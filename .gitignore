@@ -1,0 +1,57 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+.idea/**
+.idea
+*.iml
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+zhixinshu
+zhixinshu/**
+sources
+sources/**
+*.class
+
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# eclipse projects files
+.settings/**
+.metadata/**
+.mvn/**
+.settings/**
+Servers/**
+.mvn/wrapper/**
+.springBeans
+mvnw
+mvnw.cmd
+
+logs/**
+# project's specific
+*.log
+target/*
+/target/
+/bin/
+DataAnalysis/target/*
+DataGround/target/*
+DataInstall/target/*
+DataAnalysis/.*
+DataGround/.*
+DataInstall/.*
+
+# yml config
+DataAnalysis/src/main/resources/application.yml
+DataGround/src/main/resources/application.yml
+DataInstall/src/main/resources/application.yml

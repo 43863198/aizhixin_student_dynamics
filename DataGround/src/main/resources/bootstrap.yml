@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: data-ground
+#  cloud:
+#    config:
+#      profile: ${spring.profiles.active}
+#      label: master
+#      uri: ${configServerIp}
