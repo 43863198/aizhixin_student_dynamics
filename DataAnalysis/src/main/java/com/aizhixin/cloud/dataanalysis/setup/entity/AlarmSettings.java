@@ -20,6 +20,15 @@ import javax.validation.constraints.NotNull;
 @ToString
 public class AlarmSettings extends AbstractEntity {
     /*
+   * 预警类型
+   */
+    @NotNull
+    @Column(name = "TYPE")
+    @Getter
+    @Setter
+    private String type;
+
+    /*
 	 * 预警名称
 	 */
     @NotNull
