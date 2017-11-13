@@ -23,7 +23,7 @@
             <column name="COLLOGE_NAME" type="VARCHAR(20)" remarks="所属学院"/>
             <column name="GRADE" type="VARCHAR(20)" remarks="所属年级"/>
             <column name="CLASS_NAME" type="VARCHAR(50)" remarks="所属班级"/>
-            <column name="WARNING_TYPE" type="VARCHAR(50)" remarks="预警类型"/>
+            <column name="WARNING_TYPE" type="VARCHAR(20)" remarks="预警类型"/>
             <column name="WARNING_LEVEL" type="VARCHAR(50)" remarks="预警等级"/>
             <column name="WARNING_CONDITION" type="VARCHAR(200)" remarks="预警条件"/>
             <column name="WARNING_TIME" type="DATETIME" defaultValueDate="${now}" remarks="预警时间"/>
