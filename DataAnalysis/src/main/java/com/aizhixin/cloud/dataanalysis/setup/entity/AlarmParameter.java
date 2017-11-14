@@ -1,12 +1,16 @@
 package com.aizhixin.cloud.dataanalysis.setup.entity;
 
 import com.aizhixin.cloud.dataanalysis.common.entity.AbstractEntity;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -24,7 +28,8 @@ public class AlarmParameter extends AbstractEntity {
    * 设置id
    */
     @NotNull
-    @Column(name = "ALARMSETTINGS_ID")
+    @ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "ALARMSETTINGS_ID")
     @Getter @Setter private AlarmSettings alarmSettings;
 
     /*

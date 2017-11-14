@@ -49,7 +49,7 @@ public class AlarmSettings extends AbstractEntity {
      */
     @NotNull
     @Column(name = "SETUP_OR_CLOSE")
-    @Getter @Setter private int setupOrClose;
+    @Getter @Setter private int setupCloseFlag;
 
     /*
     * 包含级别
