@@ -19,6 +19,7 @@ import com.aizhixin.cloud.dataanalysis.common.constant.StudentRegisterConstant;
 import com.aizhixin.cloud.dataanalysis.common.core.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmParameter;
+import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
 import com.aizhixin.cloud.dataanalysis.setup.respository.AlarmParameterRespository;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoRespository.StudentRegisterMongoRespository;
@@ -37,10 +38,15 @@ public class StudentRegisterJob {
 
 	@Scheduled(cron = "0 0/2 * * * ?")
 	public void studenteRegister() {
-
-		List<AlarmParameter> alarmParams = alarmParameterRespository
-				.findAllByDeleteFlagAndAlarmSettings_SetupCloseFlagAndAlarmSettings_TypeOrderByAlarmSettings_idAscLevelDesc(DataValidity.VALID.getState(),AlertTypeConstant.SETUP_ALERTSETTING,
-						AlertTypeConstant.STUDENT_REGISTER);
+//固化规则咱不做规则管理和查询
+//		List<AlarmParameter> alarmParams = alarmParameterRespository
+//				.findAllByDeleteFlagAndAlarmSettings_SetupCloseFlagAndAlarmSettings_TypeOrderByAlarmSettings_idAscLevelDesc(DataValidity.VALID.getState(),AlertTypeConstant.SETUP_ALERTSETTING,
+//						AlertTypeConstant.STUDENT_REGISTER);
+		
+		List<AlarmParameter> alarmParams = new ArrayList<AlarmParameter>();
+		AlarmParameter alaParam = new AlarmParameter();
+		AlarmSettings aSetting = new AlarmSettings();
+		
 		if (null != alarmParams && alarmParams.size() > 0) {
 			HashMap<Long, ArrayList<AlarmParameter>> alarmMap = new HashMap<Long, ArrayList<AlarmParameter>>();
 			ArrayList<RegistrationAlertInformation> alertInforList = new ArrayList<RegistrationAlertInformation>();

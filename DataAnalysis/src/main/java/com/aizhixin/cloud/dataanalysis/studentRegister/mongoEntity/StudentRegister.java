@@ -74,6 +74,7 @@ public class StudentRegister {
 	/**
 	 * 是否报到 0--已报到，1--未报到
 	 */
+	@Indexed
 	private int isregister;
 	
 	/**
