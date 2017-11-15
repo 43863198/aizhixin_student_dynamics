@@ -7,13 +7,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AlertWarningInformation;
+import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.aizhixin.cloud.dataanalysis.alertinformation.entity.RegistrationAlertInformation;
-import com.aizhixin.cloud.dataanalysis.alertinformation.respository.RegistrationAlertInforRespository;
 import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.StudentRegisterConstant;
 import com.aizhixin.cloud.dataanalysis.common.core.DataValidity;
@@ -33,7 +33,7 @@ public class StudentRegisterJob {
 	@Autowired
 	private StudentRegisterMongoRespository stuRegisterMongoRespository;
 	@Autowired
-	private RegistrationAlertInforRespository registrationAlertInforRespository;
+	private AlertWarningInformationRepository alertWarningInformationRepository;
 
 	@Scheduled(cron = "0 0/2 * * * ?")
 	public void studenteRegister() {
@@ -43,7 +43,7 @@ public class StudentRegisterJob {
 						AlertTypeConstant.STUDENT_REGISTER);
 		if (null != alarmParams && alarmParams.size() > 0) {
 			HashMap<Long, ArrayList<AlarmParameter>> alarmMap = new HashMap<Long, ArrayList<AlarmParameter>>();
-			ArrayList<RegistrationAlertInformation> alertInforList = new ArrayList<RegistrationAlertInformation>();
+			ArrayList<AlertWarningInformation> alertInforList = new ArrayList<AlertWarningInformation>();
 			//按orgId归类告警等级阀值
 			for (AlarmParameter param : alarmParams) {
 				Long orgId = param.getAlarmSettings().getOrgId();
@@ -69,16 +69,13 @@ public class StudentRegisterJob {
 					int result = DateUtil.getDaysBetweenDate(studentRegister.getRegisterDate(), today);
 					for(AlarmParameter alarmParam : val){
 						if(result >= alarmParam.getSetParameter()){
-							RegistrationAlertInformation alertInfor = new RegistrationAlertInformation();
+							AlertWarningInformation alertInfor = new AlertWarningInformation();
 							alertInfor.setName(studentRegister.getStuName());
 							alertInfor.setJobNumber(studentRegister.getJobNum());
 							alertInfor.setCollogeName(studentRegister.getCollegeName());
-							alertInfor.setGrade(studentRegister.getGrade());
+							alertInfor.setTeachingYear(studentRegister.getGrade());
 							alertInfor.setClassName(studentRegister.getClassName());
-							alertInfor.setWarningType(alarmParam.getAlarmSettings().getType());
-							alertInfor.setWarningLevel(String.valueOf(alarmParam.getLevel()));
 							alertInfor.setWarningTime(new Date());
-							alertInfor.setWarningCondition(alarmParam.getId().toString());
 							alertInforList.add(alertInfor);
 							break;
 						}else{
@@ -89,7 +86,7 @@ public class StudentRegisterJob {
 			}
 			
 			if(!alertInforList.isEmpty()){
-				registrationAlertInforRespository.save(alertInforList);
+				alertWarningInformationRepository.save(alertInforList);
 			}
 		}
 	}
