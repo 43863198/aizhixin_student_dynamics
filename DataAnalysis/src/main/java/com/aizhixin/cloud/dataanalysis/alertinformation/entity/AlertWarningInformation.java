@@ -3,15 +3,18 @@ package com.aizhixin.cloud.dataanalysis.alertinformation.entity;
 import com.aizhixin.cloud.dataanalysis.common.entity.AbstractEntity;
 import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+
 import java.util.Date;
 
 /**
@@ -109,7 +112,8 @@ public class AlertWarningInformation extends AbstractEntity {
      * 预警类型
      */
     @NotNull
-    @Column(name = "WARNING_TYPE")
+    @ManyToOne(fetch = FetchType.EAGER)
+   	@JoinColumn(name = "WARNING_TYPE")
     @Getter @Setter private WarningType warningType;
 
     /*

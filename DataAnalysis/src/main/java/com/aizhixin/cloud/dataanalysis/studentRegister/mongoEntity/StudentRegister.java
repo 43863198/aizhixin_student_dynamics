@@ -28,6 +28,11 @@ public class StudentRegister {
 	private String jobNum;
 	
 	/**
+	 * 学生id
+	 */
+	private Long stuId;
+	
+	/**
 	 * 学生名称
 	 */
 	private String stuName;
