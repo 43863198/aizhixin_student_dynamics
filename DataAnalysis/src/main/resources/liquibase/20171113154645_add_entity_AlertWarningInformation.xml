@@ -11,22 +11,27 @@
     <changeSet id="20171113154645" author="jianwei.wu">
 		<preConditions onFail="MARK_RAN">
 	        <not>
-	            <tableExists tableName="T_REGISTRATION_ALERT_INFORMATION"/>
+	            <tableExists tableName="T_ALERT_WARNING_INFORMATION"/>
 	        </not>
 	    </preConditions>
-        <createTable tableName="T_REGISTRATION_ALERT_INFORMATION" remarks="注册预警信息">
+        <createTable tableName="T_ALERT_WARNING_INFORMATION" remarks="注册预警信息">
             <column name="ID" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="NAME" type="VARCHAR(120)" remarks="名称"/>
+            <column name="DEFENDANT_ID" type="BIGINT" remarks="告警人id"/>
+            <column name="NAME" type="VARCHAR(120)" remarks="告警人"/>
             <column name="JOB_NUMBER" type="VARCHAR(20)" remarks="学号/工号"/>
+            <column name="ORG_ID" type="BIGINT" remarks="学校id"/>
             <column name="COLLOGE_NAME" type="VARCHAR(20)" remarks="所属学院"/>
-            <column name="GRADE" type="VARCHAR(20)" remarks="所属年级"/>
+            <column name="COLLOGE_ID" type="BIGINT" remarks="所属学院id"/>
+            <column name="PROFESSIONAL_NAME" type="VARCHAR(20)" remarks="所属专业"/>
+            <column name="PROFESSIONAL_ID" type="BIGINT" remarks="所属专业id"/>
             <column name="CLASS_NAME" type="VARCHAR(50)" remarks="所属班级"/>
-            <column name="WARNING_TYPE" type="VARCHAR(20)" remarks="预警类型"/>
-            <column name="WARNING_LEVEL" type="VARCHAR(50)" remarks="预警等级"/>
-            <column name="WARNING_CONDITION" type="VARCHAR(200)" remarks="预警条件"/>
-            <column name="WARNING_TIME" type="DATETIME" defaultValueDate="${now}" remarks="预警时间"/>
+            <column name="CLASS_ID" type="BIGINT" remarks="所属班级id"/>
+            <column name="TEACHING_YEAR" type="VARCHAR(20)" remarks="学年"/>
+            <column name="WARNING_TYPE" type="BIGINT" remarks="预警类型"/>
+            <column name="WARNING_LEVEL" type="INT(4)" remarks="预警等级"/>
+            <column name="WARNING_TIME" type="DATETIME" defaultValueDate="${now}" remarks="告警时间"/>
             <column name="CREATED_BY" type="BIGINT" remarks="创建人ID"/>
             <column name="CREATED_DATE" type="DATETIME" defaultValueDate="${now}" remarks="创建时间"/>
             <column name="LAST_MODIFIED_BY" type="BIGINT" remarks="最后一次修改人ID"/>

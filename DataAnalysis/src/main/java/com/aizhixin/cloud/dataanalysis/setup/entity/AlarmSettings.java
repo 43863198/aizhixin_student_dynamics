@@ -19,6 +19,14 @@ import javax.validation.constraints.NotNull;
 @Table(name = "T_ALARM_SETTINGS")
 @ToString
 public class AlarmSettings extends AbstractEntity {
+
+    /*
+     * 机构id
+     */
+    @NotNull
+    @Column(name = "ORG_ID")
+    @Getter @Setter private Long orgId;
+
     /*
    * 预警类型
    */
@@ -26,7 +34,7 @@ public class AlarmSettings extends AbstractEntity {
     @Column(name = "TYPE")
     @Getter
     @Setter
-    private String type;
+    private WarningType warningType;
 
     /*
 	 * 预警名称
@@ -38,24 +46,11 @@ public class AlarmSettings extends AbstractEntity {
     private String name;
 
     /*
-     * 机构id
-     */
-    @NotNull
-    @Column(name = "ORG_ID")
-    @Getter @Setter private Long orgId;
-
-    /*
      * 开启状态(10:启用 ;20:关闭；)
      */
     @NotNull
-    @Column(name = "SETUP_OR_CLOSE")
+    @Column(name = "SETUP_CLOSE")
     @Getter @Setter private int setupCloseFlag;
 
-    /*
-    * 包含级别
-    */
-    @NotNull
-    @Column(name = "INCLUSION_LEVEL")
-    @Getter @Setter private int inclusionLevel;
 
 }
