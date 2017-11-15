@@ -3,9 +3,7 @@ package com.aizhixin.cloud.dataanalysis.setup.respository;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.repository.query.Param;
 
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmParameter;
 

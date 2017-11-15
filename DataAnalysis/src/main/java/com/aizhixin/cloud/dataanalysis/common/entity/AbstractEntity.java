@@ -15,12 +15,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 
 @MappedSuperclass
 @ToString
 @EntityListeners(AuditingEntityListener.class)
 public abstract class AbstractEntity implements java.io.Serializable {
-	private static final long serialVersionUID = -2833890921053212135L;
 
 	@ApiModelProperty(value = "ID")
 	@Id
