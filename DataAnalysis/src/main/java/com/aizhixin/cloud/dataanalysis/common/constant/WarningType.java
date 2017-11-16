@@ -8,7 +8,7 @@ import lombok.Getter;
  * @Date: 2017-09-11
  */
 public enum WarningType {
-    R("报道注册预警"),
+    Register("报道注册预警"),
     A("成绩预警");
 
     private String value ;

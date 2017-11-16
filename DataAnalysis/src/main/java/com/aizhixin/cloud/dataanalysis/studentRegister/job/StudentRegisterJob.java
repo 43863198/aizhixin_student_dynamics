@@ -52,7 +52,7 @@ public class StudentRegisterJob {
 
 		//固化报到注册规则，之后要改成从数据库获取
 		AlarmSettings aSetting = new AlarmSettings();
-		aSetting.setName(WarningType.R.getValue());
+		aSetting.setName(WarningType.Register.getValue());
 		aSetting.setOrgId(1L);
 		AlarmParameter alaParam = new AlarmParameter();
 		alaParam.setLevel(3);
@@ -60,8 +60,8 @@ public class StudentRegisterJob {
 		alaParam.setAlarmSettings(aSetting);
 		alarmParams.add(alaParam);
 		aSetting = new AlarmSettings();
-		aSetting.setWarningType("R");
-		aSetting.setName(WarningType.R.getValue());
+		aSetting.setWarningType("Register");
+		aSetting.setName(WarningType.Register.getValue());
 		aSetting.setOrgId(1L);
 		alaParam = new AlarmParameter();
 		alaParam.setLevel(2);
@@ -69,8 +69,8 @@ public class StudentRegisterJob {
 		alaParam.setAlarmSettings(aSetting);
 		alarmParams.add(alaParam);
 		aSetting = new AlarmSettings();
-		aSetting.setWarningType("R");
-		aSetting.setName(WarningType.R.getValue());
+		aSetting.setWarningType("Register");
+		aSetting.setName(WarningType.Register.getValue());
 		aSetting.setOrgId(1L);
 		 alaParam = new AlarmParameter();
 		alaParam.setLevel(1);
@@ -119,7 +119,7 @@ public class StudentRegisterJob {
 							alertInfor.setProfessionalName(studentRegister.getProfessionalName());
 							alertInfor.setTeachingYear(studentRegister.getSchoolYear());
 							alertInfor.setWarningLevel(alarmParam.getLevel());
-//							alertInfor.setWarningType(alarmParam.getAlarmSettings().getWarningType());
+							alertInfor.setWarningType(alarmParam.getAlarmSettings().getWarningType());
 							alertInfor.setWarningTime(new Date());
 							alertInfor.setOrgId(alarmParam.getAlarmSettings().getOrgId());
 							alertInforList.add(alertInfor);
