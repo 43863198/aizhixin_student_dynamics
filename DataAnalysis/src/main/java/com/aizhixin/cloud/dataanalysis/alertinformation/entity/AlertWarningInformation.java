@@ -30,7 +30,6 @@ public class AlertWarningInformation extends AbstractEntity {
     /*
    *  告警人id
    */
-    @NotNull
     @Column(name = "DEFENDANT_ID")
     @Getter
     @Setter
@@ -39,7 +38,6 @@ public class AlertWarningInformation extends AbstractEntity {
     /*
     *  告警人姓名
     */
-    @NotNull
     @Column(name = "NAME")
     @Getter
     @Setter
@@ -48,7 +46,6 @@ public class AlertWarningInformation extends AbstractEntity {
     /*
      * 学号/工号
      */
-    @NotNull
     @Column(name = "JOB_NUMBER")
     @Getter @Setter private String jobNumber;
 
@@ -61,14 +58,12 @@ public class AlertWarningInformation extends AbstractEntity {
     /*
      * 所属学院id
      */
-    @NotNull
     @Column(name = "COLLOGE_ID")
     @Getter @Setter private Long collogeId;
 
     /*
      * 所属学院
      */
-    @NotNull
     @Column(name = "COLLOGE_NAME")
     @Getter @Setter private String collogeName;
 
@@ -76,50 +71,43 @@ public class AlertWarningInformation extends AbstractEntity {
     /*
    * 所属专业id
    */
-    @NotNull
     @Column(name = "PROFESSIONAL_ID")
     @Getter @Setter private Long professionalId;
 
     /*
      * 所属专业
      */
-    @NotNull
     @Column(name = "PROFESSIONAL_NAME")
     @Getter @Setter private String professionalName;
 
     /*
    * 所属班级id
    */
-    @NotNull
     @Column(name = "CLASS_ID")
     @Getter @Setter private Long classId;
 
     /*
      * 所属班级
      */
-    @NotNull
     @Column(name = "CLASS_NAME")
     @Getter @Setter private String className;
 
     /*
    * 学年
    */
-    @NotNull
     @Column(name = "TEACHING_YEAR")
     @Getter @Setter private String teachingYear;
 
     /*
      * 预警类型
      */
-    @NotNull
-    @ManyToOne(fetch = FetchType.EAGER)
-   	@JoinColumn(name = "WARNING_TYPE")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "WARNING_TYPE")
     @Getter @Setter private WarningType warningType;
 
     /*
      * 预警等级
      */
-    @NotNull
     @Column(name = "WARNING_LEVEL")
     @Getter @Setter private int warningLevel;
 

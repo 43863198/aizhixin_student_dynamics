@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @Date: 2017-11-14
  */
 public interface AlertWarningInformationRepository extends JpaRepository<AlertWarningInformation, Long> {
+
+
 }
