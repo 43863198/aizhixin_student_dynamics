@@ -56,6 +56,7 @@ public class AlertWarningInformationController {
     @RequestMapping(value = "/registercount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "按机构id统计机构下所有学院的注册报到预警数量", response = Void.class, notes = "按机构id统计机构下所有学院的注册报到预警数量<br><br><b>@author 郑宁</b>")
 	public ResponseEntity<Map<String, Object>> taskChart(
+			@RequestHeader("Authorization") String token,
             @ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = true) Long orgId
 			) {
 		Map<String, Object> result = new HashMap<String, Object>();
