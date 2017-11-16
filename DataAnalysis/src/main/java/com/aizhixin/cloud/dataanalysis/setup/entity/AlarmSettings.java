@@ -29,11 +29,10 @@ public class AlarmSettings extends AbstractEntity {
    * 预警类型
    */
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TYPE")
+    @Column(name = "TYPE")
     @Getter
     @Setter
-    private WarningType warningType;
+    private String warningType;
 
     /*
 	 * 预警名称

@@ -1,7 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.alertinformation.entity;
 
 import com.aizhixin.cloud.dataanalysis.common.entity.AbstractEntity;
-import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -101,9 +100,8 @@ public class AlertWarningInformation extends AbstractEntity {
     /*
      * 预警类型
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "WARNING_TYPE")
-    @Getter @Setter private WarningType warningType;
+    @Column(name = "WARNING_TYPE")
+    @Getter @Setter private String warningType;
 
     /*
      * 预警等级

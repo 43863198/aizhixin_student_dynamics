@@ -8,7 +8,6 @@
     <include file="classpath:liquibase/20171113154645_add_entity_AlarmParameter.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171113154645_add_entity_AlarmSettings.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171113154645_add_entity_AlertWarningInformation.xml" relativeToChangelogFile="false"/>
-    <include file="classpath:liquibase/20171113154645_add_entity_WarningType.xml" relativeToChangelogFile="false"/>
 
 
 </databaseChangeLog>

@@ -9,9 +9,8 @@ import java.util.Map;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AlertWarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
-import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
-import com.aizhixin.cloud.dataanalysis.setup.respository.WarningTypeRepository;
 
+import com.aizhixin.cloud.dataanalysis.common.constant.WarningType;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -37,25 +36,23 @@ public class StudentRegisterJob {
 	private StudentRegisterMongoRespository stuRegisterMongoRespository;
 	@Autowired
 	private AlertWarningInformationRepository alertWarningInformationRepository;
-	@Autowired
-	private WarningTypeRepository warningTypeRepository;
 
 
 	@Scheduled(cron = "0 0/2 * * * ?")
 	public void studenteRegister() {
+        //R为学生注册预警
+		List<AlarmParameter> alarmParams = alarmParameterRespository
+				.findAllByDeleteFlagAndAlarmSettings_WarningType(DataValidity.VALID.getState(), "R");
 //固化规则咱不做规则管理和查询
 //		List<AlarmParameter> alarmParams = alarmParameterRespository
 //				.findAllByDeleteFlagAndAlarmSettings_SetupCloseFlagAndAlarmSettings_TypeOrderByAlarmSettings_idAscLevelDesc(DataValidity.VALID.getState(),AlertTypeConstant.SETUP_ALERTSETTING,
 //						AlertTypeConstant.STUDENT_REGISTER);
-		
+
+//		List<AlarmParameter> alarmParams = new ArrayList<AlarmParameter>();
+
 		//固化报到注册规则，之后要改成从数据库获取
-		List<AlarmParameter> alarmParams = new ArrayList<AlarmParameter>();
-		WarningType warningType = new WarningType();
-		warningType.setId(1L);
-		warningType.setName("studentRegister");
 		AlarmSettings aSetting = new AlarmSettings();
-		aSetting.setWarningType(warningType);
-		aSetting.setName("报到注册预警");
+		aSetting.setName(WarningType.R.getValue());
 		aSetting.setOrgId(1L);
 		AlarmParameter alaParam = new AlarmParameter();
 		alaParam.setLevel(3);
@@ -63,8 +60,8 @@ public class StudentRegisterJob {
 		alaParam.setAlarmSettings(aSetting);
 		alarmParams.add(alaParam);
 		aSetting = new AlarmSettings();
-		aSetting.setWarningType(warningType);
-		aSetting.setName("报到注册预警");
+		aSetting.setWarningType("R");
+		aSetting.setName(WarningType.R.getValue());
 		aSetting.setOrgId(1L);
 		alaParam = new AlarmParameter();
 		alaParam.setLevel(2);
@@ -72,8 +69,8 @@ public class StudentRegisterJob {
 		alaParam.setAlarmSettings(aSetting);
 		alarmParams.add(alaParam);
 		aSetting = new AlarmSettings();
-		aSetting.setWarningType(warningType);
-		aSetting.setName("报到注册预警");
+		aSetting.setWarningType("R");
+		aSetting.setName(WarningType.R.getValue());
 		aSetting.setOrgId(1L);
 		 alaParam = new AlarmParameter();
 		alaParam.setLevel(1);
