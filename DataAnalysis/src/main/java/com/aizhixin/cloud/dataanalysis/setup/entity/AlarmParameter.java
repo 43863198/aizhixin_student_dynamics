@@ -28,8 +28,8 @@ public class AlarmParameter extends AbstractEntity {
    * 设置id
    */
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "ALARMSETTINGS_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ALARMSETTINGS_ID")
     @Getter @Setter private AlarmSettings alarmSettings;
 
     /*
@@ -49,7 +49,6 @@ public class AlarmParameter extends AbstractEntity {
     /*
      * 描述
      */
-    @NotNull
     @Column(name = "DESCRIBE")
     @Getter @Setter private String describe;
 

@@ -31,7 +31,6 @@ public class WarningType implements Serializable {
     /*
     *  名称
     */
-    @NotNull
     @Column(name = "NAME")
     @Getter
     @Setter
