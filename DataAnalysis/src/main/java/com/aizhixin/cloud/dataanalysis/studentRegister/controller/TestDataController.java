@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.aizhixin.cloud.dataanalysis.studentRegister.mvc;
+package com.aizhixin.cloud.dataanalysis.studentRegister.controller;
 
 import java.io.File;
 import java.io.IOException;

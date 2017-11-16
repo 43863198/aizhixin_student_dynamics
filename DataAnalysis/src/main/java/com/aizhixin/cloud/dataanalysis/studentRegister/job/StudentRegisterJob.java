@@ -49,6 +49,8 @@ public class StudentRegisterJob {
 //						AlertTypeConstant.STUDENT_REGISTER);
 
 //		List<AlarmParameter> alarmParams = new ArrayList<AlarmParameter>();
+
+		//固化报到注册规则，之后要改成从数据库获取
 		AlarmSettings aSetting = new AlarmSettings();
 		aSetting.setName(WarningType.R.getValue());
 		aSetting.setOrgId(1L);
