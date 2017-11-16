@@ -42,7 +42,6 @@ public class AlarmParameter extends AbstractEntity {
     /*
      * 参数
      */
-    @NotNull
     @Column(name = "SET_PARAMETER")
     @Getter @Setter private int setParameter;
 

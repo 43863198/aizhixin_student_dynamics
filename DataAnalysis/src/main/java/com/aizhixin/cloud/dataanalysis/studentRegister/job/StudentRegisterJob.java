@@ -9,6 +9,8 @@ import java.util.Map;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AlertWarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
+import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
+import com.aizhixin.cloud.dataanalysis.setup.respository.WarningTypeRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -34,13 +36,15 @@ public class StudentRegisterJob {
 	private StudentRegisterMongoRespository stuRegisterMongoRespository;
 	@Autowired
 	private AlertWarningInformationRepository alertWarningInformationRepository;
+	@Autowired
+	private WarningTypeRepository warningTypeRepository;
+
 
 	@Scheduled(cron = "0 0/2 * * * ?")
 	public void studenteRegister() {
-
+        //假设1为学生注册预警
 		List<AlarmParameter> alarmParams = alarmParameterRespository
-				.findAllByDeleteFlagAndAlarmSettings_SetupCloseFlagAndAlarmSettings_TypeOrderByAlarmSettings_idAscLevelDesc(DataValidity.VALID.getState(),AlertTypeConstant.SETUP_ALERTSETTING,
-						AlertTypeConstant.STUDENT_REGISTER);
+				.findAllByDeleteFlagAndAlarmSettings_id(DataValidity.VALID.getState(),1L);
 		if (null != alarmParams && alarmParams.size() > 0) {
 			HashMap<Long, ArrayList<AlarmParameter>> alarmMap = new HashMap<Long, ArrayList<AlarmParameter>>();
 			ArrayList<AlertWarningInformation> alertInforList = new ArrayList<AlertWarningInformation>();
