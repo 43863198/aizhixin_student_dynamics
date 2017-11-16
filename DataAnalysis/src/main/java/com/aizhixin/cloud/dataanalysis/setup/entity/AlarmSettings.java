@@ -5,9 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -31,7 +29,8 @@ public class AlarmSettings extends AbstractEntity {
    * 预警类型
    */
     @NotNull
-    @Column(name = "TYPE")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TYPE")
     @Getter
     @Setter
     private WarningType warningType;
@@ -39,7 +38,6 @@ public class AlarmSettings extends AbstractEntity {
     /*
 	 * 预警名称
 	 */
-    @NotNull
     @Column(name = "NAME")
     @Getter
     @Setter

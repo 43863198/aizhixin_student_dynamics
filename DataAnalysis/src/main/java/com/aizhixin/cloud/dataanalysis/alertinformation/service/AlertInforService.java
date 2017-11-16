@@ -10,7 +10,6 @@ import org.springframework.jdbc.core.RowMapper;
 import com.aizhixin.cloud.dataanalysis.alertinformation.domain.RegisterAlertCountDomain;
 import com.aizhixin.cloud.dataanalysis.common.service.AuthUtilService;
 import com.aizhixin.cloud.dataanalysis.common.util.PageJdbcUtil;
-import com.aizhixin.cloud.studentpractice.task.domain.StuInforDomain;
 
 
 public class AlertInforService {
@@ -20,22 +19,20 @@ public class AlertInforService {
 	@Autowired
 	private AuthUtilService authUtilService;
 	
-	RowMapper<StuInforDomain> registerCountRm = new RowMapper<StuInforDomain>() {
+	RowMapper<RegisterAlertCountDomain> registerCountRm = new RowMapper<RegisterAlertCountDomain>() {
 
 		@Override
-		public StuInforDomain mapRow(ResultSet rs, int rowNum)
+		public RegisterAlertCountDomain mapRow(ResultSet rs, int rowNum)
 				throws SQLException {
 			// TODO Auto-generated method stub
-			StuInforDomain domain = new StuInforDomain();
-			domain.setId(rs.getLong("STUDENT_ID"));
-			domain.setMentorCompanyName(rs.getString("ENTERPRISE_NAME"));
+			RegisterAlertCountDomain domain = new RegisterAlertCountDomain();
 			return domain;
 		}
 	};
 	
 	public List<RegisterAlertCountDomain> findRegisterCountInfor() {
 
-		String querySql = " SELECT DISTINCT STUDENT_ID,ENTERPRISE_NAME FROM `sp_student_task` where DELETE_FLAG = 0 and org_id is not null ";
+		String querySql = " SELECT COUNT(1) as countNum,COLLOGE_ID,COLLOGE_NAME,WARNING_LEVEL FROM `t_alert_warning_information` where DELETE_FLAG = 0 and ORG_ID =1 and WARNING_TYPE =1 GROUP BY COLLOGE_ID,WARNING_LEVEL ORDER BY COLLOGE_ID,WARNING_LEVEL ;";
 
 		return pageJdbcUtil.getInfo(querySql, registerCountRm);
 	}
