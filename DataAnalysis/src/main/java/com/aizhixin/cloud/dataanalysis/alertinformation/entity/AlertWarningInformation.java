@@ -101,14 +101,8 @@ public class AlertWarningInformation extends AbstractEntity {
     /*
      * 预警类型
      */
-<<<<<<< HEAD
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WARNING_TYPE")
-=======
-    @NotNull
-    @ManyToOne(fetch = FetchType.EAGER)
-   	@JoinColumn(name = "WARNING_TYPE")
->>>>>>> 599dc31c95aa1f013a2ee9dec8d09e9801e1b771
     @Getter @Setter private WarningType warningType;
 
     /*

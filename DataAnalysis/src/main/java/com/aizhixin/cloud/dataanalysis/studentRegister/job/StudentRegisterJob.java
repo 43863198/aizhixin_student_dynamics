@@ -9,24 +9,19 @@ import java.util.Map;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AlertWarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
-<<<<<<< HEAD
 import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.setup.respository.WarningTypeRepository;
-=======
 
->>>>>>> 599dc31c95aa1f013a2ee9dec8d09e9801e1b771
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.StudentRegisterConstant;
 import com.aizhixin.cloud.dataanalysis.common.core.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmParameter;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
-import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.setup.respository.AlarmParameterRespository;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoRespository.StudentRegisterMongoRespository;
@@ -36,8 +31,8 @@ public class StudentRegisterJob {
 
 	private Logger logger = Logger.getLogger(this.getClass());
 
-//	@Autowired
-//	private AlarmParameterRespository alarmParameterRespository;
+	@Autowired
+	private AlarmParameterRespository alarmParameterRespository;
 	@Autowired
 	private StudentRegisterMongoRespository stuRegisterMongoRespository;
 	@Autowired
@@ -48,17 +43,15 @@ public class StudentRegisterJob {
 
 	@Scheduled(cron = "0 0/2 * * * ?")
 	public void studenteRegister() {
-<<<<<<< HEAD
         //假设1为学生注册预警
 		List<AlarmParameter> alarmParams = alarmParameterRespository
 				.findAllByDeleteFlagAndAlarmSettings_id(DataValidity.VALID.getState(),1L);
-=======
 //固化规则咱不做规则管理和查询
 //		List<AlarmParameter> alarmParams = alarmParameterRespository
 //				.findAllByDeleteFlagAndAlarmSettings_SetupCloseFlagAndAlarmSettings_TypeOrderByAlarmSettings_idAscLevelDesc(DataValidity.VALID.getState(),AlertTypeConstant.SETUP_ALERTSETTING,
 //						AlertTypeConstant.STUDENT_REGISTER);
-		
-		List<AlarmParameter> alarmParams = new ArrayList<AlarmParameter>();
+
+//		List<AlarmParameter> alarmParams = new ArrayList<AlarmParameter>();
 		WarningType warningType = new WarningType();
 		warningType.setId(1L);
 		warningType.setName("studentRegister");
@@ -90,8 +83,6 @@ public class StudentRegisterJob {
 		alaParam.setAlarmSettings(aSetting);
 		alarmParams.add(alaParam);
 		
-		
->>>>>>> 599dc31c95aa1f013a2ee9dec8d09e9801e1b771
 		if (null != alarmParams && alarmParams.size() > 0) {
 			HashMap<Long, ArrayList<AlarmParameter>> alarmMap = new HashMap<Long, ArrayList<AlarmParameter>>();
 			ArrayList<AlertWarningInformation> alertInforList = new ArrayList<AlertWarningInformation>();
@@ -133,7 +124,7 @@ public class StudentRegisterJob {
 							alertInfor.setProfessionalName(studentRegister.getProfessionalName());
 							alertInfor.setTeachingYear(studentRegister.getSchoolYear());
 							alertInfor.setWarningLevel(alarmParam.getLevel());
-							alertInfor.setWarningType(alarmParam.getAlarmSettings().getWarningType());
+//							alertInfor.setWarningType(alarmParam.getAlarmSettings().getWarningType());
 							alertInfor.setWarningTime(new Date());
 							alertInfor.setOrgId(alarmParam.getAlarmSettings().getOrgId());
 							alertInforList.add(alertInfor);
