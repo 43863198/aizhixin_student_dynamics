@@ -45,6 +45,7 @@ public class StudentRegisterJob {
 //				.findAllByDeleteFlagAndAlarmSettings_SetupCloseFlagAndAlarmSettings_TypeOrderByAlarmSettings_idAscLevelDesc(DataValidity.VALID.getState(),AlertTypeConstant.SETUP_ALERTSETTING,
 //						AlertTypeConstant.STUDENT_REGISTER);
 		
+		//固化报到注册规则，之后要改成从数据库获取
 		List<AlarmParameter> alarmParams = new ArrayList<AlarmParameter>();
 		WarningType warningType = new WarningType();
 		warningType.setId(1L);
