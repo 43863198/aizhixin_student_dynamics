@@ -19,7 +19,7 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="ORG_ID" type="BIGINT" remarks="机构ID"/>
-            <column name="TYPE" type="BIGINT" remarks="预警类别"/>
+            <column name="TYPE" type="VARCHAR(50)" remarks="预警类别"/>
             <column name="NAME" type="VARCHAR(120)" remarks="名称"/>
             <column name="SETUP_OR_CLOSE" type="INT(4)" remarks="开启状态(10:启用 ;20:关闭；)"/>
             <column name="CREATED_BY" type="BIGINT" remarks="创建人ID"/>
