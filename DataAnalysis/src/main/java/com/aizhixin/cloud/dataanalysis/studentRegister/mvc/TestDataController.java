@@ -51,21 +51,25 @@ public class TestDataController {
 		Map<String, Object> result = new HashMap<String, Object>();
 	
 		List<StudentRegister> stuRegisterList = new ArrayList<StudentRegister>();
-		
+		Long stuId = 9527L;
 		for(int i=0;i<10;i++){
 			StudentRegister studentRegister = new StudentRegister();
 			
+			studentRegister.setStuId(stuId++);
+			studentRegister.setClassId(1L);
 			studentRegister.setClassName("测试1班");
+			studentRegister.setCollegeId(1L);
 			studentRegister.setCollegeName("测试学院1");
 			studentRegister.setGrade("大1");
 			studentRegister.setJobNum("学号1000"+i);
 			studentRegister.setOrgId(1L);
+			studentRegister.setProfessionalId(1L);
 			studentRegister.setProfessionalName("测试专业");
 			studentRegister.setIsregister(StudentRegisterConstant.UNREGISTER);
 			studentRegister.setRegisterDate(DateUtil.getMonday(new Date()));
 //			studentRegister.setActualRegisterDate(DateUtil.getMonday(new Date()));
 //			studentRegister.setRemarks(remarks);
-//			studentRegister.setSchoolYear(schoolYear);
+			studentRegister.setSchoolYear("2017");
 			studentRegister.setStuName("学生"+i);
 			stuRegisterList.add(studentRegister);
 		}
