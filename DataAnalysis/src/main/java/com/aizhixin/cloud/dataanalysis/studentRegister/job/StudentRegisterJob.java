@@ -43,15 +43,13 @@ public class StudentRegisterJob {
 
 	@Scheduled(cron = "0 0/2 * * * ?")
 	public void studenteRegister() {
-        //假设1为学生注册预警
-		List<AlarmParameter> alarmParams = alarmParameterRespository
-				.findAllByDeleteFlagAndAlarmSettings_id(DataValidity.VALID.getState(),1L);
 //固化规则咱不做规则管理和查询
 //		List<AlarmParameter> alarmParams = alarmParameterRespository
 //				.findAllByDeleteFlagAndAlarmSettings_SetupCloseFlagAndAlarmSettings_TypeOrderByAlarmSettings_idAscLevelDesc(DataValidity.VALID.getState(),AlertTypeConstant.SETUP_ALERTSETTING,
 //						AlertTypeConstant.STUDENT_REGISTER);
-
-//		List<AlarmParameter> alarmParams = new ArrayList<AlarmParameter>();
+		
+		//固化报到注册规则，之后要改成从数据库获取
+		List<AlarmParameter> alarmParams = new ArrayList<AlarmParameter>();
 		WarningType warningType = new WarningType();
 		warningType.setId(1L);
 		warningType.setName("studentRegister");
