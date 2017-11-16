@@ -29,7 +29,11 @@
             <column name="CLASS_NAME" type="VARCHAR(50)" remarks="所属班级"/>
             <column name="CLASS_ID" type="BIGINT" remarks="所属班级id"/>
             <column name="TEACHING_YEAR" type="VARCHAR(20)" remarks="学年"/>
+<<<<<<< HEAD
+            <column name="WARNING_TYPE" type="VARCHAR(50)" remarks="预警类型"/>
+=======
             <column name="WARNING_TYPE" type="VARCHAR(20)" remarks="预警类型"/>
+>>>>>>> b10f3452410886a8dc4a1c91413ab865ddc2ccab
             <column name="WARNING_LEVEL" type="INT(4)" remarks="预警等级"/>
             <column name="WARNING_TIME" type="DATETIME" defaultValueDate="${now}" remarks="告警时间"/>
             <column name="CREATED_BY" type="BIGINT" remarks="创建人ID"/>

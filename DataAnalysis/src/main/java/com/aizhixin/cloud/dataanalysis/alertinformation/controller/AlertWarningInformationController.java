@@ -40,10 +40,15 @@ public class AlertWarningInformationController {
      * @return
      */
     @GetMapping(value = "/getlist", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "", value = "预警信息列表", response = Void.class, notes = "预警信息列表<br><br><b>@author jianwei.wu</b>")
-    public Long add(
-    ) {
-        Map<String, Object> result = new HashMap<>();
+    @ApiOperation(httpMethod = "GET", value = "预警信息列表", response = Void.class, notes = "预警信息列表<br><br><b>@author jianwei.wu</b>")
+    public Map<String, Object>  getList(
+            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "collegeId 机构id" , required = true) @RequestParam(value = "collegeId", required = true) Long collegeId,
+            @ApiParam(value = "type 预警类型") @RequestParam(value = "type", required = false) String  type,
+            @ApiParam(value = "warningLevel 预警等级") @RequestParam(value = "warningLevel", required = false) int warningLevel) {
+
+
+
         return null;
     }
 
