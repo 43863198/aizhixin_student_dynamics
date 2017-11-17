@@ -1,5 +1,8 @@
 package com.aizhixin.cloud.dataanalysis.alertinformation.controller;
 
+import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AlertWarningInformation;
+import com.aizhixin.cloud.dataanalysis.common.PageData;
+import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
 import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
 
+import java.awt.print.Pageable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,19 +41,64 @@ public class AlertWarningInformationController {
     /**
      * 预警信息列表
      *
+     * @param orgId
+     * @param collegeId
+     * @param type
+     * @param warningLevel
+     * @param pageNumber
+     * @param pageSize
      * @return
      */
     @GetMapping(value = "/getlist", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "预警信息列表", response = Void.class, notes = "预警信息列表<br><br><b>@author jianwei.wu</b>")
-    public Map<String, Object>  getList(
+    public PageData<AlertWarningInformation> getWarningInforList(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "collegeId 机构id" , required = true) @RequestParam(value = "collegeId", required = true) Long collegeId,
+            @ApiParam(value = "collegeId 学院id") @RequestParam(value = "collegeId", required = false) Long collegeId,
             @ApiParam(value = "type 预警类型") @RequestParam(value = "type", required = false) String  type,
-            @ApiParam(value = "warningLevel 预警等级") @RequestParam(value = "warningLevel", required = false) int warningLevel) {
+            @ApiParam(value = "warningLevel 预警等级") @RequestParam(value = "warningLevel", required = false) String warningLevel,
+            @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
+            @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+        return alertWarningInforService.findPageWarningInfor(PageUtil.createNoErrorPageRequest(pageNumber, pageSize),orgId,collegeId,type,warningLevel);
+    }
+
+    /**
+     * 预警级别汇总
+     *
+     * @param orgId
+     * @return
+     */
+    @GetMapping(value = "/statisticalgrade", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "预警级别汇总", response = Void.class, notes = "预警级别汇总<br><br><b>@author jianwei.wu</b>")
+    public Map<String,Object>   getStatisticalGrade(
+            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
+        return alertWarningInforService.getStatisticalGrade(orgId);
+    }
 
 
+    /**
+     * 院系预警汇总
+     *
+     * @param orgId
+     * @return
+     */
+    @GetMapping(value = "/statisticalcollege", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "院系预警汇总", response = Void.class, notes = "院系预警汇总<br><br><b>@author jianwei.wu</b>")
+    public Map<String,Object>   getStatisticalCollege(
+            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
+        return alertWarningInforService.getStatisticalCollege(orgId);
+    }
 
-        return null;
+    /**
+     * 预警分类汇总
+     *
+     * @param orgId
+     * @return
+     */
+    @GetMapping(value = "/statisticaltype", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "预警分类汇总", response = Void.class, notes = "预警分类汇总<br><br><b>@author jianwei.wu</b>")
+    public Map<String,Object>   getStatisticalType(
+            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
+        return alertWarningInforService.getStatisticalType(orgId);
     }
 
 

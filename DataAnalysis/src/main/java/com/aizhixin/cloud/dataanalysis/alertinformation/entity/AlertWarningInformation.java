@@ -110,6 +110,12 @@ public class AlertWarningInformation extends AbstractEntity {
     @Getter @Setter private int warningLevel;
 
     /*
+    * 状态(10:告警中；20：已处理；30：处理中；40:取消)
+    */
+    @Column(name = "WARNING_STATE")
+    @Getter @Setter private int warningState;
+
+    /*
      * 告警时间
      */
     @ApiModelProperty(value = "告警时间")
