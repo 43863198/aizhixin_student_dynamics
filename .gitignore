@@ -44,14 +44,14 @@ logs/**
 target/*
 /target/
 /bin/
-DataAnalysis/target/*
-DataGround/target/*
-DataInstall/target/*
-DataAnalysis/.*
-DataGround/.*
-DataInstall/.*
+dataanalysis/target/*
+dataground/target/*
+datainstall/target/*
+dataanalysis/.*
+dataground/.*
+datainstall/.*
 
 # yml config
-DataAnalysis/src/main/resources/application.yml
-DataGround/src/main/resources/application.yml
-DataInstall/src/main/resources/application.yml
+dataanalysis/src/main/resources/application.yml
+dataground/src/main/resources/application.yml
+datainstall/src/main/resources/application.yml
