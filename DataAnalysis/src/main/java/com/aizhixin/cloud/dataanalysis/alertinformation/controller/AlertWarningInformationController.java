@@ -9,17 +9,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aizhixin.cloud.dataanalysis.alertinformation.domain.AlertInforQueryDomain;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
 import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.validation.Valid;
 
 /**
  * @author: Created by jianwei.wu
@@ -55,7 +59,7 @@ public class AlertWarningInformationController {
 
     @RequestMapping(value = "/registercount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "按机构id统计机构下所有学院的注册报到预警数量", response = Void.class, notes = "按机构id统计机构下所有学院的注册报到预警数量<br><br><b>@author 郑宁</b>")
-	public ResponseEntity<Map<String, Object>> taskChart(
+	public ResponseEntity<Map<String, Object>> registerCount(
 			@RequestHeader("Authorization") String token,
             @ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = true) Long orgId
 			) {
@@ -65,5 +69,17 @@ public class AlertWarningInformationController {
 		return  new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
 
+    
+    @RequestMapping(value = "/alertpage", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+  	@ApiOperation(httpMethod = "GET", value = "按条件分页查询预警信息", response = Void.class, notes = "按条件分页查询预警信息<br><br><b>@author 郑宁</b>")
+  	public ResponseEntity<Map<String, Object>> alertPage(
+  			@RequestHeader("Authorization") String token,
+  			@ApiParam(value = "<b>必填:、</b><br>orgId:机构id<br><b>选填:、</b><br>collogeIds:学院id(字符串多个以,分隔);warningTypes:预警类型(字符串多个以,分隔);warningLevels:预警等级(字符串多个以,分隔);<br>collegeId:院系id、<br>")  @RequestBody AlertInforQueryDomain domain
+  			) {
+  		Map<String, Object> result = new HashMap<String, Object>();
+  		
+  		result.put(ApiReturnConstants.DATA, alertWarningInforService.getAlertInforPage(domain));
+  		return  new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+  	}
 
 }
