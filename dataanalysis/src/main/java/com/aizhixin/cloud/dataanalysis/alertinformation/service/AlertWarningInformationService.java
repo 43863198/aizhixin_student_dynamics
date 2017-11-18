@@ -476,7 +476,7 @@ public class AlertWarningInformationService {
 					typeStatisticsDTOList.add(typeStatisticsDTO);
 				}
 				for(TypeStatisticsDTO type:typeStatisticsDTOList){
-					type.setProportion(accuracy(type.getSum()*1.0,sum*1.0,2));
+					type.setProportion(accuracy(type.getSum() * 1.0, sum * 1.0, 2));
 				}
 			}
 		}catch (Exception e){
@@ -489,10 +489,54 @@ public class AlertWarningInformationService {
 		return result;
 	}
 
-
-
-
-
+	public Map<String,Object> getStatisticalCollegeType(Long orgId, String type) {
+		Map<String,Object> result = new HashMap<>();
+		List<CollegeStatisticsDTO> collegeStatisticsDTOList = new ArrayList<>();
+		Map<String, Object> condition = new HashMap<>();
+		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3 FROM t_alert_warning_information  WHERE 1 = 1");
+		if (null != orgId) {
+			sql.append(" and ORG_ID = :orgId");
+			condition.put("orgId", orgId);
+		}
+		if (null != type) {
+			sql.append(" and WARNING_TYPE = :type");
+			condition.put("type", type);
+		}
+		sql.append(" GROUP BY COLLOGE_ID");
+		try{
+			Query sq = em.createNativeQuery(sql.toString());
+			for (Map.Entry<String, Object> e : condition.entrySet()) {
+				sq.setParameter(e.getKey(), e.getValue());
+			}
+			List<Object> res =  sq.getResultList();
+			if(null!=res){
+				for(Object obj: res){
+					Object[] d = (Object[]) obj;
+					CollegeStatisticsDTO collegeStatisticsDTO = new CollegeStatisticsDTO();
+					if(null!=d[0]){
+						collegeStatisticsDTO.setCollegeName(String.valueOf(d[0]));
+					}
+					if(null!=d[1]){
+						collegeStatisticsDTO.setSum1(Integer.valueOf(String.valueOf(d[1])));
+					}
+					if(null!=d[2]){
+						collegeStatisticsDTO.setSum2(Integer.valueOf(String.valueOf(d[2])));
+					}
+					if(null!=d[3]){
+						collegeStatisticsDTO.setSum3(Integer.valueOf(String.valueOf(d[3])));
+					}
+					collegeStatisticsDTOList.add(collegeStatisticsDTO);
+				}
+			}
+		}catch (Exception e){
+			result.put("success",false);
+			result.put("message","按照学院统计每个告警等级的数量异常！");
+			return result;
+		}
+		result.put("success",true);
+		result.put("data",collegeStatisticsDTOList);
+		return result;
+	}
 
 	public static String accuracy(double num, double total, int scale){
 		DecimalFormat df;
@@ -504,5 +548,4 @@ public class AlertWarningInformationService {
 		double accuracy_num = num / total * 100;
 		return df.format(accuracy_num);
 	}
-
 }

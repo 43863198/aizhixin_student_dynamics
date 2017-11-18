@@ -38,9 +38,9 @@ import javax.validation.Valid;
 @RequestMapping("/v1/alertwarninginfo")
 @Api(description = "预警信息API")
 public class AlertWarningInformationController {
-	
-	@Autowired
-	private AlertWarningInformationService alertWarningInforService;
+
+    @Autowired
+    private AlertWarningInformationService alertWarningInforService;
 
     /**
      * 预警信息列表
@@ -106,29 +106,44 @@ public class AlertWarningInformationController {
     }
 
 
-    @RequestMapping(value = "/registercount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(httpMethod = "GET", value = "按机构id统计机构下所有学院的注册报到预警数量", response = Void.class, notes = "按机构id统计机构下所有学院的注册报到预警数量<br><br><b>@author 郑宁</b>")
-	public ResponseEntity<Map<String, Object>> registerCount(
-			@RequestHeader("Authorization") String token,
-            @ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = true) Long orgId
-			) {
-		Map<String, Object> result = new HashMap<String, Object>();
-		
-		result.put(ApiReturnConstants.DATA, alertWarningInforService.findRegisterCountInfor(orgId));
-		return  new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
-	}
+    /**
+     按照学院统计每个预警级别的数量
+     *
+     * @param orgId
+     * @return
+     */
+    @GetMapping(value = "/statisticalcollegetype", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "按照学院统计每个预警级别的数量", response = Void.class, notes = "按照学院统计每个预警级别的数量<br><br><b>@author jianwei.wu</b>")
+    public Map<String,Object>   getStatisticalCollegeType(
+            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "type 预警类型" , required = true) @RequestParam(value = "type", required = true) String type){
+        return alertWarningInforService.getStatisticalCollegeType(orgId,type);
+    }
 
-    
+
+    @RequestMapping(value = "/registercount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "按机构id统计机构下所有学院的注册报到预警数量", response = Void.class, notes = "按机构id统计机构下所有学院的注册报到预警数量<br><br><b>@author 郑宁</b>")
+    public ResponseEntity<Map<String, Object>> registerCount(
+            @RequestHeader("Authorization") String token,
+            @ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = true) Long orgId
+    ) {
+        Map<String, Object> result = new HashMap<String, Object>();
+
+        result.put(ApiReturnConstants.DATA, alertWarningInforService.findRegisterCountInfor(orgId));
+        return  new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+    }
+
+
     @RequestMapping(value = "/alertpage", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-  	@ApiOperation(httpMethod = "POST", value = "按条件分页查询预警信息", response = Void.class, notes = "按条件分页查询预警信息<br><br><b>@author 郑宁</b>")
-  	public ResponseEntity<Map<String, Object>> alertPage(
-  			@RequestHeader("Authorization") String token,
-  			@ApiParam(value = "<b>必填:、</b><br>orgId:机构id<br><b>选填:、</b><br>collogeIds:学院id(字符串多个以,分隔);warningTypes:预警类型(字符串多个以,分隔);warningLevels:预警等级(字符串多个以,分隔);<br>collegeId:院系id、<br>")  @RequestBody AlertInforQueryDomain domain
-  			) {
-  		Map<String, Object> result = new HashMap<String, Object>();
-  		
-  		result.put(ApiReturnConstants.DATA, alertWarningInforService.getAlertInforPage(domain));
-  		return  new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
-  	}
+    @ApiOperation(httpMethod = "POST", value = "按条件分页查询预警信息", response = Void.class, notes = "按条件分页查询预警信息<br><br><b>@author 郑宁</b>")
+    public ResponseEntity<Map<String, Object>> alertPage(
+            @RequestHeader("Authorization") String token,
+            @ApiParam(value = "<b>必填:、</b><br>orgId:机构id<br><b>选填:、</b><br>collogeIds:学院id(字符串多个以,分隔);warningTypes:预警类型(字符串多个以,分隔);warningLevels:预警等级(字符串多个以,分隔);<br>collegeId:院系id、<br>")  @RequestBody AlertInforQueryDomain domain
+    ) {
+        Map<String, Object> result = new HashMap<String, Object>();
+
+        result.put(ApiReturnConstants.DATA, alertWarningInforService.getAlertInforPage(domain));
+        return  new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+    }
 
 }
