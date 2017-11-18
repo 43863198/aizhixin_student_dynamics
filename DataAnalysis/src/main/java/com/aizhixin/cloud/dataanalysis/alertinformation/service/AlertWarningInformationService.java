@@ -1,15 +1,23 @@
 package com.aizhixin.cloud.dataanalysis.alertinformation.service;
 
+import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
+import com.aizhixin.cloud.dataanalysis.alertinformation.dto.AlarmStatisticsDTO;
+import com.aizhixin.cloud.dataanalysis.alertinformation.dto.CollegeStatisticsDTO;
+import com.aizhixin.cloud.dataanalysis.alertinformation.dto.TypeStatisticsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AlertWarningInformation;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
+import com.aizhixin.cloud.dataanalysis.common.constant.WarningType;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 
 import org.springframework.data.domain.Pageable;
@@ -69,7 +77,7 @@ public class AlertWarningInformationService {
 		return pageJdbcUtil.getInfo(querySql, registerCountRm);
 	}
 
-	public PageData<AlertWarningInformation> findRegisterCountInfor(Pageable pageable,Long orgId, Long collegeId, String  type, int warningLevel) {
+	public PageData<AlertWarningInformation> findPageWarningInfor(Pageable pageable,Long orgId, Long collegeId, String  type, String warningLevel) {
 		PageData<AlertWarningInformation> p = new PageData<>();
 		Map<String, Object> condition = new HashMap<>();
 		StringBuilder cql = new StringBuilder("SELECT count(1) FROM t_alert_warning_information aw WHERE 1 = 1");
@@ -89,12 +97,19 @@ public class AlertWarningInformationService {
 			sql.append(" and aw.WARNING_TYPE = :type");
 			condition.put("type", type);
 		}
-		if(warningLevel>0){
+		if(null!=warningLevel){
 			cql.append(" and aw.WARNING_LEVEL = :warningLevel");
 			sql.append(" and aw.WARNING_LEVEL = :warningLevel");
-			condition.put("warningLevel", warningLevel);
+			Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
+			boolean flag = pattern.matcher(warningLevel).matches();
+			if(flag) {
+				condition.put("warningLevel", Integer.valueOf(warningLevel));
+			}else {
+				//假设0级是不存在的
+				condition.put("warningLevel",0);
+			}
 		}
-		Query cq = em.createNativeQuery(sql.toString());
+		Query cq = em.createNativeQuery(cql.toString());
 		Query sq = em.createNativeQuery(sql.toString(), AlertWarningInformation.class);
 		for (Map.Entry<String, Object> e : condition.entrySet()) {
 			cq.setParameter(e.getKey(), e.getValue());
@@ -314,4 +329,179 @@ public class AlertWarningInformationService {
 		pageInfor.put(ApiReturnConstants.COUNT, countDomain);
 		return pageInfor;
 	}
+	
+	public Map<String,Object> getStatisticalGrade(Long orgId) {
+		Map<String,Object> result = new HashMap<>();
+		Map<String, Object> data = new HashMap<>();
+		Map<String, Object> condition = new HashMap<>();
+		StringBuilder sql = new StringBuilder("SELECT COUNT(1) as count, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, SUM(IF(WARNING_STATE = 20, 1, 0)) as sum4 FROM t_alert_warning_information WHERE 1 = 1");
+		if(null!=orgId){
+			sql.append(" and ORG_ID = :orgId");
+			condition.put("orgId",orgId);
+		}
+		try {
+			Query sq = em.createNativeQuery(sql.toString());
+			for (Map.Entry<String, Object> e : condition.entrySet()) {
+				sq.setParameter(e.getKey(), e.getValue());
+			}
+			Object[] d = (Object[]) sq.getSingleResult();
+			int sum = 0;
+			int sum1 = 0;
+			int sum2 = 0;
+			int sum3 = 0;
+			int alreadyProcessed = 0;
+			if (null != d && d.length == 5) {
+				sum = Integer.valueOf(String.valueOf(d[0]));
+				sum1 = Integer.valueOf(String.valueOf(d[1]));
+				sum2 = Integer.valueOf(String.valueOf(d[2]));
+				sum3 = Integer.valueOf(String.valueOf(d[3]));
+				alreadyProcessed = Integer.valueOf(String.valueOf(d[4]));
+			}
+			List<AlarmStatisticsDTO> alarmStatisticsDTOList = new ArrayList<>();
+			AlarmStatisticsDTO alarmStatisticsDTO1 = new AlarmStatisticsDTO();
+			alarmStatisticsDTO1.setWarningLevel("一级告警");
+			alarmStatisticsDTO1.setSum(sum1);
+			alarmStatisticsDTO1.setProportion(accuracy(sum1 * 1.0, sum * 1.0, 2));
+			alarmStatisticsDTOList.add(alarmStatisticsDTO1);
+			AlarmStatisticsDTO alarmStatisticsDTO2 = new AlarmStatisticsDTO();
+			alarmStatisticsDTO2.setWarningLevel("二级告警");
+			alarmStatisticsDTO2.setSum(sum1);
+			alarmStatisticsDTO2.setProportion(accuracy(sum2 * 1.0, sum * 1.0, 2));
+			alarmStatisticsDTOList.add(alarmStatisticsDTO2);
+			AlarmStatisticsDTO alarmStatisticsDTO3 = new AlarmStatisticsDTO();
+			alarmStatisticsDTO3.setWarningLevel("三级告警");
+			alarmStatisticsDTO3.setSum(sum1);
+			alarmStatisticsDTO3.setProportion(accuracy(sum3 * 1.0, sum * 1.0, 2));
+			alarmStatisticsDTOList.add(alarmStatisticsDTO3);
+			data.put("total", sum);
+			data.put("alreadyProcessed", alreadyProcessed);
+			data.put("statistics", alarmStatisticsDTOList);
+			//统计下的列表最近想的前20条
+			StringBuilder lql = new StringBuilder("SELECT aw.* FROM t_alert_warning_information WHERE 1 = 1");
+			if (null != orgId) {
+				lql.append(" and ORG_ID = :orgId");
+				condition.put("orgId", orgId);
+			}
+			lql.append(" order by WARNING_TIME desc limit 20");
+			Query lq = em.createNativeQuery(lql.toString(), AlertWarningInformation.class);
+			List<AlertWarningInformation> alertWarningInformationList = sq.getResultList();
+			data.put("alertWarningInformationList", alertWarningInformationList);
+		}catch (Exception e){
+			result.put("success",false);
+			result.put("message","预警级别汇总统计异常！");
+			return result;
+		}
+		result.put("success",true);
+		result.put("data",data);
+		return result;
+	}
+
+	public Map<String,Object> getStatisticalCollege(Long orgId) {
+		Map<String,Object> result = new HashMap<>();
+		List<CollegeStatisticsDTO> collegeStatisticsDTOList = new ArrayList<>();
+		Map<String, Object> condition = new HashMap<>();
+		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3 FROM t_alert_warning_information  WHERE 1 = 1");
+		if (null != orgId) {
+			sql.append(" and ORG_ID = :orgId");
+			condition.put("orgId", orgId);
+		}
+		sql.append(" GROUP BY COLLOGE_ID");
+		try{
+		    Query sq = em.createNativeQuery(sql.toString());
+		    for (Map.Entry<String, Object> e : condition.entrySet()) {
+			    sq.setParameter(e.getKey(), e.getValue());
+		    }
+		    List<Object> res =  sq.getResultList();
+		    if(null!=res){
+            for(Object obj: res){
+				Object[] d = (Object[]) obj;
+				CollegeStatisticsDTO collegeStatisticsDTO = new CollegeStatisticsDTO();
+				if(null!=d[0]){
+					collegeStatisticsDTO.setCollegeName(String.valueOf(d[0]));
+				}
+				if(null!=d[1]){
+					collegeStatisticsDTO.setSum1(Integer.valueOf(String.valueOf(d[1])));
+				}
+				if(null!=d[2]){
+					collegeStatisticsDTO.setSum2(Integer.valueOf(String.valueOf(d[2])));
+				}
+				if(null!=d[3]){
+					collegeStatisticsDTO.setSum3(Integer.valueOf(String.valueOf(d[3])));
+				}
+				collegeStatisticsDTOList.add(collegeStatisticsDTO);
+			  }
+		   }
+		}catch (Exception e){
+			result.put("success",false);
+			result.put("message","按照学院统计每个告警等级的数量异常！");
+			return result;
+		}
+		result.put("success",true);
+		result.put("data",collegeStatisticsDTOList);
+       return result;
+	}
+
+
+	public Map<String,Object> getStatisticalType(Long orgId) {
+		Map<String,Object> result = new HashMap<>();
+		List<TypeStatisticsDTO> typeStatisticsDTOList = new ArrayList<>();
+		Map<String, Object> condition = new HashMap<>();
+		StringBuilder sql = new StringBuilder("SELECT WARNING_TYPE, count(1) FROM t_alert_warning_information  WHERE 1 = 1");
+		if (null != orgId) {
+			sql.append(" and ORG_ID = :orgId");
+			condition.put("orgId", orgId);
+		}
+		sql.append(" GROUP BY COLLOGE_ID");
+		try{
+			Query sq = em.createNativeQuery(sql.toString());
+			for (Map.Entry<String, Object> e : condition.entrySet()) {
+				sq.setParameter(e.getKey(), e.getValue());
+			}
+			List<Object> res =  sq.getResultList();
+			int sum = 0;
+			if(null!=res){
+				for(Object obj: res){
+					Object[] d = (Object[]) obj;
+					TypeStatisticsDTO typeStatisticsDTO = new TypeStatisticsDTO();
+					if(null!=d[0]){
+						typeStatisticsDTO.setWarningType(WarningType.valueOf(String.valueOf(d[0])).getValue());
+					}
+					int subsum = 0;
+					if(null!=d[1]){
+						subsum = Integer.valueOf(String.valueOf(d[1]));
+						typeStatisticsDTO.setSum(subsum);
+					}
+					sum = sum + subsum;
+					typeStatisticsDTOList.add(typeStatisticsDTO);
+				}
+				for(TypeStatisticsDTO type:typeStatisticsDTOList){
+					type.setProportion(accuracy(type.getSum()*1.0,sum*1.0,2));
+				}
+			}
+		}catch (Exception e){
+			result.put("success",false);
+			result.put("message","按照学院统计每个告警等级的数量异常！");
+			return result;
+		}
+		result.put("success",true);
+		result.put("data",typeStatisticsDTOList);
+		return result;
+	}
+
+
+
+
+
+
+	public static String accuracy(double num, double total, int scale){
+		DecimalFormat df;
+		df = (DecimalFormat) NumberFormat.getInstance();
+		//可以设置精确几位小数
+		df.setMaximumFractionDigits(scale);
+		//模式 例如四舍五入
+		df.setRoundingMode(RoundingMode.HALF_UP);
+		double accuracy_num = num / total * 100;
+		return df.format(accuracy_num);
+	}
+
 }
