@@ -37,5 +37,5 @@ public interface ApiReturnConstants {
 	/**
 	 * 业务统计结果
 	 */
-	String COUNT = "COUNT";
+	String COUNT = "count";
 }
