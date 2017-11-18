@@ -135,6 +135,7 @@ public class AlertWarningInformationService {
 			// TODO Auto-generated method stub
 			AlertInforDomain domain = new AlertInforDomain();
 			domain.setId(rs.getLong("ID"));
+			domain.setName(rs.getString("NAME"));
 			domain.setCollogeName(rs.getString("COLLOGE_NAME"));
 			domain.setClassName(rs.getString("CLASS_NAME"));
 			domain.setJobNumber(rs.getString("JOB_NUMBER"));
@@ -147,7 +148,7 @@ public class AlertWarningInformationService {
 	
 	public Map<String, Object> queryAlertInforPage(AlertInforQueryDomain domain) {
 
-		String querySql = "SELECT ID,COLLOGE_NAME,CLASS_NAME,JOB_NUMBER,WARNING_LEVEL,WARNING_TYPE,WARNING_TIME FROM `t_alert_warning_information` where DELETE_FLAG ="+DataValidity.VALID.getState()+" ";
+		String querySql = "SELECT ID,NAME,COLLOGE_NAME,CLASS_NAME,JOB_NUMBER,WARNING_LEVEL,WARNING_TYPE,WARNING_TIME FROM `t_alert_warning_information` where DELETE_FLAG ="+DataValidity.VALID.getState()+" ";
 		String countSql = "SELECT count(1) FROM `t_alert_warning_information` where DELETE_FLAG ="+DataValidity.VALID.getState()+" ";
 		
 		if(!StringUtils.isEmpty(domain.getKeywords())){

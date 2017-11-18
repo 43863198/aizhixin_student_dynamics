@@ -22,6 +22,9 @@ public class AlertInforDomain {
 	@ApiModelProperty(value = "id", required = false)
 	private Long id;
 	
+	@ApiModelProperty(value = "姓名", required = false)
+	private String name;
+	
 	@ApiModelProperty(value = "学号/工号", required = false)
 	private String jobNumber;
 	
