@@ -335,6 +335,11 @@ public class AlertWarningInformationService {
 		Map<String,Object> result = new HashMap<>();
 		Map<String, Object> data = new HashMap<>();
 		Map<String, Object> condition = new HashMap<>();
+		int sum = 0;
+		int sum1 = 0;
+		int sum2 = 0;
+		int sum3 = 0;
+		int alreadyProcessed = 0;
 		StringBuilder sql = new StringBuilder("SELECT COUNT(1) as count, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, SUM(IF(WARNING_STATE = 20, 1, 0)) as sum4 FROM t_alert_warning_information WHERE 1 = 1");
 		if(null!=orgId){
 			sql.append(" and ORG_ID = :orgId");
@@ -346,11 +351,6 @@ public class AlertWarningInformationService {
 				sq.setParameter(e.getKey(), e.getValue());
 			}
 			Object[] d = (Object[]) sq.getSingleResult();
-			int sum = 0;
-			int sum1 = 0;
-			int sum2 = 0;
-			int sum3 = 0;
-			int alreadyProcessed = 0;
 			if (null != d && d.length == 5) {
 				sum = Integer.valueOf(String.valueOf(d[0]));
 				sum1 = Integer.valueOf(String.valueOf(d[1]));
@@ -358,42 +358,38 @@ public class AlertWarningInformationService {
 				sum3 = Integer.valueOf(String.valueOf(d[3]));
 				alreadyProcessed = Integer.valueOf(String.valueOf(d[4]));
 			}
-			List<AlarmStatisticsDTO> alarmStatisticsDTOList = new ArrayList<>();
-			AlarmStatisticsDTO alarmStatisticsDTO1 = new AlarmStatisticsDTO();
-			alarmStatisticsDTO1.setWarningLevel("一级告警");
-			alarmStatisticsDTO1.setSum(sum1);
-			alarmStatisticsDTO1.setProportion(accuracy(sum1 * 1.0, sum * 1.0, 2));
-			alarmStatisticsDTOList.add(alarmStatisticsDTO1);
-			AlarmStatisticsDTO alarmStatisticsDTO2 = new AlarmStatisticsDTO();
-			alarmStatisticsDTO2.setWarningLevel("二级告警");
-			alarmStatisticsDTO2.setSum(sum1);
-			alarmStatisticsDTO2.setProportion(accuracy(sum2 * 1.0, sum * 1.0, 2));
-			alarmStatisticsDTOList.add(alarmStatisticsDTO2);
-			AlarmStatisticsDTO alarmStatisticsDTO3 = new AlarmStatisticsDTO();
-			alarmStatisticsDTO3.setWarningLevel("三级告警");
-			alarmStatisticsDTO3.setSum(sum1);
-			alarmStatisticsDTO3.setProportion(accuracy(sum3 * 1.0, sum * 1.0, 2));
-			alarmStatisticsDTOList.add(alarmStatisticsDTO3);
 			data.put("total", sum);
 			data.put("alreadyProcessed", alreadyProcessed);
-			data.put("statistics", alarmStatisticsDTOList);
+			data.put("sum", sum);
+			data.put("sum1", sum1);
+			data.put("sum2", sum2);
+			data.put("sum3", sum3);
 			//统计下的列表最近想的前20条
-			StringBuilder lql = new StringBuilder("SELECT aw.* FROM t_alert_warning_information WHERE 1 = 1");
+			StringBuilder lql = new StringBuilder("SELECT * FROM t_alert_warning_information WHERE 1 = 1");
 			if (null != orgId) {
 				lql.append(" and ORG_ID = :orgId");
 				condition.put("orgId", orgId);
 			}
 			lql.append(" order by WARNING_TIME desc limit 20");
 			Query lq = em.createNativeQuery(lql.toString(), AlertWarningInformation.class);
-			List<AlertWarningInformation> alertWarningInformationList = sq.getResultList();
+			for (Map.Entry<String, Object> e : condition.entrySet()) {
+				lq.setParameter(e.getKey(), e.getValue());
+			}
+			List<AlertWarningInformation> alertWarningInformationList = lq.getResultList();
+			for(AlertWarningInformation aw : alertWarningInformationList){
+				if(!aw.getWarningType().equals("报道注册预警")) {
+					aw.setWarningType(WarningType.valueOf(aw.getWarningType()).getValue());
+				}
+			}
 			data.put("alertWarningInformationList", alertWarningInformationList);
 		}catch (Exception e){
-			result.put("success",false);
+			e.printStackTrace();
+			result.put("success", false);
 			result.put("message","预警级别汇总统计异常！");
 			return result;
 		}
-		result.put("success",true);
-		result.put("data",data);
+		result.put("success", true);
+		result.put("data", data);
 		return result;
 	}
 
@@ -475,7 +471,7 @@ public class AlertWarningInformationService {
 					sum = sum + subsum;
 					typeStatisticsDTOList.add(typeStatisticsDTO);
 				}
-				for(TypeStatisticsDTO type:typeStatisticsDTOList){
+				for(TypeStatisticsDTO type : typeStatisticsDTOList) {
 					type.setProportion(accuracy(type.getSum() * 1.0, sum * 1.0, 2));
 				}
 			}
@@ -530,7 +526,7 @@ public class AlertWarningInformationService {
 			}
 		}catch (Exception e){
 			result.put("success",false);
-			result.put("message","按照学院统计每个告警等级的数量异常！");
+			result.put("message", "按照学院统计每个告警等级的数量异常！");
 			return result;
 		}
 		result.put("success",true);
