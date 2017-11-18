@@ -120,7 +120,7 @@ public class AlertWarningInformationService {
 		sq.setMaxResults(pageable.getPageSize());
 		p.setData(sq.getResultList());
 		p.getPage().setTotalElements(count);
-		p.getPage().setPageNumber(pageable.getPageNumber());
+		p.getPage().setPageNumber(pageable.getPageNumber()+1);
 		p.getPage().setPageSize(pageable.getPageSize());
 		p.getPage().setTotalPages(PageUtil.cacalatePagesize(count, p.getPage().getPageSize()));
 		return p;
@@ -358,34 +358,40 @@ public class AlertWarningInformationService {
 				sum3 = Integer.valueOf(String.valueOf(d[3]));
 				alreadyProcessed = Integer.valueOf(String.valueOf(d[4]));
 			}
-			List<AlarmStatisticsDTO> alarmStatisticsDTOList = new ArrayList<>();
-			AlarmStatisticsDTO alarmStatisticsDTO1 = new AlarmStatisticsDTO();
-			alarmStatisticsDTO1.setWarningLevel("一级告警");
-			alarmStatisticsDTO1.setSum(sum1);
-			alarmStatisticsDTO1.setProportion(accuracy(sum1 * 1.0, sum * 1.0, 2));
-			alarmStatisticsDTOList.add(alarmStatisticsDTO1);
-			AlarmStatisticsDTO alarmStatisticsDTO2 = new AlarmStatisticsDTO();
-			alarmStatisticsDTO2.setWarningLevel("二级告警");
-			alarmStatisticsDTO2.setSum(sum1);
-			alarmStatisticsDTO2.setProportion(accuracy(sum2 * 1.0, sum * 1.0, 2));
-			alarmStatisticsDTOList.add(alarmStatisticsDTO2);
-			AlarmStatisticsDTO alarmStatisticsDTO3 = new AlarmStatisticsDTO();
-			alarmStatisticsDTO3.setWarningLevel("三级告警");
-			alarmStatisticsDTO3.setSum(sum1);
-			alarmStatisticsDTO3.setProportion(accuracy(sum3 * 1.0, sum * 1.0, 2));
-			alarmStatisticsDTOList.add(alarmStatisticsDTO3);
+//			List<AlarmStatisticsDTO> alarmStatisticsDTOList = new ArrayList<>();
+//			AlarmStatisticsDTO alarmStatisticsDTO1 = new AlarmStatisticsDTO();
+//			alarmStatisticsDTO1.setWarningLevel("一级告警");
+//			alarmStatisticsDTO1.setSum(sum1);
+//			alarmStatisticsDTO1.setProportion(accuracy(sum1 * 1.0, sum * 1.0, 2));
+//			alarmStatisticsDTOList.add(alarmStatisticsDTO1);
+//			AlarmStatisticsDTO alarmStatisticsDTO2 = new AlarmStatisticsDTO();
+//			alarmStatisticsDTO2.setWarningLevel("二级告警");
+//			alarmStatisticsDTO2.setSum(sum1);
+//			alarmStatisticsDTO2.setProportion(accuracy(sum2 * 1.0, sum * 1.0, 2));
+//			alarmStatisticsDTOList.add(alarmStatisticsDTO2);
+//			AlarmStatisticsDTO alarmStatisticsDTO3 = new AlarmStatisticsDTO();
+//			alarmStatisticsDTO3.setWarningLevel("三级告警");
+//			alarmStatisticsDTO3.setSum(sum1);
+//			alarmStatisticsDTO3.setProportion(accuracy(sum3 * 1.0, sum * 1.0, 2));
+//			alarmStatisticsDTOList.add(alarmStatisticsDTO3);
 			data.put("total", sum);
+			data.put("sum1", sum1);
+			data.put("sum2", sum2);
+			data.put("sum3", sum3);
 			data.put("alreadyProcessed", alreadyProcessed);
-			data.put("statistics", alarmStatisticsDTOList);
+//			data.put("statistics", alarmStatisticsDTOList);
 			//统计下的列表最近想的前20条
-			StringBuilder lql = new StringBuilder("SELECT aw.* FROM t_alert_warning_information WHERE 1 = 1");
+			StringBuilder lql = new StringBuilder("SELECT aw.* FROM t_alert_warning_information aw WHERE 1 = 1");
 			if (null != orgId) {
-				lql.append(" and ORG_ID = :orgId");
+				lql.append(" and aw.ORG_ID = :orgId");
 				condition.put("orgId", orgId);
 			}
-			lql.append(" order by WARNING_TIME desc limit 20");
+			lql.append(" order by aw.WARNING_TIME desc limit 20");
 			Query lq = em.createNativeQuery(lql.toString(), AlertWarningInformation.class);
-			List<AlertWarningInformation> alertWarningInformationList = sq.getResultList();
+			for (Map.Entry<String, Object> e : condition.entrySet()) {
+				lq.setParameter(e.getKey(), e.getValue());
+			}
+			List<AlertWarningInformation> alertWarningInformationList = lq.getResultList();
 			data.put("alertWarningInformationList", alertWarningInformationList);
 		}catch (Exception e){
 			result.put("success",false);
@@ -446,19 +452,27 @@ public class AlertWarningInformationService {
 	public Map<String,Object> getStatisticalType(Long orgId) {
 		Map<String,Object> result = new HashMap<>();
 		List<TypeStatisticsDTO> typeStatisticsDTOList = new ArrayList<>();
+		double proportion1 = 0.0;
+		double proportion2 = 0.0;
+		double proportion3 = 0.0;
 		Map<String, Object> condition = new HashMap<>();
-		StringBuilder sql = new StringBuilder("SELECT WARNING_TYPE, count(1) FROM t_alert_warning_information  WHERE 1 = 1");
+		StringBuilder sql = new StringBuilder("SELECT WARNING_TYPE, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3  FROM t_alert_warning_information  WHERE 1 = 1");
+		StringBuilder tql = new StringBuilder("SELECT count(1) as count, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3 FROM t_alert_warning_information  WHERE 1 = 1");
 		if (null != orgId) {
+			tql.append(" and ORG_ID = :orgId");
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId", orgId);
 		}
-		sql.append(" GROUP BY COLLOGE_ID");
+		sql.append(" GROUP BY WARNING_TYPE");
 		try{
 			Query sq = em.createNativeQuery(sql.toString());
+			Query tq = em.createNativeQuery(tql.toString());
 			for (Map.Entry<String, Object> e : condition.entrySet()) {
+				tq.setParameter(e.getKey(), e.getValue());
 				sq.setParameter(e.getKey(), e.getValue());
 			}
 			List<Object> res =  sq.getResultList();
+			Object tes = tq.getSingleResult();
 			int sum = 0;
 			if(null!=res){
 				for(Object obj: res){
@@ -467,25 +481,53 @@ public class AlertWarningInformationService {
 					if(null!=d[0]){
 						typeStatisticsDTO.setWarningType(WarningType.valueOf(String.valueOf(d[0])).getValue());
 					}
-					int subsum = 0;
 					if(null!=d[1]){
-						subsum = Integer.valueOf(String.valueOf(d[1]));
-						typeStatisticsDTO.setSum(subsum);
+						typeStatisticsDTO.setSum1(Integer.valueOf(String.valueOf(d[1])));
 					}
-					sum = sum + subsum;
+					if(null!=d[2]){
+						typeStatisticsDTO.setSum2(Integer.valueOf(String.valueOf(d[2])));
+					}
+					if(null!=d[3]){
+						typeStatisticsDTO.setSum3(Integer.valueOf(String.valueOf(d[3])));
+					}
 					typeStatisticsDTOList.add(typeStatisticsDTO);
 				}
-				for(TypeStatisticsDTO type:typeStatisticsDTOList){
-					type.setProportion(accuracy(type.getSum()*1.0,sum*1.0,2));
+			}
+			if(null!=tes){
+				Object[] d = (Object[])tes;
+				if(d.length==4){
+					int total = 0;
+					int sum1 = 0;
+					int sum2 = 0;
+					int sum3 = 0;
+					if(null!=d[0]) {
+						total = Integer.valueOf(String.valueOf(d[0]));
+					}
+					if(null!=d[1]) {
+						sum1 = Integer.valueOf(String.valueOf(d[1]));
+					}
+					if(null!=d[2]) {
+						sum2 = Integer.valueOf(String.valueOf(d[2]));
+					}
+					if(null!=d[3]) {
+						sum3 = Integer.valueOf(String.valueOf(d[3]));
+					}
+					proportion1 = Double.valueOf(accuracy(sum1*1.0,total*1.0,2));
+					proportion2 = Double.valueOf(accuracy(sum2*1.0,total*1.0,2));
+					proportion3 = Double.valueOf(accuracy(sum3*1.0,total*1.0,2));
 				}
+
 			}
 		}catch (Exception e){
 			result.put("success",false);
 			result.put("message","按照学院统计每个告警等级的数量异常！");
 			return result;
 		}
-		result.put("success",true);
-		result.put("data",typeStatisticsDTOList);
+		result.put("success", true);
+		result.put("data", typeStatisticsDTOList);
+		result.put("proportion1",proportion1);
+		result.put("proportion2",proportion2);
+		result.put("proportion3",proportion3);
 		return result;
 	}
 

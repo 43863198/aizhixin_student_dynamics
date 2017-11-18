@@ -73,7 +73,7 @@ public class StudentRegisterJob {
 		aSetting.setName(WarningType.Register.getValue());
 		aSetting.setOrgId(1L);
 		 alaParam = new AlarmParameter();
-		alaParam.setLevel(1);
+		alaParam.setLevel(2);
 		alaParam.setSetParameter(1);
 		alaParam.setAlarmSettings(aSetting);
 		alarmParams.add(alaParam);
@@ -119,6 +119,7 @@ public class StudentRegisterJob {
 							alertInfor.setProfessionalName(studentRegister.getProfessionalName());
 							alertInfor.setTeachingYear(studentRegister.getSchoolYear());
 							alertInfor.setWarningLevel(alarmParam.getLevel());
+							alertInfor.setWarningState(10);
 							alertInfor.setWarningType(alarmParam.getAlarmSettings().getWarningType());
 							alertInfor.setWarningTime(new Date());
 							alertInfor.setOrgId(alarmParam.getAlarmSettings().getOrgId());
