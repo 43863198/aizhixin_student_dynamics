@@ -34,4 +34,8 @@ public interface ApiReturnConstants {
 	 * ID
 	 */
 	String ID = "ID";
+	/**
+	 * 业务统计结果
+	 */
+	String COUNT = "count";
 }

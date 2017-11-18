@@ -38,7 +38,7 @@ public class StudentRegisterJob {
 	private AlertWarningInformationRepository alertWarningInformationRepository;
 
 
-	@Scheduled(cron = "0 0/2 * * * ?")
+	@Scheduled(cron = "0 0/15 * * * ?")
 	public void studenteRegister() {
         //R为学生注册预警
 		List<AlarmParameter> alarmParams = alarmParameterRespository

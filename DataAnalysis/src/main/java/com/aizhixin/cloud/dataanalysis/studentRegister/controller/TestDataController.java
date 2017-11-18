@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aizhixin.cloud.dataanalysis.common.constant.StudentRegisterConstant;
@@ -29,6 +30,7 @@ import com.aizhixin.cloud.dataanalysis.studentRegister.mongoRespository.StudentR
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 /**
  * @author zhengning
@@ -47,9 +49,13 @@ public class TestDataController {
 
 	@RequestMapping(value = "/addmongodata", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "生成MongoDB学生报到数据", response = Void.class, notes = "生成MongoDB学生报到数据<br><br><b>@author zhengning</b>")
-	public ResponseEntity<Map<String, Object>> addMongoData() {
+	public ResponseEntity<Map<String, Object>> addMongoData(
+			   @ApiParam(value = "orgId 机构id" ) @RequestParam(value = "orgId", required = false) Long orgId) {
 		Map<String, Object> result = new HashMap<String, Object>();
-	
+		if(null != orgId && orgId.longValue() > 0L){
+		}else{
+			orgId = 1L;
+		}
 		List<StudentRegister> stuRegisterList = new ArrayList<StudentRegister>();
 		Long stuId = 9527L;
 		for(int i=0;i<10;i++){
@@ -62,7 +68,7 @@ public class TestDataController {
 			studentRegister.setCollegeName("测试学院1");
 			studentRegister.setGrade("大1");
 			studentRegister.setJobNum("学号1000"+i);
-			studentRegister.setOrgId(1L);
+			studentRegister.setOrgId(orgId);
 			studentRegister.setProfessionalId(1L);
 			studentRegister.setProfessionalName("测试专业");
 			studentRegister.setIsregister(StudentRegisterConstant.UNREGISTER);
