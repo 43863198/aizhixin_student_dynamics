@@ -134,7 +134,7 @@ public class AlertWarningInformationService {
 				throws SQLException {
 			// TODO Auto-generated method stub
 			AlertInforDomain domain = new AlertInforDomain();
-			domain.setId(rs.getLong("ID"));
+			domain.setId(rs.getString("ID"));
 			domain.setName(rs.getString("NAME"));
 			domain.setCollogeName(rs.getString("COLLOGE_NAME"));
 			domain.setClassName(rs.getString("CLASS_NAME"));

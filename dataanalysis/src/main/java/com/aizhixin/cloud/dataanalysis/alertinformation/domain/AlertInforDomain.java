@@ -20,7 +20,7 @@ import javax.validation.constraints.NotNull;
 public class AlertInforDomain {
 
 	@ApiModelProperty(value = "id", required = false)
-	private Long id;
+	private String id;
 	
 	@ApiModelProperty(value = "姓名", required = false)
 	private String name;
