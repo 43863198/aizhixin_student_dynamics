@@ -38,7 +38,7 @@ public class StudentRegisterJob {
 	private AlertWarningInformationRepository alertWarningInformationRepository;
 
 
-	@Scheduled(cron = "0 0/15 * * * ?")
+	@Scheduled(cron = "0 0/2 * * * ?")
 	public void studenteRegister() {
         //R为学生注册预警
 		List<AlarmParameter> alarmParams = alarmParameterRespository
@@ -55,7 +55,7 @@ public class StudentRegisterJob {
 		aSetting.setName(WarningType.Register.getValue());
 		aSetting.setOrgId(1L);
 		AlarmParameter alaParam = new AlarmParameter();
-		alaParam.setLevel(2);
+		alaParam.setLevel(1);
 		alaParam.setSetParameter(11);
 		alaParam.setAlarmSettings(aSetting);
 		alarmParams.add(alaParam);

@@ -28,7 +28,7 @@ public abstract class AbstractEntity implements java.io.Serializable {
 	@Column(name = "ID")
 	@GeneratedValue(generator="system-uuid")
 	@GenericGenerator(name="system-uuid",strategy="uuid")
-	@Getter @Setter protected Long id;
+	@Getter @Setter protected String id;
 
 	@ApiModelProperty(value = "创建人")
 	@CreatedBy

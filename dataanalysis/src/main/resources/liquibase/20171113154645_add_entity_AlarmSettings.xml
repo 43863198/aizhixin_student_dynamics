@@ -15,7 +15,7 @@
 	        </not>
 	    </preConditions>
         <createTable tableName="T_ALARM_SETTINGS" remarks="预警设置">
-            <column name="ID" type="BIGINT" autoIncrement="true">
+            <column name="ID"  type="VARCHAR(50)" >
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="ORG_ID" type="BIGINT" remarks="机构ID"/>
