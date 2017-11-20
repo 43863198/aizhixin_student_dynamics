@@ -55,7 +55,7 @@ public class StudentRegisterJob {
 		aSetting.setName(WarningType.Register.getValue());
 		aSetting.setOrgId(1L);
 		AlarmParameter alaParam = new AlarmParameter();
-		alaParam.setLevel(1);
+		alaParam.setLevel(3);
 		alaParam.setSetParameter(11);
 		alaParam.setAlarmSettings(aSetting);
 		alarmParams.add(alaParam);
