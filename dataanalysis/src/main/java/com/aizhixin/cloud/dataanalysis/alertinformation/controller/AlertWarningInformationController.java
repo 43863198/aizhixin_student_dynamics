@@ -124,7 +124,7 @@ public class AlertWarningInformationController {
     @RequestMapping(value = "/registercount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "按机构id统计机构下所有学院的注册报到预警数量", response = Void.class, notes = "按机构id统计机构下所有学院的注册报到预警数量<br><br><b>@author 郑宁</b>")
     public ResponseEntity<Map<String, Object>> registerCount(
-            @RequestHeader("Authorization") String token,
+//            @RequestHeader("Authorization") String token,
             @ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = true) Long orgId
     ) {
         Map<String, Object> result = new HashMap<String, Object>();
@@ -137,7 +137,7 @@ public class AlertWarningInformationController {
     @RequestMapping(value = "/alertpage", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "POST", value = "按条件分页查询预警信息", response = Void.class, notes = "按条件分页查询预警信息<br><br><b>@author 郑宁</b>")
     public ResponseEntity<Map<String, Object>> alertPage(
-            @RequestHeader("Authorization") String token,
+//            @RequestHeader("Authorization") String token,
             @ApiParam(value = "<b>必填:、</b><br>orgId:机构id<br><b>选填:、</b><br>collogeIds:学院id(字符串多个以,分隔);warningTypes:预警类型(字符串多个以,分隔);warningLevels:预警等级(字符串多个以,分隔);<br>collegeId:院系id、<br>")  @RequestBody AlertInforQueryDomain domain
     ) {
         Map<String, Object> result = new HashMap<String, Object>();
