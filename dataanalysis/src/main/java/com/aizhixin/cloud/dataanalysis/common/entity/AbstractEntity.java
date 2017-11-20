@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -24,8 +25,9 @@ public abstract class AbstractEntity implements java.io.Serializable {
 
 	@ApiModelProperty(value = "ID")
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "ID")
+	@GeneratedValue(generator="system-uuid")
+	@GenericGenerator(name="system-uuid",strategy="uuid")
 	@Getter @Setter protected Long id;
 
 	@ApiModelProperty(value = "创建人")
