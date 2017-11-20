@@ -443,36 +443,57 @@ public class AlertWarningInformationService {
 		Map<String,Object> result = new HashMap<>();
 		List<TypeStatisticsDTO> typeStatisticsDTOList = new ArrayList<>();
 		Map<String, Object> condition = new HashMap<>();
-		StringBuilder sql = new StringBuilder("SELECT WARNING_TYPE, count(1) FROM t_alert_warning_information  WHERE 1 = 1");
+		int sum = 0;
+		int total = 0;
+		int total1 = 0;
+		int total2 = 0;
+		int total3 = 0;
+		int sum1 = 0;
+		int sum2 = 0;
+		int sum3 = 0;
+		StringBuilder sql = new StringBuilder("SELECT WARNING_TYPE, count(1), SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3 FROM t_alert_warning_information  WHERE 1 = 1");
 		if (null != orgId) {
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId", orgId);
 		}
-		sql.append(" GROUP BY COLLOGE_ID");
+		sql.append(" GROUP BY WARNING_TYPE");
 		try{
 			Query sq = em.createNativeQuery(sql.toString());
 			for (Map.Entry<String, Object> e : condition.entrySet()) {
 				sq.setParameter(e.getKey(), e.getValue());
 			}
 			List<Object> res =  sq.getResultList();
-			int sum = 0;
 			if(null!=res){
 				for(Object obj: res){
 					Object[] d = (Object[]) obj;
 					TypeStatisticsDTO typeStatisticsDTO = new TypeStatisticsDTO();
 					if(null!=d[0]){
-						typeStatisticsDTO.setWarningType(WarningType.valueOf(String.valueOf(d[0])).getValue());
+						if(!String.valueOf(d[0]).equals("报道注册预警")) {
+							typeStatisticsDTO.setWarningType(WarningType.valueOf(String.valueOf(d[0])).getValue());
+						}else {
+							typeStatisticsDTO.setWarningType(String.valueOf(d[0]));
+						}
 					}
-					int subsum = 0;
 					if(null!=d[1]){
-						subsum = Integer.valueOf(String.valueOf(d[1]));
-						typeStatisticsDTO.setSum(subsum);
+						sum = Integer.valueOf(String.valueOf(d[1]));
+						total = total +sum;
 					}
-					sum = sum + subsum;
+					if(null!=d[2]){
+						sum1 = Integer.valueOf(String.valueOf(d[2]));
+						total1 = total1 +sum1;
+					}
+					if(null!=d[3]){
+						sum2 =  Integer.valueOf(String.valueOf(d[3]));
+						total2 = total2 +sum2;
+					}
+					if(null!=d[4]){
+						sum3 =  Integer.valueOf(String.valueOf(d[4]));
+						total3 = total3 +sum3;
+					}
+					typeStatisticsDTO.setSum1(sum1);
+					typeStatisticsDTO.setSum2(sum2);
+					typeStatisticsDTO.setSum3(sum3);
 					typeStatisticsDTOList.add(typeStatisticsDTO);
-				}
-				for(TypeStatisticsDTO type : typeStatisticsDTOList) {
-					type.setProportion(accuracy(type.getSum() * 1.0, sum * 1.0, 2));
 				}
 			}
 		}catch (Exception e){
@@ -480,8 +501,11 @@ public class AlertWarningInformationService {
 			result.put("message","按照学院统计每个告警等级的数量异常！");
 			return result;
 		}
+		result.put("proportion1",accuracy(total1 * 1.0, total * 1.0, 2));
+		result.put("proportion2", accuracy(total2 * 1.0, total * 1.0, 2));
+		result.put("proportion3", accuracy(total3 * 1.0, total * 1.0, 2));
 		result.put("success",true);
-		result.put("data",typeStatisticsDTOList);
+		result.put("typeStatisticsDTOList",typeStatisticsDTOList);
 		return result;
 	}
 
