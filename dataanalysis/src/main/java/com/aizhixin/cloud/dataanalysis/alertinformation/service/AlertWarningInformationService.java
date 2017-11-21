@@ -141,6 +141,7 @@ public class AlertWarningInformationService {
 			domain.setJobNumber(rs.getString("JOB_NUMBER"));
 			domain.setWarningLevel(rs.getInt("WARNING_LEVEL"));
 			domain.setWarningType(rs.getString("WARNING_TYPE"));
+			domain.setWarningState(rs.getInt("WARNING_STATE"));
 			domain.setWarningTime(rs.getTimestamp("WARNING_TIME"));
 			return domain;
 		}
@@ -148,7 +149,7 @@ public class AlertWarningInformationService {
 	
 	public Map<String, Object> queryAlertInforPage(AlertInforQueryDomain domain) {
 
-		String querySql = "SELECT ID,NAME,COLLOGE_NAME,CLASS_NAME,JOB_NUMBER,WARNING_LEVEL,WARNING_TYPE,WARNING_TIME FROM `t_alert_warning_information` where DELETE_FLAG ="+DataValidity.VALID.getState()+" ";
+		String querySql = "SELECT ID,NAME,COLLOGE_NAME,CLASS_NAME,JOB_NUMBER,WARNING_LEVEL,WARNING_TYPE,WARNING_TIME,WARNING_STATE FROM `t_alert_warning_information` where DELETE_FLAG ="+DataValidity.VALID.getState()+" ";
 		String countSql = "SELECT count(1) FROM `t_alert_warning_information` where DELETE_FLAG ="+DataValidity.VALID.getState()+" ";
 		
 		if(!StringUtils.isEmpty(domain.getKeywords())){
