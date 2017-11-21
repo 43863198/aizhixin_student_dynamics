@@ -306,6 +306,10 @@ public class AlertWarningInformationService {
 					+ ")";
 		}
 		
+		if(domain.getWarningState() > 0){
+			querySql += " and WARNING_STATE =" + domain.getWarningState();
+		}
+		
 		querySql += " and ORG_ID ="+domain.getOrgId()+" GROUP BY COLLOGE_ID,WARNING_LEVEL ORDER BY COLLOGE_ID,WARNING_LEVEL ;";
 		
 		return pageJdbcUtil.getInfo(querySql, AlertInforCountRm);
