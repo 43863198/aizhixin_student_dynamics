@@ -28,8 +28,8 @@ public class AlertInforQueryDomain {
 	@ApiModelProperty(value = "预警等级（多个以,分割）", required = false)
 	private String warningLevels;
 	
-	@ApiModelProperty(value = "预警状态(10:告警中；20：已处理；30：处理中；40:取消)", required = false)
-	private int warningState;
+	@ApiModelProperty(value = "预警状态(10:告警中；20：已处理；30：处理中；40:取消)（多个以,分割）", required = false)
+	private String warningStates;
 	
 	@ApiModelProperty(value = "姓名/学号/工号", required = false)
 	private String keywords;
