@@ -22,7 +22,7 @@
             <column name="TYPE" type="VARCHAR(50)" remarks="预警类别"/>
             <column name="WARNING_CONDITION" type="VARCHAR(500)" remarks="产生预警条件"/>
             <column name="WARNING_STANDARD" type="VARCHAR(500)" remarks="预警标准"/>
-            <column name="SETUP_OR_CLOSE" type="INT(4)" remarks="开启状态(10:启用 ;20:关闭；)"/>
+            <column name="SETUP_CLOSE_FLAG" type="INT(4)" remarks="开启状态(10:启用 ;20:关闭；)"/>
             <column name="CREATED_BY" type="BIGINT" remarks="创建人ID"/>
             <column name="CREATED_DATE" type="DATETIME" defaultValueDate="${now}" remarks="创建时间"/>
             <column name="LAST_MODIFIED_BY" type="BIGINT" remarks="最后一次修改人ID"/>

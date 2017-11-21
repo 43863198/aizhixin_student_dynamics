@@ -9,7 +9,8 @@ import lombok.Getter;
  */
 public enum WarningType {
     Register("报道注册预警"),
-    A("成绩预警");
+    redit("学分预警"),
+    Academic("学业预警");
 
     private String value ;
 
