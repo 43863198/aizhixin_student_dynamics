@@ -1,5 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.studentRegister.job;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -48,46 +49,7 @@ public class StudentRegisterJob {
 	@Scheduled(cron = "0 0/30 * * * ?")
 	public void studenteRegister() {
 
-		this.setWarningType(215L, "Register");//报道注册预警
-		this.setWarningType(215L, "redit");//学分预警
-		this.setWarningType(215L, "Academic");//学业预警
-
-       for(int i=0;i<10;i++) {
-		   this.setAlertWarningInformation(215L, "Register", 10, 3);
-	   }
-		this.setAlertWarningInformation(215L, "Register", 20, 3);
-		for(int i=0;i<5;i++) {
-			this.setAlertWarningInformation(215L, "Register", 10, 2);
-		}
-		this.setAlertWarningInformation(215L, "Register", 20, 2);
-
-		this.setAlertWarningInformation(215L, "redit", 10, 1);
-
-
-
-		for(int i=0;i<12;i++) {
-			this.setAlertWarningInformation(215L, "Register", 10, 3);
-		}
-		this.setAlertWarningInformation(215L, "Register", 20, 3);
-		for(int i=0;i<2;i++) {
-			this.setAlertWarningInformation(215L, "Register", 10, 2);
-		}
-		this.setAlertWarningInformation(215L, "Register", 20, 2);
-
-		this.setAlertWarningInformation(215L, "redit", 10, 1);
-
-
-		for(int i=0;i<6;i++) {
-			this.setAlertWarningInformation(215L, "Academic", 10, 3);
-		}
-		this.setAlertWarningInformation(215L, "Academic", 20, 3);
-		for(int i=0;i<4;i++) {
-			this.setAlertWarningInformation(215L, "Academic", 10, 2);
-		}
-		this.setAlertWarningInformation(215L, "Academic", 20, 2);
-
-		this.setAlertWarningInformation(215L, "Academic", 10, 1);
-
+		this.setAlertWarningInformation(213L);
 
 
 //        //R为学生注册预警
@@ -187,8 +149,9 @@ public class StudentRegisterJob {
 
 
 	public  void setWarningType(Long orgId, String warningType){
-		AlarmSettings alarmSettings = alarmSettingsRepository.getAlarmSettingsByOrgId(orgId, warningType, DataValidity.VALID.getState());
-	    alarmSettings.setWarningType(warningType);
+//		AlarmSettings alarmSettings = alarmSettingsRepository.getAlarmSettingsByOrgId(orgId, warningType, DataValidity.VALID.getState());
+		AlarmSettings alarmSettings = new AlarmSettings();
+		alarmSettings.setWarningType(warningType);
 		if(warningType.equals("Register")) {
 			alarmSettings.setWarningStandard("延迟报道注册天数5天以内为三级预警，延迟11天内为二级预警，延迟大于13天为一级预警");
 			alarmSettings.setWarningCondition("延迟报道注册天数5天以内为三级预警，延迟11天内为二级预警，延迟大于14天为一级预警");
@@ -206,11 +169,12 @@ public class StudentRegisterJob {
 
 	}
 
-	public void setAlertWarningInformation(Long orgId,String warningType,int warningState,int warningLevel){
+	public void setAlertWarningInformation(Long orgId){
 		String url = "http://gateway.aizhixintest.com/org-manager";
 		url = url+"/v1/students/list?pageSize=1000&orgId="+orgId;
 		try {
 			String respone = new RestUtil().getData(url, null);
+			List<AlertWarningInformation> awinfoList = new ArrayList<>();
 			if(null!=respone){
 				JSONObject json = JSONObject.fromObject(respone);
 				Object data = json.get("data");
@@ -264,11 +228,30 @@ public class StudentRegisterJob {
 						if(null!=teachingYear){
 							awinfo.setTeachingYear(teachingYear);
 						}
-						awinfo.setWarningLevel(warningLevel);
-						awinfo.setWarningState(warningState);
-						awinfo.setWarningType(warningType);
+						if(i%77==0) {
+							awinfo.setWarningLevel(1);
+						}else if(i%55==0) {
+							awinfo.setWarningLevel(2);
+						}else {
+							awinfo.setWarningLevel(3);
+						}
+						if(i%2==0) {
+							awinfo.setWarningType("Register");
+						}else if(i%3==0){
+							awinfo.setWarningType("redit");
+						}else {
+							awinfo.setWarningType("Academic");
+						}
+						if(i%9==0){
+							awinfo.setWarningState(20);
+						}else {
+							awinfo.setWarningState(10);
+						}
+						awinfo.setCreatedDate(new Date());
+						awinfoList.add(awinfo);
 					}
 				}
+				alertWarningInformationRepository.save(awinfoList);
 			}
 
 
