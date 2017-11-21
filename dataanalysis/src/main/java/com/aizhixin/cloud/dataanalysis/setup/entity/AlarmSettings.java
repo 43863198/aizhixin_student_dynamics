@@ -54,7 +54,7 @@ public class AlarmSettings extends AbstractEntity {
    * 开启状态(10:启用 ;20:关闭；)
    */
     @NotNull
-    @Column(name = "SETUP_CLOSE")
+    @Column(name = "SETUP_CLOSE_FLAG")
     @Getter @Setter private int setupCloseFlag;
 
 
