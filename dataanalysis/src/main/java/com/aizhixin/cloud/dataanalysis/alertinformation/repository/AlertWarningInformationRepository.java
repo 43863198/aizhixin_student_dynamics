@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @E-mail: wujianwei@aizhixin.com
  * @Date: 2017-11-14
  */
-public interface AlertWarningInformationRepository extends JpaRepository<AlertWarningInformation, Long> {
+public interface AlertWarningInformationRepository extends JpaRepository<AlertWarningInformation, String> {
 
 
 }

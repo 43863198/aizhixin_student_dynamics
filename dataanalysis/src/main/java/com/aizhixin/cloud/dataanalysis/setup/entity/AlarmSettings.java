@@ -35,16 +35,24 @@ public class AlarmSettings extends AbstractEntity {
     private String warningType;
 
     /*
-	 * 预警名称
-	 */
-    @Column(name = "NAME")
-    @Getter
-    @Setter
-    private String name;
+     * 产生预警条件
+     */
+    @NotNull
+    @Column(name = "WARNING_CONDITION")
+    @Getter @Setter private String warningCondition;
+
 
     /*
-     * 开启状态(10:启用 ;20:关闭；)
+     * 预警标准
      */
+    @NotNull
+    @Column(name = "WARNING_STANDARD")
+    @Getter @Setter private String warningStandard;
+
+
+    /*
+   * 开启状态(10:启用 ;20:关闭；)
+   */
     @NotNull
     @Column(name = "SETUP_CLOSE")
     @Getter @Setter private int setupCloseFlag;

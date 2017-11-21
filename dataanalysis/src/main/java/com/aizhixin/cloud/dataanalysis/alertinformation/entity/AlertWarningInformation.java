@@ -92,14 +92,33 @@ public class AlertWarningInformation extends AbstractEntity {
     @Getter @Setter private String className;
 
     /*
-   * 学年
-   */
+     * 学年
+     */
     @Column(name = "TEACHING_YEAR")
     @Getter @Setter private String teachingYear;
 
     /*
+     * 手机号
+     */
+    @Column(name = "PHONE")
+    @Getter @Setter private String phone;
+
+    /*
+     * 家庭住址
+     */
+    @Column(name = "ADDRESS")
+    @Getter @Setter private String address;
+
+    /*
+     * 家长联系方式
+     */
+    @Column(name = "PARENTS_CONTACT")
+    @Getter @Setter private String parentsContact;
+
+    /*
      * 预警类型
      */
+    @NotNull
     @Column(name = "WARNING_TYPE")
     @Getter @Setter private String warningType;
 
@@ -126,6 +145,11 @@ public class AlertWarningInformation extends AbstractEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Getter @Setter protected Date warningTime = new Date();
 
+    /*
+     * 处理建议
+     */
+    @Column(name = "PROPOSAL")
+    @Getter @Setter private String proposal;
 
 
 }

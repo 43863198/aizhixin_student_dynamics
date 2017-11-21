@@ -1,6 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.common.entity;
 
-import com.aizhixin.cloud.dataanalysis.common.core.DataValidity;
+import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -16,7 +16,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.UUID;
 
 @MappedSuperclass
 @ToString

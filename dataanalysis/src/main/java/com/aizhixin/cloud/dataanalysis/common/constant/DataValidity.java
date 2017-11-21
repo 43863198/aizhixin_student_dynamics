@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.aizhixin.cloud.dataanalysis.common.core;
+package com.aizhixin.cloud.dataanalysis.common.constant;
 
 /**
  * 数据是否有效,有效0 无效1
