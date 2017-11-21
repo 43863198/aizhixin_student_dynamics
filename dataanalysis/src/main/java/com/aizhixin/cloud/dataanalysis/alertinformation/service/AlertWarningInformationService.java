@@ -216,6 +216,11 @@ public class AlertWarningInformationService {
 					+ ")";
 		}
 	
+		if(domain.getWarningState() > 0){
+			querySql += " and WARNING_STATE =" + domain.getWarningState();
+			countSql += " and WARNING_STATE =" + domain.getWarningState();
+		}
+		
 		querySql += " and ORG_ID =" + domain.getOrgId();
 		countSql += " and ORG_ID =" + domain.getOrgId();
 		List<SortDTO> sort = new ArrayList<SortDTO>();
