@@ -216,9 +216,23 @@ public class AlertWarningInformationService {
 					+ ")";
 		}
 	
-		if(domain.getWarningState() > 0){
-			querySql += " and WARNING_STATE =" + domain.getWarningState();
-			countSql += " and WARNING_STATE =" + domain.getWarningState();
+		if (!StringUtils.isEmpty(domain.getWarningStates())) {
+			String[] warnStateArr = domain.getWarningStates().split(",");
+			String warnStates = "";
+			for(String warnState : warnStateArr){
+				if(!StringUtils.isEmpty(warnState)){
+					if(StringUtils.isEmpty(warnStates)){
+						warnStates = warnState;
+					}else{
+						warnStates += ","+warnState;
+					}
+				}
+			}
+			
+			querySql += " and WARNING_STATE in (" + warnStates
+					+ ")";
+			countSql += " and WARNING_STATE in (" + warnStates
+					+ ")";
 		}
 		
 		querySql += " and ORG_ID =" + domain.getOrgId();
@@ -306,8 +320,21 @@ public class AlertWarningInformationService {
 					+ ")";
 		}
 		
-		if(domain.getWarningState() > 0){
-			querySql += " and WARNING_STATE =" + domain.getWarningState();
+		if (!StringUtils.isEmpty(domain.getWarningStates())) {
+			String[] warnStateArr = domain.getWarningStates().split(",");
+			String warnStates = "";
+			for(String warnState : warnStateArr){
+				if(!StringUtils.isEmpty(warnState)){
+					if(StringUtils.isEmpty(warnStates)){
+						warnStates = warnState;
+					}else{
+						warnStates += ","+warnState;
+					}
+				}
+			}
+			
+			querySql += " and WARNING_STATE in (" + warnStates
+					+ ")";
 		}
 		
 		querySql += " and ORG_ID ="+domain.getOrgId()+" GROUP BY COLLOGE_ID,WARNING_LEVEL ORDER BY COLLOGE_ID,WARNING_LEVEL ;";
