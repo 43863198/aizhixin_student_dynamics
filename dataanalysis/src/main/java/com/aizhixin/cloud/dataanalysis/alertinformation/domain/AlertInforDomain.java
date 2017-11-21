@@ -40,6 +40,9 @@ public class AlertInforDomain {
 	@ApiModelProperty(value = "预警等级", required = false)
 	private int warningLevel;
 	
+	@ApiModelProperty(value = "预警状态(10:告警中；20：已处理；30：处理中；40:取消)", required = false)
+	private int warningState;
+	
 	@ApiModelProperty(value = "预警时间", required = false)
 	private Date warningTime;
 }
