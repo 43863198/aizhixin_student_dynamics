@@ -11,15 +11,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import com.aizhixin.cloud.dataanalysis.alertinformation.dto.AlarmStatisticsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.CollegeStatisticsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.TypeStatisticsDTO;
+import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningDetailsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AlertWarningInformation;
+import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningType;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 
+import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
+import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +34,7 @@ import com.aizhixin.cloud.dataanalysis.alertinformation.domain.AlertInforDomain;
 import com.aizhixin.cloud.dataanalysis.alertinformation.domain.AlertInforQueryDomain;
 import com.aizhixin.cloud.dataanalysis.alertinformation.domain.LevelAlertCountDomain;
 import com.aizhixin.cloud.dataanalysis.alertinformation.domain.RegisterAlertCountDomain;
-import com.aizhixin.cloud.dataanalysis.common.core.DataValidity;
+import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.domain.SortDTO;
 import com.aizhixin.cloud.dataanalysis.common.service.AuthUtilService;
 import com.aizhixin.cloud.dataanalysis.common.util.PageJdbcUtil;
@@ -50,6 +53,11 @@ public class AlertWarningInformationService {
 
 	@Autowired
 	private EntityManager em;
+	@Autowired
+	private AlertWarningInformationRepository alertWarningInformationRepository;
+	@Autowired
+	private AlarmSettingsService alarmSettingsService;
+
 	@Autowired
 	private PageJdbcUtil pageJdbcUtil;
 	@Autowired
@@ -593,6 +601,41 @@ public class AlertWarningInformationService {
 		result.put("success",true);
 		result.put("data",collegeStatisticsDTOList);
 		return result;
+	}
+
+	public Map<String,Object> getWarningDetails(String id) {
+		Map<String, Object> result = new HashMap<>();
+		WarningDetailsDTO warningDetailsDTO = new WarningDetailsDTO();
+		try {
+			AlertWarningInformation alertWarningInformation = alertWarningInformationRepository.findOne(id);
+			if (null != alertWarningInformation) {
+				warningDetailsDTO.setId(alertWarningInformation.getId());
+				warningDetailsDTO.setName(alertWarningInformation.getName());
+				warningDetailsDTO.setJobNumber(alertWarningInformation.getJobNumber());
+				warningDetailsDTO.setCollogeName(alertWarningInformation.getCollogeName());
+				warningDetailsDTO.setProfessionalName(alertWarningInformation.getProfessionalName());
+				warningDetailsDTO.setClassName(alertWarningInformation.getClassName());
+				warningDetailsDTO.setTeachingYear(alertWarningInformation.getTeachingYear());
+				warningDetailsDTO.setPhone(alertWarningInformation.getPhone());
+				warningDetailsDTO.setAddress(alertWarningInformation.getAddress());
+				warningDetailsDTO.setParentsContact(alertWarningInformation.getParentsContact());
+				warningDetailsDTO.setWarningTime(alertWarningInformation.getWarningTime());
+				warningDetailsDTO.setWarningName(WarningType.valueOf(alertWarningInformation.getWarningType()).getValue());
+				warningDetailsDTO.setWarningLevel(alertWarningInformation.getWarningLevel());
+				AlarmSettings alarmSettings = alarmSettingsService.getAlarmSettingsById(alertWarningInformation.getOrgId(), alertWarningInformation.getWarningType());
+				if (null != alarmSettings) {
+					warningDetailsDTO.setWarningCondition(alarmSettings.getWarningCondition());
+					warningDetailsDTO.setWarningStandard(alarmSettings.getWarningStandard());
+				}
+			}
+		}catch (Exception e){
+			result.put("success",false);
+			result.put("message","获取预警详情异常！");
+			return result;
+		}
+       result.put("success",true);
+		result.put("data",warningDetailsDTO);
+       return result;
 	}
 
 	public static String accuracy(double num, double total, int scale){

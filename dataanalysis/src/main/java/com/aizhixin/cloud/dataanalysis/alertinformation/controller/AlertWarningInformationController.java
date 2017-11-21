@@ -117,7 +117,20 @@ public class AlertWarningInformationController {
     public Map<String,Object>   getStatisticalCollegeType(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "type 预警类型" , required = true) @RequestParam(value = "type", required = true) String type){
-        return alertWarningInforService.getStatisticalCollegeType(orgId,type);
+        return alertWarningInforService.getStatisticalCollegeType(orgId, type);
+    }
+
+    /**
+     * 预警详情
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping(value = "/details", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "预警详情", response = Void.class, notes = "预警详情<br><br><b>@author jianwei.wu</b>")
+    public Map<String,Object>   getWarningDetails(
+            @ApiParam(value = "id 预警id" , required = true) @RequestParam(value = "id", required = true) String id){
+        return alertWarningInforService.getWarningDetails(id);
     }
 
 

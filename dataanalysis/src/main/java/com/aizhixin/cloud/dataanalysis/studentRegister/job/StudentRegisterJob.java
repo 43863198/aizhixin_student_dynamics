@@ -17,7 +17,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.aizhixin.cloud.dataanalysis.common.constant.StudentRegisterConstant;
-import com.aizhixin.cloud.dataanalysis.common.core.DataValidity;
+import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmParameter;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
@@ -38,7 +38,7 @@ public class StudentRegisterJob {
 	private AlertWarningInformationRepository alertWarningInformationRepository;
 
 
-	@Scheduled(cron = "0 0/30 * * * ?")
+	@Scheduled(cron = "0 0/2 * * * ?")
 	public void studenteRegister() {
         //R为学生注册预警
 		List<AlarmParameter> alarmParams = alarmParameterRespository
@@ -52,25 +52,22 @@ public class StudentRegisterJob {
 
 		//固化报到注册规则，之后要改成从数据库获取
 		AlarmSettings aSetting = new AlarmSettings();
-		aSetting.setName(WarningType.Register.getValue());
 		aSetting.setOrgId(1L);
 		AlarmParameter alaParam = new AlarmParameter();
-		alaParam.setLevel(3);
+		alaParam.setLevel(1);
 		alaParam.setSetParameter(11);
 		alaParam.setAlarmSettings(aSetting);
 		alarmParams.add(alaParam);
 		aSetting = new AlarmSettings();
 		aSetting.setWarningType("Register");
-		aSetting.setName(WarningType.Register.getValue());
 		aSetting.setOrgId(1L);
 		alaParam = new AlarmParameter();
-		alaParam.setLevel(2);
+		alaParam.setLevel(1);
 		alaParam.setSetParameter(5);
 		alaParam.setAlarmSettings(aSetting);
 		alarmParams.add(alaParam);
 		aSetting = new AlarmSettings();
 		aSetting.setWarningType("Register");
-		aSetting.setName(WarningType.Register.getValue());
 		aSetting.setOrgId(1L);
 		 alaParam = new AlarmParameter();
 		alaParam.setLevel(1);
@@ -119,6 +116,7 @@ public class StudentRegisterJob {
 							alertInfor.setProfessionalName(studentRegister.getProfessionalName());
 							alertInfor.setTeachingYear(studentRegister.getSchoolYear());
 							alertInfor.setWarningLevel(alarmParam.getLevel());
+							alertInfor.setWarningState(10);
 							alertInfor.setWarningType("Register");
 							alertInfor.setWarningTime(new Date());
 							alertInfor.setOrgId(alarmParam.getAlarmSettings().getOrgId());
