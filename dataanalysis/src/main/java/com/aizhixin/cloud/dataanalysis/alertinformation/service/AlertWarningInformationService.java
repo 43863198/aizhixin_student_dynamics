@@ -216,6 +216,11 @@ public class AlertWarningInformationService {
 					+ ")";
 		}
 	
+		if(domain.getWarningState() > 0){
+			querySql += " and WARNING_STATE =" + domain.getWarningState();
+			countSql += " and WARNING_STATE =" + domain.getWarningState();
+		}
+		
 		querySql += " and ORG_ID =" + domain.getOrgId();
 		countSql += " and ORG_ID =" + domain.getOrgId();
 		List<SortDTO> sort = new ArrayList<SortDTO>();
@@ -299,6 +304,10 @@ public class AlertWarningInformationService {
 			
 			querySql += " and WARNING_TYPE in (" + warnTypes
 					+ ")";
+		}
+		
+		if(domain.getWarningState() > 0){
+			querySql += " and WARNING_STATE =" + domain.getWarningState();
 		}
 		
 		querySql += " and ORG_ID ="+domain.getOrgId()+" GROUP BY COLLOGE_ID,WARNING_LEVEL ORDER BY COLLOGE_ID,WARNING_LEVEL ;";
