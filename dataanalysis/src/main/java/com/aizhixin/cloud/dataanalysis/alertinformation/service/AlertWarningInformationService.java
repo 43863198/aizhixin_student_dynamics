@@ -123,6 +123,10 @@ public class AlertWarningInformationService {
 		Long count = Long.valueOf(String.valueOf(cq.getSingleResult()));
 		sq.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
 		sq.setMaxResults(pageable.getPageSize());
+		List<AlertWarningInformation> data = sq.getResultList();
+		for(AlertWarningInformation d :data){
+			d.setWarningType(WarningType.valueOf(d.getWarningType()).getValue());
+		}
 		p.setData(sq.getResultList());
 		p.getPage().setTotalElements(count);
 		p.getPage().setPageNumber(pageable.getPageNumber());
@@ -406,22 +410,6 @@ public class AlertWarningInformationService {
 			data.put("proportion1",accuracy(sum1 * 1.0, sum * 1.0, 2));
 			data.put("proportion2", accuracy(sum2 * 1.0, sum * 1.0, 2));
 			data.put("proportion3", accuracy(sum3 * 1.0, sum * 1.0, 2));
-//			//统计下的列表最近想的前20条
-//			StringBuilder lql = new StringBuilder("SELECT * FROM t_alert_warning_information WHERE 1 = 1");
-//			if (null != orgId) {
-//				lql.append(" and ORG_ID = :orgId");
-//				condition.put("orgId", orgId);
-//			}
-//			lql.append(" order by WARNING_TIME desc limit 20");
-//			Query lq = em.createNativeQuery(lql.toString(), AlertWarningInformation.class);
-//			for (Map.Entry<String, Object> e : condition.entrySet()) {
-//				lq.setParameter(e.getKey(), e.getValue());
-//			}
-//			List<AlertWarningInformation> alertWarningInformationList = lq.getResultList();
-//			for(AlertWarningInformation aw : alertWarningInformationList){
-//				aw.setWarningType(WarningType.valueOf(aw.getWarningType()).getValue());
-//			}
-//			data.put("alertWarningInformationList", alertWarningInformationList);
 		}catch (Exception e){
 			e.printStackTrace();
 			result.put("success", false);
@@ -430,6 +418,36 @@ public class AlertWarningInformationService {
 		}
 		result.put("success", true);
 		result.put("data", data);
+		return result;
+	}
+
+	public Map<String,Object> getLatestinformation(Long orgId) {
+		Map<String,Object> result = new HashMap<>();
+		Map<String, Object> data = new HashMap<>();
+		Map<String, Object> condition = new HashMap<>();
+		//统计下的列表最近想的前20条
+		StringBuilder lql = new StringBuilder("SELECT * FROM t_alert_warning_information WHERE 1 = 1");
+		if (null != orgId) {
+			lql.append(" and ORG_ID = :orgId");
+			condition.put("orgId", orgId);
+		}
+		lql.append(" order by WARNING_TIME desc limit 20");
+		try {
+			Query lq = em.createNativeQuery(lql.toString(), AlertWarningInformation.class);
+			for (Map.Entry<String, Object> e : condition.entrySet()) {
+				lq.setParameter(e.getKey(), e.getValue());
+			}
+			List<AlertWarningInformation> alertWarningInformationList = lq.getResultList();
+			for (AlertWarningInformation aw : alertWarningInformationList) {
+				aw.setWarningType(WarningType.valueOf(aw.getWarningType()).getValue());
+			}
+			data.put("latestinformation", alertWarningInformationList);
+		}catch (Exception e){
+			result.put("success",false);
+			result.put("message","获取最新预警学生异常！");
+		}
+		result.put("success",true);
+		result.put("data",data);
 		return result;
 	}
 
@@ -506,7 +524,6 @@ public class AlertWarningInformationService {
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId", orgId);
 		}
-		sql.append(" GROUP BY COLLOGE_ID");
 		try {
 			Query cq = em.createNativeQuery(cql.toString());
 			Query sq = em.createNativeQuery(sql.toString());
@@ -536,6 +553,7 @@ public class AlertWarningInformationService {
 						sum3 = Integer.valueOf(String.valueOf(d[4]));
 					}
 					typeStatisticsDTO.setProportion(accuracy(sum * 1.0, total * 1.0, 2));
+					typeStatisticsDTO.setSum(sum);
 					typeStatisticsDTO.setSum1(sum1);
 					typeStatisticsDTO.setSum2(sum2);
 					typeStatisticsDTO.setSum3(sum3);
@@ -546,9 +564,9 @@ public class AlertWarningInformationService {
 				result.put("success", false);
 				result.put("message", "按类型统计异常！");
 				return result;
-			}
-			result.put("success", true);
-			result.put("data", typeStatisticsDTOList);
+		}
+		result.put("success", true);
+		result.put("data", typeStatisticsDTOList);
 			return result;
 		}
 
