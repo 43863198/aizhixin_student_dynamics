@@ -19,6 +19,6 @@ public class AlarmStatisticsDTO {
     private int sum;
 
     @ApiModelProperty(value = "占比", required = false)
-    private String proportion ;
+    private String proportion;
 
 }

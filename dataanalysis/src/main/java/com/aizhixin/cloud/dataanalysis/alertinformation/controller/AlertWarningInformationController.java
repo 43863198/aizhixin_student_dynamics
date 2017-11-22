@@ -106,19 +106,19 @@ public class AlertWarningInformationController {
     }
 
 
-    /**
-     按照学院统计每个预警级别的数量
-     *
-     * @param orgId
-     * @return
-     */
-    @GetMapping(value = "/statisticalcollegetype", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "按照学院统计每个预警级别的数量", response = Void.class, notes = "按照学院统计每个预警级别的数量<br><br><b>@author jianwei.wu</b>")
-    public Map<String,Object>   getStatisticalCollegeType(
-            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "type 预警类型" , required = true) @RequestParam(value = "type", required = true) String type){
-        return alertWarningInforService.getStatisticalCollegeType(orgId, type);
-    }
+//    /**
+//     按照学院统计每个预警级别的数量
+//     *
+//     * @param orgId
+//     * @return
+//     */
+//    @GetMapping(value = "/statisticalcollegetype", produces = MediaType.APPLICATION_JSON_VALUE)
+//    @ApiOperation(httpMethod = "GET", value = "按照学院统计每个预警级别的数量", response = Void.class, notes = "按照学院统计每个预警级别的数量<br><br><b>@author jianwei.wu</b>")
+//    public Map<String,Object>   getStatisticalCollegeType(
+//            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+//            @ApiParam(value = "type 预警类型" , required = true) @RequestParam(value = "type", required = true) String type){
+//        return alertWarningInforService.getStatisticalCollegeType(orgId, type);
+//    }
 
     /**
      * 预警详情
