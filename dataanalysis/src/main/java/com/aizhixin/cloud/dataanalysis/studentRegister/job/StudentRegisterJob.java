@@ -135,14 +135,9 @@ public class StudentRegisterJob {
 //	}
 
 
-	@Scheduled(cron = "0 0/50 * * * ?")
+	@Scheduled(cron = "0 0/30 * * * ?")
 	public void studenteRegister() {
-//		this.setWarningType(213L);
-		if(flag) {
-			this.setAlertWarningInformation(213L);
-		}else {
-			logger.info("处理中！");
-		}
+		this.setAlertWarningInformation(213L);
 	}
 
 	public  void setWarningType(Long orgId){
@@ -216,7 +211,6 @@ public class StudentRegisterJob {
 	}
 
 	public void setAlertWarningInformation(Long orgId){
-		flag = false;
 		String url = "http://gateway.aizhixintest.com/org-manager";
 		url = url+"/v1/students/list?pageSize=10000&orgId="+orgId;
 		List<AlertWarningInformation> awinfoList = new ArrayList<>();
@@ -325,7 +319,6 @@ public class StudentRegisterJob {
 					alertWarningInformationRepository.save(awinfoList);
 				}
 			}
-			flag = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
