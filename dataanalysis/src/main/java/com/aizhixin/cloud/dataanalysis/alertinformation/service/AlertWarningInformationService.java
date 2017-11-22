@@ -524,6 +524,7 @@ public class AlertWarningInformationService {
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId", orgId);
 		}
+		sql.append(" GROUP BY WARNING_TYPE");
 		try {
 			Query cq = em.createNativeQuery(cql.toString());
 			Query sq = em.createNativeQuery(sql.toString());
