@@ -8,6 +8,7 @@ import java.util.Map;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AlertWarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
 
+import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningType;
 import com.aizhixin.cloud.dataanalysis.common.util.RestUtil;
 import com.aizhixin.cloud.dataanalysis.setup.respository.AlarmSettingsRepository;
@@ -20,38 +21,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.aizhixin.cloud.dataanalysis.common.constant.StudentRegisterConstant;
-import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
-import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
-import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmParameter;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
-import com.aizhixin.cloud.dataanalysis.setup.respository.AlarmParameterRespository;
-import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoRespository.StudentRegisterMongoRespository;
 
 @Component
 public class StudentRegisterJob {
-
+	public volatile static boolean flag = true;
 	private Logger logger = Logger.getLogger(this.getClass());
-	@Autowired
-	private AlarmParameterRespository alarmParameterRespository;
 	@Autowired
 	private AlarmSettingsRepository alarmSettingsRepository;
 	@Autowired
 	private RestUtil restUtil;
-
 	@Autowired
-	private StudentRegisterMongoRespository stuRegisterMongoRespository;
+	private AlertWarningInformationService  alertWarningInformationService;
 	@Autowired
-	private AlertWarningInformationRepository alertWarningInformationRepository;
+	private AlertWarningInformationRepository  alertWarningInformationRepository;
 
-
-	@Scheduled(cron = "0 0/30 * * * ?")
-	public void studenteRegister() {
-
-		this.setAlertWarningInformation(213L);
-
-
+//	@Scheduled(cron = "0 0/5 * * * ?")
+//	public void studenteRegister() {
 //        //R为学生注册预警
 //		List<AlarmParameter> alarmParams = alarmParameterRespository
 //				.findAllByDeleteFlagAndAlarmSettings_WarningType(DataValidity.VALID.getState(), "R");
@@ -145,8 +132,17 @@ public class StudentRegisterJob {
 //				alertWarningInformationRepository.save(alertInforList);
 //			}
 //		}
-	}
+//	}
 
+
+	@Scheduled(cron = "0 0/30 * * * ?")
+	public void studenteRegister() {
+		if(flag) {
+			this.setAlertWarningInformation(213L);
+		}else {
+			logger.info("处理中！");
+		}
+	}
 
 	public  void setWarningType(Long orgId, String warningType){
 //		AlarmSettings alarmSettings = alarmSettingsRepository.getAlarmSettingsByOrgId(orgId, warningType, DataValidity.VALID.getState());
@@ -170,11 +166,11 @@ public class StudentRegisterJob {
 	}
 
 	public void setAlertWarningInformation(Long orgId){
+		flag = false;
 		String url = "http://gateway.aizhixintest.com/org-manager";
-		url = url+"/v1/students/list?pageSize=1000&orgId="+orgId;
+		url = url+"/v1/students/list?pageSize=10000&orgId="+orgId;
 		try {
 			String respone = new RestUtil().getData(url, null);
-			List<AlertWarningInformation> awinfoList = new ArrayList<>();
 			if(null!=respone){
 				JSONObject json = JSONObject.fromObject(respone);
 				Object data = json.get("data");
@@ -193,7 +189,40 @@ public class StudentRegisterJob {
 						Long classesId = jsonObject.getLong("classesId");
 						String phone = jsonObject.getString("phone");
 						String teachingYear = jsonObject.getString("teachingYear");
-						AlertWarningInformation awinfo = new AlertWarningInformation();
+                        String warningType = "";
+						if(i%2==0) {
+							warningType = "Register";
+						}else if(i%3==0){
+							warningType = "redit";
+						}else {
+							warningType = "Academic";
+						}
+						AlertWarningInformation awinfo = null;
+//						List<AlertWarningInformation> awinfoOrg = alertWarningInformationService.getawinfoByOrgIdAndWarningType(orgId,warningType);
+//                        if(null!=awinfoOrg&&awinfoOrg.size()>0){
+//							List<AlertWarningInformation> updata = new ArrayList<>();
+//							for (AlertWarningInformation aw: awinfoOrg){
+//                                if(aw.getDefendantId().equals(defendantId)&&warningType.equals(aw.getWarningType())){
+//									updata.add()
+//								}
+//							}
+//
+//						}
+
+
+						List<AlertWarningInformation> awinfoList = alertWarningInformationService.getawinfoByDefendantId(orgId,warningType,defendantId);
+						if(null!=awinfoList){
+							if(awinfoList.size()==1){
+								awinfo = awinfoList.get(0);
+							}else if(awinfoList.size()>1) {
+								logger.info("学号为" + defendantId + "学生的" + WarningType.valueOf(warningType).getValue() + "数据重复异常！");
+								continue;
+							}else {
+								awinfo = new AlertWarningInformation();
+							}
+						}else {
+							awinfo = new AlertWarningInformation();
+						}
 						awinfo.setOrgId(orgId);
 						if(null!=defendantId) {
 							awinfo.setDefendantId(defendantId);
@@ -235,30 +264,21 @@ public class StudentRegisterJob {
 						}else {
 							awinfo.setWarningLevel(3);
 						}
-						if(i%2==0) {
-							awinfo.setWarningType("Register");
-						}else if(i%3==0){
-							awinfo.setWarningType("redit");
-						}else {
-							awinfo.setWarningType("Academic");
-						}
 						if(i%9==0){
 							awinfo.setWarningState(20);
 						}else {
 							awinfo.setWarningState(10);
 						}
+						awinfo.setWarningType(warningType);
 						awinfo.setCreatedDate(new Date());
-						awinfoList.add(awinfo);
+						alertWarningInformationRepository.save(awinfo);
 					}
 				}
-				alertWarningInformationRepository.save(awinfoList);
 			}
-
-
+			flag = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 }

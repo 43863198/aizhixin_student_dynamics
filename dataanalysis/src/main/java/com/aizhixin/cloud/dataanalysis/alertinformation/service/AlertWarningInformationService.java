@@ -148,7 +148,7 @@ public class AlertWarningInformationService {
 			domain.setClassName(rs.getString("CLASS_NAME"));
 			domain.setJobNumber(rs.getString("JOB_NUMBER"));
 			domain.setWarningLevel(rs.getInt("WARNING_LEVEL"));
-			domain.setWarningType(rs.getString("WARNING_TYPE"));
+			domain.setWarningType(WarningType.valueOf(rs.getString("WARNING_TYPE")).getValue());
 			domain.setWarningState(rs.getInt("WARNING_STATE"));
 			domain.setWarningTime(rs.getTimestamp("WARNING_TIME"));
 			return domain;
@@ -422,9 +422,7 @@ public class AlertWarningInformationService {
 			}
 			List<AlertWarningInformation> alertWarningInformationList = lq.getResultList();
 			for(AlertWarningInformation aw : alertWarningInformationList){
-				if(!aw.getWarningType().equals("报道注册预警")) {
-					aw.setWarningType(WarningType.valueOf(aw.getWarningType()).getValue());
-				}
+				aw.setWarningType(WarningType.valueOf(aw.getWarningType()).getValue());
 			}
 			data.put("alertWarningInformationList", alertWarningInformationList);
 		}catch (Exception e){
@@ -513,11 +511,7 @@ public class AlertWarningInformationService {
 					Object[] d = (Object[]) obj;
 					TypeStatisticsDTO typeStatisticsDTO = new TypeStatisticsDTO();
 					if(null!=d[0]){
-						if(!String.valueOf(d[0]).equals("报道注册预警")) {
-							typeStatisticsDTO.setWarningType(WarningType.valueOf(String.valueOf(d[0])).getValue());
-						}else {
-							typeStatisticsDTO.setWarningType(String.valueOf(d[0]));
-						}
+						typeStatisticsDTO.setWarningType(WarningType.valueOf(String.valueOf(d[0])).getValue());
 					}
 					if(null!=d[1]){
 						sum = Integer.valueOf(String.valueOf(d[1]));
@@ -636,6 +630,15 @@ public class AlertWarningInformationService {
        result.put("success",true);
 		result.put("data",warningDetailsDTO);
        return result;
+	}
+
+	public List<AlertWarningInformation> getawinfoByDefendantId(Long orgId,String warningType, Long defendantId){
+		return alertWarningInformationRepository.getawinfoByDefendantId(orgId,warningType,defendantId,DataValidity.VALID.getState());
+	}
+
+
+	public List<AlertWarningInformation> getawinfoByOrgIdAndWarningType(Long orgId,String warningType){
+		return alertWarningInformationRepository.getawinfoByOrgIdAndWarningType(orgId,warningType,DataValidity.VALID.getState());
 	}
 
 	public static String accuracy(double num, double total, int scale){
