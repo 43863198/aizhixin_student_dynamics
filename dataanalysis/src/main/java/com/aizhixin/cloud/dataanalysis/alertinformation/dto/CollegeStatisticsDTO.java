@@ -11,7 +11,7 @@ import lombok.Data;
  */
 @ApiModel(description="按院统计")
 @Data
-public class CollegeStatisticsDTO {
+public class CollegeStatisticsDTO implements Comparable<CollegeStatisticsDTO>{
 
     @ApiModelProperty(value = "院系名称", required = false)
     protected String collegeName ;
@@ -24,5 +24,20 @@ public class CollegeStatisticsDTO {
 
     @ApiModelProperty(value = "三级告警数量", required = false)
     protected int sum3;
+
+    @ApiModelProperty(value = "告警总数量", required = false)
+    protected int total;
+
+    @Override
+    public int compareTo(CollegeStatisticsDTO o) {
+        if (this.total > o.total) {
+            return -1;//由高到底排序
+        }else if (this.total < o.total){
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+
 
 }
