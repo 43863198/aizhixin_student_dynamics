@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AlertWarningInformation;
+import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
@@ -22,7 +22,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
-import com.aizhixin.cloud.dataanalysis.studentRegister.mongoRespository.StudentRegisterMongoRespository;
 
 @Component
 public class StudentRegisterJob {
@@ -135,7 +134,7 @@ public class StudentRegisterJob {
 //	}
 
 
-	@Scheduled(cron = "0 0/30 * * * ?")
+	@Scheduled(cron = "0 0/3 * * * ?")
 	public void studenteRegister() {
 		this.setAlertWarningInformation(213L);
 	}
@@ -213,7 +212,7 @@ public class StudentRegisterJob {
 	public void setAlertWarningInformation(Long orgId){
 		String url = "http://gateway.aizhixintest.com/org-manager";
 		url = url+"/v1/students/list?pageSize=10000&orgId="+orgId;
-		List<AlertWarningInformation> awinfoList = new ArrayList<>();
+		List<WarningInformation> awinfoList = new ArrayList<>();
 		try {
 			String respone = new RestUtil().getData(url, null);
 			if(null!=respone){
@@ -252,8 +251,8 @@ public class StudentRegisterJob {
 						} else {
 							warningType = "Cet";
 						}
-						AlertWarningInformation awinfo = null;
-						List<AlertWarningInformation> awinfos = alertWarningInformationService.getawinfoByDefendantId(orgId,warningType,defendantId);
+						WarningInformation awinfo = null;
+						List<WarningInformation> awinfos = alertWarningInformationService.getawinfoByDefendantId(orgId,warningType,defendantId);
 						if(null!=awinfos){
 							if(awinfos.size()==1){
 								awinfo = awinfos.get(0);
@@ -261,10 +260,10 @@ public class StudentRegisterJob {
 								logger.info("学号为" + defendantId + "学生的" + WarningType.valueOf(warningType).getValue() + "数据重复异常！");
 								continue;
 							}else {
-								awinfo = new AlertWarningInformation();
+								awinfo = new WarningInformation();
 							}
 						}else {
-							awinfo = new AlertWarningInformation();
+							awinfo = new WarningInformation();
 						}
 						awinfo.setOrgId(orgId);
 						if(null!=defendantId) {

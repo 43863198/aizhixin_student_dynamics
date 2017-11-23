@@ -7,7 +7,7 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
     <include file="classpath:liquibase/20171113154645_add_entity_AlarmParameter.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171113154645_add_entity_AlarmSettings.xml" relativeToChangelogFile="false"/>
-    <include file="classpath:liquibase/20171113154645_add_entity_AlertWarningInformation.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20171113154645_add_entity_WarningInformation.xml" relativeToChangelogFile="false"/>
 
 
 </databaseChangeLog>
