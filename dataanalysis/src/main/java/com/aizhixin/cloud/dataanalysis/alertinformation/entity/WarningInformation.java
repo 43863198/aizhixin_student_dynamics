@@ -13,6 +13,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import java.util.Date;
 
@@ -22,9 +23,9 @@ import java.util.Date;
  * @Date: 2017-11-13
  */
 @Entity
-@Table(name = "T_ALERT_WARNING_INFORMATION")
+@Table(name = "T_WARNING_INFORMATION")
 @ToString
-public class AlertWarningInformation extends AbstractEntity {
+public class WarningInformation extends AbstractEntity {
 
     /*
    *  告警人id
@@ -119,6 +120,7 @@ public class AlertWarningInformation extends AbstractEntity {
      * 预警类型
      */
     @NotNull
+//    @Pattern(regexp = "[a-zA-Z]+$")
     @Column(name = "WARNING_TYPE")
     @Getter @Setter private String warningType;
 

@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AlertWarningInformation;
+import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
@@ -54,9 +54,9 @@ public class StudentRegisterJob {
 //		List<AlarmParameter> alarmParams = alarmParameterRespository
 //				.findAllByDeleteFlagAndAlarmSettings_WarningType(DataValidity.VALID.getState(), WarningType.Register.getValue());
 		//固化规则咱不做规则管理和查询
-//		List<AlarmParameter> alarmParams = alarmParameterRespository
-//				.findAllByDeleteFlagAndAlarmSettings_SetupCloseFlagAndAlarmSettings_TypeOrderByAlarmSettings_idAscLevelDesc(DataValidity.VALID.getState(),AlertTypeConstant.SETUP_ALERTSETTING,
-//						AlertTypeConstant.STUDENT_REGISTER);
+
+//		List<AlarmParameter> alarmParams = new ArrayList<AlarmParameter>();
+		//固化报到注册规则，之后要改成从数据库获取
 
 //		if (null != alarmParams && alarmParams.size() > 0) {
 //			HashMap<Long, ArrayList<AlarmParameter>> alarmMap = new HashMap<Long, ArrayList<AlarmParameter>>();
@@ -119,40 +119,85 @@ public class StudentRegisterJob {
 	}
 
 
-	@Scheduled(cron = "0 0/30 * * * ?")
+	@Scheduled(cron = "0 0/50 * * * ?")
 	public void studenteRegister() {
-		if(flag) {
-			this.setAlertWarningInformation(213L);
-		}else {
-			logger.info("处理中！");
-		}
+		this.setAlertWarningInformation(213L);
 	}
 
-	public  void setWarningType(Long orgId, String warningType){
-//		AlarmSettings alarmSettings = alarmSettingsRepository.getAlarmSettingsByOrgId(orgId, warningType, DataValidity.VALID.getState());
-		AlarmSettings alarmSettings = new AlarmSettings();
-		alarmSettings.setWarningType(warningType);
-		if(warningType.equals("Register")) {
-			alarmSettings.setWarningStandard("延迟报道注册天数5天以内为三级预警，延迟11天内为二级预警，延迟大于13天为一级预警");
-			alarmSettings.setWarningCondition("延迟报道注册天数5天以内为三级预警，延迟11天内为二级预警，延迟大于14天为一级预警");
-		}else if(warningType.equals("redit")){
-			alarmSettings.setWarningStandard("成绩波动在班级名次在5名内波动");
-			alarmSettings.setWarningCondition("成绩波动在班级排名波动大于6");
-		}else if(warningType.equals("Academic")){
-			alarmSettings.setWarningStandard("挂科次数在4次以为");
-			alarmSettings.setWarningCondition("挂科次数超过4次");
-		}
-		alarmSettings.setOrgId(orgId);
-		alarmSettings.setCreatedDate(new Date());
-		alarmSettings.setSetupCloseFlag(10);
-		alarmSettingsRepository.save(alarmSettings);
+	public  void setWarningType(Long orgId){
+		List<AlarmSettings> alarmSettingsList = new ArrayList<>();
+		AlarmSettings alarmSettings1 = new AlarmSettings();
+		alarmSettings1.setWarningType("Register");
+		alarmSettings1.setWarningStandard("延迟报道注册天数5天以内为三级预警，延迟11天内为二级预警，延迟大于13天为一级预警");
+		alarmSettings1.setWarningCondition("延迟报道注册天数5天以内为三级预警，延迟11天内为二级预警，延迟大于14天为一级预警");
+		alarmSettings1.setOrgId(orgId);
+		alarmSettings1.setCreatedDate(new Date());
+		alarmSettings1.setSetupCloseFlag(10);
+		alarmSettingsList.add(alarmSettings1);
+		AlarmSettings alarmSettings2 = new AlarmSettings();
+		alarmSettings2.setWarningType("LeaveSchool");
+		alarmSettings2.setWarningStandard("退学预警标准");
+		alarmSettings2.setWarningCondition("退学预警标准条件");
+		alarmSettings2.setOrgId(orgId);
+		alarmSettings2.setCreatedDate(new Date());
+		alarmSettings2.setSetupCloseFlag(10);
+		alarmSettingsList.add(alarmSettings2);
+		AlarmSettings alarmSettings3 = new AlarmSettings();
+		alarmSettings3.setWarningType("AttendAbnormal");
+		alarmSettings3.setWarningStandard("修读异常预警标准");
+		alarmSettings3.setWarningCondition("修读异常预警条件");
+		alarmSettings3.setOrgId(orgId);
+		alarmSettings3.setCreatedDate(new Date());
+		alarmSettings3.setSetupCloseFlag(10);
+		alarmSettingsList.add(alarmSettings3);
+		AlarmSettings alarmSettings4 = new AlarmSettings();
+		alarmSettings4.setWarningType("AttendAbnormal");
+		alarmSettings4.setWarningStandard("旷课预警标准");
+		alarmSettings4.setWarningCondition("旷课预警条件");
+		alarmSettings4.setOrgId(orgId);
+		alarmSettings4.setCreatedDate(new Date());
+		alarmSettings4.setSetupCloseFlag(10);
+		alarmSettingsList.add(alarmSettings4);
+		AlarmSettings alarmSettings5 = new AlarmSettings();
+		alarmSettings5.setWarningType("TotalAchievement");
+		alarmSettings5.setWarningStandard("总评成绩预警标准");
+		alarmSettings5.setWarningCondition("总评成绩预警条件");
+		alarmSettings5.setOrgId(orgId);
+		alarmSettings5.setCreatedDate(new Date());
+		alarmSettings5.setSetupCloseFlag(10);
+		alarmSettingsList.add(alarmSettings5);
+		AlarmSettings alarmSettings7 = new AlarmSettings();
+		alarmSettings7.setWarningType("SupplementAchievement");
+		alarmSettings7.setWarningStandard("补考成绩预警标准");
+		alarmSettings7.setWarningCondition("补考成绩预警条件");
+		alarmSettings7.setOrgId(orgId);
+		alarmSettings7.setCreatedDate(new Date());
+		alarmSettings7.setSetupCloseFlag(10);
+		alarmSettingsList.add(alarmSettings7);
+		AlarmSettings alarmSettings8 = new AlarmSettings();
+		alarmSettings8.setWarningType("PerformanceFluctuation");
+		alarmSettings8.setWarningStandard("成绩波动预警标准");
+		alarmSettings8.setWarningCondition("成绩波动预警条件");
+		alarmSettings8.setOrgId(orgId);
+		alarmSettings8.setCreatedDate(new Date());
+		alarmSettings8.setSetupCloseFlag(10);
+		alarmSettingsList.add(alarmSettings8);
+		AlarmSettings alarmSettings9 = new AlarmSettings();
+		alarmSettings9.setWarningType("Cet");
+		alarmSettings9.setWarningStandard("学生四六级英语预警标准");
+		alarmSettings9.setWarningCondition("学生四六级英语预警条件");
+		alarmSettings9.setOrgId(orgId);
+		alarmSettings9.setCreatedDate(new Date());
+		alarmSettings9.setSetupCloseFlag(10);
+		alarmSettingsList.add(alarmSettings9);
+		alarmSettingsRepository.save(alarmSettingsList);
 
 	}
 
 	public void setAlertWarningInformation(Long orgId){
-		flag = false;
 		String url = "http://gateway.aizhixintest.com/org-manager";
-		url = url+"/v1/students/list?pageSize=10000&orgId="+orgId;
+		url = url+"/v1/students/list?pageSize=1000&orgId="+orgId;
+		List<WarningInformation> awinfoList = new ArrayList<>();
 		try {
 			String respone = new RestUtil().getData(url, null);
 			if(null!=respone){
@@ -173,39 +218,37 @@ public class StudentRegisterJob {
 						Long classesId = jsonObject.getLong("classesId");
 						String phone = jsonObject.getString("phone");
 						String teachingYear = jsonObject.getString("teachingYear");
-                        String warningType = "";
-						if(i%2==0) {
+						String warningType = "";
+						if (i % 2 == 0) {
 							warningType = "Register";
-						}else if(i%3==0){
-							warningType = "redit";
-						}else {
-							warningType = "Academic";
+						} else if (i % 3 == 0) {
+							warningType = "LeaveSchool";
+						} else if (i % 5 == 0) {
+							warningType = "AttendAbnormal";
+						} else if (i % 7 == 0) {
+							warningType = "Absenteeism";
+						} else if (i % 9 == 0) {
+							warningType = "TotalAchievement";
+						} else if (i % 11 == 0) {
+							warningType = "SupplementAchievement";
+						} else if (i % 13 == 0) {
+							warningType = "PerformanceFluctuation";
+						} else {
+							warningType = "Cet";
 						}
-						AlertWarningInformation awinfo = null;
-//						List<AlertWarningInformation> awinfoOrg = alertWarningInformationService.getawinfoByOrgIdAndWarningType(orgId,warningType);
-//                        if(null!=awinfoOrg&&awinfoOrg.size()>0){
-//							List<AlertWarningInformation> updata = new ArrayList<>();
-//							for (AlertWarningInformation aw: awinfoOrg){
-//                                if(aw.getDefendantId().equals(defendantId)&&warningType.equals(aw.getWarningType())){
-//									updata.add()
-//								}
-//							}
-//
-//						}
-
-
-						List<AlertWarningInformation> awinfoList = alertWarningInformationService.getawinfoByDefendantId(orgId,warningType,defendantId);
-						if(null!=awinfoList){
-							if(awinfoList.size()==1){
-								awinfo = awinfoList.get(0);
-							}else if(awinfoList.size()>1) {
+						WarningInformation awinfo = null;
+						List<WarningInformation> awinfos = alertWarningInformationService.getawinfoByDefendantId(orgId,warningType,defendantId);
+						if(null!=awinfos){
+							if(awinfos.size()==1){
+								awinfo = awinfos.get(0);
+							}else if(awinfos.size()>1) {
 								logger.info("学号为" + defendantId + "学生的" + WarningType.valueOf(warningType).getValue() + "数据重复异常！");
 								continue;
 							}else {
-								awinfo = new AlertWarningInformation();
+								awinfo = new WarningInformation();
 							}
 						}else {
-							awinfo = new AlertWarningInformation();
+							awinfo = new WarningInformation();
 						}
 						awinfo.setOrgId(orgId);
 						if(null!=defendantId) {
@@ -255,11 +298,11 @@ public class StudentRegisterJob {
 						}
 						awinfo.setWarningType(warningType);
 						awinfo.setCreatedDate(new Date());
-						alertWarningInformationRepository.save(awinfo);
+						awinfoList.add(awinfo);
 					}
+					alertWarningInformationRepository.save(awinfoList);
 				}
 			}
-			flag = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

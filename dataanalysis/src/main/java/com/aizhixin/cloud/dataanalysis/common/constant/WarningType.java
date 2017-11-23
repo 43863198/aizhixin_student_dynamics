@@ -9,13 +9,13 @@ import lombok.Getter;
  */
 public enum WarningType {
     Register("报道注册预警"),
-    LearningState ("学情预警"),
+    LeaveSchool("退学预警"),
     AttendAbnormal("修读异常预警"),
     Absenteeism("旷课预警"),
     TotalAchievement("总评成绩预警"),
     SupplementAchievement("补考成绩预警"),
     PerformanceFluctuation("成绩波动预警"),
-    Cet("英语四六级预警");
+    Cet("学生四六级英语预警");
 
     private String value ;
 
