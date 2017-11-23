@@ -11,10 +11,10 @@
     <changeSet id="20171113154645" author="jianwei.wu">
 		<preConditions onFail="MARK_RAN">
 	        <not>
-	            <tableExists tableName="T_ALERT_WARNING_INFORMATION"/>
+	            <tableExists tableName="T_WARNING_INFORMATION"/>
 	        </not>
 	    </preConditions>
-        <createTable tableName="T_ALERT_WARNING_INFORMATION" remarks="注册预警信息">
+        <createTable tableName="T_WARNING_INFORMATION" remarks="注册预警信息">
             <column name="ID"  type="VARCHAR(50)">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
