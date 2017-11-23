@@ -38,7 +38,7 @@ import io.swagger.annotations.ApiParam;
  */
 @RestController
 @RequestMapping("/v1/test/studentregister")
-@Api(value = "IDC环境office文档数据操作", description = "针对IDC环境office文档历史数据操作")
+@Api(value = "IDC环境office文档数据操作", description = "生成mongodb模拟数据操作")
 public class TestDataController {
 	private final static Logger log = LoggerFactory
 			.getLogger(TestDataController.class);
@@ -61,7 +61,7 @@ public class TestDataController {
 		for(int i=0;i<10;i++){
 			StudentRegister studentRegister = new StudentRegister();
 			
-			studentRegister.setStuId(stuId++);
+			studentRegister.setUserId(stuId++);
 			studentRegister.setClassId(1L);
 			studentRegister.setClassName("测试1班");
 			studentRegister.setCollegeId(1L);
@@ -76,7 +76,7 @@ public class TestDataController {
 //			studentRegister.setActualRegisterDate(DateUtil.getMonday(new Date()));
 //			studentRegister.setRemarks(remarks);
 			studentRegister.setSchoolYear("2017");
-			studentRegister.setStuName("学生"+i);
+			studentRegister.setUserName("学生"+i);
 			stuRegisterList.add(studentRegister);
 		}
 		

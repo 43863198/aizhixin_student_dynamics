@@ -1,4 +1,4 @@
-package com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity;
+package com.aizhixin.cloud.dataanalysis.score.mongoEntity;
 
 import java.util.Date;
 
@@ -8,9 +8,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
 
-@Document(collection="StudentRegister")
+@Document(collection="Score")
 @Data
-public class StudentRegister {
+public class Score {
 
 	@Id
 	private String id;
@@ -82,20 +82,65 @@ public class StudentRegister {
 	private String schoolYear;
 	
 	/**
-	 * 是否报到 0--已报到，1--未报到
+	 * 排课id
 	 */
-	@Indexed
-	private int isregister;
+	private Long scheduleId;
 	
 	/**
-	 * 报到日期
+	 * 选课名称
 	 */
-	private Date registerDate;
+	private String courseName;
 	
 	/**
-	 * 实际报到日期
+	 * 选课类型
 	 */
-	private Date actualRegisterDate;
+	private String courseType;
+	
+	/**
+	 * 考试时间
+	 */
+	private Date examTime;
+	
+	/**
+	 * 期中成绩
+	 */
+	private String midtermScore;
+	
+	/**
+	 * 期末成绩
+	 */
+	private String finalScore;
+	
+	/**
+	 * 平时成绩
+	 */
+	private String usualScore;
+	
+	/**
+	 * 总评成绩
+	 */
+	private String TotalScore;
+	
+	/**
+	 * 成绩类型
+	 */
+	private String scoreType;
+	
+	
+	/**
+	 * 成绩结果类型
+	 */
+	private String scoreResultType;
+	
+	/**
+	 * 所得学分
+	 */
+	private int credit;
+	
+	/**
+	 * 绩点
+	 */
+	private String gradePoint;
 	
 	/**
 	 * 备注
