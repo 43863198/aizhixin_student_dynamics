@@ -1,5 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.alertinformation.controller;
 
+import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningDetailsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
@@ -55,7 +56,7 @@ public class AlertWarningInformationController {
      */
     @GetMapping(value = "/getlist", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "预警信息列表", response = Void.class, notes = "预警信息列表<br><br><b>@author jianwei.wu</b>")
-    public PageData<WarningInformation> getWarningInforList(
+    public PageData<WarningDetailsDTO> getWarningInforList(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "collegeId 学院id") @RequestParam(value = "collegeId", required = false) Long collegeId,
             @ApiParam(value = "type 预警类型") @RequestParam(value = "type", required = false) String  type,
