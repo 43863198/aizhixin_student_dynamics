@@ -77,7 +77,7 @@ public class AlertWarningInformationService {
 	
 	public List<RegisterAlertCountDomain> findRegisterCountInfor(Long orgId) {
 
-		String querySql = " SELECT COUNT(1) as countNum,COLLOGE_ID,COLLOGE_NAME,WARNING_LEVEL FROM `t_alert_warning_information` where DELETE_FLAG = "+DataValidity.VALID.getState()+" and ORG_ID ="+orgId+" and WARNING_TYPE ='Register' GROUP BY COLLOGE_ID,WARNING_LEVEL ORDER BY COLLOGE_ID,WARNING_LEVEL ;";
+		String querySql = " SELECT COUNT(1) as countNum,COLLOGE_ID,COLLOGE_NAME,WARNING_LEVEL FROM `t_warning_information` where DELETE_FLAG = "+DataValidity.VALID.getState()+" and ORG_ID ="+orgId+" and WARNING_TYPE ='Register' GROUP BY COLLOGE_ID,WARNING_LEVEL ORDER BY COLLOGE_ID,WARNING_LEVEL ;";
 
 		return pageJdbcUtil.getInfo(querySql, registerCountRm);
 	}
@@ -85,8 +85,8 @@ public class AlertWarningInformationService {
 	public PageData<WarningInformation> findPageWarningInfor(Pageable pageable,Long orgId, Long collegeId, String  type, String warningLevel) {
 		PageData<WarningInformation> p = new PageData<>();
 		Map<String, Object> condition = new HashMap<>();
-		StringBuilder cql = new StringBuilder("SELECT count(1) FROM t_alert_warning_information aw WHERE 1 = 1");
-		StringBuilder sql = new StringBuilder("SELECT aw.* FROM t_alert_warning_information aw WHERE 1 = 1");
+		StringBuilder cql = new StringBuilder("SELECT count(1) FROM t_warning_information aw WHERE 1 = 1");
+		StringBuilder sql = new StringBuilder("SELECT aw.* FROM t_warning_information aw WHERE 1 = 1");
 		if(null!=orgId){
 			cql.append(" and aw.ORG_ID = :orgId");
 			sql.append(" and aw.ORG_ID = :orgId");
@@ -158,8 +158,8 @@ public class AlertWarningInformationService {
 	
 	public Map<String, Object> queryAlertInforPage(AlertInforQueryDomain domain) {
 
-		String querySql = "SELECT ID,NAME,COLLOGE_NAME,CLASS_NAME,JOB_NUMBER,WARNING_LEVEL,WARNING_TYPE,WARNING_TIME,WARNING_STATE FROM `t_alert_warning_information` where DELETE_FLAG ="+DataValidity.VALID.getState()+" ";
-		String countSql = "SELECT count(1) FROM `t_alert_warning_information` where DELETE_FLAG ="+DataValidity.VALID.getState()+" ";
+		String querySql = "SELECT ID,NAME,COLLOGE_NAME,CLASS_NAME,JOB_NUMBER,WARNING_LEVEL,WARNING_TYPE,WARNING_TIME,WARNING_STATE FROM `t_warning_information` where DELETE_FLAG ="+DataValidity.VALID.getState()+" ";
+		String countSql = "SELECT count(1) FROM `t_warning_information` where DELETE_FLAG ="+DataValidity.VALID.getState()+" ";
 		
 		if(!StringUtils.isEmpty(domain.getKeywords())){
 			
@@ -272,7 +272,7 @@ public class AlertWarningInformationService {
 	
 	public List<RegisterAlertCountDomain> alertCountInfor(AlertInforQueryDomain domain) {
 
-		String querySql = " SELECT COUNT(1) as countNum,WARNING_LEVEL FROM `t_alert_warning_information` where DELETE_FLAG = "+DataValidity.VALID.getState()+" ";
+		String querySql = " SELECT COUNT(1) as countNum,WARNING_LEVEL FROM `t_warning_information` where DELETE_FLAG = "+DataValidity.VALID.getState()+" ";
 
 		if(!StringUtils.isEmpty(domain.getKeywords())){
 			querySql += " and ( NAME like '%" + domain.getKeywords()+ "%' or JOB_NUMBER like '%" + domain.getKeywords()+ "%') ";
@@ -386,7 +386,7 @@ public class AlertWarningInformationService {
 		int sum2 = 0;
 		int sum3 = 0;
 		int alreadyProcessed = 0;
-		StringBuilder sql = new StringBuilder("SELECT COUNT(1) as count, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, SUM(IF(WARNING_STATE = 20, 1, 0)) as sum4 FROM t_alert_warning_information WHERE 1 = 1");
+		StringBuilder sql = new StringBuilder("SELECT COUNT(1) as count, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, SUM(IF(WARNING_STATE = 20, 1, 0)) as sum4 FROM t_warning_information WHERE 1 = 1");
 		if(null!=orgId){
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId",orgId);
@@ -426,7 +426,7 @@ public class AlertWarningInformationService {
 		Map<String, Object> data = new HashMap<>();
 		Map<String, Object> condition = new HashMap<>();
 		//统计下的列表最近想的前20条
-		StringBuilder lql = new StringBuilder("SELECT * FROM t_alert_warning_information WHERE 1 = 1");
+		StringBuilder lql = new StringBuilder("SELECT * FROM t_warning_information WHERE 1 = 1");
 		if (null != orgId) {
 			lql.append(" and ORG_ID = :orgId");
 			condition.put("orgId", orgId);
@@ -456,7 +456,7 @@ public class AlertWarningInformationService {
 		List<CollegeStatisticsDTO> collegeStatisticsDTOList = new ArrayList<>();
 		List<CollegeStatisticsDTO> subdata = null;
 		Map<String, Object> condition = new HashMap<>();
-		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, count(1) FROM t_alert_warning_information  WHERE 1 = 1");
+		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, count(1) FROM t_warning_information  WHERE 1 = 1");
 		if (null != orgId) {
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId", orgId);
@@ -517,8 +517,8 @@ public class AlertWarningInformationService {
 		int sum1 = 0;
 		int sum2 = 0;
 		int sum3 = 0;
-		StringBuilder cql = new StringBuilder("SELECT count(1) FROM t_alert_warning_information  WHERE 1 = 1");
-		StringBuilder sql = new StringBuilder("SELECT WARNING_TYPE, count(1), SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3 FROM t_alert_warning_information  WHERE 1 = 1");
+		StringBuilder cql = new StringBuilder("SELECT count(1) FROM t_warning_information  WHERE 1 = 1");
+		StringBuilder sql = new StringBuilder("SELECT WARNING_TYPE, count(1), SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3 FROM t_warning_information  WHERE 1 = 1");
 		if (null != orgId) {
 			cql.append(" and ORG_ID = :orgId");
 			sql.append(" and ORG_ID = :orgId");
@@ -575,7 +575,7 @@ public class AlertWarningInformationService {
 		Map<String,Object> result = new HashMap<>();
 		List<CollegeStatisticsDTO> collegeStatisticsDTOList = new ArrayList<>();
 		Map<String, Object> condition = new HashMap<>();
-		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3 FROM t_alert_warning_information  WHERE 1 = 1");
+		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3 FROM t_warning_information  WHERE 1 = 1");
 		if (null != orgId) {
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId", orgId);
