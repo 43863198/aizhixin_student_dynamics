@@ -82,8 +82,8 @@ public class AlertWarningInformationService {
 		return pageJdbcUtil.getInfo(querySql, registerCountRm);
 	}
 
-	public PageData<WarningInformation> findPageWarningInfor(Pageable pageable,Long orgId, Long collegeId, String  type, String warningLevel) {
-		PageData<WarningInformation> p = new PageData<>();
+	public PageData<WarningDetailsDTO> findPageWarningInfor(Pageable pageable,Long orgId, Long collegeId, String  type, String warningLevel) {
+		PageData<WarningDetailsDTO> p = new PageData<>();
 		Map<String, Object> condition = new HashMap<>();
 		StringBuilder cql = new StringBuilder("SELECT count(1) FROM t_warning_information aw WHERE 1 = 1");
 		StringBuilder sql = new StringBuilder("SELECT aw.* FROM t_warning_information aw WHERE 1 = 1");
@@ -124,10 +124,30 @@ public class AlertWarningInformationService {
 		sq.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
 		sq.setMaxResults(pageable.getPageSize());
 		List<WarningInformation> data = sq.getResultList();
-		for(WarningInformation d :data){
-			d.setWarningType(WarningType.valueOf(d.getWarningType()).getValue());
+		List<WarningDetailsDTO> warningInformationDTOList = new ArrayList<>();
+		for(WarningInformation alertWarningInformation :data){
+			WarningDetailsDTO warningDetailsDTO = new WarningDetailsDTO();
+			warningDetailsDTO.setId(alertWarningInformation.getId());
+			warningDetailsDTO.setName(alertWarningInformation.getName());
+			warningDetailsDTO.setJobNumber(alertWarningInformation.getJobNumber());
+			warningDetailsDTO.setCollogeName(alertWarningInformation.getCollogeName());
+			warningDetailsDTO.setProfessionalName(alertWarningInformation.getProfessionalName());
+			warningDetailsDTO.setClassName(alertWarningInformation.getClassName());
+			warningDetailsDTO.setTeachingYear(alertWarningInformation.getTeachingYear());
+			warningDetailsDTO.setPhone(alertWarningInformation.getPhone());
+			warningDetailsDTO.setAddress(alertWarningInformation.getAddress());
+			warningDetailsDTO.setParentsContact(alertWarningInformation.getParentsContact());
+			warningDetailsDTO.setWarningTime(alertWarningInformation.getWarningTime());
+			warningDetailsDTO.setWarningName(WarningType.valueOf(alertWarningInformation.getWarningType()).getValue());
+			warningDetailsDTO.setWarningLevel(alertWarningInformation.getWarningLevel());
+			AlarmSettings alarmSettings = alarmSettingsService.getAlarmSettingsById(alertWarningInformation.getOrgId(), alertWarningInformation.getWarningType());
+			if (null != alarmSettings) {
+				warningDetailsDTO.setWarningCondition(alarmSettings.getWarningCondition());
+				warningDetailsDTO.setWarningStandard(alarmSettings.getWarningStandard());
+			}
+			warningInformationDTOList.add(warningDetailsDTO);
 		}
-		p.setData(sq.getResultList());
+		p.setData(warningInformationDTOList);
 		p.getPage().setTotalElements(count);
 		p.getPage().setPageNumber(pageable.getPageNumber());
 		p.getPage().setPageSize(pageable.getPageSize());
@@ -425,6 +445,7 @@ public class AlertWarningInformationService {
 		Map<String,Object> result = new HashMap<>();
 		Map<String, Object> data = new HashMap<>();
 		Map<String, Object> condition = new HashMap<>();
+		List<WarningDetailsDTO> res = new ArrayList<>();
 		//统计下的列表最近想的前20条
 		StringBuilder lql = new StringBuilder("SELECT * FROM t_warning_information WHERE 1 = 1");
 		if (null != orgId) {
@@ -438,10 +459,24 @@ public class AlertWarningInformationService {
 				lq.setParameter(e.getKey(), e.getValue());
 			}
 			List<WarningInformation> alertWarningInformationList = lq.getResultList();
-			for (WarningInformation aw : alertWarningInformationList) {
-				aw.setWarningType(WarningType.valueOf(aw.getWarningType()).getValue());
+			for (WarningInformation alertWarningInformation : alertWarningInformationList) {
+				WarningDetailsDTO warningDetailsDTO = new WarningDetailsDTO();
+				warningDetailsDTO.setId(alertWarningInformation.getId());
+				warningDetailsDTO.setName(alertWarningInformation.getName());
+				warningDetailsDTO.setJobNumber(alertWarningInformation.getJobNumber());
+				warningDetailsDTO.setCollogeName(alertWarningInformation.getCollogeName());
+				warningDetailsDTO.setProfessionalName(alertWarningInformation.getProfessionalName());
+				warningDetailsDTO.setClassName(alertWarningInformation.getClassName());
+				warningDetailsDTO.setTeachingYear(alertWarningInformation.getTeachingYear());
+				warningDetailsDTO.setPhone(alertWarningInformation.getPhone());
+				warningDetailsDTO.setAddress(alertWarningInformation.getAddress());
+				warningDetailsDTO.setParentsContact(alertWarningInformation.getParentsContact());
+				warningDetailsDTO.setWarningTime(alertWarningInformation.getWarningTime());
+				warningDetailsDTO.setWarningName(WarningType.valueOf(alertWarningInformation.getWarningType()).getValue());
+				warningDetailsDTO.setWarningLevel(alertWarningInformation.getWarningLevel());
+				res.add(warningDetailsDTO);
 			}
-			data.put("latestinformation", alertWarningInformationList);
+			data.put("latestinformation", res);
 		}catch (Exception e){
 			result.put("success",false);
 			result.put("message","获取最新预警学生异常！");
