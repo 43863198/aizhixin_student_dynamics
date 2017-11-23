@@ -120,7 +120,7 @@ public class WarningInformation extends AbstractEntity {
      * 预警类型
      */
     @NotNull
-   // @Pattern(regexp = "/[a-zA-Z\\u4E00-\\u9FA5]+$/")
+    @Pattern(regexp = "[a-zA-Z]+$")
     @Column(name = "WARNING_TYPE")
     @Getter @Setter private String warningType;
 

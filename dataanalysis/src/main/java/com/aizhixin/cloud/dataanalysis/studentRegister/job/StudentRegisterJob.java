@@ -72,7 +72,7 @@ public class StudentRegisterJob {
 //		alaParam.setSetParameter(1);
 //		alaParam.setAlarmSettings(aSetting);
 //		alarmParams.add(alaParam);
-		
+
 //		if (null != alarmParams && alarmParams.size() > 0) {
 //			HashMap<Long, ArrayList<AlarmParameter>> alarmMap = new HashMap<Long, ArrayList<AlarmParameter>>();
 //			ArrayList<AlertWarningInformation> alertInforList = new ArrayList<AlertWarningInformation>();
