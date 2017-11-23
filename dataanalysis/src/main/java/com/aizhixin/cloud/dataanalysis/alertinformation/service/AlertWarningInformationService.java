@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.CollegeStatisticsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.TypeStatisticsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningDetailsDTO;
-import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AlertWarningInformation;
+import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
@@ -82,8 +82,8 @@ public class AlertWarningInformationService {
 		return pageJdbcUtil.getInfo(querySql, registerCountRm);
 	}
 
-	public PageData<AlertWarningInformation> findPageWarningInfor(Pageable pageable,Long orgId, Long collegeId, String  type, String warningLevel) {
-		PageData<AlertWarningInformation> p = new PageData<>();
+	public PageData<WarningInformation> findPageWarningInfor(Pageable pageable,Long orgId, Long collegeId, String  type, String warningLevel) {
+		PageData<WarningInformation> p = new PageData<>();
 		Map<String, Object> condition = new HashMap<>();
 		StringBuilder cql = new StringBuilder("SELECT count(1) FROM t_alert_warning_information aw WHERE 1 = 1");
 		StringBuilder sql = new StringBuilder("SELECT aw.* FROM t_alert_warning_information aw WHERE 1 = 1");
@@ -115,7 +115,7 @@ public class AlertWarningInformationService {
 			}
 		}
 		Query cq = em.createNativeQuery(cql.toString());
-		Query sq = em.createNativeQuery(sql.toString(), AlertWarningInformation.class);
+		Query sq = em.createNativeQuery(sql.toString(), WarningInformation.class);
 		for (Map.Entry<String, Object> e : condition.entrySet()) {
 			cq.setParameter(e.getKey(), e.getValue());
 			sq.setParameter(e.getKey(), e.getValue());
@@ -123,8 +123,8 @@ public class AlertWarningInformationService {
 		Long count = Long.valueOf(String.valueOf(cq.getSingleResult()));
 		sq.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
 		sq.setMaxResults(pageable.getPageSize());
-		List<AlertWarningInformation> data = sq.getResultList();
-		for(AlertWarningInformation d :data){
+		List<WarningInformation> data = sq.getResultList();
+		for(WarningInformation d :data){
 			d.setWarningType(WarningType.valueOf(d.getWarningType()).getValue());
 		}
 		p.setData(sq.getResultList());
@@ -433,12 +433,12 @@ public class AlertWarningInformationService {
 		}
 		lql.append(" order by WARNING_TIME desc limit 20");
 		try {
-			Query lq = em.createNativeQuery(lql.toString(), AlertWarningInformation.class);
+			Query lq = em.createNativeQuery(lql.toString(), WarningInformation.class);
 			for (Map.Entry<String, Object> e : condition.entrySet()) {
 				lq.setParameter(e.getKey(), e.getValue());
 			}
-			List<AlertWarningInformation> alertWarningInformationList = lq.getResultList();
-			for (AlertWarningInformation aw : alertWarningInformationList) {
+			List<WarningInformation> alertWarningInformationList = lq.getResultList();
+			for (WarningInformation aw : alertWarningInformationList) {
 				aw.setWarningType(WarningType.valueOf(aw.getWarningType()).getValue());
 			}
 			data.put("latestinformation", alertWarningInformationList);
@@ -624,7 +624,7 @@ public class AlertWarningInformationService {
 		Map<String, Object> result = new HashMap<>();
 		WarningDetailsDTO warningDetailsDTO = new WarningDetailsDTO();
 		try {
-			AlertWarningInformation alertWarningInformation = alertWarningInformationRepository.findOne(id);
+			WarningInformation alertWarningInformation = alertWarningInformationRepository.findOne(id);
 			if (null != alertWarningInformation) {
 				warningDetailsDTO.setId(alertWarningInformation.getId());
 				warningDetailsDTO.setName(alertWarningInformation.getName());
@@ -655,12 +655,12 @@ public class AlertWarningInformationService {
        return result;
 	}
 
-	public List<AlertWarningInformation> getawinfoByDefendantId(Long orgId,String warningType, Long defendantId){
+	public List<WarningInformation> getawinfoByDefendantId(Long orgId,String warningType, Long defendantId){
 		return alertWarningInformationRepository.getawinfoByDefendantId(orgId,warningType,defendantId,DataValidity.VALID.getState());
 	}
 
 
-	public List<AlertWarningInformation> getawinfoByOrgIdAndWarningType(Long orgId,String warningType){
+	public List<WarningInformation> getawinfoByOrgIdAndWarningType(Long orgId,String warningType){
 		return alertWarningInformationRepository.getawinfoByOrgIdAndWarningType(orgId,warningType,DataValidity.VALID.getState());
 	}
 
