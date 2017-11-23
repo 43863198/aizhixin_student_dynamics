@@ -134,8 +134,9 @@ public class StudentRegisterJob {
 //	}
 
 
-	@Scheduled(cron = "0 0/3 * * * ?")
+	@Scheduled(cron = "0 0/50 * * * ?")
 	public void studenteRegister() {
+		this.setWarningType(213L);
 		this.setAlertWarningInformation(213L);
 	}
 
