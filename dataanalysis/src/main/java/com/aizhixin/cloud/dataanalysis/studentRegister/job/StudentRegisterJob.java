@@ -211,7 +211,7 @@ public class StudentRegisterJob {
 
 	public void setAlertWarningInformation(Long orgId){
 		String url = "http://gateway.aizhixintest.com/org-manager";
-		url = url+"/v1/students/list?pageSize=10000&orgId="+orgId;
+		url = url+"/v1/students/list?pageSize=1000&orgId="+orgId;
 		List<WarningInformation> awinfoList = new ArrayList<>();
 		try {
 			String respone = new RestUtil().getData(url, null);
