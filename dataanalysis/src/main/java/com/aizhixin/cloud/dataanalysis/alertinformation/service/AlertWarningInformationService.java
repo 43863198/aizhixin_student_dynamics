@@ -669,6 +669,7 @@ public class AlertWarningInformationService {
 				warningDetailsDTO.setWarningTime(alertWarningInformation.getWarningTime());
 				warningDetailsDTO.setWarningName(WarningType.valueOf(alertWarningInformation.getWarningType()).getValue());
 				warningDetailsDTO.setWarningLevel(alertWarningInformation.getWarningLevel());
+				warningDetailsDTO.setWarningState(alertWarningInformation.getWarningState());
 			}
 		}catch (Exception e){
 			result.put("success",false);
