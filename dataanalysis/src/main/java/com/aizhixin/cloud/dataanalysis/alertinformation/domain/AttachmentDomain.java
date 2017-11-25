@@ -12,6 +12,10 @@ import lombok.Data;
 @ApiModel(description="附件信息")
 @Data
 public class AttachmentDomain {
+
+    @ApiModelProperty(value = "附件id", required = false)
+    private String id;
+
     @ApiModelProperty(value = "附件名称", required = false)
     private String fileName;
 
