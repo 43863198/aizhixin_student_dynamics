@@ -734,7 +734,7 @@ public class AlertWarningInformationService {
 				iq.setParameter("orgId", orgId);
 			}
 			if(!StringUtils.isBlank(type)){
-				sq.setParameter("type", type);
+				cq.setParameter("type", type);
 				iq.setParameter("type", type);
 			}
 			List<Object> res =  sq.getResultList();
