@@ -34,7 +34,7 @@ public class AlarmHandlingController {
     private AlarmHandlingService alarmHandlingService;
 
     @RequestMapping(value = "/addprocessing", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "POST", value = "提交处理信息", response = Void.class, notes = "提交处理信息<br><br><b>@author 郑宁</b>")
+    @ApiOperation(httpMethod = "POST", value = "提交处理信息", response = Void.class, notes = "提交处理信息<br><br><b>@author wu.jianwei</b>")
     public Map<String, Object> addProcessing(
             @ApiParam(value = "<b>必填:、</b><br>warningInformationId:预警信息id<br><b>" +
                     "选填:、" +
@@ -45,7 +45,7 @@ public class AlarmHandlingController {
     }
 
     @RequestMapping(value = "/updateprocessing", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "PUT", value = "修改处理信息", response = Void.class, notes = "修改处理信息<br><br><b>@author 郑宁</b>")
+    @ApiOperation(httpMethod = "PUT", value = "修改处理信息", response = Void.class, notes = "修改处理信息<br><br><b>@author wu.jianwei</b>")
     public Map<String, Object> updateProcessing(
             @ApiParam(value = "<b>必填:、</b><br>warningInformationId:预警信息id<br><b>" +
                     "选填:、" +
@@ -58,7 +58,7 @@ public class AlarmHandlingController {
 
 
     @RequestMapping(value = "/processing", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "POST", value = "修改处理信息", response = Void.class, notes = "修改处理信息<br><br><b>@author 郑宁</b>")
+    @ApiOperation(httpMethod = "POST", value = "处理结果", response = Void.class, notes = "处理结果<br><br><b>@author wu.jianwei</b>")
     public Map<String, Object> processing(
             @ApiParam(value = "<b>必填:、</b><br>warningInformationId:预警信息id<br><b>" +
                     "<br>status:10 完成预警处理 20 撤销预警处理<br>")  @RequestBody DealResultDomain dealResultDomain) {
