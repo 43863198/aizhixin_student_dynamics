@@ -74,6 +74,11 @@ public class AlertWarningInformationService {
 			return domain;
 		}
 	};
+
+
+	public WarningInformation getOneById(String id){
+		return alertWarningInformationRepository.findOne(id);
+	}
 	
 	public List<RegisterAlertCountDomain> findRegisterCountInfor(Long orgId) {
 
@@ -717,6 +722,7 @@ public class AlertWarningInformationService {
 			iql.append(" and ORG_ID = :orgId");
 		}
 		if(!StringUtils.isBlank(type)){
+			sql.append(" and WARNING_TYPE = :type");
 			cql.append(" and WARNING_TYPE = :type");
 			iql.append(" and WARNING_TYPE = :type");
 		}
@@ -734,6 +740,7 @@ public class AlertWarningInformationService {
 				iq.setParameter("orgId", orgId);
 			}
 			if(!StringUtils.isBlank(type)){
+				sq.setParameter("type", type);
 				cq.setParameter("type", type);
 				iq.setParameter("type", type);
 			}
@@ -816,6 +823,10 @@ public class AlertWarningInformationService {
 	return result;
 }
 
+
+	public void  save(WarningInformation warningInformation){
+		alertWarningInformationRepository.save(warningInformation);
+	}
 
 
 
