@@ -78,5 +78,11 @@ public class AlarmSettings extends AbstractEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Getter @Setter protected Date endTime = new Date();
 
+    /*
+    * 开启状态(10:启用 ;20:关闭；)
+    */
+    @NotNull
+    @Column(name = "SETUP_CLOSE_FLAG")
+    @Getter @Setter private int setupCloseFlag;
 
 }
