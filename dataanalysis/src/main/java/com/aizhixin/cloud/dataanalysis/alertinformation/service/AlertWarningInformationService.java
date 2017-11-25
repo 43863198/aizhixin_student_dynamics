@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.CollegeStatisticsDTO;
+import com.aizhixin.cloud.dataanalysis.alertinformation.dto.CollegeWarningInfoDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.TypeStatisticsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningDetailsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
@@ -680,12 +681,12 @@ public class AlertWarningInformationService {
 	}
 
 	public List<WarningInformation> getawinfoByDefendantId(Long orgId,String warningType, Long defendantId){
-		return alertWarningInformationRepository.getawinfoByDefendantId(orgId,warningType,defendantId,DataValidity.VALID.getState());
+		return alertWarningInformationRepository.getawinfoByDefendantId(orgId, warningType, defendantId, DataValidity.VALID.getState());
 	}
 
 
 	public List<WarningInformation> getawinfoByOrgIdAndWarningType(Long orgId,String warningType){
-		return alertWarningInformationRepository.getawinfoByOrgIdAndWarningType(orgId,warningType,DataValidity.VALID.getState());
+		return alertWarningInformationRepository.getawinfoByOrgIdAndWarningType(orgId, warningType, DataValidity.VALID.getState());
 	}
 
 	public static String accuracy(double num, double total, int scale){
@@ -698,4 +699,123 @@ public class AlertWarningInformationService {
 		double accuracy_num = num / total * 100;
 		return df.format(accuracy_num);
 	}
+
+	/****************************************************************/
+	public Map<String,Object> getStatisticsByCollege(Pageable pageable,Long orgId, String type) {
+		Map<String, Object> result = new HashMap<>();
+		//学院预警统计数量
+		List<CollegeStatisticsDTO>  collegeStatisticsDTOList = new ArrayList<>();
+		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, count(1) as count FROM t_warning_information  WHERE 1 = 1");
+		//学院预警信息
+		PageData<CollegeWarningInfoDTO> p = new PageData<>();
+		StringBuilder cql = new StringBuilder("SELECT count(sub.COLLOGE_ID) FROM (SELECT COLLOGE_ID FROM t_warning_information WHERE 1 = 1 ");
+		StringBuilder iql = new StringBuilder("SELECT COLLOGE_NAME, count(1) as count, SUM(IF(WARNING_STATE = 20, 1, 0)) as sum, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, SUM(IF(WARNING_LEVEL = 1 and WARNING_STATE = 20, 1, 0)) as asum1, SUM(IF(WARNING_LEVEL = 2 and WARNING_STATE = 20, 1, 0)) as asum2, SUM(IF(WARNING_LEVEL = 3 and WARNING_STATE = 20, 1, 0)) as asum3 FROM t_warning_information  WHERE 1 = 1");
+		if (null != orgId) {
+			sql.append(" and ORG_ID = :orgId");
+			cql.append(" and ORG_ID = :orgId");
+			iql.append(" and ORG_ID = :orgId");
+		}
+		if(!StringUtils.isBlank(type)){
+			cql.append(" and WARNING_TYPE = :type");
+			iql.append(" and WARNING_TYPE = :type");
+		}
+		sql.append(" GROUP BY COLLOGE_ID");
+		cql.append(" GROUP BY COLLOGE_ID) sub");
+		iql.append(" GROUP BY COLLOGE_ID");
+
+		try{
+			Query sq = em.createNativeQuery(sql.toString());
+			Query cq = em.createNativeQuery(cql.toString());
+			Query iq = em.createNativeQuery(iql.toString());
+			if(null!=orgId) {
+				cq.setParameter("orgId", orgId);
+				sq.setParameter("orgId", orgId);
+				iq.setParameter("orgId", orgId);
+			}
+			if(!StringUtils.isBlank(type)){
+				sq.setParameter("type", type);
+				iq.setParameter("type", type);
+			}
+			List<Object> res =  sq.getResultList();
+			if(null!=res){
+				for(Object obj: res){
+					Object[] d = (Object[]) obj;
+					CollegeStatisticsDTO collegeStatisticsDTO = new CollegeStatisticsDTO();
+					if(null!=d[0]){
+						collegeStatisticsDTO.setCollegeName(String.valueOf(d[0]));
+					}
+					if(null!=d[1]){
+						collegeStatisticsDTO.setSum1(Integer.valueOf(String.valueOf(d[1])));
+					}
+					if(null!=d[2]){
+						collegeStatisticsDTO.setSum2(Integer.valueOf(String.valueOf(d[2])));
+					}
+					if(null!=d[3]){
+						collegeStatisticsDTO.setSum3(Integer.valueOf(String.valueOf(d[3])));
+					}
+					if(null!=d[4]){
+						collegeStatisticsDTO.setTotal(Integer.valueOf(String.valueOf(d[4])));
+					}
+					collegeStatisticsDTOList.add(collegeStatisticsDTO);
+				}
+			}
+			Long count = Long.valueOf(String.valueOf(cq.getSingleResult()));
+			iq.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
+			iq.setMaxResults(pageable.getPageSize());
+			List<Object> rd = iq.getResultList();
+			List<CollegeWarningInfoDTO> collegeWarningInfoDTOList = new ArrayList<>();
+			if(null!=rd&&rd.size()>0) {
+				for (Object obj : rd) {
+					Object[] d = (Object[])obj;
+					CollegeWarningInfoDTO collegeWarningInfoDTO = new CollegeWarningInfoDTO();
+					if(null!=d[0]){
+						collegeWarningInfoDTO.setCollegeName(String.valueOf(d[0]));
+					}
+					if(null!=d[1]) {
+						collegeWarningInfoDTO.setTotal(Integer.valueOf(String.valueOf(d[1])));
+					}
+					if(null!=d[2]){
+                        collegeWarningInfoDTO.setProcessedNumber(Integer.valueOf(String.valueOf(d[2])));
+					}
+					if(null!=d[3]){
+						collegeWarningInfoDTO.setSum1(Integer.valueOf(String.valueOf(d[3])));
+					}
+					if(null!=d[4]){
+						collegeWarningInfoDTO.setSum2(Integer.valueOf(String.valueOf(d[4])));
+					}
+					if(null!=d[5]){
+						collegeWarningInfoDTO.setSum3(Integer.valueOf(String.valueOf(d[5])));
+					}
+					if(null!=d[6]){
+						collegeWarningInfoDTO.setProcessedSum1(Integer.valueOf(String.valueOf(d[6])));
+					}
+					if(null!=d[7]){
+						collegeWarningInfoDTO.setProcessedSum2(Integer.valueOf(String.valueOf(d[7])));
+					}
+					if(null!=d[8]){
+						collegeWarningInfoDTO.setProcessedSum3(Integer.valueOf(String.valueOf(d[8])));
+					}
+					collegeWarningInfoDTO.setProcessedProportion(accuracy(collegeWarningInfoDTO.getProcessedNumber()*1.0,collegeWarningInfoDTO.getTotal()*1.0,2));
+					collegeWarningInfoDTOList.add(collegeWarningInfoDTO);
+				}
+			}
+			p.setData(collegeWarningInfoDTOList);
+			p.getPage().setTotalElements(count);
+			p.getPage().setPageNumber(pageable.getPageNumber());
+			p.getPage().setPageSize(pageable.getPageSize());
+			p.getPage().setTotalPages(PageUtil.cacalatePagesize(count, p.getPage().getPageSize()));
+	} catch (Exception e) {
+		result.put("success", false);
+		result.put("message", "按类型统计异常！");
+		return result;
+	}
+	result.put("success", true);
+	result.put("collegeStatisticsDTOList", collegeStatisticsDTOList);
+	result.put("pagData", p);
+	return result;
+}
+
+
+
+
 }

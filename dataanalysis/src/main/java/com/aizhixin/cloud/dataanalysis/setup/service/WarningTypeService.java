@@ -26,4 +26,12 @@ public class WarningTypeService {
         return warningTypeRespository.findAll();
     }
 
+    public void save(WarningType warningType){
+        warningTypeRespository.save(warningType);
+    }
+
+    public void save(List<WarningType> warningTypeList){
+        warningTypeRespository.save(warningTypeList);
+    }
+
 }

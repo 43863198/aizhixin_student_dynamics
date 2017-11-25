@@ -148,6 +148,27 @@ public class AlertWarningInformationController {
     }
 
 
+    /**
+     * 预警统计
+     * @param orgId
+     * @return
+     */
+    @GetMapping(value = "/statistics", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "预警统计", response = Void.class, notes = "预警统计<br><br><b>@author jianwei.wu</b>")
+    public Map<String,Object>   getStatisticsByCollege(
+            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "type 类型") @RequestParam(value = "type", required = false) String type,
+            @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
+            @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+        return alertWarningInforService.getStatisticsByCollege(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId, type);
+    }
+
+
+
+
+
+
+
     @RequestMapping(value = "/registercount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "按机构id统计机构下所有学院的注册报到预警数量", response = Void.class, notes = "按机构id统计机构下所有学院的注册报到预警数量<br><br><b>@author 郑宁</b>")
     public ResponseEntity<Map<String, Object>> registerCount(
