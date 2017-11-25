@@ -7,24 +7,26 @@
     <property name="now" value="now()" dbms="mysql,h2"/>
     <property name="now" value="current_timestamp" dbms="postgresql"/>
     <property name="now" value="sysdate" dbms="oracle"/>
-    <!-- 预警设置表结构-->
+    <!-- 预警处理操作记录表结构-->
     <changeSet id="20171113154645" author="jianwei.wu">
 		<preConditions onFail="MARK_RAN">
 	        <not>
-	            <tableExists tableName="T_ALARM_SETTINGS"/>
+	            <tableExists tableName="T_OPERATION_RECORD"/>
 	        </not>
 	    </preConditions>
-        <createTable tableName="T_ALARM_SETTINGS" remarks="预警设置">
-            <column name="ID"  type="VARCHAR(50)" >
+        <createTable tableName="T_OPERATION_RECORD" remarks="预警处理操作记录表">
+            <column name="ID" type="VARCHAR(50)">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="ORG_ID" type="BIGINT" remarks="机构ID"/>
-            <column name="TYPE" type="VARCHAR(50)" remarks="预警类别"/>
-            <column name="WARNING_LEVEL" type="INT(4)" remarks="预警等级"/>
-            <column name="RULE_SET" type="VARCHAR(50)" remarks="应用规则id集合"/>
-            <column name="RELATIONSHIP" type="VARCHAR(500)" remarks="规则集合关系"/>
-            <column name="START_TIME" type="DATETIME" defaultValueDate="${now}" remarks="规则预警起始时间"/>
-            <column name="END_TIME" type="DATETIME" defaultValueDate="${now}" remarks="规则预警结束时间"/>
+            <column name="WARNINGINFORMATION_ID" type="VARCHAR(50)" remarks="预警信息id"/>
+            <column name="WARNING_STATE" type="INT(4)"  remarks="状态(10:告警中；20：已处理；30：处理中；40:取消)"/>
+            <column name="PROCESSINGMODE_ID" type="VARCHAR(50)" remarks="预警处理方式设置id"/>
+            <column name="OPERATION_TYPE" type="VARCHAR(50)" remarks="预警处理操作类型(短信通知，辅导员和学生面谈，院系教务和家长电话联系等)"/>
+            <column name="PROPOSAL" type="VARCHAR(200)" remarks="预警处理建议"/>
+            <column name="OPERATION_TIME" type="DATETIME" defaultValueDate="${now}" remarks="处理时间"/>
+            <column name="SEMESTER_ID" type="BIGINT" remarks="所属学期id"/>
+            <column name="OPERATOR_ID" type="BIGINT" remarks="处理人员id"/>
+            <column name="ORG_ID" type="BIGINT" remarks="机构id"/>
             <column name="CREATED_BY" type="BIGINT" remarks="创建人ID"/>
             <column name="CREATED_DATE" type="DATETIME" defaultValueDate="${now}" remarks="创建时间"/>
             <column name="LAST_MODIFIED_BY" type="BIGINT" remarks="最后一次修改人ID"/>

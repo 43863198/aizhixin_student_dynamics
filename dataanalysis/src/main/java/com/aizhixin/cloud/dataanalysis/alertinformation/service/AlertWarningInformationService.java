@@ -18,7 +18,6 @@ import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningType;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 
-import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang.StringUtils;
@@ -140,11 +139,6 @@ public class AlertWarningInformationService {
 			warningDetailsDTO.setWarningTime(alertWarningInformation.getWarningTime());
 			warningDetailsDTO.setWarningName(WarningType.valueOf(alertWarningInformation.getWarningType()).getValue());
 			warningDetailsDTO.setWarningLevel(alertWarningInformation.getWarningLevel());
-			AlarmSettings alarmSettings = alarmSettingsService.getAlarmSettingsById(alertWarningInformation.getOrgId(), alertWarningInformation.getWarningType());
-			if (null != alarmSettings) {
-				warningDetailsDTO.setWarningCondition(alarmSettings.getWarningCondition());
-				warningDetailsDTO.setWarningStandard(alarmSettings.getWarningStandard());
-			}
 			warningInformationDTOList.add(warningDetailsDTO);
 		}
 		p.setData(warningInformationDTOList);
@@ -674,11 +668,6 @@ public class AlertWarningInformationService {
 				warningDetailsDTO.setWarningTime(alertWarningInformation.getWarningTime());
 				warningDetailsDTO.setWarningName(WarningType.valueOf(alertWarningInformation.getWarningType()).getValue());
 				warningDetailsDTO.setWarningLevel(alertWarningInformation.getWarningLevel());
-				AlarmSettings alarmSettings = alarmSettingsService.getAlarmSettingsById(alertWarningInformation.getOrgId(), alertWarningInformation.getWarningType());
-				if (null != alarmSettings) {
-					warningDetailsDTO.setWarningCondition(alarmSettings.getWarningCondition());
-					warningDetailsDTO.setWarningStandard(alarmSettings.getWarningStandard());
-				}
 			}
 		}catch (Exception e){
 			result.put("success",false);

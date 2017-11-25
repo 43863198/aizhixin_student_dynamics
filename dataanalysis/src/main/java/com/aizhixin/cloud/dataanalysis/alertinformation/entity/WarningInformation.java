@@ -131,6 +131,12 @@ public class WarningInformation extends AbstractEntity {
     @Getter @Setter private int warningLevel;
 
     /*
+     *  预警对象类型(60老师，70学生)
+     */
+    @Column(name = "USER_TYPE")
+    @Getter @Setter private int userType;
+
+    /*
     * 状态(10:告警中；20：已处理；30：处理中；40:取消)
     */
     @Column(name = "WARNING_STATE")
@@ -148,10 +154,33 @@ public class WarningInformation extends AbstractEntity {
     @Getter @Setter protected Date warningTime = new Date();
 
     /*
-     * 处理建议
+     * 学期id
      */
-    @Column(name = "PROPOSAL")
-    @Getter @Setter private String proposal;
+    @Column(name = "SEMESTER_ID")
+    @Getter @Setter private Long semesterId;
 
+    /*
+    * 学期名称
+    */
+    @Column(name = "SEMESTER_NAME")
+    @Getter @Setter private String semesterName;
+
+    /*
+     * 预警引擎设置id
+     */
+    @Column(name = "ALARMSETTINGS_ID")
+    @Getter @Setter private String alarmSettingsId;
+
+    /*
+     * 产生预警条件
+     */
+    @Column(name = "WARNING_CONDITION")
+    @Getter @Setter private String warningCondition;
+
+    /*
+     * 预警产生源数据
+     */
+    @Column(name = "WARNING_SOURCE")
+    @Getter @Setter private String warningSource;
 
 }

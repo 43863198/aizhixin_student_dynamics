@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 /**
  * @author: Created by jianwei.wu
  * @E-mail: wujianwei@aizhixin.com
@@ -14,7 +16,8 @@ import org.springframework.data.repository.query.Param;
 public interface AlarmSettingsRepository extends JpaRepository<AlarmSettings, String> {
 
     @Query("select ast from #{#entityName} ast where ast.deleteFlag = :deleteFlag and ast.warningType = :type and ast.orgId = :orgId")
-	AlarmSettings getAlarmSettingsByOrgId(@Param("orgId")Long orgId, @Param("type")String type, @Param("deleteFlag")int deleteFlag);
+	List<AlarmSettings> getAlarmSettingsByOrgIdAndType(@Param("orgId")Long orgId, @Param("type")String type, @Param("deleteFlag")int deleteFlag);
+
 
 
 }
