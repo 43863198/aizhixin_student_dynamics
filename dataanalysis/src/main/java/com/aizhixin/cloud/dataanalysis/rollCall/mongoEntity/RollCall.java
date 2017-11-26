@@ -1,4 +1,4 @@
-package com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity;
+package com.aizhixin.cloud.dataanalysis.rollCall.mongoEntity;
 
 import java.util.Date;
 
@@ -8,9 +8,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
 
-@Document(collection="StudentRegister")
+@Document(collection="RollCall")
 @Data
-public class StudentRegister {
+public class RollCall {
 
 	@Id
 	private String id;
@@ -82,20 +82,35 @@ public class StudentRegister {
 	private String schoolYear;
 	
 	/**
-	 * 是否报到 0--已报到，1--未报到
+	 * 排课id
 	 */
 	@Indexed
-	private int isregister;
+	private Long scheduleId;
 	
 	/**
-	 * 报到日期
+	 * 选课名称
 	 */
-	private Date registerDate;
+	private String courseName;
 	
 	/**
-	 * 实际报到日期
+	 * 选课类型（必修，限选，任选）
 	 */
-	private Date actualRegisterDate;
+	private String courseType;
+	
+	/**
+	 * 考勤日期
+	 */
+	private Date rollCallDate;
+	
+	/**
+	 * 考勤类型
+	 */
+	private String rollCallType;
+	
+	/**
+	 * 考勤结果
+	 */
+	private String rollCallResult;
 	
 	/**
 	 * 备注

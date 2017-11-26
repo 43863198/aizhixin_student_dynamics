@@ -25,6 +25,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.aizhixin.cloud.dataanalysis.common.constant.StudentRegisterConstant;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
+import com.aizhixin.cloud.dataanalysis.rollCall.mongoEntity.RollCall;
+import com.aizhixin.cloud.dataanalysis.rollCall.mongoRespository.RollCallMongoRespository;
+import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
+import com.aizhixin.cloud.dataanalysis.score.mongoRespository.ScoreMongoRespository;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoRespository.StudentRegisterMongoRespository;
 
@@ -38,18 +42,22 @@ import io.swagger.annotations.ApiParam;
  */
 @RestController
 @RequestMapping("/v1/test/studentregister")
-@Api(value = "IDC环境office文档数据操作", description = "针对IDC环境office文档历史数据操作")
+@Api(value = "IDC环境office文档数据操作", description = "生成mongodb模拟数据操作")
 public class TestDataController {
 	private final static Logger log = LoggerFactory
 			.getLogger(TestDataController.class);
 
 	@Autowired
 	private StudentRegisterMongoRespository stuRegisterMongoRespository;
+	@Autowired
+	private RollCallMongoRespository rollCallMongoRespository;
+	@Autowired
+	private ScoreMongoRespository scoreMongoRespository;
 
 
-	@RequestMapping(value = "/addmongodata", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/addRegisterdata", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "生成MongoDB学生报到数据", response = Void.class, notes = "生成MongoDB学生报到数据<br><br><b>@author zhengning</b>")
-	public ResponseEntity<Map<String, Object>> addMongoData(
+	public ResponseEntity<Map<String, Object>> addRegisterData(
 			   @ApiParam(value = "orgId 机构id" ) @RequestParam(value = "orgId", required = false) Long orgId) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		if(null != orgId && orgId.longValue() > 0L){
@@ -61,7 +69,7 @@ public class TestDataController {
 		for(int i=0;i<10;i++){
 			StudentRegister studentRegister = new StudentRegister();
 			
-			studentRegister.setStuId(stuId++);
+			studentRegister.setUserId(stuId++);
 			studentRegister.setClassId(1L);
 			studentRegister.setClassName("测试1班");
 			studentRegister.setCollegeId(1L);
@@ -73,10 +81,9 @@ public class TestDataController {
 			studentRegister.setProfessionalName("测试专业");
 			studentRegister.setIsregister(StudentRegisterConstant.UNREGISTER);
 			studentRegister.setRegisterDate(DateUtil.getMonday(new Date()));
-//			studentRegister.setActualRegisterDate(DateUtil.getMonday(new Date()));
 //			studentRegister.setRemarks(remarks);
 			studentRegister.setSchoolYear("2017");
-			studentRegister.setStuName("学生"+i);
+			studentRegister.setUserName("学生"+i);
 			stuRegisterList.add(studentRegister);
 		}
 		
@@ -86,4 +93,89 @@ public class TestDataController {
 					HttpStatus.OK);
 	}
 	
+	@RequestMapping(value = "/addRollCalldata", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "GET", value = "生成MongoDB学生考勤数据", response = Void.class, notes = "生成MongoDB学生考勤数据<br><br><b>@author zhengning</b>")
+	public ResponseEntity<Map<String, Object>> addRollCallData(
+			   @ApiParam(value = "orgId 机构id" ) @RequestParam(value = "orgId", required = false) Long orgId) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		if(null != orgId && orgId.longValue() > 0L){
+		}else{
+			orgId = 1L;
+		}
+		List<RollCall> rollCallList = new ArrayList<RollCall>();
+		Long stuId = 9527L;
+		for(int i=0;i<10;i++){
+			RollCall rollCall = new RollCall();
+			
+			rollCall.setUserId(stuId++);
+			rollCall.setClassId(1L);
+			rollCall.setClassName("测试1班");
+			rollCall.setCollegeId(1L);
+			rollCall.setCollegeName("测试学院1");
+			rollCall.setGrade("大1");
+			rollCall.setJobNum("学号1000"+i);
+			rollCall.setOrgId(orgId);
+			rollCall.setProfessionalId(1L);
+			rollCall.setProfessionalName("测试专业");
+			rollCall.setSchoolYear("2017");
+			rollCall.setUserName("学生"+i);
+			rollCall.setScheduleId(1L);
+			rollCall.setCourseName("大学英语");
+			rollCall.setCourseType("必修");
+			rollCall.setRollCallDate(DateUtil.getMonday(new Date()));
+			rollCall.setRollCallType("上课点名");
+			rollCall.setRollCallResult("旷课");
+			
+			rollCallList.add(rollCall);
+		}
+		
+		rollCallMongoRespository.save(rollCallList);
+			return new ResponseEntity<Map<String, Object>>(result,
+					HttpStatus.OK);
+	}
+	
+	
+	@RequestMapping(value = "/addScoredata", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "GET", value = "生成MongoDB学生考勤数据", response = Void.class, notes = "生成MongoDB学生成绩数据<br><br><b>@author zhengning</b>")
+	public ResponseEntity<Map<String, Object>> addScoreData(
+			   @ApiParam(value = "orgId 机构id" ) @RequestParam(value = "orgId", required = false) Long orgId) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		if(null != orgId && orgId.longValue() > 0L){
+		}else{
+			orgId = 1L;
+		}
+		List<Score> scoreList = new ArrayList<Score>();
+		Long stuId = 9527L;
+		for(int i=0;i<10;i++){
+			Score score = new Score();
+			
+			score.setUserId(stuId++);
+			score.setClassId(1L);
+			score.setClassName("测试1班");
+			score.setCollegeId(1L);
+			score.setCollegeName("测试学院1");
+			score.setGrade("大1");
+			score.setJobNum("学号1000"+i);
+			score.setOrgId(orgId);
+			score.setProfessionalId(1L);
+			score.setProfessionalName("测试专业");
+			score.setSchoolYear("2017");
+			score.setUserName("学生"+i);
+			score.setScheduleId(1L);
+			score.setCourseName("大学英语");
+			score.setCourseType("必修");
+			score.setExamTime(DateUtil.getMonday(new Date()));
+			score.setScoreType("总评成绩");
+			score.setFinalScore("85");
+			score.setScoreResultType("百分制");
+			score.setCredit(8);
+			score.setGradePoint("2.5");
+			
+			scoreList.add(score);
+		}
+		
+		scoreMongoRespository.save(scoreList);
+			return new ResponseEntity<Map<String, Object>>(result,
+					HttpStatus.OK);
+	}
 }
