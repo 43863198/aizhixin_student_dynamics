@@ -88,6 +88,16 @@ public class RollCall {
 	private Long scheduleId;
 	
 	/**
+	 * 选课名称
+	 */
+	private String courseName;
+	
+	/**
+	 * 选课类型（必修，限选，任选）
+	 */
+	private String courseType;
+	
+	/**
 	 * 考勤日期
 	 */
 	private Date rollCallDate;

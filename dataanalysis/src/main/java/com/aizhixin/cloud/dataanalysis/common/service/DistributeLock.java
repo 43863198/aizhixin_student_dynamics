@@ -75,10 +75,11 @@ public class DistributeLock {
             client.start();
             client.delete().deletingChildrenIfNeeded().forPath(zkLockPath);
             client.delete().deletingChildrenIfNeeded().forPath(zkTaskPath);
-            client.close();
         } catch (Exception e) {
             LOG.warn("删除锁路径({})和任务路径({})失败:{}", zkLockPath, zkTaskPath, e);
             e.printStackTrace();
+        }finally{
+        	client.close();
         }
     }
 

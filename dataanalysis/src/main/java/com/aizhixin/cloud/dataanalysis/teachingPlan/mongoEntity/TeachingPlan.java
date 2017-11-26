@@ -48,22 +48,22 @@ public class TeachingPlan {
 	private int minLimiteScore;
 	
 	/**
-	 * 最低必修学分要求
+	 * 最低任选学分要求
 	 */
 	private int minOptionScore;
 	
 	/**
-	 * 最低必修学分要求
+	 * 最低学期学分要求
 	 */
 	private int minTermScore;
 	
 	/**
-	 * 最低必修学分要求
+	 * 最低实践学分要求
 	 */
 	private int minPracticeScore;
 	
 	/**
-	 * 最低必修学分要求
+	 * 最低第二课堂学分要求
 	 */
 	private int minSecondClassScore;
 	

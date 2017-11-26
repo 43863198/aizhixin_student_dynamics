@@ -28,7 +28,7 @@ public class MySchedulingService {
     public void stuRegisterJob() {
         if (distributeLock.getStuRegisterLock()) {
             LOG.info("开始启动学生注册报到预警定时任务");
-            studentRegisterJob.studenteRegister();;
+            studentRegisterJob.studenteRegisterJob();
         } else {
             LOG.info("启动学生注册报到预警，获取锁失败");
         }

@@ -15,6 +15,7 @@ import com.aizhixin.cloud.dataanalysis.common.constant.StudentRegisterConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningType;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.common.util.RestUtil;
+import com.aizhixin.cloud.dataanalysis.setup.respository.AlarmParameterRespository;
 import com.aizhixin.cloud.dataanalysis.setup.respository.AlarmSettingsRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,20 +48,18 @@ public class StudentRegisterJob {
 	private AlertWarningInformationService  alertWarningInformationService;
 	@Autowired
 	private AlertWarningInformationRepository  alertWarningInformationRepository;
+	@Autowired
+	private AlarmParameterRespository alarmParameterRespository;
 
-	@Scheduled(cron = "0 0/5 * * * ?")
+	@Scheduled(cron = "0 0/30 * * * ?")
 	public void studenteRegisterJob() {
-        //R为学生注册预警
+		
 //		List<AlarmParameter> alarmParams = alarmParameterRespository
 //				.findAllByDeleteFlagAndAlarmSettings_WarningType(DataValidity.VALID.getState(), WarningType.Register.getValue());
-		//固化规则咱不做规则管理和查询
-
-//		List<AlarmParameter> alarmParams = new ArrayList<AlarmParameter>();
-		//固化报到注册规则，之后要改成从数据库获取
-
+//
 //		if (null != alarmParams && alarmParams.size() > 0) {
 //			HashMap<Long, ArrayList<AlarmParameter>> alarmMap = new HashMap<Long, ArrayList<AlarmParameter>>();
-//			ArrayList<AlertWarningInformation> alertInforList = new ArrayList<AlertWarningInformation>();
+//			ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 //			//按orgId归类告警等级阀值
 //			for (AlarmParameter param : alarmParams) {
 //				Long orgId = param.getAlarmSettings().getOrgId();
@@ -86,9 +85,9 @@ public class StudentRegisterJob {
 //					int result = DateUtil.getDaysBetweenDate(studentRegister.getRegisterDate(), today);
 //					for(AlarmParameter alarmParam : val){
 //						if(result >= alarmParam.getSetParameter()){
-//							AlertWarningInformation alertInfor = new AlertWarningInformation();
-//							alertInfor.setDefendantId(studentRegister.getStuId());
-//							alertInfor.setName(studentRegister.getStuName());
+//							WarningInformation alertInfor = new WarningInformation();
+//							alertInfor.setDefendantId(studentRegister.getUserId());
+//							alertInfor.setName(studentRegister.getUserName());
 //							alertInfor.setJobNumber(studentRegister.getJobNum());
 //							alertInfor.setCollogeId(studentRegister.getCollegeId());
 //							alertInfor.setCollogeName(studentRegister.getCollegeName());
