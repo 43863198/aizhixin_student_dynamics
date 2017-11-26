@@ -1,10 +1,13 @@
 package com.aizhixin.cloud.dataanalysis.setup.controller;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningSettingsDTO;
+import com.aizhixin.cloud.dataanalysis.setup.domain.ProcessingModeDomain;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -55,7 +58,7 @@ public class AlarmSettingsController {
      * @return
      */
     @PostMapping(value = "/warningset", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "预警参数设置", response = Void.class, notes = "预警参数设置<br><br><b>@author jianwei.wu</b>")
+    @ApiOperation(httpMethod = "POST", value = "预警参数设置", response = Void.class, notes = "预警参数设置<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object> warningSet(
             @ApiParam(value = "<b>必填:、</b><br>orgId:机构id<br><b>")
             @RequestBody WarningSettingsDTO warningSettingsDTO
@@ -64,7 +67,33 @@ public class AlarmSettingsController {
     }
 
 
+    /**
+     * 已设置的预警处理设置信息
+     * @param alarmSettingsId
+     * @return
+     */
+    @GetMapping(value = "/getprocessingmode", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "已设置的预警处理设置信息", response = Void.class, notes = "已设置的预警处理设置信息<br><br><b>@author jianwei.wu</b>")
+    public Map<String,Object> getProcessingMode(
+            @ApiParam(value = "alarmSettingsId 预警设置id" , required = true) @RequestParam(value = "alarmSettingsId", required = true) String alarmSettingsId
+            ){
+        return null;
+    }
 
+
+    /**
+     * 预警处理设置
+     * @param ProcessingModeDomain
+     * @return
+     */
+    @PostMapping(value = "/setprocessingmode", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "POST", value = "预警处理设置", response = Void.class, notes = "预警处理设置<br><br><b>@author jianwei.wu</b>")
+    public Map<String,Object> setProcessingMode(
+            @ApiParam(value = "<b>必填:、</b><br>orgId:机构id<br><b>")
+            @RequestBody ProcessingModeDomain domain
+    ){
+        return null;
+    }
 
 
 
