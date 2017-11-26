@@ -15,7 +15,6 @@ import com.aizhixin.cloud.dataanalysis.common.constant.StudentRegisterConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningType;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.common.util.RestUtil;
-import com.aizhixin.cloud.dataanalysis.setup.respository.AlarmParameterRespository;
 import com.aizhixin.cloud.dataanalysis.setup.respository.AlarmSettingsRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,8 +27,6 @@ import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmParameter;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoRespository.StudentRegisterMongoRespository;
@@ -48,8 +45,6 @@ public class StudentRegisterJob {
 	private AlertWarningInformationService  alertWarningInformationService;
 	@Autowired
 	private AlertWarningInformationRepository  alertWarningInformationRepository;
-	@Autowired
-	private AlarmParameterRespository alarmParameterRespository;
 
 	@Scheduled(cron = "0 0/30 * * * ?")
 	public void studenteRegisterJob() {
