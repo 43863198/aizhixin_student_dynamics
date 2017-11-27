@@ -17,8 +17,6 @@ import javax.persistence.Column;
 @Data
 public class AlarmRuleDomain {
 
-    @ApiModelProperty(value = "id", required = false)
-    private String id;
 
     @ApiModelProperty(value = "规则名称", required = false)
     private String name;
@@ -26,8 +24,7 @@ public class AlarmRuleDomain {
     @ApiModelProperty(value = "参数值", required = false)
     private int parameter;
 
-    @ApiModelProperty(value = "机构id", required = false)
-    private Long orgId;
+
 
 
 }

@@ -12,7 +12,7 @@ import java.util.List;
  * @E-mail: wujianwei@aizhixin.com
  * @Date: 2017-11-24
  */
-@ApiModel(description="预警设置")
+@ApiModel(description="预警类型")
 @Data
 public class WarningSettingsDTO {
     @ApiModelProperty(value = "id")

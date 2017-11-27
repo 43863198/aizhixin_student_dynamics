@@ -1,6 +1,8 @@
 package com.aizhixin.cloud.dataanalysis.setup.controller;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningSettingsDTO;
+import com.aizhixin.cloud.dataanalysis.setup.domain.AlarmRuleDomain;
+import com.aizhixin.cloud.dataanalysis.setup.domain.AlarmSettingDomain;
 import com.aizhixin.cloud.dataanalysis.setup.domain.ProcessingModeDomain;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
 
@@ -54,40 +56,36 @@ public class AlarmSettingsController {
 
     /**
      * 预警参数设置
-     * @param warningSettingsDTO
+     * @param alarmSettingDomain
      * @return
      */
     @PostMapping(value = "/warningset", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "POST", value = "预警参数设置", response = Void.class, notes = "预警参数设置<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object> warningSet(
             @ApiParam(value = "<b>必填:、</b><br>orgId:机构id<br><b>"+
-                    "</b><br>warningTypeId:预警类型id;" +
+                    "</b><br>alarmSettingsId:预警设置id;" +
                     "</b><br>setupCloseFlag:此类型预警的开关（10：开启；20:关闭）;" +
-                    "</b><br>WarningGradeDTO:每个预警等级信息;包含" +
-                    "</b><br>grade:预警等级;" +
-                    "</b><br>AlarmRule:预警规则包含;" +
-                    "</b><br>setupCloseFlag:此规则的开关（10：开启；20:关闭）;" +
-                    "</b><br>rightRelationship:此规则的参数;" +
-                    "<b>选填(有则是更新，没有则是添加):、</b>" +
-                    "<br>id:规则id<br><b>"
+                    "</b><br>AlarmRuleDomain:;包含" +
+                    "</b><br>name:规则名称;" +
+                    "<br><br>parameter:参数;<br><b>"
             )
-            @RequestBody WarningSettingsDTO warningSettingsDTO
+            @RequestBody AlarmSettingDomain alarmSettingDomain
     ){
-        return alarmSettingsService.warningSet(warningSettingsDTO);
+        return alarmSettingsService.warningSet(alarmSettingDomain);
     }
 
 
     /**
      * 已设置的预警处理设置信息
-     * @param alarmSettingsId
+     * @param warningTypeId
      * @return
      */
     @GetMapping(value = "/getprocessingmode", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "已设置的预警处理设置信息", response = Void.class, notes = "已设置的预警处理设置信息<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object> getProcessingMode(
-            @ApiParam(value = "alarmSettingsId 预警设置id" , required = true) @RequestParam(value = "alarmSettingsId", required = true) String alarmSettingsId
+            @ApiParam(value = "warningTypeId 预警类型id" , required = true) @RequestParam(value = "warningTypeId", required = true) String warningTypeId
             ){
-        return null;
+        return alarmSettingsService.getProcessingMode(warningTypeId);
     }
 
 
