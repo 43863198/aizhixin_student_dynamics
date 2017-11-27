@@ -36,15 +36,16 @@ public class AlarmHandlingService {
             operationRecord.setOrgId(warningInformation.getOrgId());
             operationRecord.setWarningState(30);
             operationRecord.setOperationTime(new Date());
-            operationRecord.setOperationType(submitDealDomain.getDealType() + "");
+            operationRecord.setDealType(submitDealDomain.getDealType());
             operationRecord.setProposal(submitDealDomain.getDealInfo());
             operationRecord.setWarningInformationId(submitDealDomain.getWarningInformationId());
-            operaionRecordService.save(operationRecord);
+            String id = operaionRecordService.save(operationRecord);
             for (AttachmentDomain d : submitDealDomain.getAttachmentDomain()) {
                 AttachmentInformation attachmentInformation = new AttachmentInformation();
                 attachmentInformation.setOrgId(warningInformation.getOrgId());
                 attachmentInformation.setAttachmentName(d.getFileName());
                 attachmentInformation.setAttachmentPath(d.getFileUrl());
+                attachmentInformation.setOperationRecordId(id);
                 attachmentInfomationService.save(attachmentInformation);
             }
         } catch (Exception e) {
