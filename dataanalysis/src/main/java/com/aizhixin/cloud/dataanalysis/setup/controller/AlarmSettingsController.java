@@ -61,14 +61,15 @@ public class AlarmSettingsController {
     @ApiOperation(httpMethod = "POST", value = "预警参数设置", response = Void.class, notes = "预警参数设置<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object> warningSet(
             @ApiParam(value = "<b>必填:、</b><br>orgId:机构id<br><b>"+
-                    "</b><br>warningTypeId:告警类型id;" +
+                    "</b><br>warningTypeId:预警类型id;" +
                     "</b><br>setupCloseFlag:此类型预警的开关（10：开启；20:关闭）;" +
                     "</b><br>WarningGradeDTO:每个预警等级信息;包含" +
                     "</b><br>grade:预警等级;" +
                     "</b><br>AlarmRule:预警规则包含;" +
                     "</b><br>setupCloseFlag:此规则的开关（10：开启；20:关闭）;" +
-                    "</b><br>rightRelationship:此规则的参数;"
-
+                    "</b><br>rightRelationship:此规则的参数;" +
+                    "<b>选填(有则是更新，没有则是添加):、</b>" +
+                    "<br>id:规则id<br><b>"
             )
             @RequestBody WarningSettingsDTO warningSettingsDTO
     ){
