@@ -16,9 +16,11 @@ import java.util.List;
  * @E-mail: wujianwei@aizhixin.com
  * @Date: 2017-11-24
  */
-@ApiModel(description="预警等级")
+@ApiModel(description="预警设置")
 @Data
 public class WarningGradeDTO {
+    @ApiModelProperty(value = "预警设置id")
+    private String id ;
     @ApiModelProperty(value = "等级")
     private int grade;
     @ApiModelProperty(value = "等级名称")

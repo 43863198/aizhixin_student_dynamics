@@ -1,8 +1,12 @@
 package com.aizhixin.cloud.dataanalysis.setup.service;
 
+import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
+import com.aizhixin.cloud.dataanalysis.setup.entity.ProcessingMode;
 import com.aizhixin.cloud.dataanalysis.setup.respository.ProcessingModeRespository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @author: Created by jianwei.wu
@@ -13,5 +17,10 @@ import org.springframework.stereotype.Component;
 public class ProcessingModeService {
     @Autowired
     private ProcessingModeRespository processingModeRespository;
+
+    public List<ProcessingMode> getProcessingModeBywarningTypeId(Long orgId, String warningTypeId){
+        return processingModeRespository.getProcessingModeBywarningTypeId(orgId,warningTypeId, DataValidity.VALID.getState());
+
+    }
 
 }
