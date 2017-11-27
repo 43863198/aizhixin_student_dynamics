@@ -6,6 +6,8 @@ import com.aizhixin.cloud.dataanalysis.setup.respository.WarningTypeRespository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * @author: Created by jianwei.wu
  * @E-mail: wujianwei@aizhixin.com
@@ -19,5 +21,11 @@ public class AlarmRuleService {
     public AlarmRule  getAlarmRuleById(String id){
         return alarmRuleRespository.findOne(id);
     }
+
+    public List<AlarmRule> getAlarmRuleBySettingsId(String alarmSettingsId){
+        return alarmRuleRespository.getAlarmRuleBySettingsId(alarmSettingsId);
+    }
+
+
 
 }
