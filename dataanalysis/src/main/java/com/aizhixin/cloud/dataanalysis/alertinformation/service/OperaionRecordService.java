@@ -2,9 +2,12 @@ package com.aizhixin.cloud.dataanalysis.alertinformation.service;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.OperationRecord;
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.OperationRecordRepository;
+import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @author: Created by jianwei.wu
@@ -25,5 +28,13 @@ public class OperaionRecordService {
     public void save(OperationRecord operationRecord){
          operationRecordRepository.save(operationRecord);
     }
+
+    public List<OperationRecord> getOperationRecordByWInfoId(String warningInformationId){
+        return operationRecordRepository.getOperationRecordByWInfoId(warningInformationId, DataValidity.VALID.getState());
+    }
+
+
+
+
 
 }

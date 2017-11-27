@@ -8,6 +8,7 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import com.aizhixin.cloud.dataanalysis.alertinformation.domain.*;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.CollegeStatisticsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.CollegeWarningInfoDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.TypeStatisticsDTO;
@@ -27,10 +28,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.aizhixin.cloud.dataanalysis.alertinformation.domain.AlertInforDomain;
-import com.aizhixin.cloud.dataanalysis.alertinformation.domain.AlertInforQueryDomain;
-import com.aizhixin.cloud.dataanalysis.alertinformation.domain.LevelAlertCountDomain;
-import com.aizhixin.cloud.dataanalysis.alertinformation.domain.RegisterAlertCountDomain;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.domain.SortDTO;
 import com.aizhixin.cloud.dataanalysis.common.service.AuthUtilService;
@@ -59,6 +56,8 @@ public class AlertWarningInformationService {
 	private PageJdbcUtil pageJdbcUtil;
 	@Autowired
 	private AuthUtilService authUtilService;
+
+
 	
 	RowMapper<RegisterAlertCountDomain> registerCountRm = new RowMapper<RegisterAlertCountDomain>() {
 
@@ -675,6 +674,12 @@ public class AlertWarningInformationService {
 				warningDetailsDTO.setWarningName(WarningType.valueOf(alertWarningInformation.getWarningType()).getValue());
 				warningDetailsDTO.setWarningLevel(alertWarningInformation.getWarningLevel());
 				warningDetailsDTO.setWarningState(alertWarningInformation.getWarningState());
+				List<DealDomain> dealDomainList = new ArrayList<>();
+
+
+
+
+
 			}
 		}catch (Exception e){
 			result.put("success",false);

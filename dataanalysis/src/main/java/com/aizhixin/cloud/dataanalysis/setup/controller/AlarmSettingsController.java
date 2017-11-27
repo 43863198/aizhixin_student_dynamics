@@ -83,7 +83,7 @@ public class AlarmSettingsController {
 
     /**
      * 预警处理设置
-     * @param ProcessingModeDomain
+     * @param domain
      * @return
      */
     @PostMapping(value = "/setprocessingmode", produces = MediaType.APPLICATION_JSON_VALUE)

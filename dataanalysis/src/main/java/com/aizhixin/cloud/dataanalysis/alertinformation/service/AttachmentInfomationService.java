@@ -2,9 +2,12 @@ package com.aizhixin.cloud.dataanalysis.alertinformation.service;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AttachmentInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AttachmentInfoRepository;
+import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @author: Created by jianwei.wu
@@ -25,4 +28,9 @@ public class AttachmentInfomationService {
     public void save(AttachmentInformation attachmentInformation){
         attachmentInfoRepository.save(attachmentInformation);
     }
+
+    public List<AttachmentInformation> getAttachmentInformationByOprId(String operationRecordId){
+        return attachmentInfoRepository.getAttachmentInformationByOprId(operationRecordId, DataValidity.VALID.getState());
+    }
+
 }

@@ -27,6 +27,7 @@
             <column name="SEMESTER_ID" type="BIGINT" remarks="所属学期id"/>
             <column name="OPERATOR_ID" type="BIGINT" remarks="处理人员id"/>
             <column name="ORG_ID" type="BIGINT" remarks="机构id"/>
+            <column name="DEALT_YPE" type="INT(4)"  remarks="处理类型 辅导员处理10 学院处理 20"/>
             <column name="CREATED_BY" type="BIGINT" remarks="创建人ID"/>
             <column name="CREATED_DATE" type="DATETIME" defaultValueDate="${now}" remarks="创建时间"/>
             <column name="LAST_MODIFIED_BY" type="BIGINT" remarks="最后一次修改人ID"/>
