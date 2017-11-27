@@ -97,10 +97,17 @@ public class AlarmSettingsController {
     @PostMapping(value = "/setprocessingmode", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "POST", value = "预警处理设置", response = Void.class, notes = "预警处理设置<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object> setProcessingMode(
-            @ApiParam(value = "<b>必填:、</b><br>orgId:机构id<br><b>")
+            @ApiParam(value = "<b>必填:、</b><br>orgId:机构id<br><b>"+
+                    "</b><br>warningTypeId:预警类型id;" +
+                    "</b><br>processingGreadList:包含;" +
+                    "</b><br>grade:预警类等级;" +
+                    "</b><br>operationTypeSet:预警处理操作类型集合(发送学生10 发送辅导员 20 发送院系领导);" +
+                    "</b><br>setupCloseFlag:开启或关闭;" +
+                    "<br><br>operationSet:预警处理操作集合(手机短信 1 电子邮件 2 站内信 3 注:多个用“,”隔开);<br><b>"
+            )
             @RequestBody ProcessingModeDomain domain
     ){
-        return null;
+        return alarmSettingsService.setProcessingMode(domain);
     }
 
 

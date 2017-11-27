@@ -36,7 +36,7 @@ public class ProcessingMode extends AbstractEntity {
     * 预警处理操作类型集合(发送学生10 发送辅导员 20 发送院系领导)
     */
     @Column(name = "OPERATION_TYPE_SET")
-    @Getter @Setter private String operationTypeSet;
+    @Getter @Setter private int operationTypeSet;
 
 
     /*

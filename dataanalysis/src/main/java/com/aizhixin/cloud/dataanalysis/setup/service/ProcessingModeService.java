@@ -20,7 +20,14 @@ public class ProcessingModeService {
 
     public List<ProcessingMode> getProcessingModeBywarningTypeId(Long orgId, String warningTypeId){
         return processingModeRespository.getProcessingModeBywarningTypeId(orgId,warningTypeId, DataValidity.VALID.getState());
-
     }
+
+   public ProcessingMode getBywarningTypeIdAndTypeSet(Long orgId, String warningTypeId, int operationTypeSet,int warningLevel){
+       return processingModeRespository.getBywarningTypeIdAndTypeSet(orgId, warningTypeId, operationTypeSet, warningLevel, DataValidity.VALID.getState());
+   }
+
+   public void save(ProcessingMode processingMode){
+       processingModeRespository.save(processingMode);
+   }
 
 }
