@@ -18,7 +18,10 @@ public interface AlarmRuleRespository extends PagingAndSortingRepository<AlarmRu
 	
 	List<AlarmRule> findAllByIdIn(Set<String> id);
 
+<<<<<<< HEAD
 	@Query("select ar from  #{#entityName} ar where ar.alarmSettingsId = :alarmSettingsId ")
 	List<AlarmRule> getAlarmRuleBySettingsId(@Param("alarmSettingsId") String alarmSettingsId);
+=======
+>>>>>>> 7a66fd229045943455fdded1980800f986670cee
 
 }

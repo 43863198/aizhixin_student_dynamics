@@ -2,21 +2,14 @@ package com.aizhixin.cloud.dataanalysis.alertinformation.controller;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.domain.DealDomain;
 import com.aizhixin.cloud.dataanalysis.alertinformation.domain.DealResultDomain;
-import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningDetailsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlarmHandlingService;
-import com.aizhixin.cloud.dataanalysis.common.PageData;
-import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
-import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
