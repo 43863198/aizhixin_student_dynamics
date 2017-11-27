@@ -72,19 +72,19 @@ public class Score {
 	private String collegeName;
 	
 	/**
-	 * 年级
+	 * 学期
 	 */
-	private String grade;
+	private int semester;
 	
 	/**
-	 * 学年学期
+	 * 学年
 	 */
-	private String schoolYear;
+	private int schoolYear;
 	
 	/**
 	 * 排课id
 	 */
-	private Long scheduleId;
+	private String scheduleId;
 	
 	/**
 	 * 选课名称

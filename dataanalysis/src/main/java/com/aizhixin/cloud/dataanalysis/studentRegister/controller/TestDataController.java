@@ -154,14 +154,41 @@ public class TestDataController {
 			score.setClassName("测试1班");
 			score.setCollegeId(1L);
 			score.setCollegeName("测试学院1");
-			score.setGrade("大1");
+			score.setSemester(1);
 			score.setJobNum("学号1000"+i);
 			score.setOrgId(orgId);
 			score.setProfessionalId(1L);
 			score.setProfessionalName("测试专业");
-			score.setSchoolYear("2017");
+			score.setSchoolYear(2017);
 			score.setUserName("学生"+i);
-			score.setScheduleId(1L);
+			score.setScheduleId("1");
+			score.setCourseName("大学英语");
+			score.setCourseType("必修");
+			score.setExamTime(DateUtil.getMonday(new Date()));
+			score.setScoreType("总评成绩");
+			score.setFinalScore("85");
+			score.setScoreResultType("百分制");
+			score.setCredit(8);
+			score.setGradePoint("2.5");
+			
+			scoreList.add(score);
+		}
+		for(int i=0;i<10;i++){
+			Score score = new Score();
+			
+			score.setUserId(stuId++);
+			score.setClassId(1L);
+			score.setClassName("测试1班");
+			score.setCollegeId(1L);
+			score.setCollegeName("测试学院1");
+			score.setSemester(1);
+			score.setJobNum("学号1000"+i);
+			score.setOrgId(orgId);
+			score.setProfessionalId(1L);
+			score.setProfessionalName("测试专业");
+			score.setSchoolYear(2017);
+			score.setUserName("学生"+i);
+			score.setScheduleId("1");
 			score.setCourseName("大学英语");
 			score.setCourseType("必修");
 			score.setExamTime(DateUtil.getMonday(new Date()));
