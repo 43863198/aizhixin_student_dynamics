@@ -1,11 +1,9 @@
 package com.aizhixin.cloud.dataanalysis.alertinformation.controller;
 
-import com.aizhixin.cloud.dataanalysis.alertinformation.domain.AlertInforQueryDomain;
+import com.aizhixin.cloud.dataanalysis.alertinformation.domain.DealDomain;
 import com.aizhixin.cloud.dataanalysis.alertinformation.domain.DealResultDomain;
-import com.aizhixin.cloud.dataanalysis.alertinformation.domain.SubmitDealDomain;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningDetailsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlarmHandlingService;
-import com.aizhixin.cloud.dataanalysis.alertinformation.service.OperaionRecordService;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
@@ -40,8 +38,8 @@ public class AlarmHandlingController {
                     "选填:、" +
                     "</b><br>dealInfo:处理信息;" +
                     "dealType:处理类型 辅导员处理10 学院处理 20;" +
-                    "<br>attachmentDomain:附件信息、<br>")  @RequestBody SubmitDealDomain submitDealDomain) {
-        return alarmHandlingService.addProcessing(submitDealDomain) ;
+                    "<br>attachmentDomain:附件信息、<br>")  @RequestBody DealDomain dealDomain) {
+        return alarmHandlingService.addProcessing(dealDomain) ;
     }
 
     @RequestMapping(value = "/updateprocessing", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -52,8 +50,8 @@ public class AlarmHandlingController {
                     "</b><br>dealId:处理id;" +
                     "</b><br>dealInfo:处理信息;" +
                     "dealType:处理类型 辅导员处理10 学院处理 20;" +
-                    "<br>attachmentDomain:附件信息、<br>")  @RequestBody SubmitDealDomain submitDealDomain) {
-        return alarmHandlingService.updateProcessing(submitDealDomain) ;
+                    "<br>attachmentDomain:附件信息、<br>")  @RequestBody DealDomain dealDomain) {
+        return alarmHandlingService.updateProcessing(dealDomain) ;
     }
 
 

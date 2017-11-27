@@ -61,10 +61,10 @@ public class AttachmentInformation extends AbstractEntity {
     @Getter @Setter private Long orgId;
 
       /*
-       *  预警信息ID
+       *  操作信息ID
        */
-    @Column(name = "WARNINGINFORMATION_ID")
-    @Getter @Setter private String warningInformationId;
+    @Column(name = "OPERATION_RECORD_ID")
+    @Getter @Setter private String operationRecordId;
 
 
 }
