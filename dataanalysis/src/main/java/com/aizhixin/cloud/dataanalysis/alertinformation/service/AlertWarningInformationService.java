@@ -856,5 +856,8 @@ public class AlertWarningInformationService {
 	}
 
 
-
+	public List<WarningInformation> getWarnInforByState(Long orgId,String warningType,int deleteFlag,int warningState){
+		
+		return alertWarningInformationRepository.getawinfoByOrgIdAndWarningTypeAndState(orgId, warningType, deleteFlag, warningState);
+	}
 }

@@ -12,17 +12,12 @@ import java.util.Set;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
-import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
-import com.aizhixin.cloud.dataanalysis.common.constant.StudentRegisterConstant;
+import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningType;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.common.util.RestUtil;
-import com.aizhixin.cloud.dataanalysis.score.domain.ScoreDomain;
-import com.aizhixin.cloud.dataanalysis.setup.respository.AlarmSettingsRepository;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmRuleService;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.log4j.Logger;
 
@@ -58,7 +53,7 @@ public class StudentRegisterJob {
 	@Autowired
 	private AlertWarningInformationRepository alertWarningInformationRepository;
 
-	@Scheduled(cron = "0 0/30 * * * ?")
+	
 	public void studenteRegisterJob() {
 
 		// 获取预警配置
@@ -141,7 +136,8 @@ public class StudentRegisterJob {
 										.getSchoolYear());
 								alertInfor.setWarningLevel(alarmSettings
 										.getWarningLevel());
-								alertInfor.setWarningState(10);
+								alertInfor.setWarningState(AlertTypeConstant.ALERT_PENDING);
+								alertInfor.setAlarmSettingsId(alarmSettings.getId());
 								alertInfor.setWarningType(WarningType.Register
 										.toString());
 								alertInfor.setWarningTime(new Date());
@@ -157,6 +153,7 @@ public class StudentRegisterJob {
 			}
 
 			if (!alertInforList.isEmpty()) {
+				//判断是否已生成预警信息
 				alertWarningInformationRepository.save(alertInforList);
 			}
 		}

@@ -110,6 +110,17 @@ public class AlarmSettingsService {
             WarningType warningType = warningTypeService.getWarningTypeById(warningSettingsDTO.getWarningTypeId());
             warningSettingsDTO.setSetupCloseFlag(warningSettingsDTO.getSetupCloseFlag());
             warningTypeService.save(warningType);//开启或关闭此类型的预警（预警总开关）
+            if(null!=warningSettingsDTO.getGradeDTOList()&&warningSettingsDTO.getGradeDTOList().size()>0){
+                for(WarningGradeDTO wg: warningSettingsDTO.getGradeDTOList()){
+                    List<AlarmSettings> alarmSettingsList = alarmSettingsRepository.getAlarmSettingsByLevel(warningType.getOrgId(),warningType.getWarningType(),wg.getGrade(),DataValidity.VALID.getState())
+                    for(AlarmSettings as: alarmSettingsList){
+
+                    }
+                }
+            }
+
+
+
             List<AlarmSettings> alarmSettingsList = alarmSettingsRepository.getAlarmSettingsByOrgIdAndType(warningType.getOrgId(),warningType.getWarningType(),DataValidity.VALID.getState());
             if(null!=alarmSettingsList){
                 List<WarningGradeDTO> warningGradeDTOList = new ArrayList<>();

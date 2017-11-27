@@ -15,6 +15,14 @@ public interface AlarmRuleRespository extends PagingAndSortingRepository<AlarmRu
 	
 	@Query("select ar from com.aizhixin.cloud.dataanalysis.setup.entity.AlarmRule ar where ar.id in (:ids) ")
 	List<AlarmRule> findAllByIds(@Param("ids") String[] ids);
+<<<<<<< HEAD
 	
 	List<AlarmRule> findAllByIdIn(Set<String> id);
+=======
+
+	@Query("select ar from  #{#entityName} ar where ar.alarmSettingsId = :alarmSettingsId ")
+	List<AlarmRule> getAlarmRuleBySettingsId(@Param("alarmSettingsId") String alarmSettingsId);
+
+
+>>>>>>> eb81828bbd0a11559a54e22c541844f84f6b95e0
 }
