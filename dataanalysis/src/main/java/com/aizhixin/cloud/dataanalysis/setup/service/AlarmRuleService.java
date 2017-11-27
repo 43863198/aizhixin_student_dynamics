@@ -27,17 +27,10 @@ public class AlarmRuleService {
         return alarmRuleRespository.findOne(id);
     }
 
-<<<<<<< HEAD
     
     public List<AlarmRule>  getAlarmRuleByIds(Set<String> ids){
         return alarmRuleRespository.findAllByIdIn(ids);
     }
-    public List<AlarmRule> getAlarmRuleBySettingsId(String alarmSettingsId){
-        return alarmRuleRespository.getAlarmRuleBySettingsId(alarmSettingsId);
-    }
-
-=======
->>>>>>> 7a66fd229045943455fdded1980800f986670cee
     public String save(AlarmRule alarmRule){
         return alarmRuleRespository.save(alarmRule).getId();
     }
