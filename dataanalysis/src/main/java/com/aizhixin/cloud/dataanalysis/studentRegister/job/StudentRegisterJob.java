@@ -2,26 +2,34 @@ package com.aizhixin.cloud.dataanalysis.studentRegister.job;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
-
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
+import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
+import com.aizhixin.cloud.dataanalysis.common.constant.StudentRegisterConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningType;
+import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.common.util.RestUtil;
 import com.aizhixin.cloud.dataanalysis.setup.respository.AlarmSettingsRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.log4j.Logger;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
+import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
+import com.aizhixin.cloud.dataanalysis.studentRegister.mongoRespository.StudentRegisterMongoRespository;
 
 @Component
 public class StudentRegisterJob {
@@ -32,50 +40,21 @@ public class StudentRegisterJob {
 	@Autowired
 	private RestUtil restUtil;
 	@Autowired
+	private StudentRegisterMongoRespository stuRegisterMongoRespository;
+	@Autowired
 	private AlertWarningInformationService  alertWarningInformationService;
 	@Autowired
 	private AlertWarningInformationRepository  alertWarningInformationRepository;
 
-//	@Scheduled(cron = "0 0/5 * * * ?")
-//	public void studenteRegister() {
-//        //R为学生注册预警
+	@Scheduled(cron = "0 0/30 * * * ?")
+	public void studenteRegisterJob() {
+		
 //		List<AlarmParameter> alarmParams = alarmParameterRespository
-//				.findAllByDeleteFlagAndAlarmSettings_WarningType(DataValidity.VALID.getState(), "R");
-//固化规则咱不做规则管理和查询
-//		List<AlarmParameter> alarmParams = alarmParameterRespository
-//				.findAllByDeleteFlagAndAlarmSettings_SetupCloseFlagAndAlarmSettings_TypeOrderByAlarmSettings_idAscLevelDesc(DataValidity.VALID.getState(),AlertTypeConstant.SETUP_ALERTSETTING,
-//						AlertTypeConstant.STUDENT_REGISTER);
-
-//		List<AlarmParameter> alarmParams = new ArrayList<AlarmParameter>();
-
-		//固化报到注册规则，之后要改成从数据库获取
-//		AlarmSettings aSetting = new AlarmSettings();
-//		aSetting.setOrgId(1L);
-//		AlarmParameter alaParam = new AlarmParameter();
-//		alaParam.setLevel(1);
-//		alaParam.setSetParameter(11);
-//		alaParam.setAlarmSettings(aSetting);
-//		alarmParams.add(alaParam);
-//		aSetting = new AlarmSettings();
-//		aSetting.setWarningType("Register");
-//		aSetting.setOrgId(1L);
-//		alaParam = new AlarmParameter();
-//		alaParam.setLevel(1);
-//		alaParam.setSetParameter(5);
-//		alaParam.setAlarmSettings(aSetting);
-//		alarmParams.add(alaParam);
-//		aSetting = new AlarmSettings();
-//		aSetting.setWarningType("Register");
-//		aSetting.setOrgId(1L);
-//		 alaParam = new AlarmParameter();
-//		alaParam.setLevel(1);
-//		alaParam.setSetParameter(1);
-//		alaParam.setAlarmSettings(aSetting);
-//		alarmParams.add(alaParam);
-
+//				.findAllByDeleteFlagAndAlarmSettings_WarningType(DataValidity.VALID.getState(), WarningType.Register.getValue());
+//
 //		if (null != alarmParams && alarmParams.size() > 0) {
 //			HashMap<Long, ArrayList<AlarmParameter>> alarmMap = new HashMap<Long, ArrayList<AlarmParameter>>();
-//			ArrayList<AlertWarningInformation> alertInforList = new ArrayList<AlertWarningInformation>();
+//			ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 //			//按orgId归类告警等级阀值
 //			for (AlarmParameter param : alarmParams) {
 //				Long orgId = param.getAlarmSettings().getOrgId();
@@ -101,9 +80,9 @@ public class StudentRegisterJob {
 //					int result = DateUtil.getDaysBetweenDate(studentRegister.getRegisterDate(), today);
 //					for(AlarmParameter alarmParam : val){
 //						if(result >= alarmParam.getSetParameter()){
-//							AlertWarningInformation alertInfor = new AlertWarningInformation();
-//							alertInfor.setDefendantId(studentRegister.getStuId());
-//							alertInfor.setName(studentRegister.getStuName());
+//							WarningInformation alertInfor = new WarningInformation();
+//							alertInfor.setDefendantId(studentRegister.getUserId());
+//							alertInfor.setName(studentRegister.getUserName());
 //							alertInfor.setJobNumber(studentRegister.getJobNum());
 //							alertInfor.setCollogeId(studentRegister.getCollegeId());
 //							alertInfor.setCollogeName(studentRegister.getCollegeName());
@@ -115,7 +94,7 @@ public class StudentRegisterJob {
 //							alertInfor.setTeachingYear(studentRegister.getSchoolYear());
 //							alertInfor.setWarningLevel(alarmParam.getLevel());
 //							alertInfor.setWarningState(10);
-//							alertInfor.setWarningType("Register");
+//							alertInfor.setWarningType(WarningType.Register.getValue());
 //							alertInfor.setWarningTime(new Date());
 //							alertInfor.setOrgId(alarmParam.getAlarmSettings().getOrgId());
 //							alertInforList.add(alertInfor);
@@ -131,7 +110,7 @@ public class StudentRegisterJob {
 //				alertWarningInformationRepository.save(alertInforList);
 //			}
 //		}
-//	}
+	}
 
 
 //	@Scheduled(cron = "0 0/10 * * * ?")
