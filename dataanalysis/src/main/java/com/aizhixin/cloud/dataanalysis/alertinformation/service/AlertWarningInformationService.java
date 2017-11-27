@@ -8,10 +8,13 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import com.aizhixin.cloud.dataanalysis.alertinformation.domain.*;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.CollegeStatisticsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.CollegeWarningInfoDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.TypeStatisticsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningDetailsDTO;
+import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AttachmentInformation;
+import com.aizhixin.cloud.dataanalysis.alertinformation.entity.OperationRecord;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
@@ -27,10 +30,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.aizhixin.cloud.dataanalysis.alertinformation.domain.AlertInforDomain;
-import com.aizhixin.cloud.dataanalysis.alertinformation.domain.AlertInforQueryDomain;
-import com.aizhixin.cloud.dataanalysis.alertinformation.domain.LevelAlertCountDomain;
-import com.aizhixin.cloud.dataanalysis.alertinformation.domain.RegisterAlertCountDomain;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.domain.SortDTO;
 import com.aizhixin.cloud.dataanalysis.common.service.AuthUtilService;
@@ -54,11 +53,16 @@ public class AlertWarningInformationService {
 	private AlertWarningInformationRepository alertWarningInformationRepository;
 	@Autowired
 	private AlarmSettingsService alarmSettingsService;
-
 	@Autowired
 	private PageJdbcUtil pageJdbcUtil;
 	@Autowired
 	private AuthUtilService authUtilService;
+	@Autowired
+	private  OperaionRecordService operaionRecordService;
+	@Autowired
+	private AttachmentInfomationService attachmentInfomationService;
+
+
 	
 	RowMapper<RegisterAlertCountDomain> registerCountRm = new RowMapper<RegisterAlertCountDomain>() {
 
@@ -675,6 +679,29 @@ public class AlertWarningInformationService {
 				warningDetailsDTO.setWarningName(WarningType.valueOf(alertWarningInformation.getWarningType()).getValue());
 				warningDetailsDTO.setWarningLevel(alertWarningInformation.getWarningLevel());
 				warningDetailsDTO.setWarningState(alertWarningInformation.getWarningState());
+				List<DealDomain> dealDomainList = new ArrayList<>();
+				List<OperationRecord> operationRecordList = operaionRecordService.getOperationRecordByWInfoId(alertWarningInformation.getId());
+                if(null!=operationRecordList&&operationRecordList.size()>0){
+                    for(OperationRecord or : operationRecordList){
+						DealDomain dealDomain = new DealDomain();
+						dealDomain.setDealId(or.getId());
+						dealDomain.setDealType(or.getDealType());
+						dealDomain.setDealInfo(or.getProposal());
+						List<AttachmentDomain> attachmentDomainList = new ArrayList<>();
+						List<AttachmentInformation> attachmentInformationList = attachmentInfomationService.getAttachmentInformationByOprId(or.getId());
+					    if(null!=attachmentInformationList&&attachmentInformationList.size()>0){
+							for(AttachmentInformation aif : attachmentInformationList){
+								AttachmentDomain  attachmentDomain = new AttachmentDomain();
+								attachmentDomain.setId(aif.getId());
+								attachmentDomain.setFileUrl(aif.getAttachmentPath());
+								attachmentDomain.setFileName(aif.getAttachmentName());
+								attachmentDomainList.add(attachmentDomain);
+							}
+						}
+						dealDomain.setAttachmentDomain(attachmentDomainList);
+					}
+				}
+				warningDetailsDTO.setDealDomainList(dealDomainList);
 			}
 		}catch (Exception e){
 			result.put("success",false);

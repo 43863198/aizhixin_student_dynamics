@@ -85,5 +85,10 @@ public class OperationRecord extends AbstractEntity {
     @Column(name = "ORG_ID")
     @Getter @Setter private Long orgId;
 
+    /*
+     *处理类型 辅导员处理10 学院处理 20
+     */
+    @Column(name = "DEALT_YPE")
+    @Getter @Setter private int dealType;
 
 }

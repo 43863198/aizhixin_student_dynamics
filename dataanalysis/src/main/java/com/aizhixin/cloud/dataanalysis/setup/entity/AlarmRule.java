@@ -68,4 +68,5 @@ public class AlarmRule extends AbstractEntity {
     @Column(name = "RIGHT_RELATIONSHIP")
     @Getter @Setter private String rightRelationship;
 
+
 }

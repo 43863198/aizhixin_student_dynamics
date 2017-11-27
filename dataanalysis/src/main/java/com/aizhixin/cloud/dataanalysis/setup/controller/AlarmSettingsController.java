@@ -60,7 +60,16 @@ public class AlarmSettingsController {
     @PostMapping(value = "/warningset", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "POST", value = "预警参数设置", response = Void.class, notes = "预警参数设置<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object> warningSet(
-            @ApiParam(value = "<b>必填:、</b><br>orgId:机构id<br><b>")
+            @ApiParam(value = "<b>必填:、</b><br>orgId:机构id<br><b>"+
+                    "</b><br>warningTypeId:告警类型id;" +
+                    "</b><br>setupCloseFlag:此类型预警的开关（10：开启；20:关闭）;" +
+                    "</b><br>WarningGradeDTO:每个预警等级信息;包含" +
+                    "</b><br>grade:预警等级;" +
+                    "</b><br>AlarmRule:预警规则包含;" +
+                    "</b><br>setupCloseFlag:此规则的开关（10：开启；20:关闭）;" +
+                    "</b><br>rightRelationship:此规则的参数;"
+
+            )
             @RequestBody WarningSettingsDTO warningSettingsDTO
     ){
         return alarmSettingsService.warningSet(warningSettingsDTO);
@@ -83,7 +92,7 @@ public class AlarmSettingsController {
 
     /**
      * 预警处理设置
-     * @param ProcessingModeDomain
+     * @param domain
      * @return
      */
     @PostMapping(value = "/setprocessingmode", produces = MediaType.APPLICATION_JSON_VALUE)

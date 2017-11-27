@@ -13,7 +13,7 @@ import java.util.List;
  */
 @ApiModel(description="处理预警信息")
 @Data
-public class SubmitDealDomain {
+public class DealDomain {
 
     @ApiModelProperty(value = "预警信息id", required = false)
     private String warningInformationId;

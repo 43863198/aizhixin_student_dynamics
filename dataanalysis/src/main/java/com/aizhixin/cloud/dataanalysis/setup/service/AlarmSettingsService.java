@@ -13,10 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.xml.bind.Element;
+import java.util.*;
 
 /**
  * @author: Created by jianwei.wu
@@ -78,9 +76,13 @@ public class AlarmSettingsService {
             if(null!=alarmSettingsList){
                 List<WarningGradeDTO> warningGradeDTOList = new ArrayList<>();
                 for(AlarmSettings as :alarmSettingsList){
+                    String[] wd = warningType.getWarningDescribe().split(",");
                     WarningGradeDTO warningGradeDTO = new WarningGradeDTO();
                     warningGradeDTO.setGrade(as.getWarningLevel());
                     warningGradeDTO.setName(as.getRelationship());
+                    warningGradeDTO.setSetupCloseFlag(as.getSetupCloseFlag());
+                    List<String> list = Arrays.asList(wd);
+                    warningGradeDTO.setDescribeList(list);
                     String[] rule = as.getRuleSet().split(",");
                     if(rule.length>0){
                         List<AlarmRule> alarmRuleList = new ArrayList<>();
@@ -105,6 +107,31 @@ public class AlarmSettingsService {
         Map<String,Object> result = new HashMap<>();
         List<WarningSettingsDTO> data = new ArrayList<>();
         try{
+            WarningType warningType = warningTypeService.getWarningTypeById(warningSettingsDTO.getWarningTypeId());
+            warningSettingsDTO.setSetupCloseFlag(warningSettingsDTO.getSetupCloseFlag());
+            warningTypeService.save(warningType);//开启或关闭此类型的预警（预警总开关）
+            List<AlarmSettings> alarmSettingsList = alarmSettingsRepository.getAlarmSettingsByOrgIdAndType(warningType.getOrgId(),warningType.getWarningType(),DataValidity.VALID.getState());
+            if(null!=alarmSettingsList){
+                List<WarningGradeDTO> warningGradeDTOList = new ArrayList<>();
+                for(AlarmSettings as :alarmSettingsList){
+                    String[] wd = warningType.getWarningDescribe().split(",");
+                    WarningGradeDTO warningGradeDTO = new WarningGradeDTO();
+                    warningGradeDTO.setGrade(as.getWarningLevel());
+                    warningGradeDTO.setName(as.getRelationship());
+                    warningGradeDTO.setSetupCloseFlag(as.getSetupCloseFlag());
+                    List<String> list = Arrays.asList(wd);
+                    warningGradeDTO.setDescribeList(list);
+                    String[] rule = as.getRuleSet().split(",");
+                    if(rule.length>0){
+                        List<AlarmRule> alarmRuleList = new ArrayList<>();
+                        for(int i=0;i<rule.length;i++){
+                            alarmRuleList.add(alarmRuleService.getAlarmRuleById(rule[i]));
+                        }
+                        warningGradeDTO.setRuleList(alarmRuleList);
+                    }
+                    warningGradeDTOList.add(warningGradeDTO);
+                }
+            }
 
 
 
