@@ -73,6 +73,6 @@ public class WarningDetailsDTO {
     @ApiModelProperty(value = "预警状态")
     private int warningState;
 
-    @ApiModelProperty(value = "处理操作id", required = false)
-    private List<DealDomain> dealId;
+    @ApiModelProperty(value = "处理操作", required = false)
+    private List<DealDomain> dealDomainList;
 }

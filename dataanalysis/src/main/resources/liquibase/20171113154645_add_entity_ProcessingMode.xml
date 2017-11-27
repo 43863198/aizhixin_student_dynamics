@@ -18,7 +18,8 @@
             <column name="ID"  type="VARCHAR(50)" >
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="ALARMSETTINGS_ID" type="VARCHAR(50)" remarks="预警设置id"/>
+            <column name="WARNING_TYPE" type="VARCHAR(50)" remarks="预警类型"/>
+            <column name="WARNING_LEVEL" type="INT(4)" remarks="预警等级"/>
             <column name="ORG_ID" type="BIGINT" remarks="机构ID"/>
             <column name="OPERATION_TYPE_SET" type="VARCHAR(50)" remarks="预警处理操作类型集合(短信通知，辅导员和学生面谈，院系教务和家长电话联系等)"/>
             <column name="CREATED_BY" type="BIGINT" remarks="创建人ID"/>

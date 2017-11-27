@@ -27,7 +27,7 @@ public class AlarmSettings extends AbstractEntity {
    * 预警类型
    */
     @NotNull
-    @Column(name = "TYPE")
+    @Column(name = "WARNING_TYPE")
     @Getter @Setter private String warningType;
 
     /*

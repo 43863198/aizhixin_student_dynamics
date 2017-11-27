@@ -19,7 +19,7 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="ORG_ID" type="BIGINT" remarks="机构ID"/>
-            <column name="TYPE" type="VARCHAR(50)" remarks="预警类别"/>
+            <column name="WARNING_TYPE" type="VARCHAR(50)" remarks="预警类型"/>
             <column name="WARNING_LEVEL" type="INT(4)" remarks="预警等级"/>
             <column name="RULE_SET" type="VARCHAR(50)" remarks="应用规则id集合"/>
             <column name="RELATIONSHIP" type="VARCHAR(500)" remarks="规则集合关系"/>
