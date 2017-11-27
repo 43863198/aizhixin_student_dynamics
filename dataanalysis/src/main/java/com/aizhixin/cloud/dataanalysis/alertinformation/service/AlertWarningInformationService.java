@@ -13,6 +13,8 @@ import com.aizhixin.cloud.dataanalysis.alertinformation.dto.CollegeStatisticsDTO
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.CollegeWarningInfoDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.TypeStatisticsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningDetailsDTO;
+import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AttachmentInformation;
+import com.aizhixin.cloud.dataanalysis.alertinformation.entity.OperationRecord;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
@@ -51,11 +53,14 @@ public class AlertWarningInformationService {
 	private AlertWarningInformationRepository alertWarningInformationRepository;
 	@Autowired
 	private AlarmSettingsService alarmSettingsService;
-
 	@Autowired
 	private PageJdbcUtil pageJdbcUtil;
 	@Autowired
 	private AuthUtilService authUtilService;
+	@Autowired
+	private  OperaionRecordService operaionRecordService;
+	@Autowired
+	private AttachmentInfomationService attachmentInfomationService;
 
 
 	
@@ -675,11 +680,28 @@ public class AlertWarningInformationService {
 				warningDetailsDTO.setWarningLevel(alertWarningInformation.getWarningLevel());
 				warningDetailsDTO.setWarningState(alertWarningInformation.getWarningState());
 				List<DealDomain> dealDomainList = new ArrayList<>();
-
-
-
-
-
+				List<OperationRecord> operationRecordList = operaionRecordService.getOperationRecordByWInfoId(alertWarningInformation.getId());
+                if(null!=operationRecordList&&operationRecordList.size()>0){
+                    for(OperationRecord or : operationRecordList){
+						DealDomain dealDomain = new DealDomain();
+						dealDomain.setDealId(or.getId());
+						dealDomain.setDealType(or.getDealType());
+						dealDomain.setDealInfo(or.getProposal());
+						List<AttachmentDomain> attachmentDomainList = new ArrayList<>();
+						List<AttachmentInformation> attachmentInformationList = attachmentInfomationService.getAttachmentInformationByOprId(or.getId());
+					    if(null!=attachmentInformationList&&attachmentInformationList.size()>0){
+							for(AttachmentInformation aif : attachmentInformationList){
+								AttachmentDomain  attachmentDomain = new AttachmentDomain();
+								attachmentDomain.setId(aif.getId());
+								attachmentDomain.setFileUrl(aif.getAttachmentPath());
+								attachmentDomain.setFileName(aif.getAttachmentName());
+								attachmentDomainList.add(attachmentDomain);
+							}
+						}
+						dealDomain.setAttachmentDomain(attachmentDomainList);
+					}
+				}
+				warningDetailsDTO.setDealDomainList(dealDomainList);
 			}
 		}catch (Exception e){
 			result.put("success",false);

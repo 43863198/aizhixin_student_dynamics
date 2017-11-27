@@ -38,6 +38,7 @@ public class AlarmHandlingService {
             operationRecord.setOperationTime(new Date());
             operationRecord.setOperationType(submitDealDomain.getDealType() + "");
             operationRecord.setProposal(submitDealDomain.getDealInfo());
+            operationRecord.setWarningInformationId(submitDealDomain.getWarningInformationId());
             operaionRecordService.save(operationRecord);
             for (AttachmentDomain d : submitDealDomain.getAttachmentDomain()) {
                 AttachmentInformation attachmentInformation = new AttachmentInformation();
