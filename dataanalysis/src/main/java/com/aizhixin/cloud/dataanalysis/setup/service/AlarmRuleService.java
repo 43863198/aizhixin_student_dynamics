@@ -35,6 +35,9 @@ public class AlarmRuleService {
         return alarmRuleRespository.getAlarmRuleBySettingsId(alarmSettingsId);
     }
 
+    public String save(AlarmRule alarmRule){
+        return alarmRuleRespository.save(alarmRule).getId();
+    }
 
 
 }

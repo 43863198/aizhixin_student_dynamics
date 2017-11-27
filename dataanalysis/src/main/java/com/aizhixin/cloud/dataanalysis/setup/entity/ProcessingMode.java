@@ -20,17 +20,37 @@ import javax.validation.constraints.NotNull;
 @ToString
 public class ProcessingMode extends AbstractEntity {
     /*
-     * 预警设置id
-     */
+     * 预警类型
+      */
     @NotNull
-    @Column(name = "ALARMSETTINGS_ID")
-    @Getter @Setter private String alarmSettingsId;
+    @Column(name = "WARNING_TYPE")
+    @Getter @Setter private String warningType;
 
     /*
-    * 预警处理操作类型集合(短信通知，辅导员和学生面谈，院系教务和家长电话联系等)
+     * 预警级别
+     */
+    @Column(name = "WARNING_LEVEL")
+    @Getter @Setter private int warningLevel;
+
+    /*
+    * 预警处理操作类型集合(发送学生10 发送辅导员 20 发送院系领导)
     */
     @Column(name = "OPERATION_TYPE_SET")
     @Getter @Setter private String operationTypeSet;
+
+
+    /*
+     * 开启状态(10:启用 ;20:关闭；)
+     */
+    @NotNull
+    @Column(name = "SETUP_CLOSE_FLAG")
+    @Getter @Setter private int setupCloseFlag;
+
+    /*
+     * 预警处理操作集合(手机短信 1 电子邮件 2 站内信 3)
+     */
+    @Column(name = "OPERATION_SET")
+    @Getter @Setter private String operationSet;
 
     /*
      * 机构id

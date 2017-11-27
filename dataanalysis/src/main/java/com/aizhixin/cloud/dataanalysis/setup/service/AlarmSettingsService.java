@@ -5,8 +5,11 @@ import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningGradeDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningSettingsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningTypeDTO;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
+import com.aizhixin.cloud.dataanalysis.setup.domain.AlarmRuleDomain;
+import com.aizhixin.cloud.dataanalysis.setup.domain.AlarmSettingDomain;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmRule;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
+import com.aizhixin.cloud.dataanalysis.setup.entity.ProcessingMode;
 import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.setup.respository.AlarmSettingsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +33,8 @@ public class AlarmSettingsService {
     private WarningTypeService warningTypeService;
     @Autowired
     private AlarmRuleService alarmRuleService;
+    @Autowired
+    private ProcessingModeService processingModeService;
 
     public List<AlarmSettings> getAlarmSettingsByType(String warningType){
         return alarmSettingsRepository.getAlarmSettingsByType(warningType, DataValidity.VALID.getState());
@@ -72,7 +77,7 @@ public class AlarmSettingsService {
             WarningType warningType = warningTypeService.getWarningTypeById(warningTypeId);
             warningSettingsDTO.setWarningName(warningType.getWarningName());
             warningSettingsDTO.setSetupCloseFlag(warningType.getSetupCloseFlag());
-            List<AlarmSettings> alarmSettingsList = alarmSettingsRepository.getAlarmSettingsByOrgIdAndType(warningType.getOrgId(),warningType.getWarningType(),DataValidity.VALID.getState());
+            List<AlarmSettings> alarmSettingsList = alarmSettingsRepository.getAlarmSettingsByOrgIdAndType(warningType.getOrgId(), warningType.getWarningType(), DataValidity.VALID.getState());
             if(null!=alarmSettingsList){
                 List<WarningGradeDTO> warningGradeDTOList = new ArrayList<>();
                 for(AlarmSettings as :alarmSettingsList){
@@ -81,6 +86,7 @@ public class AlarmSettingsService {
                     warningGradeDTO.setGrade(as.getWarningLevel());
                     warningGradeDTO.setName(as.getRelationship());
                     warningGradeDTO.setSetupCloseFlag(as.getSetupCloseFlag());
+                    warningGradeDTO.setId(as.getId());
                     List<String> list = Arrays.asList(wd);
                     warningGradeDTO.setDescribeList(list);
                     String[] rule = as.getRuleSet().split(",");
@@ -103,58 +109,48 @@ public class AlarmSettingsService {
         return result;
     }
 
-    public Map<String,Object>  warningSet(WarningSettingsDTO warningSettingsDTO){
+    public Map<String,Object>  warningSet(AlarmSettingDomain alarmSettingDomain){
         Map<String,Object> result = new HashMap<>();
-        List<WarningSettingsDTO> data = new ArrayList<>();
         try{
-            WarningType warningType = warningTypeService.getWarningTypeById(warningSettingsDTO.getWarningTypeId());
-            warningSettingsDTO.setSetupCloseFlag(warningSettingsDTO.getSetupCloseFlag());
-            warningTypeService.save(warningType);//开启或关闭此类型的预警（预警总开关）
-            if(null!=warningSettingsDTO.getGradeDTOList()&&warningSettingsDTO.getGradeDTOList().size()>0){
-                for(WarningGradeDTO wg: warningSettingsDTO.getGradeDTOList()){
-//                    List<AlarmSettings> alarmSettingsList = alarmSettingsRepository.getAlarmSettingsByLevel(warningType.getOrgId(),warningType.getWarningType(),wg.getGrade(),DataValidity.VALID.getState())
-//                    for(AlarmSettings as: alarmSettingsList){
-//
-//                    }
-                }
+            String ruleId = "";
+            for(AlarmRuleDomain ard : alarmSettingDomain.getRuleDomainList()) {
+                AlarmRule alarmRule = new AlarmRule();
+                alarmRule.setName(ard.getName());
+                alarmRule.setRightParameter(ard.getParameter());
+                String id = alarmRuleService.save(alarmRule);
+                ruleId = ruleId + id +",";
             }
-
-
-
-            List<AlarmSettings> alarmSettingsList = alarmSettingsRepository.getAlarmSettingsByOrgIdAndType(warningType.getOrgId(),warningType.getWarningType(),DataValidity.VALID.getState());
-            if(null!=alarmSettingsList){
-                List<WarningGradeDTO> warningGradeDTOList = new ArrayList<>();
-                for(AlarmSettings as :alarmSettingsList){
-                    String[] wd = warningType.getWarningDescribe().split(",");
-                    WarningGradeDTO warningGradeDTO = new WarningGradeDTO();
-                    warningGradeDTO.setGrade(as.getWarningLevel());
-                    warningGradeDTO.setName(as.getRelationship());
-                    warningGradeDTO.setSetupCloseFlag(as.getSetupCloseFlag());
-                    List<String> list = Arrays.asList(wd);
-                    warningGradeDTO.setDescribeList(list);
-                    String[] rule = as.getRuleSet().split(",");
-                    if(rule.length>0){
-                        List<AlarmRule> alarmRuleList = new ArrayList<>();
-                        for(int i=0;i<rule.length;i++){
-                            alarmRuleList.add(alarmRuleService.getAlarmRuleById(rule[i]));
-                        }
-                        warningGradeDTO.setRuleList(alarmRuleList);
-                    }
-                    warningGradeDTOList.add(warningGradeDTO);
-                }
+            if(ruleId.length()>0){
+                ruleId = ruleId.substring(0, ruleId.length() - 1);
+                AlarmSettings alarmSettings = alarmSettingsRepository.findOne(alarmSettingDomain.getAlarmSettingsId());
+                alarmSettings.setRuleSet(ruleId);
+                alarmSettingsRepository.save(alarmSettings);
             }
-
-
-
         }catch (Exception e){
             result.put("success",true);
             result.put("message","预警设置保存异常！");
         }
         result.put("success",true);
-        result.put("data",data);
+        result.put("message","预警设置保存成功!");
         return result;
     }
 
+
+    public  Map<String,Object> getProcessingMode(String warningTypeId){
+        Map<String,Object> result = new HashMap<>();
+        List<ProcessingMode> processingModeList = null;
+        try{
+            WarningType warningType = warningTypeService.getWarningTypeById(warningTypeId);
+            processingModeList =  processingModeService.getProcessingModeBywarningTypeId(warningType.getOrgId(),warningTypeId);
+
+           }catch (Exception e){
+           result.put("success",true);
+            result.put("message","获取预警处理设置信息异常！");
+          }
+         result.put("success",true);
+         result.put("processingModeList",processingModeList);
+       return result;
+    }
 
 
 
