@@ -43,15 +43,15 @@ public class ScoreJob {
 //						.toString());
 //		HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
 //		
-//		Set<String> warmRuleIdList = new  HashSet<String>();
+//		Set<String> warnRuleIdList = new  HashSet<String>();
 //		// 按orgId归类告警等级阀值
 //		for (AlarmSettings settings : settingsList) {
 //			Long orgId = settings.getOrgId();
 //			
-//			String[] warmRuleIds = settings.getRuleSet().split(",");
-//			for(String warmRuleId : warmRuleIds){
-//				if(!StringUtils.isEmpty(warmRuleId)){
-//					warmRuleIdList.add(warmRuleId);
+//			String[] warnRuleIds = settings.getRuleSet().split(",");
+//			for(String warnRuleId : warnRuleIds){
+//				if(!StringUtils.isEmpty(warnRuleId)){
+//					warnRuleIdList.add(warnRuleId);
 //				}
 //			}
 //			if (null != alarmMap.get(orgId)) {
@@ -63,7 +63,7 @@ public class ScoreJob {
 //				alarmMap.put(orgId, alarmList);
 //			}
 //		}
-//		 List<AlarmRule> alarmList = alarmRuleService.getAlarmRuleByIds(warmRuleIdList);
+//		 List<AlarmRule> alarmList = alarmRuleService.getAlarmRuleByIds(warnRuleIdList);
 //		Iterator iter = alarmMap.entrySet().iterator();
 //		while (iter.hasNext()) {
 //			Map.Entry entry = (Map.Entry) iter.next();

@@ -27,17 +27,14 @@ public class AlarmRuleService {
         return alarmRuleRespository.findOne(id);
     }
 
-<<<<<<< HEAD
     
     public List<AlarmRule>  getAlarmRuleByIds(Set<String> ids){
         return alarmRuleRespository.findAllByIdIn(ids);
     }
-=======
     public List<AlarmRule> getAlarmRuleBySettingsId(String alarmSettingsId){
         return alarmRuleRespository.getAlarmRuleBySettingsId(alarmSettingsId);
     }
 
 
 
->>>>>>> eb81828bbd0a11559a54e22c541844f84f6b95e0
 }
