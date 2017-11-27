@@ -22,10 +22,6 @@ public class AlarmRuleService {
         return alarmRuleRespository.findOne(id);
     }
 
-    public List<AlarmRule> getAlarmRuleBySettingsId(String alarmSettingsId){
-        return alarmRuleRespository.getAlarmRuleBySettingsId(alarmSettingsId);
-    }
-
     public String save(AlarmRule alarmRule){
         return alarmRuleRespository.save(alarmRule).getId();
     }
