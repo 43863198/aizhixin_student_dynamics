@@ -52,7 +52,7 @@ public class AlarmHandlingController {
     @ApiOperation(httpMethod = "POST", value = "处理结果", response = Void.class, notes = "处理结果<br><br><b>@author wu.jianwei</b>")
     public Map<String, Object> processing(
             @ApiParam(value = "<b>必填:、</b><br>warningInformationId:预警信息id<br><b>" +
-                    "<br>status:10 完成预警处理 20 撤销预警处理<br>")  @RequestBody DealResultDomain dealResultDomain) {
+                    "<br>status:20 完成预警处理 40 撤销预警处理<br>")  @RequestBody DealResultDomain dealResultDomain) {
         return alarmHandlingService.processing(dealResultDomain) ;
     }
 
