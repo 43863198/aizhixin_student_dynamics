@@ -11,7 +11,7 @@ import lombok.Data;
  */
 @ApiModel(description="预警设置中的规则和参数对应")
 @Data
-public class WarningDescParameterDTO {
+public class WarningDescparameterDTO {
 
     @ApiModelProperty(value = "序号")
     private int serialNumber;

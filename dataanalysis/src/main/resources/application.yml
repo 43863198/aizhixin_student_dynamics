@@ -1,0 +1,82 @@
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${spring.application.name}:${server.port}
+  client:
+    service-url:
+      defaultZone: http://172.16.23.120:1111/eureka/,http://172.16.23.121:1111/eureka/
+spring:
+  cloud:
+    inetutils:
+      ignored-interfaces:
+        - eth1
+        - em2
+        - em3
+        - em4
+        - usb0
+  aop:
+    auto: true
+    proxy-target-class: true
+  data:
+    mongodb: 
+      database: student_dynamics_dev
+      host: 172.16.23.65
+      port: 27017
+      password:
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/student_dynamics_dev?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF8&useSSL=false
+#    username: root
+#    password: root
+    url: jdbc:mysql://172.16.23.65:3306/student_dynamics_dev?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF8&useSSL=false
+    username: org_api
+    password: dinglicom       
+    hikari:
+      auto-commit: false
+      minimum-idle: 2
+      maximum-pool-size: 10
+      connection-timeout: 10000
+      max-lifetime: 600000
+      idle-timeout: 60000
+      validation-timeout: 1000
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLInnoDBDialect
+    database: MYSQL
+    open-in-view: false
+    generate-ddl: false
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+      naming.strategy: org.hibernate.cfg.EJB3NamingStrategy
+    properties:
+      hibernate.cache.use_second_level_cache: true
+      hibernate.cache.use_query_cache: true
+      hibernate.generate_statistics: false
+      hibernate.cache.region.factory_class: org.hibernate.cache.ehcache.EhCacheRegionFactory
+      javax.persistence.sharedCache.mode: ENABLE_SELECTIVE
+
+liquibase:
+  change-log: classpath:liquibase/master.xml
+  default-schema: student_dynamics_dev
+
+logging.level.com.aizhixin.cloud: DEBUG
+
+sys:
+  version: v0.0.0.1
+
+dl:
+  dledu:
+    back:
+      host: http://dledudev.aizhixin.com/zhixin_api
+      userInfoUrl: /api/web/v1/users/userinfonew
+      userAvatarUrl: /api/account/userAvatarlist
+      listpush: /api/web/v1/push/listpush
+  org:
+    back:
+      dbname: org_api_dev
+      host: http://172.16.23.120:3333/org-manager
+      
+zookeeper:
+  connecton: 172.16.23.121:2181
+  path: /analysis/lock
+  task: /analysis/task      

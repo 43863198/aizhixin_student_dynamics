@@ -22,6 +22,6 @@ public class WarningGradeDTO {
     @ApiModelProperty(value = "开启状态(10:启用 ;20:关闭；")
     private int setupCloseFlag;
     @ApiModelProperty(value = "规则描述及参数")
-    List<WarningDescParameterDTO> describeParameter;
+    List<WarningDescparameterDTO> describeParameter;
 
 }
