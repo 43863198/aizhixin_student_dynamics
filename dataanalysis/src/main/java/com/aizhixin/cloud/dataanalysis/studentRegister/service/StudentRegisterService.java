@@ -3,14 +3,20 @@ package com.aizhixin.cloud.dataanalysis.studentRegister.service;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -44,60 +50,88 @@ public class StudentRegisterService {
 	@Autowired
 	private ExcelBasedataHelper basedataHelper;
 
+	/**
+     * 功能：判断字符串是否为日期格式
+     * 
+     * @param str
+     * @return
+     */
+    public static boolean isDate(String strDate) {
+        Pattern pattern = Pattern
+                .compile("^((\\d{2}(([02468][048])|([13579][26]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])))))|(\\d{2}(([02468][1235679])|([13579][01345789]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))))(\\s(((0?[0-9])|([1-2][0-3]))\\:([0-5]?[0-9])((\\s)|(\\:([0-5]?[0-9])))))?$");
+        Matcher m = pattern.matcher(strDate);
+        if (m.matches()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-	public void importData(Long orgId, MultipartFile studentInfoFile,MultipartFile dataBaseFile, Date registerDate) throws ParseException {
-		//获取基础数据源
-		List<StudentRegisterDomain> dataBases = basedataHelper.readStudentRegisterFromInputStream(dataBaseFile);
-		if (null == dataBases || dataBases.size() <= 0) {
-			throw new CommonException(ErrorCode.ID_IS_REQUIRED, "没有读取到任何数据");
-		}
+	public void importData(MultipartFile studentInfoFile,MultipartFile dataBaseFile, Date registerDate) throws ParseException {
 		//获取学生信息
 		List<StudentInfoDomain> studentInfos = basedataHelper.readStudentInfoFromInputStream(studentInfoFile);
 		if (null == studentInfos || studentInfos.size() <= 0) {
 			throw new CommonException(ErrorCode.ID_IS_REQUIRED, "没有读取到任何数据");
 		}
-		
-		Map<String, List<StudentRegisterDomain>> maps = new HashMap<>();
-		Set<String> jobNums = new HashSet<>();
+		//获取学生基础数据源
+		List<StudentRegisterDomain> dataBases = basedataHelper.readStudentRegisterFromInputStream(dataBaseFile);
+		if (null == dataBases || dataBases.size() <= 0) {
+			throw new CommonException(ErrorCode.ID_IS_REQUIRED, "没有读取到任何数据");
+		}
+		//学生基础数据存map
+		Map<String, StudentRegisterDomain> maps = new HashMap<>();
 		for (StudentRegisterDomain data : dataBases) {
-			List<StudentRegisterDomain> list = maps.get(data.getJobNum());
-			if (null == list) {
-				list = new ArrayList<>();
-				maps.put(data.getJobNum(), list);
-			}
-			jobNums.add(data.getJobNum());
+			maps.put(data.getJobNum(), data);
 		}
-		
-		Map<String, List<StudentInfoDomain>> maps1= new HashMap<>();
-		Set<String> jobNums1 = new HashSet<>();
+		//学生信息存map
+		Map<String, StudentInfoDomain> maps1= new HashMap<>();
 		for (StudentInfoDomain data : studentInfos) {
-			List<StudentInfoDomain> list = maps1.get(data.getJobNum());
-			if (null == list) {
-				list = new ArrayList<>();
-				maps1.put(data.getJobNum(), list);
-			}
-			jobNums1.add(data.getJobNum());
+			maps1.put(data.getJobNum(), data);
 		}
-		Set<String> keySet = maps.keySet();
 		List<StudentRegister> stuRegisterList = new ArrayList<>();
-		for (String key : keySet) {
-			if (maps1.containsKey(key)) {
-				
-				for (StudentRegisterDomain data : dataBases) {
-					StudentRegister studentRegister = new StudentRegister();
-					studentRegister.setIsregister(data.getIsregister());
-					studentRegister.setGrade(data.getGrade());
-					if (null != data.getActualRegisterDate()) {
-						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");  
-						Date actualRegisterDate = sdf.parse(data.getActualRegisterDate()); 
-						studentRegister.setActualRegisterDate(actualRegisterDate);
+		//学生数据key value
+		for (Entry<String, StudentRegisterDomain> entry : maps.entrySet()) {  
+//		    System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue()); 
+		    //学生信息key value
+		    for (Entry<String, StudentInfoDomain> entry1 : maps1.entrySet()) {  
+//		    	System.out.println("Key = " + entry1.getKey() + ", Value = " + entry1.getValue());  
+		    	if (entry.getKey().equals(entry1.getKey())) {
+		    		StudentRegister studentRegister = new StudentRegister();
+		    		studentRegister.setOrgId(entry1.getValue().getOrgId());
+		    		studentRegister.setJobNum(entry.getValue().getJobNum());
+//		    		if (isDate(entry.getValue().getActualRegisterDate())) {
+//		    			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//		    			Date date = sdf.parse(entry.getValue().getActualRegisterDate());  
+//		    			studentRegister.setActualRegisterDate(date);
+//					}
+		    		if (entry.getValue().getActualRegisterDate() != null) {
+		    			Integer date = Integer.valueOf(entry.getValue().getActualRegisterDate());
+		    			if (date > 0) {
+		    				Calendar c = new GregorianCalendar(1900,0,-1);  
+		    				Date d = c.getTime();  
+		    				System.out.println(d.toLocaleString());  
+		    				Date _d = DateUtils.addDays(d, date + 1);  //42605是距离1900年1月1日的天数
+		    				System.out.println(_d.toLocaleString());
+		    				studentRegister.setActualRegisterDate(_d);
+						}
 					}
-					studentRegister.setRegisterDate(registerDate);
-					studentRegister.setSchoolYear(data.getSchoolYear());
-					stuRegisterList.add(studentRegister);
+		    		studentRegister.setIsregister(entry.getValue().getIsregister());
+		    		studentRegister.setClassId(entry1.getValue().getClassId());
+		    		studentRegister.setClassName(entry1.getValue().getClassName());
+		    		studentRegister.setGrade(entry.getValue().getGrade());
+		    		studentRegister.setCollegeId(entry1.getValue().getCollegeId());
+		    		studentRegister.setCollegeName(entry1.getValue().getCollegeName());
+		    		studentRegister.setProfessionalId(entry1.getValue().getProfessionalId());
+		    		studentRegister.setProfessionalName(entry1.getValue().getProfessionalName());
+		    		studentRegister.setSchoolYear(entry.getValue().getSchoolYear());
+		    		studentRegister.setUserId(entry1.getValue().getUserId());
+		    		studentRegister.setUserName(entry1.getValue().getUserName());
+		    		studentRegister.setRegisterDate(registerDate);
+		    		stuRegisterList.add(studentRegister);
 				}
-			}
-		}
+		    }
+		    
+		}  
 		respository.save(stuRegisterList);
 	}
 }

@@ -188,12 +188,11 @@ public class TestDataController {
 	@RequestMapping(value = "/import", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "POST", value = "批量导入新生报到", response = Void.class, notes = "批量导入新生报到<br><br><b>@author bly</b>")
 	public ResponseEntity<Void> importStudent(
-			@ApiParam(value = "orgId 组织ID", required = true) @RequestParam(value = "orgId") Long orgId,
-			@ApiParam(value = "基础数据文件", required = true) @RequestParam(value = "studentInfoFile") MultipartFile studentInfoFile,
-			@ApiParam(value = "学生信息文件", required = true) @RequestParam(value = "dataBaseFile") MultipartFile dataBaseFile,
+			@ApiParam(value = "学生信息文件", required = true) @RequestParam(value = "studentInfoFile") MultipartFile studentInfoFile,
+			@ApiParam(value = "基础数据文件", required = true) @RequestParam(value = "dataBaseFile") MultipartFile dataBaseFile,
 			@DateTimeFormat(pattern = "yyyy-MM-dd") @ApiParam(value = "registerDate 报到日期<br/>时间格式：yyyy-MM-dd") @RequestParam(value = "registerDate", required = false) Date registerDate) {
 		try {
-			registerService.importData(orgId, studentInfoFile, dataBaseFile, registerDate);
+			registerService.importData(studentInfoFile, dataBaseFile, registerDate);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

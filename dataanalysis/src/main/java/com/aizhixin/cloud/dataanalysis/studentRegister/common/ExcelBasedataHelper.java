@@ -51,7 +51,7 @@ public class ExcelBasedataHelper {
 	public List<StudentRegisterDomain> readStudentRegisterFromInputStream(MultipartFile file) {
 		List<StudentRegisterDomain> list = new ArrayList<>();
 		ExcelUtil util = new ExcelUtil(file);
-		Sheet sheet = util.getSheet("新生报到2017");
+		Sheet sheet = util.getSheet("new");
 		if (null == sheet) {// 如果没有此sheet页标签，读取第1个标签的内容
 			sheet = util.getSheet(0);
 		}
@@ -68,8 +68,11 @@ public class ExcelBasedataHelper {
 				String grade = getCellStringValue(row, 4);
 				String schoolYear = getCellStringValue(row, 4);
 				String jobNum = getCellStringValue(row, 5);
-				String actualRegisterDate = getCellStringValue(row, 2);
-				int isregister = 1;
+				String actualRegisterDate = getCellStringValue(row, 39);
+				int isregister = 0;
+				if ("".equals(actualRegisterDate) || actualRegisterDate.length() <= 0) {
+					isregister = 1;
+				}
 				list.add(new StudentRegisterDomain(line, jobNum, grade, isregister, actualRegisterDate, schoolYear));
 				line++;
 			}
@@ -80,7 +83,7 @@ public class ExcelBasedataHelper {
 	public List<StudentInfoDomain> readStudentInfoFromInputStream(MultipartFile file) {
 		List<StudentInfoDomain> list = new ArrayList<>();
 		ExcelUtil util = new ExcelUtil(file);
-		Sheet sheet = util.getSheet("新生报到2017");
+		Sheet sheet = util.getSheet("new");
 		if (null == sheet) {// 如果没有此sheet页标签，读取第1个标签的内容
 			sheet = util.getSheet(0);
 		}
