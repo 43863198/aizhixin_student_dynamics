@@ -1,5 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.setup.service;
 
+import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
 import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.setup.respository.WarningTypeRespository;
@@ -22,8 +23,8 @@ public class WarningTypeService {
         return warningTypeRespository.findOne(id);
     }
 
-    public List<WarningType> getWarningTypeList(){
-        return warningTypeRespository.findAll();
+    public List<WarningType> getWarningTypeList(Long orgId){
+        return warningTypeRespository.getWarningTypeByOrgId(orgId, DataValidity.VALID.getState());
     }
 
     public void save(WarningType warningType){

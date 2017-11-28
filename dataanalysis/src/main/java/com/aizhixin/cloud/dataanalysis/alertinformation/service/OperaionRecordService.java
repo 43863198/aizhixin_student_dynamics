@@ -25,8 +25,8 @@ public class OperaionRecordService {
         return operationRecordRepository.findOne(id);
     }
 
-    public void save(OperationRecord operationRecord){
-         operationRecordRepository.save(operationRecord);
+    public String save(OperationRecord operationRecord){
+         return operationRecordRepository.save(operationRecord).getId();
     }
 
     public List<OperationRecord> getOperationRecordByWInfoId(String warningInformationId){
