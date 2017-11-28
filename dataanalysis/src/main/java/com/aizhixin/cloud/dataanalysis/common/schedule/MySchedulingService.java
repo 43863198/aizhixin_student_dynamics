@@ -24,7 +24,7 @@ public class MySchedulingService {
     /**
      * 定时统计实践任务
      */
-    @Scheduled(cron = "0 0/2 * * * ?")
+    @Scheduled(cron = "0 0/30 * * * ?")
     public void stuRegisterJob() {
         if (distributeLock.getStuRegisterLock()) {
             LOG.info("开始启动学生注册报到预警定时任务");

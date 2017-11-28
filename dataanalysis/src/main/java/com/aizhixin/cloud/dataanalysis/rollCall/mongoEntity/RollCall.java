@@ -25,6 +25,7 @@ public class RollCall {
 	/**
 	 * 工号/学号
 	 */
+	@Indexed
 	private String jobNum;
 	
 	/**
@@ -77,14 +78,18 @@ public class RollCall {
 	private String grade;
 	
 	/**
-	 * 学年学期
+	 * 学期
 	 */
-	private String schoolYear;
+	private int semester;
+	
+	/**
+	 * 学年
+	 */
+	private int schoolYear;
 	
 	/**
 	 * 排课id
 	 */
-	@Indexed
 	private Long scheduleId;
 	
 	/**
@@ -110,6 +115,7 @@ public class RollCall {
 	/**
 	 * 考勤结果
 	 */
+	@Indexed
 	private String rollCallResult;
 	
 	/**

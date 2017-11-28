@@ -22,9 +22,6 @@ public class ProcessingModeService {
     @Autowired
     private ProcessingModeRespository processingModeRespository;
 
-    public List<ProcessingMode> getProcessingModeList(Set<String> settingsIds,int deleteFlag){
-    	return processingModeRespository.findAllByAlarmSettingsIdInAndDeleteFlag(settingsIds, deleteFlag);
-    }
     public List<ProcessingMode> getProcessingModeBywarningTypeId(Long orgId, String warningTypeId){
         return processingModeRespository.getProcessingModeBywarningTypeId(orgId,warningTypeId, DataValidity.VALID.getState());
 

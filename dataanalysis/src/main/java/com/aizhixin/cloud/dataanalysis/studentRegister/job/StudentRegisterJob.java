@@ -54,9 +54,9 @@ public class StudentRegisterJob {
 	private StudentRegisterMongoRespository stuRegisterMongoRespository;
 	@Autowired
 	private AlertWarningInformationService alertWarningInformationService;
-	@Autowired 
+	@Autowired
 	private ProcessingModeService processingModeService;
-	
+
 	public void studenteRegisterJob() {
 
 		// 获取预警配置
@@ -64,12 +64,12 @@ public class StudentRegisterJob {
 				.getAlarmSettingsByType(WarningType.Register.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
-			
+
 			Set<String> warnRuleIdList = new HashSet<String>();
 			Set<String> warnSettingsIdList = new HashSet<String>();
 			// 按orgId归类告警等级阀值
 			for (AlarmSettings settings : settingsList) {
-				
+
 				warnSettingsIdList.add(settings.getId());
 				Long orgId = settings.getOrgId();
 
@@ -95,108 +95,146 @@ public class StudentRegisterJob {
 			for (AlarmRule alarmRule : alarmList) {
 				alarmRuleMap.put(alarmRule.getId(), alarmRule);
 			}
-			//预警处理配置获取
-			HashMap<String, ProcessingMode> processingModeMap = new HashMap<String, ProcessingMode>();
-			List<ProcessingMode> processingModeList = processingModeService.getProcessingModeList(warnSettingsIdList, DataValidity.VALID.getState());
-			
+
 			Iterator iter = alarmMap.entrySet().iterator();
 			while (iter.hasNext()) {
-				
+
+				//更新预警集合
 				ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
-				ArrayList<WarningInformation> removeAlertInforList = new ArrayList<WarningInformation>();
-				HashMap<String,WarningInformation> warnDbMap = new HashMap<String,WarningInformation>();
-				HashMap<String,WarningInformation> warnMap = new HashMap<String,WarningInformation>();
+				//撤销预警集合
+				List<WarningInformation> removeAlertInforList = new ArrayList<WarningInformation>();
+				//新增预警处理信息
+				
+				// 数据库已生成的处理中预警数据
+				HashMap<String, WarningInformation> warnDbMap = new HashMap<String, WarningInformation>();
+				// 定时任务产生的新的预警数据
+				HashMap<String, WarningInformation> warnMap = new HashMap<String, WarningInformation>();
 				Map.Entry entry = (Map.Entry) iter.next();
 				Long orgId = (Long) entry.getKey();
 				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
 						.getValue();
 
+				// 预警处理配置获取
+				HashMap<String, ProcessingMode> processingModeMap = new HashMap<String, ProcessingMode>();
+				List<ProcessingMode> processingModeList = processingModeService
+						.getProcessingModeBywarningTypeId(orgId,
+								WarningType.Register.toString());
 				// 按orgId查询未报到的学生信息
 				// List<StudentRegister> stuRegisterList =
 				// stuRegisterMongoRespository
 				// .findAllByOrgIdAndIsregister(key,StudentRegisterConstant.UNREGISTER);
 				List<StudentRegister> stuRegisterList = stuRegisterMongoRespository
 						.findAllByOrgIdAndActualRegisterDateIsNull(orgId);
-				Date today = new Date();
-				for (StudentRegister studentRegister : stuRegisterList) {
-					int result = DateUtil.getDaysBetweenDate(
-							studentRegister.getRegisterDate(), today);
-					for (AlarmSettings alarmSettings : val) {
-						AlarmRule alarmRule = alarmRuleMap.get(alarmSettings
-								.getRuleSet());
-						if (null != alarmRule) {
-							if (result >= alarmRule.getRightParameter()) {
-								WarningInformation alertInfor = new WarningInformation();
-								String alertId = UUID.randomUUID().toString();
-								alertInfor.setId(alertId);
-								alertInfor.setDefendantId(studentRegister
-										.getUserId());
-								alertInfor.setName(studentRegister
-										.getUserName());
-								alertInfor.setJobNumber(studentRegister
-										.getJobNum());
-								alertInfor.setCollogeId(studentRegister
-										.getCollegeId());
-								alertInfor.setCollogeName(studentRegister
-										.getCollegeName());
-								alertInfor.setTeachingYear(studentRegister
-										.getGrade());
-								alertInfor.setClassId(studentRegister
-										.getClassId());
-								alertInfor.setClassName(studentRegister
-										.getClassName());
-								alertInfor.setProfessionalId(studentRegister
-										.getProfessionalId());
-								alertInfor.setProfessionalName(studentRegister
-										.getProfessionalName());
-								alertInfor.setTeachingYear(studentRegister
-										.getSchoolYear());
-								alertInfor.setWarningLevel(alarmSettings
-										.getWarningLevel());
-								alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-								alertInfor.setAlarmSettingsId(alarmSettings.getId());
-								alertInfor.setWarningType(WarningType.Register
-										.toString());
-								alertInfor.setWarningTime(new Date());
-								alertInfor.setOrgId(alarmRule.getOrgId());
-								alertInforList.add(alertInfor);
-								warnMap.put(alertInfor.getJobNumber(), alertInfor);
-								
-								//生成预警处理数据
-								break;
-							} else {
-								continue;
+				
+				// 数据库已生成的处理中预警数据
+				List<WarningInformation> warnDbList = alertWarningInformationService
+						.getWarnInforByState(orgId,
+								WarningType.Register.toString(),
+								DataValidity.VALID.getState(),
+								AlertTypeConstant.ALERT_IN_PROCESS);
+				for (WarningInformation warningInfor : warnDbList) {
+					warnDbMap
+							.put(warningInfor.getJobNumber(), warningInfor);
+				}
+
+				if (null != stuRegisterList && stuRegisterList.size() > 0) {
+					Date today = new Date();
+					for (StudentRegister studentRegister : stuRegisterList) {
+						int result = DateUtil.getDaysBetweenDate(
+								studentRegister.getRegisterDate(), today);
+						for (AlarmSettings alarmSettings : val) {
+							AlarmRule alarmRule = alarmRuleMap
+									.get(alarmSettings.getRuleSet());
+							if (null != alarmRule) {
+								if (result >= alarmRule.getRightParameter()) {
+									WarningInformation alertInfor = new WarningInformation();
+									String alertId = UUID.randomUUID()
+											.toString();
+									alertInfor.setId(alertId);
+									alertInfor.setDefendantId(studentRegister
+											.getUserId());
+									alertInfor.setName(studentRegister
+											.getUserName());
+									alertInfor.setJobNumber(studentRegister
+											.getJobNum());
+									alertInfor.setCollogeId(studentRegister
+											.getCollegeId());
+									alertInfor.setCollogeName(studentRegister
+											.getCollegeName());
+									alertInfor.setTeachingYear(studentRegister
+											.getGrade());
+									alertInfor.setClassId(studentRegister
+											.getClassId());
+									alertInfor.setClassName(studentRegister
+											.getClassName());
+									alertInfor
+											.setProfessionalId(studentRegister
+													.getProfessionalId());
+									alertInfor
+											.setProfessionalName(studentRegister
+													.getProfessionalName());
+									alertInfor.setTeachingYear(studentRegister
+											.getSchoolYear());
+									alertInfor.setWarningLevel(alarmSettings
+											.getWarningLevel());
+									alertInfor
+											.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+									alertInfor.setAlarmSettingsId(alarmSettings
+											.getId());
+									alertInfor
+											.setWarningType(WarningType.Register
+													.toString());
+									alertInfor.setWarningTime(new Date());
+									alertInfor.setOrgId(alarmRule.getOrgId());
+									alertInforList.add(alertInfor);
+									warnMap.put(alertInfor.getJobNumber(),
+											alertInfor);
+
+									// 生成预警处理表数据
+									if(null != warnDbMap.get(studentRegister.getJobNum())){
+										
+									}
+
+									break;
+								} else {
+									continue;
+								}
 							}
 						}
 					}
 				}
-				
 				if (!alertInforList.isEmpty()) {
-					
-					List<WarningInformation> warnDbList = alertWarningInformationService.getWarnInforByState(orgId, WarningType.Register
-							.toString(), DataValidity.VALID.getState(), AlertTypeConstant.ALERT_IN_PROCESS);
-					for(WarningInformation warningInfor: warnDbList){
-						warnDbMap.put(warningInfor.getJobNumber(), warningInfor);
-					}
-					//数据库里有的预警更新预警信息(id和预警时间不变其他的信息以新的预警信息为主)
-					for(WarningInformation warningInfor:alertInforList){
-						WarningInformation warnDbInfor = warnDbMap.get(warningInfor.getJobNumber());
-						if(null != warnDbInfor){
+
+					// 数据库里有的预警更新预警信息(id和预警时间不变其他的信息以新的预警信息为主)
+					for (WarningInformation warningInfor : alertInforList) {
+						WarningInformation warnDbInfor = warnDbMap
+								.get(warningInfor.getJobNumber());
+						if (null != warnDbInfor) {
 							warningInfor.setId(warnDbInfor.getId());
-							warningInfor.setWarningTime(warnDbInfor.getWarningTime());
+							warningInfor.setWarningTime(warnDbInfor
+									.getWarningTime());
 						}
 					}
-					//数据库中存在新产生的预警不存在的预警直接系统处理成已处理状态
-					for(WarningInformation warningDbInfor:warnDbList){
-						WarningInformation warnInfor = warnMap.get(warningDbInfor.getJobNumber());
-						if(null == warnInfor){
-							warningDbInfor.setWarningState(AlertTypeConstant.ALERT_PROCESSED);
+					// 数据库中存在新产生的预警不存在的预警直接系统处理成已处理状态
+					for (WarningInformation warningDbInfor : warnDbList) {
+						WarningInformation warnInfor = warnMap
+								.get(warningDbInfor.getJobNumber());
+						if (null == warnInfor) {
+							warningDbInfor
+									.setWarningState(AlertTypeConstant.ALERT_PROCESSED);
 							removeAlertInforList.add(warningDbInfor);
 						}
 					}
-					
+
 					alertWarningInformationService.save(alertInforList);
+					//
+
 					alertWarningInformationService.save(removeAlertInforList);
+				}else{
+					//mongo中的报到数据都未产生预警信息则撤销数据库还处于处理中的预警信息
+					removeAlertInforList = warnDbList;
+					alertWarningInformationService.save(removeAlertInforList);
+					//预警处理表同步处理为撤销状态
 				}
 			}
 		}

@@ -11,5 +11,4 @@ import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegist
 
 public interface RollCallMongoRespository extends MongoRepository<RollCall, String>{
  
-	List<StudentRegister> findAllByOrgId(Long orgId);
 }

@@ -117,14 +117,14 @@ public class TestDataController {
 			rollCall.setOrgId(orgId);
 			rollCall.setProfessionalId(1L);
 			rollCall.setProfessionalName("测试专业");
-			rollCall.setSchoolYear("2017");
+			rollCall.setSchoolYear(2017);
 			rollCall.setUserName("学生"+i);
 			rollCall.setScheduleId(1L);
 			rollCall.setCourseName("大学英语");
 			rollCall.setCourseType("必修");
 			rollCall.setRollCallDate(DateUtil.getMonday(new Date()));
 			rollCall.setRollCallType("上课点名");
-			rollCall.setRollCallResult("旷课");
+			rollCall.setRollCallResult("outSchool");
 			
 			rollCallList.add(rollCall);
 		}
