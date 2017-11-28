@@ -26,7 +26,6 @@ public class AlarmSettings extends AbstractEntity {
     /*
    * 预警类型
    */
-    @NotNull
     @Column(name = "WARNING_TYPE")
     @Getter @Setter private String warningType;
 
@@ -51,7 +50,6 @@ public class AlarmSettings extends AbstractEntity {
     /*
     * 机构id
     */
-    @NotNull
     @Column(name = "ORG_ID")
     @Getter @Setter private Long orgId;
 
