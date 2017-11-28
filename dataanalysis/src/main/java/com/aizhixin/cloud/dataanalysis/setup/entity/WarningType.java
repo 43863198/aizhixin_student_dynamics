@@ -42,7 +42,7 @@ public class WarningType extends AbstractEntity {
     @Getter @Setter private String warningName;
 
     /*
-    * 预警描述(多个时候使用“,”分割)
+    * 预警描述(多个时候使用“,”分割;描述和序号用“-”分隔开)
     */
     @NotNull
     @Column(name = "WARNING_DESCRIBE")

@@ -686,6 +686,7 @@ public class AlertWarningInformationService {
 						DealDomain dealDomain = new DealDomain();
 						dealDomain.setDealId(or.getId());
 						dealDomain.setDealType(or.getDealType());
+						dealDomain.setDealId(or.getId());
 						dealDomain.setDealInfo(or.getProposal());
 						List<AttachmentDomain> attachmentDomainList = new ArrayList<>();
 						List<AttachmentInformation> attachmentInformationList = attachmentInfomationService.getAttachmentInformationByOprId(or.getId());
@@ -699,6 +700,7 @@ public class AlertWarningInformationService {
 							}
 						}
 						dealDomain.setAttachmentDomain(attachmentDomainList);
+						dealDomainList.add(dealDomain);
 					}
 				}
 				warningDetailsDTO.setDealDomainList(dealDomainList);

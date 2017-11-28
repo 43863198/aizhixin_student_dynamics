@@ -1,7 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.setup.controller;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningSettingsDTO;
-import com.aizhixin.cloud.dataanalysis.setup.domain.AlarmRuleDomain;
 import com.aizhixin.cloud.dataanalysis.setup.domain.AlarmSettingDomain;
 import com.aizhixin.cloud.dataanalysis.setup.domain.ProcessingModeDomain;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
@@ -62,11 +61,14 @@ public class AlarmSettingsController {
     @PostMapping(value = "/warningset", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "POST", value = "预警参数设置", response = Void.class, notes = "预警参数设置<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object> warningSet(
-            @ApiParam(value = "<b>必填:、</b><br>orgId:机构id<br><b>"+
-                    "</b><br>alarmSettingsId:预警设置id;" +
+            @ApiParam(value = "<b>必填:、</b><br>warningTypeId:预警类型id;<br><b>"+
                     "</b><br>setupCloseFlag:此类型预警的开关（10：开启；20:关闭）;" +
-                    "</b><br>AlarmRuleDomain:;包含" +
-                    "</b><br>name:规则名称;" +
+                    "</b><br>warningGradeDomainList:;包含" +
+                    "</b><br>alarmSettingsId:预警设置id;" +
+                    "</b><br>grade:等级;" +
+                    "</b><br>setupCloseFlag:开启状态(10:启用 ;20:关闭;" +
+                    "</b><br>waringParameterDomainList:包含;" +
+                    "</b><br>serialNumber:序号;" +
                     "<br><br>parameter:参数;<br><b>"
             )
             @RequestBody AlarmSettingDomain alarmSettingDomain

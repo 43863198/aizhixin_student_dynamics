@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ProcessingModeRespository extends PagingAndSortingRepository<ProcessingMode, String> {
+
     @Query("select ast from #{#entityName} ast where ast.deleteFlag = :deleteFlag and ast.warningType = :warningTypeId and ast.orgId = :orgId")
     List<ProcessingMode> getProcessingModeBywarningTypeId(@Param("orgId")Long orgId, @Param("warningTypeId")String warningTypeId, @Param("deleteFlag")int deleteFlag);
 
