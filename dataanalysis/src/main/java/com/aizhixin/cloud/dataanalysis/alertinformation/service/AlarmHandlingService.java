@@ -33,7 +33,7 @@ public class AlarmHandlingService {
         try {
             WarningInformation warningInformation = alertWarningInformationService.getOneById(submitDealDomain.getWarningInformationId());
             OperationRecord operationRecord = null;
-            if(null!=submitDealDomain.getDealId()) {
+            if(!StringUtils.isBlank(submitDealDomain.getDealId())) {
                 operationRecord = operaionRecordService.getOneById(submitDealDomain.getDealId());
             }else {
                 operationRecord = new OperationRecord();
@@ -47,7 +47,7 @@ public class AlarmHandlingService {
             String id = operaionRecordService.save(operationRecord);
             for (AttachmentDomain d : submitDealDomain.getAttachmentDomain()) {
                 AttachmentInformation attachmentInformation = null;
-                if(null!= d.getId()){
+                if(!StringUtils.isBlank(d.getId())){
                     attachmentInformation = attachmentInfomationService.getOneById(d.getId());
                 }else {
                     attachmentInformation = new AttachmentInformation();
@@ -82,7 +82,7 @@ public class AlarmHandlingService {
                 operationRecord.setProposal(dealDomain.getDealInfo());
                 operaionRecordService.save(operationRecord);
                 for (AttachmentDomain d : dealDomain.getAttachmentDomain()) {
-                    if (null != d.getId()) {
+                    if (!StringUtils.isBlank(d.getId())) {
                         AttachmentInformation attachmentInformation = attachmentInfomationService.getOneById(d.getId());
                         attachmentInformation.setOrgId(warningInformation.getOrgId());
                         attachmentInformation.setAttachmentName(d.getFileName());

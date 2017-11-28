@@ -11,6 +11,7 @@ import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
 import com.aizhixin.cloud.dataanalysis.setup.entity.ProcessingMode;
 import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.setup.respository.AlarmSettingsRepository;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -116,7 +117,7 @@ public class AlarmSettingsService {
                     for(WarningGradeDTO warningGradeDTO: warningGradeDTOList){
                         if(warningGradeDTO.getGrade()==as.getWarningLevel()){
                             warningGradeDTO.setSetupCloseFlag(20);
-                            if(null!=as.getId()) {
+                            if(!StringUtils.isBlank(as.getId())) {
                                 warningGradeDTO.setAlarmSettingsId(as.getId());
                                 List<AlarmRule> alarmRuleList = alarmRuleService.getByAlarmSettingId(as.getId());
                                 for (WaringDescParameterDTO waringDescParameterDTO : warningGradeDTO.getDescribeParameter()) {
@@ -151,7 +152,7 @@ public class AlarmSettingsService {
             warningTypeService.save(warningType);
             for(WarningGradeDomain wg :alarmSettingDomain.getWarningGradeDomainList() ){
                 AlarmSettings alarmSettings = null;
-                if(null!=wg.getAlarmSettingsId()){
+                if(!StringUtils.isBlank(wg.getAlarmSettingsId())){
                     alarmSettings = alarmSettingsRepository.findOne(wg.getAlarmSettingsId());
                 }else {
                     alarmSettings = new AlarmSettings();
