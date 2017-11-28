@@ -32,7 +32,12 @@ public class AlarmHandlingService {
         Map<String, Object> result = new HashMap<>();
         try {
             WarningInformation warningInformation = alertWarningInformationService.getOneById(submitDealDomain.getWarningInformationId());
-            OperationRecord operationRecord = new OperationRecord();
+            OperationRecord operationRecord = null;
+            if(null!=submitDealDomain.getDealId()) {
+                operationRecord = operaionRecordService.getOneById(submitDealDomain.getDealId());
+            }else {
+                operationRecord = new OperationRecord();
+            }
             operationRecord.setOrgId(warningInformation.getOrgId());
             operationRecord.setWarningState(30);
             operationRecord.setOperationTime(new Date());
@@ -41,7 +46,12 @@ public class AlarmHandlingService {
             operationRecord.setWarningInformationId(submitDealDomain.getWarningInformationId());
             String id = operaionRecordService.save(operationRecord);
             for (AttachmentDomain d : submitDealDomain.getAttachmentDomain()) {
-                AttachmentInformation attachmentInformation = new AttachmentInformation();
+                AttachmentInformation attachmentInformation = null;
+                if(null!= d.getId()){
+                    attachmentInformation = attachmentInfomationService.getOneById(d.getId());
+                }else {
+                    attachmentInformation = new AttachmentInformation();
+                }
                 attachmentInformation.setOrgId(warningInformation.getOrgId());
                 attachmentInformation.setAttachmentName(d.getFileName());
                 attachmentInformation.setAttachmentPath(d.getFileUrl());
