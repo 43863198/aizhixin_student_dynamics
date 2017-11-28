@@ -1,6 +1,4 @@
 package com.aizhixin.cloud.dataanalysis.setup.domain;
-
-import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WaringDescParameterDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
