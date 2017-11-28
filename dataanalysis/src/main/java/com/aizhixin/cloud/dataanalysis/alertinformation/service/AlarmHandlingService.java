@@ -32,7 +32,12 @@ public class AlarmHandlingService {
         Map<String, Object> result = new HashMap<>();
         try {
             WarningInformation warningInformation = alertWarningInformationService.getOneById(submitDealDomain.getWarningInformationId());
-            OperationRecord operationRecord = new OperationRecord();
+            OperationRecord operationRecord = null;
+            if(!StringUtils.isBlank(submitDealDomain.getDealId())) {
+                operationRecord = operaionRecordService.getOneById(submitDealDomain.getDealId());
+            }else {
+                operationRecord = new OperationRecord();
+            }
             operationRecord.setOrgId(warningInformation.getOrgId());
             operationRecord.setWarningState(30);
             operationRecord.setOperationTime(new Date());
@@ -41,7 +46,12 @@ public class AlarmHandlingService {
             operationRecord.setWarningInformationId(submitDealDomain.getWarningInformationId());
             String id = operaionRecordService.save(operationRecord);
             for (AttachmentDomain d : submitDealDomain.getAttachmentDomain()) {
-                AttachmentInformation attachmentInformation = new AttachmentInformation();
+                AttachmentInformation attachmentInformation = null;
+                if(!StringUtils.isBlank(d.getId())){
+                    attachmentInformation = attachmentInfomationService.getOneById(d.getId());
+                }else {
+                    attachmentInformation = new AttachmentInformation();
+                }
                 attachmentInformation.setOrgId(warningInformation.getOrgId());
                 attachmentInformation.setAttachmentName(d.getFileName());
                 attachmentInformation.setAttachmentPath(d.getFileUrl());
@@ -72,7 +82,7 @@ public class AlarmHandlingService {
                 operationRecord.setProposal(dealDomain.getDealInfo());
                 operaionRecordService.save(operationRecord);
                 for (AttachmentDomain d : dealDomain.getAttachmentDomain()) {
-                    if (null != d.getId()) {
+                    if (!StringUtils.isBlank(d.getId())) {
                         AttachmentInformation attachmentInformation = attachmentInfomationService.getOneById(d.getId());
                         attachmentInformation.setOrgId(warningInformation.getOrgId());
                         attachmentInformation.setAttachmentName(d.getFileName());
