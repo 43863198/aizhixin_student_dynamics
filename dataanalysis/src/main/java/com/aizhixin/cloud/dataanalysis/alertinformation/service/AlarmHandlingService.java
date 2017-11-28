@@ -96,6 +96,7 @@ public class AlarmHandlingService {
         try {
             WarningInformation warningInformation = alertWarningInformationService.getOneById(dealResultDomain.getWarningInformationId());
             if (null != warningInformation) {
+                warningInformation.setWarningState(dealResultDomain.getStatus());
                 alertWarningInformationService.save(warningInformation);
             }
         } catch (Exception e) {

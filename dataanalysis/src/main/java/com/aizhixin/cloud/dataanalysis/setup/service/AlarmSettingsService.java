@@ -47,7 +47,7 @@ public class AlarmSettingsService {
         Map<String,Object> result = new HashMap<>();
         List<WarningTypeDTO> data = new ArrayList<>();
         try{
-            List<WarningType> warningTypeList = warningTypeService.getWarningTypeList();
+            List<WarningType> warningTypeList = warningTypeService.getWarningTypeList(orgId);
             if(null!=warningTypeList&&warningTypeList.size()>0) {
                 for (WarningType type :warningTypeList) {
                     WarningTypeDTO warningTypeDTO = new WarningTypeDTO();
@@ -57,6 +57,7 @@ public class AlarmSettingsService {
                     warningTypeDTO.setWarningName(type.getWarningName());
                     List<AlarmSettings> alarmSettingsList = alarmSettingsRepository.getAlarmSettingsByOrgIdAndType(orgId, type.getWarningType(), DataValidity.VALID.getState());
                     warningTypeDTO.setInclusionNumber(alarmSettingsList.size());
+                    data.add(warningTypeDTO);
                 }
             }
         }catch (Exception e){

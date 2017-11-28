@@ -17,6 +17,6 @@ public class DealResultDomain {
     private String warningInformationId;
 
     @ApiModelProperty(value = "处理结果", required = false)
-    private String status;
+    private int status;
 
 }
