@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "T_ALARM_RULE")
 @ToString
-public class    AlarmRule extends AbstractEntity {
+public class  AlarmRule extends AbstractEntity {
 
     /*
     * 规则名称
@@ -33,14 +33,12 @@ public class    AlarmRule extends AbstractEntity {
     /*
      * 预警设置ID
      */
-    @NotNull
     @Column(name = "ALARMSETTINGS_ID")
     @Getter @Setter private String alarmSettingsId;
 
     /*
     * 机构id
     */
-    @NotNull
     @Column(name = "ORG_ID")
     @Getter @Setter private Long orgId;
 
