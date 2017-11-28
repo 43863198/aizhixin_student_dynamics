@@ -16,9 +16,22 @@ public class AttachmentDomain {
     @ApiModelProperty(value = "附件id", required = false)
     private String id;
 
+    @ApiModelProperty(value = "机构id", required = false)
+    private Long orgId;
+
     @ApiModelProperty(value = "附件名称", required = false)
     private String fileName;
 
     @ApiModelProperty(value = "附件地址", required = false)
     private String fileUrl;
+
+    public AttachmentDomain(){
+    }
+
+    public AttachmentDomain(String id,String fileName,String fileUrl){
+        this.id = id;
+        this.fileName = fileName;
+        this.fileUrl = fileUrl;
+
+    }
 }
