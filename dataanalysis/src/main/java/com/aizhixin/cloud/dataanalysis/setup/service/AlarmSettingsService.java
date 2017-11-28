@@ -1,6 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.setup.service;
 
-import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WaringDescParameterDTO;
+import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningDescParameterDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningGradeDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningSettingsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningTypeDTO;
@@ -77,33 +77,33 @@ public class AlarmSettingsService {
             warningSettingsDTO.setWarningTypeId(warningTypeId);
             List<WarningGradeDTO> warningGradeDTOList = new ArrayList<>();
             String[] wd = warningType.getWarningDescribe().split(",");
-            List<WaringDescParameterDTO> waringDescParameterDTOArrayList1 = new ArrayList<>();
+            List<WarningDescParameterDTO> waringDescParameterDTOArrayList1 = new ArrayList<>();
             if (wd.length > 0) {
                 int serialNumber = 1;
                 for (String d : wd) {
-                    WaringDescParameterDTO waringDescParameterDTO1 = new WaringDescParameterDTO();
+                    WarningDescParameterDTO waringDescParameterDTO1 = new WarningDescParameterDTO();
                     waringDescParameterDTO1.setDescribe(d);
                     waringDescParameterDTO1.setSerialNumber(serialNumber);
                     waringDescParameterDTOArrayList1.add(waringDescParameterDTO1);
                     serialNumber++;
                 }
             }
-            List<WaringDescParameterDTO> waringDescParameterDTOArrayList2 = new ArrayList<>();
+            List<WarningDescParameterDTO> waringDescParameterDTOArrayList2 = new ArrayList<>();
             if (wd.length > 0) {
                 int serialNumber = 1;
                 for (String d : wd) {
-                    WaringDescParameterDTO waringDescParameterDTO2 = new WaringDescParameterDTO();
+                    WarningDescParameterDTO waringDescParameterDTO2 = new WarningDescParameterDTO();
                     waringDescParameterDTO2.setDescribe(d);
                     waringDescParameterDTO2.setSerialNumber(serialNumber);
                     waringDescParameterDTOArrayList2.add(waringDescParameterDTO2);
                     serialNumber++;
                 }
             }
-            List<WaringDescParameterDTO> waringDescParameterDTOArrayList3 = new ArrayList<>();
+            List<WarningDescParameterDTO> waringDescParameterDTOArrayList3 = new ArrayList<>();
             if (wd.length > 0) {
                 int serialNumber = 1;
                 for (String d : wd) {
-                    WaringDescParameterDTO waringDescParameterDTO3 = new WaringDescParameterDTO();
+                    WarningDescParameterDTO waringDescParameterDTO3 = new WarningDescParameterDTO();
                     waringDescParameterDTO3.setDescribe(d);
                     waringDescParameterDTO3.setSerialNumber(serialNumber);
                     waringDescParameterDTOArrayList3.add(waringDescParameterDTO3);
@@ -141,7 +141,7 @@ public class AlarmSettingsService {
                             warningGradeDTO.setAlarmSettingsId(as.getId());
                             List<AlarmRule> alarmRuleList = alarmRuleService.getByAlarmSettingId(as.getId());
                             for (AlarmRule alarmRule : alarmRuleList) {
-                                for (WaringDescParameterDTO waringDescParameterDTO : warningGradeDTO.getDescribeParameter()) {
+                                for (WarningDescParameterDTO waringDescParameterDTO : warningGradeDTO.getDescribeParameter()) {
                                     if (alarmRule.getSerialNumber() == waringDescParameterDTO.getSerialNumber()) {
                                         waringDescParameterDTO.setParameter(alarmRule.getRightParameter());
                                         break;

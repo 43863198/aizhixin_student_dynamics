@@ -191,11 +191,7 @@ public class TestDataController {
 			@ApiParam(value = "学生信息文件", required = true) @RequestParam(value = "studentInfoFile") MultipartFile studentInfoFile,
 			@ApiParam(value = "基础数据文件", required = true) @RequestParam(value = "dataBaseFile") MultipartFile dataBaseFile,
 			@DateTimeFormat(pattern = "yyyy-MM-dd") @ApiParam(value = "registerDate 报到日期<br/>时间格式：yyyy-MM-dd") @RequestParam(value = "registerDate", required = false) Date registerDate) {
-		try {
 			registerService.importData(studentInfoFile, dataBaseFile, registerDate);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

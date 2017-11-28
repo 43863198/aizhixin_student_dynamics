@@ -2,8 +2,6 @@ package com.aizhixin.cloud.dataanalysis.studentRegister.common;
 
 import lombok.Getter;
 
-import java.util.List;
-
 /**
  * 通用非检查异常
  * 主要用来传递错误码和错误原因

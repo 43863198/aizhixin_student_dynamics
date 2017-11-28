@@ -1,25 +1,18 @@
 package com.aizhixin.cloud.dataanalysis.studentRegister.service;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.aizhixin.cloud.dataanalysis.studentRegister.common.CommonException;
 import com.aizhixin.cloud.dataanalysis.studentRegister.common.ErrorCode;
 import com.aizhixin.cloud.dataanalysis.studentRegister.common.ExcelBasedataHelper;
-import com.aizhixin.cloud.dataanalysis.studentRegister.common.ExcelUtil;
 import com.aizhixin.cloud.dataanalysis.studentRegister.domain.StudentInfoDomain;
 import com.aizhixin.cloud.dataanalysis.studentRegister.domain.StudentRegisterDomain;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
@@ -67,7 +59,7 @@ public class StudentRegisterService {
         }
     }
 
-	public void importData(MultipartFile studentInfoFile,MultipartFile dataBaseFile, Date registerDate) throws ParseException {
+	public void importData(MultipartFile studentInfoFile,MultipartFile dataBaseFile, Date registerDate) {
 		//获取学生信息
 		List<StudentInfoDomain> studentInfos = basedataHelper.readStudentInfoFromInputStream(studentInfoFile);
 		if (null == studentInfos || studentInfos.size() <= 0) {
@@ -91,27 +83,18 @@ public class StudentRegisterService {
 		List<StudentRegister> stuRegisterList = new ArrayList<>();
 		//学生数据key value
 		for (Entry<String, StudentRegisterDomain> entry : maps.entrySet()) {  
-//		    System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue()); 
 		    //学生信息key value
 		    for (Entry<String, StudentInfoDomain> entry1 : maps1.entrySet()) {  
-//		    	System.out.println("Key = " + entry1.getKey() + ", Value = " + entry1.getValue());  
 		    	if (entry.getKey().equals(entry1.getKey())) {
 		    		StudentRegister studentRegister = new StudentRegister();
 		    		studentRegister.setOrgId(entry1.getValue().getOrgId());
 		    		studentRegister.setJobNum(entry.getValue().getJobNum());
-//		    		if (isDate(entry.getValue().getActualRegisterDate())) {
-//		    			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//		    			Date date = sdf.parse(entry.getValue().getActualRegisterDate());  
-//		    			studentRegister.setActualRegisterDate(date);
-//					}
 		    		if (entry.getValue().getActualRegisterDate() != null) {
 		    			Integer date = Integer.valueOf(entry.getValue().getActualRegisterDate());
 		    			if (date > 0) {
 		    				Calendar c = new GregorianCalendar(1900,0,-1);  
 		    				Date d = c.getTime();  
-		    				System.out.println(d.toLocaleString());  
 		    				Date _d = DateUtils.addDays(d, date + 1);  //42605是距离1900年1月1日的天数
-		    				System.out.println(_d.toLocaleString());
 		    				studentRegister.setActualRegisterDate(_d);
 						}
 					}
@@ -130,7 +113,6 @@ public class StudentRegisterService {
 		    		stuRegisterList.add(studentRegister);
 				}
 		    }
-		    
 		}  
 		respository.save(stuRegisterList);
 	}
