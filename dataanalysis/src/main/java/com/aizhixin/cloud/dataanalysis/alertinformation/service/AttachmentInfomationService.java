@@ -58,6 +58,8 @@ public class AttachmentInfomationService {
             attachmentInformation.setAttachmentName(attachmentDomain.getFileName());
             attachmentInformation.setAttachmentPath(attachmentDomain.getFileUrl());
             attachmentInformation.setOrgId(attachmentDomain.getOrgId());
+            attachmentInformation.setUploadPeopleId(attachmentDomain.getUploadPeopleId());
+            attachmentInformation.setUploadPeople(attachmentInformation.getUploadPeople());
             attachmentInfoRepository.save(attachmentInformation);
 
         }catch (Exception e){
