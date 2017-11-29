@@ -54,7 +54,11 @@ spring:
       hibernate.generate_statistics: false
       hibernate.cache.region.factory_class: org.hibernate.cache.ehcache.EhCacheRegionFactory
       javax.persistence.sharedCache.mode: ENABLE_SELECTIVE
-
+  http:
+    multipart:
+      max-file-size: 100Mb
+      max-request-size: 1000Mb
+      
 liquibase:
   change-log: classpath:liquibase/master.xml
   default-schema: student_dynamics_dev
