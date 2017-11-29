@@ -43,7 +43,9 @@ public class AttachmentInformationController {
     public Map<String,Object> addAttachmentInfomation(
             @ApiParam(value = "<b>必填:、</b><br>orgId:机构id<br><b>" +
                     "</b><br>fileName:文件名称;" +
-                    "<br>fileUrl:文件地址;<br>")
+                    "</b><br>fileUrl:文件地址;" +
+                    "</b><br>uploadPeopleId:上传人id;" +
+                    "<br>uploadPeople:上传人;<br>")
             @RequestBody AttachmentDomain attachmentDomain) {
         return attachmentInfomationService.addAttachmentInfomation(attachmentDomain);
     }
