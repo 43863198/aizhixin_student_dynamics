@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.aizhixin.cloud.dataanalysis.score.domain.ScoreDomain;
 import com.aizhixin.cloud.dataanalysis.studentRegister.domain.StudentInfoDomain;
 import com.aizhixin.cloud.dataanalysis.studentRegister.domain.StudentRegisterDomain;
 
@@ -135,4 +136,50 @@ public class ExcelBasedataHelper {
 		}
 		return list;
 	}
+	
+	public List<ScoreDomain> readStudentScoreFromInputStream(MultipartFile file) {
+		List<ScoreDomain> list = new ArrayList<>();
+		ExcelUtil util = new ExcelUtil(file);
+		Sheet sheet = util.getSheet("new");
+		if (null == sheet) {// 如果没有此sheet页标签，读取第1个标签的内容
+			sheet = util.getSheet(0);
+		}
+		if (null != sheet) {
+			Iterator<Row> rows = sheet.rowIterator();
+			int line = 1;
+			String jobNum = null;
+			while (rows.hasNext()) {
+				Row row = rows.next();
+				if (1 == line) {
+					line++;
+					continue;// 跳过第一行
+				}
+				try {
+					setCellStringType(row, 21);// 一行共有21个列值
+					jobNum = getCellStringValue(row, 1);
+					String schoolYear = getCellStringValue(row, 15);
+					String examTime = getCellStringValue(row, 3);
+					Long scheduleId = Long.valueOf(getCellStringValue(row, 4));
+//					String midtermScore = getCellStringValue(row, 4);
+//					String finalScore = getCellStringValue(row, 4);
+					String usualScore = getCellStringValue(row, 16);
+//					String totalScore = getCellStringValue(row, 4);
+//					String scoreType = getCellStringValue(row, 4);
+//					String scoreResultType = getCellStringValue(row, 4);
+					String gradePoint = getCellStringValue(row, 13);
+//					Integer credit = Integer.valueOf(getCellStringValue(row, 5));
+					list.add(new ScoreDomain(line, jobNum, schoolYear, scheduleId, examTime, usualScore, gradePoint));
+				} catch (Exception e) {
+					ScoreDomain d = new ScoreDomain();
+					d.setLine(line);
+					d.setJobNum(jobNum);
+					list.add(d);
+					LOG.info("错误信息行号：" + line + ",  学号：" + jobNum);
+				}
+				line++;
+			}
+		}
+		return list;
+	}
+	
 }
