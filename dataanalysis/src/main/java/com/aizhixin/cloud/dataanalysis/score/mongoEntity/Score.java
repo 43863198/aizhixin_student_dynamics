@@ -119,7 +119,7 @@ public class Score {
 	/**
 	 * 总评成绩
 	 */
-	private String TotalScore;
+	private String totalScore;
 	
 	/**
 	 * 成绩类型
