@@ -54,6 +54,12 @@ public class AttachmentInformation extends AbstractEntity {
     @Getter @Setter private Long uploadPeopleId;
 
     /*
+    *  上传人
+    */
+    @Column(name = "UPLOAD_PEOPLE")
+    @Getter @Setter private String uploadPeople;
+
+    /*
      * 机构id
      */
     @NotNull

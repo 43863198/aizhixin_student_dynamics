@@ -21,8 +21,8 @@ public interface AttachmentInfoRepository extends JpaRepository<AttachmentInform
     @Query("select ai from #{#entityName} ai where ai.operationRecordId = :operationRecordId and ai.deleteFlag = :deleteFlag")
     List<AttachmentInformation> getAttachmentInformationByOprId(@Param("operationRecordId")String operationRecordId, @Param("deleteFlag")int deleteFlag);
 
-    @Query("select new com.aizhixin.cloud.dataanalysis.alertinformation.domain.AttachmentDomain(a.id, a.attachmentName, a.attachmentPath) from #{#entityName} a where a.orgId = :orgId and  a.deleteFlag = :deleteFlag")
-    Page<AttachmentDomain> findPageByOrgId(Pageable pageable, @Param(value = "orgId") Long orgId, @Param(value = "deleteFlag") Integer deleteFlag);
+    @Query("select new com.aizhixin.cloud.dataanalysis.alertinformation.domain.AttachmentDomain(a.id, a.attachmentName, a.attachmentPath, a.uploadPeople, a.lastModifiedDate) from #{#entityName} a where a.orgId = :orgId and  a.deleteFlag = :deleteFlag")
+    Page<AttachmentDomain> findPageDataByOrgId(Pageable pageable, @Param(value = "orgId") Long orgId, @Param(value = "deleteFlag") Integer deleteFlag);
 
 
 }
