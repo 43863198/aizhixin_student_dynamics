@@ -99,7 +99,152 @@ public class DistributeLock {
 
         return getLock(lockPath.toString(), taskPath.toString());
     }
+    
+    /**
+     * 旷课预警
+     * @return  是否获取到锁
+     */
+    public boolean getRollCallLock() {
+        StringBuilder lockPath = new StringBuilder(zkLockPath);
+        StringBuilder taskPath = new StringBuilder(zkTaskPath);
+        Date current = new Date();
+        String curDayString = DateUtil.format(current);
+        String HHmm = DateUtil.format(current, "HHmm");
+        lockPath.append("/").append(curDayString).append("/outsch/").append(HHmm);
+        taskPath.append("/").append(curDayString).append("/outsch/").append(HHmm);
 
+        return getLock(lockPath.toString(), taskPath.toString());
+    }
+
+    /**
+     * 旷课信息统计
+     * @return  是否获取到锁
+     */
+    public boolean getRollCallCountLock() {
+        StringBuilder lockPath = new StringBuilder(zkLockPath);
+        StringBuilder taskPath = new StringBuilder(zkTaskPath);
+        Date current = new Date();
+        String curDayString = DateUtil.format(current);
+        String HHmm = DateUtil.format(current, "HHmm");
+        lockPath.append("/").append(curDayString).append("/outct/").append(HHmm);
+        taskPath.append("/").append(curDayString).append("/outct/").append(HHmm);
+
+        return getLock(lockPath.toString(), taskPath.toString());
+    }
+    
+    /**
+     * 总评成绩预警
+     * @return  是否获取到锁
+     */
+    public boolean getTotalScoreLock() {
+        StringBuilder lockPath = new StringBuilder(zkLockPath);
+        StringBuilder taskPath = new StringBuilder(zkTaskPath);
+        Date current = new Date();
+        String curDayString = DateUtil.format(current);
+        String HHmm = DateUtil.format(current, "HHmm");
+        lockPath.append("/").append(curDayString).append("/total/").append(HHmm);
+        taskPath.append("/").append(curDayString).append("/total/").append(HHmm);
+
+        return getLock(lockPath.toString(), taskPath.toString());
+    }
+
+    /**
+     * 总评不及格成绩信息统计
+     * @return  是否获取到锁
+     */
+    public boolean getTotalScoreCountLock() {
+        StringBuilder lockPath = new StringBuilder(zkLockPath);
+        StringBuilder taskPath = new StringBuilder(zkTaskPath);
+        Date current = new Date();
+        String curDayString = DateUtil.format(current);
+        String HHmm = DateUtil.format(current, "HHmm");
+        lockPath.append("/").append(curDayString).append("/totalct/").append(HHmm);
+        taskPath.append("/").append(curDayString).append("/totalct/").append(HHmm);
+
+        return getLock(lockPath.toString(), taskPath.toString());
+    }
+    
+    
+    /**
+     * 补考成绩预警
+     * @return  是否获取到锁
+     */
+    public boolean getMakeUpScoreLock() {
+        StringBuilder lockPath = new StringBuilder(zkLockPath);
+        StringBuilder taskPath = new StringBuilder(zkTaskPath);
+        Date current = new Date();
+        String curDayString = DateUtil.format(current);
+        String HHmm = DateUtil.format(current, "HHmm");
+        lockPath.append("/").append(curDayString).append("/makeup/").append(HHmm);
+        taskPath.append("/").append(curDayString).append("/makeup/").append(HHmm);
+
+        return getLock(lockPath.toString(), taskPath.toString());
+    }
+
+    /**
+     * 补考不及格成绩信息统计
+     * @return  是否获取到锁
+     */
+    public boolean getMakeUpScoreCountLock() {
+        StringBuilder lockPath = new StringBuilder(zkLockPath);
+        StringBuilder taskPath = new StringBuilder(zkTaskPath);
+        Date current = new Date();
+        String curDayString = DateUtil.format(current);
+        String HHmm = DateUtil.format(current, "HHmm");
+        lockPath.append("/").append(curDayString).append("/makeupct/").append(HHmm);
+        taskPath.append("/").append(curDayString).append("/makeupct/").append(HHmm);
+
+        return getLock(lockPath.toString(), taskPath.toString());
+    }
+    
+    /**
+     * 之前两学期成绩统计
+     * @return  是否获取到锁
+     */
+    public boolean getScoreFluctuateCountLock() {
+        StringBuilder lockPath = new StringBuilder(zkLockPath);
+        StringBuilder taskPath = new StringBuilder(zkTaskPath);
+        Date current = new Date();
+        String curDayString = DateUtil.format(current);
+        String HHmm = DateUtil.format(current, "HHmm");
+        lockPath.append("/").append(curDayString).append("/flucount/").append(HHmm);
+        taskPath.append("/").append(curDayString).append("/flucount/").append(HHmm);
+
+        return getLock(lockPath.toString(), taskPath.toString());
+    }
+
+    /**
+     * 成绩波动预警统计
+     * @return  是否获取到锁
+     */
+    public boolean getScoreFluctuateLock() {
+        StringBuilder lockPath = new StringBuilder(zkLockPath);
+        StringBuilder taskPath = new StringBuilder(zkTaskPath);
+        Date current = new Date();
+        String curDayString = DateUtil.format(current);
+        String HHmm = DateUtil.format(current, "HHmm");
+        lockPath.append("/").append(curDayString).append("/fluct/").append(HHmm);
+        taskPath.append("/").append(curDayString).append("/fluct/").append(HHmm);
+
+        return getLock(lockPath.toString(), taskPath.toString());
+    }
+    
+   
+    /**
+     * 修读异常预警统计
+     * @return  是否获取到锁
+     */
+    public boolean getAttendAbnormalLock() {
+        StringBuilder lockPath = new StringBuilder(zkLockPath);
+        StringBuilder taskPath = new StringBuilder(zkTaskPath);
+        Date current = new Date();
+        String curDayString = DateUtil.format(current);
+        String HHmm = DateUtil.format(current, "HHmm");
+        lockPath.append("/").append(curDayString).append("/attend/").append(HHmm);
+        taskPath.append("/").append(curDayString).append("/attend/").append(HHmm);
+
+        return getLock(lockPath.toString(), taskPath.toString());
+    }
     
     public void cleanZookeeperTaskData() {
         delete();

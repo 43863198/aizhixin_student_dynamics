@@ -72,6 +72,11 @@ public class Score {
 	private String collegeName;
 	
 	/**
+	 * 年级
+	 */
+	private String grade;
+	
+	/**
 	 * 学期
 	 */
 	private int semester;
@@ -119,7 +124,7 @@ public class Score {
 	/**
 	 * 总评成绩
 	 */
-	private String TotalScore;
+	private String totalScore;
 	
 	/**
 	 * 成绩类型

@@ -31,25 +31,25 @@ import com.mongodb.util.JSON;
 @Component
 public class RollCallService {
 
-	@Autowired
-	private MongoTemplate mongoTemplate;
-
-	/**
-	 * 按条件查询考勤数据
-	 * 
-	 */
-	public void findRollCallInfor(Long orgId,int times) {
-
-		Calendar c = Calendar.getInstance();
-		// 当前年份
-		int year = c.get(Calendar.YEAR);
-
-		String groupStr = "{$group:{_id:null,countNum:{$sum:1}}}";
-		DBObject group = (DBObject) JSON.parse(groupStr);
-		String matchStr = "{$match:{countNum :{$gt:"+times+"}}}";
-		DBObject match = (DBObject) JSON.parse(matchStr);
-		AggregationOutput output = mongoTemplate.getCollection("news")
-				.aggregate(group, match);
-	}
+//	@Autowired
+//	private MongoTemplate mongoTemplate;
+//
+//	/**
+//	 * 按条件查询考勤数据
+//	 * 
+//	 */
+//	public void findRollCallInfor(Long orgId,int times) {
+//
+//		Calendar c = Calendar.getInstance();
+//		// 当前年份
+//		int year = c.get(Calendar.YEAR);
+//
+//		String groupStr = "{$group:{_id:null,countNum:{$sum:1}}}";
+//		DBObject group = (DBObject) JSON.parse(groupStr);
+//		String matchStr = "{$match:{countNum :{$gt:"+times+"}}}";
+//		DBObject match = (DBObject) JSON.parse(matchStr);
+//		AggregationOutput output = mongoTemplate.getCollection("news")
+//				.aggregate(group, match);
+//	}
 
 }

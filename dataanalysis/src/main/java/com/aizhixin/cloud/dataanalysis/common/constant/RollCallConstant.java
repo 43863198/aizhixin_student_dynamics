@@ -7,4 +7,7 @@ public class RollCallConstant {
 	
 	//点名结果
 	public final static int RESULT_ = 1;
+	
+	//旷课
+	public final static int OUT_SCHOOL = 2;
 }

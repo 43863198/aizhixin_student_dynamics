@@ -7,6 +7,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.aizhixin.cloud.dataanalysis.common.service.DistributeLock;
+import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
+import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
 import com.aizhixin.cloud.dataanalysis.studentRegister.job.StudentRegisterJob;
 
 /**
@@ -19,12 +21,13 @@ public class MySchedulingService {
     private DistributeLock distributeLock;
     @Autowired
     private StudentRegisterJob studentRegisterJob;
+    @Autowired
+    private RollCallJob rollCallJob;
+    @Autowired
+    private ScoreJob scoreJob;
 
 
-    /**
-     * 定时统计实践任务
-     */
-    @Scheduled(cron = "0 0/30 * * * ?")
+    @Scheduled(cron = "0 0/15 * * * ?")
     public void stuRegisterJob() {
         if (distributeLock.getStuRegisterLock()) {
             LOG.info("开始启动学生注册报到预警定时任务");
@@ -34,5 +37,100 @@ public class MySchedulingService {
         }
     }
 
+    
+    @Scheduled(cron = "0 0/10 * * * ?")
+    public void rollCallJob() {
+        if (distributeLock.getRollCallLock()) {
+            LOG.info("开始启动旷课预警定时任务");
+            rollCallJob.rollCallJob();;
+        } else {
+            LOG.info("启动旷课预警，获取锁失败");
+        }
+    }
+    
+    
+    @Scheduled(cron = "0 0/15 * * * ?")
+    public void rollCallCountJob() {
+        if (distributeLock.getRollCallLock()) {
+            LOG.info("开始启动旷课信息统计定时任务");
+            rollCallJob.rollCallCountJob();
+        } else {
+            LOG.info("启动旷课信息统计任务，获取锁失败");
+        }
+    }
+    
+    
+    @Scheduled(cron = "0 0/10 * * * ?")
+    public void totalScoreCountJob() {
+        if (distributeLock.getTotalScoreCountLock()) {
+            LOG.info("开始启动总评不及格成绩信息统计定时任务");
+            scoreJob.totalScoreCountJob();;
+        } else {
+            LOG.info("启动总评不及格成绩统计任务，获取锁失败");
+        }
+    }
+    
+    
+    @Scheduled(cron = "0 0/15 * * * ?")
+    public void totalScoreJob() {
+        if (distributeLock.getTotalScoreLock()) {
+            LOG.info("开始启动总评成绩预警定时任务");
+            scoreJob.totalScoreJob();
+        } else {
+            LOG.info("启动总评成绩预警任务，获取锁失败");
+        }
+    }
+    
+    
+    @Scheduled(cron = "0 0/10 * * * ?")
+    public void makeUpScoreCountJob() {
+        if (distributeLock.getMakeUpScoreCountLock()) {
+            LOG.info("开始启动补考不及格成绩信息统计定时任务");
+            scoreJob.makeUpScoreCountJob();;
+        } else {
+            LOG.info("启动总评不及格成绩统计任务，获取锁失败");
+        }
+    }
+    
+    
+    @Scheduled(cron = "0 0/15 * * * ?")
+    public void makeUpScoreJob() {
+        if (distributeLock.getMakeUpScoreLock()) {
+            LOG.info("开始启动总评成绩预警定时任务");
+            scoreJob.makeUpScoreJob();
+        } else {
+            LOG.info("启动补考成绩预警任务，获取锁失败");
+        }
+    }
+    
+    @Scheduled(cron = "0 0/10 * * * ?")
+    public void scoreFluctuateCountJob() {
+        if (distributeLock.getScoreFluctuateCountLock()) {
+            LOG.info("开始启动获取之前两学期成绩信息统计定时任务");
+            scoreJob.scoreFluctuateCountJob();
+        } else {
+            LOG.info("启动之前两学期成绩统计任务，获取锁失败");
+        }
+    }
+    
+    
+    @Scheduled(cron = "0 0/15 * * * ?")
+    public void scoreFluctuateJob() {
+        if (distributeLock.getScoreFluctuateLock()) {
+            LOG.info("开始启动成绩波动预警定时任务");
+            scoreJob.scoreFluctuateJob();
+        } else {
+            LOG.info("启动成绩波动预警任务，获取锁失败");
+        }
+    }
 
+    @Scheduled(cron = "0 0/1 * * * ?")
+    public void attendAbnormalJob() {
+        if (distributeLock.getAttendAbnormalLock()) {
+            LOG.info("开始启动修读异常预警定时任务");
+            scoreJob.attendAbnormalJob();;
+        } else {
+            LOG.info("启动修读异常预警任务，获取锁失败");
+        }
+    }
 }

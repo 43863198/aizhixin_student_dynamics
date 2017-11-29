@@ -13,6 +13,7 @@ import java.util.UUID;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
+import com.aizhixin.cloud.dataanalysis.alertinformation.service.OperaionRecordService;
 import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningType;
@@ -56,6 +57,8 @@ public class StudentRegisterJob {
 	private AlertWarningInformationService alertWarningInformationService;
 	@Autowired
 	private ProcessingModeService processingModeService;
+	@Autowired
+	private OperaionRecordService operaionRecordService;
 
 	public void studenteRegisterJob() {
 
@@ -114,11 +117,15 @@ public class StudentRegisterJob {
 				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
 						.getValue();
 
-				// 预警处理配置获取
-				HashMap<String, ProcessingMode> processingModeMap = new HashMap<String, ProcessingMode>();
-				List<ProcessingMode> processingModeList = processingModeService
-						.getProcessingModeBywarningTypeId(orgId,
-								WarningType.Register.toString());
+				// 预警处理配置获取 暂不初始化预警处理信息 2017.11.28
+//				HashMap<Integer, ProcessingMode> processingModeMap = new HashMap<Integer, ProcessingMode>();
+//				List<ProcessingMode> processingModeList = processingModeService
+//						.getProcessingModeBywarningTypeId(orgId,
+//								WarningType.Register.toString());
+//				for(ProcessingMode processingMode: processingModeList){
+//					processingModeMap.put(processingMode.getWarningLevel(), processingMode);
+//				}
+				
 				// 按orgId查询未报到的学生信息
 				// List<StudentRegister> stuRegisterList =
 				// stuRegisterMongoRespository
@@ -161,8 +168,6 @@ public class StudentRegisterJob {
 											.getCollegeId());
 									alertInfor.setCollogeName(studentRegister
 											.getCollegeName());
-									alertInfor.setTeachingYear(studentRegister
-											.getGrade());
 									alertInfor.setClassId(studentRegister
 											.getClassId());
 									alertInfor.setClassName(studentRegister
@@ -173,8 +178,8 @@ public class StudentRegisterJob {
 									alertInfor
 											.setProfessionalName(studentRegister
 													.getProfessionalName());
-									alertInfor.setTeachingYear(studentRegister
-											.getSchoolYear());
+									alertInfor.setTeachingYear(String.valueOf(studentRegister
+											.getSchoolYear()));
 									alertInfor.setWarningLevel(alarmSettings
 											.getWarningLevel());
 									alertInfor
@@ -190,11 +195,14 @@ public class StudentRegisterJob {
 									warnMap.put(alertInfor.getJobNumber(),
 											alertInfor);
 
-									// 生成预警处理表数据
-									if(null != warnDbMap.get(studentRegister.getJobNum())){
-										
-									}
-
+									//新预警生成预警处理表数据  暂不初始化预警处理信息 2017.11.28
+//									if(null == warnDbMap.get(studentRegister.getJobNum())){
+//										ProcessingMode processingMode = processingModeMap.get(alarmSettings
+//											.getWarningLevel());
+//										if(null != processingMode){
+//											
+//										}
+//									}
 									break;
 								} else {
 									continue;

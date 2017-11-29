@@ -79,7 +79,7 @@ public class StudentRegister {
 	/**
 	 * 学年学期
 	 */
-	private String schoolYear;
+	private int schoolYear;
 	
 	/**
 	 * 是否报到 0--已报到，1--未报到

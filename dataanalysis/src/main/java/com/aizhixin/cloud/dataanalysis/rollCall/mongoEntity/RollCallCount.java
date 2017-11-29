@@ -8,9 +8,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
 
-@Document(collection="RollCall")
+@Document(collection="RollCallCount")
 @Data
-public class RollCall {
+public class RollCallCount {
 
 	@Id
 	private String id;
@@ -80,52 +80,30 @@ public class RollCall {
 	/**
 	 * 学期
 	 */
+	@Indexed
 	private int semester;
 	
 	/**
 	 * 学年
 	 */
+	@Indexed
 	private int schoolYear;
 	
-	/**
-	 * 排课id
-	 */
-	private Long scheduleId;
 	
 	/**
-	 * 选课名称
+	 * 旷课次数
 	 */
-	private String courseName;
+	private int outSchoolTimes;
 	
 	/**
-	 * 选课类型（必修，限选，任选）
+	 * 迟到次数
 	 */
-	private String courseType;
+	private int lateTimes;
 	
 	/**
-	 * 考勤日期
+	 * 请假次数
 	 */
-	private Date rollCallDate;
-	
-	/**
-	 * 考勤类型
-	 */
-	private int rollCallType;
-	
-	/**
-	 * 考勤结果
-	 * 1:已到
-	 * 2:旷课
-	 * 3:迟到
-	 * 4:请假
-	 * 5:早退
-	 * 6:已提交
-	 * 7:未提交
-	 * 8:超出设定范围
-	 * 9:取消本次考勤
-	 */
-	@Indexed
-	private int rollCallResult;
+	private int leaveTimes;
 	
 	/**
 	 * 备注
