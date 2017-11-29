@@ -22,7 +22,7 @@ public interface AttachmentInfoRepository extends JpaRepository<AttachmentInform
     List<AttachmentInformation> getAttachmentInformationByOprId(@Param("operationRecordId")String operationRecordId, @Param("deleteFlag")int deleteFlag);
 
     @Query("select new com.aizhixin.cloud.dataanalysis.alertinformation.domain.AttachmentDomain(a.id, a.attachmentName, a.attachmentPath) from #{#entityName} a where a.orgId = :orgId and  a.deleteFlag = :deleteFlag")
-    Page<AttachmentDomain> findPageByOrgId(Pageable pageable, @Param(value = "orgId") Long orgId, @Param(value = "deleteFlag") Integer deleteFlag);
+    Page<AttachmentDomain> findPageDataByOrgId(Pageable pageable, @Param(value = "orgId") Long orgId, @Param(value = "deleteFlag") Integer deleteFlag);
 
 
 }
