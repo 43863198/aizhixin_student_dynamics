@@ -9,6 +9,7 @@ import com.aizhixin.cloud.dataanalysis.setup.respository.ProcessingModeResposito
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ import java.util.List;
  * @Date: 2017-11-25
  */
 @Component
+@Transactional
 public class ProcessingModeService {
     @Autowired
     private ProcessingModeRespository processingModeRespository;

@@ -81,7 +81,6 @@ public class OperationRecord extends AbstractEntity {
     /*
     * 机构id
     */
-    @NotNull
     @Column(name = "ORG_ID")
     @Getter @Setter private Long orgId;
 

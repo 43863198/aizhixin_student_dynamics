@@ -15,8 +15,6 @@ import java.util.List;
 @ApiModel(description="预警类型")
 @Data
 public class WarningSettingsDTO {
-    @ApiModelProperty(value = "id")
-    private String id;
     @ApiModelProperty(value = "告警类型id")
     private String warningTypeId;
     @ApiModelProperty(value = "告警名称")

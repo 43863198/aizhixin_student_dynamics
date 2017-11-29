@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "T_ALARM_RULE")
 @ToString
-public class AlarmRule extends AbstractEntity {
+public class  AlarmRule extends AbstractEntity {
 
     /*
     * 规则名称
@@ -31,16 +31,14 @@ public class AlarmRule extends AbstractEntity {
     @Getter @Setter private String name;
 
     /*
-     * 开启状态(10:启用 ;20:关闭；)
+     * 预警设置ID
      */
-    @NotNull
-    @Column(name = "SETUP_CLOSE_FLAG")
-    @Getter @Setter private int setupCloseFlag;
+    @Column(name = "ALARMSETTINGS_ID")
+    @Getter @Setter private String alarmSettingsId;
 
     /*
     * 机构id
     */
-    @NotNull
     @Column(name = "ORG_ID")
     @Getter @Setter private Long orgId;
 
@@ -67,6 +65,12 @@ public class AlarmRule extends AbstractEntity {
      */
     @Column(name = "RIGHT_RELATIONSHIP")
     @Getter @Setter private String rightRelationship;
+
+    /*
+     * 规则的序号
+     */
+    @Column(name = "SERIAL_NUMBER")
+    @Getter @Setter private int serialNumber;
 
 
 }

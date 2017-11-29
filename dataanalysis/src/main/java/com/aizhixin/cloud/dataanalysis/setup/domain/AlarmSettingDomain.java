@@ -15,14 +15,14 @@ import java.util.List;
 @Data
 public class AlarmSettingDomain {
 
-    @ApiModelProperty(value = "预警设置id", required = false)
-    private String alarmSettingsId;
+    @ApiModelProperty(value = "预警类型id", required = false)
+    private String warningTypeId;
 
-    @ApiModelProperty(value = "机构id", required = false)
-    private Long orgId;
+    @ApiModelProperty(value = "开启或关闭")
+    private int setupCloseFlag;
 
-    @ApiModelProperty(value = "规则", required = false)
-    List<AlarmRuleDomain> ruleDomainList;
+    @ApiModelProperty(value = "设置等级规则信息", required = false)
+    List<WarningGradeDomain> warningGradeDomainList;
 
 
 }

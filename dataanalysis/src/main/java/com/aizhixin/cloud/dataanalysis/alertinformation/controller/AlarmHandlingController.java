@@ -29,6 +29,7 @@ public class AlarmHandlingController {
     public Map<String, Object> addProcessing(
             @ApiParam(value = "<b>必填:、</b><br>warningInformationId:预警信息id<br><b>" +
                     "选填:、" +
+                    "</b><br>dealId:处理操作id;" +
                     "</b><br>dealInfo:处理信息;" +
                     "dealType:处理类型 辅导员处理10 学院处理 20;" +
                     "<br>attachmentDomain:附件信息、<br>")  @RequestBody DealDomain dealDomain) {
