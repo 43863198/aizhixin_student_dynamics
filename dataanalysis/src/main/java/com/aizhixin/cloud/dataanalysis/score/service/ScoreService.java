@@ -14,12 +14,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.aizhixin.cloud.dataanalysis.common.excelutil.ExcelBasedataHelper;
+import com.aizhixin.cloud.dataanalysis.common.exception.CommonException;
+import com.aizhixin.cloud.dataanalysis.common.exception.ErrorCode;
 import com.aizhixin.cloud.dataanalysis.score.domain.ScoreDomain;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 import com.aizhixin.cloud.dataanalysis.score.mongoRespository.ScoreMongoRespository;
-import com.aizhixin.cloud.dataanalysis.studentRegister.common.CommonException;
-import com.aizhixin.cloud.dataanalysis.studentRegister.common.ErrorCode;
-import com.aizhixin.cloud.dataanalysis.studentRegister.common.ExcelBasedataHelper;
 
 /**
  * 成绩导入

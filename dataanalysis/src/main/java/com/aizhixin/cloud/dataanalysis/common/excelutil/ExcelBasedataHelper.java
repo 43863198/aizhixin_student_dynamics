@@ -1,4 +1,4 @@
-package com.aizhixin.cloud.dataanalysis.studentRegister.common;
+package com.aizhixin.cloud.dataanalysis.common.excelutil;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -79,16 +79,15 @@ public class ExcelBasedataHelper {
 					int isPay = 0;
 					int isGreenChannel = 0;
 					if (!"".equals(getCellStringValue(row, 69)) && getCellStringValue(row, 69).length() > 0) {
-						isGreenChannel = 1;//银行卡号
+						isGreenChannel = 1;// 银行卡号
 						isPay = 1;
 					}
-					int isregister = 0;
+					int isRegister = 0;
 					if ("".equals(actualRegisterDate) || actualRegisterDate.length() <= 0) {
-						isregister = 1;
+						isRegister = 1;
 					}
-					list.add(
-							new StudentRegisterDomain(line, jobNum, grade, isregister, actualRegisterDate,
-									schoolYear, isPay, isGreenChannel));
+					list.add(new StudentRegisterDomain(line, jobNum, grade, isRegister, actualRegisterDate, schoolYear,
+							isPay, isGreenChannel));
 				} catch (Exception e) {
 					StudentRegisterDomain d = new StudentRegisterDomain();
 					d.setLine(line);

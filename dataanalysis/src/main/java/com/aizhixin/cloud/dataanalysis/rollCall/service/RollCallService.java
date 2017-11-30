@@ -14,12 +14,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.aizhixin.cloud.dataanalysis.common.excelutil.ExcelBasedataHelper;
+import com.aizhixin.cloud.dataanalysis.common.exception.CommonException;
+import com.aizhixin.cloud.dataanalysis.common.exception.ErrorCode;
 import com.aizhixin.cloud.dataanalysis.rollCall.domain.RollCallDomain;
 import com.aizhixin.cloud.dataanalysis.rollCall.mongoEntity.RollCall;
 import com.aizhixin.cloud.dataanalysis.rollCall.mongoRespository.RollCallMongoRespository;
-import com.aizhixin.cloud.dataanalysis.studentRegister.common.CommonException;
-import com.aizhixin.cloud.dataanalysis.studentRegister.common.ErrorCode;
-import com.aizhixin.cloud.dataanalysis.studentRegister.common.ExcelBasedataHelper;
 
 /**
  * 考勤导入
@@ -62,7 +62,7 @@ public class RollCallService {
 //				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //				Date date = sdf.parse(d.getRollCallDate());  
 				if (d.getRollCallDate() != null) {
-					String date = d.getRollCallDate().substring(0, 4);
+					String date = d.getRollCallDate().substring(0, 5);
     				Integer date1 = Integer.valueOf(date);
     				if (date1 > 0) {
     					Calendar c = new GregorianCalendar(1900,0,-1);  

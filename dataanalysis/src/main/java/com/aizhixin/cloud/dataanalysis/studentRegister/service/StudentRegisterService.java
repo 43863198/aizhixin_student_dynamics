@@ -17,9 +17,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.aizhixin.cloud.dataanalysis.studentRegister.common.CommonException;
-import com.aizhixin.cloud.dataanalysis.studentRegister.common.ErrorCode;
-import com.aizhixin.cloud.dataanalysis.studentRegister.common.ExcelBasedataHelper;
+import com.aizhixin.cloud.dataanalysis.common.excelutil.ExcelBasedataHelper;
+import com.aizhixin.cloud.dataanalysis.common.exception.CommonException;
+import com.aizhixin.cloud.dataanalysis.common.exception.ErrorCode;
 import com.aizhixin.cloud.dataanalysis.studentRegister.domain.StudentInfoDomain;
 import com.aizhixin.cloud.dataanalysis.studentRegister.domain.StudentRegisterDomain;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
@@ -83,7 +83,7 @@ public class StudentRegisterService {
 		    					studentRegister.setActualRegisterDate(_d);
 		    				}
 		    			}
-		    			studentRegister.setIsRegister(entry.getValue().getIsregister());
+		    			studentRegister.setIsRegister(entry.getValue().getIsRegister());
 		    			studentRegister.setClassId(entry1.getValue().getClassId());
 		    			studentRegister.setClassName(entry1.getValue().getClassName());
 		    			studentRegister.setGrade(entry.getValue().getGrade());

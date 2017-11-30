@@ -10,7 +10,7 @@ import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegist
 
 public interface StudentRegisterMongoRespository extends MongoRepository<StudentRegister, String>{
  
-	List<StudentRegister> findAllByOrgIdAndIsregister(Long orgId,int isregister);
+	List<StudentRegister> findAllByOrgIdAndIsRegister(Long orgId,int isregister);
 	
 	List<StudentRegister> findAllByOrgIdAndActualRegisterDateIsNull(Long orgId);
 }
