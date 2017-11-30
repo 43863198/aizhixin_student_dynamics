@@ -2,14 +2,7 @@ spring:
   application:
     name: data-analysis
   cloud:
-<<<<<<< HEAD
-#    config:
-#      profile: ${spring.profiles.active}
-#      label: master
-#      uri: ${configServerIp}
-=======
     config:
       profile: ${spring.profiles.active}
       label: master
       uri: ${configServerIp}
->>>>>>> 080dffefb325fd361d57c390be6045488654b2ba
