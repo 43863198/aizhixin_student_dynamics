@@ -45,4 +45,8 @@ public class ExcelUtil {
     public Sheet getSheet(int sheetIndex) {
         return wb.getSheetAt(sheetIndex);
     }
+    
+    public int getSheetNumber() {
+    	return wb.getNumberOfSheets();
+    }
 }
