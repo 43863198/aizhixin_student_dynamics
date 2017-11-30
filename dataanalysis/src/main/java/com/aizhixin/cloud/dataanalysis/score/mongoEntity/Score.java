@@ -147,7 +147,7 @@ public class Score {
 	/**
 	 * 所得学分
 	 */
-	private int credit;
+	private String credit;
 	
 	/**
 	 * 绩点

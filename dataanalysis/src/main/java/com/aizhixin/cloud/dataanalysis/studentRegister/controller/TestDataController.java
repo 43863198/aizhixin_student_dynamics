@@ -213,7 +213,7 @@ public class TestDataController {
 			score.setExamType(ScoreConstant.EXAM_TYPE_COURSE);
 			score.setTotalScore("55");
 			score.setScoreResultType("百分制");
-			score.setCredit(10);
+			score.setCredit("10");
 			score.setGradePoint("0");
 
 			scoreList.add(score);
@@ -240,7 +240,7 @@ public class TestDataController {
 			score.setExamType(ScoreConstant.EXAM_TYPE_COURSE);
 			score.setTotalScore("60");
 			score.setScoreResultType("百分制");
-			score.setCredit(8);
+			score.setCredit("8");
 			score.setGradePoint("1");
 
 			scoreList.add(score);
