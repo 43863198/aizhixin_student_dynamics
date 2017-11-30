@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/v1/welcome")
-@Api(description = "迎新学情API")
+@Api(description = "学校概况统计API")
 public class SchoolConditionStatisticsController {
+
 
 
 }
