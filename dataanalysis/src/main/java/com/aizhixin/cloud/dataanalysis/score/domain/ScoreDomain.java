@@ -7,35 +7,35 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-@ApiModel(description="成绩excel导入信息")
+@ApiModel(description="成绩导入信息")
 public class ScoreDomain extends StudentInfoDomain {
 	
 	
-    @ApiModelProperty(value = "grade 年级", position=12)
+    @ApiModelProperty(value = "grade 年级", position=1)
     @Getter @Setter private String grade;
     
-    @ApiModelProperty(value = "schoolYear 学年学期", position=13)
+    @ApiModelProperty(value = "schoolYear 学年学期", position=2)
     @Getter @Setter private String schoolYear;
     
-    @ApiModelProperty(value = "scheduleId 排课ID", position=14)
+    @ApiModelProperty(value = "scheduleId 排课ID", position=3)
     @Getter @Setter private String scheduleId;
     
-    @ApiModelProperty(value = "courseType 选课类型", position=16)
+    @ApiModelProperty(value = "courseType 选课类型", position=4)
     @Getter @Setter private String courseType;
 	
-    @ApiModelProperty(value = "usualScore 平时成绩", position=20)
+    @ApiModelProperty(value = "usualScore 平时成绩", position=5)
     @Getter @Setter private String usualScore;
 	
-    @ApiModelProperty(value = "credit 所得学分", position=24)
+    @ApiModelProperty(value = "credit 所得学分", position=6)
     @Getter @Setter private String credit;
 	
-    @ApiModelProperty(value = "gradePoint 绩点", position=25)
+    @ApiModelProperty(value = "gradePoint 绩点", position=7)
     @Getter @Setter private String gradePoint;
     
-    @ApiModelProperty(value = "examTime 考试时间", position=26)
+    @ApiModelProperty(value = "examTime 考试时间", position=8)
     @Getter @Setter private String examTime;
     
-    @ApiModelProperty(value = "totalScore 课程成绩", position=27)
+    @ApiModelProperty(value = "totalScore 课程成绩", position=9)
     @Getter @Setter private String totalScore;
     
 	public ScoreDomain() {}

@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
@@ -44,23 +42,6 @@ public class StudentRegisterService {
 	@Autowired
 	private ExcelBasedataHelper basedataHelper;
 
-	/**
-     * 功能：判断字符串是否为日期格式
-     * 
-     * @param str
-     * @return
-     */
-    public static boolean isDate(String strDate) {
-        Pattern pattern = Pattern
-                .compile("^((\\d{2}(([02468][048])|([13579][26]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])))))|(\\d{2}(([02468][1235679])|([13579][01345789]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))))(\\s(((0?[0-9])|([1-2][0-3]))\\:([0-5]?[0-9])((\\s)|(\\:([0-5]?[0-9])))))?$");
-        Matcher m = pattern.matcher(strDate);
-        if (m.matches()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
 	public void importData(MultipartFile studentInfoFile,MultipartFile dataBaseFile, Date registerDate) {
 		//获取学生信息
 		List<StudentInfoDomain> studentInfos = basedataHelper.readStudentInfoFromInputStream(studentInfoFile);
@@ -84,6 +65,7 @@ public class StudentRegisterService {
 		}
 		List<StudentRegister> stuRegisterList = new ArrayList<>();
 		//学生数据key value
+		int i = 0;
 		for (Entry<String, StudentRegisterDomain> entry : maps.entrySet()) {  
 		    //学生信息key value
 		    for (Entry<String, StudentInfoDomain> entry1 : maps1.entrySet()) {
@@ -113,6 +95,8 @@ public class StudentRegisterService {
 		    			studentRegister.setUserId(entry1.getValue().getUserId());
 		    			studentRegister.setUserName(entry1.getValue().getUserName());
 		    			studentRegister.setRegisterDate(registerDate);
+		    			studentRegister.setIsPay(entry.getValue().getIsPay());
+		    			studentRegister.setIsGreenChannel(entry.getValue().getIsGreenChannel());
 		    			stuRegisterList.add(studentRegister);
 		    		}
 				} catch (Exception e) {
@@ -121,7 +105,14 @@ public class StudentRegisterService {
 					e.printStackTrace();
 				}
 		    }
-		}  
-		respository.save(stuRegisterList);
+		    i++;
+			if (0 == i % 1000) {
+				respository.save(stuRegisterList);
+				stuRegisterList.clear();
+			}
+		} 
+		if (!stuRegisterList.isEmpty()) {
+			respository.save(stuRegisterList);
+		}
 	}
 }
