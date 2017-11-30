@@ -6,6 +6,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
+
 import lombok.Data;
 
 @Document(collection="Score")
@@ -77,6 +79,11 @@ public class Score {
 	private String grade;
 	
 	/**
+	 * 入学日期
+	 */
+	private Date enrollmentate;
+	
+	/**
 	 * 学期
 	 */
 	private int semester;
@@ -97,9 +104,9 @@ public class Score {
 	private String courseName;
 	
 	/**
-	 * 选课类型
+	 * 选课类型: require:必修,limite:限选,optional:任选
 	 */
-	private String courseType;
+	private String courseType =ScoreConstant.REQUIRED_COURSE;
 	
 	/**
 	 * 考试时间
@@ -127,15 +134,15 @@ public class Score {
 	private String totalScore;
 	
 	/**
-	 * 成绩类型
+	 * 成绩类型: course:课程成绩,英语四级:cet4,英语六级:cet6
 	 */
-	private String scoreType;
+	private String examType = ScoreConstant.EXAM_TYPE_COURSE;
 	
 	
 	/**
-	 * 成绩结果类型
+	 * 成绩结果类型:  100:百分制
 	 */
-	private String scoreResultType;
+	private String scoreResultType =ScoreConstant.RESULT_TYPE_100;
 	
 	/**
 	 * 所得学分

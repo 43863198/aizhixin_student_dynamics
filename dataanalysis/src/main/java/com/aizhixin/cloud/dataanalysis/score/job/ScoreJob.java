@@ -108,7 +108,7 @@ public class ScoreJob {
 			}
 
 			//清除之前总评成绩不及格统计数据
-			totalScoreCountMongoRespository.deleteAll();
+//			totalScoreCountMongoRespository.deleteAll();
 			Iterator iter = alarmMap.entrySet().iterator();
 			while (iter.hasNext()) {
 
@@ -117,8 +117,8 @@ public class ScoreJob {
 				Map.Entry entry = (Map.Entry) iter.next();
 				Long orgId = (Long) entry.getKey();
 
-				List<Score> secondScoreList = scoreMongoRespository.findAllByTotalScoreGreaterThanEqualAndSchoolYearAndSemesterAndOrgId(ScoreConstant.PASS_SCORE_LINE, secondSchoolYear, secondSemester, orgId);
-				List<Score> firstScoreList = scoreMongoRespository.findAllByTotalScoreGreaterThanEqualAndSchoolYearAndSemesterAndOrgId(ScoreConstant.PASS_SCORE_LINE, firstSchoolYear, firstSemester, orgId);
+				List<Score> secondScoreList = scoreMongoRespository.findAllByTotalScoreGreaterThanEqualAndSchoolYearAndSemesterAndOrgIdAndExamType(ScoreConstant.PASS_SCORE_LINE, secondSchoolYear, secondSemester, orgId,ScoreConstant.EXAM_TYPE_COURSE);
+				List<Score> firstScoreList = scoreMongoRespository.findAllByTotalScoreGreaterThanEqualAndSchoolYearAndSemesterAndOrgIdAndExamType(ScoreConstant.PASS_SCORE_LINE, firstSchoolYear, firstSemester, orgId,ScoreConstant.EXAM_TYPE_COURSE);
 				HashMap<String,List<Score>> secondUserScoreMap = new HashMap<String,List<Score>>();
 				HashMap<String,List<Score>> firstUserScoreMap = new HashMap<String,List<Score>>();
 				//按学号分组学生上学期成绩信息
@@ -420,7 +420,7 @@ public class ScoreJob {
 			}
 
 			//清除之前总评成绩不及格统计数据
-			totalScoreCountMongoRespository.deleteAll();
+//			totalScoreCountMongoRespository.deleteAll();
 			Iterator iter = alarmMap.entrySet().iterator();
 			while (iter.hasNext()) {
 
@@ -429,7 +429,7 @@ public class ScoreJob {
 				Map.Entry entry = (Map.Entry) iter.next();
 				Long orgId = (Long) entry.getKey();
 
-				List<Score> scoreList = scoreMongoRespository.findAllByTotalScoreLessThanAndSchoolYearAndSemesterAndOrgId(ScoreConstant.PASS_SCORE_LINE, schoolYear, lastSemester, orgId);
+				List<Score> scoreList = scoreMongoRespository.findAllByTotalScoreLessThanAndSchoolYearAndSemesterAndOrgIdAndExamType(ScoreConstant.PASS_SCORE_LINE, schoolYear, lastSemester, orgId,ScoreConstant.EXAM_TYPE_COURSE);
 				for(Score score : scoreList){
 					TotalScoreCount totalScoreCount = totalScoreCountMap.get(score.getJobNum());
 					if(null == totalScoreCount){
@@ -786,7 +786,7 @@ public class ScoreJob {
 			}
 
 			//清除之前补考统计数据
-			makeUpScoreCountMongoRespository.deleteAll();
+//			makeUpScoreCountMongoRespository.deleteAll();
 			Iterator iter = alarmMap.entrySet().iterator();
 			while (iter.hasNext()) {
 

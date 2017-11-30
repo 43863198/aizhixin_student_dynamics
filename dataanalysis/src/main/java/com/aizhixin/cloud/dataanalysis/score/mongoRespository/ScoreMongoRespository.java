@@ -12,7 +12,7 @@ public interface ScoreMongoRespository extends MongoRepository<Score, String>{
 	
 	List<Score> findAllBySchoolYearGreaterThanEqualAndOrgId(int beginYear,Long orgId);
 	
-	List<Score> findAllByTotalScoreLessThanAndSchoolYearAndSemesterAndOrgId(String totalScore,int schoolYear,int semester,Long orgId);
+	List<Score> findAllByTotalScoreLessThanAndSchoolYearAndSemesterAndOrgIdAndExamType(String totalScore,int schoolYear,int semester,Long orgId,String examType);
 	
-	List<Score> findAllByTotalScoreGreaterThanEqualAndSchoolYearAndSemesterAndOrgId(String totalScore,int schoolYear,int semester,Long orgId);
+	List<Score> findAllByTotalScoreGreaterThanEqualAndSchoolYearAndSemesterAndOrgIdAndExamType(String totalScore,int schoolYear,int semester,Long orgId,String examType);
 }

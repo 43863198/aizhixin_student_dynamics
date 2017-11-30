@@ -101,7 +101,7 @@ public class StudentRegisterService {
 		    					studentRegister.setActualRegisterDate(_d);
 		    				}
 		    			}
-		    			studentRegister.setIsregister(entry.getValue().getIsregister());
+		    			studentRegister.setIsRegister(entry.getValue().getIsregister());
 		    			studentRegister.setClassId(entry1.getValue().getClassId());
 		    			studentRegister.setClassName(entry1.getValue().getClassName());
 		    			studentRegister.setGrade(entry.getValue().getGrade());

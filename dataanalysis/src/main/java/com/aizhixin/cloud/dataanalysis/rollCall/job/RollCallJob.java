@@ -91,7 +91,7 @@ public class RollCallJob {
 			}
 
 			//清除之前考勤统计数据
-			rollCallCountMongoRespository.deleteAll();
+//			rollCallCountMongoRespository.deleteAll();
 			Iterator iter = alarmMap.entrySet().iterator();
 			while (iter.hasNext()) {
 

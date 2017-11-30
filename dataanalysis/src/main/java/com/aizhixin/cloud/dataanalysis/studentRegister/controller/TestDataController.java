@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.StudentRegisterConstant;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
@@ -96,7 +97,7 @@ public class TestDataController {
 			studentRegister.setOrgId(orgId);
 			studentRegister.setProfessionalId(1L);
 			studentRegister.setProfessionalName("测试专业");
-			studentRegister.setIsregister(StudentRegisterConstant.UNREGISTER);
+			studentRegister.setIsRegister(StudentRegisterConstant.UNREGISTER);
 			studentRegister.setRegisterDate(DateUtil.getMonday(new Date()));
 			// studentRegister.setRemarks(remarks);
 			studentRegister.setSchoolYear(2017);
@@ -206,7 +207,7 @@ public class TestDataController {
 			score.setCourseName("大学英语");
 			score.setCourseType("require");
 			score.setExamTime(DateUtil.getMonday(new Date()));
-			score.setScoreType("总评成绩");
+			score.setExamType(ScoreConstant.EXAM_TYPE_COURSE);
 			score.setTotalScore("55");
 			score.setScoreResultType("百分制");
 			score.setCredit(10);
@@ -233,7 +234,7 @@ public class TestDataController {
 			score.setCourseName("大学英语");
 			score.setCourseType("require");
 			score.setExamTime(DateUtil.getMonday(new Date()));
-			score.setScoreType("总评成绩");
+			score.setExamType(ScoreConstant.EXAM_TYPE_COURSE);
 			score.setTotalScore("60");
 			score.setScoreResultType("百分制");
 			score.setCredit(8);

@@ -13,4 +13,16 @@ public class ScoreConstant {
 	
 	//课程类型：任选
 	public final static String OPTIONAL_COURSE = "optional";	
+	
+	//考试类型：课程
+	public final static String EXAM_TYPE_COURSE = "course";
+	
+	//考试类型：英语4级
+	public final static String EXAM_TYPE_CET4 = "cet4";
+	
+	//考试类型：英语6级
+	public final static String EXAM_TYPE_CET6 = "cet6";	
+	
+	//成绩评分制
+	public final static String RESULT_TYPE_100 = "100";
 }
