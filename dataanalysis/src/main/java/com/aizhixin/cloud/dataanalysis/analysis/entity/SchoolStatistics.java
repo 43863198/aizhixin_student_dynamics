@@ -22,6 +22,11 @@ import java.util.Date;
 @ToString
 public class SchoolStatistics extends AbstractEntity {
     /*
+     * 组织id
+     */
+    @Column(name = "ORG_ID")
+    @Getter @Setter private Long orgId;
+    /*
     * 学院名称
     */
     @Column(name = "COLLOEGE_NAME")
