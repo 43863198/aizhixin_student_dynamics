@@ -52,7 +52,6 @@ public class ExcelBasedataHelper {
 		}
 		return null;
 	}
-	
 
 	public List<StudentRegisterDomain> readStudentRegisterFromInputStream(MultipartFile file) {
 		List<StudentRegisterDomain> list = new ArrayList<>();
@@ -77,11 +76,19 @@ public class ExcelBasedataHelper {
 					String schoolYear = getCellStringValue(row, 4);
 					jobNum = getCellStringValue(row, 5);
 					String actualRegisterDate = getCellStringValue(row, 39);
+					int isPay = 0;
+					int isGreenChannel = 0;
+					if (!"".equals(getCellStringValue(row, 69)) && getCellStringValue(row, 69).length() > 0) {
+						isGreenChannel = 1;//银行卡号
+						isPay = 1;
+					}
 					int isregister = 0;
 					if ("".equals(actualRegisterDate) || actualRegisterDate.length() <= 0) {
 						isregister = 1;
 					}
-					list.add(new StudentRegisterDomain(line, jobNum, grade, isregister, actualRegisterDate, schoolYear));
+					list.add(
+							new StudentRegisterDomain(line, jobNum, grade, isregister, actualRegisterDate,
+									schoolYear, isPay, isGreenChannel));
 				} catch (Exception e) {
 					StudentRegisterDomain d = new StudentRegisterDomain();
 					d.setLine(line);
@@ -138,7 +145,7 @@ public class ExcelBasedataHelper {
 		}
 		return list;
 	}
-	
+
 	public List<ScoreDomain> readStudentScoreFromInputStream(MultipartFile file) {
 		List<ScoreDomain> list = new ArrayList<>();
 		ExcelUtil util = new ExcelUtil(file);
@@ -152,12 +159,8 @@ public class ExcelBasedataHelper {
 			String jobNum = null;
 			while (rows.hasNext()) {
 				Row row = rows.next();
-//				if (1 == line) {
-//					line++;
-//					continue;// 跳过第一行
-//				}
 				try {
-					setCellStringType(row, 25);// 一行共有24个列值
+					setCellStringType(row, 25);// 一行共有25个列值
 					Long orgId = Long.valueOf(getCellStringValue(row, 0));
 					Long userId = Long.valueOf(getCellStringValue(row, 1));
 					jobNum = getCellStringValue(row, 2);
@@ -173,17 +176,13 @@ public class ExcelBasedataHelper {
 					String scheduleId = getCellStringValue(row, 17);
 					String credit = getCellStringValue(row, 18);
 					String examTime = getCellStringValue(row, 16);
-//					String finalScore = getCellStringValue(row, 4);
 					String usualScore = getCellStringValue(row, 23);
-//					String totalScore = getCellStringValue(row, 4);
 					String courseType = getCellStringValue(row, 20);
 					String totalScore = getCellStringValue(row, 21);
 					String gradePoint = getCellStringValue(row, 22);
-//					Integer credit = Integer.valueOf(getCellStringValue(row, 5));
-					list.add(new ScoreDomain(line, orgId, jobNum, userId, userName, 
-							classId, className, professionalId, professionalName, collegeId, 
-							collegeName, grade, schoolYear, scheduleId, courseType, usualScore, 
-							credit, gradePoint, examTime, totalScore));
+					list.add(new ScoreDomain(line, orgId, jobNum, userId, userName, classId, className, professionalId,
+							professionalName, collegeId, collegeName, grade, schoolYear, scheduleId, courseType,
+							usualScore, credit, gradePoint, examTime, totalScore));
 				} catch (Exception e) {
 					ScoreDomain d = new ScoreDomain();
 					d.setLine(line);
@@ -196,60 +195,57 @@ public class ExcelBasedataHelper {
 		}
 		return list;
 	}
-	
+
 	public List<RollCallDomain> readRollCallFromInputStream(MultipartFile file) {
 		List<RollCallDomain> list = new ArrayList<>();
 		ExcelUtil util = new ExcelUtil(file);
-		Sheet sheet = null;
-//		if (null == sheet) {// 如果没有此sheet页标签，读取第1个标签的内容
-//			sheet = util.getSheet(0);
-//		}
-		for (int i = 0; i < util.getSheetNumber(); i++) {
-			sheet = util.getSheet(i);
-			if (null != sheet) {
-				Iterator<Row> rows = sheet.rowIterator();
-				int line = 1;
-				String jobNum = null;
-				while (rows.hasNext()) {
-					Row row = rows.next();
-					if (1 == line) {
-						line++;
-						continue;// 跳过第一行
-					}
-					try {
-						setCellStringType(row, 15);// 一行共有15个列值
-						Long orgId = Long.valueOf(getCellStringValue(row, 0));
-						Long userId = Long.valueOf(getCellStringValue(row, 1));
-						jobNum = getCellStringValue(row, 2);
-						String userName = getCellStringValue(row, 3);
-						Long classId = Long.valueOf(getCellStringValue(row, 5));
-						String className = getCellStringValue(row, 6);
-						Long professionalId = Long.valueOf(getCellStringValue(row, 7));
-						String professionalName = getCellStringValue(row, 8);
-						Long collegeId = Long.valueOf(getCellStringValue(row, 9));
-						String collegeName = getCellStringValue(row, 10);
-						Long scheduleId = null;
-						if (getCellStringValue(row, 11).length() > 0 && !"".equals(getCellStringValue(row, 11))) {
-							scheduleId = Long.valueOf(getCellStringValue(row, 11));
-						}
-						String rollCallDate = getCellStringValue(row, 12);
-						String rollCallResult = getCellStringValue(row, 13);
-						String grade = getCellStringValue(row, 14);
-						list.add(new RollCallDomain(line, orgId, jobNum, userId, userName, classId, 
-								className, professionalId, professionalName, collegeId, collegeName, scheduleId, 
-								rollCallDate, grade, rollCallResult));
-					} catch (Exception e) {
-						RollCallDomain d = new RollCallDomain();
-						d.setLine(line);
-						d.setJobNum(jobNum);
-						list.add(d);
-						LOG.info("错误信息行号：" + line + ",  学号：" + jobNum);
-					}
+		Sheet sheet = util.getSheet("new");
+		if (null == sheet) {// 如果没有此sheet页标签，读取第1个标签的内容
+			sheet = util.getSheet(0);
+		}
+		if (null != sheet) {
+			Iterator<Row> rows = sheet.rowIterator();
+			int line = 1;
+			String jobNum = null;
+			while (rows.hasNext()) {
+				Row row = rows.next();
+				if (1 == line) {
 					line++;
+					continue;// 跳过第一行
 				}
+				try {
+					setCellStringType(row, 14);// 一行共有15个列值
+					Long orgId = Long.valueOf(getCellStringValue(row, 0));
+					Long userId = Long.valueOf(getCellStringValue(row, 1));
+					jobNum = getCellStringValue(row, 2);
+					String userName = getCellStringValue(row, 3);
+					Long classId = Long.valueOf(getCellStringValue(row, 4));
+					String className = getCellStringValue(row, 5);
+					Long professionalId = Long.valueOf(getCellStringValue(row, 6));
+					String professionalName = getCellStringValue(row, 7);
+					Long collegeId = Long.valueOf(getCellStringValue(row, 8));
+					String collegeName = getCellStringValue(row, 9);
+					Long scheduleId = null;
+					if (getCellStringValue(row, 10).length() > 0 && !"".equals(getCellStringValue(row, 10))) {
+						scheduleId = Long.valueOf(getCellStringValue(row, 10));
+					}
+					String rollCallDate = getCellStringValue(row, 13);
+					String rollCallResult = getCellStringValue(row, 11);
+					String grade = getCellStringValue(row, 12);
+					list.add(new RollCallDomain(line, orgId, jobNum, userId, userName, classId, className,
+							professionalId, professionalName, collegeId, collegeName, scheduleId, rollCallDate, grade,
+							rollCallResult));
+				} catch (Exception e) {
+					RollCallDomain d = new RollCallDomain();
+					d.setLine(line);
+					d.setJobNum(jobNum);
+					list.add(d);
+					LOG.info("错误信息行号：" + line + ",  学号：" + jobNum);
+				}
+				line++;
 			}
 		}
 		return list;
 	}
-	
+
 }
