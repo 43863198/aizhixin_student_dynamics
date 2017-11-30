@@ -101,7 +101,7 @@ public class StudentRegisterService {
 		    					studentRegister.setActualRegisterDate(_d);
 		    				}
 		    			}
-		    			studentRegister.setIsregister(entry.getValue().getIsregister());
+		    			studentRegister.setIsRegister(entry.getValue().getIsregister());
 		    			studentRegister.setClassId(entry1.getValue().getClassId());
 		    			studentRegister.setClassName(entry1.getValue().getClassName());
 		    			studentRegister.setGrade(entry.getValue().getGrade());
@@ -109,7 +109,7 @@ public class StudentRegisterService {
 		    			studentRegister.setCollegeName(entry1.getValue().getCollegeName());
 		    			studentRegister.setProfessionalId(entry1.getValue().getProfessionalId());
 		    			studentRegister.setProfessionalName(entry1.getValue().getProfessionalName());
-		    			studentRegister.setSchoolYear(entry.getValue().getSchoolYear());
+		    			studentRegister.setSchoolYear(Integer.parseInt(entry.getValue().getSchoolYear()));
 		    			studentRegister.setUserId(entry1.getValue().getUserId());
 		    			studentRegister.setUserName(entry1.getValue().getUserName());
 		    			studentRegister.setRegisterDate(registerDate);

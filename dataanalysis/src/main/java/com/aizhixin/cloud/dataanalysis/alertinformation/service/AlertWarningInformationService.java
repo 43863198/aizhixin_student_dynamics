@@ -873,7 +873,14 @@ public class AlertWarningInformationService {
 	public void  save(WarningInformation warningInformation){
 		alertWarningInformationRepository.save(warningInformation);
 	}
+	
+	public void  save(List<WarningInformation> warningInformations){
+		alertWarningInformationRepository.save(warningInformations);
+	}
 
 
-
+	public List<WarningInformation> getWarnInforByState(Long orgId,String warningType,int deleteFlag,int warningState){
+		
+		return alertWarningInformationRepository.getawinfoByOrgIdAndWarningTypeAndState(orgId, warningType, deleteFlag, warningState);
+	}
 }

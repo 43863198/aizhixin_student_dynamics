@@ -1,6 +1,7 @@
-package com.aizhixin.cloud.dataanalysis.studentRegister.job;
+package com.aizhixin.cloud.dataanalysis.rollCall.job;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,12 +14,16 @@ import java.util.UUID;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
-import com.aizhixin.cloud.dataanalysis.alertinformation.service.OperaionRecordService;
 import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
+import com.aizhixin.cloud.dataanalysis.common.constant.RollCallConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningType;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.common.util.RestUtil;
+import com.aizhixin.cloud.dataanalysis.rollCall.mongoEntity.RollCall;
+import com.aizhixin.cloud.dataanalysis.rollCall.mongoEntity.RollCallCount;
+import com.aizhixin.cloud.dataanalysis.rollCall.mongoRespository.RollCallCountMongoRespository;
+import com.aizhixin.cloud.dataanalysis.rollCall.mongoRespository.RollCallMongoRespository;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmRuleService;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
 import com.aizhixin.cloud.dataanalysis.setup.service.ProcessingModeService;
@@ -36,11 +41,9 @@ import org.springframework.util.StringUtils;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmRule;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
 import com.aizhixin.cloud.dataanalysis.setup.entity.ProcessingMode;
-import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
-import com.aizhixin.cloud.dataanalysis.studentRegister.mongoRespository.StudentRegisterMongoRespository;
 
 @Component
-public class StudentRegisterJob {
+public class RollCallJob {
 
 	public volatile static boolean flag = true;
 
@@ -50,24 +53,115 @@ public class StudentRegisterJob {
 	@Autowired
 	private AlarmRuleService alarmRuleService;
 	@Autowired
-	private RestUtil restUtil;
+	private RollCallMongoRespository rollCallMongoRespository;
 	@Autowired
-	private StudentRegisterMongoRespository stuRegisterMongoRespository;
+	private RollCallCountMongoRespository rollCallCountMongoRespository;
 	@Autowired
 	private AlertWarningInformationService alertWarningInformationService;
 	@Autowired
 	private ProcessingModeService processingModeService;
-	@Autowired
-	private OperaionRecordService operaionRecordService;
-
-	public void studenteRegisterJob() {
+	
+	/**
+	 * 统计mongo里的本学期考勤数据将汇总的数据存入rollCallCount里
+	 */
+	public void rollCallCountJob() {
 
 		// 获取预警配置
 		List<AlarmSettings> settingsList = alarmSettingsService
-				.getAlarmSettingsByType(WarningType.Register.toString());
+				.getAlarmSettingsByType(WarningType.Absenteeism.toString());
 		if (null != settingsList && settingsList.size() > 0) {
-			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
+			
+			Calendar c = Calendar.getInstance();
+			//当前年份
+			int schoolYear = c.get(Calendar.YEAR);
+			//当前月份
+			int month = c.get(Calendar.MONTH);
+			//当前学期编号
+			int semester = 2;
+			if( month > 2 && month < 9){
+				semester = 1;
+			}
+			
+			HashMap<Long, Long> alarmMap = new HashMap<Long,Long>();
+			// 按orgId归类告警等级阀值
+			for (AlarmSettings settings : settingsList) {
 
+				Long orgId = settings.getOrgId();
+				alarmMap.put(orgId, orgId);
+			}
+
+			//清除之前考勤统计数据
+//			rollCallCountMongoRespository.deleteAll();
+			Iterator iter = alarmMap.entrySet().iterator();
+			while (iter.hasNext()) {
+
+				List<RollCallCount> rollCallCountList = new ArrayList<RollCallCount>();
+				HashMap<String,RollCallCount> rollCallCountMap = new HashMap<String,RollCallCount>();
+				Map.Entry entry = (Map.Entry) iter.next();
+				Long orgId = (Long) entry.getKey();
+
+				List<RollCall> rollCallList = rollCallMongoRespository.findAllBySchoolYearAndSemesterAndOrgId(schoolYear, semester, orgId);
+				for(RollCall rollCall : rollCallList){
+					RollCallCount rollCallCount = rollCallCountMap.get(rollCall.getJobNum());
+					if(null == rollCallCount){
+						rollCallCount = new RollCallCount();
+						rollCallCount.setClassId(rollCall.getClassId());
+						rollCallCount.setClassName(rollCall.getClassName());
+						rollCallCount.setCollegeId(rollCall.getCollegeId());
+						rollCallCount.setCollegeName(rollCall.getCollegeName());
+						rollCallCount.setGrade(rollCall.getGrade());
+						rollCallCount.setJobNum(rollCall.getJobNum());
+						rollCallCount.setOrgId(orgId);
+						rollCallCount.setProfessionalId(rollCall.getProfessionalId());
+						rollCallCount.setProfessionalName(rollCall.getProfessionalName());
+						rollCallCount.setSchoolYear(schoolYear);
+						rollCallCount.setSemester(semester);
+						rollCallCount.setUserName(rollCall.getUserName());
+						if(RollCallConstant.OUT_SCHOOL == rollCall.getRollCallResult()){
+							rollCallCount.setOutSchoolTimes(1);
+						}
+						rollCallCountMap.put(rollCall.getJobNum(), rollCallCount);
+					}else{
+						if(RollCallConstant.OUT_SCHOOL == rollCall.getRollCallResult()){
+							rollCallCount.setOutSchoolTimes(rollCallCount.getOutSchoolTimes()+1);
+							rollCallCountMap.put(rollCall.getJobNum(), rollCallCount);
+						}
+					}
+				}
+				
+				Iterator rollCalliter = rollCallCountMap.entrySet().iterator();
+				while (rollCalliter.hasNext()) {
+					Map.Entry rollCallentry = (Map.Entry) rollCalliter.next();
+					RollCallCount rollCallCount = (RollCallCount)rollCallentry.getValue();
+					if(rollCallCount.getOutSchoolTimes() > 0){
+						rollCallCountList.add(rollCallCount);
+					}
+				}
+				
+				rollCallCountMongoRespository.save(rollCallCountList);
+			}
+		}
+	}
+
+	public void rollCallJob() {
+
+		// 获取预警配置
+		List<AlarmSettings> settingsList = alarmSettingsService
+				.getAlarmSettingsByType(WarningType.Absenteeism.toString());
+		if (null != settingsList && settingsList.size() > 0) {
+			
+			Calendar c = Calendar.getInstance();
+			//当前年份
+			int schoolYear = c.get(Calendar.YEAR);
+			//当前月份
+			int month = c.get(Calendar.MONTH);
+			//当前学期编号
+			int semester = 2;
+			if( month > 2 && month < 9){
+				semester = 1;
+			}
+			
+			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
 			Set<String> warnRuleIdList = new HashSet<String>();
 			Set<String> warnSettingsIdList = new HashSet<String>();
 			// 按orgId归类告警等级阀值
@@ -117,26 +211,18 @@ public class StudentRegisterJob {
 				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
 						.getValue();
 
-				// 预警处理配置获取 暂不初始化预警处理信息 2017.11.28
-//				HashMap<Integer, ProcessingMode> processingModeMap = new HashMap<Integer, ProcessingMode>();
+				// 预警处理配置获取
+//				HashMap<String, ProcessingMode> processingModeMap = new HashMap<String, ProcessingMode>();
 //				List<ProcessingMode> processingModeList = processingModeService
 //						.getProcessingModeBywarningTypeId(orgId,
-//								WarningType.Register.toString());
-//				for(ProcessingMode processingMode: processingModeList){
-//					processingModeMap.put(processingMode.getWarningLevel(), processingMode);
-//				}
-				
+//								WarningType.Absenteeism.toString());
 				// 按orgId查询未报到的学生信息
-				// List<StudentRegister> stuRegisterList =
-				// stuRegisterMongoRespository
-				// .findAllByOrgIdAndIsregister(key,StudentRegisterConstant.UNREGISTER);
-				List<StudentRegister> stuRegisterList = stuRegisterMongoRespository
-						.findAllByOrgIdAndActualRegisterDateIsNull(orgId);
+				List<RollCallCount> rollCallCountList = rollCallCountMongoRespository.findAllBySchoolYearAndSemesterAndOrgId(schoolYear, semester, orgId);
 				
 				// 数据库已生成的处理中预警数据
 				List<WarningInformation> warnDbList = alertWarningInformationService
 						.getWarnInforByState(orgId,
-								WarningType.Register.toString(),
+								WarningType.Absenteeism.toString(),
 								DataValidity.VALID.getState(),
 								AlertTypeConstant.ALERT_IN_PROCESS);
 				for (WarningInformation warningInfor : warnDbList) {
@@ -144,41 +230,39 @@ public class StudentRegisterJob {
 							.put(warningInfor.getJobNumber(), warningInfor);
 				}
 
-				if (null != stuRegisterList && stuRegisterList.size() > 0) {
+				if (null != rollCallCountList && rollCallCountList.size() > 0) {
 					Date today = new Date();
-					for (StudentRegister studentRegister : stuRegisterList) {
-						int result = DateUtil.getDaysBetweenDate(
-								studentRegister.getRegisterDate(), today);
+					for (RollCallCount rollCallCount : rollCallCountList) {
 						for (AlarmSettings alarmSettings : val) {
 							AlarmRule alarmRule = alarmRuleMap
 									.get(alarmSettings.getRuleSet());
 							if (null != alarmRule) {
-								if (result >= alarmRule.getRightParameter()) {
+								if (rollCallCount.getOutSchoolTimes() > alarmRule.getRightParameter()) {
 									WarningInformation alertInfor = new WarningInformation();
 									String alertId = UUID.randomUUID()
 											.toString();
 									alertInfor.setId(alertId);
-									alertInfor.setDefendantId(studentRegister
+									alertInfor.setDefendantId(rollCallCount
 											.getUserId());
-									alertInfor.setName(studentRegister
+									alertInfor.setName(rollCallCount
 											.getUserName());
-									alertInfor.setJobNumber(studentRegister
+									alertInfor.setJobNumber(rollCallCount
 											.getJobNum());
-									alertInfor.setCollogeId(studentRegister
+									alertInfor.setCollogeId(rollCallCount
 											.getCollegeId());
-									alertInfor.setCollogeName(studentRegister
+									alertInfor.setCollogeName(rollCallCount
 											.getCollegeName());
-									alertInfor.setClassId(studentRegister
+									alertInfor.setClassId(rollCallCount
 											.getClassId());
-									alertInfor.setClassName(studentRegister
+									alertInfor.setClassName(rollCallCount
 											.getClassName());
 									alertInfor
-											.setProfessionalId(studentRegister
+											.setProfessionalId(rollCallCount
 													.getProfessionalId());
 									alertInfor
-											.setProfessionalName(studentRegister
+											.setProfessionalName(rollCallCount
 													.getProfessionalName());
-									alertInfor.setTeachingYear(String.valueOf(studentRegister
+									alertInfor.setTeachingYear(String.valueOf(rollCallCount
 											.getSchoolYear()));
 									alertInfor.setWarningLevel(alarmSettings
 											.getWarningLevel());
@@ -187,7 +271,7 @@ public class StudentRegisterJob {
 									alertInfor.setAlarmSettingsId(alarmSettings
 											.getId());
 									alertInfor
-											.setWarningType(WarningType.Register
+											.setWarningType(WarningType.Absenteeism
 													.toString());
 									alertInfor.setWarningTime(new Date());
 									alertInfor.setOrgId(alarmRule.getOrgId());
@@ -195,14 +279,7 @@ public class StudentRegisterJob {
 									warnMap.put(alertInfor.getJobNumber(),
 											alertInfor);
 
-									//新预警生成预警处理表数据  暂不初始化预警处理信息 2017.11.28
-//									if(null == warnDbMap.get(studentRegister.getJobNum())){
-//										ProcessingMode processingMode = processingModeMap.get(alarmSettings
-//											.getWarningLevel());
-//										if(null != processingMode){
-//											
-//										}
-//									}
+
 									break;
 								} else {
 									continue;
@@ -245,136 +322,6 @@ public class StudentRegisterJob {
 					//预警处理表同步处理为撤销状态
 				}
 			}
-		}
-	}
-
-	// @Scheduled(cron = "0 0/10 * * * ?")
-	public void studenteRegister() {
-		this.setAlertWarningInformation(213L);
-	}
-
-	public void setAlertWarningInformation(Long orgId) {
-		String url = "http://gateway.aizhixintest.com/org-manager";
-		url = url + "/v1/students/list?pageSize=1000&orgId=" + orgId;
-		List<WarningInformation> awinfoList = new ArrayList<>();
-		try {
-			String respone = new RestUtil().getData(url, null);
-			if (null != respone) {
-				JSONObject json = JSONObject.fromObject(respone);
-				Object data = json.get("data");
-				if (null != data) {
-					JSONArray jsonArray = JSONArray.fromObject(data);
-					for (int i = 0; i < jsonArray.length(); i++) {
-						JSONObject jsonObject = jsonArray.getJSONObject(i);
-						Long defendantId = jsonObject.getLong("id");
-						String name = jsonObject.getString("name");
-						String jobNumber = jsonObject.getString("jobNumber");
-						String collegeName = jsonObject
-								.getString("collegeName");
-						Long collegeId = jsonObject.getLong("collegeId");
-						String professionalName = jsonObject
-								.getString("professionalName");
-						Long professionalId = jsonObject
-								.getLong("professionalId");
-						String classesName = jsonObject
-								.getString("classesName");
-						Long classesId = jsonObject.getLong("classesId");
-						String phone = jsonObject.getString("phone");
-						String teachingYear = jsonObject
-								.getString("teachingYear");
-						String warningType = "";
-						if (i % 2 == 0) {
-							warningType = "Register";
-						} else if (i % 3 == 0) {
-							warningType = "LeaveSchool";
-						} else if (i % 5 == 0) {
-							warningType = "AttendAbnormal";
-						} else if (i % 7 == 0) {
-							warningType = "Absenteeism";
-						} else if (i % 9 == 0) {
-							warningType = "TotalAchievement";
-						} else if (i % 11 == 0) {
-							warningType = "SupplementAchievement";
-						} else if (i % 13 == 0) {
-							warningType = "PerformanceFluctuation";
-						} else {
-							warningType = "Cet";
-						}
-						WarningInformation awinfo = null;
-						List<WarningInformation> awinfos = alertWarningInformationService
-								.getawinfoByDefendantId(orgId, warningType,
-										defendantId);
-						if (null != awinfos) {
-							if (awinfos.size() == 1) {
-								awinfo = awinfos.get(0);
-							} else if (awinfos.size() > 1) {
-								logger.info("学号为"
-										+ defendantId
-										+ "学生的"
-										+ WarningType.valueOf(warningType)
-												.getValue() + "数据重复异常！");
-								continue;
-							} else {
-								awinfo = new WarningInformation();
-							}
-						} else {
-							awinfo = new WarningInformation();
-						}
-						awinfo.setOrgId(orgId);
-						if (null != defendantId) {
-							awinfo.setDefendantId(defendantId);
-						}
-						if (null != name) {
-							awinfo.setName(name);
-						}
-						if (null != jobNumber) {
-							awinfo.setJobNumber(jobNumber);
-						}
-						if (null != collegeName) {
-							awinfo.setCollogeName(collegeName);
-						}
-						if (null != collegeId) {
-							awinfo.setCollogeId(collegeId);
-						}
-						if (null != professionalName) {
-							awinfo.setProfessionalName(professionalName);
-						}
-						if (null != professionalId) {
-							awinfo.setProfessionalId(professionalId);
-						}
-						if (null != classesName) {
-							awinfo.setClassName(classesName);
-						}
-						if (null != classesId) {
-							awinfo.setClassId(classesId);
-						}
-						if (null != phone) {
-							awinfo.setPhone(phone);
-						}
-						if (null != teachingYear) {
-							awinfo.setTeachingYear(teachingYear);
-						}
-						if (i % 77 == 0) {
-							awinfo.setWarningLevel(1);
-						} else if (i % 55 == 0) {
-							awinfo.setWarningLevel(2);
-						} else {
-							awinfo.setWarningLevel(3);
-						}
-						if (i % 9 == 0) {
-							awinfo.setWarningState(20);
-						} else {
-							awinfo.setWarningState(10);
-						}
-						awinfo.setWarningType(warningType);
-						awinfo.setCreatedDate(new Date());
-						awinfoList.add(awinfo);
-					}
-					alertWarningInformationService.save(awinfoList);
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 

@@ -61,7 +61,7 @@ public class RollCallService {
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				Date date = sdf.parse(d.getRollCallDate());  
 				rollCall.setRollCallDate(date);
-				rollCall.setRollCallResult(d.getRollCallResult());
+				rollCall.setRollCallResult(Integer.parseInt(d.getRollCallResult()));
 				list.add(rollCall);
 			} catch (Exception e) {
 				LOG.info("错误信息行号：" + d.getLine() + ",  学号：" + d.getJobNum());

@@ -1,5 +1,29 @@
 package com.aizhixin.cloud.dataanalysis.score.service;
 
+import io.swagger.annotations.ApiModelProperty;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Component;
+
+import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
+import com.aizhixin.cloud.dataanalysis.score.domain.ScoreDomain;
+import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
+import com.aizhixin.cloud.dataanalysis.score.mongoRespository.ScoreMongoRespository;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -99,7 +123,7 @@ public class ScoreService {
 		    			score.setCollegeName(entry1.getValue().getCollegeName());
 		    			score.setProfessionalId(entry1.getValue().getProfessionalId());
 		    			score.setProfessionalName(entry1.getValue().getProfessionalName());
-		    			score.setSchoolYear(entry.getValue().getSchoolYear());
+		    			score.setSchoolYear(Integer.parseInt(entry.getValue().getSchoolYear()));
 		    			score.setUserId(entry1.getValue().getUserId());
 		    			score.setUserName(entry1.getValue().getUserName());
 		    			if (entry.getValue().getExamTime() != null && entry.getValue().getExamTime().length() == 5) {
@@ -111,9 +135,9 @@ public class ScoreService {
 		    					score.setExamTime(_d);
 		    				}
 		    			}
-		    			score.setScheduleId(entry.getValue().getScheduleId());
+		    			score.setScheduleId(String.valueOf(entry.getValue().getScheduleId()));
 		    			score.setUsualScore(entry.getValue().getUsualScore());
-		    			score.setSchoolYear(entry.getValue().getSchoolYear());
+		    			score.setSchoolYear(Integer.parseInt(entry.getValue().getSchoolYear()));
 		    			score.setGradePoint(entry.getValue().getGradePoint());
 		    			scores.add(score);
 		    		}

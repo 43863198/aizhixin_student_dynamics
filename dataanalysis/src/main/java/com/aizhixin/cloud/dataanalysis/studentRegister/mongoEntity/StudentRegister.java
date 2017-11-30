@@ -79,13 +79,25 @@ public class StudentRegister {
 	/**
 	 * 学年学期
 	 */
-	private String schoolYear;
+	private int schoolYear;
 	
 	/**
-	 * 是否报到 0--已报到，1--未报到
+	 * 是否报到 1--已报到，0--未报到
 	 */
 	@Indexed
-	private int isregister;
+	private int isRegister;
+	
+	/**
+	 * 是否缴费(是否注册) 1--已缴费，0--未缴费
+	 */
+	@Indexed
+	private int isPay;
+	
+	/**
+	 * 是否绿色通道 (已注册，有银行卡号) 1--是，0--否
+	 */
+	@Indexed
+	private int isGreenChannel;
 	
 	/**
 	 * 报到日期

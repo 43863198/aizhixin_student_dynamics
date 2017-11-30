@@ -1,4 +1,4 @@
-package com.aizhixin.cloud.dataanalysis.rollCall.mongoEntity;
+package com.aizhixin.cloud.dataanalysis.score.mongoEntity;
 
 import java.util.Date;
 
@@ -8,9 +8,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
 
-@Document(collection="RollCall")
+@Document(collection="MakeUpScoreCount")
 @Data
-public class RollCall {
+public class MakeUpScoreCount {
 
 	@Id
 	private String id;
@@ -73,59 +73,10 @@ public class RollCall {
 	private String collegeName;
 	
 	/**
-	 * 年级
+	 * 不及格课程数
 	 */
-	private String grade;
+	private int failCourseNum;
 	
-	/**
-	 * 学期
-	 */
-	private int semester;
-	
-	/**
-	 * 学年
-	 */
-	private int schoolYear;
-	
-	/**
-	 * 排课id
-	 */
-	private Long scheduleId;
-	
-	/**
-	 * 选课名称
-	 */
-	private String courseName;
-	
-	/**
-	 * 选课类型（必修，限选，任选）
-	 */
-	private String courseType;
-	
-	/**
-	 * 考勤日期
-	 */
-	private Date rollCallDate;
-	
-	/**
-	 * 考勤类型
-	 */
-	private int rollCallType;
-	
-	/**
-	 * 考勤结果
-	 * 1:已到
-	 * 2:旷课
-	 * 3:迟到
-	 * 4:请假
-	 * 5:早退
-	 * 6:已提交
-	 * 7:未提交
-	 * 8:超出设定范围
-	 * 9:取消本次考勤
-	 */
-	@Indexed
-	private int rollCallResult;
 	
 	/**
 	 * 备注

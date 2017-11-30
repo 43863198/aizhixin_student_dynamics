@@ -36,9 +36,15 @@ public class AlarmSettingsService {
     @Autowired
     private ProcessingModeService processingModeService;
 
-    public List<AlarmSettings> getAlarmSettingsById(Long orgId, String warningType) {
+    public List<AlarmSettings> getAlarmSettingsByType(String warningType){
+        return alarmSettingsRepository.getAlarmSettingsByType(warningType, DataValidity.VALID.getState());
+    }
+
+    
+    public List<AlarmSettings> getAlarmSettingsById(Long orgId, String warningType){
         return alarmSettingsRepository.getAlarmSettingsByOrgIdAndType(orgId, warningType, DataValidity.VALID.getState());
     }
+
 
     public Map<String, Object> getWarningTypeList(Long orgId) {
         Map<String, Object> result = new HashMap<>();
