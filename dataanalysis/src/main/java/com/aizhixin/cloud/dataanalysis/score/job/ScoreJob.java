@@ -705,7 +705,7 @@ public class ScoreJob {
 							AlarmRule alarmRule = alarmRuleMap
 									.get(alarmSettings.getRuleSet());
 							if (null != alarmRule) {
-								if (totalScoreCount.getRequireCreditCount() >= alarmRule.getRightParameter()) {
+								if (Float.parseFloat(totalScoreCount.getRequireCreditCount()) >= Float.parseFloat(String.valueOf(alarmRule.getRightParameter()))) {
 									WarningInformation alertInfor = new WarningInformation();
 									String alertId = UUID.randomUUID()
 											.toString();
@@ -774,7 +774,7 @@ public class ScoreJob {
 			Calendar c = Calendar.getInstance();
 			//当前年份
 			int endYear = c.get(Calendar.YEAR);
-			//前一年
+			//前三年
 			int beginYear = endYear-3;
 			
 			HashMap<Long, Long> alarmMap = new HashMap<Long,Long>();
@@ -994,4 +994,127 @@ public class ScoreJob {
 			}
 		}
 	}
+	
+	
+	/**
+	 * 英语四级考试成绩未通过预警
+	 */
+//	public void cet4ScoreJob() {
+//
+//		// 获取预警配置
+//		List<AlarmSettings> settingsList = alarmSettingsService
+//				.getAlarmSettingsByType(WarningType.Cet.toString());
+//		if (null != settingsList && settingsList.size() > 0) {
+//			
+//			
+//			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
+//			Set<String> warnRuleIdList = new HashSet<String>();
+//			Set<String> warnSettingsIdList = new HashSet<String>();
+//			// 按orgId归类告警等级阀值
+//			for (AlarmSettings settings : settingsList) {
+//
+//				warnSettingsIdList.add(settings.getId());
+//				Long orgId = settings.getOrgId();
+//
+//				String[] warmRuleIds = settings.getRuleSet().split(",");
+//				for (String warmRuleId : warmRuleIds) {
+//					if (!StringUtils.isEmpty(warmRuleId)) {
+//						warnRuleIdList.add(warmRuleId);
+//					}
+//				}
+//				if (null != alarmMap.get(orgId)) {
+//					ArrayList<AlarmSettings> alarmList = alarmMap.get(orgId);
+//					alarmList.add(settings);
+//				} else {
+//					ArrayList<AlarmSettings> alarmList = new ArrayList<AlarmSettings>();
+//					alarmList.add(settings);
+//					alarmMap.put(orgId, alarmList);
+//				}
+//			}
+//			// 预警规则获取
+//			HashMap<String, AlarmRule> alarmRuleMap = new HashMap<String, AlarmRule>();
+//			List<AlarmRule> alarmList = alarmRuleService
+//					.getAlarmRuleByIds(warnRuleIdList);
+//			for (AlarmRule alarmRule : alarmList) {
+//				alarmRuleMap.put(alarmRule.getId(), alarmRule);
+//			}
+//
+//			Iterator iter = alarmMap.entrySet().iterator();
+//			while (iter.hasNext()) {
+//
+//				//更新预警集合
+//				ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
+//				// 定时任务产生的新的预警数据
+//				HashMap<String, WarningInformation> warnMap = new HashMap<String, WarningInformation>();
+//				Map.Entry entry = (Map.Entry) iter.next();
+//				Long orgId = (Long) entry.getKey();
+//				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
+//						.getValue();
+//
+//				// 预警处理配置获取
+////				HashMap<String, ProcessingMode> processingModeMap = new HashMap<String, ProcessingMode>();
+////				List<ProcessingMode> processingModeList = processingModeService
+////						.getProcessingModeBywarningTypeId(orgId,
+////								WarningType.TotalAchievement.toString());
+//				// 按orgId查询未报到的学生信息
+//				List<MakeUpScoreCount> makeUpScoreCountList = scoreMongoRespository.findAllByTotalScoreLessThanAndSchoolYearInAndOrgIdAndExamType(totalScore, schoolYears, orgId, examType);
+//				
+//				if (null != makeUpScoreCountList && makeUpScoreCountList.size() > 0) {
+//					for (MakeUpScoreCount makeUpScoreCount : makeUpScoreCountList) {
+//						for (AlarmSettings alarmSettings : val) {
+//							AlarmRule alarmRule = alarmRuleMap
+//									.get(alarmSettings.getRuleSet());
+//							if (null != alarmRule) {
+//								if (makeUpScoreCount.getFailCourseNum() >= alarmRule.getRightParameter()) {
+//									WarningInformation alertInfor = new WarningInformation();
+//									String alertId = UUID.randomUUID()
+//											.toString();
+//									alertInfor.setId(alertId);
+//									alertInfor.setDefendantId(makeUpScoreCount
+//											.getUserId());
+//									alertInfor.setName(makeUpScoreCount
+//											.getUserName());
+//									alertInfor.setJobNumber(makeUpScoreCount
+//											.getJobNum());
+//									alertInfor.setCollogeId(makeUpScoreCount
+//											.getCollegeId());
+//									alertInfor.setCollogeName(makeUpScoreCount
+//											.getCollegeName());
+//									alertInfor.setClassId(makeUpScoreCount
+//											.getClassId());
+//									alertInfor.setClassName(makeUpScoreCount
+//											.getClassName());
+//									alertInfor
+//											.setProfessionalId(makeUpScoreCount
+//													.getProfessionalId());
+//									alertInfor
+//											.setProfessionalName(makeUpScoreCount
+//													.getProfessionalName());
+//									alertInfor.setWarningLevel(alarmSettings
+//											.getWarningLevel());
+//									alertInfor
+//											.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+//									alertInfor.setAlarmSettingsId(alarmSettings
+//											.getId());
+//									alertInfor
+//											.setWarningType(WarningType.SupplementAchievement
+//													.toString());
+//									alertInfor.setWarningTime(new Date());
+//									alertInfor.setOrgId(alarmRule.getOrgId());
+//									alertInforList.add(alertInfor);
+//
+//									break;
+//								} else {
+//									continue;
+//								}
+//							}
+//						}
+//					}
+//				}
+//				if (!alertInforList.isEmpty()) {
+//					alertWarningInformationService.save(alertInforList);
+//				}
+//			}
+//		}
+//	}
 }

@@ -103,7 +103,7 @@ public class TotalScoreCount {
 	/**
 	 * 不及格必修课程学分总计
 	 */
-	private int requireCreditCount;
+	private String requireCreditCount;
 	
 	
 	/**
