@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.aizhixin.cloud.dataanalysis.rollCall.domain.RollCallDomain;
 import com.aizhixin.cloud.dataanalysis.score.domain.ScoreDomain;
 import com.aizhixin.cloud.dataanalysis.studentRegister.domain.StudentInfoDomain;
 import com.aizhixin.cloud.dataanalysis.studentRegister.domain.StudentRegisterDomain;
@@ -171,6 +172,55 @@ public class ExcelBasedataHelper {
 					list.add(new ScoreDomain(line, jobNum, schoolYear, scheduleId, examTime, usualScore, gradePoint));
 				} catch (Exception e) {
 					ScoreDomain d = new ScoreDomain();
+					d.setLine(line);
+					d.setJobNum(jobNum);
+					list.add(d);
+					LOG.info("错误信息行号：" + line + ",  学号：" + jobNum);
+				}
+				line++;
+			}
+		}
+		return list;
+	}
+	
+	public List<RollCallDomain> readScoreFromInputStream(MultipartFile file) {
+		List<RollCallDomain> list = new ArrayList<>();
+		ExcelUtil util = new ExcelUtil(file);
+		Sheet sheet = util.getSheet("new");
+		if (null == sheet) {// 如果没有此sheet页标签，读取第1个标签的内容
+			sheet = util.getSheet(0);
+		}
+		if (null != sheet) {
+			Iterator<Row> rows = sheet.rowIterator();
+			int line = 1;
+			String jobNum = null;
+			while (rows.hasNext()) {
+				Row row = rows.next();
+				if (1 == line) {
+					line++;
+					continue;// 跳过第一行
+				}
+				try {
+					setCellStringType(row, 15);// 一行共有15个列值
+					Long orgId = Long.valueOf(getCellStringValue(row, 0));
+					Long userId = Long.valueOf(getCellStringValue(row, 1));
+					jobNum = getCellStringValue(row, 2);
+					String userName = getCellStringValue(row, 3);
+					Long classId = Long.valueOf(getCellStringValue(row, 5));
+					String className = getCellStringValue(row, 6);
+					Long professionalId = Long.valueOf(getCellStringValue(row, 7));
+					String professionalName = getCellStringValue(row, 8);
+					Long collegeId = Long.valueOf(getCellStringValue(row, 9));
+					String collegeName = getCellStringValue(row, 10);
+					Long scheduleId = Long.valueOf(getCellStringValue(row, 11));
+					String rollCallDate = getCellStringValue(row, 12);
+					String rollCallResult = getCellStringValue(row, 13);
+					String grade = getCellStringValue(row, 14);
+					list.add(new RollCallDomain(line, orgId, jobNum, userId, userName, classId, 
+							className, professionalId, professionalName, collegeId, collegeName, scheduleId, 
+							rollCallDate, grade, rollCallResult));
+				} catch (Exception e) {
+					RollCallDomain d = new RollCallDomain();
 					d.setLine(line);
 					d.setJobNum(jobNum);
 					list.add(d);
