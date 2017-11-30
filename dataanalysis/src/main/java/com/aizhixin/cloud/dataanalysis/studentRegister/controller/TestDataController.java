@@ -36,6 +36,7 @@ import com.aizhixin.cloud.dataanalysis.rollCall.mongoEntity.RollCallCount;
 import com.aizhixin.cloud.dataanalysis.rollCall.mongoRespository.RollCallCountMongoRespository;
 import com.aizhixin.cloud.dataanalysis.rollCall.mongoRespository.RollCallMongoRespository;
 import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
+import com.aizhixin.cloud.dataanalysis.rollCall.service.RollCallService;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 import com.aizhixin.cloud.dataanalysis.score.mongoRespository.ScoreMongoRespository;
 import com.aizhixin.cloud.dataanalysis.studentRegister.job.StudentRegisterJob;
@@ -71,6 +72,8 @@ public class TestDataController {
 	private StudentRegisterService registerService;
 	@Autowired
 	private ScoreService scoreService;
+	@Autowired
+	private RollCallService rollCallService;
 
 
 	@RequestMapping(value = "/addRegisterdata", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -263,6 +266,14 @@ public class TestDataController {
 			@ApiParam(value = "studentInfoFile 学生信息文件", required = true) @RequestParam(value = "studentInfoFile") MultipartFile studentInfoFile,
 			@ApiParam(value = "scoreFile 成绩文件", required = true) @RequestParam(value = "scoreFile") MultipartFile scoreFile) {
 		scoreService.importData(studentInfoFile, scoreFile);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/importRollCall", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "POST", value = "批量导入考勤", response = Void.class, notes = "批量导入考勤<br><br><b>@author bly</b>")
+	public ResponseEntity<Void> importRollCall(
+			@ApiParam(value = "dataBaseFile 考勤文件", required = true) @RequestParam(value = "dataBaseFile") MultipartFile dataBaseFile) {
+		rollCallService.importData(dataBaseFile);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

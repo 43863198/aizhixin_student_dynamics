@@ -12,5 +12,6 @@
     <include file="classpath:liquibase/20171113154645_add_entity_ProcessingMode.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171113154645_add_entity_AttachmentInformation.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171113154645_add_entity_OperationRecord.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20171113154645_add_entity_SchoolStatistics.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

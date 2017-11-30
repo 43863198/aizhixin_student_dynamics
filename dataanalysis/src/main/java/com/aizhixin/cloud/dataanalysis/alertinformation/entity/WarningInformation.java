@@ -137,7 +137,7 @@ public class WarningInformation extends AbstractEntity {
     @Getter @Setter private int userType;
 
     /*
-    * 状态(10:告警中；20：已处理；30：处理中；40:取消)
+    * 状态(10:处理中；20：已处理)
     */
     @Column(name = "WARNING_STATE")
     @Getter @Setter private int warningState;

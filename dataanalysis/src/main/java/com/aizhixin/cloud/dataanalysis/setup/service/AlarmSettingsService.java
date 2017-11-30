@@ -59,7 +59,7 @@ public class AlarmSettingsService {
                     warningTypeDTO.setWarningType(type.getWarningType());
                     warningTypeDTO.setSetupCloseFlag(type.getSetupCloseFlag());
                     warningTypeDTO.setWarningName(type.getWarningName());
-                    List<AlarmSettings> alarmSettingsList = alarmSettingsRepository.getAlarmSettingsByOrgIdAndType(orgId, type.getWarningType(), DataValidity.VALID.getState());
+                    List<AlarmSettings> alarmSettingsList = alarmSettingsRepository.getAlarmSettingsByOrgIdAndTypeAndOpen(orgId, type.getWarningType(), 10, DataValidity.VALID.getState());
                     warningTypeDTO.setInclusionNumber(alarmSettingsList.size());
                     data.add(warningTypeDTO);
                 }
