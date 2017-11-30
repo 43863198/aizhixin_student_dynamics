@@ -40,7 +40,7 @@ public class RollCallService {
 
 	public void importData(MultipartFile dataBaseFile) {
 		//获取成绩
-		List<RollCallDomain> dataBases = basedataHelper.readScoreFromInputStream(dataBaseFile);
+		List<RollCallDomain> dataBases = basedataHelper.readRollCallFromInputStream(dataBaseFile);
 		if (null == dataBases || dataBases.size() <= 0) {
 			throw new CommonException(ErrorCode.ID_IS_REQUIRED, "没有读取到任何数据");
 		}

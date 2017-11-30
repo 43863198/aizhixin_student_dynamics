@@ -265,7 +265,7 @@ public class TestDataController {
 	public ResponseEntity<Void> importScore(
 			@ApiParam(value = "studentInfoFile 学生信息文件", required = true) @RequestParam(value = "studentInfoFile") MultipartFile studentInfoFile,
 			@ApiParam(value = "scoreFile 成绩文件", required = true) @RequestParam(value = "scoreFile") MultipartFile scoreFile) {
-		scoreService.importData(studentInfoFile, scoreFile);
+		scoreService.importData(scoreFile);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
