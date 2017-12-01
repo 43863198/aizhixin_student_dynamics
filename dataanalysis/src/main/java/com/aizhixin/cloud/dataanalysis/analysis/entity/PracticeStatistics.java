@@ -85,12 +85,12 @@ public class PracticeStatistics extends AbstractEntity {
     @Column(name = "TASK_PASS_NUM")
     @Getter @Setter private Long taskPassNum;
     /*
-* 实践任务数
+* 数据状态
 */
     @Column(name = "STATE")
     @Getter @Setter private int state;
     /*
-    * 任务通过数
+    * 统计类型
     */
     @Column(name = "STATISTICS_TYPE")
     @Getter @Setter private int statisticsType;

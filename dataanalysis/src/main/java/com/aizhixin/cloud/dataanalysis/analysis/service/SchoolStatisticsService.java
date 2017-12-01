@@ -3,6 +3,7 @@ package com.aizhixin.cloud.dataanalysis.analysis.service;
 import com.aizhixin.cloud.dataanalysis.analysis.constant.TrendType;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.*;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolStatistics;
+import com.aizhixin.cloud.dataanalysis.analysis.respository.CetScoreStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.PracticeStaticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.SchoolStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
@@ -34,6 +35,8 @@ public class SchoolStatisticsService {
     private EntityManager em;
     @Autowired
     private PracticeStaticsRespository practiceStaticsRespository;
+    @Autowired
+    private CetScoreStatisticsRespository cetScoreStatisticsRespository;
     public Map<String, Object> getStatisticNewstudents(Long orgId, String year, Pageable pageable) {
         Map<String, Object> result = new HashMap<>();
         NewStudentProfileDTO newStudentProfileDTO = new NewStudentProfileDTO();
@@ -321,5 +324,12 @@ public class SchoolStatisticsService {
     public PracticeStaticsDTO getPracticeStatics(Long orgId){
         return practiceStaticsRespository.getPracticeStatics(orgId);
     }
-
+    /**
+     * 四六级学情首页统计查询
+     * @param orgId
+     * @return
+     */
+   public CetScoreStatisticsDTO getEctStatics(Long orgId){
+       return cetScoreStatisticsRespository.getEctStatics(orgId);
+   }
 }

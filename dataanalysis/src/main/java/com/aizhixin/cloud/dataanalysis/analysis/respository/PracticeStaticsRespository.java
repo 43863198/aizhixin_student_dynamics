@@ -13,7 +13,6 @@ import org.springframework.data.repository.query.Param;
  * @Date: 2017-11-30
  */
 public interface PracticeStaticsRespository extends JpaRepository<PracticeStatistics, String> {
-    //(Long practiceStudentNum, Long practiceCompanyNum, Long taskNum, Long taskPassNum)
     @Query("select new com.aizhixin.cloud.dataanalysis.analysis.dto.PracticeStaticsDTO(sum(a.practiceStudentNum),sum(a.practiceCompanyNum),sum(a.taskNum),sum(a.taskPassNum)) from #{#entityName} a where a.orgId = :orgId and a.state=0 ")
     PracticeStaticsDTO getPracticeStatics(@Param(value = "orgId")Long orgId);
 }
