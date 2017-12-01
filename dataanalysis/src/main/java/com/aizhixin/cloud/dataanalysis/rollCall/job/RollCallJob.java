@@ -116,6 +116,7 @@ public class RollCallJob {
 						rollCallCount.setProfessionalName(rollCall.getProfessionalName());
 						rollCallCount.setSchoolYear(schoolYear);
 						rollCallCount.setSemester(semester);
+						rollCallCount.setUserId(rollCall.getUserId());
 						rollCallCount.setUserPhone(rollCall.getUserPhone());
 						rollCallCount.setUserName(rollCall.getUserName());
 						if(RollCallConstant.OUT_SCHOOL == rollCall.getRollCallResult()){
