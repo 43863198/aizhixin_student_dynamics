@@ -1,5 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.analysis.service;
 
+import com.aizhixin.cloud.dataanalysis.analysis.dto.SchoolProfileDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.constant.TrendType;
 import com.aizhixin.cloud.dataanalysis.analysis.domain.NewStudentProfileDomain;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.NewStudentProfileDTO;
@@ -42,8 +43,8 @@ public class SchoolStatisticsService {
         PageData<SchoolStatistics> p = new PageData<>();
         Map<String, Object> condition = new HashMap<>();
         Long count = 0L;
-        int studentNumber = 0;
-        int alreadyReport = 0;
+        long studentNumber = 0;
+        long alreadyReport = 0;
         int alreadyPay = 0;
         int convenienceChannel = 0;
         Date time = new Date();
@@ -129,6 +130,12 @@ public class SchoolStatisticsService {
         return result;
     }
 
+    public SchoolProfileDTO getSchoolPersonStatistics(Long orgId) {
+        return schoolStatisticsRespository.getSchoolPersonStatistics(orgId);
+    }
+    public NewStudentProfileDTO getNewStudentStatistics(Long orgId){
+        return schoolStatisticsRespository.getNewStudentStatistics(orgId);
+    }
     public Map<String, Object> getTrend(Long orgId, Long colloegeId, int typeIndex) {
         Map<String, Object> result = new HashMap<>();
         List<TrendDTO> trendDTOList = new ArrayList<>();
