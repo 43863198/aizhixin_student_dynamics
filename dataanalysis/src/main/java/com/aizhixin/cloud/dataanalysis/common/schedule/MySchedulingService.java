@@ -133,4 +133,14 @@ public class MySchedulingService {
             LOG.info("启动修读异常预警任务，获取锁失败");
         }
     }
+    
+    @Scheduled(cron = "0 0/1 * * * ?")
+    public void cet4ScoreJob() {
+        if (distributeLock.getCet4ScoreJobLock()) {
+            LOG.info("开始启动英语四级成绩预警定时任务");
+            scoreJob.cet4ScoreJob();
+        } else {
+            LOG.info("启动英语四级成绩预警任务，获取锁失败");
+        }
+    }
 }
