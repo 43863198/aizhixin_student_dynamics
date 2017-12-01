@@ -25,6 +25,7 @@ public class RollCall {
 	/**
 	 * 工号/学号
 	 */
+	@Indexed
 	private String jobNum;
 	
 	/**
@@ -77,14 +78,18 @@ public class RollCall {
 	private String grade;
 	
 	/**
-	 * 学年学期
+	 * 学期
 	 */
-	private String schoolYear;
+	private int semester;
+	
+	/**
+	 * 学年
+	 */
+	private int schoolYear;
 	
 	/**
 	 * 排课id
 	 */
-	@Indexed
 	private Long scheduleId;
 	
 	/**
@@ -105,12 +110,22 @@ public class RollCall {
 	/**
 	 * 考勤类型
 	 */
-	private String rollCallType;
+	private int rollCallType;
 	
 	/**
 	 * 考勤结果
+	 * 1:已到
+	 * 2:旷课
+	 * 3:迟到
+	 * 4:请假
+	 * 5:早退
+	 * 6:已提交
+	 * 7:未提交
+	 * 8:超出设定范围
+	 * 9:取消本次考勤
 	 */
-	private String rollCallResult;
+	@Indexed
+	private int rollCallResult;
 	
 	/**
 	 * 备注

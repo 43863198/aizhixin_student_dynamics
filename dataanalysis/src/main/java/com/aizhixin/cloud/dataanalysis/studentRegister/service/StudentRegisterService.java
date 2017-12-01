@@ -12,6 +12,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,7 @@ import com.aizhixin.cloud.dataanalysis.studentRegister.mongoRespository.StudentR
 @Component
 @Transactional
 public class StudentRegisterService {
+	final static private Logger LOG = LoggerFactory.getLogger(StudentRegisterService.class);
 
 	@Autowired
 	private StudentRegisterMongoRespository respository;
@@ -83,33 +86,39 @@ public class StudentRegisterService {
 		//学生数据key value
 		for (Entry<String, StudentRegisterDomain> entry : maps.entrySet()) {  
 		    //学生信息key value
-		    for (Entry<String, StudentInfoDomain> entry1 : maps1.entrySet()) {  
-		    	if (entry.getKey().equals(entry1.getKey())) {
-		    		StudentRegister studentRegister = new StudentRegister();
-		    		studentRegister.setOrgId(entry1.getValue().getOrgId());
-		    		studentRegister.setJobNum(entry.getValue().getJobNum());
-		    		if (entry.getValue().getActualRegisterDate() != null) {
-		    			Integer date = Integer.valueOf(entry.getValue().getActualRegisterDate());
-		    			if (date > 0) {
-		    				Calendar c = new GregorianCalendar(1900,0,-1);  
-		    				Date d = c.getTime();  
-		    				Date _d = DateUtils.addDays(d, date + 1);  //42605是距离1900年1月1日的天数
-		    				studentRegister.setActualRegisterDate(_d);
-						}
-					}
-		    		studentRegister.setIsregister(entry.getValue().getIsregister());
-		    		studentRegister.setClassId(entry1.getValue().getClassId());
-		    		studentRegister.setClassName(entry1.getValue().getClassName());
-		    		studentRegister.setGrade(entry.getValue().getGrade());
-		    		studentRegister.setCollegeId(entry1.getValue().getCollegeId());
-		    		studentRegister.setCollegeName(entry1.getValue().getCollegeName());
-		    		studentRegister.setProfessionalId(entry1.getValue().getProfessionalId());
-		    		studentRegister.setProfessionalName(entry1.getValue().getProfessionalName());
-		    		studentRegister.setSchoolYear(entry.getValue().getSchoolYear());
-		    		studentRegister.setUserId(entry1.getValue().getUserId());
-		    		studentRegister.setUserName(entry1.getValue().getUserName());
-		    		studentRegister.setRegisterDate(registerDate);
-		    		stuRegisterList.add(studentRegister);
+		    for (Entry<String, StudentInfoDomain> entry1 : maps1.entrySet()) {
+		    	try {
+		    		if (entry.getKey().equals(entry1.getKey())) {
+		    			StudentRegister studentRegister = new StudentRegister();
+		    			studentRegister.setOrgId(entry1.getValue().getOrgId());
+		    			studentRegister.setJobNum(entry.getValue().getJobNum());
+		    			if (entry.getValue().getActualRegisterDate() != null) {
+		    				Integer date = Integer.valueOf(entry.getValue().getActualRegisterDate());
+		    				if (date > 0) {
+		    					Calendar c = new GregorianCalendar(1900,0,-1);  
+		    					Date d = c.getTime();  
+		    					Date _d = DateUtils.addDays(d, date + 1);  //42605是距离1900年1月1日的天数
+		    					studentRegister.setActualRegisterDate(_d);
+		    				}
+		    			}
+		    			studentRegister.setIsRegister(entry.getValue().getIsregister());
+		    			studentRegister.setClassId(entry1.getValue().getClassId());
+		    			studentRegister.setClassName(entry1.getValue().getClassName());
+		    			studentRegister.setGrade(entry.getValue().getGrade());
+		    			studentRegister.setCollegeId(entry1.getValue().getCollegeId());
+		    			studentRegister.setCollegeName(entry1.getValue().getCollegeName());
+		    			studentRegister.setProfessionalId(entry1.getValue().getProfessionalId());
+		    			studentRegister.setProfessionalName(entry1.getValue().getProfessionalName());
+		    			studentRegister.setSchoolYear(Integer.parseInt(entry.getValue().getSchoolYear()));
+		    			studentRegister.setUserId(entry1.getValue().getUserId());
+		    			studentRegister.setUserName(entry1.getValue().getUserName());
+		    			studentRegister.setRegisterDate(registerDate);
+		    			stuRegisterList.add(studentRegister);
+		    		}
+				} catch (Exception e) {
+					LOG.info("错误信息行号：" + entry.getValue().getLine() + ",  学号：" + entry.getValue().getJobNum());
+					LOG.info("错误信息行号：" + entry1.getValue().getLine() + ",  学号：" + entry1.getValue().getJobNum());
+					e.printStackTrace();
 				}
 		    }
 		}  

@@ -385,17 +385,23 @@ public class AlertWarningInformationService {
 		List<RegisterAlertCountDomain> countList = this.alertCountInfor(domain);
 		LevelAlertCountDomain countDomain = new LevelAlertCountDomain();
 		if(null != countList && countList.size() > 0){
+			Long sum1 = 0L;
+			Long sum2 = 0L;
+			Long sum3 = 0L;
 			for(RegisterAlertCountDomain countDTO : countList){
 				if(countDTO.getWarningLevel() == 1){
-					countDomain.setLevel1CountNum(countDTO.getCountNum());
+					sum1 = sum1 + countDTO.getCountNum();
 				}
 				if(countDTO.getWarningLevel() == 2){
-					countDomain.setLevel2CountNum(countDTO.getCountNum());
+					sum2 = sum2 + countDTO.getCountNum();
 				}
 				if(countDTO.getWarningLevel() == 3){
-					countDomain.setLevel3CountNum(countDTO.getCountNum());
+					sum3 = sum3 + countDTO.getCountNum();
 				}
 			}
+			countDomain.setLevel1CountNum(sum1);
+			countDomain.setLevel2CountNum(sum2);
+			countDomain.setLevel3CountNum(sum3);
 		}
 		pageInfor.put(ApiReturnConstants.COUNT, countDomain);
 		return pageInfor;
@@ -422,11 +428,21 @@ public class AlertWarningInformationService {
 			}
 			Object[] d = (Object[]) sq.getSingleResult();
 			if (null != d && d.length == 5) {
-				sum = Integer.valueOf(String.valueOf(d[0]));
-				sum1 = Integer.valueOf(String.valueOf(d[1]));
-				sum2 = Integer.valueOf(String.valueOf(d[2]));
-				sum3 = Integer.valueOf(String.valueOf(d[3]));
-				alreadyProcessed = Integer.valueOf(String.valueOf(d[4]));
+				if(null!=d[0]) {
+					sum = Integer.valueOf(String.valueOf(d[0]));
+				}
+				if(null!=d[1]) {
+					sum1 = Integer.valueOf(String.valueOf(d[1]));
+				}
+				if(null!=d[2]) {
+					sum2 = Integer.valueOf(String.valueOf(d[2]));
+				}
+				if(null!=d[3]) {
+					sum3 = Integer.valueOf(String.valueOf(d[3]));
+				}
+				if(null!=d[4]) {
+					alreadyProcessed = Integer.valueOf(String.valueOf(d[4]));
+				}
 			}
 			data.put("total", sum);
 			data.put("alreadyProcessed", alreadyProcessed);
@@ -474,6 +490,7 @@ public class AlertWarningInformationService {
 				warningDetailsDTO.setTeachingYear(alertWarningInformation.getTeachingYear());
 				warningDetailsDTO.setPhone(alertWarningInformation.getPhone());
 				warningDetailsDTO.setAddress(alertWarningInformation.getAddress());
+				warningDetailsDTO.setWarningState(alertWarningInformation.getWarningState());
 				warningDetailsDTO.setParentsContact(alertWarningInformation.getParentsContact());
 				warningDetailsDTO.setWarningTime(alertWarningInformation.getWarningTime());
 				warningDetailsDTO.setWarningName(WarningType.valueOf(alertWarningInformation.getWarningType()).getValue());
@@ -654,8 +671,8 @@ public class AlertWarningInformationService {
 			result.put("message", "按照学院统计每个告警等级的数量异常！");
 			return result;
 		}
-		result.put("success",true);
-		result.put("data",collegeStatisticsDTOList);
+		result.put("success", true);
+		result.put("data", collegeStatisticsDTOList);
 		return result;
 	}
 
@@ -856,7 +873,14 @@ public class AlertWarningInformationService {
 	public void  save(WarningInformation warningInformation){
 		alertWarningInformationRepository.save(warningInformation);
 	}
+	
+	public void  save(List<WarningInformation> warningInformations){
+		alertWarningInformationRepository.save(warningInformations);
+	}
 
 
-
+	public List<WarningInformation> getWarnInforByState(Long orgId,String warningType,int deleteFlag,int warningState){
+		
+		return alertWarningInformationRepository.getawinfoByOrgIdAndWarningTypeAndState(orgId, warningType, deleteFlag, warningState);
+	}
 }
