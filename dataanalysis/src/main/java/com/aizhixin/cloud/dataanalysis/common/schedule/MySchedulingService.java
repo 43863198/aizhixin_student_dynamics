@@ -134,7 +134,7 @@ public class MySchedulingService {
         }
     }
     
-    @Scheduled(cron = "0 0/1 * * * ?")
+//    @Scheduled(cron = "0 0/1 * * * ?")
     public void cet4ScoreJob() {
         if (distributeLock.getCet4ScoreJobLock()) {
             LOG.info("开始启动英语四级成绩预警定时任务");
