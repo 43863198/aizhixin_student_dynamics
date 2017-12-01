@@ -1,16 +1,12 @@
 package com.aizhixin.cloud.dataanalysis.analysis.service;
 
-import com.aizhixin.cloud.dataanalysis.analysis.dto.SchoolProfileDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.constant.TrendType;
-import com.aizhixin.cloud.dataanalysis.analysis.domain.NewStudentProfileDomain;
-import com.aizhixin.cloud.dataanalysis.analysis.dto.NewStudentProfileDTO;
-import com.aizhixin.cloud.dataanalysis.analysis.dto.TrendDTO;
-import com.aizhixin.cloud.dataanalysis.analysis.dto.TrendTypeDTO;
+import com.aizhixin.cloud.dataanalysis.analysis.dto.*;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolStatistics;
+import com.aizhixin.cloud.dataanalysis.analysis.respository.PracticeStaticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.SchoolStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
-import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
 import liquibase.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +32,8 @@ public class SchoolStatisticsService {
     private SchoolStatisticsRespository schoolStatisticsRespository;
     @Autowired
     private EntityManager em;
-
+    @Autowired
+    private PracticeStaticsRespository practiceStaticsRespository;
     public Map<String, Object> getStatisticNewstudents(Long orgId, String year, Pageable pageable) {
         Map<String, Object> result = new HashMap<>();
         NewStudentProfileDTO newStudentProfileDTO = new NewStudentProfileDTO();
@@ -130,9 +127,24 @@ public class SchoolStatisticsService {
         return result;
     }
 
+    /**
+     * 全校人数统计查询
+     * @param orgId
+     * @return
+     */
     public SchoolProfileDTO getSchoolPersonStatistics(Long orgId) {
-        return schoolStatisticsRespository.getSchoolPersonStatistics(orgId);
+        PracticeStaticsDTO practiceStaticsDTO=practiceStaticsRespository.getPracticeStatics(orgId);
+        SchoolProfileDTO schoolProfileDTO=schoolStatisticsRespository.getSchoolPersonStatistics(orgId);
+        schoolProfileDTO.setOutSchoolStudent(practiceStaticsDTO.getPracticeStudentNum());
+        schoolProfileDTO.setInSchoolStudent(schoolProfileDTO.getAllStudent()-schoolProfileDTO.getOutSchoolStudent());
+        return schoolProfileDTO;
     }
+
+    /**
+     * 迎新学情统计查询
+     * @param orgId
+     * @return
+     */
     public NewStudentProfileDTO getNewStudentStatistics(Long orgId){
         return schoolStatisticsRespository.getNewStudentStatistics(orgId);
     }
@@ -301,5 +313,13 @@ public class SchoolStatisticsService {
         return result;
     }
 
+    /**
+     * 实践学情首页统计查询
+     * @param orgId
+     * @return
+     */
+    public PracticeStaticsDTO getPracticeStatics(Long orgId){
+        return practiceStaticsRespository.getPracticeStatics(orgId);
+    }
 
 }

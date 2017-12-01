@@ -1,6 +1,7 @@
 package com.aizhixin.cloud.dataanalysis.analysis.controller;
 
 import com.aizhixin.cloud.dataanalysis.analysis.dto.NewStudentProfileDTO;
+import com.aizhixin.cloud.dataanalysis.analysis.dto.PracticeStaticsDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.SchoolProfileDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.service.SchoolStatisticsService;
 import com.aizhixin.cloud.dataanalysis.alertinformation.domain.DealDomain;
@@ -55,8 +56,15 @@ public class SchoolConditionStatisticsController {
         return schoolStatisticsService.getNewStudentStatistics(orgId);
     }
     /**
-     *
+     * 首页实践学情统计信息
+     * @param orgId
+     * @return
      */
+    @GetMapping(value = "/getPracticeStatistics", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "首页实践学情统计信息", response = Void.class, notes = "首页实践学情统计信息<br><br><b>@author 王俊</b>")
+    public PracticeStaticsDTO getPracticeStatistics(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
+        return schoolStatisticsService.getPracticeStatics(orgId);
+    }
 
     /**
      * 迎新学情———统计
