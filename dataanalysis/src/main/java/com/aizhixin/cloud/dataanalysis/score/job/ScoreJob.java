@@ -166,7 +166,7 @@ public class ScoreJob {
 					ScoreFluctuateCount scoreDomain = scoreFluctuateCountMap.get(jobNum);
 					if(null != scoreDomain){
 					 scoreDomain = setFirstScoreDomainInfor(userScoreList, orgId, firstSchoolYear, firstSemester, scoreDomain);
-					 if(!StringUtils.isEmpty(scoreDomain.getFirstAvgradePoint())){
+					 if(!StringUtils.isEmpty(scoreDomain.getSecondAvgradePoint()) && !StringUtils.isEmpty(scoreDomain.getFirstAvgradePoint())){
 						 scoreFluctuateCountMap.put(jobNum, scoreDomain);
 					 }else{
 						 scoreFluctuateCountMap.remove(jobNum);
@@ -327,7 +327,10 @@ public class ScoreJob {
 						AlarmRule alarmRule = alarmRuleMap
 								.get(alarmSettings.getRuleSet());
 						if (null != alarmRule) {
-							 float result = Float.parseFloat(scoreFluctuateCount.getSecondAvgradePoint())-Float.parseFloat(scoreFluctuateCount.getFirstAvgradePoint());
+							 float result = 0L;
+							 if(!StringUtils.isEmpty(scoreFluctuateCount.getSecondAvgradePoint()) && !StringUtils.isEmpty(scoreFluctuateCount.getFirstAvgradePoint())){
+								 result = Float.parseFloat(scoreFluctuateCount.getSecondAvgradePoint())-Float.parseFloat(scoreFluctuateCount.getFirstAvgradePoint());
+							 }
 							 //上学期平均绩点小于上上学期平均绩点时
 							 if(result < 0){
 								 result = Math.abs(result);
@@ -449,6 +452,7 @@ public class ScoreJob {
 						totalScoreCount.setSchoolYear(schoolYear);
 						totalScoreCount.setSemester(lastSemester);
 						totalScoreCount.setUserName(score.getUserName());
+						totalScoreCount.setUserId(score.getUserId());
 						totalScoreCount.setUserPhone(score.getUserPhone());
 						totalScoreCount.setFailCourseNum(1);
 						if(!StringUtils.isEmpty(score.getCourseType()) && ScoreConstant.REQUIRED_COURSE.equals(score.getCourseType())){
@@ -459,7 +463,13 @@ public class ScoreJob {
 					}else{
 						if(!StringUtils.isEmpty(score.getCourseType()) && ScoreConstant.REQUIRED_COURSE.equals(score.getCourseType())){
 							totalScoreCount.setFailRequiredCourseNum(totalScoreCount.getFailRequiredCourseNum()+1);
-							totalScoreCount.setRequireCreditCount(totalScoreCount.getRequireCreditCount()+score.getCredit());
+							if(StringUtils.isEmpty(totalScoreCount.getRequireCreditCount())){
+								totalScoreCount.setRequireCreditCount(score.getCredit());
+							}else{
+								BigDecimal totalCredits = new BigDecimal(totalScoreCount.getRequireCreditCount());
+								totalCredits = totalCredits.add(new BigDecimal(score.getCredit()));
+								totalScoreCount.setRequireCreditCount(totalCredits.setScale(2, RoundingMode.HALF_UP).toString());
+							}
 						}
 						totalScoreCount.setFailCourseNum(totalScoreCount.getFailCourseNum()+1);
 						totalScoreCountMap.put(score.getJobNum(), totalScoreCount);
@@ -710,6 +720,9 @@ public class ScoreJob {
 							AlarmRule alarmRule = alarmRuleMap
 									.get(alarmSettings.getRuleSet());
 							if (null != alarmRule) {
+								if(StringUtils.isEmpty(totalScoreCount.getRequireCreditCount())){
+									continue;
+								}
 								if (Float.parseFloat(totalScoreCount.getRequireCreditCount()) >= Float.parseFloat(String.valueOf(alarmRule.getRightParameter()))) {
 									WarningInformation alertInfor = new WarningInformation();
 									String alertId = UUID.randomUUID()
@@ -1114,7 +1127,7 @@ public class ScoreJob {
 								if(null != gradeMap.get(score.getGrade())){
 									grade = gradeMap.get(score.getGrade()).intValue();
 								}
-								if (grade == alarmRule.getRightParameter()) {
+								if (grade >= alarmRule.getRightParameter()) {
 									WarningInformation alertInfor = new WarningInformation();
 									String alertId = UUID.randomUUID()
 											.toString();
