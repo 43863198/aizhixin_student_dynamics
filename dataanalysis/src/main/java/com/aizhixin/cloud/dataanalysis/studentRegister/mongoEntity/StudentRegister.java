@@ -73,6 +73,11 @@ public class StudentRegister {
 	private String collegeName;
 	
 	/**
+	 * 用户手机号
+	 */
+	private  String userPhone;
+	
+	/**
 	 * 年级
 	 */
 	private String grade;
@@ -109,6 +114,11 @@ public class StudentRegister {
 	 * 实际报到日期
 	 */
 	private Date actualRegisterDate;
+	
+	/**
+	 * 学历： 0-专科，1-本科，2-研究生
+	 */
+	private int education;
 	
 	/**
 	 * 备注

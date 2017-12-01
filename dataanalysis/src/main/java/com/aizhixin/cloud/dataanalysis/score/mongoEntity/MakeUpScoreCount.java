@@ -73,6 +73,11 @@ public class MakeUpScoreCount {
 	private String collegeName;
 	
 	/**
+	 * 用户手机号
+	 */
+	private  String userPhone;
+	
+	/**
 	 * 不及格课程数
 	 */
 	private int failCourseNum;

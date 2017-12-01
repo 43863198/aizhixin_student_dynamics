@@ -190,6 +190,7 @@ public class StudentRegisterJob {
 											.setWarningType(WarningType.Register
 													.toString());
 									alertInfor.setWarningTime(new Date());
+									alertInfor.setPhone(studentRegister.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());
 									alertInforList.add(alertInfor);
 									warnMap.put(alertInfor.getJobNumber(),

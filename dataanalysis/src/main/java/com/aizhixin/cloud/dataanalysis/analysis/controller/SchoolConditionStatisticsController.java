@@ -1,5 +1,8 @@
 package com.aizhixin.cloud.dataanalysis.analysis.controller;
 
+import com.aizhixin.cloud.dataanalysis.analysis.dto.NewStudentProfileDTO;
+import com.aizhixin.cloud.dataanalysis.analysis.dto.SchoolProfileDTO;
+import com.aizhixin.cloud.dataanalysis.analysis.service.SchoolStatisticsService;
 import com.aizhixin.cloud.dataanalysis.alertinformation.domain.DealDomain;
 import com.aizhixin.cloud.dataanalysis.analysis.service.SchoolStatisticsService;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
@@ -9,6 +12,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -27,6 +34,29 @@ public class SchoolConditionStatisticsController {
     @Autowired
     private StudentRegisterService studentRegisterService;
 
+    /**
+     * 全校人数统计信息
+     * @param orgId
+     * @return
+     */
+    @GetMapping(value = "/getSchoolPersonStatistics", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "全校人数统计信息", response = Void.class, notes = "首页全校人数统计信息<br><br><b>@author 王俊</b>")
+    public SchoolProfileDTO getSchoolPersonStatistics(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
+        return schoolStatisticsService.getSchoolPersonStatistics(orgId);
+    }
+    /**
+     * 首页迎新人数统计信息
+     * @param orgId
+     * @return
+     */
+    @GetMapping(value = "/getNewStudentStatistics", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "首页迎新人数统计信息", response = Void.class, notes = "首页迎新人数统计信息<br><br><b>@author 王俊</b>")
+    public NewStudentProfileDTO getNewStudentStatistics(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
+        return schoolStatisticsService.getNewStudentStatistics(orgId);
+    }
+    /**
+     *
+     */
 
     /**
      * 迎新学情———统计

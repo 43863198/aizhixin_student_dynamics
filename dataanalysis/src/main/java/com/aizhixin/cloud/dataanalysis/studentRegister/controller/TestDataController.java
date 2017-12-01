@@ -3,9 +3,6 @@
  */
 package com.aizhixin.cloud.dataanalysis.studentRegister.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,8 +16,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,16 +25,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.StudentRegisterConstant;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
-import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
 import com.aizhixin.cloud.dataanalysis.rollCall.mongoEntity.RollCall;
-import com.aizhixin.cloud.dataanalysis.rollCall.mongoEntity.RollCallCount;
-import com.aizhixin.cloud.dataanalysis.rollCall.mongoRespository.RollCallCountMongoRespository;
 import com.aizhixin.cloud.dataanalysis.rollCall.mongoRespository.RollCallMongoRespository;
-import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
 import com.aizhixin.cloud.dataanalysis.rollCall.service.RollCallService;
+import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 import com.aizhixin.cloud.dataanalysis.score.mongoRespository.ScoreMongoRespository;
-import com.aizhixin.cloud.dataanalysis.studentRegister.job.StudentRegisterJob;
 import com.aizhixin.cloud.dataanalysis.score.service.ScoreService;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoRespository.StudentRegisterMongoRespository;
@@ -203,15 +194,16 @@ public class TestDataController {
 			score.setOrgId(orgId);
 			score.setProfessionalId(1L);
 			score.setProfessionalName("测试专业");
-			score.setSchoolYear(2017);
+			score.setSchoolYear(2016);
+			score.setGrade("2016");
 			score.setSemester(1);
 			score.setUserName("学生" + i);
 			score.setScheduleId("1");
-			score.setCourseName("大学英语");
+			score.setCourseName("英语四级");
 			score.setCourseType("require");
 			score.setExamTime(DateUtil.getMonday(new Date()));
-			score.setExamType(ScoreConstant.EXAM_TYPE_COURSE);
-			score.setTotalScore("55");
+			score.setExamType(ScoreConstant.EXAM_TYPE_CET4);
+			score.setTotalScore("245");
 			score.setScoreResultType("百分制");
 			score.setCredit("10");
 			score.setGradePoint("0");
@@ -219,6 +211,34 @@ public class TestDataController {
 			scoreList.add(score);
 		}
 		for (int i = 0; i < 10; i++) {
+		Score score = new Score();
+
+		score.setUserId(stuId++);
+		score.setClassId(1L);
+		score.setClassName("测试1班");
+		score.setCollegeId(1L);
+		score.setCollegeName("测试学院1");
+		score.setJobNum("学号20000" + i);
+		score.setOrgId(orgId);
+		score.setProfessionalId(1L);
+		score.setProfessionalName("测试专业");
+		score.setSchoolYear(2015);
+		score.setGrade("2015");
+		score.setSemester(1);
+		score.setUserName("学生" + i);
+		score.setScheduleId("1");
+		score.setCourseName("英语四级");
+		score.setCourseType("require");
+		score.setExamTime(DateUtil.getMonday(new Date()));
+		score.setExamType(ScoreConstant.EXAM_TYPE_CET4);
+		score.setTotalScore("245");
+		score.setScoreResultType("百分制");
+		score.setCredit("10");
+		score.setGradePoint("0");
+
+		scoreList.add(score);
+	}
+	for (int i = 0; i < 10; i++) {
 			Score score = new Score();
 
 			score.setUserId(stuId++);
@@ -226,25 +246,26 @@ public class TestDataController {
 			score.setClassName("测试1班");
 			score.setCollegeId(1L);
 			score.setCollegeName("测试学院1");
-			score.setJobNum("学号1000" + i);
+			score.setJobNum("学号30000" + i);
 			score.setOrgId(orgId);
 			score.setProfessionalId(1L);
 			score.setProfessionalName("测试专业");
-			score.setSchoolYear(2016);
-			score.setSemester(2);
+			score.setSchoolYear(2014);
+			score.setGrade("2014");
+			score.setSemester(1);
 			score.setUserName("学生" + i);
 			score.setScheduleId("1");
-			score.setCourseName("大学英语");
+			score.setCourseName("英语四级");
 			score.setCourseType("require");
 			score.setExamTime(DateUtil.getMonday(new Date()));
-			score.setExamType(ScoreConstant.EXAM_TYPE_COURSE);
-			score.setTotalScore("60");
+			score.setExamType(ScoreConstant.EXAM_TYPE_CET4);
+			score.setTotalScore("245");
 			score.setScoreResultType("百分制");
-			score.setCredit("8");
-			score.setGradePoint("1");
+			score.setCredit("10");
+			score.setGradePoint("0");
 
 			scoreList.add(score);
-		}
+		}	
 
 		scoreMongoRespository.save(scoreList);
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
@@ -273,6 +294,14 @@ public class TestDataController {
 	public ResponseEntity<Void> importRollCall(
 			@ApiParam(value = "dataBaseFile 考勤文件", required = true) @RequestParam(value = "dataBaseFile") MultipartFile dataBaseFile) {
 		rollCallService.importData(dataBaseFile);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/importScore46", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "POST", value = "批量导入为英语4级的成绩", response = Void.class, notes = "批量导入成绩<br><br><b>@author bly</b>")
+	public ResponseEntity<Void> importScore46(
+			@ApiParam(value = "scoreFile 成绩文件", required = true) @RequestParam(value = "scoreFile") MultipartFile scoreFile) {
+		scoreService.importData46(scoreFile);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }
