@@ -293,9 +293,8 @@ public class TestDataController {
 	@RequestMapping(value = "/importScore", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "POST", value = "批量导入成绩", response = Void.class, notes = "批量导入成绩<br><br><b>@author bly</b>")
 	public ResponseEntity<Void> importScore(
-			@ApiParam(value = "studentInfoFile 学生信息文件", required = true) @RequestParam(value = "studentInfoFile") MultipartFile studentInfoFile,
 			@ApiParam(value = "scoreFile 成绩文件", required = true) @RequestParam(value = "scoreFile") MultipartFile scoreFile) {
-		scoreService.importData(studentInfoFile, scoreFile);
+		scoreService.importData(scoreFile);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	

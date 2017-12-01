@@ -1,4 +1,4 @@
-package com.aizhixin.cloud.dataanalysis.studentRegister.common;
+package com.aizhixin.cloud.dataanalysis.common.exception;
 
 import lombok.Getter;
 

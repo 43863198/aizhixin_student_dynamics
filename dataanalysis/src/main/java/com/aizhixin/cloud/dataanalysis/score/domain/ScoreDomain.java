@@ -1,79 +1,60 @@
 package com.aizhixin.cloud.dataanalysis.score.domain;
 
+import com.aizhixin.cloud.dataanalysis.studentRegister.domain.StudentInfoDomain;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import com.aizhixin.cloud.dataanalysis.common.domain.UserInforDTO;
 import lombok.Getter;
 import lombok.Setter;
 
-@ApiModel(description="成绩excel导入信息")
-public class ScoreDomain {
-	@ApiModelProperty(value = "line 行号", position=1)
-    @Getter @Setter private Integer line;
+@ApiModel(description="成绩导入信息")
+public class ScoreDomain extends StudentInfoDomain {
 	
-	@ApiModelProperty(value = "jobNum 学号", position=2)
-	@Getter @Setter private String jobNum;
 	
-    @ApiModelProperty(value = "grade 年级", position=12)
+    @ApiModelProperty(value = "grade 年级", position=1)
     @Getter @Setter private String grade;
     
-    @ApiModelProperty(value = "schoolYear 学年学期", position=13)
+    @ApiModelProperty(value = "schoolYear 学年学期", position=2)
     @Getter @Setter private String schoolYear;
     
-    @ApiModelProperty(value = "scheduleId 排课ID", position=14)
-    @Getter @Setter private Long scheduleId;
+    @ApiModelProperty(value = "scheduleId 排课ID", position=3)
+    @Getter @Setter private String scheduleId;
     
-    @ApiModelProperty(value = "courseName 选课名称", position=15)
-    @Getter @Setter private String courseName;
-    
-    @ApiModelProperty(value = "courseType 选课类型", position=16)
+    @ApiModelProperty(value = "courseType 选课类型", position=4)
     @Getter @Setter private String courseType;
 	
-    @ApiModelProperty(value = "examTime 考试时间", position=17)
-    @Getter @Setter private String examTime;
-	
-    @ApiModelProperty(value = "midtermScore 期中成绩", position=18)
-    @Getter @Setter private String midtermScore;
-	
-    @ApiModelProperty(value = "finalScore 期末成绩", position=19)
-    @Getter @Setter private String finalScore;
-	
-    @ApiModelProperty(value = "usualScore 平时成绩", position=20)
+    @ApiModelProperty(value = "usualScore 平时成绩", position=5)
     @Getter @Setter private String usualScore;
 	
-    @ApiModelProperty(value = "totalScore 总评成绩", position=21)
-    @Getter @Setter private String totalScore;
+    @ApiModelProperty(value = "credit 所得学分", position=6)
+    @Getter @Setter private String credit;
 	
-    @ApiModelProperty(value = "scoreType 成绩类型", position=22)
-    @Getter @Setter private String scoreType;
-	
-    @ApiModelProperty(value = "scoreResultType 成绩结果类型", position=23)
-    @Getter @Setter private String scoreResultType;
-	
-    @ApiModelProperty(value = "credit 所得学分", position=24)
-    @Getter @Setter private int credit;
-	
-    @ApiModelProperty(value = "gradePoint 绩点", position=25)
+    @ApiModelProperty(value = "gradePoint 绩点", position=7)
     @Getter @Setter private String gradePoint;
     
-    @ApiModelProperty(value = "id ID", position=29)
-    @Getter @Setter private Long id;
+    @ApiModelProperty(value = "examTime 考试时间", position=8)
+    @Getter @Setter private String examTime;
     
-    @ApiModelProperty(value = "msg 消息获取错误描述", position=30)
-    @Getter @Setter private String msg;
-
+    @ApiModelProperty(value = "totalScore 课程成绩", position=9)
+    @Getter @Setter private String totalScore;
+    
 	public ScoreDomain() {}
 
-	public ScoreDomain(Integer line, String jobNum, String schoolYear, Long scheduleId, String examTime,
-			String usualScore, String gradePoint) {
-		this.line = line;
-		this.jobNum = jobNum;
+	public ScoreDomain(Integer line, Long orgId, String jobNum, Long userId, String userName, Long classId,
+			String className, Long professionalId, String professionalName, Long collegeId, String collegeName,
+			String grade, String schoolYear, String scheduleId, String courseType, String usualScore, String credit,
+			String gradePoint, String examTime, String totalScore) {
+		super(line, orgId, jobNum, userId, userName, classId, className, professionalId, professionalName, collegeId,
+				collegeName);
+		this.grade = grade;
 		this.schoolYear = schoolYear;
 		this.scheduleId = scheduleId;
-		this.examTime = examTime;
+		this.courseType = courseType;
 		this.usualScore = usualScore;
+		this.credit = credit;
 		this.gradePoint = gradePoint;
+		this.examTime = examTime;
+		this.totalScore = totalScore;
 	}
 
 	

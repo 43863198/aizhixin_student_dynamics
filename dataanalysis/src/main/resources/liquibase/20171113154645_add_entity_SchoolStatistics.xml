@@ -18,6 +18,7 @@
             <column name="ID" type="VARCHAR(50)">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
+            <column name="ORG_ID" type="BIGINT"  remarks="组织id"/>
             <column name="COLLOEGE_NAME" type="VARCHAR(50)" remarks="学院名称"/>
             <column name="COLLOEGE_ID" type="BIGINT"  remarks="学院id"/>
             <column name="NEW_STUDENTS_COUNT" type="INT(4)" remarks="新生人数"/>
