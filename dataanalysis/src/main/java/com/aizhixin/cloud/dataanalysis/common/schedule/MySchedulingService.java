@@ -38,7 +38,7 @@ public class MySchedulingService {
     }
 
     
-    @Scheduled(cron = "0 0/5 * * * ?")
+//    @Scheduled(cron = "0 0/5 * * * ?")
     public void rollCallJob() {
         if (distributeLock.getRollCallLock()) {
             LOG.info("开始启动旷课预警定时任务");
@@ -49,7 +49,7 @@ public class MySchedulingService {
     }
     
     
-    @Scheduled(cron = "0 0/3 * * * ?")
+//    @Scheduled(cron = "0 0/1 * * * ?")
     public void rollCallCountJob() {
         if (distributeLock.getRollCallCountLock()) {
             LOG.info("开始启动旷课信息统计定时任务");
@@ -60,7 +60,7 @@ public class MySchedulingService {
     }
     
     
-//    @Scheduled(cron = "0 0/10 * * * ?")
+//    @Scheduled(cron = "0 0/1 * * * ?")
     public void totalScoreCountJob() {
         if (distributeLock.getTotalScoreCountLock()) {
             LOG.info("开始启动总评不及格成绩信息统计定时任务");
@@ -71,7 +71,7 @@ public class MySchedulingService {
     }
     
     
-//    @Scheduled(cron = "0 0/15 * * * ?")
+//    @Scheduled(cron = "0 0/1 * * * ?")
     public void totalScoreJob() {
         if (distributeLock.getTotalScoreLock()) {
             LOG.info("开始启动总评成绩预警定时任务");
@@ -82,7 +82,7 @@ public class MySchedulingService {
     }
     
     
-//    @Scheduled(cron = "0 0/10 * * * ?")
+//    @Scheduled(cron = "0 0/1 * * * ?")
     public void makeUpScoreCountJob() {
         if (distributeLock.getMakeUpScoreCountLock()) {
             LOG.info("开始启动补考不及格成绩信息统计定时任务");
@@ -93,7 +93,7 @@ public class MySchedulingService {
     }
     
     
-//    @Scheduled(cron = "0 0/15 * * * ?")
+//    @Scheduled(cron = "0 0/1 * * * ?")
     public void makeUpScoreJob() {
         if (distributeLock.getMakeUpScoreLock()) {
             LOG.info("开始启动总评成绩预警定时任务");
@@ -103,7 +103,7 @@ public class MySchedulingService {
         }
     }
     
-//    @Scheduled(cron = "0 0/10 * * * ?")
+//    @Scheduled(cron = "0 0/1 * * * ?")
     public void scoreFluctuateCountJob() {
         if (distributeLock.getScoreFluctuateCountLock()) {
             LOG.info("开始启动获取之前两学期成绩信息统计定时任务");
@@ -114,7 +114,7 @@ public class MySchedulingService {
     }
     
     
-//    @Scheduled(cron = "0 0/15 * * * ?")
+//    @Scheduled(cron = "0 0/1 * * * ?")
     public void scoreFluctuateJob() {
         if (distributeLock.getScoreFluctuateLock()) {
             LOG.info("开始启动成绩波动预警定时任务");
@@ -124,7 +124,7 @@ public class MySchedulingService {
         }
     }
 
-//    @Scheduled(cron = "0 0/15 * * * ?")
+//    @Scheduled(cron = "0 0/1 * * * ?")
     public void attendAbnormalJob() {
         if (distributeLock.getAttendAbnormalLock()) {
             LOG.info("开始启动修读异常预警定时任务");

@@ -2,6 +2,7 @@ package com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity;
 
 import java.util.Date;
 
+import org.hibernate.annotations.Entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -113,6 +114,11 @@ public class StudentRegister {
 	 * 实际报到日期
 	 */
 	private Date actualRegisterDate;
+	
+	/**
+	 * 学历： 0-专科，1-本科，2-研究生
+	 */
+	private int education;
 	
 	/**
 	 * 备注

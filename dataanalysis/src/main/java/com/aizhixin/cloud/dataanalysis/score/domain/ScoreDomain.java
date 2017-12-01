@@ -11,11 +11,11 @@ import lombok.Setter;
 public class ScoreDomain extends StudentInfoDomain {
 	
 	
-    @ApiModelProperty(value = "grade 年级", position=1)
-    @Getter @Setter private String grade;
+    @ApiModelProperty(value = "semester 学期", position=1)
+    @Getter @Setter private int semester;
     
     @ApiModelProperty(value = "schoolYear 学年学期", position=2)
-    @Getter @Setter private String schoolYear;
+    @Getter @Setter private int schoolYear;
     
     @ApiModelProperty(value = "scheduleId 排课ID", position=3)
     @Getter @Setter private String scheduleId;
@@ -38,15 +38,18 @@ public class ScoreDomain extends StudentInfoDomain {
     @ApiModelProperty(value = "totalScore 课程成绩", position=9)
     @Getter @Setter private String totalScore;
     
+    @ApiModelProperty(value = "grade 年级", position=10)
+    @Getter @Setter private String grade;
+    
 	public ScoreDomain() {}
 
 	public ScoreDomain(Integer line, Long orgId, String jobNum, Long userId, String userName, Long classId,
 			String className, Long professionalId, String professionalName, Long collegeId, String collegeName,
-			String grade, String schoolYear, String scheduleId, String courseType, String usualScore, String credit,
-			String gradePoint, String examTime, String totalScore) {
+			String userPhone, int semester, int schoolYear, String scheduleId, String courseType, String usualScore,
+			String credit, String gradePoint, String examTime, String totalScore, String grade) {
 		super(line, orgId, jobNum, userId, userName, classId, className, professionalId, professionalName, collegeId,
-				collegeName);
-		this.grade = grade;
+				collegeName, userPhone);
+		this.semester = semester;
 		this.schoolYear = schoolYear;
 		this.scheduleId = scheduleId;
 		this.courseType = courseType;
@@ -55,7 +58,7 @@ public class ScoreDomain extends StudentInfoDomain {
 		this.gradePoint = gradePoint;
 		this.examTime = examTime;
 		this.totalScore = totalScore;
+		this.grade = grade;
 	}
-
 	
 }

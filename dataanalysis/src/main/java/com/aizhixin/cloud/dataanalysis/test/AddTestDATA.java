@@ -21,6 +21,7 @@ public class AddTestDATA {
     private WarningTypeService warningTypeService;
 
 
+
 //    @Scheduled(cron = "0 0/3 * * * ?")
     public  void setWarningType(){
             Long orgId = 213L;

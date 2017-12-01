@@ -16,8 +16,8 @@ public class RollCallDomain extends StudentInfoDomain {
     @ApiModelProperty(value = "rollCallDate 考勤日期", position=2)
     @Getter @Setter private String rollCallDate;
     
-    @ApiModelProperty(value = "grade 年级", position=3)
-    @Getter @Setter private String grade;
+    @ApiModelProperty(value = "schoolYear 学年", position=3)
+    @Getter @Setter private int schoolYear;
     
     @ApiModelProperty(value = "rollCallResult 考勤结果", position=4)
     @Getter @Setter private String rollCallResult;
@@ -26,12 +26,12 @@ public class RollCallDomain extends StudentInfoDomain {
 
 	public RollCallDomain(Integer line, Long orgId, String jobNum, Long userId, String userName, Long classId,
 			String className, Long professionalId, String professionalName, Long collegeId, String collegeName,
-			Long scheduleId, String rollCallDate, String grade, String rollCallResult) {
+			String userPhone, Long scheduleId, String rollCallDate, int schoolYear, String rollCallResult) {
 		super(line, orgId, jobNum, userId, userName, classId, className, professionalId, professionalName, collegeId,
-				collegeName);
+				collegeName, userPhone);
 		this.scheduleId = scheduleId;
 		this.rollCallDate = rollCallDate;
-		this.grade = grade;
+		this.schoolYear = schoolYear;
 		this.rollCallResult = rollCallResult;
 	}
 

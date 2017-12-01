@@ -50,15 +50,18 @@ public class RollCallService {
 			try {
 				RollCall rollCall = new RollCall();
 				rollCall.setOrgId(d.getOrgId());
+				rollCall.setUserId(d.getUserId());
+				rollCall.setUserName(d.getUserName());
 				rollCall.setClassId(d.getClassId());
 				rollCall.setClassName(d.getClassName());
 				rollCall.setCollegeId(d.getCollegeId());
 				rollCall.setCollegeName(d.getCollegeName());
-				rollCall.setGrade(d.getGrade());
+				rollCall.setSchoolYear(d.getSchoolYear());
 				rollCall.setJobNum(d.getJobNum());
 				rollCall.setProfessionalId(d.getProfessionalId());
 				rollCall.setProfessionalName(d.getProfessionalName());
 				rollCall.setScheduleId(d.getScheduleId());
+				rollCall.setUserPhone(d.getUserPhone());
 //				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //				Date date = sdf.parse(d.getRollCallDate());  
 				if (d.getRollCallDate() != null) {
@@ -72,6 +75,7 @@ public class RollCallService {
     				}
     			}
 				rollCall.setRollCallResult(Integer.parseInt(d.getRollCallResult()));
+				rollCall.setSemester(2);
 				list.add(rollCall);
 			} catch (Exception e) {
 				LOG.info("错误信息行号：" + d.getLine() + ",  学号：" + d.getJobNum());
