@@ -115,6 +115,11 @@ public class StudentRegister {
 	private Date actualRegisterDate;
 	
 	/**
+	 * 学历： 0-专科，1-本科，2-研究生
+	 */
+	private int education;
+	
+	/**
 	 * 备注
 	 */
 	private String remarks;
