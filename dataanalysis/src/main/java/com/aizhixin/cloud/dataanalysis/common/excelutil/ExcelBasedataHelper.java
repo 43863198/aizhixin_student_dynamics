@@ -230,9 +230,12 @@ public class ExcelBasedataHelper {
 					}
 					String rollCallDate = getCellStringValue(row, 13);
 					String rollCallResult = getCellStringValue(row, 11);
-					String grade = getCellStringValue(row, 12);
+					Integer schoolYear = 2017;
+					if (!"".equals(getCellStringValue(row, 12)) && getCellStringValue(row, 12).length() == 4) {
+						schoolYear = Integer.valueOf(getCellStringValue(row, 12));
+					}
 					list.add(new RollCallDomain(line, orgId, jobNum, userId, userName, classId, className,
-							professionalId, professionalName, collegeId, collegeName, scheduleId, rollCallDate, grade,
+							professionalId, professionalName, collegeId, collegeName, scheduleId, rollCallDate, schoolYear,
 							rollCallResult));
 				} catch (Exception e) {
 					RollCallDomain d = new RollCallDomain();
