@@ -27,7 +27,7 @@ public class MySchedulingService {
     private ScoreJob scoreJob;
 
 
-//    @Scheduled(cron = "0 0/15 * * * ?")
+//    @Scheduled(cron = "0 0/1 * * * ?")
     public void stuRegisterJob() {
         if (distributeLock.getStuRegisterLock()) {
             LOG.info("开始启动学生注册报到预警定时任务");
@@ -38,7 +38,7 @@ public class MySchedulingService {
     }
 
     
-//    @Scheduled(cron = "0 0/10 * * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
     public void rollCallJob() {
         if (distributeLock.getRollCallLock()) {
             LOG.info("开始启动旷课预警定时任务");
@@ -49,9 +49,9 @@ public class MySchedulingService {
     }
     
     
-//    @Scheduled(cron = "0 0/15 * * * ?")
+    @Scheduled(cron = "0 0/3 * * * ?")
     public void rollCallCountJob() {
-        if (distributeLock.getRollCallLock()) {
+        if (distributeLock.getRollCallCountLock()) {
             LOG.info("开始启动旷课信息统计定时任务");
             rollCallJob.rollCallCountJob();
         } else {
@@ -131,6 +131,16 @@ public class MySchedulingService {
             scoreJob.attendAbnormalJob();;
         } else {
             LOG.info("启动修读异常预警任务，获取锁失败");
+        }
+    }
+    
+//    @Scheduled(cron = "0 0/1 * * * ?")
+    public void cet4ScoreJob() {
+        if (distributeLock.getCet4ScoreJobLock()) {
+            LOG.info("开始启动英语四级成绩预警定时任务");
+            scoreJob.cet4ScoreJob();
+        } else {
+            LOG.info("启动英语四级成绩预警任务，获取锁失败");
         }
     }
 }

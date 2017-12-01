@@ -203,15 +203,16 @@ public class TestDataController {
 			score.setOrgId(orgId);
 			score.setProfessionalId(1L);
 			score.setProfessionalName("测试专业");
-			score.setSchoolYear(2017);
+			score.setSchoolYear(2016);
+			score.setGrade("2016");
 			score.setSemester(1);
 			score.setUserName("学生" + i);
 			score.setScheduleId("1");
-			score.setCourseName("大学英语");
+			score.setCourseName("英语四级");
 			score.setCourseType("require");
 			score.setExamTime(DateUtil.getMonday(new Date()));
-			score.setExamType(ScoreConstant.EXAM_TYPE_COURSE);
-			score.setTotalScore("55");
+			score.setExamType(ScoreConstant.EXAM_TYPE_CET4);
+			score.setTotalScore("245");
 			score.setScoreResultType("百分制");
 			score.setCredit("10");
 			score.setGradePoint("0");
@@ -219,6 +220,34 @@ public class TestDataController {
 			scoreList.add(score);
 		}
 		for (int i = 0; i < 10; i++) {
+		Score score = new Score();
+
+		score.setUserId(stuId++);
+		score.setClassId(1L);
+		score.setClassName("测试1班");
+		score.setCollegeId(1L);
+		score.setCollegeName("测试学院1");
+		score.setJobNum("学号20000" + i);
+		score.setOrgId(orgId);
+		score.setProfessionalId(1L);
+		score.setProfessionalName("测试专业");
+		score.setSchoolYear(2015);
+		score.setGrade("2015");
+		score.setSemester(1);
+		score.setUserName("学生" + i);
+		score.setScheduleId("1");
+		score.setCourseName("英语四级");
+		score.setCourseType("require");
+		score.setExamTime(DateUtil.getMonday(new Date()));
+		score.setExamType(ScoreConstant.EXAM_TYPE_CET4);
+		score.setTotalScore("245");
+		score.setScoreResultType("百分制");
+		score.setCredit("10");
+		score.setGradePoint("0");
+
+		scoreList.add(score);
+	}
+	for (int i = 0; i < 10; i++) {
 			Score score = new Score();
 
 			score.setUserId(stuId++);
@@ -226,25 +255,26 @@ public class TestDataController {
 			score.setClassName("测试1班");
 			score.setCollegeId(1L);
 			score.setCollegeName("测试学院1");
-			score.setJobNum("学号1000" + i);
+			score.setJobNum("学号30000" + i);
 			score.setOrgId(orgId);
 			score.setProfessionalId(1L);
 			score.setProfessionalName("测试专业");
-			score.setSchoolYear(2016);
-			score.setSemester(2);
+			score.setSchoolYear(2014);
+			score.setGrade("2014");
+			score.setSemester(1);
 			score.setUserName("学生" + i);
 			score.setScheduleId("1");
-			score.setCourseName("大学英语");
+			score.setCourseName("英语四级");
 			score.setCourseType("require");
 			score.setExamTime(DateUtil.getMonday(new Date()));
-			score.setExamType(ScoreConstant.EXAM_TYPE_COURSE);
-			score.setTotalScore("60");
+			score.setExamType(ScoreConstant.EXAM_TYPE_CET4);
+			score.setTotalScore("245");
 			score.setScoreResultType("百分制");
-			score.setCredit("8");
-			score.setGradePoint("1");
+			score.setCredit("10");
+			score.setGradePoint("0");
 
 			scoreList.add(score);
-		}
+		}	
 
 		scoreMongoRespository.save(scoreList);
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
@@ -263,9 +293,8 @@ public class TestDataController {
 	@RequestMapping(value = "/importScore", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "POST", value = "批量导入成绩", response = Void.class, notes = "批量导入成绩<br><br><b>@author bly</b>")
 	public ResponseEntity<Void> importScore(
-			@ApiParam(value = "studentInfoFile 学生信息文件", required = true) @RequestParam(value = "studentInfoFile") MultipartFile studentInfoFile,
 			@ApiParam(value = "scoreFile 成绩文件", required = true) @RequestParam(value = "scoreFile") MultipartFile scoreFile) {
-		scoreService.importData(studentInfoFile, scoreFile);
+		scoreService.importData(scoreFile);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	

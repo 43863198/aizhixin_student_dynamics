@@ -69,6 +69,11 @@ public class ScoreFluctuateCount {
 	private Long collegeId;
 	
 	/**
+	 * 用户手机号
+	 */
+	private  String userPhone;
+	
+	/**
 	 * 学院名称
 	 */
 	private String collegeName;

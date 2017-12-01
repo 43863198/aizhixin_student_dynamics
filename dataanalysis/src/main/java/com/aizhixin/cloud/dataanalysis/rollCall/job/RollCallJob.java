@@ -100,7 +100,7 @@ public class RollCallJob {
 				Map.Entry entry = (Map.Entry) iter.next();
 				Long orgId = (Long) entry.getKey();
 
-				List<RollCall> rollCallList = rollCallMongoRespository.findAllBySchoolYearAndSemesterAndOrgId(schoolYear, semester, orgId);
+				List<RollCall> rollCallList = rollCallMongoRespository.findAllBySchoolYearAndSemesterAndOrgIdAndRollCallResult(schoolYear, semester, orgId,RollCallConstant.OUT_SCHOOL);
 				for(RollCall rollCall : rollCallList){
 					RollCallCount rollCallCount = rollCallCountMap.get(rollCall.getJobNum());
 					if(null == rollCallCount){
@@ -116,6 +116,7 @@ public class RollCallJob {
 						rollCallCount.setProfessionalName(rollCall.getProfessionalName());
 						rollCallCount.setSchoolYear(schoolYear);
 						rollCallCount.setSemester(semester);
+						rollCallCount.setUserPhone(rollCall.getUserPhone());
 						rollCallCount.setUserName(rollCall.getUserName());
 						if(RollCallConstant.OUT_SCHOOL == rollCall.getRollCallResult()){
 							rollCallCount.setOutSchoolTimes(1);
@@ -274,6 +275,7 @@ public class RollCallJob {
 											.setWarningType(WarningType.Absenteeism
 													.toString());
 									alertInfor.setWarningTime(new Date());
+									alertInfor.setPhone(rollCallCount.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());
 									alertInforList.add(alertInfor);
 									warnMap.put(alertInfor.getJobNumber(),

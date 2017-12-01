@@ -24,6 +24,7 @@ import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningType;
+import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.score.domain.ScoreDomain;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.MakeUpScoreCount;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
@@ -208,6 +209,7 @@ public class ScoreJob {
 					scoreDomain.setUserId(score.getUserId());
 					scoreDomain.setUserName(score.getUserName());
 					scoreDomain.setUserPhoto(score.getUserPhoto());
+					scoreDomain.setUserPhone(score.getUserPhone());
 				}
 				courseMap.put(score.getScheduleId(), score.getScheduleId());
 				if(!StringUtils.isEmpty(score.getTotalScore())){
@@ -364,6 +366,7 @@ public class ScoreJob {
 												.setWarningType(WarningType.PerformanceFluctuation
 														.toString());
 										alertInfor.setWarningTime(new Date());
+										alertInfor.setPhone(scoreFluctuateCount.getUserPhone());
 										alertInfor.setOrgId(alarmRule.getOrgId());
 										alertInforList.add(alertInfor);
 
@@ -446,6 +449,7 @@ public class ScoreJob {
 						totalScoreCount.setSchoolYear(schoolYear);
 						totalScoreCount.setSemester(lastSemester);
 						totalScoreCount.setUserName(score.getUserName());
+						totalScoreCount.setUserPhone(score.getUserPhone());
 						totalScoreCount.setFailCourseNum(1);
 						if(!StringUtils.isEmpty(score.getCourseType()) && ScoreConstant.REQUIRED_COURSE.equals(score.getCourseType())){
 							totalScoreCount.setFailRequiredCourseNum(1);
@@ -600,6 +604,7 @@ public class ScoreJob {
 											.setWarningType(WarningType.TotalAchievement
 													.toString());
 									alertInfor.setWarningTime(new Date());
+									alertInfor.setPhone(totalScoreCount.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());
 									alertInforList.add(alertInfor);
 
@@ -742,6 +747,7 @@ public class ScoreJob {
 											.setWarningType(WarningType.AttendAbnormal
 													.toString());
 									alertInfor.setWarningTime(new Date());
+									alertInfor.setPhone(totalScoreCount.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());
 									alertInforList.add(alertInfor);
 
@@ -848,6 +854,7 @@ public class ScoreJob {
 								makeUpScoreCount.setProfessionalId(score.getProfessionalId());
 								makeUpScoreCount.setProfessionalName(score.getProfessionalName());
 								makeUpScoreCount.setUserName(score.getUserName());
+								makeUpScoreCount.setUserPhone(score.getUserPhone());
 								makeUpScoreCount.setFailCourseNum(1);
 								makeUpScoreCountMap.put(score.getJobNum(), makeUpScoreCount);
 							}else{
@@ -977,6 +984,7 @@ public class ScoreJob {
 											.setWarningType(WarningType.SupplementAchievement
 													.toString());
 									alertInfor.setWarningTime(new Date());
+									alertInfor.setPhone(makeUpScoreCount.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());
 									alertInforList.add(alertInfor);
 
@@ -999,122 +1007,164 @@ public class ScoreJob {
 	/**
 	 * 英语四级考试成绩未通过预警
 	 */
-//	public void cet4ScoreJob() {
-//
-//		// 获取预警配置
-//		List<AlarmSettings> settingsList = alarmSettingsService
-//				.getAlarmSettingsByType(WarningType.Cet.toString());
-//		if (null != settingsList && settingsList.size() > 0) {
-//			
-//			
-//			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
-//			Set<String> warnRuleIdList = new HashSet<String>();
-//			Set<String> warnSettingsIdList = new HashSet<String>();
-//			// 按orgId归类告警等级阀值
-//			for (AlarmSettings settings : settingsList) {
-//
-//				warnSettingsIdList.add(settings.getId());
-//				Long orgId = settings.getOrgId();
-//
-//				String[] warmRuleIds = settings.getRuleSet().split(",");
-//				for (String warmRuleId : warmRuleIds) {
-//					if (!StringUtils.isEmpty(warmRuleId)) {
-//						warnRuleIdList.add(warmRuleId);
-//					}
-//				}
-//				if (null != alarmMap.get(orgId)) {
-//					ArrayList<AlarmSettings> alarmList = alarmMap.get(orgId);
-//					alarmList.add(settings);
-//				} else {
-//					ArrayList<AlarmSettings> alarmList = new ArrayList<AlarmSettings>();
-//					alarmList.add(settings);
-//					alarmMap.put(orgId, alarmList);
-//				}
-//			}
-//			// 预警规则获取
-//			HashMap<String, AlarmRule> alarmRuleMap = new HashMap<String, AlarmRule>();
-//			List<AlarmRule> alarmList = alarmRuleService
-//					.getAlarmRuleByIds(warnRuleIdList);
-//			for (AlarmRule alarmRule : alarmList) {
-//				alarmRuleMap.put(alarmRule.getId(), alarmRule);
-//			}
-//
-//			Iterator iter = alarmMap.entrySet().iterator();
-//			while (iter.hasNext()) {
-//
-//				//更新预警集合
-//				ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
-//				// 定时任务产生的新的预警数据
-//				HashMap<String, WarningInformation> warnMap = new HashMap<String, WarningInformation>();
-//				Map.Entry entry = (Map.Entry) iter.next();
-//				Long orgId = (Long) entry.getKey();
-//				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
-//						.getValue();
-//
-//				// 预警处理配置获取
-////				HashMap<String, ProcessingMode> processingModeMap = new HashMap<String, ProcessingMode>();
-////				List<ProcessingMode> processingModeList = processingModeService
-////						.getProcessingModeBywarningTypeId(orgId,
-////								WarningType.TotalAchievement.toString());
-//				// 按orgId查询未报到的学生信息
-//				List<MakeUpScoreCount> makeUpScoreCountList = scoreMongoRespository.findAllByTotalScoreLessThanAndSchoolYearInAndOrgIdAndExamType(totalScore, schoolYears, orgId, examType);
-//				
-//				if (null != makeUpScoreCountList && makeUpScoreCountList.size() > 0) {
-//					for (MakeUpScoreCount makeUpScoreCount : makeUpScoreCountList) {
-//						for (AlarmSettings alarmSettings : val) {
-//							AlarmRule alarmRule = alarmRuleMap
-//									.get(alarmSettings.getRuleSet());
-//							if (null != alarmRule) {
-//								if (makeUpScoreCount.getFailCourseNum() >= alarmRule.getRightParameter()) {
-//									WarningInformation alertInfor = new WarningInformation();
-//									String alertId = UUID.randomUUID()
-//											.toString();
-//									alertInfor.setId(alertId);
-//									alertInfor.setDefendantId(makeUpScoreCount
-//											.getUserId());
-//									alertInfor.setName(makeUpScoreCount
-//											.getUserName());
-//									alertInfor.setJobNumber(makeUpScoreCount
-//											.getJobNum());
-//									alertInfor.setCollogeId(makeUpScoreCount
-//											.getCollegeId());
-//									alertInfor.setCollogeName(makeUpScoreCount
-//											.getCollegeName());
-//									alertInfor.setClassId(makeUpScoreCount
-//											.getClassId());
-//									alertInfor.setClassName(makeUpScoreCount
-//											.getClassName());
-//									alertInfor
-//											.setProfessionalId(makeUpScoreCount
-//													.getProfessionalId());
-//									alertInfor
-//											.setProfessionalName(makeUpScoreCount
-//													.getProfessionalName());
-//									alertInfor.setWarningLevel(alarmSettings
-//											.getWarningLevel());
-//									alertInfor
-//											.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-//									alertInfor.setAlarmSettingsId(alarmSettings
-//											.getId());
-//									alertInfor
-//											.setWarningType(WarningType.SupplementAchievement
-//													.toString());
-//									alertInfor.setWarningTime(new Date());
-//									alertInfor.setOrgId(alarmRule.getOrgId());
-//									alertInforList.add(alertInfor);
-//
-//									break;
-//								} else {
-//									continue;
-//								}
-//							}
-//						}
-//					}
-//				}
-//				if (!alertInforList.isEmpty()) {
-//					alertWarningInformationService.save(alertInforList);
-//				}
-//			}
-//		}
-//	}
+	public void cet4ScoreJob() {
+
+		// 获取预警配置
+		List<AlarmSettings> settingsList = alarmSettingsService
+				.getAlarmSettingsByType(WarningType.Cet.toString());
+		if (null != settingsList && settingsList.size() > 0) {
+			
+			Calendar c = Calendar.getInstance();
+			//当前年份
+			int nowYear = c.get(Calendar.YEAR);
+			String grade2 = String.valueOf(nowYear-1);
+			String grade3 = String.valueOf(nowYear-2);
+			String grade4 = String.valueOf(nowYear-3);
+			String[] grades = new String[]{grade2,grade3,grade4};
+			HashMap<String,Integer> gradeMap = new HashMap<String,Integer>();
+			gradeMap.put(grade2,2);
+			gradeMap.put(grade3,3);
+			gradeMap.put(grade4,4);
+			
+			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
+			Set<String> warnRuleIdList = new HashSet<String>();
+			Set<String> warnSettingsIdList = new HashSet<String>();
+			// 按orgId归类告警等级阀值
+			for (AlarmSettings settings : settingsList) {
+
+				warnSettingsIdList.add(settings.getId());
+				Long orgId = settings.getOrgId();
+
+				String[] warmRuleIds = settings.getRuleSet().split(",");
+				for (String warmRuleId : warmRuleIds) {
+					if (!StringUtils.isEmpty(warmRuleId)) {
+						warnRuleIdList.add(warmRuleId);
+					}
+				}
+				if (null != alarmMap.get(orgId)) {
+					ArrayList<AlarmSettings> alarmList = alarmMap.get(orgId);
+					alarmList.add(settings);
+				} else {
+					ArrayList<AlarmSettings> alarmList = new ArrayList<AlarmSettings>();
+					alarmList.add(settings);
+					alarmMap.put(orgId, alarmList);
+				}
+			}
+			// 预警规则获取
+			HashMap<String, AlarmRule> alarmRuleMap = new HashMap<String, AlarmRule>();
+			List<AlarmRule> alarmList = alarmRuleService
+					.getAlarmRuleByIds(warnRuleIdList);
+			for (AlarmRule alarmRule : alarmList) {
+				alarmRuleMap.put(alarmRule.getId(), alarmRule);
+			}
+
+			Iterator iter = alarmMap.entrySet().iterator();
+			while (iter.hasNext()) {
+
+				//更新预警集合
+				ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
+				Map.Entry entry = (Map.Entry) iter.next();
+				Long orgId = (Long) entry.getKey();
+				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
+						.getValue();
+
+				// 预警处理配置获取
+//				HashMap<String, ProcessingMode> processingModeMap = new HashMap<String, ProcessingMode>();
+//				List<ProcessingMode> processingModeList = processingModeService
+//						.getProcessingModeBywarningTypeId(orgId,
+//								WarningType.TotalAchievement.toString());
+				// 按orgId查询成绩信息		
+				List<Score> scoreList = scoreMongoRespository.findAllByGradeInAndOrgIdAndExamType( grades, orgId, ScoreConstant.EXAM_TYPE_CET4);
+				HashMap<String,Score> userScoreMap = new HashMap<String,Score>();
+				//去重后的英语四级不合格成绩集合
+				List<Score> alarmScoreList = new ArrayList<Score>();
+				
+				for(Score score : scoreList){
+					if(StringUtils.isEmpty(score.getTotalScore())){
+						continue;
+					}
+					Score tmpScore = userScoreMap.get(score.getJobNum());
+					if(null != tmpScore){
+						if(Float.parseFloat(score.getTotalScore()) > Float.parseFloat(tmpScore.getTotalScore())){
+							userScoreMap.put(score.getJobNum(), score);
+						}
+					}else{
+						userScoreMap.put(score.getJobNum(), score);
+					}
+				}
+				
+				Iterator userScoreMapIter = userScoreMap.entrySet().iterator();
+				while (userScoreMapIter.hasNext()) {
+					Map.Entry userScoreEntry = (Map.Entry) userScoreMapIter.next();
+					Score score = (Score) userScoreEntry
+							.getValue();
+					
+					if(Float.parseFloat(score.getTotalScore()) < Float.parseFloat(ScoreConstant.CET_PASS_SCORE_LINE)){
+						alarmScoreList.add(score);
+					}
+				}
+				
+				if (null != alarmScoreList && alarmScoreList.size() > 0) {
+					for (Score score : alarmScoreList) {
+						for (AlarmSettings alarmSettings : val) {
+							AlarmRule alarmRule = alarmRuleMap
+									.get(alarmSettings.getRuleSet());
+							if (null != alarmRule) {
+								int grade = 0;
+								if(null != gradeMap.get(score.getGrade())){
+									grade = gradeMap.get(score.getGrade()).intValue();
+								}
+								if (grade == alarmRule.getRightParameter()) {
+									WarningInformation alertInfor = new WarningInformation();
+									String alertId = UUID.randomUUID()
+											.toString();
+									alertInfor.setId(alertId);
+									alertInfor.setDefendantId(score
+											.getUserId());
+									alertInfor.setName(score
+											.getUserName());
+									alertInfor.setJobNumber(score
+											.getJobNum());
+									alertInfor.setCollogeId(score
+											.getCollegeId());
+									alertInfor.setCollogeName(score
+											.getCollegeName());
+									alertInfor.setClassId(score
+											.getClassId());
+									alertInfor.setClassName(score
+											.getClassName());
+									alertInfor
+											.setProfessionalId(score
+													.getProfessionalId());
+									alertInfor
+											.setProfessionalName(score
+													.getProfessionalName());
+									alertInfor.setWarningLevel(alarmSettings
+											.getWarningLevel());
+									alertInfor
+											.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+									alertInfor.setAlarmSettingsId(alarmSettings
+											.getId());
+									alertInfor
+											.setWarningType(WarningType.Cet
+													.toString());
+									alertInfor.setWarningTime(new Date());
+									alertInfor.setPhone(score.getUserPhone());
+									alertInfor.setOrgId(alarmRule.getOrgId());
+									alertInforList.add(alertInfor);
+
+									break;
+								} else {
+									continue;
+								}
+							}
+						}
+					}
+				}
+				if (!alertInforList.isEmpty()) {
+					alertWarningInformationService.save(alertInforList);
+				}
+			}
+		}
+	}
 }
