@@ -209,6 +209,7 @@ public class ScoreJob {
 					scoreDomain.setUserId(score.getUserId());
 					scoreDomain.setUserName(score.getUserName());
 					scoreDomain.setUserPhoto(score.getUserPhoto());
+					scoreDomain.setUserPhone(score.getUserPhone());
 				}
 				courseMap.put(score.getScheduleId(), score.getScheduleId());
 				if(!StringUtils.isEmpty(score.getTotalScore())){
@@ -365,6 +366,7 @@ public class ScoreJob {
 												.setWarningType(WarningType.PerformanceFluctuation
 														.toString());
 										alertInfor.setWarningTime(new Date());
+										alertInfor.setPhone(scoreFluctuateCount.getUserPhone());
 										alertInfor.setOrgId(alarmRule.getOrgId());
 										alertInforList.add(alertInfor);
 
@@ -447,6 +449,7 @@ public class ScoreJob {
 						totalScoreCount.setSchoolYear(schoolYear);
 						totalScoreCount.setSemester(lastSemester);
 						totalScoreCount.setUserName(score.getUserName());
+						totalScoreCount.setUserPhone(score.getUserPhone());
 						totalScoreCount.setFailCourseNum(1);
 						if(!StringUtils.isEmpty(score.getCourseType()) && ScoreConstant.REQUIRED_COURSE.equals(score.getCourseType())){
 							totalScoreCount.setFailRequiredCourseNum(1);
@@ -601,6 +604,7 @@ public class ScoreJob {
 											.setWarningType(WarningType.TotalAchievement
 													.toString());
 									alertInfor.setWarningTime(new Date());
+									alertInfor.setPhone(totalScoreCount.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());
 									alertInforList.add(alertInfor);
 
@@ -743,6 +747,7 @@ public class ScoreJob {
 											.setWarningType(WarningType.AttendAbnormal
 													.toString());
 									alertInfor.setWarningTime(new Date());
+									alertInfor.setPhone(totalScoreCount.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());
 									alertInforList.add(alertInfor);
 
@@ -849,6 +854,7 @@ public class ScoreJob {
 								makeUpScoreCount.setProfessionalId(score.getProfessionalId());
 								makeUpScoreCount.setProfessionalName(score.getProfessionalName());
 								makeUpScoreCount.setUserName(score.getUserName());
+								makeUpScoreCount.setUserPhone(score.getUserPhone());
 								makeUpScoreCount.setFailCourseNum(1);
 								makeUpScoreCountMap.put(score.getJobNum(), makeUpScoreCount);
 							}else{
@@ -978,6 +984,7 @@ public class ScoreJob {
 											.setWarningType(WarningType.SupplementAchievement
 													.toString());
 									alertInfor.setWarningTime(new Date());
+									alertInfor.setPhone(makeUpScoreCount.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());
 									alertInforList.add(alertInfor);
 
@@ -1142,6 +1149,7 @@ public class ScoreJob {
 											.setWarningType(WarningType.Cet
 													.toString());
 									alertInfor.setWarningTime(new Date());
+									alertInfor.setPhone(score.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());
 									alertInforList.add(alertInfor);
 
