@@ -97,6 +97,7 @@ public class StudentRegisterService {
 		    			studentRegister.setRegisterDate(registerDate);
 		    			studentRegister.setIsPay(entry.getValue().getIsPay());
 		    			studentRegister.setIsGreenChannel(entry.getValue().getIsGreenChannel());
+		    			studentRegister.setUserPhone(entry1.getValue().getUserPhone());
 		    			stuRegisterList.add(studentRegister);
 		    		}
 				} catch (Exception e) {

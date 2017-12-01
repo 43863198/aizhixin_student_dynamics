@@ -40,6 +40,9 @@ public class StudentInfoDomain {
     @ApiModelProperty(value = "collegeName 学院名称", position=11)
     @Getter @Setter private String collegeName;
     
+    @ApiModelProperty(value = "userPhone 手机号", position=11)
+    @Getter @Setter private String userPhone;
+    
     @ApiModelProperty(value = "id ID", position=19)
     @Getter @Setter private Long id;
     
@@ -49,7 +52,8 @@ public class StudentInfoDomain {
 	public StudentInfoDomain() {}
 
 	public StudentInfoDomain(Integer line, Long orgId, String jobNum, Long userId, String userName, Long classId,
-			String className, Long professionalId, String professionalName, Long collegeId, String collegeName) {
+			String className, Long professionalId, String professionalName, Long collegeId, String collegeName,
+			String userPhone) {
 		this.line = line;
 		this.orgId = orgId;
 		this.jobNum = jobNum;
@@ -61,6 +65,8 @@ public class StudentInfoDomain {
 		this.professionalName = professionalName;
 		this.collegeId = collegeId;
 		this.collegeName = collegeName;
+		this.userPhone = userPhone;
 	}
+
 	
 }

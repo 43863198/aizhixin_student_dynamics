@@ -26,9 +26,9 @@ public class RollCallDomain extends StudentInfoDomain {
 
 	public RollCallDomain(Integer line, Long orgId, String jobNum, Long userId, String userName, Long classId,
 			String className, Long professionalId, String professionalName, Long collegeId, String collegeName,
-			Long scheduleId, String rollCallDate, int schoolYear, String rollCallResult) {
+			String userPhone, Long scheduleId, String rollCallDate, int schoolYear, String rollCallResult) {
 		super(line, orgId, jobNum, userId, userName, classId, className, professionalId, professionalName, collegeId,
-				collegeName);
+				collegeName, userPhone);
 		this.scheduleId = scheduleId;
 		this.rollCallDate = rollCallDate;
 		this.schoolYear = schoolYear;

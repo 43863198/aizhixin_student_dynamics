@@ -61,6 +61,7 @@ public class RollCallService {
 				rollCall.setProfessionalId(d.getProfessionalId());
 				rollCall.setProfessionalName(d.getProfessionalName());
 				rollCall.setScheduleId(d.getScheduleId());
+				rollCall.setUserPhone(d.getUserPhone());
 //				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //				Date date = sdf.parse(d.getRollCallDate());  
 				if (d.getRollCallDate() != null) {
