@@ -73,6 +73,11 @@ public class TotalScoreCount {
 	private String collegeName;
 	
 	/**
+	 * 用户手机号
+	 */
+	private  String userPhone;
+	
+	/**
 	 * 年级
 	 */
 	private String grade;

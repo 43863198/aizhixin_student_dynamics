@@ -246,6 +246,22 @@ public class DistributeLock {
         return getLock(lockPath.toString(), taskPath.toString());
     }
     
+    /**
+     * 英语四级考试
+     * @return  是否获取到锁
+     */
+    public boolean getCet4ScoreJobLock() {
+        StringBuilder lockPath = new StringBuilder(zkLockPath);
+        StringBuilder taskPath = new StringBuilder(zkTaskPath);
+        Date current = new Date();
+        String curDayString = DateUtil.format(current);
+        String HHmm = DateUtil.format(current, "HHmm");
+        lockPath.append("/").append(curDayString).append("/cet4/").append(HHmm);
+        taskPath.append("/").append(curDayString).append("/cet4/").append(HHmm);
+
+        return getLock(lockPath.toString(), taskPath.toString());
+    }
+    
     public void cleanZookeeperTaskData() {
         delete();
     }
