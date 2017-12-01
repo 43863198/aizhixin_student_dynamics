@@ -2,6 +2,7 @@ package com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity;
 
 import java.util.Date;
 
+import org.hibernate.annotations.Entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
