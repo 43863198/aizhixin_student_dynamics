@@ -15,14 +15,13 @@ import org.springframework.data.repository.query.Param;
  * @Date: 2017-11-29
  */
 public interface SchoolStatisticsRespository extends JpaRepository<SchoolStatistics, String> {
-    //SchoolProfileDTO(Long allStudent, Long allTeacher, Long allInstructor, Long inSchoolStudent, Long outSchoolStudent, Long readyGraduation)
-    @Query("select new com.aizhixin.cloud.dataanalysis.analysis.dto.SchoolProfileDTO(sum(a.studentNumber),sum(a.teacherNumber),sum(a.InstructorNumber),0L,sum(a.readyGraduation)) from #{#entityName} a where a.orgId = :orgId ")
+    @Query("select new com.aizhixin.cloud.dataanalysis.analysis.dto.SchoolProfileDTO(sum(a.studentNumber),sum(a.teacherNumber),sum(a.InstructorNumber),0L,sum(a.readyGraduation)) from #{#entityName} a where a.orgId = :orgId and a.deleteFlag=0 ")
     SchoolProfileDTO getSchoolPersonStatistics(@Param(value = "orgId")Long orgId);
 
     @Query("select a from #{#entityName} a where a.orgId = :orgId and a.teacherYear = :teacherYear and a.deleteFlag = :deleteFlag order by a.statisticalTime desc")
     Page<SchoolStatistics> findPageDataByOrgIdAndTeacherYear(Pageable pageable, @Param(value = "orgId") Long orgId, @Param(value = "teacherYear") String teacherYear, @Param(value = "deleteFlag") int deleteFlag);
-    //(int studentNumber, int alreadyReport)
-    @Query("select new com.aizhixin.cloud.dataanalysis.analysis.dto.NewStudentProfileDTO(sum(a.newStudentsCount),sum(a.alreadyReport)) from #{#entityName} a where a.orgId = :orgId and a.teacherYear =(select max(b.teacherYear) FROM #{#entityName} b where b.orgId = :orgId)")
+
+    @Query("select new com.aizhixin.cloud.dataanalysis.analysis.dto.NewStudentProfileDTO(sum(a.newStudentsCount),sum(a.alreadyReport)) from #{#entityName} a where a.orgId = :orgId and  a.deleteFlag=0 and a.teacherYear =(select max(b.teacherYear) FROM #{#entityName} b where b.orgId = :orgId)")
     NewStudentProfileDTO getNewStudentStatistics(@Param(value = "orgId")Long orgId);
 
 }
