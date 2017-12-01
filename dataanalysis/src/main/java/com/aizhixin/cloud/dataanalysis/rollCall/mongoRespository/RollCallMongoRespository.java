@@ -11,5 +11,5 @@ import com.aizhixin.cloud.dataanalysis.rollCall.mongoEntity.RollCall;
 
 public interface RollCallMongoRespository extends MongoRepository<RollCall, String>{
  
-	List<RollCall> findAllBySchoolYearAndSemesterAndOrgId(int schoolYear,int semester,Long orgId);
+	List<RollCall> findAllBySchoolYearAndSemesterAndOrgIdAndRollCallResult(int schoolYear,int semester,Long orgId,int rollCallResult);
 }

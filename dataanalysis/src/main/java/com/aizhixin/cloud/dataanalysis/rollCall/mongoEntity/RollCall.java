@@ -73,6 +73,11 @@ public class RollCall {
 	private String collegeName;
 	
 	/**
+	 * 用户手机号
+	 */
+	private  String userPhone;
+	
+	/**
 	 * 年级
 	 */
 	private String grade;
@@ -80,11 +85,13 @@ public class RollCall {
 	/**
 	 * 学期
 	 */
+	@Indexed
 	private int semester;
 	
 	/**
 	 * 学年
 	 */
+	@Indexed
 	private int schoolYear;
 	
 	/**
