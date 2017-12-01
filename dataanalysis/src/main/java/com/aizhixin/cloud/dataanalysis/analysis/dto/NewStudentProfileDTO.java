@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -21,15 +23,17 @@ import java.util.Date;
  */
 @ApiModel(description="迎新学情概况统计信息")
 @Data
+@ToString
+@NoArgsConstructor
 public class NewStudentProfileDTO {
     @ApiModelProperty(value = "新生总数量", required = false)
-    private int studentNumber;
+    private Long studentNumber;
     @ApiModelProperty(value = "已报到人数", required = false)
-    private int alreadyReport;
+    private Long alreadyReport;
     @ApiModelProperty(value = "未报到人数", required = false)
-    private int unreported;
+    private Long unreported;
     @ApiModelProperty(value = "已报到人数占比", required = false)
-    private String Proportion;
+    private String proportion;
     @ApiModelProperty(value = "完成缴费人数", required = false)
     private int alreadyPay;
     @ApiModelProperty(value = "走绿色通道人数", required = false)
@@ -44,4 +48,11 @@ public class NewStudentProfileDTO {
     @ApiModelProperty(value = "分页查询学院新生概况", required = false)
     PageData<SchoolStatistics> schoolStatisticsPageData;
 
+    public NewStudentProfileDTO(Long studentNumber, Long alreadyReport) {
+        this.studentNumber = studentNumber;
+        this.alreadyReport = alreadyReport;
+        this.unreported = this.studentNumber-this.alreadyReport;
+        this.proportion = this.alreadyReport/this.studentNumber+"";
+
+    }
 }
