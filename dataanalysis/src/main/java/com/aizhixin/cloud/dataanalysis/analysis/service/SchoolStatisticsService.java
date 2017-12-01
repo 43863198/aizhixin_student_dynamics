@@ -1,8 +1,10 @@
 package com.aizhixin.cloud.dataanalysis.analysis.service;
 
+import com.aizhixin.cloud.dataanalysis.analysis.constant.TrendType;
 import com.aizhixin.cloud.dataanalysis.analysis.domain.NewStudentProfileDomain;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.NewStudentProfileDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.TrendDTO;
+import com.aizhixin.cloud.dataanalysis.analysis.dto.TrendTypeDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.SchoolStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
@@ -105,6 +107,27 @@ public class SchoolStatisticsService {
         return result;
     }
 
+    public Map<String, Object> getTrendType() {
+        Map<String, Object> result = new HashMap<>();
+        List<TrendTypeDTO> trendTypeDTOList = new ArrayList<>();
+        try{
+            for(TrendType type : TrendType.values()) {
+                TrendTypeDTO trendTypeDTO = new TrendTypeDTO();
+                trendTypeDTO.setIndex(type.getIndex());
+                trendTypeDTO.setTyep(type.toString());
+                trendTypeDTO.setTypeName(type.getName());
+                trendTypeDTOList.add(trendTypeDTO);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message","获取指标类型失败！");
+            return result;
+        }
+        result.put("success",true);
+        result.put("data",trendTypeDTOList);
+        return result;
+    }
 
     public Map<String, Object> getTrend(Long orgId, Long colloegeId, String trend) {
         Map<String, Object> result = new HashMap<>();

@@ -56,6 +56,17 @@ public class SchoolConditionStatisticsController {
         return schoolStatisticsService.getTrend(orgId, colloegeId, trend);
     }
 
+    /**
+     * 趋势分析---指标类型
+     *
+     * @return
+     */
+    @GetMapping(value = "/trendtype", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "趋势分析---指标类型", response = Void.class, notes = "趋势分析---指标类型<br><br><b>@author jianwei.wu</b>")
+    public Map<String,Object>   getTrendType() {
+        return schoolStatisticsService.getTrendType();
+    }
+
 
 
 
