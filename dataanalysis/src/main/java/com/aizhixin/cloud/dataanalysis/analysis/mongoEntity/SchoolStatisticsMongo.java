@@ -1,4 +1,4 @@
-package com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity;
+package com.aizhixin.cloud.dataanalysis.analysis.mongoEntity;
 
 import com.aizhixin.cloud.dataanalysis.common.entity.AbstractEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;

@@ -127,4 +127,12 @@ public class TestAlarmJobController {
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
 
+	
+	@RequestMapping(value = "/cet4job", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "GET", value = "英语4级预警定时任务", response = Void.class, notes = "总评成绩统计定时任务执行后,执行英语4级预警定时任务<br><br><b>@author zhengning</b>")
+	public ResponseEntity<Map<String, Object>> cet4Job() {
+		scoreJob.cet4ScoreJob();
+		Map<String, Object> result = new HashMap<String, Object>();
+		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+	}
 }
