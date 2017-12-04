@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
@@ -16,6 +19,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
+import com.aizhixin.cloud.dataanalysis.common.domain.ImportDomain;
 import com.aizhixin.cloud.dataanalysis.common.excelutil.ExcelBasedataHelper;
 import com.aizhixin.cloud.dataanalysis.common.exception.CommonException;
 import com.aizhixin.cloud.dataanalysis.common.exception.ErrorCode;
@@ -24,7 +28,7 @@ import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 import com.aizhixin.cloud.dataanalysis.score.mongoRespository.ScoreMongoRespository;
 
 /**
- * 成绩导入
+ * 导入成绩数据写入Mongo库
  * 
  * @author bly
  * @data 2017年11月29日
@@ -40,11 +44,21 @@ public class ScoreService {
 	@Autowired
 	private ExcelBasedataHelper basedataHelper;
 
-	public void importData(MultipartFile dataBaseFile, Long orgId) {
+	public void importData(MultipartFile dataBaseFile, MultipartFile importFile, Long orgId) {
 		// 获取成绩
 		List<ScoreDomain> dataBases = basedataHelper.readStudentScoreFromInputStream(dataBaseFile);
 		if (null == dataBases || dataBases.size() <= 0) {
 			throw new CommonException(ErrorCode.ID_IS_REQUIRED, "没有读取到任何数据");
+		}
+		//获取新学生基础信息
+		List<ImportDomain> importDomains = basedataHelper.readDataBase(importFile);
+		if (null == importDomains || importDomains.size() <= 0) {
+			throw new CommonException(ErrorCode.ID_IS_REQUIRED, "没有读取到任何数据");
+		}
+		//新学生基础信息存map
+		Map<String, ImportDomain> map = new HashMap<>();
+		for (ImportDomain data : importDomains) {
+			map.put(data.getName(), data);
 		}
 		List<Score> list = new ArrayList<>();
 		int i = 0;
@@ -54,13 +68,28 @@ public class ScoreService {
 				score.setUserId(d.getUserId());
 				score.setUserName(d.getUserName());
 				score.setOrgId(orgId);
-				score.setClassId(d.getClassId());
+				for (Entry<String, ImportDomain> entry : map.entrySet()) {
+					if (entry.getKey().equals(d.getClassName())) {
+						score.setClassId(entry.getValue().getId());
+						break;
+					}
+				}
 				score.setClassName(d.getClassName());
-				score.setCollegeId(d.getCollegeId());
+				for (Entry<String, ImportDomain> entry : map.entrySet()) {
+					if (entry.getKey().equals(d.getCollegeName())) {
+						score.setCollegeId(entry.getValue().getId());
+						break;
+					}
+				}
 				score.setCollegeName(d.getCollegeName());
 				score.setSemester(d.getSemester());
 				score.setJobNum(d.getJobNum());
-				score.setProfessionalId(d.getProfessionalId());
+				for (Entry<String, ImportDomain> entry : map.entrySet()) {
+					if (entry.getKey().equals(d.getProfessionalName())) {
+						score.setProfessionalId(entry.getValue().getId());
+						break;
+					}
+				}
 				score.setProfessionalName(d.getProfessionalName());
 				score.setScheduleId(d.getScheduleId());
 				score.setCourseType(d.getCourseType());
@@ -95,11 +124,21 @@ public class ScoreService {
 		}
 	}
 
-	public void importData46(MultipartFile dataBaseFile, Long orgId) {
+	public void importData46(MultipartFile dataBaseFile, MultipartFile importFile, Long orgId) {
 		// 获取成绩
 		List<ScoreDomain> dataBases = basedataHelper.readStudentScoreFromInputStream(dataBaseFile);
 		if (null == dataBases || dataBases.size() <= 0) {
 			throw new CommonException(ErrorCode.ID_IS_REQUIRED, "没有读取到任何数据");
+		}
+		//获取新学生基础信息
+		List<ImportDomain> importDomains = basedataHelper.readDataBase(importFile);
+		if (null == importDomains || importDomains.size() <= 0) {
+			throw new CommonException(ErrorCode.ID_IS_REQUIRED, "没有读取到任何数据");
+		}
+		//新学生基础信息存map
+		Map<String, ImportDomain> map = new HashMap<>();
+		for (ImportDomain data : importDomains) {
+			map.put(data.getName(), data);
 		}
 		List<Score> list = new ArrayList<>();
 		int i = 0;
@@ -111,13 +150,28 @@ public class ScoreService {
 					score.setUserId(d.getUserId());
 					score.setUserName(d.getUserName());
 					score.setOrgId(orgId);
-					score.setClassId(d.getClassId());
+					for (Entry<String, ImportDomain> entry : map.entrySet()) {
+						if (entry.getKey().equals(d.getClassName())) {
+							score.setClassId(entry.getValue().getId());
+							break;
+						}
+					}
 					score.setClassName(d.getClassName());
-					score.setCollegeId(d.getCollegeId());
+					for (Entry<String, ImportDomain> entry : map.entrySet()) {
+						if (entry.getKey().equals(d.getCollegeName())) {
+							score.setCollegeId(entry.getValue().getId());
+							break;
+						}
+					}
 					score.setCollegeName(d.getCollegeName());
 					score.setSemester(d.getSemester());
 					score.setJobNum(d.getJobNum());
-					score.setProfessionalId(d.getProfessionalId());
+					for (Entry<String, ImportDomain> entry : map.entrySet()) {
+						if (entry.getKey().equals(d.getProfessionalName())) {
+							score.setProfessionalId(entry.getValue().getId());
+							break;
+						}
+					}
 					score.setProfessionalName(d.getProfessionalName());
 					score.setScheduleId(d.getScheduleId());
 					score.setCourseType(d.getCourseType());

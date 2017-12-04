@@ -9,7 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-@ApiModel(description="实践导入信息")
+@ApiModel(description="导入实践数据")
 public class PracticeDomain extends StudentInfoDomain {
 	
     @ApiModelProperty(value = "semester 学期", position=1)

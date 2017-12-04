@@ -279,9 +279,10 @@ public class TestDataController {
 	public ResponseEntity<Void> importStudent(
 			@ApiParam(value = "studentInfoFile 学生信息文件", required = true) @RequestParam(value = "studentInfoFile") MultipartFile studentInfoFile,
 			@ApiParam(value = "dataBaseFile 基础数据文件", required = true) @RequestParam(value = "dataBaseFile") MultipartFile dataBaseFile,
+			@ApiParam(value = "newStudentInfoFile 基础数据文件", required = true) @RequestParam(value = "newStudentInfoFile") MultipartFile newStudentInfoFile,
 			@DateTimeFormat(pattern = "yyyy-MM-dd") @ApiParam(value = "registerDate 报到日期,传参时日期天数加1,<br/>时间格式：yyyy-MM-dd") @RequestParam(value = "registerDate", required = false) Date registerDate,
 			@ApiParam(value = "orgId 学校ID", required = true) @RequestParam(value = "orgId") Long orgId) {
-			registerService.importData(studentInfoFile, dataBaseFile, registerDate, orgId);
+			registerService.importData(studentInfoFile, dataBaseFile, newStudentInfoFile, registerDate, orgId);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
@@ -289,8 +290,9 @@ public class TestDataController {
 	@ApiOperation(httpMethod = "POST", value = "批量导入成绩", response = Void.class, notes = "批量导入成绩<br><br><b>@author bly</b>")
 	public ResponseEntity<Void> importScore(
 			@ApiParam(value = "scoreFile 成绩文件", required = true) @RequestParam(value = "scoreFile") MultipartFile scoreFile,
+			@ApiParam(value = "newStudentInfoFile 基础数据文件", required = true) @RequestParam(value = "newStudentInfoFile") MultipartFile newStudentInfoFile,
 			@ApiParam(value = "orgId 学校ID", required = true) @RequestParam(value = "orgId") Long orgId) {
-		scoreService.importData(scoreFile, orgId);
+		scoreService.importData(scoreFile, newStudentInfoFile, orgId);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
@@ -298,8 +300,9 @@ public class TestDataController {
 	@ApiOperation(httpMethod = "POST", value = "批量导入考勤", response = Void.class, notes = "批量导入考勤<br><br><b>@author bly</b>")
 	public ResponseEntity<Void> importRollCall(
 			@ApiParam(value = "dataBaseFile 考勤文件", required = true) @RequestParam(value = "dataBaseFile") MultipartFile dataBaseFile,
+			@ApiParam(value = "newStudentInfoFile 基础数据文件", required = true) @RequestParam(value = "newStudentInfoFile") MultipartFile newStudentInfoFile,
 			@ApiParam(value = "orgId 学校ID", required = true) @RequestParam(value = "orgId") Long orgId) {
-		rollCallService.importData(dataBaseFile, orgId);
+		rollCallService.importData(dataBaseFile, newStudentInfoFile, orgId);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
@@ -307,8 +310,9 @@ public class TestDataController {
 	@ApiOperation(httpMethod = "POST", value = "批量导入为英语4级的成绩", response = Void.class, notes = "批量导入成绩<br><br><b>@author bly</b>")
 	public ResponseEntity<Void> importScore46(
 			@ApiParam(value = "scoreFile 成绩文件", required = true) @RequestParam(value = "scoreFile") MultipartFile scoreFile,
+			@ApiParam(value = "newStudentInfoFile 基础数据文件", required = true) @RequestParam(value = "newStudentInfoFile") MultipartFile newStudentInfoFile,
 			@ApiParam(value = "orgId 学校ID", required = true) @RequestParam(value = "orgId") Long orgId) {
-		scoreService.importData46(scoreFile, orgId);
+		scoreService.importData46(scoreFile, newStudentInfoFile, orgId);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
@@ -316,8 +320,9 @@ public class TestDataController {
 	@ApiOperation(httpMethod = "POST", value = "批量导入实践信息", response = Void.class, notes = "批量导入实践信息<br><br><b>@author bly</b>")
 	public ResponseEntity<Void> importPractice(
 			@ApiParam(value = "practiceFile 实践数据", required = true) @RequestParam(value = "practiceFile") MultipartFile practiceFile,
+			@ApiParam(value = "newStudentInfoFile 基础数据文件", required = true) @RequestParam(value = "newStudentInfoFile") MultipartFile newStudentInfoFile,
 			@ApiParam(value = "orgId 学校ID", required = true) @RequestParam(value = "orgId") Long orgId) {
-		practiceService.importData(practiceFile, orgId);;
+		practiceService.importData(practiceFile, newStudentInfoFile, orgId);;
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

@@ -15,11 +15,17 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.aizhixin.cloud.dataanalysis.analysis.domain.PracticeDomain;
+import com.aizhixin.cloud.dataanalysis.common.domain.ImportDomain;
 import com.aizhixin.cloud.dataanalysis.rollCall.domain.RollCallDomain;
 import com.aizhixin.cloud.dataanalysis.score.domain.ScoreDomain;
 import com.aizhixin.cloud.dataanalysis.studentRegister.domain.StudentInfoDomain;
 import com.aizhixin.cloud.dataanalysis.studentRegister.domain.StudentRegisterDomain;
-
+/**
+ * excel导入数据
+ * 
+ * @author bly
+ * @data 2017年12月5日
+ */
 @Component
 public class ExcelBasedataHelper {
 	final static private Logger LOG = LoggerFactory.getLogger(ExcelBasedataHelper.class);
@@ -316,4 +322,37 @@ public class ExcelBasedataHelper {
 		return list;
 	}
 
+	public List<ImportDomain> readDataBase(MultipartFile file) {
+		List<ImportDomain> list = new ArrayList<>();
+		ExcelUtil util = new ExcelUtil(file);
+		Sheet sheet = util.getSheet("new");
+		if (null == sheet) {// 如果没有此sheet页标签，读取第1个标签的内容
+			sheet = util.getSheet(0);
+		}
+		if (null != sheet) {
+			Iterator<Row> rows = sheet.rowIterator();
+			int line = 1;
+			while (rows.hasNext()) {
+				Row row = rows.next();
+				if (1 == line) {
+					line++;
+					continue;// 跳过第一行
+				}
+				try {
+					setCellStringType(row, 2);// 一行共有2个列值
+					Long id = Long.valueOf(getCellStringValue(row, 0));
+					String name = getCellStringValue(row, 1);
+					list.add(new ImportDomain(id, name, line));
+				} catch (Exception e) {
+					ImportDomain d = new ImportDomain();
+					d.setLine(line);
+					list.add(d);
+					LOG.info("错误信息行号：" + line);
+				}
+				line++;
+			}
+		}
+		return list;
+	}
+	
 }

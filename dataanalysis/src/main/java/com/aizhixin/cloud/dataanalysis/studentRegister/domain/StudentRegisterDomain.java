@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-@ApiModel(description="新生报到excel导入信息")
+@ApiModel(description="导入新生报到数据")
 public class StudentRegisterDomain {
 	@ApiModelProperty(value = "line 行号", position=1)
     @Getter @Setter private Integer line;

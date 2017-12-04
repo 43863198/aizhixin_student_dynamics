@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-@ApiModel(description="成绩导入信息")
+@ApiModel(description="导入成绩数据")
 public class ScoreDomain extends StudentInfoDomain {
 	
 	

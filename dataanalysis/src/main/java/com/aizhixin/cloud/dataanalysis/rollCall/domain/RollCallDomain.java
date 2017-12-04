@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-@ApiModel(description="考勤导入信息")
+@ApiModel(description="导入考勤数据")
 public class RollCallDomain extends StudentInfoDomain {
 
     @ApiModelProperty(value = "scheduleId 排课ID", position=1)
