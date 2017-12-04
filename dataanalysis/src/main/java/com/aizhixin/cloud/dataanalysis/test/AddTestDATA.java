@@ -20,9 +20,6 @@ public class AddTestDATA {
     @Autowired
     private WarningTypeService warningTypeService;
 
-
-
-//    @Scheduled(cron = "0 0/3 * * * ?")
     public  void setWarningType(){
             Long orgId = 213L;
 		    List<WarningType> warningTypeList = new ArrayList<>();
