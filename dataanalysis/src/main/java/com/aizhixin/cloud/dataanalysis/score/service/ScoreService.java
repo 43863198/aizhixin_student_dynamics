@@ -40,7 +40,7 @@ public class ScoreService {
 	@Autowired
 	private ExcelBasedataHelper basedataHelper;
 
-	public void importData(MultipartFile dataBaseFile) {
+	public void importData(MultipartFile dataBaseFile, Long orgId) {
 		// 获取成绩
 		List<ScoreDomain> dataBases = basedataHelper.readStudentScoreFromInputStream(dataBaseFile);
 		if (null == dataBases || dataBases.size() <= 0) {
@@ -53,7 +53,7 @@ public class ScoreService {
 				Score score = new Score();
 				score.setUserId(d.getUserId());
 				score.setUserName(d.getUserName());
-				score.setOrgId(d.getOrgId());
+				score.setOrgId(orgId);
 				score.setClassId(d.getClassId());
 				score.setClassName(d.getClassName());
 				score.setCollegeId(d.getCollegeId());
@@ -95,7 +95,7 @@ public class ScoreService {
 		}
 	}
 
-	public void importData46(MultipartFile dataBaseFile) {
+	public void importData46(MultipartFile dataBaseFile, Long orgId) {
 		// 获取成绩
 		List<ScoreDomain> dataBases = basedataHelper.readStudentScoreFromInputStream(dataBaseFile);
 		if (null == dataBases || dataBases.size() <= 0) {
@@ -110,7 +110,7 @@ public class ScoreService {
 					Score score = new Score();
 					score.setUserId(d.getUserId());
 					score.setUserName(d.getUserName());
-					score.setOrgId(d.getOrgId());
+					score.setOrgId(orgId);
 					score.setClassId(d.getClassId());
 					score.setClassName(d.getClassName());
 					score.setCollegeId(d.getCollegeId());

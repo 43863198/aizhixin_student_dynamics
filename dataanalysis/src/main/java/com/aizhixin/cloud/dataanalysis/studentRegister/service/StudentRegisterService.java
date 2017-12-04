@@ -43,7 +43,7 @@ public class StudentRegisterService {
 	@Autowired
 	private ExcelBasedataHelper basedataHelper;
 
-	public void importData(MultipartFile studentInfoFile, MultipartFile dataBaseFile, Date registerDate) {
+	public void importData(MultipartFile studentInfoFile, MultipartFile dataBaseFile, Date registerDate, Long orgId) {
 		//获取学生信息
 		List<StudentInfoDomain> studentInfos = basedataHelper.readStudentInfoFromInputStream(studentInfoFile);
 		if (null == studentInfos || studentInfos.size() <= 0) {
@@ -74,7 +74,7 @@ public class StudentRegisterService {
 		    	try {
 		    		if (entry.getKey().equals(entry1.getKey())) {
 		    			StudentRegister studentRegister = new StudentRegister();
-		    			studentRegister.setOrgId(entry1.getValue().getOrgId());
+		    			studentRegister.setOrgId(orgId);
 		    			studentRegister.setJobNum(entry.getValue().getJobNum());
 		    			if (entry.getValue().getActualRegisterDate() != null) {
 		    				Integer date = Integer.valueOf(entry.getValue().getActualRegisterDate());

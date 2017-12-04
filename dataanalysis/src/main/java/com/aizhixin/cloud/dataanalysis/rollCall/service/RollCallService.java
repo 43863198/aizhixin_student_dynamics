@@ -38,7 +38,7 @@ public class RollCallService {
 	@Autowired
 	private ExcelBasedataHelper basedataHelper;
 
-	public void importData(MultipartFile dataBaseFile) {
+	public void importData(MultipartFile dataBaseFile, Long orgId) {
 		//获取考勤
 		List<RollCallDomain> dataBases = basedataHelper.readRollCallFromInputStream(dataBaseFile);
 		if (null == dataBases || dataBases.size() <= 0) {
@@ -49,7 +49,7 @@ public class RollCallService {
 		for (RollCallDomain d : dataBases) {
 			try {
 				RollCall rollCall = new RollCall();
-				rollCall.setOrgId(d.getOrgId());
+				rollCall.setOrgId(orgId);
 				rollCall.setUserId(d.getUserId());
 				rollCall.setUserName(d.getUserName());
 				rollCall.setClassId(d.getClassId());
