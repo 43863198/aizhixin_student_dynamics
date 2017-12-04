@@ -104,7 +104,7 @@ public class ScoreService {
 		List<Score> list = new ArrayList<>();
 		int i = 0;
 		for (ScoreDomain d : dataBases) {
-			if (!StringUtils.isEmpty(d.getTotalScore()) && Integer.valueOf(d.getTotalScore()) + 345 < 425
+			if (!StringUtils.isEmpty(d.getTotalScore()) && Double.valueOf(d.getTotalScore()) + 345.00 < 425.00
 					&& !"2017".equals(d.getGrade())) {
 				try {
 					Score score = new Score();
@@ -126,7 +126,7 @@ public class ScoreService {
 					score.setGradePoint(d.getGradePoint());
 					score.setGrade(d.getGrade());
 					score.setSchoolYear(d.getSchoolYear());
-					score.setTotalScore(String.valueOf(Integer.valueOf(d.getTotalScore()) + 345));
+					score.setTotalScore(String.valueOf(Double.valueOf(d.getTotalScore()) + 345.00));
 					score.setUserPhone(d.getUserPhone());
 					score.setExamType(ScoreConstant.EXAM_TYPE_CET4);
 					if (d.getExamTime() != null) {
