@@ -408,7 +408,13 @@ public class AlertWarningInformationService {
 		Map<String,Object> result = new HashMap<>();
 		List<CollegeStatisticProportionDTO> cspDTOList = new ArrayList<>();
 		Map<String, Object> condition = new HashMap<>();
-		StringBuilder cql = new StringBuilder("SELECT COUNT(1) as count FROM t_warning_information WHERE 1 = 1");
+		Map<String, Object> data = new HashMap<>();
+		int sum = 0;
+		int sum1 = 0;
+		int sum2 = 0;
+		int sum3 = 0;
+		int alreadyProcessed = 0;
+		StringBuilder cql = new StringBuilder("SELECT COUNT(1) as count, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, SUM(IF(WARNING_STATE = 20, 1, 0)) as sum4 FROM t_warning_information WHERE 1 = 1");
 		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3 FROM t_warning_information WHERE 1 = 1");
 		if(null!=orgId){
 			cql.append(" and ORG_ID = :orgId");
@@ -423,7 +429,30 @@ public class AlertWarningInformationService {
 				cq.setParameter(e.getKey(), e.getValue());
 				sq.setParameter(e.getKey(), e.getValue());
 			}
-			Long count = Long.valueOf(String.valueOf(cq.getSingleResult()));
+			Object[] cd = (Object[]) cq.getSingleResult();
+			if (null != cd && cd.length == 5) {
+				if(null!=cd[0]) {
+					sum = Integer.valueOf(String.valueOf(cd[0]));
+				}
+				if(null!=cd[1]) {
+					sum1 = Integer.valueOf(String.valueOf(cd[1]));
+				}
+				if(null!=cd[2]) {
+					sum2 = Integer.valueOf(String.valueOf(cd[2]));
+				}
+				if(null!=cd[3]) {
+					sum3 = Integer.valueOf(String.valueOf(cd[3]));
+				}
+				if(null!=cd[4]) {
+					alreadyProcessed = Integer.valueOf(String.valueOf(cd[4]));
+				}
+			}
+			data.put("total", sum);
+			data.put("alreadyProcessed", alreadyProcessed);
+			data.put("proportion",accuracy(alreadyProcessed * 1.0, sum * 1.0, 2));
+			data.put("proportion1",accuracy(sum1 * 1.0, sum * 1.0, 2));
+			data.put("proportion2", accuracy(sum2 * 1.0, sum * 1.0, 2));
+			data.put("proportion3", accuracy(sum3 * 1.0, sum * 1.0, 2));
 			List<Object> res = sq.getResultList();
 			if(null!=res&&res.size()>0){
 				for(Object obj : res){
@@ -434,15 +463,15 @@ public class AlertWarningInformationService {
 					}
 					if(null!=d[1]){
 						cspDTO.setSum1(Integer.valueOf(String.valueOf(d[1])));
-						cspDTO.setProportion1(accuracy(Double.valueOf(String.valueOf(d[1])), count * 1.0, 2));
+						cspDTO.setProportion1(accuracy(Double.valueOf(String.valueOf(d[1])), sum * 1.0, 2));
 					}
 					if(null!=d[2]){
 						cspDTO.setSum2(Integer.valueOf(String.valueOf(d[2])));
-						cspDTO.setProportion2(accuracy(Double.valueOf(String.valueOf(d[2])), count * 1.0, 2));
+						cspDTO.setProportion2(accuracy(Double.valueOf(String.valueOf(d[2])), sum * 1.0, 2));
 					}
 					if(null!=d[3]){
 						cspDTO.setSum3(Integer.valueOf(String.valueOf(d[3])));
-						cspDTO.setProportion3(accuracy(Double.valueOf(String.valueOf(d[3])), count * 1.0, 2));
+						cspDTO.setProportion3(accuracy(Double.valueOf(String.valueOf(d[3])), sum * 1.0, 2));
 					}
                     cspDTOList.add(cspDTO);
 				}
@@ -454,7 +483,8 @@ public class AlertWarningInformationService {
 			return result;
 		}
 		result.put("success", true);
-		result.put("data", cspDTOList);
+		result.put("cspDTOList", cspDTOList);
+		result.put("data", data);
 		return result;
 	}
 
@@ -494,7 +524,6 @@ public class AlertWarningInformationService {
 				warningDetailsDTO.setWarningLevel(alertWarningInformation.getWarningLevel());
 				res.add(warningDetailsDTO);
 			}
-			data.put("latestinformation", res);
 		}catch (Exception e){
 			result.put("success",false);
 			result.put("message","获取最新预警学生异常！");
