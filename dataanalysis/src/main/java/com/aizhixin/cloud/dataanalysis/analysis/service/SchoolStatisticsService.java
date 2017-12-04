@@ -164,7 +164,7 @@ public class SchoolStatisticsService {
                             Object[] d = (Object[]) obj;
                             TrendDTO trendDTO = new TrendDTO();
                             if (null != d[0]) {
-                                trendDTO.setYaer(String.valueOf(d[0]));
+                                trendDTO.setYear(String.valueOf(d[0]));
                             }
                             if (null != d[1]) {
                                 trendDTO.setValue(String.valueOf(d[1]));
@@ -193,7 +193,7 @@ public class SchoolStatisticsService {
                             Object[] d = (Object[]) obj;
                             TrendDTO trendDTO = new TrendDTO();
                             if (null != d[0]) {
-                                trendDTO.setYaer(String.valueOf(d[0]));
+                                trendDTO.setYear(String.valueOf(d[0]));
                             }
                             if (null != d[1] && null != d[2]) {
                                 trendDTO.setValue((Integer.valueOf(String.valueOf(d[1])) - Integer.valueOf(String.valueOf(d[2]))) + "");
@@ -222,7 +222,7 @@ public class SchoolStatisticsService {
                             Object[] d = (Object[]) obj;
                             TrendDTO trendDTO = new TrendDTO();
                             if (null != d[0]) {
-                                trendDTO.setYaer(String.valueOf(d[0]));
+                                trendDTO.setYear(String.valueOf(d[0]));
                             }
                             if (null != d[1] && null != d[2]) {
                                 trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])),2));
@@ -251,7 +251,7 @@ public class SchoolStatisticsService {
                             Object[] d = (Object[]) obj;
                             TrendDTO trendDTO = new TrendDTO();
                             if (null != d[0]) {
-                                trendDTO.setYaer(String.valueOf(d[0]));
+                                trendDTO.setYear(String.valueOf(d[0]));
                             }
                             if (null != d[1] && null != d[2]) {
                                 trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])),2));
@@ -280,7 +280,7 @@ public class SchoolStatisticsService {
                             Object[] d = (Object[]) obj;
                             TrendDTO trendDTO = new TrendDTO();
                             if (null != d[0]) {
-                                trendDTO.setYaer(String.valueOf(d[0]));
+                                trendDTO.setYear(String.valueOf(d[0]));
                             }
                             if (null != d[1] && null != d[2]) {
                                 trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])),2));

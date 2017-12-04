@@ -13,7 +13,7 @@ import lombok.Data;
 @Data
 public class TrendDTO {
     @ApiModelProperty(value = "年", required = false)
-    private String yaer;
+    private String year;
     @ApiModelProperty(value = "占比", required = false)
     private String value;
 }
