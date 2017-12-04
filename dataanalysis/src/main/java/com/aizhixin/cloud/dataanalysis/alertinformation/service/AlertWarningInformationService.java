@@ -731,6 +731,7 @@ public class AlertWarningInformationService {
 						dealDomain.setDealType(or.getDealType());
 						dealDomain.setDealId(or.getId());
 						dealDomain.setDealInfo(or.getProposal());
+						dealDomain.setWarningInformationId(or.getWarningInformationId());
 						List<AttachmentDomain> attachmentDomainList = new ArrayList<>();
 						List<AttachmentInformation> attachmentInformationList = attachmentInfomationService.getAttachmentInformationByOprId(or.getId());
 					    if(null!=attachmentInformationList&&attachmentInformationList.size()>0){

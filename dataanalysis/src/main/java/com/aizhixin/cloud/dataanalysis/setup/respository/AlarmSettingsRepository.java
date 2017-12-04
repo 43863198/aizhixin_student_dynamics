@@ -27,4 +27,9 @@ public interface AlarmSettingsRepository extends JpaRepository<AlarmSettings, St
     @Query("select ast from #{#entityName} ast where ast.deleteFlag = :deleteFlag and ast.warningType = :type and ast.orgId = :orgId and ast.setupCloseFlag = :setupCloseFlag")
     List<AlarmSettings> getAlarmSettingsByOrgIdAndTypeAndOpen(@Param("orgId")Long orgId, @Param("type")String type, @Param("setupCloseFlag")int setupCloseFlag,  @Param("deleteFlag")int deleteFlag);
 
+    @Query("select ast from #{#entityName} ast where ast.deleteFlag = :deleteFlag and ast.warningType = :type and ast.orgId = :orgId and ast.setupCloseFlag = :setupCloseFlag group by ast.warningLevel")
+    List<AlarmSettings> getCountByOrgIdAndTypeAndOpen(@Param("orgId")Long orgId, @Param("type")String type, @Param("setupCloseFlag")int setupCloseFlag,  @Param("deleteFlag")int deleteFlag);
+
+
+
 }

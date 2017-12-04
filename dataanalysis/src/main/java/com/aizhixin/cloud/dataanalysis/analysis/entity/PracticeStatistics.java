@@ -65,8 +65,8 @@ public class PracticeStatistics extends AbstractEntity {
     @Getter @Setter private Long semesterId;
 
     /*
-* 实践人数
-*/
+     * 实践人数
+     */
     @Column(name = "PRACTICE_STUDENT_NUM")
     @Getter @Setter private Long practiceStudentNum;
     /*
@@ -75,8 +75,8 @@ public class PracticeStatistics extends AbstractEntity {
     @Column(name = "PRACTICE_COMPANY_NUM")
     @Getter @Setter private Long practiceCompanyNum;
     /*
-* 实践任务数
-*/
+     * 实践任务数
+     */
     @Column(name = "TASK_NUM")
     @Getter @Setter private Long taskNum;
     /*
@@ -85,8 +85,8 @@ public class PracticeStatistics extends AbstractEntity {
     @Column(name = "TASK_PASS_NUM")
     @Getter @Setter private Long taskPassNum;
     /*
-* 数据状态
-*/
+     * 数据状态
+     */
     @Column(name = "STATE")
     @Getter @Setter private int state;
     /*
