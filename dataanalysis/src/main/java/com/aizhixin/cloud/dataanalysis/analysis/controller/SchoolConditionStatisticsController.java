@@ -138,7 +138,16 @@ public class SchoolConditionStatisticsController {
         return studentRegisterService.getCollegeDetails(PageUtil.createNoErrorPageRequest(pageNumber, pageSize),orgId,colloegeId,type,isReport,isPay);
     }
 
-
+    /**
+     * 首页教学成绩统计信息
+     * @param orgId
+     * @return
+     */
+    @GetMapping(value = "/getTeachingSoreStatics", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "首页教学成绩信息", response = Void.class, notes = "首页教学成绩统计信息<br><br><b>@author 王俊</b>")
+    public Map<String,Object> getTeachingSoreStatics(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
+        return schoolStatisticsService.getTeachingSoreStatics(orgId);
+    }
 
 
 }
