@@ -1,6 +1,7 @@
 package com.aizhixin.cloud.dataanalysis.common.excelutil;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.aizhixin.cloud.dataanalysis.analysis.domain.PracticeDomain;
 import com.aizhixin.cloud.dataanalysis.rollCall.domain.RollCallDomain;
 import com.aizhixin.cloud.dataanalysis.score.domain.ScoreDomain;
 import com.aizhixin.cloud.dataanalysis.studentRegister.domain.StudentInfoDomain;
@@ -250,6 +252,59 @@ public class ExcelBasedataHelper {
 							rollCallResult));
 				} catch (Exception e) {
 					RollCallDomain d = new RollCallDomain();
+					d.setLine(line);
+					d.setJobNum(jobNum);
+					list.add(d);
+					LOG.info("错误信息行号：" + line + ",  学号：" + jobNum);
+				}
+				line++;
+			}
+		}
+		return list;
+	}
+	
+	public List<PracticeDomain> readPracticeFromInputStream(MultipartFile file) {
+		List<PracticeDomain> list = new ArrayList<>();
+		ExcelUtil util = new ExcelUtil(file);
+		Sheet sheet = util.getSheet("new");
+		if (null == sheet) {// 如果没有此sheet页标签，读取第1个标签的内容
+			sheet = util.getSheet(0);
+		}
+		if (null != sheet) {
+			Iterator<Row> rows = sheet.rowIterator();
+			int line = 1;
+			String jobNum = null;
+			while (rows.hasNext()) {
+				Row row = rows.next();
+				if (1 == line) {
+					line++;
+					continue;// 跳过第一行
+				}
+				try {
+					setCellStringType(row, 15);// 一行共有15个列值
+					Long orgId = Long.valueOf(getCellStringValue(row, 0));
+					Long userId = Long.valueOf(getCellStringValue(row, 1));
+					jobNum = getCellStringValue(row, 2);
+					String userName = getCellStringValue(row, 3);
+					String userPhone = getCellStringValue(row, 4);
+					Long classId = Long.valueOf(getCellStringValue(row, 5));
+					String className = getCellStringValue(row, 6);
+					Long professionalId = Long.valueOf(getCellStringValue(row, 7));
+					String professionalName = getCellStringValue(row, 8);
+					Long collegeId = Long.valueOf(getCellStringValue(row, 9));
+					String collegeName = getCellStringValue(row, 10);
+					String companyName = getCellStringValue(row, 11);
+					String companyProvince = getCellStringValue(row, 12);
+					String companyCity = getCellStringValue(row, 13);
+					String reviewResult = getCellStringValue(row, 14);
+					Date taskCreatedDate = row.getCell(15).getDateCellValue();
+					Integer schoolYear = 2016;
+					String grade = "2016";
+					list.add(new PracticeDomain(line, orgId, jobNum, userId, userName, classId, className, professionalId, 
+							professionalName, collegeId, collegeName, userPhone, /*semester,*/ schoolYear, companyName,
+							companyProvince, companyCity, reviewResult, taskCreatedDate, grade));
+				} catch (Exception e) {
+					PracticeDomain d = new PracticeDomain();
 					d.setLine(line);
 					d.setJobNum(jobNum);
 					list.add(d);

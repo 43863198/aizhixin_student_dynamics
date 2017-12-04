@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.aizhixin.cloud.dataanalysis.analysis.service.PracticeService;
 import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.StudentRegisterConstant;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
@@ -65,6 +66,8 @@ public class TestDataController {
 	private ScoreService scoreService;
 	@Autowired
 	private RollCallService rollCallService;
+	@Autowired
+	private PracticeService practiceService;
 
 
 	@RequestMapping(value = "/addRegisterdata", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -276,32 +279,45 @@ public class TestDataController {
 	public ResponseEntity<Void> importStudent(
 			@ApiParam(value = "studentInfoFile 学生信息文件", required = true) @RequestParam(value = "studentInfoFile") MultipartFile studentInfoFile,
 			@ApiParam(value = "dataBaseFile 基础数据文件", required = true) @RequestParam(value = "dataBaseFile") MultipartFile dataBaseFile,
-			@DateTimeFormat(pattern = "yyyy-MM-dd") @ApiParam(value = "registerDate 报到日期,<br/>时间格式：yyyy-MM-dd") @RequestParam(value = "registerDate", required = false) Date registerDate) {
-			registerService.importData(studentInfoFile, dataBaseFile, registerDate);
+			@DateTimeFormat(pattern = "yyyy-MM-dd") @ApiParam(value = "registerDate 报到日期,传参时日期天数加1,<br/>时间格式：yyyy-MM-dd") @RequestParam(value = "registerDate", required = false) Date registerDate,
+			@ApiParam(value = "orgId 学校ID", required = true) @RequestParam(value = "orgId") Long orgId) {
+			registerService.importData(studentInfoFile, dataBaseFile, registerDate, orgId);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/importScore", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "POST", value = "批量导入成绩", response = Void.class, notes = "批量导入成绩<br><br><b>@author bly</b>")
 	public ResponseEntity<Void> importScore(
-			@ApiParam(value = "scoreFile 成绩文件", required = true) @RequestParam(value = "scoreFile") MultipartFile scoreFile) {
-		scoreService.importData(scoreFile);
+			@ApiParam(value = "scoreFile 成绩文件", required = true) @RequestParam(value = "scoreFile") MultipartFile scoreFile,
+			@ApiParam(value = "orgId 学校ID", required = true) @RequestParam(value = "orgId") Long orgId) {
+		scoreService.importData(scoreFile, orgId);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/importRollCall", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "POST", value = "批量导入考勤", response = Void.class, notes = "批量导入考勤<br><br><b>@author bly</b>")
 	public ResponseEntity<Void> importRollCall(
-			@ApiParam(value = "dataBaseFile 考勤文件", required = true) @RequestParam(value = "dataBaseFile") MultipartFile dataBaseFile) {
-		rollCallService.importData(dataBaseFile);
+			@ApiParam(value = "dataBaseFile 考勤文件", required = true) @RequestParam(value = "dataBaseFile") MultipartFile dataBaseFile,
+			@ApiParam(value = "orgId 学校ID", required = true) @RequestParam(value = "orgId") Long orgId) {
+		rollCallService.importData(dataBaseFile, orgId);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/importScore46", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "POST", value = "批量导入为英语4级的成绩", response = Void.class, notes = "批量导入成绩<br><br><b>@author bly</b>")
 	public ResponseEntity<Void> importScore46(
-			@ApiParam(value = "scoreFile 成绩文件", required = true) @RequestParam(value = "scoreFile") MultipartFile scoreFile) {
-		scoreService.importData46(scoreFile);
+			@ApiParam(value = "scoreFile 成绩文件", required = true) @RequestParam(value = "scoreFile") MultipartFile scoreFile,
+			@ApiParam(value = "orgId 学校ID", required = true) @RequestParam(value = "orgId") Long orgId) {
+		scoreService.importData46(scoreFile, orgId);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/importPractice", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "POST", value = "批量导入实践信息", response = Void.class, notes = "批量导入实践信息<br><br><b>@author bly</b>")
+	public ResponseEntity<Void> importPractice(
+			@ApiParam(value = "practiceFile 实践数据", required = true) @RequestParam(value = "practiceFile") MultipartFile practiceFile,
+			@ApiParam(value = "orgId 学校ID", required = true) @RequestParam(value = "orgId") Long orgId) {
+		practiceService.importData(practiceFile, orgId);;
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }
