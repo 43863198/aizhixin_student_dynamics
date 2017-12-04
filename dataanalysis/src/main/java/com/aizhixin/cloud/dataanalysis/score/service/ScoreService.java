@@ -149,9 +149,9 @@ public class ScoreService {
 					list.clear();
 				}
 			}
-			if (!list.isEmpty()) {
-				respository.save(list);
-			}
+		}
+		if (!list.isEmpty()) {
+			respository.save(list);
 		}
 	}
 
