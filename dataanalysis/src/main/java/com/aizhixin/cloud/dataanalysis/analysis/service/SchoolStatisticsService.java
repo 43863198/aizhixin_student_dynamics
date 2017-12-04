@@ -6,6 +6,7 @@ import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.CetScoreStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.PracticeStaticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.SchoolStatisticsRespository;
+import com.aizhixin.cloud.dataanalysis.analysis.respository.TeachingScoreStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
@@ -37,6 +38,9 @@ public class SchoolStatisticsService {
     private PracticeStaticsRespository practiceStaticsRespository;
     @Autowired
     private CetScoreStatisticsRespository cetScoreStatisticsRespository;
+    @Autowired
+    private TeachingScoreStatisticsRespository teachingScoreStatisticsRespository;
+
     public Map<String, Object> getStatisticNewstudents(Long orgId, String year, Pageable pageable) {
         Map<String, Object> result = new HashMap<>();
         NewStudentProfileDTO newStudentProfileDTO = new NewStudentProfileDTO();
@@ -54,7 +58,7 @@ public class SchoolStatisticsService {
                 sql.append(" and ss.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
-            if(!StringUtils.isEmpty(year)){
+            if (!StringUtils.isEmpty(year)) {
                 sql.append(" and ss.TEACHER_YEAR = :teacherYear");
                 condition.put("teacherYear", year);
             }
@@ -80,7 +84,7 @@ public class SchoolStatisticsService {
                 if (null != d[4]) {
                     convenienceChannel = Integer.valueOf(String.valueOf(d[4]));
                 }
-                if(null!=d[5]){
+                if (null != d[5]) {
                     time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(String.valueOf(d[5]));
                 }
             }
@@ -104,60 +108,63 @@ public class SchoolStatisticsService {
             result.put("message", "获取学校新生统计信息异常！");
         }
         result.put("success", true);
-        result.put("data",newStudentProfileDTO);
+        result.put("data", newStudentProfileDTO);
         return result;
     }
 
     public Map<String, Object> getTrendType() {
         Map<String, Object> result = new HashMap<>();
         List<TrendTypeDTO> trendTypeDTOList = new ArrayList<>();
-        try{
-            for(TrendType type : TrendType.values()) {
+        try {
+            for (TrendType type : TrendType.values()) {
                 TrendTypeDTO trendTypeDTO = new TrendTypeDTO();
                 trendTypeDTO.setIndex(type.getIndex());
                 trendTypeDTO.setTyep(type.toString());
                 trendTypeDTO.setTypeName(type.getName());
                 trendTypeDTOList.add(trendTypeDTO);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
-            result.put("message","获取指标类型失败！");
+            result.put("message", "获取指标类型失败！");
             return result;
         }
-        result.put("success",true);
-        result.put("data",trendTypeDTOList);
+        result.put("success", true);
+        result.put("data", trendTypeDTOList);
         return result;
     }
 
     /**
      * 全校人数统计查询
+     *
      * @param orgId
      * @return
      */
     public SchoolProfileDTO getSchoolPersonStatistics(Long orgId) {
-        PracticeStaticsDTO practiceStaticsDTO=practiceStaticsRespository.getPracticeStatics(orgId);
-        SchoolProfileDTO schoolProfileDTO=schoolStatisticsRespository.getSchoolPersonStatistics(orgId);
+        PracticeStaticsDTO practiceStaticsDTO = practiceStaticsRespository.getPracticeStatics(orgId);
+        SchoolProfileDTO schoolProfileDTO = schoolStatisticsRespository.getSchoolPersonStatistics(orgId);
         schoolProfileDTO.setOutSchoolStudent(practiceStaticsDTO.getPracticeStudentNum());
-        schoolProfileDTO.setInSchoolStudent(schoolProfileDTO.getAllStudent()-schoolProfileDTO.getOutSchoolStudent());
+        schoolProfileDTO.setInSchoolStudent(schoolProfileDTO.getAllStudent() - schoolProfileDTO.getOutSchoolStudent());
         return schoolProfileDTO;
     }
 
     /**
      * 迎新学情统计查询
+     *
      * @param orgId
      * @return
      */
-    public NewStudentProfileDTO getNewStudentStatistics(Long orgId){
+    public NewStudentProfileDTO getNewStudentStatistics(Long orgId) {
         return schoolStatisticsRespository.getNewStudentStatistics(orgId);
     }
+
     public Map<String, Object> getTrend(Long orgId, Long colloegeId, int typeIndex) {
         Map<String, Object> result = new HashMap<>();
         List<TrendDTO> trendDTOList = new ArrayList<>();
         Map<String, Object> condition = new HashMap<>();
         try {
             String trend = TrendType.getType(typeIndex);
-            if(null!=trend) {
+            if (null != trend) {
                 if (trend.equals("NEW_STUDENTS_COUNT") || trend.equals("ALREADY_REPORT") || trend.equals("ALREADY_PAY") || trend.equals("CONVENIENCE_CHANNEL")) {
                     StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR, SUM(" + trend + ") FROM T_SCHOOL_STATISTICS  WHERE 1 = 1");
                     if (null != orgId) {
@@ -240,7 +247,7 @@ public class SchoolStatisticsService {
                                 trendDTO.setYear(String.valueOf(d[0]));
                             }
                             if (null != d[1] && null != d[2]) {
-                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])),2));
+                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2));
                             }
                             trendDTOList.add(trendDTO);
                         }
@@ -269,7 +276,7 @@ public class SchoolStatisticsService {
                                 trendDTO.setYear(String.valueOf(d[0]));
                             }
                             if (null != d[1] && null != d[2]) {
-                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])),2));
+                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2));
                             }
                             trendDTOList.add(trendDTO);
                         }
@@ -298,7 +305,7 @@ public class SchoolStatisticsService {
                                 trendDTO.setYear(String.valueOf(d[0]));
                             }
                             if (null != d[1] && null != d[2]) {
-                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])),2));
+                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2));
                             }
                             trendDTOList.add(trendDTO);
                         }
@@ -307,29 +314,46 @@ public class SchoolStatisticsService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            result.put("success",false);
-            result.put("message","获取分析数据异常！");
+            result.put("success", false);
+            result.put("message", "获取分析数据异常！");
             return result;
         }
-        result.put("success",true);
-        result.put("data",trendDTOList);
+        result.put("success", true);
+        result.put("data", trendDTOList);
         return result;
     }
 
     /**
      * 实践学情首页统计查询
+     *
      * @param orgId
      * @return
      */
-    public PracticeStaticsDTO getPracticeStatics(Long orgId){
+    public PracticeStaticsDTO getPracticeStatics(Long orgId) {
         return practiceStaticsRespository.getPracticeStatics(orgId);
     }
+
     /**
      * 四六级学情首页统计查询
+     *
      * @param orgId
      * @return
      */
-   public CetScoreStatisticsDTO getEctStatics(Long orgId){
-       return cetScoreStatisticsRespository.getEctStatics(orgId);
-   }
+    public CetScoreStatisticsDTO getEctStatics(Long orgId) {
+        return cetScoreStatisticsRespository.getEctStatics(orgId);
+    }
+    /**
+     * 教学成绩首页统计查询
+     *
+     * @param orgId
+     * @return
+     */
+    public Map<String,Object> getTeachingSoreStatics(Long orgId){
+        Map<String,Object> map=new HashMap<String, Object>();
+        TeachingScoreStatisticsDTO obj=teachingScoreStatisticsRespository.getAvgTeachingScore(orgId);
+        List<TeachingScoreStatisticsDTO> list=teachingScoreStatisticsRespository.getTeachingScoreStatisticsByOrgId(orgId);
+        map.put("courseAndAvgScore",obj);
+        map.put("collegeAndAvgScore",list);
+        return map;
+    }
 }
