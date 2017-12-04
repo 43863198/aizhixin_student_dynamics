@@ -9,10 +9,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.domain.*;
-import com.aizhixin.cloud.dataanalysis.alertinformation.dto.CollegeStatisticsDTO;
-import com.aizhixin.cloud.dataanalysis.alertinformation.dto.CollegeWarningInfoDTO;
-import com.aizhixin.cloud.dataanalysis.alertinformation.dto.TypeStatisticsDTO;
-import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningDetailsDTO;
+import com.aizhixin.cloud.dataanalysis.alertinformation.dto.*;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AttachmentInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.OperationRecord;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
@@ -409,47 +406,47 @@ public class AlertWarningInformationService {
 	
 	public Map<String,Object> getStatisticalGrade(Long orgId) {
 		Map<String,Object> result = new HashMap<>();
-		Map<String, Object> data = new HashMap<>();
+		List<CollegeStatisticProportionDTO> cspDTOList = new ArrayList<>();
 		Map<String, Object> condition = new HashMap<>();
-		int sum = 0;
-		int sum1 = 0;
-		int sum2 = 0;
-		int sum3 = 0;
-		int alreadyProcessed = 0;
-		StringBuilder sql = new StringBuilder("SELECT COUNT(1) as count, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, SUM(IF(WARNING_STATE = 20, 1, 0)) as sum4 FROM t_warning_information WHERE 1 = 1");
+		StringBuilder cql = new StringBuilder("SELECT COUNT(1) as count FROM t_warning_information WHERE 1 = 1");
+		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3 FROM t_warning_information WHERE 1 = 1");
 		if(null!=orgId){
+			cql.append(" and ORG_ID = :orgId");
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId",orgId);
 		}
+		sql.append(" GROUP BY COLLOGE_ID");
 		try {
+			Query cq = em.createNativeQuery(cql.toString());
 			Query sq = em.createNativeQuery(sql.toString());
 			for (Map.Entry<String, Object> e : condition.entrySet()) {
+				cq.setParameter(e.getKey(), e.getValue());
 				sq.setParameter(e.getKey(), e.getValue());
 			}
-			Object[] d = (Object[]) sq.getSingleResult();
-			if (null != d && d.length == 5) {
-				if(null!=d[0]) {
-					sum = Integer.valueOf(String.valueOf(d[0]));
-				}
-				if(null!=d[1]) {
-					sum1 = Integer.valueOf(String.valueOf(d[1]));
-				}
-				if(null!=d[2]) {
-					sum2 = Integer.valueOf(String.valueOf(d[2]));
-				}
-				if(null!=d[3]) {
-					sum3 = Integer.valueOf(String.valueOf(d[3]));
-				}
-				if(null!=d[4]) {
-					alreadyProcessed = Integer.valueOf(String.valueOf(d[4]));
+			Long count = Long.valueOf(String.valueOf(cq.getSingleResult()));
+			List<Object> res = sq.getResultList();
+			if(null!=res&&res.size()>0){
+				for(Object obj : res){
+					Object[] d = (Object[])obj;
+					CollegeStatisticProportionDTO cspDTO = new CollegeStatisticProportionDTO();
+					if(null!=d[0]){
+						cspDTO.setCollegeName(String.valueOf(d[0]));
+					}
+					if(null!=d[1]){
+						cspDTO.setSum1(Integer.valueOf(String.valueOf(d[1])));
+						cspDTO.setProportion1(accuracy(Double.valueOf(String.valueOf(d[1])), count * 1.0, 2));
+					}
+					if(null!=d[2]){
+						cspDTO.setSum2(Integer.valueOf(String.valueOf(d[2])));
+						cspDTO.setProportion2(accuracy(Double.valueOf(String.valueOf(d[2])), count * 1.0, 2));
+					}
+					if(null!=d[3]){
+						cspDTO.setSum3(Integer.valueOf(String.valueOf(d[3])));
+						cspDTO.setProportion3(accuracy(Double.valueOf(String.valueOf(d[3])), count * 1.0, 2));
+					}
+                    cspDTOList.add(cspDTO);
 				}
 			}
-			data.put("total", sum);
-			data.put("alreadyProcessed", alreadyProcessed);
-			data.put("proportion",accuracy(alreadyProcessed * 1.0, sum * 1.0, 2));
-			data.put("proportion1",accuracy(sum1 * 1.0, sum * 1.0, 2));
-			data.put("proportion2", accuracy(sum2 * 1.0, sum * 1.0, 2));
-			data.put("proportion3", accuracy(sum3 * 1.0, sum * 1.0, 2));
 		}catch (Exception e){
 			e.printStackTrace();
 			result.put("success", false);
@@ -457,7 +454,7 @@ public class AlertWarningInformationService {
 			return result;
 		}
 		result.put("success", true);
-		result.put("data", data);
+		result.put("data", cspDTOList);
 		return result;
 	}
 
@@ -624,7 +621,7 @@ public class AlertWarningInformationService {
 		}
 		result.put("success", true);
 		result.put("data", typeStatisticsDTOList);
-			return result;
+		return result;
 		}
 
 	public Map<String,Object> getStatisticalCollegeType(Long orgId, String type) {
