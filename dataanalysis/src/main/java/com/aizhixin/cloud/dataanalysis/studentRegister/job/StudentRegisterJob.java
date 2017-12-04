@@ -249,7 +249,7 @@ public class StudentRegisterJob {
 		}
 	}
 
-	// @Scheduled(cron = "0 0/10 * * * ?")
+//	 @Scheduled(cron = "0 0/3 * * * ?")
 	public void studenteRegister() {
 		this.setAlertWarningInformation(213L);
 	}

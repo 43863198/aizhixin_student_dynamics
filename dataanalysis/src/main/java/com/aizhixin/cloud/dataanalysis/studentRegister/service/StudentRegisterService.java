@@ -1,18 +1,17 @@
 package com.aizhixin.cloud.dataanalysis.studentRegister.service;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
+import com.aizhixin.cloud.dataanalysis.common.PageData;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,11 +37,13 @@ public class StudentRegisterService {
 
 	@Autowired
 	private StudentRegisterMongoRespository respository;
-	
+	@Autowired
+	private MongoTemplate mongoTemplate;
+
 	@Autowired
 	private ExcelBasedataHelper basedataHelper;
 
-	public void importData(MultipartFile studentInfoFile,MultipartFile dataBaseFile, Date registerDate) {
+	public void importData(MultipartFile studentInfoFile, MultipartFile dataBaseFile, Date registerDate) {
 		//获取学生信息
 		List<StudentInfoDomain> studentInfos = basedataHelper.readStudentInfoFromInputStream(studentInfoFile);
 		if (null == studentInfos || studentInfos.size() <= 0) {
@@ -59,13 +60,14 @@ public class StudentRegisterService {
 			maps.put(data.getJobNum(), data);
 		}
 		//学生信息存map
-		Map<String, StudentInfoDomain> maps1= new HashMap<>();
+		Map<String, StudentInfoDomain> maps1 = new HashMap<>();
 		for (StudentInfoDomain data : studentInfos) {
 			maps1.put(data.getJobNum(), data);
 		}
 		List<StudentRegister> stuRegisterList = new ArrayList<>();
 		//学生数据key value
 		int i = 0;
+
 		for (Entry<String, StudentRegisterDomain> entry : maps.entrySet()) {  
 		    //学生信息key value
 		    for (Entry<String, StudentInfoDomain> entry1 : maps1.entrySet()) {
@@ -105,15 +107,81 @@ public class StudentRegisterService {
 					LOG.info("错误信息行号：" + entry1.getValue().getLine() + ",  学号：" + entry1.getValue().getJobNum());
 					e.printStackTrace();
 				}
-		    }
-		    i++;
+			}
+			i++;
 			if (0 == i % 1000) {
 				respository.save(stuRegisterList);
 				stuRegisterList.clear();
 			}
-		} 
+		}
 		if (!stuRegisterList.isEmpty()) {
 			respository.save(stuRegisterList);
 		}
 	}
+
+
+	public Map<String, Object> getCollegeDetails(Pageable page,Long orgId, String collegeId, String type,String isReport,String isPay) {
+		Map<String, Object> result = new HashMap<>();
+		PageData<StudentRegister> p = new PageData<>();
+		List<StudentRegister> items = new ArrayList<>();
+		long total = 0L;
+		try {
+			//创建排序模板Sort
+			Sort sort = new Sort(Sort.Direction.DESC, "id");
+			//创建分页模板Pageable
+			Pageable pageable = new PageRequest(page.getPageNumber(), page.getPageSize(), sort);
+			//创建查询条件对象
+			Query query = new Query();
+			//条件
+			Criteria criteria = Criteria.where("orgId").is(orgId);
+			if (null != collegeId) {
+				String[] cid = collegeId.split(",");
+				Set<Long> collegeIds = new HashSet<>();
+				for (String d : cid) {
+					collegeIds.add(Long.valueOf(d));
+				}
+				criteria.and("collegeId").in(collegeId);
+			}
+			if (null != type) {
+				String[] td = type.split(",");
+				List tds = new ArrayList<>();
+				for (String d : td) {
+					tds.add(Integer.valueOf(d));
+				}
+				criteria.and("education").in(tds);
+			}
+			if (null != isReport) {
+				criteria.and("isRegister").is(Integer.valueOf(isReport));
+			}
+			if (null != isPay) {
+				String[] td = type.split(",");
+				for (String d : td) {
+					if (d.equals("1")) {
+						criteria.and("isPay").is(1);
+					}
+					if (d.equals("2")) {
+						criteria.and("isGreenChannel").is(1);
+					}
+				}
+
+			}
+			query.addCriteria(criteria);
+			//mongoTemplate.count计算总数
+			 total = mongoTemplate.count(query, StudentRegister.class);
+			// mongoTemplate.find 查询结果集
+			items = mongoTemplate.find(query.with(pageable), StudentRegister.class);
+		}catch (Exception e){
+			result.put("success", false);
+			result.put("message","获取数据异常！");
+		}
+        p.getPage().setPageNumber(page.getPageNumber());
+		p.getPage().setPageSize(page.getPageSize());
+		p.getPage().setTotalElements(total);
+		p.setData(items);
+		result.put("success", true);
+		result.put("data", p);
+		return result;
+	}
+
+
 }

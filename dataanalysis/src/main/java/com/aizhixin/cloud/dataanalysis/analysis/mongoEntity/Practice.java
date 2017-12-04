@@ -1,17 +1,16 @@
-package com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity;
+package com.aizhixin.cloud.dataanalysis.analysis.mongoEntity;
 
 import java.util.Date;
 
-import org.hibernate.annotations.Entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
 
-@Document(collection="StudentRegister")
+@Document(collection="Practice")
 @Data
-public class StudentRegister {
+public class Practice {
 
 	@Id
 	private String id;
@@ -26,6 +25,7 @@ public class StudentRegister {
 	/**
 	 * 工号/学号
 	 */
+	@Indexed
 	private String jobNum;
 	
 	/**
@@ -83,42 +83,46 @@ public class StudentRegister {
 	private String grade;
 	
 	/**
-	 * 学年学期
+	 * 学期
 	 */
+	@Indexed
+	private int semester;
+	
+	/**
+	 * 学年
+	 */
+	@Indexed
 	private int schoolYear;
 	
 	/**
-	 * 是否报到 1--已报到，0--未报到
+	 * 实践企业名称
 	 */
-	@Indexed
-	private int isRegister;
+	private String companyName;
 	
 	/**
-	 * 是否缴费(是否注册) 1--已缴费，0--未缴费
+	 * 实践企业所在省份
 	 */
-	@Indexed
-	private int isPay;
+	private String companyProvince;
 	
 	/**
-	 * 是否绿色通道 (已注册，有银行卡号) 1--是，0--否
+	 * 实践企业所在城市
 	 */
-	@Indexed
-	private int isGreenChannel;
+	private String companyCity;
 	
 	/**
-	 * 报到日期
+	 * 实践任务评审结果(pass:已通过,notPass:未通过,backTo:被打回)
 	 */
-	private Date registerDate;
+	private String reviewResult;
 	
 	/**
-	 * 实际报到日期
+	 * 实践任务Id
 	 */
-	private Date actualRegisterDate;
+	private String taskId;
 	
 	/**
-	 * 学历： 0-专科，1-本科，2-研究生
+	 * 实践任务创建日期
 	 */
-	private int education;
+	private Date taskCreatedDate;
 	
 	/**
 	 * 备注
