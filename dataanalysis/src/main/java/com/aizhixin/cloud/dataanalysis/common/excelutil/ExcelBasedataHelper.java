@@ -63,6 +63,7 @@ public class ExcelBasedataHelper {
 	}
 
 	public List<StudentRegisterDomain> readStudentRegisterFromInputStream(MultipartFile file) {
+		LOG.debug("star.........readStudentRegister");
 		List<StudentRegisterDomain> list = new ArrayList<>();
 		ExcelUtil util = new ExcelUtil(file);
 		Sheet sheet = util.getSheet("new");
@@ -102,15 +103,15 @@ public class ExcelBasedataHelper {
 					d.setLine(line);
 					d.setJobNum(jobNum);
 					list.add(d);
-					LOG.info("错误信息行号：" + line + ",  学号：" + jobNum);
+					LOG.debug("错误信息行号：" + line + ",  学号：" + jobNum);
 				}
 				line++;
 			}
 		}
 		return list;
 	}
-
 	public List<StudentInfoDomain> readStudentInfoFromInputStream(MultipartFile file) {
+		LOG.debug("star.........readStudentInfo");
 		List<StudentInfoDomain> list = new ArrayList<>();
 		ExcelUtil util = new ExcelUtil(file);
 		Sheet sheet = util.getSheet("new");
@@ -147,7 +148,7 @@ public class ExcelBasedataHelper {
 					d.setLine(line);
 					d.setJobNum(jobNum);
 					list.add(d);
-					LOG.info("错误信息行号：" + line + ",  学号：" + jobNum);
+					LOG.debug("错误信息行号：" + line + ",  学号：" + jobNum);
 				}
 				line++;
 			}
@@ -205,7 +206,7 @@ public class ExcelBasedataHelper {
 					d.setLine(line);
 					d.setJobNum(jobNum);
 					list.add(d);
-					LOG.info("错误信息行号：" + line + ",  学号：" + jobNum);
+					LOG.debug("错误信息行号：" + line + ",  学号：" + jobNum);
 				}
 				line++;
 			}
@@ -261,7 +262,7 @@ public class ExcelBasedataHelper {
 					d.setLine(line);
 					d.setJobNum(jobNum);
 					list.add(d);
-					LOG.info("错误信息行号：" + line + ",  学号：" + jobNum);
+					LOG.debug("错误信息行号：" + line + ",  学号：" + jobNum);
 				}
 				line++;
 			}
@@ -314,7 +315,7 @@ public class ExcelBasedataHelper {
 					d.setLine(line);
 					d.setJobNum(jobNum);
 					list.add(d);
-					LOG.info("错误信息行号：" + line + ",  学号：" + jobNum);
+					LOG.debug("错误信息行号：" + line + ",  学号：" + jobNum);
 				}
 				line++;
 			}
@@ -347,7 +348,7 @@ public class ExcelBasedataHelper {
 					ImportDomain d = new ImportDomain();
 					d.setLine(line);
 					list.add(d);
-					LOG.info("错误信息行号：" + line);
+					LOG.debug("错误信息行号：" + line);
 				}
 				line++;
 			}
