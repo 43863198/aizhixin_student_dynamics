@@ -59,8 +59,10 @@ public class AlarmSettingsService {
                     warningTypeDTO.setWarningType(type.getWarningType());
                     warningTypeDTO.setSetupCloseFlag(type.getSetupCloseFlag());
                     warningTypeDTO.setWarningName(type.getWarningName());
-                    List<AlarmSettings> alarmSettingsList = alarmSettingsRepository.getCountByOrgIdAndTypeAndOpen(orgId, type.getWarningType(), 10, DataValidity.VALID.getState());
-                    warningTypeDTO.setInclusionNumber(alarmSettingsList.size());
+                    if(type.getSetupCloseFlag()==10) {
+                        List<AlarmSettings> alarmSettingsList = alarmSettingsRepository.getCountByOrgIdAndTypeAndOpen(orgId, type.getWarningType(), 10, DataValidity.VALID.getState());
+                        warningTypeDTO.setInclusionNumber(alarmSettingsList.size());
+                    }
                     data.add(warningTypeDTO);
                 }
             }
@@ -78,11 +80,12 @@ public class AlarmSettingsService {
         WarningSettingsDTO warningSettingsDTO = new WarningSettingsDTO();
         try {
             WarningType warningType = warningTypeService.getWarningTypeById(warningTypeId);
+            String[] wd = warningType.getWarningDescribe().split(",");
             warningSettingsDTO.setWarningName(warningType.getWarningName());
             warningSettingsDTO.setSetupCloseFlag(warningType.getSetupCloseFlag());
             warningSettingsDTO.setWarningTypeId(warningTypeId);
             List<WarningGradeDTO> warningGradeDTOList = new ArrayList<>();
-            String[] wd = warningType.getWarningDescribe().split(",");
+
             List<WarningDescparameterDTO> waringDescParameterDTOArrayList1 = new ArrayList<>();
             if (wd.length > 0) {
                 int serialNumber = 1;
@@ -197,6 +200,7 @@ public class AlarmSettingsService {
                     alarmRule.setAlarmSettingsId(alarmSettingsId);
                     alarmRule.setSerialNumber(wp.getSerialNumber());
                     alarmRule.setRightParameter(wp.getParameter());
+                    alarmRule.setOrgId(warningType.getOrgId());
                     alarmRuleService.save(alarmRule);
                 }
             }
