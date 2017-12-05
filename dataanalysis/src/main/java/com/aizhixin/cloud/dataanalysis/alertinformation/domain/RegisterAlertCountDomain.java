@@ -23,7 +23,7 @@ public class RegisterAlertCountDomain {
 	@ApiModelProperty(value = "学院名称", required = false)
 	protected String collogeName;
 
-	@ApiModelProperty(value = "未参加实践人数", required = false)
+	@ApiModelProperty(value = "人数", required = false)
 	protected Long countNum;
 	
 	@ApiModelProperty(value = "预警等级", required = false)

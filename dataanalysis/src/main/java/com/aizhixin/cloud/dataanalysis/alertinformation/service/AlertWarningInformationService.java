@@ -652,10 +652,10 @@ public class AlertWarningInformationService {
 					TypeStatisticsDTO tSDTO = new TypeStatisticsDTO();
 					tSDTO.setWarningType(type.getWarningName());
 					tSDTO.setProportion("0");
-					tSDTO.setSum(sum);
-					tSDTO.setSum1(sum1);
-					tSDTO.setSum2(sum2);
-					tSDTO.setSum3(sum3);
+					tSDTO.setSum(0);
+					tSDTO.setSum1(0);
+					tSDTO.setSum2(0);
+					tSDTO.setSum3(0);
 					for (TypeStatisticsDTO ts : typeStatisticsDTOList){
 						if(type.getWarningName().equals(ts.getWarningType())){
 							tSDTO.setProportion(ts.getProportion());
@@ -798,7 +798,8 @@ public class AlertWarningInformationService {
 
 	public static String accuracy(double num, double total, int scale){
 		DecimalFormat df;
-		df = (DecimalFormat) NumberFormat.getInstance();
+//		df = (DecimalFormat) NumberFormat.getInstance();
+		df   = new DecimalFormat("######0.00");
 		//可以设置精确几位小数
 		df.setMaximumFractionDigits(scale);
 		//模式 例如四舍五入
