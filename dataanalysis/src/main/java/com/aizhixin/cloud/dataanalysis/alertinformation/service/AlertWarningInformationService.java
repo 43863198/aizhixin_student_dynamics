@@ -652,10 +652,10 @@ public class AlertWarningInformationService {
 					TypeStatisticsDTO tSDTO = new TypeStatisticsDTO();
 					tSDTO.setWarningType(type.getWarningName());
 					tSDTO.setProportion("0");
-					tSDTO.setSum(sum);
-					tSDTO.setSum1(sum1);
-					tSDTO.setSum2(sum2);
-					tSDTO.setSum3(sum3);
+					tSDTO.setSum(0);
+					tSDTO.setSum1(0);
+					tSDTO.setSum2(0);
+					tSDTO.setSum3(0);
 					for (TypeStatisticsDTO ts : typeStatisticsDTOList){
 						if(type.getWarningName().equals(ts.getWarningType())){
 							tSDTO.setProportion(ts.getProportion());
