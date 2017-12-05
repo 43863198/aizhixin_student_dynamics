@@ -308,7 +308,10 @@ public class ScoreJob {
 			List<AlarmRule> alarmList = alarmRuleService
 					.getAlarmRuleByIds(warnRuleIdList);
 			for (AlarmRule alarmRule : alarmList) {
+				//成绩波动只取第一条规则
+				if(alarmRule.getSerialNumber() == 1){
 				alarmRuleMap.put(alarmRule.getId(), alarmRule);
+				}
 			}
 
 			Iterator iter = alarmMap.entrySet().iterator();
@@ -547,7 +550,10 @@ public class ScoreJob {
 			List<AlarmRule> alarmList = alarmRuleService
 					.getAlarmRuleByIds(warnRuleIdList);
 			for (AlarmRule alarmRule : alarmList) {
+				//总评成绩只取第一条规则
+				if(alarmRule.getSerialNumber() == 1){
 				alarmRuleMap.put(alarmRule.getId(), alarmRule);
+				}
 			}
 
 			Iterator iter = alarmMap.entrySet().iterator();
