@@ -130,8 +130,8 @@ public class StudentRegisterService {
 		    				stuRegisterList.add(studentRegister);
 		    			}
 		    		} catch (Exception e) {
-		    			LOG.info("错误信息行号：" + entry.getValue().getLine() + ",  学号：" + entry.getValue().getJobNum());
-		    			LOG.info("错误信息行号：" + entry1.getValue().getLine() + ",  学号：" + entry1.getValue().getJobNum());
+		    			LOG.debug("错误信息行号：" + entry.getValue().getLine() + ",  学号：" + entry.getValue().getJobNum());
+		    			LOG.debug("错误信息行号：" + entry1.getValue().getLine() + ",  学号：" + entry1.getValue().getJobNum());
 		    			e.printStackTrace();
 		    		}
 			}

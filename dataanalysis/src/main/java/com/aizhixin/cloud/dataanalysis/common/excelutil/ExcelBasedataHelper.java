@@ -102,7 +102,7 @@ public class ExcelBasedataHelper {
 					d.setLine(line);
 					d.setJobNum(jobNum);
 					list.add(d);
-					LOG.info("错误信息行号：" + line + ",  学号：" + jobNum);
+					LOG.debug("错误信息行号：" + line + ",  学号：" + jobNum);
 				}
 				line++;
 			}
@@ -147,7 +147,7 @@ public class ExcelBasedataHelper {
 					d.setLine(line);
 					d.setJobNum(jobNum);
 					list.add(d);
-					LOG.info("错误信息行号：" + line + ",  学号：" + jobNum);
+					LOG.debug("错误信息行号：" + line + ",  学号：" + jobNum);
 				}
 				line++;
 			}
@@ -205,7 +205,7 @@ public class ExcelBasedataHelper {
 					d.setLine(line);
 					d.setJobNum(jobNum);
 					list.add(d);
-					LOG.info("错误信息行号：" + line + ",  学号：" + jobNum);
+					LOG.debug("错误信息行号：" + line + ",  学号：" + jobNum);
 				}
 				line++;
 			}
@@ -261,7 +261,7 @@ public class ExcelBasedataHelper {
 					d.setLine(line);
 					d.setJobNum(jobNum);
 					list.add(d);
-					LOG.info("错误信息行号：" + line + ",  学号：" + jobNum);
+					LOG.debug("错误信息行号：" + line + ",  学号：" + jobNum);
 				}
 				line++;
 			}
@@ -314,7 +314,7 @@ public class ExcelBasedataHelper {
 					d.setLine(line);
 					d.setJobNum(jobNum);
 					list.add(d);
-					LOG.info("错误信息行号：" + line + ",  学号：" + jobNum);
+					LOG.debug("错误信息行号：" + line + ",  学号：" + jobNum);
 				}
 				line++;
 			}
@@ -347,7 +347,7 @@ public class ExcelBasedataHelper {
 					ImportDomain d = new ImportDomain();
 					d.setLine(line);
 					list.add(d);
-					LOG.info("错误信息行号：" + line);
+					LOG.debug("错误信息行号：" + line);
 				}
 				line++;
 			}
