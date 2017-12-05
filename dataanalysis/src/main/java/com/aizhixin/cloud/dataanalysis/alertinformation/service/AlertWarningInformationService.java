@@ -664,8 +664,9 @@ public class AlertWarningInformationService {
 							tSDTO.setSum1(ts.getSum1());
 							tSDTO.setSum2(ts.getSum2());
 							tSDTO.setSum3(ts.getSum3());
+							typeList.add(tSDTO);
+							break;
 						}
-						typeList.add(tSDTO);
 					}
 				}
 			}
