@@ -1,9 +1,11 @@
 package com.aizhixin.cloud.dataanalysis.setup.service;
 
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
+import com.aizhixin.cloud.dataanalysis.setup.domain.WarningTypeDomain;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
 import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.setup.respository.WarningTypeRespository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,4 +39,8 @@ public class WarningTypeService {
         warningTypeRespository.save(warningTypeList);
     }
 
+//    public List<WarningTypeDomain> getAllOrgId(){
+//    	return warningTypeRespository.getAllOrgId();
+//    }
+    
 }

@@ -1,6 +1,8 @@
 package com.aizhixin.cloud.dataanalysis.setup.respository;
 
+import com.aizhixin.cloud.dataanalysis.setup.domain.WarningTypeDomain;
 import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,5 +19,6 @@ public interface WarningTypeRespository extends JpaRepository<WarningType, Strin
     @Query("select tp from #{#entityName} tp where tp.orgId = :orgId and tp.deleteFlag = :deleteFlag ")
     List<WarningType> getWarningTypeByOrgId(@Param("orgId")Long orgId, @Param("deleteFlag")int deleteFlag);
 
-
+//    @Query("select distinct new com.aizhixin.cloud.dataanalysis.setup.domain.WarningTypeDomain(wt.orgId)  from com.aizhixin.cloud.dataanalysis.setup.entity.WarningType wt" ) 
+//    List<WarningTypeDomain> getAllOrgId();
 }
