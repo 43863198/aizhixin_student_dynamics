@@ -109,7 +109,7 @@ public class ScoreJob {
 			}
 
 			//清除之前总评成绩不及格统计数据
-//			totalScoreCountMongoRespository.deleteAll();
+			totalScoreCountMongoRespository.deleteAll();
 			Iterator iter = alarmMap.entrySet().iterator();
 			while (iter.hasNext()) {
 
@@ -429,7 +429,7 @@ public class ScoreJob {
 			}
 
 			//清除之前总评成绩不及格统计数据
-//			totalScoreCountMongoRespository.deleteAll();
+			totalScoreCountMongoRespository.deleteAll();
 			Iterator iter = alarmMap.entrySet().iterator();
 			while (iter.hasNext()) {
 
@@ -811,7 +811,7 @@ public class ScoreJob {
 			}
 
 			//清除之前补考统计数据
-//			makeUpScoreCountMongoRespository.deleteAll();
+			makeUpScoreCountMongoRespository.deleteAll();
 			Iterator iter = alarmMap.entrySet().iterator();
 			while (iter.hasNext()) {
 
