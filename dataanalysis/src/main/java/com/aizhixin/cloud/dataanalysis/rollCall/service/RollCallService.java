@@ -101,6 +101,7 @@ public class RollCallService {
     					rollCall.setRollCallDate(_d);
     				}
     			}
+//				rollCall.setRollCallDate(d.getRollCallDate());
 				rollCall.setRollCallResult(Integer.parseInt(d.getRollCallResult()));
 				rollCall.setSemester(2);
 				list.add(rollCall);
