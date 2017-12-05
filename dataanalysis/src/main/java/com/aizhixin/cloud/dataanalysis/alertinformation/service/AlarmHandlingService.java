@@ -46,7 +46,7 @@ public class AlarmHandlingService {
             String id = operaionRecordService.save(operationRecord);
             for (AttachmentDomain d : submitDealDomain.getAttachmentDomain()) {
                 AttachmentInformation attachmentInformation = null;
-                if(null!=d.getId()){
+                if(null!=d.getId()&&!StringUtils.isBlank(d.getId())){
                     attachmentInformation = attachmentInfomationService.getOneById(d.getId());
                 }else {
                     attachmentInformation = new AttachmentInformation();
@@ -75,7 +75,7 @@ public class AlarmHandlingService {
                 WarningInformation warningInformation = alertWarningInformationService.getOneById(dealDomain.getWarningInformationId());
                 warningInformation.setLastModifiedDate(new Date());
                 alertWarningInformationService.save(warningInformation);
-                if (null != dealDomain.getDealId()) {
+                if (null != dealDomain.getDealId()&&!StringUtils.isBlank(dealDomain.getDealId())) {
                     OperationRecord operationRecord = operaionRecordService.getOneById(dealDomain.getDealId());
                     operationRecord.setOrgId(warningInformation.getOrgId());
                     operationRecord.setOperationTime(new Date());
@@ -84,7 +84,7 @@ public class AlarmHandlingService {
                     operaionRecordService.save(operationRecord);
                     for (AttachmentDomain d : dealDomain.getAttachmentDomain()) {
                         AttachmentInformation attachmentInformation = null;
-                        if(null!=d.getId()){
+                        if(null!=d.getId()&&!StringUtils.isBlank(d.getId())){
                             attachmentInformation = attachmentInfomationService.getOneById(d.getId());
                         }else {
                             attachmentInformation = new AttachmentInformation();
@@ -101,6 +101,7 @@ public class AlarmHandlingService {
             e.printStackTrace();
             result.put("success", false);
             result.put("message", "处理信息更新异常！");
+            return result;
         }
         result.put("success", true);
         result.put("message", "处理信息修改成功！");
