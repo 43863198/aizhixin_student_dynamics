@@ -33,9 +33,9 @@ public class AlarmHandlingService {
         try {
             WarningInformation warningInformation = alertWarningInformationService.getOneById(submitDealDomain.getWarningInformationId());
             OperationRecord operationRecord = null;
-            if(!StringUtils.isBlank(submitDealDomain.getDealId())) {
+            if (!StringUtils.isBlank(submitDealDomain.getDealId())) {
                 operationRecord = operaionRecordService.getOneById(submitDealDomain.getDealId());
-            }else {
+            } else {
                 operationRecord = new OperationRecord();
             }
             operationRecord.setOrgId(warningInformation.getOrgId());
@@ -46,9 +46,9 @@ public class AlarmHandlingService {
             String id = operaionRecordService.save(operationRecord);
             for (AttachmentDomain d : submitDealDomain.getAttachmentDomain()) {
                 AttachmentInformation attachmentInformation = null;
-                if(null!=d.getId()&&!StringUtils.isBlank(d.getId())){
+                if (null != d.getId() && !StringUtils.isBlank(d.getId())) {
                     attachmentInformation = attachmentInfomationService.getOneById(d.getId());
-                }else {
+                } else {
                     attachmentInformation = new AttachmentInformation();
                 }
                 attachmentInformation.setOrgId(warningInformation.getOrgId());
@@ -71,29 +71,23 @@ public class AlarmHandlingService {
     public Map<String, Object> updateProcessing(DealDomain dealDomain) {
         Map<String, Object> result = new HashMap<>();
         try {
-            if(null!=dealDomain.getWarningInformationId()) {
+            if (null != dealDomain.getWarningInformationId()) {
                 WarningInformation warningInformation = alertWarningInformationService.getOneById(dealDomain.getWarningInformationId());
                 warningInformation.setLastModifiedDate(new Date());
                 alertWarningInformationService.save(warningInformation);
-                if (null != dealDomain.getDealId()&&!StringUtils.isBlank(dealDomain.getDealId())) {
+                if (null != dealDomain.getDealId() && !StringUtils.isBlank(dealDomain.getDealId())) {
                     OperationRecord operationRecord = operaionRecordService.getOneById(dealDomain.getDealId());
                     operationRecord.setOrgId(warningInformation.getOrgId());
                     operationRecord.setOperationTime(new Date());
                     operationRecord.setDealType(dealDomain.getDealType());
                     operationRecord.setProposal(dealDomain.getDealInfo());
                     operaionRecordService.save(operationRecord);
+                    List<AttachmentInformation> attachmentInformations = attachmentInfomationService.getAttachmentInformationByOprId(operationRecord.getId());
+                    if (null != attachmentInformations) {
+                        attachmentInfomationService.deleteAttachmentInformation(attachmentInformations);
+                    }
                     for (AttachmentDomain d : dealDomain.getAttachmentDomain()) {
-                        AttachmentInformation attachmentInformation = null;
-                        if(null!=d.getId()&&!StringUtils.isBlank(d.getId())){
-                            attachmentInformation = attachmentInfomationService.getOneById(d.getId());
-                            if(null!=attachmentInformation) {
-                                attachmentInfomationService.deleteAttachmentInformation(d.getId());
-                            }else {
-                                attachmentInformation = new AttachmentInformation();
-                            }
-                        }else {
-                            attachmentInformation = new AttachmentInformation();
-                        }
+                        AttachmentInformation attachmentInformation = new AttachmentInformation();
                         attachmentInformation.setOrgId(warningInformation.getOrgId());
                         attachmentInformation.setAttachmentName(d.getFileName());
                         attachmentInformation.setAttachmentPath(d.getFileUrl());
@@ -132,20 +126,20 @@ public class AlarmHandlingService {
         return result;
     }
 
-    public List<DealDomain>  getOperationRecordByWInfoId(String warningInformationId){
+    public List<DealDomain> getOperationRecordByWInfoId(String warningInformationId) {
         List<DealDomain> dealDomainList = new ArrayList<>();
         List<OperationRecord> operationRecordList = operaionRecordService.getOperationRecordByWInfoId(warningInformationId);
-        if(null!=operationRecordList&&operationRecordList.size()>0){
-            for(OperationRecord or : operationRecordList){
-                DealDomain  dealDomain = new DealDomain();
+        if (null != operationRecordList && operationRecordList.size() > 0) {
+            for (OperationRecord or : operationRecordList) {
+                DealDomain dealDomain = new DealDomain();
                 dealDomain.setWarningInformationId(warningInformationId);
                 dealDomain.setDealId(or.getId());
                 dealDomain.setDealType(or.getDealType());
                 dealDomain.setDealInfo(or.getProposal());
                 List<AttachmentDomain> attachmentDomainList = new ArrayList<>();
                 List<AttachmentInformation> attachmentInformationList = attachmentInfomationService.getAttachmentInformationByOprId(or.getProcessingModeId());
-                if(null!=attachmentInformationList&&attachmentInformationList.size()>0){
-                    for(AttachmentInformation ai : attachmentInformationList){
+                if (null != attachmentInformationList && attachmentInformationList.size() > 0) {
+                    for (AttachmentInformation ai : attachmentInformationList) {
                         AttachmentDomain attachmentDomain = new AttachmentDomain();
                         attachmentDomain.setFileName(ai.getAttachmentName());
                         attachmentDomain.setId(ai.getId());
