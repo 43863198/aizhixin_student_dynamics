@@ -39,7 +39,6 @@ public class AlarmHandlingService {
                 operationRecord = new OperationRecord();
             }
             operationRecord.setOrgId(warningInformation.getOrgId());
-            operationRecord.setWarningState(30);
             operationRecord.setOperationTime(new Date());
             operationRecord.setDealType(submitDealDomain.getDealType());
             operationRecord.setProposal(submitDealDomain.getDealInfo());
@@ -47,7 +46,7 @@ public class AlarmHandlingService {
             String id = operaionRecordService.save(operationRecord);
             for (AttachmentDomain d : submitDealDomain.getAttachmentDomain()) {
                 AttachmentInformation attachmentInformation = null;
-                if(!StringUtils.isBlank(d.getId())){
+                if(null!=d.getId()){
                     attachmentInformation = attachmentInfomationService.getOneById(d.getId());
                 }else {
                     attachmentInformation = new AttachmentInformation();
@@ -72,21 +71,28 @@ public class AlarmHandlingService {
     public Map<String, Object> updateProcessing(DealDomain dealDomain) {
         Map<String, Object> result = new HashMap<>();
         try {
-            WarningInformation warningInformation = alertWarningInformationService.getOneById(dealDomain.getWarningInformationId());
-            if (null != dealDomain.getDealId()) {
-                OperationRecord operationRecord = operaionRecordService.getOneById(dealDomain.getDealId());
-                operationRecord.setOrgId(warningInformation.getOrgId());
-                operationRecord.setWarningState(30);
-                operationRecord.setOperationTime(new Date());
-                operationRecord.setOperationType(dealDomain.getDealType() + "");
-                operationRecord.setProposal(dealDomain.getDealInfo());
-                operaionRecordService.save(operationRecord);
-                for (AttachmentDomain d : dealDomain.getAttachmentDomain()) {
-                    if (!StringUtils.isBlank(d.getId())) {
-                        AttachmentInformation attachmentInformation = attachmentInfomationService.getOneById(d.getId());
+            if(null!=dealDomain.getWarningInformationId()) {
+                WarningInformation warningInformation = alertWarningInformationService.getOneById(dealDomain.getWarningInformationId());
+                warningInformation.setLastModifiedDate(new Date());
+                alertWarningInformationService.save(warningInformation);
+                if (null != dealDomain.getDealId()) {
+                    OperationRecord operationRecord = operaionRecordService.getOneById(dealDomain.getDealId());
+                    operationRecord.setOrgId(warningInformation.getOrgId());
+                    operationRecord.setOperationTime(new Date());
+                    operationRecord.setDealType(dealDomain.getDealType());
+                    operationRecord.setProposal(dealDomain.getDealInfo());
+                    operaionRecordService.save(operationRecord);
+                    for (AttachmentDomain d : dealDomain.getAttachmentDomain()) {
+                        AttachmentInformation attachmentInformation = null;
+                        if(null!=d.getId()){
+                            attachmentInformation = attachmentInfomationService.getOneById(d.getId());
+                        }else {
+                            attachmentInformation = new AttachmentInformation();
+                        }
                         attachmentInformation.setOrgId(warningInformation.getOrgId());
                         attachmentInformation.setAttachmentName(d.getFileName());
                         attachmentInformation.setAttachmentPath(d.getFileUrl());
+                        attachmentInformation.setOperationRecordId(dealDomain.getDealId());
                         attachmentInfomationService.save(attachmentInformation);
                     }
                 }
@@ -106,7 +112,8 @@ public class AlarmHandlingService {
         try {
             WarningInformation warningInformation = alertWarningInformationService.getOneById(dealResultDomain.getWarningInformationId());
             if (null != warningInformation) {
-                warningInformation.setWarningState(20);
+                warningInformation.setWarningState(dealResultDomain.getStatus());
+                warningInformation.setLastModifiedDate(new Date());
                 alertWarningInformationService.save(warningInformation);
             }
         } catch (Exception e) {

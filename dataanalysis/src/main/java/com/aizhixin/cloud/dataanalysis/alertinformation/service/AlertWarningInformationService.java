@@ -414,7 +414,7 @@ public class AlertWarningInformationService {
 		int sum2 = 0;
 		int sum3 = 0;
 		int alreadyProcessed = 0;
-		StringBuilder cql = new StringBuilder("SELECT COUNT(1) as count, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, SUM(IF(WARNING_STATE = 20, 1, 0)) as sum4 FROM t_warning_information WHERE 1 = 1");
+		StringBuilder cql = new StringBuilder("SELECT COUNT(1) as count, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, SUM(IF(WARNING_STATE = 20 OR WARNING_STATE = 40, 1, 0)) as sum4 FROM t_warning_information WHERE 1 = 1");
 		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3 FROM t_warning_information WHERE 1 = 1");
 		if(null!=orgId){
 			cql.append(" and ORG_ID = :orgId");
@@ -490,9 +490,8 @@ public class AlertWarningInformationService {
 
 	public Map<String,Object> getLatestinformation(Long orgId) {
 		Map<String,Object> result = new HashMap<>();
-		Map<String, Object> data = new HashMap<>();
 		Map<String, Object> condition = new HashMap<>();
-		List<WarningDetailsDTO> res = new ArrayList<>();
+		List<WarningDetailsDTO> data = new ArrayList<>();
 		//统计下的列表最近想的前20条
 		StringBuilder lql = new StringBuilder("SELECT * FROM t_warning_information WHERE 1 = 1");
 		if (null != orgId) {
@@ -522,7 +521,7 @@ public class AlertWarningInformationService {
 				warningDetailsDTO.setWarningTime(alertWarningInformation.getWarningTime());
 				warningDetailsDTO.setWarningName(WarningType.valueOf(alertWarningInformation.getWarningType()).getValue());
 				warningDetailsDTO.setWarningLevel(alertWarningInformation.getWarningLevel());
-				res.add(warningDetailsDTO);
+				data.add(warningDetailsDTO);
 			}
 		}catch (Exception e){
 			result.put("success",false);
@@ -788,7 +787,7 @@ public class AlertWarningInformationService {
 		//学院预警信息
 		PageData<CollegeWarningInfoDTO> p = new PageData<>();
 		StringBuilder cql = new StringBuilder("SELECT count(sub.COLLOGE_ID) FROM (SELECT COLLOGE_ID FROM t_warning_information WHERE 1 = 1 ");
-		StringBuilder iql = new StringBuilder("SELECT COLLOGE_NAME, count(1) as count, SUM(IF(WARNING_STATE = 20, 1, 0)) as sum, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, SUM(IF(WARNING_LEVEL = 1 and WARNING_STATE = 20, 1, 0)) as asum1, SUM(IF(WARNING_LEVEL = 2 and WARNING_STATE = 20, 1, 0)) as asum2, SUM(IF(WARNING_LEVEL = 3 and WARNING_STATE = 20, 1, 0)) as asum3 FROM t_warning_information  WHERE 1 = 1");
+		StringBuilder iql = new StringBuilder("SELECT COLLOGE_NAME, count(1) as count, SUM(IF(WARNING_STATE = 20 OR WARNING_STATE = 40, 1, 0)) as sum, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, SUM(IF(WARNING_LEVEL = 1 and WARNING_STATE = 20, 1, 0)) as asum1, SUM(IF(WARNING_LEVEL = 2 and WARNING_STATE = 20, 1, 0)) as asum2, SUM(IF(WARNING_LEVEL = 3 and WARNING_STATE = 20, 1, 0)) as asum3 FROM t_warning_information  WHERE 1 = 1");
 		if (null != orgId) {
 			sql.append(" and ORG_ID = :orgId");
 			cql.append(" and ORG_ID = :orgId");
