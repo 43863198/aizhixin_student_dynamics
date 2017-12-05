@@ -798,7 +798,8 @@ public class AlertWarningInformationService {
 
 	public static String accuracy(double num, double total, int scale){
 		DecimalFormat df;
-		df = (DecimalFormat) NumberFormat.getInstance();
+//		df = (DecimalFormat) NumberFormat.getInstance();
+		df   = new DecimalFormat("######0.00");
 		//可以设置精确几位小数
 		df.setMaximumFractionDigits(scale);
 		//模式 例如四舍五入
