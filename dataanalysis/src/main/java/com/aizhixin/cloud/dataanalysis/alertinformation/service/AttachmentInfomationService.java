@@ -35,6 +35,10 @@ public class AttachmentInfomationService {
         attachmentInfoRepository.save(attachmentInformation);
     }
 
+    public void deleteAttachmentInformation(String id){
+        attachmentInfoRepository.delete(id);
+    }
+
     public List<AttachmentInformation> getAttachmentInformationByOprId(String operationRecordId){
         return attachmentInfoRepository.getAttachmentInformationByOprId(operationRecordId, DataValidity.VALID.getState());
     }
