@@ -63,6 +63,7 @@ public class ExcelBasedataHelper {
 	}
 
 	public List<StudentRegisterDomain> readStudentRegisterFromInputStream(MultipartFile file) {
+		LOG.debug("star.........readStudentRegister");
 		List<StudentRegisterDomain> list = new ArrayList<>();
 		ExcelUtil util = new ExcelUtil(file);
 		Sheet sheet = util.getSheet("new");
@@ -109,8 +110,8 @@ public class ExcelBasedataHelper {
 		}
 		return list;
 	}
-
 	public List<StudentInfoDomain> readStudentInfoFromInputStream(MultipartFile file) {
+		LOG.debug("star.........readStudentInfo");
 		List<StudentInfoDomain> list = new ArrayList<>();
 		ExcelUtil util = new ExcelUtil(file);
 		Sheet sheet = util.getSheet("new");

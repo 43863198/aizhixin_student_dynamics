@@ -46,37 +46,43 @@ public class StudentRegisterService {
 	private ExcelBasedataHelper basedataHelper;
 
 	public void importData(MultipartFile studentInfoFile, MultipartFile dataBaseFile, MultipartFile importFile, Date registerDate, Long orgId) {
+		LOG.debug("star.........1");
 		//获取学生信息
 		List<StudentInfoDomain> studentInfos = basedataHelper.readStudentInfoFromInputStream(studentInfoFile);
 		if (null == studentInfos || studentInfos.size() <= 0) {
 			throw new CommonException(ErrorCode.ID_IS_REQUIRED, "没有读取到任何数据");
 		}
+		LOG.debug("star.........2");
 		//获取学生基础数据源
 		List<StudentRegisterDomain> dataBases = basedataHelper.readStudentRegisterFromInputStream(dataBaseFile);
 		if (null == dataBases || dataBases.size() <= 0) {
 			throw new CommonException(ErrorCode.ID_IS_REQUIRED, "没有读取到任何数据");
 		}
+		LOG.debug("star.........3");
 		//获取新学生基础信息
 		List<ImportDomain> importDomains = basedataHelper.readDataBase(importFile);
 		if (null == importDomains || importDomains.size() <= 0) {
 			throw new CommonException(ErrorCode.ID_IS_REQUIRED, "没有读取到任何数据");
 		}
+		LOG.debug("star.........4");
 		//学生基础数据存map
 		Map<String, StudentRegisterDomain> maps = new HashMap<>();
 		for (StudentRegisterDomain data : dataBases) {
 			maps.put(data.getJobNum(), data);
 		}
+		LOG.debug("star.........5");
 		//学生信息存map
 		Map<String, StudentInfoDomain> maps1 = new HashMap<>();
 		for (StudentInfoDomain data : studentInfos) {
 			maps1.put(data.getJobNum(), data);
 		}
+		LOG.debug("star.........6");
 		//新学生基础信息存map
 		Map<String, ImportDomain> map2 = new HashMap<>();
 		for (ImportDomain data : importDomains) {
 			map2.put(data.getName(), data);
 		}
-		
+		LOG.debug("star.........7");
 		List<StudentRegister> stuRegisterList = new ArrayList<>();
 		int i = 0;
 		//学生数据key value
