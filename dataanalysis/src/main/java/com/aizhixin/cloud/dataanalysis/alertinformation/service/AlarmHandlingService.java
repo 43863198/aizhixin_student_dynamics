@@ -86,6 +86,11 @@ public class AlarmHandlingService {
                         AttachmentInformation attachmentInformation = null;
                         if(null!=d.getId()&&!StringUtils.isBlank(d.getId())){
                             attachmentInformation = attachmentInfomationService.getOneById(d.getId());
+                            if(null!=attachmentInformation) {
+                                attachmentInfomationService.deleteAttachmentInformation(d.getId());
+                            }else {
+                                attachmentInformation = new AttachmentInformation();
+                            }
                         }else {
                             attachmentInformation = new AttachmentInformation();
                         }

@@ -664,10 +664,10 @@ public class AlertWarningInformationService {
 							tSDTO.setSum1(ts.getSum1());
 							tSDTO.setSum2(ts.getSum2());
 							tSDTO.setSum3(ts.getSum3());
-							typeList.add(tSDTO);
 							break;
 						}
 					}
+					typeList.add(tSDTO);
 				}
 			}
 			} catch (Exception e) {
@@ -816,7 +816,7 @@ public class AlertWarningInformationService {
 		//学院预警信息
 		PageData<CollegeWarningInfoDTO> p = new PageData<>();
 		StringBuilder cql = new StringBuilder("SELECT count(sub.COLLOGE_ID) FROM (SELECT COLLOGE_ID FROM t_warning_information WHERE 1 = 1 ");
-		StringBuilder iql = new StringBuilder("SELECT COLLOGE_NAME, count(1) as count, SUM(IF(WARNING_STATE = 20 OR WARNING_STATE = 40, 1, 0)) as sum, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, SUM(IF(WARNING_LEVEL = 1 and (WARNING_STATE = 20 OR and WARNING_STATE = 40), 1, 0)) as asum1, SUM(IF(WARNING_LEVEL = 2 and (WARNING_STATE = 20 OR and WARNING_STATE = 40), 1, 0)) as asum2, SUM(IF(WARNING_LEVEL = 3 and (WARNING_STATE = 20 OR and WARNING_STATE = 40), 1, 0)) as asum3 FROM t_warning_information  WHERE 1 = 1");
+		StringBuilder iql = new StringBuilder("SELECT COLLOGE_NAME, count(1) as count, SUM(IF(WARNING_STATE = 20 OR WARNING_STATE = 40, 1, 0)) as sum, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, SUM(IF(WARNING_LEVEL = 1 and (WARNING_STATE = 20 OR WARNING_STATE = 40), 1, 0)) as asum1, SUM(IF(WARNING_LEVEL = 2 and (WARNING_STATE = 20 OR WARNING_STATE = 40), 1, 0)) as asum2, SUM(IF(WARNING_LEVEL = 3 and (WARNING_STATE = 20 OR WARNING_STATE = 40), 1, 0)) as asum3 FROM t_warning_information  WHERE 1 = 1");
 		if (null != orgId) {
 			sql.append(" and ORG_ID = :orgId");
 			cql.append(" and ORG_ID = :orgId");
@@ -869,43 +869,45 @@ public class AlertWarningInformationService {
 				}
 			}
 			Long count = Long.valueOf(String.valueOf(cq.getSingleResult()));
-			iq.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
-			iq.setMaxResults(pageable.getPageSize());
-			List<Object> rd = iq.getResultList();
 			List<CollegeWarningInfoDTO> collegeWarningInfoDTOList = new ArrayList<>();
-			if(null!=rd&&rd.size()>0) {
-				for (Object obj : rd) {
-					Object[] d = (Object[])obj;
-					CollegeWarningInfoDTO collegeWarningInfoDTO = new CollegeWarningInfoDTO();
-					if(null!=d[0]){
-						collegeWarningInfoDTO.setCollegeName(String.valueOf(d[0]));
+			if(count.intValue()>0) {
+				iq.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
+				iq.setMaxResults(pageable.getPageSize());
+				List<Object> rd = iq.getResultList();
+				if (null != rd && rd.size() > 0) {
+					for (Object obj : rd) {
+						Object[] d = (Object[]) obj;
+						CollegeWarningInfoDTO collegeWarningInfoDTO = new CollegeWarningInfoDTO();
+						if (null != d[0]) {
+							collegeWarningInfoDTO.setCollegeName(String.valueOf(d[0]));
+						}
+						if (null != d[1]) {
+							collegeWarningInfoDTO.setTotal(Integer.valueOf(String.valueOf(d[1])));
+						}
+						if (null != d[2]) {
+							collegeWarningInfoDTO.setProcessedNumber(Integer.valueOf(String.valueOf(d[2])));
+						}
+						if (null != d[3]) {
+							collegeWarningInfoDTO.setSum1(Integer.valueOf(String.valueOf(d[3])));
+						}
+						if (null != d[4]) {
+							collegeWarningInfoDTO.setSum2(Integer.valueOf(String.valueOf(d[4])));
+						}
+						if (null != d[5]) {
+							collegeWarningInfoDTO.setSum3(Integer.valueOf(String.valueOf(d[5])));
+						}
+						if (null != d[6]) {
+							collegeWarningInfoDTO.setProcessedSum1(Integer.valueOf(String.valueOf(d[6])));
+						}
+						if (null != d[7]) {
+							collegeWarningInfoDTO.setProcessedSum2(Integer.valueOf(String.valueOf(d[7])));
+						}
+						if (null != d[8]) {
+							collegeWarningInfoDTO.setProcessedSum3(Integer.valueOf(String.valueOf(d[8])));
+						}
+						collegeWarningInfoDTO.setProcessedProportion(accuracy(collegeWarningInfoDTO.getProcessedNumber() * 1.0, collegeWarningInfoDTO.getTotal() * 1.0, 2));
+						collegeWarningInfoDTOList.add(collegeWarningInfoDTO);
 					}
-					if(null!=d[1]) {
-						collegeWarningInfoDTO.setTotal(Integer.valueOf(String.valueOf(d[1])));
-					}
-					if(null!=d[2]){
-                        collegeWarningInfoDTO.setProcessedNumber(Integer.valueOf(String.valueOf(d[2])));
-					}
-					if(null!=d[3]){
-						collegeWarningInfoDTO.setSum1(Integer.valueOf(String.valueOf(d[3])));
-					}
-					if(null!=d[4]){
-						collegeWarningInfoDTO.setSum2(Integer.valueOf(String.valueOf(d[4])));
-					}
-					if(null!=d[5]){
-						collegeWarningInfoDTO.setSum3(Integer.valueOf(String.valueOf(d[5])));
-					}
-					if(null!=d[6]){
-						collegeWarningInfoDTO.setProcessedSum1(Integer.valueOf(String.valueOf(d[6])));
-					}
-					if(null!=d[7]){
-						collegeWarningInfoDTO.setProcessedSum2(Integer.valueOf(String.valueOf(d[7])));
-					}
-					if(null!=d[8]){
-						collegeWarningInfoDTO.setProcessedSum3(Integer.valueOf(String.valueOf(d[8])));
-					}
-					collegeWarningInfoDTO.setProcessedProportion(accuracy(collegeWarningInfoDTO.getProcessedNumber()*1.0,collegeWarningInfoDTO.getTotal()*1.0,2));
-					collegeWarningInfoDTOList.add(collegeWarningInfoDTO);
 				}
 			}
 			p.setData(collegeWarningInfoDTOList);
