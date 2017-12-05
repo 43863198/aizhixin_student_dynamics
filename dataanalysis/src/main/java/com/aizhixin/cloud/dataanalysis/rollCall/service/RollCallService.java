@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.aizhixin.cloud.dataanalysis.common.domain.ImportDomain;
 import com.aizhixin.cloud.dataanalysis.common.excelutil.ExcelBasedataHelper;
 import com.aizhixin.cloud.dataanalysis.common.exception.CommonException;
 import com.aizhixin.cloud.dataanalysis.common.exception.ErrorCode;
@@ -22,7 +26,7 @@ import com.aizhixin.cloud.dataanalysis.rollCall.mongoEntity.RollCall;
 import com.aizhixin.cloud.dataanalysis.rollCall.mongoRespository.RollCallMongoRespository;
 
 /**
- * 考勤导入
+ * 导入考勤数据写入Mongo库
  * 
  * @author bly
  * @data 2017年11月27日
@@ -38,11 +42,21 @@ public class RollCallService {
 	@Autowired
 	private ExcelBasedataHelper basedataHelper;
 
-	public void importData(MultipartFile dataBaseFile, Long orgId) {
+	public void importData(MultipartFile dataBaseFile, MultipartFile importFile, Long orgId) {
 		//获取考勤
 		List<RollCallDomain> dataBases = basedataHelper.readRollCallFromInputStream(dataBaseFile);
 		if (null == dataBases || dataBases.size() <= 0) {
 			throw new CommonException(ErrorCode.ID_IS_REQUIRED, "没有读取到任何数据");
+		}
+		//获取新学生基础信息
+		List<ImportDomain> importDomains = basedataHelper.readDataBase(importFile);
+		if (null == importDomains || importDomains.size() <= 0) {
+			throw new CommonException(ErrorCode.ID_IS_REQUIRED, "没有读取到任何数据");
+		}
+		//新学生基础信息存map
+		Map<String, ImportDomain> map = new HashMap<>();
+		for (ImportDomain data : importDomains) {
+			map.put(data.getName(), data);
 		}
 		List<RollCall> list = new ArrayList<>();
 		int i = 0;
@@ -52,18 +66,31 @@ public class RollCallService {
 				rollCall.setOrgId(orgId);
 				rollCall.setUserId(d.getUserId());
 				rollCall.setUserName(d.getUserName());
-				rollCall.setClassId(d.getClassId());
+				for (Entry<String, ImportDomain> entry : map.entrySet()) {
+					if (entry.getKey().equals(d.getClassName())) {
+						rollCall.setClassId(entry.getValue().getId());
+						break;
+					}
+				}
 				rollCall.setClassName(d.getClassName());
-				rollCall.setCollegeId(d.getCollegeId());
+				for (Entry<String, ImportDomain> entry : map.entrySet()) {
+					if (entry.getKey().equals(d.getCollegeName())) {
+						rollCall.setCollegeId(entry.getValue().getId());
+						break;
+					}
+				}
 				rollCall.setCollegeName(d.getCollegeName());
 				rollCall.setSchoolYear(d.getSchoolYear());
 				rollCall.setJobNum(d.getJobNum());
-				rollCall.setProfessionalId(d.getProfessionalId());
+				for (Entry<String, ImportDomain> entry : map.entrySet()) {
+					if (entry.getKey().equals(d.getProfessionalName())) {
+						rollCall.setProfessionalId(entry.getValue().getId());
+						break;
+					}
+				}
 				rollCall.setProfessionalName(d.getProfessionalName());
 				rollCall.setScheduleId(d.getScheduleId());
 				rollCall.setUserPhone(d.getUserPhone());
-//				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//				Date date = sdf.parse(d.getRollCallDate());  
 				if (d.getRollCallDate() != null) {
 					String date = d.getRollCallDate().substring(0, 5);
     				Integer date1 = Integer.valueOf(date);

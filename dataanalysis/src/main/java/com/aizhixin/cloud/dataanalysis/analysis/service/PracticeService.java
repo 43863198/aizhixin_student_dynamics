@@ -3,8 +3,11 @@ package com.aizhixin.cloud.dataanalysis.analysis.service;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,12 +19,13 @@ import org.springframework.web.multipart.MultipartFile;
 import com.aizhixin.cloud.dataanalysis.analysis.domain.PracticeDomain;
 import com.aizhixin.cloud.dataanalysis.analysis.mongoEntity.Practice;
 import com.aizhixin.cloud.dataanalysis.analysis.mongoRespository.PracticeMongoRespository;
+import com.aizhixin.cloud.dataanalysis.common.domain.ImportDomain;
 import com.aizhixin.cloud.dataanalysis.common.excelutil.ExcelBasedataHelper;
 import com.aizhixin.cloud.dataanalysis.common.exception.CommonException;
 import com.aizhixin.cloud.dataanalysis.common.exception.ErrorCode;
 
 /**
- * 实践导入信息
+ * 导入实践数据写入Mongo库
  * 
  * @author bly
  * @data 2017年12月4日
@@ -37,11 +41,21 @@ public class PracticeService {
 	@Autowired
 	private ExcelBasedataHelper basedataHelper;
 
-	public void importData(MultipartFile dataBaseFile, Long orgId) {
+	public void importData(MultipartFile dataBaseFile, MultipartFile importFile, Long orgId) {
 		//获取实践数据
 		List<PracticeDomain> dataBases = basedataHelper.readPracticeFromInputStream(dataBaseFile);
 		if (null == dataBases || dataBases.size() <= 0) {
 			throw new CommonException(ErrorCode.ID_IS_REQUIRED, "没有读取到任何数据");
+		}
+		//获取新学生基础信息
+		List<ImportDomain> importDomains = basedataHelper.readDataBase(importFile);
+		if (null == importDomains || importDomains.size() <= 0) {
+			throw new CommonException(ErrorCode.ID_IS_REQUIRED, "没有读取到任何数据");
+		}
+		//新学生基础信息存map
+		Map<String, ImportDomain> map = new HashMap<>();
+		for (ImportDomain data : importDomains) {
+			map.put(data.getName(), data);
 		}
 		List<Practice> list = new ArrayList<>();
 		int i = 0;
@@ -51,13 +65,28 @@ public class PracticeService {
 				practice.setOrgId(orgId);
 				practice.setUserId(d.getUserId());
 				practice.setUserName(d.getUserName());
-				practice.setClassId(d.getClassId());
+				for (Entry<String, ImportDomain> entry : map.entrySet()) {
+					if (entry.getKey().equals(d.getClassName())) {
+						practice.setClassId(entry.getValue().getId());
+						break;
+					}
+				}
 				practice.setClassName(d.getClassName());
-				practice.setCollegeId(d.getCollegeId());
+				for (Entry<String, ImportDomain> entry : map.entrySet()) {
+					if (entry.getKey().equals(d.getCollegeName())) {
+						practice.setCollegeId(entry.getValue().getId());
+						break;
+					}
+				}
 				practice.setCollegeName(d.getCollegeName());
 				practice.setSchoolYear(d.getSchoolYear());
 				practice.setJobNum(d.getJobNum());
-				practice.setProfessionalId(d.getProfessionalId());
+				for (Entry<String, ImportDomain> entry : map.entrySet()) {
+					if (entry.getKey().equals(d.getProfessionalName())) {
+						practice.setProfessionalId(entry.getValue().getId());
+						break;
+					}
+				}
 				practice.setProfessionalName(d.getProfessionalName());
 				practice.setUserPhone(d.getUserPhone());
 				if (null != d.getTaskCreatedDate()) {
