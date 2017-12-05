@@ -893,9 +893,7 @@ public class ScoreJob {
 		}
 	}
 
-	/**
-	 * 总评成绩预警
-	 */
+	
 	public void makeUpScoreJob() {
 
 		// 获取预警配置

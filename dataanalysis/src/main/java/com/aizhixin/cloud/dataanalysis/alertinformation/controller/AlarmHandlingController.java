@@ -36,12 +36,12 @@ public class AlarmHandlingController {
         return alarmHandlingService.addProcessing(dealDomain) ;
     }
 
-    @RequestMapping(value = "/updateprocessing", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/updateprocessing",  produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "PUT", value = "修改处理信息", response = Void.class, notes = "修改处理信息<br><br><b>@author wu.jianwei</b>")
     public Map<String, Object> updateProcessing(
             @ApiParam(value = "<b>必填:、</b><br>warningInformationId:预警信息id<br><b>" +
-                    "选填:、" +
                     "</b><br>dealId:处理id;" +
+                    "选填:、" +
                     "</b><br>dealInfo:处理信息;" +
                     "dealType:处理类型 辅导员处理10 学院处理 20;" +
                     "<br>attachmentDomain:附件信息、<br>")  @RequestBody DealDomain dealDomain) {

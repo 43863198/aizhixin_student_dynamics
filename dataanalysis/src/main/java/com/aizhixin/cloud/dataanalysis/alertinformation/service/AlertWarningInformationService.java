@@ -20,6 +20,7 @@ import com.aizhixin.cloud.dataanalysis.common.constant.WarningType;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
+import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,8 @@ public class AlertWarningInformationService {
 	private  OperaionRecordService operaionRecordService;
 	@Autowired
 	private AttachmentInfomationService attachmentInfomationService;
+	@Autowired
+	private WarningTypeService warningTypeService;
 
 
 	
@@ -414,7 +417,7 @@ public class AlertWarningInformationService {
 		int sum2 = 0;
 		int sum3 = 0;
 		int alreadyProcessed = 0;
-		StringBuilder cql = new StringBuilder("SELECT COUNT(1) as count, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, SUM(IF(WARNING_STATE = 20, 1, 0)) as sum4 FROM t_warning_information WHERE 1 = 1");
+		StringBuilder cql = new StringBuilder("SELECT COUNT(1) as count, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, SUM(IF(WARNING_STATE = 20 OR WARNING_STATE = 40, 1, 0)) as sum4 FROM t_warning_information WHERE 1 = 1");
 		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3 FROM t_warning_information WHERE 1 = 1");
 		if(null!=orgId){
 			cql.append(" and ORG_ID = :orgId");
@@ -490,9 +493,8 @@ public class AlertWarningInformationService {
 
 	public Map<String,Object> getLatestinformation(Long orgId) {
 		Map<String,Object> result = new HashMap<>();
-		Map<String, Object> data = new HashMap<>();
 		Map<String, Object> condition = new HashMap<>();
-		List<WarningDetailsDTO> res = new ArrayList<>();
+		List<WarningDetailsDTO> data = new ArrayList<>();
 		//统计下的列表最近想的前20条
 		StringBuilder lql = new StringBuilder("SELECT * FROM t_warning_information WHERE 1 = 1");
 		if (null != orgId) {
@@ -522,14 +524,14 @@ public class AlertWarningInformationService {
 				warningDetailsDTO.setWarningTime(alertWarningInformation.getWarningTime());
 				warningDetailsDTO.setWarningName(WarningType.valueOf(alertWarningInformation.getWarningType()).getValue());
 				warningDetailsDTO.setWarningLevel(alertWarningInformation.getWarningLevel());
-				res.add(warningDetailsDTO);
+				data.add(warningDetailsDTO);
 			}
 		}catch (Exception e){
 			result.put("success",false);
 			result.put("message","获取最新预警学生异常！");
 		}
-		result.put("success",true);
-		result.put("data",data);
+		result.put("success", true);
+		result.put("data", data);
 		return result;
 	}
 
@@ -593,6 +595,7 @@ public class AlertWarningInformationService {
 	public Map<String,Object>  getStatisticalType(Long orgId) {
 		Map<String,Object> result = new HashMap<>();
 		List<TypeStatisticsDTO> typeStatisticsDTOList = new ArrayList<>();
+		List<TypeStatisticsDTO> typeList = new ArrayList<>();
 		Map<String, Object> condition = new HashMap<>();
 		int sum = 0;
 		int total = 0;
@@ -643,13 +646,37 @@ public class AlertWarningInformationService {
 					typeStatisticsDTOList.add(typeStatisticsDTO);
 				}
 			}
+			if (null != orgId) {
+				List<com.aizhixin.cloud.dataanalysis.setup.entity.WarningType> warningTypeList = warningTypeService.getWarningTypeList(orgId);
+			    for(com.aizhixin.cloud.dataanalysis.setup.entity.WarningType type: warningTypeList){
+					TypeStatisticsDTO tSDTO = new TypeStatisticsDTO();
+					tSDTO.setWarningType(type.getWarningName());
+					tSDTO.setProportion("0");
+					tSDTO.setSum(sum);
+					tSDTO.setSum1(sum1);
+					tSDTO.setSum2(sum2);
+					tSDTO.setSum3(sum3);
+					for (TypeStatisticsDTO ts : typeStatisticsDTOList){
+						if(type.getWarningName().equals(ts.getWarningType())){
+							tSDTO.setProportion(ts.getProportion());
+							tSDTO.setWarningType(ts.getWarningType());
+							tSDTO.setSum(ts.getSum());
+							tSDTO.setSum1(ts.getSum1());
+							tSDTO.setSum2(ts.getSum2());
+							tSDTO.setSum3(ts.getSum3());
+							typeList.add(tSDTO);
+							break;
+						}
+					}
+				}
+			}
 			} catch (Exception e) {
 				result.put("success", false);
 				result.put("message", "按类型统计异常！");
 				return result;
 		}
 		result.put("success", true);
-		result.put("data", typeStatisticsDTOList);
+		result.put("data", typeList);
 		return result;
 		}
 
@@ -722,6 +749,7 @@ public class AlertWarningInformationService {
 				warningDetailsDTO.setWarningName(WarningType.valueOf(alertWarningInformation.getWarningType()).getValue());
 				warningDetailsDTO.setWarningLevel(alertWarningInformation.getWarningLevel());
 				warningDetailsDTO.setWarningState(alertWarningInformation.getWarningState());
+				warningDetailsDTO.setDealTime(alertWarningInformation.getLastModifiedDate());
 				List<DealDomain> dealDomainList = new ArrayList<>();
 				List<OperationRecord> operationRecordList = operaionRecordService.getOperationRecordByWInfoId(alertWarningInformation.getId());
                 if(null!=operationRecordList&&operationRecordList.size()>0){
@@ -788,7 +816,7 @@ public class AlertWarningInformationService {
 		//学院预警信息
 		PageData<CollegeWarningInfoDTO> p = new PageData<>();
 		StringBuilder cql = new StringBuilder("SELECT count(sub.COLLOGE_ID) FROM (SELECT COLLOGE_ID FROM t_warning_information WHERE 1 = 1 ");
-		StringBuilder iql = new StringBuilder("SELECT COLLOGE_NAME, count(1) as count, SUM(IF(WARNING_STATE = 20, 1, 0)) as sum, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, SUM(IF(WARNING_LEVEL = 1 and WARNING_STATE = 20, 1, 0)) as asum1, SUM(IF(WARNING_LEVEL = 2 and WARNING_STATE = 20, 1, 0)) as asum2, SUM(IF(WARNING_LEVEL = 3 and WARNING_STATE = 20, 1, 0)) as asum3 FROM t_warning_information  WHERE 1 = 1");
+		StringBuilder iql = new StringBuilder("SELECT COLLOGE_NAME, count(1) as count, SUM(IF(WARNING_STATE = 20 OR WARNING_STATE = 40, 1, 0)) as sum, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, SUM(IF(WARNING_LEVEL = 1 and (WARNING_STATE = 20 OR and WARNING_STATE = 40), 1, 0)) as asum1, SUM(IF(WARNING_LEVEL = 2 and (WARNING_STATE = 20 OR and WARNING_STATE = 40), 1, 0)) as asum2, SUM(IF(WARNING_LEVEL = 3 and (WARNING_STATE = 20 OR and WARNING_STATE = 40), 1, 0)) as asum3 FROM t_warning_information  WHERE 1 = 1");
 		if (null != orgId) {
 			sql.append(" and ORG_ID = :orgId");
 			cql.append(" and ORG_ID = :orgId");

@@ -30,7 +30,7 @@ public class OperationRecord extends AbstractEntity {
     @Getter @Setter private String warningInformationId;
 
     /*
-   * 状态(10:告警中；20：已处理；30：处理中；40:取消)
+   * 状态(10:告警中；20：已处理；40:取消)
    */
     @Column(name = "WARNING_STATE")
     @Getter @Setter private int warningState;
