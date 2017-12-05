@@ -1,5 +1,7 @@
 package com.aizhixin.cloud.dataanalysis.rollCall.domain;
 
+import java.util.Date;
+
 import com.aizhixin.cloud.dataanalysis.studentRegister.domain.StudentInfoDomain;
 
 import io.swagger.annotations.ApiModel;
