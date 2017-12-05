@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,34 +75,34 @@ public class TestDataController {
 	@RequestMapping(value = "/addRegisterdata", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "生成MongoDB学生报到数据", response = Void.class, notes = "生成MongoDB学生报到数据<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> addRegisterData(
-			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId) {
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
+			@ApiParam(value = "jobNum 学号") @RequestParam(value = "jobNum", required = true) String jobNum,
+			@ApiParam(value = "stuName 姓名") @RequestParam(value = "stuName", required = true) String stuName,
+			@ApiParam(value = "dayNum 注册报到时间比当前日期推前几天(例子:-2为2天前报到注册)") @RequestParam(value = "dayNum", required = false) int dayNum) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		if (null != orgId && orgId.longValue() > 0L) {
 		} else {
 			orgId = 1L;
 		}
 		List<StudentRegister> stuRegisterList = new ArrayList<StudentRegister>();
-		Long stuId = 9527L;
-		for (int i = 0; i < 10; i++) {
-			StudentRegister studentRegister = new StudentRegister();
-
-			studentRegister.setUserId(stuId++);
+			
+		StudentRegister studentRegister = new StudentRegister();
+			studentRegister.setUserId(1L);
 			studentRegister.setClassId(1L);
 			studentRegister.setClassName("测试1班");
 			studentRegister.setCollegeId(1L);
-			studentRegister.setCollegeName("测试学院1");
+			studentRegister.setCollegeName("测试学院");
 			studentRegister.setGrade("大1");
-			studentRegister.setJobNum("学号1000" + i);
+			studentRegister.setJobNum(jobNum);
 			studentRegister.setOrgId(orgId);
 			studentRegister.setProfessionalId(1L);
 			studentRegister.setProfessionalName("测试专业");
 			studentRegister.setIsRegister(StudentRegisterConstant.UNREGISTER);
-			studentRegister.setRegisterDate(DateUtil.getMonday(new Date()));
+			studentRegister.setRegisterDate(DateUtil.afterNDay(new Date(), dayNum));
 			// studentRegister.setRemarks(remarks);
 			studentRegister.setSchoolYear(2017);
-			studentRegister.setUserName("学生" + i);
+			studentRegister.setUserName(stuName);
 			stuRegisterList.add(studentRegister);
-		}
 
 		stuRegisterMongoRespository.save(stuRegisterList);
 
@@ -110,166 +112,299 @@ public class TestDataController {
 	@RequestMapping(value = "/addRollCalldata", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "生成MongoDB学生考勤数据", response = Void.class, notes = "生成MongoDB学生考勤数据<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> addRollCallData(
-			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId) {
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
+			@ApiParam(value = "jobNum 学号") @RequestParam(value = "jobNum", required = true) String jobNum,
+			@ApiParam(value = "stuName 姓名") @RequestParam(value = "stuName", required = true) String stuName,
+			@ApiParam(value = "num 迟到次数") @RequestParam(value = "num", required = false) int num) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		if (null != orgId && orgId.longValue() > 0L) {
 		} else {
 			orgId = 1L;
 		}
 		List<RollCall> rollCallList = new ArrayList<RollCall>();
-		Long stuId = 9527L;
-		for (int i = 0; i < 10; i++) {
-			RollCall rollCall = new RollCall();
+			
+            if(num > 0){
+            	for(int i=0;i<num;i++){
+            		RollCall rollCall = new RollCall();
+            	rollCall.setUserId(1L);
+    			rollCall.setClassId(1L);
+    			rollCall.setClassName("测试1班");
+    			rollCall.setCollegeId(1L);
+    			rollCall.setCollegeName("测试学院");
+    			rollCall.setGrade("大1");
+    			rollCall.setJobNum(jobNum);
+    			rollCall.setOrgId(orgId);
+    			rollCall.setProfessionalId(1L);
+    			rollCall.setProfessionalName("测试专业");
+    			rollCall.setSchoolYear(2017);
+    			rollCall.setSemester(2);
+    			rollCall.setUserName(stuName);
+    			rollCall.setScheduleId(1L);
+    			rollCall.setCourseName("大学英语");
+    			rollCall.setCourseType("必修");
+    			rollCall.setRollCallDate(DateUtil.getMonday(new Date()));
+    			rollCall.setRollCallType(1);
+    			rollCall.setRollCallResult(2);
+    			rollCallList.add(rollCall);
+            	}
+    		rollCallMongoRespository.save(rollCallList);
 
-			rollCall.setUserId(stuId++);
-			rollCall.setClassId(1L);
-			rollCall.setClassName("测试1班");
-			rollCall.setCollegeId(1L);
-			rollCall.setCollegeName("测试学院1");
-			rollCall.setGrade("大1");
-			rollCall.setJobNum("学号1000" + i);
-			rollCall.setOrgId(orgId);
-			rollCall.setProfessionalId(1L);
-			rollCall.setProfessionalName("测试专业");
-			rollCall.setSchoolYear(2017);
-			rollCall.setSemester(2);
-			rollCall.setUserName("学生" + i);
-			rollCall.setScheduleId(1L);
-			rollCall.setCourseName("大学英语");
-			rollCall.setCourseType("必修");
-			rollCall.setRollCallDate(DateUtil.getMonday(new Date()));
-			rollCall.setRollCallType(1);
-			rollCall.setRollCallResult(2);
-
-			rollCallList.add(rollCall);
-		}
-		rollCallMongoRespository.save(rollCallList);
-
-		// List<RollCallCount> rollCallCountList = new
-		// ArrayList<RollCallCount>();
-		// Long stuId = 9527L;
-		// for(int i=0;i<10;i++){
-		// RollCallCount rollCallCount = new RollCallCount();
-		//
-		// rollCallCount.setUserId(stuId++);
-		// rollCallCount.setClassId(1L);
-		// rollCallCount.setClassName("测试1班");
-		// rollCallCount.setCollegeId(1L);
-		// rollCallCount.setCollegeName("测试学院1");
-		// rollCallCount.setGrade("大1");
-		// rollCallCount.setJobNum("学号1000"+i);
-		// rollCallCount.setOrgId(orgId);
-		// rollCallCount.setProfessionalId(1L);
-		// rollCallCount.setProfessionalName("测试专业");
-		// rollCallCount.setSchoolYear(2017);
-		// rollCallCount.setSemester(2);
-		// rollCallCount.setOutSchoolTimes(9+i);
-		// rollCallCount.setUserName("学生"+i);
-		//
-		// rollCallCountList.add(rollCallCount);
-		// }
-		//
-		// rollCallCountMongoRespository.save(rollCallCountList);
-
+            }
+			
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/addScoredata", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(httpMethod = "GET", value = "生成MongoDB学生考勤数据", response = Void.class, notes = "生成MongoDB学生成绩数据<br><br><b>@author zhengning</b>")
+	@ApiOperation(httpMethod = "GET", value = "生成MongoDB修读异常数据", response = Void.class, notes = "上学期不及格必修课学分大于等于num<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> addScoreData(
-			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId) {
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
+			@ApiParam(value = "jobNum 学号") @RequestParam(value = "jobNum", required = true) String jobNum,
+			@ApiParam(value = "stuName 姓名") @RequestParam(value = "stuName", required = true) String stuName,
+			@ApiParam(value = "num 不合格必修课学分") @RequestParam(value = "num", required = false) int num) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		if (null != orgId && orgId.longValue() > 0L) {
 		} else {
 			orgId = 1L;
 		}
 		List<Score> scoreList = new ArrayList<Score>();
-		Long stuId = 9527L;
-		for (int i = 0; i < 10; i++) {
 			Score score = new Score();
 
-			score.setUserId(stuId++);
+			score.setUserId(1L);
 			score.setClassId(1L);
 			score.setClassName("测试1班");
 			score.setCollegeId(1L);
-			score.setCollegeName("测试学院1");
-			score.setJobNum("学号1000" + i);
+			score.setCollegeName("测试学院");
+			score.setJobNum(jobNum);
+			score.setOrgId(orgId);
+			score.setProfessionalId(1L);
+			score.setProfessionalName("测试专业");
+			score.setSchoolYear(2017);
+			score.setGrade("2017");
+			score.setSemester(1);
+			score.setUserName(stuName);
+			score.setScheduleId("1");
+			score.setCourseName("英语四级");
+			score.setCourseType(ScoreConstant.REQUIRED_COURSE);
+			score.setExamTime(DateUtil.getMonday(new Date()));
+			score.setExamType(ScoreConstant.EXAM_TYPE_COURSE);
+			score.setTotalScore("33");
+			score.setScoreResultType("百分制");
+			score.setCredit(String.valueOf(num));
+			score.setGradePoint("0");
+
+			scoreList.add(score);
+	
+		scoreMongoRespository.save(scoreList);
+		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/addScoredata1", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "GET", value = "生成MongoDB总评成绩数据", response = Void.class, notes = "上学期不及格课程门数大于等于num（目前只支持一个条件：不及格门数）<br><br><b>@author zhengning</b>")
+	public ResponseEntity<Map<String, Object>> addScoreData1(
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
+			@ApiParam(value = "jobNum 学号") @RequestParam(value = "jobNum", required = true) String jobNum,
+			@ApiParam(value = "stuName 姓名") @RequestParam(value = "stuName", required = true) String stuName,
+			@ApiParam(value = "num 不及格课程门数") @RequestParam(value = "num", required = false) int num) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		if (null != orgId && orgId.longValue() > 0L) {
+		} else {
+			orgId = 1L;
+		}
+		if(num == 0){
+			num =1;
+		}
+		List<Score> scoreList = new ArrayList<Score>();
+			
+			for(int i=0;i<num;i++){
+				Score score = new Score();
+			score.setUserId(1L);
+			score.setClassId(1L);
+			score.setClassName("测试1班");
+			score.setCollegeId(1L);
+			score.setCollegeName("测试学院");
+			score.setJobNum(jobNum);
+			score.setOrgId(orgId);
+			score.setProfessionalId(1L);
+			score.setProfessionalName("测试专业");
+			score.setSchoolYear(2017);
+			score.setGrade("2017");
+			score.setSemester(1);
+			score.setUserName(stuName);
+			score.setScheduleId("1");
+			score.setCourseName("英语四级");
+			score.setCourseType(ScoreConstant.REQUIRED_COURSE);
+			score.setExamTime(DateUtil.getMonday(new Date()));
+			score.setExamType(ScoreConstant.EXAM_TYPE_COURSE);
+			score.setTotalScore("33");
+			score.setScoreResultType("百分制");
+			score.setCredit(String.valueOf(num));
+			score.setGradePoint("0");
+			scoreList.add(score);
+            }	
+		scoreMongoRespository.save(scoreList);
+		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+	}
+	
+	
+	@RequestMapping(value = "/addScoredata2", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "GET", value = "生成MongoDB补考成绩数据", response = Void.class, notes = "三年内不及格课程门数大于等于num<br><br><b>@author zhengning</b>")
+	public ResponseEntity<Map<String, Object>> addScoreData2(
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
+			@ApiParam(value = "jobNum 学号") @RequestParam(value = "jobNum", required = true) String jobNum,
+			@ApiParam(value = "stuName 姓名") @RequestParam(value = "stuName", required = true) String stuName,
+			@ApiParam(value = "num 不及格课程门数") @RequestParam(value = "num", required = false) int num) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		if (null != orgId && orgId.longValue() > 0L) {
+		} else {
+			orgId = 1L;
+		}
+		if(num == 0){
+			num =1;
+		}
+		List<Score> scoreList = new ArrayList<Score>();
+			
+			for(int i=0;i<num;i++){
+				Score score = new Score();
+			score.setUserId(1L);
+			score.setClassId(1L);
+			score.setClassName("测试1班");
+			score.setCollegeId(1L);
+			score.setCollegeName("测试学院");
+			score.setJobNum(jobNum);
+			score.setOrgId(orgId);
+			score.setProfessionalId(1L);
+			score.setProfessionalName("测试专业");
+			score.setSchoolYear(2017);
+			score.setGrade("2017");
+			score.setSemester(1);
+			score.setUserName(stuName);
+			score.setScheduleId(UUID.randomUUID().toString());
+			score.setCourseName("英语四级");
+			score.setCourseType(ScoreConstant.REQUIRED_COURSE);
+			score.setExamTime(DateUtil.getMonday(new Date()));
+			score.setExamType(ScoreConstant.EXAM_TYPE_COURSE);
+			score.setTotalScore("33");
+			score.setScoreResultType("百分制");
+			score.setCredit(String.valueOf(num));
+			score.setGradePoint("0");
+			scoreList.add(score);
+            }	
+		scoreMongoRespository.save(scoreList);
+		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+	}
+	
+	
+	@RequestMapping(value = "/addScoredata3", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "GET", value = "生成MongoDB成绩波动数据", response = Void.class, notes = "本学期前2学期成绩平均绩点下降大于等于num(目前只支持一个条件平均绩点下降数值大于等于)<br><br><b>@author zhengning</b>")
+	public ResponseEntity<Map<String, Object>> addScoreData3(
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
+			@ApiParam(value = "jobNum 学号") @RequestParam(value = "jobNum", required = true) String jobNum,
+			@ApiParam(value = "stuName 姓名") @RequestParam(value = "stuName", required = true) String stuName,
+			@ApiParam(value = "num 下降绩点") @RequestParam(value = "num", required = false) int num) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		if (null != orgId && orgId.longValue() > 0L) {
+		} else {
+			orgId = 1L;
+		}
+		if(num == 0){
+			num =1;
+		}
+		List<Score> scoreList = new ArrayList<Score>();
+			
+				Score score = new Score();
+			score.setUserId(1L);
+			score.setClassId(1L);
+			score.setClassName("测试1班");
+			score.setCollegeId(1L);
+			score.setCollegeName("测试学院");
+			score.setJobNum(jobNum);
+			score.setOrgId(orgId);
+			score.setProfessionalId(1L);
+			score.setProfessionalName("测试专业");
+			score.setSchoolYear(2017);
+			score.setGrade("2017");
+			score.setSemester(1);
+			score.setUserName(stuName);
+			score.setScheduleId(UUID.randomUUID().toString());
+			score.setCourseName("英语四级");
+			score.setCourseType(ScoreConstant.REQUIRED_COURSE);
+			score.setExamTime(DateUtil.getMonday(new Date()));
+			score.setExamType(ScoreConstant.EXAM_TYPE_COURSE);
+			score.setTotalScore(String.valueOf((num*10)+50));
+			score.setScoreResultType("百分制");
+			score.setCredit(String.valueOf(num));
+			score.setGradePoint(String.valueOf(num+1));
+			scoreList.add(score);
+			
+			score = new Score();
+			score.setUserId(1L);
+			score.setClassId(1L);
+			score.setClassName("测试1班");
+			score.setCollegeId(1L);
+			score.setCollegeName("测试学院");
+			score.setJobNum(jobNum);
 			score.setOrgId(orgId);
 			score.setProfessionalId(1L);
 			score.setProfessionalName("测试专业");
 			score.setSchoolYear(2016);
 			score.setGrade("2016");
-			score.setSemester(1);
-			score.setUserName("学生" + i);
-			score.setScheduleId("1");
+			score.setSemester(2);
+			score.setUserName(stuName);
+			score.setScheduleId(UUID.randomUUID().toString());
 			score.setCourseName("英语四级");
-			score.setCourseType("require");
+			score.setCourseType(ScoreConstant.REQUIRED_COURSE);
 			score.setExamTime(DateUtil.getMonday(new Date()));
-			score.setExamType(ScoreConstant.EXAM_TYPE_CET4);
-			score.setTotalScore("245");
+			score.setExamType(ScoreConstant.EXAM_TYPE_COURSE);
+			score.setTotalScore("60");
 			score.setScoreResultType("百分制");
-			score.setCredit("10");
-			score.setGradePoint("0");
-
+			score.setCredit(String.valueOf(num));
+			score.setGradePoint("1");
 			scoreList.add(score);
-		}
-		for (int i = 0; i < 10; i++) {
-		Score score = new Score();
-
-		score.setUserId(stuId++);
-		score.setClassId(1L);
-		score.setClassName("测试1班");
-		score.setCollegeId(1L);
-		score.setCollegeName("测试学院1");
-		score.setJobNum("学号20000" + i);
-		score.setOrgId(orgId);
-		score.setProfessionalId(1L);
-		score.setProfessionalName("测试专业");
-		score.setSchoolYear(2015);
-		score.setGrade("2015");
-		score.setSemester(1);
-		score.setUserName("学生" + i);
-		score.setScheduleId("1");
-		score.setCourseName("英语四级");
-		score.setCourseType("require");
-		score.setExamTime(DateUtil.getMonday(new Date()));
-		score.setExamType(ScoreConstant.EXAM_TYPE_CET4);
-		score.setTotalScore("245");
-		score.setScoreResultType("百分制");
-		score.setCredit("10");
-		score.setGradePoint("0");
-
-		scoreList.add(score);
+		scoreMongoRespository.save(scoreList);
+		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
-	for (int i = 0; i < 10; i++) {
+	
+	@RequestMapping(value = "/addScoredata4", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "GET", value = "生成MongoDB英语4级成绩数据", response = Void.class, notes = "num为在校学年数<br><br><b>@author zhengning</b>")
+	public ResponseEntity<Map<String, Object>> addScoreData4(
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
+			@ApiParam(value = "jobNum 学号") @RequestParam(value = "jobNum", required = true) String jobNum,
+			@ApiParam(value = "stuName 姓名") @RequestParam(value = "stuName", required = true) String stuName,
+			@ApiParam(value = "num 学年数") @RequestParam(value = "num", required = false) int num) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		if (null != orgId && orgId.longValue() > 0L) {
+		} else {
+			orgId = 1L;
+		}
+		if(num == 0){
+			num =1;
+		}
+		List<Score> scoreList = new ArrayList<Score>();
+			
 			Score score = new Score();
-
-			score.setUserId(stuId++);
+			score.setUserId(1L);
 			score.setClassId(1L);
 			score.setClassName("测试1班");
 			score.setCollegeId(1L);
-			score.setCollegeName("测试学院1");
-			score.setJobNum("学号30000" + i);
+			score.setCollegeName("测试学院");
+			score.setJobNum(jobNum);
 			score.setOrgId(orgId);
 			score.setProfessionalId(1L);
 			score.setProfessionalName("测试专业");
-			score.setSchoolYear(2014);
-			score.setGrade("2014");
+			score.setSchoolYear(2017-num);
+			score.setGrade(String.valueOf(2017-num));
 			score.setSemester(1);
-			score.setUserName("学生" + i);
-			score.setScheduleId("1");
+			score.setUserName(stuName);
+			score.setScheduleId(UUID.randomUUID().toString());
 			score.setCourseName("英语四级");
-			score.setCourseType("require");
+			score.setCourseType(ScoreConstant.REQUIRED_COURSE);
 			score.setExamTime(DateUtil.getMonday(new Date()));
 			score.setExamType(ScoreConstant.EXAM_TYPE_CET4);
-			score.setTotalScore("245");
+			score.setTotalScore("410");
 			score.setScoreResultType("百分制");
-			score.setCredit("10");
+			score.setCredit(String.valueOf(num));
 			score.setGradePoint("0");
-
 			scoreList.add(score);
-		}	
-
 		scoreMongoRespository.save(scoreList);
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
