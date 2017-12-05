@@ -20,6 +20,7 @@ import com.aizhixin.cloud.dataanalysis.common.constant.WarningType;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
+import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,8 @@ public class AlertWarningInformationService {
 	private  OperaionRecordService operaionRecordService;
 	@Autowired
 	private AttachmentInfomationService attachmentInfomationService;
+	@Autowired
+	private WarningTypeService warningTypeService;
 
 
 	
@@ -527,8 +530,8 @@ public class AlertWarningInformationService {
 			result.put("success",false);
 			result.put("message","获取最新预警学生异常！");
 		}
-		result.put("success",true);
-		result.put("data",data);
+		result.put("success", true);
+		result.put("data", data);
 		return result;
 	}
 
@@ -592,6 +595,7 @@ public class AlertWarningInformationService {
 	public Map<String,Object>  getStatisticalType(Long orgId) {
 		Map<String,Object> result = new HashMap<>();
 		List<TypeStatisticsDTO> typeStatisticsDTOList = new ArrayList<>();
+		List<TypeStatisticsDTO> typeList = new ArrayList<>();
 		Map<String, Object> condition = new HashMap<>();
 		int sum = 0;
 		int total = 0;
@@ -642,13 +646,31 @@ public class AlertWarningInformationService {
 					typeStatisticsDTOList.add(typeStatisticsDTO);
 				}
 			}
+			if (null != orgId) {
+				List<com.aizhixin.cloud.dataanalysis.setup.entity.WarningType> warningTypeList = warningTypeService.getWarningTypeList(orgId);
+			    for(com.aizhixin.cloud.dataanalysis.setup.entity.WarningType type: warningTypeList){
+					TypeStatisticsDTO tSDTO = new TypeStatisticsDTO();
+					tSDTO.setWarningType(type.getWarningName());
+					tSDTO.setProportion("0");
+					tSDTO.setSum(sum);
+					tSDTO.setSum1(sum1);
+					tSDTO.setSum2(sum2);
+					tSDTO.setSum3(sum3);
+					for (TypeStatisticsDTO ts : typeStatisticsDTOList){
+						if(type.getWarningName().equals(ts.getWarningType())){
+							tSDTO = ts;
+						}
+						typeList.add(tSDTO);
+					}
+				}
+			}
 			} catch (Exception e) {
 				result.put("success", false);
 				result.put("message", "按类型统计异常！");
 				return result;
 		}
 		result.put("success", true);
-		result.put("data", typeStatisticsDTOList);
+		result.put("data", typeList);
 		return result;
 		}
 
