@@ -109,7 +109,7 @@ public class ScoreJob {
 			}
 
 			//清除之前总评成绩不及格统计数据
-//			totalScoreCountMongoRespository.deleteAll();
+			totalScoreCountMongoRespository.deleteAll();
 			Iterator iter = alarmMap.entrySet().iterator();
 			while (iter.hasNext()) {
 
@@ -308,7 +308,10 @@ public class ScoreJob {
 			List<AlarmRule> alarmList = alarmRuleService
 					.getAlarmRuleByIds(warnRuleIdList);
 			for (AlarmRule alarmRule : alarmList) {
+				//成绩波动只取第一条规则
+				if(alarmRule.getSerialNumber() == 1){
 				alarmRuleMap.put(alarmRule.getId(), alarmRule);
+				}
 			}
 
 			Iterator iter = alarmMap.entrySet().iterator();
@@ -426,7 +429,7 @@ public class ScoreJob {
 			}
 
 			//清除之前总评成绩不及格统计数据
-//			totalScoreCountMongoRespository.deleteAll();
+			totalScoreCountMongoRespository.deleteAll();
 			Iterator iter = alarmMap.entrySet().iterator();
 			while (iter.hasNext()) {
 
@@ -547,7 +550,10 @@ public class ScoreJob {
 			List<AlarmRule> alarmList = alarmRuleService
 					.getAlarmRuleByIds(warnRuleIdList);
 			for (AlarmRule alarmRule : alarmList) {
+				//总评成绩只取第一条规则
+				if(alarmRule.getSerialNumber() == 1){
 				alarmRuleMap.put(alarmRule.getId(), alarmRule);
+				}
 			}
 
 			Iterator iter = alarmMap.entrySet().iterator();
@@ -805,7 +811,7 @@ public class ScoreJob {
 			}
 
 			//清除之前补考统计数据
-//			makeUpScoreCountMongoRespository.deleteAll();
+			makeUpScoreCountMongoRespository.deleteAll();
 			Iterator iter = alarmMap.entrySet().iterator();
 			while (iter.hasNext()) {
 
