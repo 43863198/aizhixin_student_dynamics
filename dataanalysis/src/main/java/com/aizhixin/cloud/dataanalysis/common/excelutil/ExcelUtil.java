@@ -27,7 +27,7 @@ public class ExcelUtil {
 
 	public ExcelUtil(String name) {
 		
-		File excelFile = new File("\\nfs\\1\\"+name);
+		File excelFile = new File("/nfs/1/"+name);
 		String path = excelFile.getName();// 返回原始文件名
 		String extName = null;
 		int p = path.lastIndexOf(".");
