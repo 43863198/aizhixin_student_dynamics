@@ -10,7 +10,9 @@ import com.aizhixin.cloud.dataanalysis.analysis.respository.TeachingScoreStatist
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
+
 import liquibase.util.StringUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -41,6 +44,14 @@ public class SchoolStatisticsService {
     @Autowired
     private TeachingScoreStatisticsRespository teachingScoreStatisticsRespository;
 
+    /**
+     * 批量保存学校统计数据
+     * @param statisticsList
+     */
+    public void saveList(List<SchoolStatistics> statisticsList){
+    	schoolStatisticsRespository.save(statisticsList);
+    }
+    
     public Map<String, Object> getStatisticNewstudents(Long orgId, String year, Pageable pageable) {
         Map<String, Object> result = new HashMap<>();
         NewStudentProfileDTO newStudentProfileDTO = new NewStudentProfileDTO();
