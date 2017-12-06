@@ -224,7 +224,7 @@ public class AddDataController {
       warningType8.setWarningType("Cet");
       warningType8.setWarningName("CET-4成绩预警");
       warningType8.setSetupCloseFlag(10);
-      warningType8.setWarningDescribe("相邻两个学期平均绩点相比下降数值大于等于,班级成绩排名下降名次大于等于");
+      warningType8.setWarningDescribe("英语四级分数小于425分并且在校学年数已大于等于");
       warningTypeList.add(warningType8);
       warningTypeService.save(warningTypeList);
      }catch (Exception e){
