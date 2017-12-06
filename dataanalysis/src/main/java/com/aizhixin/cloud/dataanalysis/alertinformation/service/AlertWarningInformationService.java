@@ -296,7 +296,7 @@ public class AlertWarningInformationService {
 	
 	public List<RegisterAlertCountDomain> alertCountInfor(AlertInforQueryDomain domain) {
 
-		String querySql = " SELECT COUNT(1) as countNum,WARNING_LEVEL FROM `t_warning_information` where DELETE_FLAG = "+DataValidity.VALID.getState()+" ";
+		String querySql = " SELECT COUNT(1) as countNum, WARNING_LEVEL FROM `t_warning_information` where DELETE_FLAG = "+DataValidity.VALID.getState()+" ";
 
 		if(!StringUtils.isEmpty(domain.getKeywords())){
 			querySql += " and ( NAME like '%" + domain.getKeywords()+ "%' or JOB_NUMBER like '%" + domain.getKeywords()+ "%') ";
