@@ -62,10 +62,10 @@ public class ExcelBasedataHelper {
 		return null;
 	}
 
-	public List<StudentRegisterDomain> readStudentRegisterFromInputStream(MultipartFile file) {
+	public List<StudentRegisterDomain> readStudentRegisterFromInputStream(String name) {
 		LOG.debug("star.........readStudentRegister");
 		List<StudentRegisterDomain> list = new ArrayList<>();
-		ExcelUtil util = new ExcelUtil(file);
+		ExcelUtil util = new ExcelUtil(name);
 		Sheet sheet = util.getSheet("new");
 		if (null == sheet) {// 如果没有此sheet页标签，读取第1个标签的内容
 			sheet = util.getSheet(0);
@@ -110,10 +110,10 @@ public class ExcelBasedataHelper {
 		}
 		return list;
 	}
-	public List<StudentInfoDomain> readStudentInfoFromInputStream(MultipartFile file) {
+	public List<StudentInfoDomain> readStudentInfoFromInputStream(String name) {
 		LOG.debug("star.........readStudentInfo");
 		List<StudentInfoDomain> list = new ArrayList<>();
-		ExcelUtil util = new ExcelUtil(file);
+		ExcelUtil util = new ExcelUtil(name);
 		Sheet sheet = util.getSheet("new");
 		if (null == sheet) {// 如果没有此sheet页标签，读取第1个标签的内容
 			sheet = util.getSheet(0);
@@ -156,9 +156,9 @@ public class ExcelBasedataHelper {
 		return list;
 	}
 
-	public List<ScoreDomain> readStudentScoreFromInputStream(MultipartFile file) {
+	public List<ScoreDomain> readStudentScoreFromInputStream(String name) {
 		List<ScoreDomain> list = new ArrayList<>();
-		ExcelUtil util = new ExcelUtil(file);
+		ExcelUtil util = new ExcelUtil(name);
 		Sheet sheet = util.getSheet("new");
 		if (null == sheet) {// 如果没有此sheet页标签，读取第1个标签的内容
 			sheet = util.getSheet(0);
@@ -214,9 +214,9 @@ public class ExcelBasedataHelper {
 		return list;
 	}
 
-	public List<RollCallDomain> readRollCallFromInputStream(MultipartFile file) {
+	public List<RollCallDomain> readRollCallFromInputStream(String name) {
 		List<RollCallDomain> list = new ArrayList<>();
-		ExcelUtil util = new ExcelUtil(file);
+		ExcelUtil util = new ExcelUtil(name);
 		Sheet sheet = util.getSheet("new");
 		if (null == sheet) {// 如果没有此sheet页标签，读取第1个标签的内容
 			sheet = util.getSheet(0);
@@ -270,9 +270,9 @@ public class ExcelBasedataHelper {
 		return list;
 	}
 	
-	public List<PracticeDomain> readPracticeFromInputStream(MultipartFile file) {
+	public List<PracticeDomain> readPracticeFromInputStream(String name) {
 		List<PracticeDomain> list = new ArrayList<>();
-		ExcelUtil util = new ExcelUtil(file);
+		ExcelUtil util = new ExcelUtil(name);
 		Sheet sheet = util.getSheet("new");
 		if (null == sheet) {// 如果没有此sheet页标签，读取第1个标签的内容
 			sheet = util.getSheet(0);
@@ -323,9 +323,9 @@ public class ExcelBasedataHelper {
 		return list;
 	}
 
-	public List<ImportDomain> readDataBase(MultipartFile file) {
+	public List<ImportDomain> readDataBase(String name1) {
 		List<ImportDomain> list = new ArrayList<>();
-		ExcelUtil util = new ExcelUtil(file);
+		ExcelUtil util = new ExcelUtil(name1);
 		Sheet sheet = util.getSheet("new");
 		if (null == sheet) {// 如果没有此sheet页标签，读取第1个标签的内容
 			sheet = util.getSheet(0);
