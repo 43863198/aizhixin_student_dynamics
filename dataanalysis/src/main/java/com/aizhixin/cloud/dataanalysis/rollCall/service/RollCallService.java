@@ -42,7 +42,7 @@ public class RollCallService {
 	@Autowired
 	private ExcelBasedataHelper basedataHelper;
 
-	public void importData(MultipartFile dataBaseFile, MultipartFile importFile, Long orgId) {
+	public void importData(String dataBaseFile, String importFile, Long orgId) {
 		//获取考勤
 		List<RollCallDomain> dataBases = basedataHelper.readRollCallFromInputStream(dataBaseFile);
 		if (null == dataBases || dataBases.size() <= 0) {
@@ -101,6 +101,7 @@ public class RollCallService {
     					rollCall.setRollCallDate(_d);
     				}
     			}
+//				rollCall.setRollCallDate(d.getRollCallDate());
 				rollCall.setRollCallResult(Integer.parseInt(d.getRollCallResult()));
 				rollCall.setSemester(2);
 				list.add(rollCall);

@@ -55,7 +55,7 @@ public class WarningDetailsDTO {
     @ApiModelProperty(value = "预警名称")
     private String warningName;
 
-    @ApiModelProperty(value = "预警时间")
+    @ApiModelProperty(value = "预警产生时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
@@ -75,4 +75,10 @@ public class WarningDetailsDTO {
 
     @ApiModelProperty(value = "处理操作", required = false)
     private List<DealDomain> dealDomainList;
+
+    @ApiModelProperty(value = "预警处理时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dealTime = new Date();
 }

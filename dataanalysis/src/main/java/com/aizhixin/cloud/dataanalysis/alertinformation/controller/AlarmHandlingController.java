@@ -36,7 +36,7 @@ public class AlarmHandlingController {
         return alarmHandlingService.addProcessing(dealDomain) ;
     }
 
-    @RequestMapping(value = "/updateprocessing", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/updateprocessing",  produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "PUT", value = "修改处理信息", response = Void.class, notes = "修改处理信息<br><br><b>@author wu.jianwei</b>")
     public Map<String, Object> updateProcessing(
             @ApiParam(value = "<b>必填:、</b><br>warningInformationId:预警信息id<br><b>" +

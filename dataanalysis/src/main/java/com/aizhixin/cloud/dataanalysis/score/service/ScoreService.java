@@ -44,7 +44,7 @@ public class ScoreService {
 	@Autowired
 	private ExcelBasedataHelper basedataHelper;
 
-	public void importData(MultipartFile dataBaseFile, MultipartFile importFile, Long orgId) {
+	public void importData(String dataBaseFile, String importFile, Long orgId) {
 		// 获取成绩
 		List<ScoreDomain> dataBases = basedataHelper.readStudentScoreFromInputStream(dataBaseFile);
 		if (null == dataBases || dataBases.size() <= 0) {
@@ -108,6 +108,7 @@ public class ScoreService {
 						score.setExamTime(_d);
 					}
 				}
+//				score.setExamTime(d.getExamTime());
 				list.add(score);
 			} catch (Exception e) {
 				LOG.info("错误信息行号：" + d.getLine() + ",  学号：" + d.getJobNum());
@@ -124,7 +125,7 @@ public class ScoreService {
 		}
 	}
 
-	public void importData46(MultipartFile dataBaseFile, MultipartFile importFile, Long orgId) {
+	public void importData46(String dataBaseFile, String importFile, Long orgId) {
 		// 获取成绩
 		List<ScoreDomain> dataBases = basedataHelper.readStudentScoreFromInputStream(dataBaseFile);
 		if (null == dataBases || dataBases.size() <= 0) {
@@ -142,8 +143,8 @@ public class ScoreService {
 		}
 		List<Score> list = new ArrayList<>();
 		int i = 0;
-		for (ScoreDomain d : dataBases) {
-			if (!StringUtils.isEmpty(d.getTotalScore()) && Double.valueOf(d.getTotalScore()) + 345.00 < 425.00
+		for (ScoreDomain d : dataBases) {//(筛选后为661个)
+			if (!StringUtils.isEmpty(d.getTotalScore()) && Double.valueOf(d.getTotalScore()) + 400.00 < 425.00
 					&& !"2017".equals(d.getGrade())) {
 				try {
 					Score score = new Score();
@@ -192,6 +193,7 @@ public class ScoreService {
 							score.setExamTime(_d);
 						}
 					}
+//					score.setExamTime(d.getExamTime());
 					list.add(score);
 				} catch (Exception e) {
 					LOG.info("错误信息行号：" + d.getLine() + ",  学号：" + d.getJobNum());

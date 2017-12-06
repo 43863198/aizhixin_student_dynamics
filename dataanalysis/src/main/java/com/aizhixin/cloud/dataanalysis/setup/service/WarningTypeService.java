@@ -43,4 +43,9 @@ public class WarningTypeService {
     	return warningTypeRespository.getAllOrgId();
     }
     
+    public void delete(Long orgId){
+        warningTypeRespository.deleteByOrgId(orgId);
+    }
+
+    
 }
