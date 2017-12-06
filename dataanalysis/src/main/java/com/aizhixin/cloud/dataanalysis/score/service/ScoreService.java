@@ -44,7 +44,7 @@ public class ScoreService {
 	@Autowired
 	private ExcelBasedataHelper basedataHelper;
 
-	public void importData(MultipartFile dataBaseFile, MultipartFile importFile, Long orgId) {
+	public void importData(String dataBaseFile, String importFile, Long orgId) {
 		// 获取成绩
 		List<ScoreDomain> dataBases = basedataHelper.readStudentScoreFromInputStream(dataBaseFile);
 		if (null == dataBases || dataBases.size() <= 0) {
@@ -125,7 +125,7 @@ public class ScoreService {
 		}
 	}
 
-	public void importData46(MultipartFile dataBaseFile, MultipartFile importFile, Long orgId) {
+	public void importData46(String dataBaseFile, String importFile, Long orgId) {
 		// 获取成绩
 		List<ScoreDomain> dataBases = basedataHelper.readStudentScoreFromInputStream(dataBaseFile);
 		if (null == dataBases || dataBases.size() <= 0) {

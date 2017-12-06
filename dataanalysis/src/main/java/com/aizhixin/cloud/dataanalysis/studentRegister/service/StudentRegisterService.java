@@ -45,7 +45,7 @@ public class StudentRegisterService {
 	@Autowired
 	private ExcelBasedataHelper basedataHelper;
 
-	public void importData(MultipartFile studentInfoFile, MultipartFile dataBaseFile, MultipartFile importFile, Date registerDate, Long orgId) {
+	public void importData(String studentInfoFile, String dataBaseFile, String importFile, Date registerDate, Long orgId) {
 		LOG.debug("star.........1");
 		//获取学生信息
 		List<StudentInfoDomain> studentInfos = basedataHelper.readStudentInfoFromInputStream(studentInfoFile);

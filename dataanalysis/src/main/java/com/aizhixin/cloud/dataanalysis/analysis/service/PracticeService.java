@@ -41,7 +41,7 @@ public class PracticeService {
 	@Autowired
 	private ExcelBasedataHelper basedataHelper;
 
-	public void importData(MultipartFile dataBaseFile, MultipartFile importFile, Long orgId) {
+	public void importData(String dataBaseFile, String importFile, Long orgId) {
 		//获取实践数据
 		List<PracticeDomain> dataBases = basedataHelper.readPracticeFromInputStream(dataBaseFile);
 		if (null == dataBases || dataBases.size() <= 0) {
