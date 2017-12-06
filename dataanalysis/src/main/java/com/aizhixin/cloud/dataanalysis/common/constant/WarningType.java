@@ -8,7 +8,7 @@ import lombok.Getter;
  * @Date: 2017-09-11
  */
 public enum WarningType {
-    Register("迎新报道预警"),
+    Register("迎新报到预警"),
     LeaveSchool("退学预警"),
     AttendAbnormal("修读异常预警"),
     Absenteeism("旷课预警"),
