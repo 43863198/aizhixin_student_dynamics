@@ -7,13 +7,9 @@
     <property name="now" value="now()" dbms="mysql,h2"/>
     <property name="now" value="current_timestamp" dbms="postgresql"/>
     <property name="now" value="sysdate" dbms="oracle"/>
-<<<<<<< HEAD
+
     <!-- 四六级英语成绩统计表结构-->
     <changeSet id="20171201184545" author="jun.wang">
-=======
-    <!-- 预警规则参数表结构-->
-    <changeSet id="201712015545" author="jun.wang">
->>>>>>> 24baafcee636de44222591edd6430b83bfed7620
 		<preConditions onFail="MARK_RAN">
 	        <not>
 	            <tableExists tableName="T_CET_STATISTICS"/>

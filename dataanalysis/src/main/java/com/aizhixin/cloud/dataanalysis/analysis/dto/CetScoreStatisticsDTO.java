@@ -19,25 +19,15 @@ public class CetScoreStatisticsDTO {
     @ApiModelProperty(value = "参加人数", required = false)
     private Long cetJoinNum=0l;
     @ApiModelProperty(value = "通过人数", required = false)
-<<<<<<< HEAD
-    private Long cetPassNum;
+    private Long cetPassNum = 0l;
     @ApiModelProperty(value = "六级参加人数", required = false)
-    private Long cetSixJoinNum;
+    private Long cetSixJoinNum = 0l;
     @ApiModelProperty(value = "六级通过人数", required = false)
-    private Long cetSixPassNum;
+    private Long cetSixPassNum = 0l;
     @ApiModelProperty(value = "四级参加人数", required = false)
-    private Long cetForeJoinNum;
+    private Long cetForeJoinNum = 0l;
     @ApiModelProperty(value = "四级通过人数", required = false)
-    private Long cetForePassNum;
-=======
-    private Long cetPassNum=0l;
-    @ApiModelProperty(value = "六级通过人数", required = false)
-    private Long cetSixPassNum=0l;
-    @ApiModelProperty(value = "四级通过人数", required = false)
-    private Long cetForePassNum=0l;
-    private Long cetForeJoinNum=0l;
-    private Long cetSixJoinNum=0l;
->>>>>>> 24baafcee636de44222591edd6430b83bfed7620
+    private Long cetForePassNum =0l;
 
     public CetScoreStatisticsDTO(Long cetSixPassNum, Long cetForePassNum, Long cetForeJoinNum, Long cetSixJoinNum) {
         this.cetSixPassNum = cetSixPassNum==null?0:cetSixPassNum;
