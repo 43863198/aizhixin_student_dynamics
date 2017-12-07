@@ -65,4 +65,10 @@ public class CetScoreStatistics  extends AbstractEntity {
     */
     @Column(name = "STATE")
     @Getter @Setter private int state;
+
+    /*
+     * 学年
+     */
+    @Column(name = "TEACHER_YEAR")
+    @Getter @Setter private int teacherYear;
 }

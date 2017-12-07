@@ -130,12 +130,13 @@ public class SchoolConditionStatisticsController {
     public Map<String,Object>   getCollegeDetails(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "colloegeId 学院id(多个用“，”隔开)") @RequestParam(value = "colloegeId", required = false) String colloegeId,
+            @ApiParam(value = "nj 姓名/学号") @RequestParam(value = "nj", required = false) String nj,
             @ApiParam(value = "type 学生类型(1:专科2:本科3:研究生)") @RequestParam(value = "type", required = false) String type,
             @ApiParam(value = "报道情况 isReport(0:未报到；1:已报到；)" ) @RequestParam(value = "isReport", required = false) String isReport,
             @ApiParam(value = "缴费情况 isPay(1:已缴费；2:绿色通道；3:其他)" ) @RequestParam(value = "isPay", required = false) String isPay,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return studentRegisterService.getCollegeDetails(PageUtil.createNoErrorPageRequest(pageNumber, pageSize),orgId,colloegeId,type,isReport,isPay);
+        return studentRegisterService.getCollegeDetails(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId, colloegeId, nj, type, isReport, isPay);
     }
 
     /**
