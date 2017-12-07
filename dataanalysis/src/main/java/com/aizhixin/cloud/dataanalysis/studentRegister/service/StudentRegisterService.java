@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.domain.ImportDomain;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,7 +154,7 @@ public class StudentRegisterService {
 	}
 
 
-	public Map<String, Object> getCollegeDetails(Pageable page,Long orgId, String collegeId, String type,String isReport,String isPay) {
+	public Map<String, Object> getCollegeDetails(Pageable page,Long orgId, String collegeId, String nj, String type,String isReport,String isPay) {
 		Map<String, Object> result = new HashMap<>();
 		PageData<StudentRegister> p = new PageData<>();
 		List<StudentRegister> items = new ArrayList<>();
@@ -197,6 +198,9 @@ public class StudentRegisterService {
 					}
 				}
 
+			}
+			if(!StringUtils.isBlank(nj)){
+				criteria.orOperator(criteria.where("userName").is(nj), criteria.where("jobNum").is(nj));
 			}
 			query.addCriteria(criteria);
 			//mongoTemplate.count计算总数
