@@ -27,15 +27,15 @@ import java.util.Date;
 @NoArgsConstructor
 public class NewStudentProfileDTO {
     @ApiModelProperty(value = "新生总数量", required = false)
-    private Long studentNumber;
+    private Long studentNumber=0l;
     @ApiModelProperty(value = "已报到人数", required = false)
-    private Long alreadyReport;
+    private Long alreadyReport=0l;
     @ApiModelProperty(value = "未报到人数", required = false)
-    private Long unreported;
+    private Long unreported=0l;
     @ApiModelProperty(value = "已报到人数占比", required = false)
-    private String proportion;
+    private String proportion="0";
     @ApiModelProperty(value = "完成缴费人数", required = false)
-    private int alreadyPay;
+    private int alreadyPay=0;
     @ApiModelProperty(value = "走绿色通道人数", required = false)
     private int convenienceChannel;
     @ApiModelProperty(value = "统计时间", required = false)
@@ -49,10 +49,13 @@ public class NewStudentProfileDTO {
     PageData<SchoolStatistics> schoolStatisticsPageData;
 
     public NewStudentProfileDTO(Long studentNumber, Long alreadyReport) {
-        this.studentNumber = studentNumber;
-        this.alreadyReport = alreadyReport;
+        this.studentNumber = studentNumber==null?0:studentNumber;
+        this.alreadyReport = alreadyReport==null?0:alreadyReport;
         this.unreported = this.studentNumber-this.alreadyReport;
-        this.proportion = this.alreadyReport/this.studentNumber+"";
-
+        if(this.studentNumber==0){
+            this.proportion="0";
+        }else {
+            this.proportion = this.alreadyReport/this.studentNumber+"";
+        }
     }
 }
