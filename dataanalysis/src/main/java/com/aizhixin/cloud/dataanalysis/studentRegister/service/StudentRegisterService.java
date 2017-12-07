@@ -173,7 +173,7 @@ public class StudentRegisterService {
 				for (String d : cid) {
 					collegeIds.add(Long.valueOf(d));
 				}
-				criteria.and("collegeId").in(collegeId);
+				criteria.and("collegeId").in(collegeIds);
 			}
 			if (null != type) {
 				String[] td = type.split(",");
@@ -207,6 +207,7 @@ public class StudentRegisterService {
 			result.put("success", false);
 			result.put("message","获取数据异常！");
 		}
+		p.getPage().setTotalPages((int)Math.ceil(total/page.getPageSize())+1);
         p.getPage().setPageNumber(page.getPageNumber());
 		p.getPage().setPageSize(page.getPageSize());
 		p.getPage().setTotalElements(total);
