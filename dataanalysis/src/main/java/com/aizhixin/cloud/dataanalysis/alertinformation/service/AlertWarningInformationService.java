@@ -19,6 +19,7 @@ import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningType;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 
+import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
 import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
 import org.springframework.data.domain.Pageable;
@@ -296,7 +297,7 @@ public class AlertWarningInformationService {
 	
 	public List<RegisterAlertCountDomain> alertCountInfor(AlertInforQueryDomain domain) {
 
-		String querySql = " SELECT COUNT(1) as countNum,WARNING_LEVEL FROM `t_warning_information` where DELETE_FLAG = "+DataValidity.VALID.getState()+" ";
+		String querySql = " SELECT COUNT(1) as countNum, WARNING_LEVEL FROM `t_warning_information` where DELETE_FLAG = "+DataValidity.VALID.getState()+" ";
 
 		if(!StringUtils.isEmpty(domain.getKeywords())){
 			querySql += " and ( NAME like '%" + domain.getKeywords()+ "%' or JOB_NUMBER like '%" + domain.getKeywords()+ "%') ";
@@ -452,10 +453,10 @@ public class AlertWarningInformationService {
 			}
 			data.put("total", sum);
 			data.put("alreadyProcessed", alreadyProcessed);
-			data.put("proportion",accuracy(alreadyProcessed * 1.0, sum * 1.0, 2));
-			data.put("proportion1",accuracy(sum1 * 1.0, sum * 1.0, 2));
-			data.put("proportion2", accuracy(sum2 * 1.0, sum * 1.0, 2));
-			data.put("proportion3", accuracy(sum3 * 1.0, sum * 1.0, 2));
+			data.put("proportion", ProportionUtil.accuracy(alreadyProcessed * 1.0, sum * 1.0, 2));
+			data.put("proportion1",ProportionUtil.accuracy(sum1 * 1.0, sum * 1.0, 2));
+			data.put("proportion2", ProportionUtil.accuracy(sum2 * 1.0, sum * 1.0, 2));
+			data.put("proportion3", ProportionUtil.accuracy(sum3 * 1.0, sum * 1.0, 2));
 			List<Object> res = sq.getResultList();
 			if(null!=res&&res.size()>0){
 				for(Object obj : res){
@@ -466,15 +467,15 @@ public class AlertWarningInformationService {
 					}
 					if(null!=d[1]){
 						cspDTO.setSum1(Integer.valueOf(String.valueOf(d[1])));
-						cspDTO.setProportion1(accuracy(Double.valueOf(String.valueOf(d[1])), sum * 1.0, 2));
+						cspDTO.setProportion1(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[1])), sum * 1.0, 2));
 					}
 					if(null!=d[2]){
 						cspDTO.setSum2(Integer.valueOf(String.valueOf(d[2])));
-						cspDTO.setProportion2(accuracy(Double.valueOf(String.valueOf(d[2])), sum * 1.0, 2));
+						cspDTO.setProportion2(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), sum * 1.0, 2));
 					}
 					if(null!=d[3]){
 						cspDTO.setSum3(Integer.valueOf(String.valueOf(d[3])));
-						cspDTO.setProportion3(accuracy(Double.valueOf(String.valueOf(d[3])), sum * 1.0, 2));
+						cspDTO.setProportion3(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[3])), sum * 1.0, 2));
 					}
                     cspDTOList.add(cspDTO);
 				}
@@ -638,7 +639,7 @@ public class AlertWarningInformationService {
 					if (null != d[4]) {
 						sum3 = Integer.valueOf(String.valueOf(d[4]));
 					}
-					typeStatisticsDTO.setProportion(accuracy(sum * 1.0, total * 1.0, 2));
+					typeStatisticsDTO.setProportion(ProportionUtil.accuracy(sum * 1.0, total * 1.0, 2));
 					typeStatisticsDTO.setSum(sum);
 					typeStatisticsDTO.setSum1(sum1);
 					typeStatisticsDTO.setSum2(sum2);
@@ -796,17 +797,6 @@ public class AlertWarningInformationService {
 		return alertWarningInformationRepository.getawinfoByOrgIdAndWarningType(orgId, warningType, DataValidity.VALID.getState());
 	}
 
-	public static String accuracy(double num, double total, int scale){
-		DecimalFormat df;
-//		df = (DecimalFormat) NumberFormat.getInstance();
-		df   = new DecimalFormat("######0.00");
-		//可以设置精确几位小数
-		df.setMaximumFractionDigits(scale);
-		//模式 例如四舍五入
-		df.setRoundingMode(RoundingMode.HALF_UP);
-		double accuracy_num = num / total * 100;
-		return df.format(accuracy_num);
-	}
 
 	/****************************************************************/
 	public Map<String,Object> getStatisticsByCollege(Pageable pageable,Long orgId, String type) {
@@ -906,7 +896,7 @@ public class AlertWarningInformationService {
 						if (null != d[8]) {
 							collegeWarningInfoDTO.setProcessedSum3(Integer.valueOf(String.valueOf(d[8])));
 						}
-						collegeWarningInfoDTO.setProcessedProportion(accuracy(collegeWarningInfoDTO.getProcessedNumber() * 1.0, collegeWarningInfoDTO.getTotal() * 1.0, 2));
+						collegeWarningInfoDTO.setProcessedProportion(ProportionUtil.accuracy(collegeWarningInfoDTO.getProcessedNumber() * 1.0, collegeWarningInfoDTO.getTotal() * 1.0, 2));
 						collegeWarningInfoDTOList.add(collegeWarningInfoDTO);
 					}
 				}

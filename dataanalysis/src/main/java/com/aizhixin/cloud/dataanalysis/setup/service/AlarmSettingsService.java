@@ -178,6 +178,7 @@ public class AlarmSettingsService {
         try {
             WarningType warningType = warningTypeService.getWarningTypeById(alarmSettingDomain.getWarningTypeId());
             warningType.setSetupCloseFlag(alarmSettingDomain.getSetupCloseFlag());
+            String[] wd = warningType.getWarningDescribe().split(",");
             warningTypeService.save(warningType);
             for (WarningGradeDomain wg : alarmSettingDomain.getWarningGradeDomainList()) {
                 AlarmSettings alarmSettings = null;
@@ -191,6 +192,7 @@ public class AlarmSettingsService {
                 alarmSettings.setOrgId(warningType.getOrgId());
                 alarmSettings.setWarningType(warningType.getWarningType());
                 String alarmSettingsId = alarmSettingsRepository.save(alarmSettings).getId();
+                String ruids = "";
                 for (WaringParameterDomain wp : wg.getWaringParameterDomainList()) {
                     AlarmRule alarmRule = null;
                     alarmRule = alarmRuleService.getByAlarmSettingIdAndSerialNumber(alarmSettingsId, wp.getSerialNumber());
@@ -201,7 +203,15 @@ public class AlarmSettingsService {
                     alarmRule.setSerialNumber(wp.getSerialNumber());
                     alarmRule.setRightParameter(wp.getParameter());
                     alarmRule.setOrgId(warningType.getOrgId());
-                    alarmRuleService.save(alarmRule);
+                    if (wd.length > 0) {
+                        alarmRule.setName(wd[wp.getSerialNumber()-1]);
+                    }
+                    ruids  = alarmRuleService.save(alarmRule) + ",";
+                }
+                if(!StringUtils.isBlank(ruids)) {
+                    AlarmSettings set = alarmSettingsRepository.findOne(alarmSettingsId);
+                    set.setRuleSet(ruids.substring(0,ruids.length()-1));
+                    alarmSettingsRepository.save(set);
                 }
             }
         } catch (Exception e) {

@@ -17,7 +17,7 @@ import lombok.ToString;
 @NoArgsConstructor
 public class PracticeStaticsDTO {
     @ApiModelProperty(value = "实践人数", required = false)
-    private Long practiceStudentNum;
+    private Long practiceStudentNum=0l;
     @ApiModelProperty(value = "实践公司数", required = false)
     private Long practiceCompanyNum;
     @ApiModelProperty(value = "任务数", required = false)
