@@ -26,8 +26,8 @@ public class ExcelUtil {
 	private boolean isE2007 = false; // 判断是否是excel2007格式
 
 	public ExcelUtil(String name) {
-		
-		File excelFile = new File("/nfs/1/"+name);
+		//               IDC文件存储路径  /nfs/1/
+		File excelFile = new File("C:/Users/zhouxin/Desktop/导入文件/" + name);
 		String path = excelFile.getName();// 返回原始文件名
 		String extName = null;
 		int p = path.lastIndexOf(".");
