@@ -10,11 +10,8 @@ import com.aizhixin.cloud.dataanalysis.analysis.respository.TeachingScoreStatist
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
-<<<<<<< HEAD
-import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
-=======
 
->>>>>>> 66c57e6f23bc69f66367f0543e4da00a29d5eab1
+import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
 import liquibase.util.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
