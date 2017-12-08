@@ -2,6 +2,7 @@ package com.aizhixin.cloud.dataanalysis.analysis.service;
 
 import com.aizhixin.cloud.dataanalysis.analysis.constant.TrendType;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.*;
+import com.aizhixin.cloud.dataanalysis.analysis.entity.PracticeStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.CetScoreStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.PracticeStaticsRespository;
@@ -18,11 +19,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -49,6 +52,7 @@ public class SchoolStatisticsService {
     @Autowired
     private TeachingScoreStatisticsRespository teachingScoreStatisticsRespository;
     @Autowired
+    private JdbcTemplate jdbcTemplate;
     private MongoTemplate mongoTemplate;
 
     /**
@@ -71,7 +75,7 @@ public class SchoolStatisticsService {
         int convenienceChannel = 0;
         Date time = new Date();
         try {
-            StringBuilder sql = new StringBuilder("SELECT COUNT(1) AS count, SUM(ss.NEW_STUDENTS_COUNT) as sum, SUM(ss.ALREADY_REPORT) as rsum, SUM(ss.ALREADY_PAY) as psum, SUM(ss.CONVENIENCE_CHANNEL) as csum, ss.STATISTICAL_TIME FROM T_SCHOOL_STATISTICS ss WHERE 1 = 1");
+            StringBuilder sql = new StringBuilder("SELECT COUNT(1) AS count, SUM(ss.NEW_STUDENTS_COUNT) as sum, SUM(ss.ALREADY_REPORT) as rsum, SUM(ss.ALREADY_PAY) as psum, SUM(ss.CONVENIENCE_CHANNEL) as csum, max(ss.STATISTICAL_TIME) FROM T_SCHOOL_STATISTICS ss WHERE 1 = 1");
             if (null != orgId) {
                 sql.append(" and ss.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
@@ -83,6 +87,7 @@ public class SchoolStatisticsService {
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
+
             }
             Object res = sq.getSingleResult();
             if (null != res) {
@@ -374,6 +379,7 @@ public class SchoolStatisticsService {
         map.put("collegeAndAvgScore",list);
         return map;
     }
+
 
     public Map<String, Object> getCollegeDetails(Pageable page,Long orgId, String collegeId, String nj, String type,String isReport,String isPay) {
         Map<String, Object> result = new HashMap<>();
