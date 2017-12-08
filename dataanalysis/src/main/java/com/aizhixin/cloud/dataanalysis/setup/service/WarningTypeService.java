@@ -39,12 +39,13 @@ public class WarningTypeService {
         warningTypeRespository.save(warningTypeList);
     }
 
+    public List<WarningTypeDomain> getAllOrgId(){
+    	return warningTypeRespository.getAllOrgId();
+    }
+    
     public void delete(Long orgId){
         warningTypeRespository.deleteByOrgId(orgId);
     }
 
-//    public List<WarningTypeDomain> getAllOrgId(){
-//    	return warningTypeRespository.getAllOrgId();
-//    }
     
 }
