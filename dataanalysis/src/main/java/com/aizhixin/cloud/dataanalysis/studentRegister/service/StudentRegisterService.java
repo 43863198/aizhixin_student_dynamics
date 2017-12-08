@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.domain.ImportDomain;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,7 +154,7 @@ public class StudentRegisterService {
 	}
 
 
-	public Map<String, Object> getCollegeDetails(Pageable page,Long orgId, String collegeId, String type,String isReport,String isPay) {
+	public Map<String, Object> getCollegeDetails(Pageable page,Long orgId, String collegeId, String nj, String type,String isReport,String isPay) {
 		Map<String, Object> result = new HashMap<>();
 		PageData<StudentRegister> p = new PageData<>();
 		List<StudentRegister> items = new ArrayList<>();
@@ -173,7 +174,7 @@ public class StudentRegisterService {
 				for (String d : cid) {
 					collegeIds.add(Long.valueOf(d));
 				}
-				criteria.and("collegeId").in(collegeId);
+				criteria.and("collegeId").in(collegeIds);
 			}
 			if (null != type) {
 				String[] td = type.split(",");
@@ -198,6 +199,9 @@ public class StudentRegisterService {
 				}
 
 			}
+			if(!StringUtils.isBlank(nj)){
+				criteria.orOperator(criteria.where("userName").regex(".*?\\" +nj+ ".*"), criteria.where("jobNum").is(nj));
+			}
 			query.addCriteria(criteria);
 			//mongoTemplate.count计算总数
 			 total = mongoTemplate.count(query, StudentRegister.class);
@@ -207,6 +211,7 @@ public class StudentRegisterService {
 			result.put("success", false);
 			result.put("message","获取数据异常！");
 		}
+		p.getPage().setTotalPages((int)Math.ceil(total/page.getPageSize())+1);
         p.getPage().setPageNumber(page.getPageNumber());
 		p.getPage().setPageSize(page.getPageSize());
 		p.getPage().setTotalElements(total);

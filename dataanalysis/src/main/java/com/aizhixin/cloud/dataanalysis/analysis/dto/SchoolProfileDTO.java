@@ -23,21 +23,21 @@ public class SchoolProfileDTO {
     private Long allTeacher;
 
     @ApiModelProperty(value = "辅导员数量")
-    private Long allInstructor;
+    private Long allInstructor=0l;
 
     @ApiModelProperty(value = "在校学生")
     private Long inSchoolStudent;
 
     @ApiModelProperty(value = "校外实践学生")
-    private Long outSchoolStudent;
+    private Long outSchoolStudent=0l;
 
     @ApiModelProperty(value = "准毕业生")
     private Long readyGraduation;
 
     public SchoolProfileDTO(Long allStudent, Long allTeacher, Long allInstructor,  Long outSchoolStudent, Long readyGraduation) {
-        this.allStudent = allStudent;
-        this.allTeacher = allTeacher;
-        this.allInstructor = allInstructor;
+        this.allStudent = allStudent==null?0:allStudent;
+        this.allTeacher = allTeacher==null?0:allTeacher;
+        this.allInstructor = allInstructor==null?0:allInstructor;
         this.outSchoolStudent = outSchoolStudent;
         this.inSchoolStudent = this.allStudent-this.outSchoolStudent;
         this.readyGraduation = readyGraduation;
