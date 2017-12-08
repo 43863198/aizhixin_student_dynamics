@@ -46,7 +46,7 @@ public class  AlarmRule extends AbstractEntity {
      * 规则左区间参数值
      */
     @Column(name = "LEFT_PARAMETER")
-    @Getter @Setter private Integer leftParameter;
+    @Getter @Setter private String leftParameter;
 
     /*
      * 规则左区间参数关系(大于,大于等于)
@@ -58,7 +58,7 @@ public class  AlarmRule extends AbstractEntity {
     * 规则右区间参数值
     */
     @Column(name = "RIGHT_PARAMETER")
-    @Getter @Setter private Integer rightParameter;
+    @Getter @Setter private String rightParameter;
 
     /*
      * 规则右区间参数关系(大于,大于等于)

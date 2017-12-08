@@ -1,7 +1,9 @@
 package com.aizhixin.cloud.dataanalysis.alertinformation.repository;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -24,5 +26,7 @@ public interface AlertWarningInformationRepository extends JpaRepository<Warning
     @Query("select aw from #{#entityName} aw where aw.deleteFlag = :deleteFlag and aw.warningType = :warningType and aw.orgId = :orgId and aw.warningState =:warningState ")
     List<WarningInformation> getawinfoByOrgIdAndWarningTypeAndState(@Param("orgId")Long orgId, @Param("warningType")String warningType, @Param("deleteFlag")int deleteFlag,@Param("warningState") int warningState);
 
-
+    @Modifying(clearAutomatically = true) 
+	@Query("update com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation wi set wi.deleteFlag = 1 where wi.deleteFlag= 0 and wi.warningType =:warningType and wi.orgId=:orgId ")
+	public void logicDeleteByOrgIdAndWarnType(@Param("warningType") String warningType,@Param("orgId") Long orgId);
 }
