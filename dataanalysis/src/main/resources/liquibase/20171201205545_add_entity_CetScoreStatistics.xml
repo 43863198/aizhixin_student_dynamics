@@ -9,7 +9,7 @@
     <property name="now" value="sysdate" dbms="oracle"/>
 
     <!-- 四六级英语成绩统计表结构-->
-    <changeSet id="20171201184545" author="jun.wang">
+    <changeSet id="20171201204545" author="jun.wang">
 		<preConditions onFail="MARK_RAN">
 	        <not>
 	            <tableExists tableName="T_CET_STATISTICS"/>
