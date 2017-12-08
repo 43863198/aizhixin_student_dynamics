@@ -73,7 +73,15 @@ public class AlarmSettingsController {
             )
             @RequestBody AlarmSettingDomain alarmSettingDomain
     ){
-        return alarmSettingsService.warningSet(alarmSettingDomain);
+    	 Map<String, Object> result =  alarmSettingsService.warningSet(alarmSettingDomain);
+    	 
+    	
+    	 if(null != result.get("warningType")){
+    		 String warningType = (String)result.get("warningType");
+    		 Long orgId = (Long)result.get("orgId");
+    		 alarmSettingsService.rebuildAlertInfor(warningType,orgId);
+    	 }
+    	 return result;
     }
 
 
