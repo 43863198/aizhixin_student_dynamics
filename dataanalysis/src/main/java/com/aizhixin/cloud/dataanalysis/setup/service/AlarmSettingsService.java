@@ -221,7 +221,7 @@ public class AlarmSettingsService {
                     alarmRule.setRightParameter(wp.getParameter());
                     alarmRule.setOrgId(warningType.getOrgId());
                     
-                    if(null != result.get("warningType")){
+                    if(null == result.get("warningType")){
                      result.put("warningType", warningType.getWarningType());
                      result.put("orgId", warningType.getOrgId());
                     }
