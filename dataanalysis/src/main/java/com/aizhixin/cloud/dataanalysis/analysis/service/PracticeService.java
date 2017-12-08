@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +61,10 @@ public class PracticeService {
 		}
 		List<Practice> list = new ArrayList<>();
 		int i = 0;
+		int companyNameMax = 5;
+		int companyNameMin = 1;
+		int reviewResultMax = 20;
+		int reviewResultMin = 1;
 		for (PracticeDomain d : dataBases) {
 			try {
 				// 每个学生循环增加10次实践任务
@@ -100,22 +105,51 @@ public class PracticeService {
 						practice.setTaskCreatedDate(taskCreatedDate);
 					}
 					// 造数据：公司名称5个，按班级id大小随机取
-					if (practice.getClassId() < 1000l) {
+					if (practice.getClassId() < 9700) {
 						practice.setCompanyName(CompanyName.getName(1));
-					}else if (practice.getClassId() < 1200l) {
+					} else if (practice.getClassId() < 9800) {
 						practice.setCompanyName(CompanyName.getName(2));
-					}else if (practice.getClassId() < 1400l) {
+					} else if (practice.getClassId() < 9900) {
 						practice.setCompanyName(CompanyName.getName(3));
-					}else if(practice.getClassId() < 1500l) {
+					} else if (practice.getClassId() < 10000) {
 						practice.setCompanyName(CompanyName.getName(4));
-					}else if (practice.getClassId() < 1700l) {
+					} else if (practice.getClassId() < 11000) {
 						practice.setCompanyName(CompanyName.getName(5));
 					}
-//					practice.setCompanyName(d.getCompanyName());
-
-					// 造数据：审评状态3个，(pass,notPass,backTo),pass率在80%-100%之间
-					practice.setReviewResult(d.getReviewResult());
-
+// -----------------------公司名称5个，按随机1~5的数取公司名称-----------------------------------------------------------------//
+// -----------------------审评状态3个，按随机1~100的数取审评状态(pass,notPass,backTo),pass率在80%-100%之间----------------------//
+//					Random random = new Random();
+//					int count = random.nextInt(companyNameMax) % (companyNameMax - companyNameMin + 1) + companyNameMin;
+					Random random1 = new Random();
+					int count1 = random1.nextInt(reviewResultMax) % (reviewResultMax - reviewResultMin + 1) + reviewResultMin;
+//					switch (count) {
+//					case 1:
+//						practice.setCompanyName(CompanyName.getName(1));
+//						break;
+//					case 2:
+//						practice.setCompanyName(CompanyName.getName(2));
+//						break;
+//					case 3:
+//						practice.setCompanyName(CompanyName.getName(3));
+//						break;
+//					case 4:
+//						practice.setCompanyName(CompanyName.getName(4));
+//						break;
+//					default:
+//						practice.setCompanyName(CompanyName.getName(5));
+//						break;
+//					}
+					switch (count1) {
+					case 1:
+						practice.setReviewResult("backTo");
+						break;
+					case 2:
+						practice.setReviewResult("notPass");
+						break;
+					default:
+						practice.setReviewResult("pass");
+						break;
+					}
 					practice.setCompanyProvince(d.getCompanyProvince());
 					practice.setCompanyCity(d.getCompanyCity());
 					String uuid = UUID.randomUUID().toString().replaceAll("-", "");
