@@ -136,7 +136,7 @@ public class SchoolConditionStatisticsController {
             @ApiParam(value = "缴费情况 isPay(1:已缴费；2:绿色通道；3:其他)" ) @RequestParam(value = "isPay", required = false) String isPay,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return studentRegisterService.getCollegeDetails(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId, colloegeId, nj, type, isReport, isPay);
+        return schoolStatisticsService.getCollegeDetails(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId, colloegeId, nj, type, isReport, isPay);
     }
 
     /**
