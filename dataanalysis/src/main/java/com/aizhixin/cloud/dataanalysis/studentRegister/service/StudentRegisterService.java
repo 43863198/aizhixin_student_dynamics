@@ -41,9 +41,6 @@ public class StudentRegisterService {
 	@Autowired
 	private StudentRegisterMongoRespository respository;
 	@Autowired
-	private MongoTemplate mongoTemplate;
-
-	@Autowired
 	private ExcelBasedataHelper basedataHelper;
 
 	public void importData(String studentInfoFile, String dataBaseFile, String importFile, Date registerDate, Long orgId) {
@@ -152,74 +149,4 @@ public class StudentRegisterService {
 			respository.save(stuRegisterList);
 		}
 	}
-
-
-	public Map<String, Object> getCollegeDetails(Pageable page,Long orgId, String collegeId, String nj, String type,String isReport,String isPay) {
-		Map<String, Object> result = new HashMap<>();
-		PageData<StudentRegister> p = new PageData<>();
-		List<StudentRegister> items = new ArrayList<>();
-		long total = 0L;
-		try {
-			//创建排序模板Sort
-			Sort sort = new Sort(Sort.Direction.DESC, "id");
-			//创建分页模板Pageable
-			Pageable pageable = new PageRequest(page.getPageNumber(), page.getPageSize(), sort);
-			//创建查询条件对象
-			Query query = new Query();
-			//条件
-			Criteria criteria = Criteria.where("orgId").is(orgId);
-			if (null != collegeId) {
-				String[] cid = collegeId.split(",");
-				Set<Long> collegeIds = new HashSet<>();
-				for (String d : cid) {
-					collegeIds.add(Long.valueOf(d));
-				}
-				criteria.and("collegeId").in(collegeIds);
-			}
-			if (null != type) {
-				String[] td = type.split(",");
-				List tds = new ArrayList<>();
-				for (String d : td) {
-					tds.add(Integer.valueOf(d));
-				}
-				criteria.and("education").in(tds);
-			}
-			if (null != isReport) {
-				criteria.and("isRegister").is(Integer.valueOf(isReport));
-			}
-			if (null != isPay) {
-				String[] td = type.split(",");
-				for (String d : td) {
-					if (d.equals("1")) {
-						criteria.and("isPay").is(1);
-					}
-					if (d.equals("2")) {
-						criteria.and("isGreenChannel").is(1);
-					}
-				}
-
-			}
-			if(!StringUtils.isBlank(nj)){
-				criteria.orOperator(criteria.where("userName").is(nj), criteria.where("jobNum").is(nj));
-			}
-			query.addCriteria(criteria);
-			//mongoTemplate.count计算总数
-			 total = mongoTemplate.count(query, StudentRegister.class);
-			// mongoTemplate.find 查询结果集
-			items = mongoTemplate.find(query.with(pageable), StudentRegister.class);
-		}catch (Exception e){
-			result.put("success", false);
-			result.put("message","获取数据异常！");
-		}
-		p.getPage().setTotalPages((int)Math.ceil(total/page.getPageSize())+1);
-        p.getPage().setPageNumber(page.getPageNumber());
-		p.getPage().setPageSize(page.getPageSize());
-		p.getPage().setTotalElements(total);
-		p.setData(items);
-		result.put("success", true);
-		result.put("data", p);
-		return result;
-	}
-
-
 }

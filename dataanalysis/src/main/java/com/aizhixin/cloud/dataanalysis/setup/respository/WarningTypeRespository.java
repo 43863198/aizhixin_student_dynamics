@@ -20,8 +20,8 @@ public interface WarningTypeRespository extends JpaRepository<WarningType, Strin
     @Query("select tp from #{#entityName} tp where tp.orgId = :orgId and tp.deleteFlag = :deleteFlag ")
     List<WarningType> getWarningTypeByOrgId(@Param("orgId")Long orgId, @Param("deleteFlag")int deleteFlag);
 
-//    @Query("select distinct new com.aizhixin.cloud.dataanalysis.setup.domain.WarningTypeDomain(wt.orgId)  from com.aizhixin.cloud.dataanalysis.setup.entity.WarningType wt" ) 
-//    List<WarningTypeDomain> getAllOrgId();
+    @Query("select distinct new com.aizhixin.cloud.dataanalysis.setup.domain.WarningTypeDomain(wt.orgId)  from com.aizhixin.cloud.dataanalysis.setup.entity.WarningType wt" ) 
+    List<WarningTypeDomain> getAllOrgId();
 
     @Modifying
     @Query("delete from #{#entityName} tp where tp.orgId = :orgId ")

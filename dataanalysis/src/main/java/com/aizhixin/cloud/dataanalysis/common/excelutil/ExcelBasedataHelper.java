@@ -288,7 +288,7 @@ public class ExcelBasedataHelper {
 					continue;// 跳过第一行
 				}
 				try {
-					setCellStringType(row, 15);// 一行共有15个列值
+					setCellStringType(row, 15);// 一行共有16个列值
 					Long orgId = Long.valueOf(getCellStringValue(row, 0));
 					Long userId = Long.valueOf(getCellStringValue(row, 1));
 					jobNum = getCellStringValue(row, 2);

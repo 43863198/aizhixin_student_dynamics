@@ -458,7 +458,7 @@ public class TestDataController {
 //			@ApiParam(value = "practiceFile 实践数据", required = true) @RequestParam(value = "practiceFile") MultipartFile practiceFile,
 //			@ApiParam(value = "newStudentInfoFile 基础数据文件", required = true) @RequestParam(value = "newStudentInfoFile") MultipartFile newStudentInfoFile,
 			@ApiParam(value = "orgId 学校ID", required = true) @RequestParam(value = "orgId") Long orgId) {
-		practiceService.importData("", "", orgId);;
+		practiceService.importData("实践2016第二学期数据.xlsx", "开发环境桂林理工17级新学生信息.xlsx", orgId);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

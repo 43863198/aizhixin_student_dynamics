@@ -11,7 +11,7 @@ import lombok.ToString;
  * @E-mail: wangjun@aizhixin.com
  * @Date: 2017-11-30
  */
-@ApiModel(description="四六级学情概况统计信息")
+@ApiModel(description="英语四六级学情概况统计信息")
 @Data
 @ToString
 @NoArgsConstructor
