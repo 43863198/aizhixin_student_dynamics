@@ -7,7 +7,7 @@ import lombok.Getter;
  * @E-mail: wujianwei@aizhixin.com
  * @Date: 2017-09-11
  */
-public enum WarningType {
+public enum WarningTypeConstant {
     Register("迎新报到预警"),
     LeaveSchool("退学预警"),
     AttendAbnormal("修读异常预警"),
@@ -19,7 +19,7 @@ public enum WarningType {
 
     private String value ;
 
-    private WarningType(String value){
+    private WarningTypeConstant(String value){
         this.value = value;
     }
 

@@ -4,19 +4,26 @@ import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningDescparameter
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningGradeDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningSettingsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningTypeDTO;
+import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
+import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
+import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
+import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
 import com.aizhixin.cloud.dataanalysis.setup.domain.*;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmRule;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
 import com.aizhixin.cloud.dataanalysis.setup.entity.ProcessingMode;
 import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.setup.respository.AlarmSettingsRepository;
+import com.aizhixin.cloud.dataanalysis.studentRegister.job.StudentRegisterJob;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.xml.bind.Element;
 import java.util.*;
 
 /**
@@ -27,6 +34,8 @@ import java.util.*;
 @Component
 @Transactional
 public class AlarmSettingsService {
+	
+	private Logger logger = Logger.getLogger(this.getClass());
     @Autowired
     private AlarmSettingsRepository alarmSettingsRepository;
     @Autowired
@@ -35,6 +44,14 @@ public class AlarmSettingsService {
     private AlarmRuleService alarmRuleService;
     @Autowired
     private ProcessingModeService processingModeService;
+    @Autowired
+    private AlertWarningInformationService alertWarningInformationService;
+    @Autowired
+    private StudentRegisterJob studentRegisterJob;
+    @Autowired
+    private RollCallJob rollCallJob;
+    @Autowired
+    private ScoreJob scoreJob;
 
     public List<AlarmSettings> getAlarmSettingsByType(String warningType){
         return alarmSettingsRepository.getAlarmSettingsByType(warningType, DataValidity.VALID.getState());
@@ -203,6 +220,12 @@ public class AlarmSettingsService {
                     alarmRule.setSerialNumber(wp.getSerialNumber());
                     alarmRule.setRightParameter(wp.getParameter());
                     alarmRule.setOrgId(warningType.getOrgId());
+                    
+                    if(null != result.get("warningType")){
+                     result.put("warningType", warningType.getWarningType());
+                     result.put("orgId", warningType.getOrgId());
+                    }
+                    
                     if (wd.length > 0) {
                         alarmRule.setName(wd[wp.getSerialNumber()-1]);
                     }
@@ -221,6 +244,52 @@ public class AlarmSettingsService {
         result.put("success", true);
         result.put("message", "预警设置保存成功!");
         return result;
+    }
+    
+    @Async
+    public void rebuildAlertInfor(String warningType,Long orgId){
+    	
+    	logger.debug("开始删除warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
+    	
+    	alertWarningInformationService.logicDeleteByOrgIdAndWarnType(warningType, orgId);
+    	
+    	logger.debug("删除warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
+    	
+    	if(WarningTypeConstant.Register.toString().equals(warningType)){
+    		logger.debug("开始重新生成warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
+    		studentRegisterJob.studenteRegisterJob();
+    		logger.debug("重新生成warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
+    	}
+    	if(WarningTypeConstant.Absenteeism.toString().equals(warningType)){
+    		logger.debug("开始重新生成warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
+    		rollCallJob.rollCallJob();
+    		logger.debug("重新生成warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
+    	}
+    	if(WarningTypeConstant.AttendAbnormal.toString().equals(warningType)){
+    		logger.debug("开始重新生成warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
+    		scoreJob.attendAbnormalJob();
+    		logger.debug("重新生成warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
+    	}
+    	if(WarningTypeConstant.Cet.toString().equals(warningType)){
+    		logger.debug("开始重新生成warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
+    		scoreJob.cet4ScoreJob();
+    		logger.debug("重新生成warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
+    	}
+    	if(WarningTypeConstant.PerformanceFluctuation.toString().equals(warningType)){
+    		logger.debug("开始重新生成warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
+    		scoreJob.scoreFluctuateJob();
+    		logger.debug("重新生成warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
+    	}
+    	if(WarningTypeConstant.TotalAchievement.toString().equals(warningType)){
+    		logger.debug("开始重新生成warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
+    		scoreJob.totalScoreJob();
+    		logger.debug("重新生成warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
+    	}
+    	if(WarningTypeConstant.SupplementAchievement.toString().equals(warningType)){
+    		logger.debug("开始重新生成warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
+    		scoreJob.makeUpScoreJob();
+    		logger.debug("重新生成warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
+    	}
     }
 
 
