@@ -49,7 +49,7 @@ public class CetStatisticAnalysisController {
      * @param orgId
      * @return
      */
-    @GetMapping(value = "/statistic", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/analysis", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "cet———趋势分析", response = Void.class, notes = "cet———趋势分析<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object> getCetTrendAnalysis(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
