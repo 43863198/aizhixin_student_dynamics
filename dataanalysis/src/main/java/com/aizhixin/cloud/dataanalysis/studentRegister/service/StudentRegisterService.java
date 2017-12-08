@@ -200,7 +200,7 @@ public class StudentRegisterService {
 
 			}
 			if(!StringUtils.isBlank(nj)){
-				criteria.orOperator(criteria.where("userName").is(nj), criteria.where("jobNum").is(nj));
+				criteria.orOperator(criteria.where("userName").regex(".*?\\" +nj+ ".*"), criteria.where("jobNum").is(nj));
 			}
 			query.addCriteria(criteria);
 			//mongoTemplate.count计算总数

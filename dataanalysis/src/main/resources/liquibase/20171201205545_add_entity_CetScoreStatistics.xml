@@ -26,8 +26,7 @@
             <column name="CET_FORE_PASS_NUM" type="INT(5)"  remarks="四级通过人数"/>
             <column name="CET_SIX_JOIN_NUM" type="INT(5)" remarks="六级参考人数"/>
             <column name="CET_SIX_PASS_NUM" type="INT(5)"  remarks="六级通过人数"/>
-            <column name="SEMESTER_NAME" type="VARCHAR(50)" remarks="学期名称"/>
-            <column name="SEMESTER_ID" type="BIGINT"  remarks="学期id"/>
+            <column name="SEMESTER" type="INT(4)"  remarks="学期"/>
             <column name="TEACHER_YEAR" type="VARCHAR(50)" remarks="学年"/>
             <column name="STATE" type="INT(4)" defaultValueNumeric="0" remarks="数据状态(是否删除0:否 1:是)"/>
             <column name="STATISTICS_TYPE" type="INT(4)"  remarks="统计类型"/>

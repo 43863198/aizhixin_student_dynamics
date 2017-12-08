@@ -11,11 +11,11 @@ import lombok.ToString;
  * @E-mail: wujianwei@aizhixin.com
  * @Date: 2017-12-07
  */
-@ApiModel(description="四六各个学院统计信息")
+@ApiModel(description="英语四六级各个学院统计信息")
 @Data
 @ToString
 @NoArgsConstructor
-public class CollegeCetStatisticDTO extends CetScoreStatisticsDTO{
+public class CollegeCetStatisticDTO extends CetStatisticDTO{
     @ApiModelProperty(value = "学院id", required = false)
     private Long collegeId;
     @ApiModelProperty(value = "学院", required = false)
