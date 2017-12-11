@@ -68,6 +68,9 @@ public class StudentRegisterJob {
 				warnSettingsIdList.add(settings.getId());
 				Long orgId = settings.getOrgId();
 
+				if(StringUtils.isEmpty(settings.getRuleSet())){
+					continue;
+				}
 				String[] warmRuleIds = settings.getRuleSet().split(",");
 				for (String warmRuleId : warmRuleIds) {
 					if (!StringUtils.isEmpty(warmRuleId)) {
