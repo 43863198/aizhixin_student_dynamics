@@ -184,6 +184,7 @@ public class StudentRegisterJob {
 									alertInfor
 											.setWarningType(WarningTypeConstant.Register
 													.toString());
+									alertInfor.setWarningCondition("报到注册截至时间超过天数："+result);
 									alertInfor.setWarningTime(new Date());
 									alertInfor.setPhone(studentRegister.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());

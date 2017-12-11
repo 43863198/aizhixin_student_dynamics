@@ -171,7 +171,10 @@ public class RollCallJob {
 
 				warnSettingsIdList.add(settings.getId());
 				Long orgId = settings.getOrgId();
-
+				
+				if(StringUtils.isEmpty(settings.getRuleSet())){
+					continue;
+				}
 				String[] warmRuleIds = settings.getRuleSet().split(",");
 				for (String warmRuleId : warmRuleIds) {
 					if (!StringUtils.isEmpty(warmRuleId)) {
@@ -276,6 +279,7 @@ public class RollCallJob {
 											.setWarningType(WarningTypeConstant.Absenteeism
 													.toString());
 									alertInfor.setWarningTime(new Date());
+									alertInfor.setWarningCondition("本学期累计旷课次数为:"+rollCallCount.getOutSchoolTimes());
 									alertInfor.setPhone(rollCallCount.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());
 									alertInforList.add(alertInfor);
