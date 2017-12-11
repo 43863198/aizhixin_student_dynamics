@@ -13,4 +13,13 @@ public class AlertTypeConstant {
 	
 	//状态(10:处理中；20：已处理)
 	public final static int ALERT_PROCESSED = 20;
+	
+	//预警等级：红色预警
+	public final static int WARN_STATE_RED_ALERT = 1;
+	
+	//预警等级：橙色预警
+	public final static int WARN_STATE_ORANGE_ALERT = 2;
+	
+	//预警等级：黄色预警
+	public final static int WARN_STATE_YELLOW_ALERT = 3;
 }

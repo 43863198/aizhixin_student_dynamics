@@ -18,10 +18,10 @@ import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
-
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
 import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
+
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +63,20 @@ public class AlertWarningInformationService {
 	@Autowired
 	private WarningTypeService warningTypeService;
 
+	/**
+	 * 修改预警状态按预警等级和机构id
+	 * @param warningState
+	 * @param warningLevel
+	 * @param orgId
+	 */
+	public void updateWarningStateByWarningLevel(int warningState,int warningLevel,HashSet<Long> orgIds){
+		alertWarningInformationRepository.updateWarningStateByWarningLevel(warningState, warningLevel, orgIds);
+	}
+	
+	public Long countyWarningLevel(int warningState,int warningLevel){
+		return alertWarningInformationRepository.countByDeleteFlagAndWarningStateAndWarningLevel(DataValidity.VALID.getState(),warningState, warningLevel);
+	}
+	
 	/**
 	 * 按预警类型逻辑删除预警信息
 	 * @param warningType

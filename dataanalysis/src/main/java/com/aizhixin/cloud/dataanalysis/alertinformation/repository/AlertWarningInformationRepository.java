@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -29,4 +30,11 @@ public interface AlertWarningInformationRepository extends JpaRepository<Warning
     @Modifying(clearAutomatically = true) 
 	@Query("update com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation wi set wi.deleteFlag = 1 where wi.deleteFlag= 0 and wi.warningType =:warningType and wi.orgId=:orgId ")
 	public void logicDeleteByOrgIdAndWarnType(@Param("warningType") String warningType,@Param("orgId") Long orgId);
+    
+    @Modifying(clearAutomatically = true) 
+   	@Query("update com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation wi set wi.warningState = :warningState where wi.deleteFlag= 0 and wi.warningLevel =:warningLevel and wi.orgId in(:orgIds) ")
+   	public void updateWarningStateByWarningLevel(@Param("warningState") int warningState,@Param("warningLevel") int warningLevel,@Param("orgIds") HashSet<Long> orgIds);
+    
+    
+	public Long countByDeleteFlagAndWarningStateAndWarningLevel(int deleteFlag,int warningState,int warningLevel);
 }
