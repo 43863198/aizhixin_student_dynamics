@@ -58,9 +58,9 @@ public class PracticeStaticsDTO {
     @ApiModelProperty(value = "分页查询", required = false)
     PageData<PracticeStatistics> practiceStatisticsPageData;
     public PracticeStaticsDTO(Long practiceStudentNum, Long practiceCompanyNum, Long taskNum, Long taskPassNum) {
-        this.practiceStudentNum = practiceStudentNum;
-        this.practiceCompanyNum = practiceCompanyNum;
-        this.taskNum = taskNum;
-        this.taskPassNum = taskPassNum;
+        this.practiceStudentNum = practiceStudentNum==null?0:practiceStudentNum;
+        this.practiceCompanyNum = practiceCompanyNum==null?0:practiceCompanyNum;
+        this.taskNum = taskNum==null?0:taskNum;
+        this.taskPassNum = taskPassNum==null?0:taskPassNum;
     }
 }
