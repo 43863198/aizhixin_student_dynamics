@@ -4,6 +4,7 @@
 package com.aizhixin.cloud.dataanalysis.studentRegister.controller;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -14,15 +15,19 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
 import com.aizhixin.cloud.dataanalysis.analysis.job.SchoolStatisticsJob;
+import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
 import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
 import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
 import com.aizhixin.cloud.dataanalysis.studentRegister.job.StudentRegisterJob;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 /**
  * @author zhengning
@@ -43,6 +48,8 @@ public class TestAlarmJobController {
 	private ScoreJob scoreJob;
 	@Autowired
 	private SchoolStatisticsJob schoolStatisticsJob;
+	@Autowired
+	private AlertWarningInformationService alertWarningInformationService;
 
 
 	@RequestMapping(value = "/rollcallcountjob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -147,6 +154,17 @@ public class TestAlarmJobController {
 	@ApiOperation(httpMethod = "GET", value = "学校信息统计定时任务", response = Void.class, notes = "学校信息统计定时任务<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> schoolCountJob() {
 		schoolStatisticsJob.schoolStatisticsJob();
+		Map<String, Object> result = new HashMap<String, Object>();
+		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/processedalert", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "GET", value = "按预警等级处理预警信息", response = Void.class, notes = "处理预警信息<br><br><b>@author zhengning</b>")
+	public ResponseEntity<Map<String, Object>> processedAlert(
+			@ApiParam(value = "orgIds 机构id") @RequestParam(value = "orgIds", required = true) HashSet<Long> orgIds,
+			@ApiParam(value = "warningLevel 预警等级") @RequestParam(value = "warningLevel", required = true) int warningLevel
+			) {
+		alertWarningInformationService.updateWarningStateByWarningLevel(AlertTypeConstant.ALERT_PROCESSED, warningLevel, orgIds);
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
