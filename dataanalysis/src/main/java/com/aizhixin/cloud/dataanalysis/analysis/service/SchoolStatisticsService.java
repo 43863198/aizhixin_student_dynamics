@@ -167,7 +167,7 @@ public class SchoolStatisticsService {
         PracticeStaticsDTO practiceStaticsDTO = practiceStaticsRespository.getPracticeStatics(orgId);
         SchoolProfileDTO schoolProfileDTO = schoolStatisticsRespository.getSchoolPersonStatistics(orgId);
         schoolProfileDTO.setOutSchoolStudent(practiceStaticsDTO.getPracticeStudentNum());
-        schoolProfileDTO.setInSchoolStudent(schoolProfileDTO.getAllStudent() - schoolProfileDTO.getOutSchoolStudent());
+        schoolProfileDTO.setInSchoolStudent(Long.valueOf(schoolProfileDTO.getAllStudent()) - Long.valueOf(schoolProfileDTO.getOutSchoolStudent()));
         return schoolProfileDTO;
     }
 
