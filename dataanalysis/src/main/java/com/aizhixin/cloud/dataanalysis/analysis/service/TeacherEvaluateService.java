@@ -51,8 +51,8 @@ public class TeacherEvaluateService {
             countSql += " and TEACHER_YEAR=" + grade + " ";
         }
         if (!StringUtils.isEmpty(collegeIds)) {
-            querySql += " and COLLEGE_ID IN [" + collegeIds + "] ";
-            countSql += " and COLLEGE_ID IN [" + collegeIds + "] ";
+            querySql += " and COLLEGE_ID IN (" + collegeIds + ") ";
+            countSql += " and COLLEGE_ID IN (" + collegeIds + ") ";
         }
         if (!StringUtils.isEmpty(teacherId)) {
             querySql += " and TEACHER_ID=" + teacherId + " ";

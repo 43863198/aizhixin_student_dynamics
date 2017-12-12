@@ -173,8 +173,8 @@ public class PracticeStatisticsService {
             countSql+=" and COLLOEGE_ID="+colloegeId+" ";
         }
         if(!StringUtils.isEmpty(className)){
-            querySql+=" and CLASS_NAME like %"+className+"% ";
-            countSql+=" and CLASS_NAME like %"+className+"% ";
+            querySql+=" and CLASS_NAME like '%"+className+"%' ";
+            countSql+=" and CLASS_NAME like '%"+className+"%' ";
         }
         if(!isEmpty(year)){
             querySql+=" and TEACHER_YEAR="+year+" ";
