@@ -12,16 +12,10 @@
         <preConditions onFail="MARK_RAN">
             <not>
                 <columnExists tableName="T_TEACHING_SCORE_STATISTICS" columnName="CURRICULUM_NUM"/>
-                <columnExists tableName="T_TEACHING_SCORE_STATISTICS" columnName="CURRICULUM_AVG"/>
-                <columnExists tableName="T_TEACHING_SCORE_STATISTICS" columnName="SEMESTER"/>
-                <columnExists tableName="T_TEACHING_SCORE_STATISTICS" columnName="GRADE"/>
             </not>
         </preConditions>
         <addColumn tableName="T_TEACHING_SCORE_STATISTICS">
-            <column name="CURRICULUM_NUM" type="INT(6)" remarks="学生学号"/>
-            <column name="CURRICULUM_AVG" type="double(6,2)" remarks="学生学号"/>
-            <column name="SEMESTER" type="INT(4)" remarks="学生学号"/>
-            <column name="GRADE" type="VARCHAR(50)" remarks="学年"/>
+            <column name="CURRICULUM_NUM" type="INT(4)" remarks="开设课程数量"/>
         </addColumn>
     </changeSet>
 </databaseChangeLog>
