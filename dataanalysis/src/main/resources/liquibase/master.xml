@@ -17,5 +17,6 @@
     <include file="classpath:liquibase/20171201205545_add_entity_CetScoreStatistics.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20170523162900_update_entity_PracticeStatistics.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171204165545_add_entity_TeachingScoreStatistics.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20171204165545_add_entity_TeachingScoreDetails.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171208151500_update_entity_AlarmRule.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
