@@ -14,8 +14,8 @@ import javax.persistence.Table;
 @ToString
 public class TeachingScoreStatistics extends AbstractEntity {
     /*
-  * 组织id
-  */
+    * 组织id
+    */
     @Column(name = "ORG_ID")
     @Getter
     @Setter
@@ -34,32 +34,42 @@ public class TeachingScoreStatistics extends AbstractEntity {
      * 学生人数
      */
     @Column(name = "STUDENT_NUM")
-    @Getter @Setter private Long studentNum;
+    @Getter @Setter private int studentNum;
     /**
      * 不及格人数
      */
     @Column(name = "FAIL_PASS_STU_NUM")
-    @Getter @Setter private Long failPassStuNum;
+    @Getter @Setter private int failPassStuNum;
+    /*
+     * 开设课程数量
+     */
+    @Column(name = "COURSES_NUMBER")
+    @Getter @Setter private int coursesNum;
     /**
      *平均GPA
      */
     @Column(name = "AVG_GPA")
-    @Getter @Setter private Double avgGPA;
+    @Getter @Setter private float avgGPA;
     /**
-     *平均GPA
+     *课程平均分
      */
     @Column(name = "AVG_SCORE")
-    @Getter @Setter private Double avgScore;
+    @Getter @Setter private float avgScore;
     /*
-  * 学期名称
-  */
+     * 学期名称
+     */
     @Column(name = "SEMESTER_NAME")
     @Getter @Setter private String semesterName;
     /*
-    * 学期id
+    * 学期
     */
-    @Column(name = "SEMESTER_ID")
-    @Getter @Setter private Long semesterId;
+    @Column(name = "SEMESTER")
+    @Getter @Setter private int semester;
+    /*
+    * 学年
+    */
+    @Column(name = "TEACHER_YEAR")
+    @Getter @Setter private String teacherYear;
     /*
    * 数据状态
    */
