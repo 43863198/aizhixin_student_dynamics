@@ -34,6 +34,7 @@ public class AlarmRuleService {
     public List<AlarmRule>  getAlarmRuleByIds(Set<String> ids){
         return alarmRuleRespository.findAllByIdIn(ids);
     }
+
     public String save(AlarmRule alarmRule){
         return alarmRuleRespository.save(alarmRule).getId();
     }
