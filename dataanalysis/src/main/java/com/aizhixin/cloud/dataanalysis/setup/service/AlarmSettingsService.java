@@ -229,12 +229,16 @@ public class AlarmSettingsService {
                     if (wd.length > 0) {
                         alarmRule.setName(wd[wp.getSerialNumber()-1]);
                     }
-                    ruids  = alarmRuleService.save(alarmRule) + ",";
+                    ruids = ruids + alarmRuleService.save(alarmRule) + ",";
                 }
                 if(!StringUtils.isBlank(ruids)) {
-                    AlarmSettings set = alarmSettingsRepository.findOne(alarmSettingsId);
-                    set.setRuleSet(ruids.substring(0,ruids.length()-1));
-                    alarmSettingsRepository.save(set);
+                    String rid = ruids.substring(0, ruids.length() - 1);
+                    String[] rd = rid.split(",");
+                    for(String d :rd) {
+                        AlarmSettings set = alarmSettingsRepository.findOne(alarmSettingsId);
+                        set.setRuleSet(d);
+                        alarmSettingsRepository.save(set);
+                    }
                 }
             }
         } catch (Exception e) {
