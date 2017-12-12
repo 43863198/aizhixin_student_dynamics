@@ -833,7 +833,7 @@ public class ScoreJob {
 				Long orgId = (Long) entry.getKey();
 
 				HashMap<String,HashMap<String,ArrayList<Score>>> scoreMap = new HashMap<String,HashMap<String,ArrayList<Score>>>();
-				List<Score> scoreList = scoreMongoRespository.findAllBySchoolYearGreaterThanEqualAndOrgId(beginYear,orgId);
+				List<Score> scoreList = scoreMongoRespository.findAllBySchoolYearGreaterThanEqualAndOrgIdAndExamType(beginYear,orgId,ScoreConstant.EXAM_TYPE_COURSE);
 				for(Score score : scoreList){
 					HashMap<String,ArrayList<Score>> userScoreMap = scoreMap.get(score.getJobNum());
 					if(null == userScoreMap){
@@ -1204,4 +1204,164 @@ public class ScoreJob {
 			}
 		}
 	}
+	
+	
+	
+	/**
+	 * 退学预警
+	 */
+//	public void dropOutJob() {
+//
+//		// 获取预警配置
+//		List<AlarmSettings> settingsList = alarmSettingsService
+//				.getAlarmSettingsByType(WarningTypeConstant.LeaveSchool.toString());
+//		if (null != settingsList && settingsList.size() > 0) {
+//			
+//			Calendar c = Calendar.getInstance();
+//			//当前年份
+//			int endYear = c.get(Calendar.YEAR);
+//			//前三年
+//			int beginYear = endYear-3;
+//			
+//			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
+//			Set<String> warnRuleIdList = new HashSet<String>();
+//			Set<String> warnSettingsIdList = new HashSet<String>();
+//			// 按orgId归类告警等级阀值
+//			for (AlarmSettings settings : settingsList) {
+//
+//				warnSettingsIdList.add(settings.getId());
+//				Long orgId = settings.getOrgId();
+//
+//				if(StringUtils.isEmpty(settings.getRuleSet())){
+//					continue;
+//				}
+//				String[] warmRuleIds = settings.getRuleSet().split(",");
+//				for (String warmRuleId : warmRuleIds) {
+//					if (!StringUtils.isEmpty(warmRuleId)) {
+//						warnRuleIdList.add(warmRuleId);
+//					}
+//				}
+//				if (null != alarmMap.get(orgId)) {
+//					ArrayList<AlarmSettings> alarmList = alarmMap.get(orgId);
+//					alarmList.add(settings);
+//				} else {
+//					ArrayList<AlarmSettings> alarmList = new ArrayList<AlarmSettings>();
+//					alarmList.add(settings);
+//					alarmMap.put(orgId, alarmList);
+//				}
+//			}
+//			// 预警规则获取
+//			HashMap<String, AlarmRule> alarmRuleMap = new HashMap<String, AlarmRule>();
+//			List<AlarmRule> alarmList = alarmRuleService
+//					.getAlarmRuleByIds(warnRuleIdList);
+//			for (AlarmRule alarmRule : alarmList) {
+//				alarmRuleMap.put(alarmRule.getId(), alarmRule);
+//			}
+//
+//			Iterator iter = alarmMap.entrySet().iterator();
+//			while (iter.hasNext()) {
+//
+//				//更新预警集合
+//				ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
+//				Map.Entry entry = (Map.Entry) iter.next();
+//				Long orgId = (Long) entry.getKey();
+//				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
+//						.getValue();
+//
+//				// 按orgId查询成绩信息		
+//				List<Score> scoreList = scoreMongoRespository.findAllByGradeInAndOrgIdAndExamType( grades, orgId, ScoreConstant.EXAM_TYPE_CET4);
+//				HashMap<String,Score> userScoreMap = new HashMap<String,Score>();
+//				//去重后的英语四级不合格成绩集合
+//				List<Score> alarmScoreList = new ArrayList<Score>();
+//				
+//				for(Score score : scoreList){
+//					if(StringUtils.isEmpty(score.getTotalScore())){
+//						continue;
+//					}
+//					Score tmpScore = userScoreMap.get(score.getJobNum());
+//					if(null != tmpScore){
+//						if(Float.parseFloat(score.getTotalScore()) > Float.parseFloat(tmpScore.getTotalScore())){
+//							userScoreMap.put(score.getJobNum(), score);
+//						}
+//					}else{
+//						userScoreMap.put(score.getJobNum(), score);
+//					}
+//				}
+//				
+//				Iterator userScoreMapIter = userScoreMap.entrySet().iterator();
+//				while (userScoreMapIter.hasNext()) {
+//					Map.Entry userScoreEntry = (Map.Entry) userScoreMapIter.next();
+//					Score score = (Score) userScoreEntry
+//							.getValue();
+//					
+//					if(Float.parseFloat(score.getTotalScore()) < Float.parseFloat(ScoreConstant.CET_PASS_SCORE_LINE)){
+//						alarmScoreList.add(score);
+//					}
+//				}
+//				
+//				if (null != alarmScoreList && alarmScoreList.size() > 0) {
+//					for (Score score : alarmScoreList) {
+//						for (AlarmSettings alarmSettings : val) {
+//							AlarmRule alarmRule = alarmRuleMap
+//									.get(alarmSettings.getRuleSet());
+//							if (null != alarmRule) {
+//								int grade = 0;
+//								if(null != gradeMap.get(score.getGrade())){
+//									grade = gradeMap.get(score.getGrade()).intValue();
+//								}
+//								if (grade >= Float.parseFloat(alarmRule.getRightParameter())) {
+//									WarningInformation alertInfor = new WarningInformation();
+//									String alertId = UUID.randomUUID()
+//											.toString();
+//									alertInfor.setId(alertId);
+//									alertInfor.setDefendantId(score
+//											.getUserId());
+//									alertInfor.setName(score
+//											.getUserName());
+//									alertInfor.setJobNumber(score
+//											.getJobNum());
+//									alertInfor.setCollogeId(score
+//											.getCollegeId());
+//									alertInfor.setCollogeName(score
+//											.getCollegeName());
+//									alertInfor.setClassId(score
+//											.getClassId());
+//									alertInfor.setClassName(score
+//											.getClassName());
+//									alertInfor
+//											.setProfessionalId(score
+//													.getProfessionalId());
+//									alertInfor
+//											.setProfessionalName(score
+//													.getProfessionalName());
+//									alertInfor.setWarningLevel(alarmSettings
+//											.getWarningLevel());
+//									alertInfor
+//											.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+//									alertInfor.setAlarmSettingsId(alarmSettings
+//											.getId());
+//									alertInfor
+//											.setWarningType(WarningTypeConstant.Cet
+//													.toString());
+//									alertInfor.setWarningCondition("第"+grade+"学年仍未通过英语四级考试");
+//									alertInfor.setWarningTime(new Date());
+//									alertInfor.setPhone(score.getUserPhone());
+//									alertInfor.setOrgId(alarmRule.getOrgId());
+//									alertInforList.add(alertInfor);
+//
+//									break;
+//								} else {
+//									continue;
+//								}
+//							}
+//						}
+//					}
+//				}
+//				if (!alertInforList.isEmpty()) {
+//					alertWarningInformationService.save(alertInforList);
+//				}
+//			}
+//		}
+//	}
+	
 }
