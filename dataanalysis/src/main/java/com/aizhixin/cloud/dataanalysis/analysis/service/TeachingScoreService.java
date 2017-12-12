@@ -37,7 +37,7 @@ public class TeachingScoreService {
         TeachingAchievementDTO teachingAchievementDTO = new TeachingAchievementDTO();
         List<CollegeTeachingAchievementDTO> collegeTeachingAchievementDTOList = new ArrayList<>();
         try {
-            StringBuilder sql = new StringBuilder("SELECT * FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
+            StringBuilder sql = new StringBuilder("SELECT COLLOEGE_NAME,STUDENT_NUM,avgGPA,failPassStuNum, FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
             if (null != orgId) {
                 sql.append(" and ORG_ID = :orgId");
                 condition.put("orgId", orgId);
@@ -51,21 +51,21 @@ public class TeachingScoreService {
                 condition.put("semester", semester);
             }
             sql.append(" GROUP BY COLLOEGE_ID");
-            Query sq = em.createNativeQuery(sql.toString(), TeachingScoreStatistics.class);
+            Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
             }
-            List<TeachingScoreStatistics> res = sq.getResultList();
+            List res = sq.getResultList();
             if(null!=res&&res.size()>0){
-                for(TeachingScoreStatistics ts : res){
-                    CollegeTeachingAchievementDTO collegeTeachingAchievementDTO = new CollegeTeachingAchievementDTO();
-
-
-
-
-
-                    collegeTeachingAchievementDTOList.add(collegeTeachingAchievementDTO);
-                }
+//                for(TeachingScoreStatistics ts : res){
+//                    CollegeTeachingAchievementDTO collegeTeachingAchievementDTO = new CollegeTeachingAchievementDTO();
+//
+//
+//
+//
+//
+//                    collegeTeachingAchievementDTOList.add(collegeTeachingAchievementDTO);
+//                }
             }
 
 

@@ -67,7 +67,7 @@ public class AlertWarningInformationService {
 	 * 修改预警状态按预警等级和机构id
 	 * @param warningState
 	 * @param warningLevel
-	 * @param orgId
+	 * @param
 	 */
 	public void updateWarningStateByWarningLevel(int warningState,int warningLevel,HashSet<Long> orgIds){
 		alertWarningInformationRepository.updateWarningStateByWarningLevel(warningState, warningLevel, orgIds);
@@ -145,6 +145,8 @@ public class AlertWarningInformationService {
 				condition.put("warningLevel",0);
 			}
 		}
+		cql.append(" and aw.DELETE_FLAG = 0");
+		sql.append(" and aw.DELETE_FLAG = 0");
 		Query cq = em.createNativeQuery(cql.toString());
 		Query sq = em.createNativeQuery(sql.toString(), WarningInformation.class);
 		for (Map.Entry<String, Object> e : condition.entrySet()) {
@@ -446,7 +448,10 @@ public class AlertWarningInformationService {
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId",orgId);
 		}
+
+		sql.append(" and DELETE_FLAG = 0");
 		sql.append(" GROUP BY COLLOGE_ID");
+
 		try {
 			Query cq = em.createNativeQuery(cql.toString());
 			Query sq = em.createNativeQuery(sql.toString());
@@ -523,6 +528,7 @@ public class AlertWarningInformationService {
 			lql.append(" and ORG_ID = :orgId");
 			condition.put("orgId", orgId);
 		}
+		lql.append(" and DELETE_FLAG = 0");
 		lql.append(" order by WARNING_TIME desc limit 20");
 		try {
 			Query lq = em.createNativeQuery(lql.toString(), WarningInformation.class);
@@ -567,6 +573,7 @@ public class AlertWarningInformationService {
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId", orgId);
 		}
+		sql.append(" and DELETE_FLAG = 0");
 		sql.append(" GROUP BY COLLOGE_ID");
 		try{
 		    Query sq = em.createNativeQuery(sql.toString());
@@ -631,6 +638,7 @@ public class AlertWarningInformationService {
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId", orgId);
 		}
+		sql.append(" and DELETE_FLAG = 0");
 		sql.append(" GROUP BY WARNING_TYPE");
 		try {
 			Query cq = em.createNativeQuery(cql.toString());
@@ -715,6 +723,7 @@ public class AlertWarningInformationService {
 			sql.append(" and WARNING_TYPE = :type");
 			condition.put("type", type);
 		}
+		sql.append(" and DELETE_FLAG = 0");
 		sql.append(" GROUP BY COLLOGE_ID");
 		try{
 			Query sq = em.createNativeQuery(sql.toString());
@@ -839,6 +848,10 @@ public class AlertWarningInformationService {
 			cql.append(" and WARNING_TYPE = :type");
 			iql.append(" and WARNING_TYPE = :type");
 		}
+		sql.append(" and DELETE_FLAG = 0");
+		cql.append(" and DELETE_FLAG = 0");
+		iql.append(" and DELETE_FLAG = 0");
+
 		sql.append(" GROUP BY COLLOGE_ID");
 		cql.append(" GROUP BY COLLOGE_ID) sub");
 		iql.append(" GROUP BY COLLOGE_ID");
