@@ -449,6 +449,7 @@ public class AlertWarningInformationService {
 			condition.put("orgId",orgId);
 		}
 
+		cql.append(" and DELETE_FLAG = 0");
 		sql.append(" and DELETE_FLAG = 0");
 		sql.append(" GROUP BY COLLOGE_ID");
 
@@ -638,6 +639,7 @@ public class AlertWarningInformationService {
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId", orgId);
 		}
+		cql.append(" and DELETE_FLAG = 0");
 		sql.append(" and DELETE_FLAG = 0");
 		sql.append(" GROUP BY WARNING_TYPE");
 		try {

@@ -120,7 +120,7 @@ public class TeachingScoreService {
     }
 
 
-    public Map<String, Object> getCetDetail(Long orgId, String collegeId, String grade, Integer type, Pageable page) {
+    public Map<String, Object> getCetDetail(Long orgId, String collegeId, String grade, String nj, Pageable page) {
         Map<String, Object> result = new HashMap<>();
         PageData<Score> p = new PageData<>();
         List<Score> items = new ArrayList<>();
