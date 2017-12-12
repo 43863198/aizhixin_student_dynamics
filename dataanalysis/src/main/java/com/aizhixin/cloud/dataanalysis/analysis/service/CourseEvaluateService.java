@@ -100,8 +100,8 @@ public class CourseEvaluateService {
             countSql += " and TEACHER_YEAR=" + grade + " ";
         }
         if (!StringUtils.isEmpty(courseCode)) {
-            querySql += " and COURSE_CODE=" + courseCode + " ";
-            countSql += " and COURSE_CODE=" + courseCode + " ";
+            querySql += " and COURSE_CODE='" + courseCode + "' ";
+            countSql += " and COURSE_CODE='" + courseCode + "' ";
         }
         if (!StringUtils.isEmpty(name)) {
             querySql += " and TEACHING_CLASS_NAME like '%" + name + "%' or CHARGE_PERSON like '%"+ name + "%' ";
