@@ -190,6 +190,7 @@ public class AlarmSettingsService {
         return result;
     }
 
+    @Transactional
     public Map<String, Object> warningSet(AlarmSettingDomain alarmSettingDomain) {
         Map<String, Object> result = new HashMap<>();
         try {
