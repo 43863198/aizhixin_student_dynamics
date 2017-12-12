@@ -37,10 +37,11 @@ public class CetStatisticAnalysisController {
     public Map<String,Object> getStatisticCet(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "grade 学年" , required = true) @RequestParam(value = "grade", required = true) String grade,
-            @ApiParam(value = "semester 学期" , required = true) @RequestParam(value = "semester", required = true) Integer semester,
-            @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
-            @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return cetStatisticAnalysisService.getStatistic(orgId, grade, semester, PageUtil.createNoErrorPageRequest(pageNumber, pageSize));
+            @ApiParam(value = "semester 学期" , required = true) @RequestParam(value = "semester", required = true) Integer semester
+//            @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
+//            @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize
+    ) {
+        return cetStatisticAnalysisService.getStatistic(orgId, grade, semester);
     }
 
     /**

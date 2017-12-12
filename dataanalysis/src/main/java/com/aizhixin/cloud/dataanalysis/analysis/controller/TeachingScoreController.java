@@ -35,7 +35,7 @@ public class TeachingScoreController {
      */
     @GetMapping(value = "/statistic", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "教学成绩———统计", response = Void.class, notes = "教学成绩———统计<br><br><b>@author jianwei.wu</b>")
-    public Map<String,Object> getStatisticCet(
+    public Map<String,Object> getStatisticTeachingScore(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "grade 学年" , required = false) @RequestParam(value = "grade", required = false) String grade,
             @ApiParam(value = "semester 学期" , required = false) @RequestParam(value = "semester", required = false) Integer semester) {
@@ -50,12 +50,12 @@ public class TeachingScoreController {
      */
     @GetMapping(value = "/analysis", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "教学成绩———趋势分析", response = Void.class, notes = "教学成绩———趋势分析<br><br><b>@author jianwei.wu</b>")
-    public Map<String,Object> getCetTrendAnalysis(
+    public Map<String,Object> getTeachingScoreTrendAnalysis(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "collegeId 机构id", required = false) @RequestParam(value = "collegeId", required = false) Long collegeId,
-            @ApiParam(value = "type 分析指标：4:四级通过率，6:六级通过率" , required = true)
+            @ApiParam(value = "type 分析指标：1:学生人数，2:平均GPA，3:不及格人数，4:课程平均分" , required = true)
             @RequestParam(value = "type", required = true) Integer type) {
-        return teachingScoreService.getCetTrendAnalysis(orgId, collegeId, type);
+        return teachingScoreService.getTeachingScoreTrendAnalysis(orgId, collegeId, type);
     }
 
     /**
@@ -65,17 +65,16 @@ public class TeachingScoreController {
      * @return
      */
     @GetMapping(value = "/detail", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "cet———详情列表", response = Void.class, notes = "cet———详情列表<br><br><b>@author jianwei.wu</b>")
-    public Map<String,Object> getCetDetail(
+    @ApiOperation(httpMethod = "GET", value = "教学成绩———详情列表", response = Void.class, notes = "教学成绩———详情列表<br><br><b>@author jianwei.wu</b>")
+    public Map<String,Object> getTeachingScoreDetail(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "collegeId 机构id 注:多个时候用“，”隔开", required = false) @RequestParam(value = "collegeId", required = false) String collegeId,
             @ApiParam(value = "grade 年级 注:多个时候用“，”隔开", required = false) @RequestParam(value = "grade", required = false) String grade,
             @ApiParam(value = "nj 姓名/学号" , required = false) @RequestParam(value = "nj", required = false) String nj,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return teachingScoreService.getCetDetail(orgId, collegeId, grade, nj, PageUtil.createNoErrorPageRequest(pageNumber, pageSize));
+        return teachingScoreService.getTeachingScoreDetail(orgId, collegeId, grade, nj, PageUtil.createNoErrorPageRequest(pageNumber, pageSize));
     }
-
 
 
 
