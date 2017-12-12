@@ -83,11 +83,11 @@ public class TeachingEvaluateController {
                                                            @ApiParam(value = "学期", required = true) @RequestParam(value = "semester", required = true) String semester,
                                                            @ApiParam(value = "grade 学年" , required = false) @RequestParam(value = "grade", required = false) String grade,
                                                            @ApiParam(value = "学院ids 以,隔开的字符串", required = false) @RequestParam(value = "collegeIds", required = false) String collegeIds,
-                                                           @ApiParam(value = "教师id", required = false) @RequestParam(value = "teacherId", required = false) String teacherId,
+                                                           @ApiParam(value = "教师名称", required = false) @RequestParam(value = "teacherName", required = false) String teacherName,
                                                            @ApiParam(value = "第几页", required = false) @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
                                                            @ApiParam(value = "每页大小", required = false) @RequestParam(value = "pageSize", required = false) Integer pageSize,
                                                            @ApiParam(value = "排序升序：asc 降序 desc", required = true) @RequestParam(value = "sort", required = false) String sort) {
-        return teacherEvaluateService.getTeacherEvaluate(orgId,semester,grade,collegeIds,teacherId,sort,pageSize,pageNumber);
+        return teacherEvaluateService.getTeacherEvaluate(orgId,semester,grade,collegeIds,teacherName,sort,pageSize,pageNumber);
     }
     /**
      * 教师评价详情
@@ -101,9 +101,9 @@ public class TeachingEvaluateController {
                                                                        @ApiParam(value = "学期", required = true) @RequestParam(value = "semester", required = true) String semester,
                                                                        @ApiParam(value = "grade 学年" , required = false) @RequestParam(value = "grade", required = false) String grade,
                                                                        @ApiParam(value = "教师id", required = false) @RequestParam(value = "teacherId", required = false) String teacherId,
-                                                                       @ApiParam(value = "教师名称", required = false) @RequestParam(value = "teacherName", required = false) String teacherName,
+                                                                       @ApiParam(value = "课程名称", required = false) @RequestParam(value = "className", required = false) String className,
                                                                        @ApiParam(value = "第几页", required = false) @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
                                                                        @ApiParam(value = "每页大小", required = false) @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return teacherEvaluateService.getTeacherEvaluateDetail(orgId,semester,grade,teacherId,teacherName,pageNumber,pageSize);
+        return teacherEvaluateService.getTeacherEvaluateDetail(orgId,semester,grade,teacherId,className,pageNumber,pageSize);
     }
 }

@@ -28,7 +28,7 @@ public class TeacherEvaluateService {
     @Autowired
     private PageJdbcUtil pageJdbcUtil;
 
-    public PageData<TeacherEvaluateDTO> getTeacherEvaluate(long orgId, String semesterId, String grade,String collegeIds, String teacherId, String sort, Integer pageSize, Integer pageNumber) {
+    public PageData<TeacherEvaluateDTO> getTeacherEvaluate(long orgId, String semesterId, String grade,String collegeIds, String teacherName, String sort, Integer pageSize, Integer pageNumber) {
         List<SortDTO> sortDTOS = new ArrayList();
         RowMapper<TeacherEvaluateDTO> rowMapper = new RowMapper<TeacherEvaluateDTO>() {
             @Override
@@ -54,9 +54,9 @@ public class TeacherEvaluateService {
             querySql += " and COLLEGE_ID IN (" + collegeIds + ") ";
             countSql += " and COLLEGE_ID IN (" + collegeIds + ") ";
         }
-        if (!StringUtils.isEmpty(teacherId)) {
-            querySql += " and TEACHER_ID=" + teacherId + " ";
-            countSql += " and TEACHER_ID=" + teacherId + " ";
+        if (!StringUtils.isEmpty(teacherName)) {
+            querySql += " and TEACHER_NAME like '%" + teacherName + "%' ";
+            countSql += " and TEACHER_NAME like '%" + teacherName + "%' ";
         }
         querySql += "  group by TEACHER_ID";
         countSql += "  group by TEACHER_ID";
@@ -77,7 +77,7 @@ public class TeacherEvaluateService {
         return p;
     }
 
-    public PageData<TeacherEvaluateDetailDTO> getTeacherEvaluateDetail(long orgId, String semesterId,String grade ,String teacherId, String teacherName, Integer pageNumber, Integer pageSize) {
+    public PageData<TeacherEvaluateDetailDTO> getTeacherEvaluateDetail(long orgId, String semesterId,String grade ,String teacherId, String className, Integer pageNumber, Integer pageSize) {
         RowMapper<TeacherEvaluateDetailDTO> rowMapper = new RowMapper<TeacherEvaluateDetailDTO>() {
             @Override
             public TeacherEvaluateDetailDTO mapRow(ResultSet rs, int i) throws SQLException {
@@ -99,12 +99,12 @@ public class TeacherEvaluateService {
             countSql += " and TEACHER_YEAR=" + grade + " ";
         }
         if (!StringUtils.isEmpty(teacherId)) {
-            querySql += " and COURSE_CODE=" + teacherId + " ";
-            countSql += " and COURSE_CODE=" + teacherId + " ";
+            querySql += " and TEACHER_ID=" + teacherId + " ";
+            countSql += " and TEACHER_ID=" + teacherId + " ";
         }
-        if (!StringUtils.isEmpty(teacherName)) {
-            querySql += " and TEACHING_CLASS_NAME like %" + teacherName + "% or CHARGE_PERSON like %" + teacherName + "% ";
-            countSql += " and TEACHING_CLASS_NAME like %" + teacherName + "% or CHARGE_PERSON like %" + teacherName + "% ";
+        if (!StringUtils.isEmpty(className)) {
+            querySql += " and CLASS_NAME like '%" + className + "%' " ;
+            countSql += " and CLASS_NAME like '%" + className + "%'  ";
         }
         Map map=pageJdbcUtil
                 .getPageInfor(pageSize, pageNumber, rowMapper, null, querySql, countSql);
