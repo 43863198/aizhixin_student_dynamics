@@ -29,7 +29,7 @@ public class CourseEvaluateService {
     @Autowired
     private PageJdbcUtil pageJdbcUtil;
 
-    public PageData<CourseEvaluateDTO> getCourseEvaluate(long orgId, String semesterId,String collegeIds,String grade, String courseName, String sort, Integer pageSize, Integer pageNumber) {
+    public PageData<CourseEvaluateDTO> getCourseEvaluate(long orgId, String semesterId,String grade,String collegeIds, String courseName, String sort, Integer pageSize, Integer pageNumber) {
         Map<String, Object> result = new HashMap<>();
         List<SortDTO> sortDTOS = new ArrayList();
         RowMapper<CourseEvaluateDTO> rowMapper = new RowMapper<CourseEvaluateDTO>() {
@@ -53,12 +53,12 @@ public class CourseEvaluateService {
             countSql += " and TEACHER_YEAR=" + grade + " ";
         }
         if (!StringUtils.isEmpty(collegeIds)) {
-            querySql += " and COLLEGE_ID IN [" + collegeIds + "] ";
-            countSql += " and COLLEGE_ID IN [" + collegeIds + "] ";
+            querySql += " and COLLEGE_ID IN (" + collegeIds + ") ";
+            countSql += " and COLLEGE_ID IN (" + collegeIds + ") ";
         }
         if (!StringUtils.isEmpty(courseName)) {
-            querySql += " and COURSE_NAME like %" + courseName + "% ";
-            countSql += " and COURSE_NAME like %" + courseName + "% ";
+            querySql += " and COURSE_NAME like '%" + courseName + "%' ";
+            countSql += " and COURSE_NAME like '%" + courseName + "%' ";
         }
         querySql += "  group by COURSE_CODE";
         countSql += "  group by COURSE_CODE";
@@ -104,8 +104,8 @@ public class CourseEvaluateService {
             countSql += " and COURSE_CODE=" + courseCode + " ";
         }
         if (!StringUtils.isEmpty(name)) {
-            querySql += " and TEACHING_CLASS_NAME like %" + name + "% or CHARGE_PERSON like %"+ name + "% ";
-            countSql += " and TEACHING_CLASS_NAME like %" + name + "% or CHARGE_PERSON like %"+ name + "% ";
+            querySql += " and TEACHING_CLASS_NAME like '%" + name + "%' or CHARGE_PERSON like '%"+ name + "%' ";
+            countSql += " and TEACHING_CLASS_NAME like '%" + name + "%' or CHARGE_PERSON like '%"+ name + "%' ";
         }
 
         Map map=pageJdbcUtil
