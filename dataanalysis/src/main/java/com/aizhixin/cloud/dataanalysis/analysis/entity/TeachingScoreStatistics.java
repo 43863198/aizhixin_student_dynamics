@@ -78,4 +78,13 @@ public class TeachingScoreStatistics extends AbstractEntity {
      */
     @Column(name = "CURRICULUM_NUM")
     @Getter @Setter private int curriculumNum;
+    /**
+     * 年级/学年
+     */
+    @Column(name = "GRADE")
+    @Getter
+    @Setter
+    private String grade;
+
+
 }

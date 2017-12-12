@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 /**
  * @author: Created by jianwei.wu
  * @E-mail: wujianwei@aizhixin.com
@@ -23,6 +25,10 @@ public interface SchoolStatisticsRespository extends JpaRepository<SchoolStatist
 
     @Query("select new com.aizhixin.cloud.dataanalysis.analysis.dto.NewStudentProfileDTO(sum(a.newStudentsCount),sum(a.alreadyReport)) from #{#entityName} a where a.orgId = :orgId and  a.deleteFlag=0 and a.teacherYear =(select max(b.teacherYear) FROM #{#entityName} b where b.orgId = :orgId)")
     NewStudentProfileDTO getNewStudentStatistics(@Param(value = "orgId")Long orgId);
+
+    @Query("select a from #{#entityName} a where a.orgId = :orgId and a.teacherYear = :teacherYear and a.deleteFlag = :deleteFlag order by a.statisticalTime desc")
+    List<SchoolStatistics> findDataByOrgIdAndTeacherYear(@Param(value = "orgId") Long orgId, @Param(value = "teacherYear") String teacherYear, @Param(value = "deleteFlag") int deleteFlag);
+
 
 }
 
