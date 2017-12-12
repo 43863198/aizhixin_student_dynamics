@@ -152,7 +152,7 @@ public class PracticeStatisticsService {
         result.put("data", res);
         return result;
     }
-    public Map<String,Object> getPracticeDetail(Long orgId, Long colloegeId, String year, Integer pageNumber,Integer pageSize){
+    public Map<String,Object> getPracticeDetail(Long orgId,String className, Long colloegeId, String year, Integer pageNumber,Integer pageSize){
         RowMapper <Map> rowMapper= new RowMapper<Map>() {
             @Override
             public Map mapRow(ResultSet rs, int i) throws SQLException {
@@ -171,6 +171,10 @@ public class PracticeStatisticsService {
         if(null!=colloegeId){
             querySql+=" and COLLOEGE_ID="+colloegeId+" ";
             countSql+=" and COLLOEGE_ID="+colloegeId+" ";
+        }
+        if(!StringUtils.isEmpty(className)){
+            querySql+=" and CLASS_NAME like %"+className+"% ";
+            countSql+=" and CLASS_NAME like %"+className+"% ";
         }
         if(!isEmpty(year)){
             querySql+=" and TEACHER_YEAR="+year+" ";
