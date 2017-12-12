@@ -262,6 +262,23 @@ public class DistributeLock {
         return getLock(lockPath.toString(), taskPath.toString());
     }
     
+    
+    /**
+     * 修改预警处理状态
+     * @return  是否获取到锁
+     */
+    public boolean updateWarnStateJobLock() {
+        StringBuilder lockPath = new StringBuilder(zkLockPath);
+        StringBuilder taskPath = new StringBuilder(zkTaskPath);
+        Date current = new Date();
+        String curDayString = DateUtil.format(current);
+        String HHmm = DateUtil.format(current, "HHmm");
+        lockPath.append("/").append(curDayString).append("/updstate/").append(HHmm);
+        taskPath.append("/").append(curDayString).append("/updstate/").append(HHmm);
+
+        return getLock(lockPath.toString(), taskPath.toString());
+    }
+    
     public void cleanZookeeperTaskData() {
         delete();
     }

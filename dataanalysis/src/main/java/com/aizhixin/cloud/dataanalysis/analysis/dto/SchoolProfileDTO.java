@@ -38,7 +38,7 @@ public class SchoolProfileDTO {
         this.allStudent = allStudent==null?0:allStudent;
         this.allTeacher = allTeacher==null?0:allTeacher;
         this.allInstructor = allInstructor==null?0:allInstructor;
-        this.outSchoolStudent = outSchoolStudent;
+        this.outSchoolStudent = outSchoolStudent==null?0:outSchoolStudent;
         this.inSchoolStudent = this.allStudent-this.outSchoolStudent;
         this.readyGraduation = readyGraduation;
     }

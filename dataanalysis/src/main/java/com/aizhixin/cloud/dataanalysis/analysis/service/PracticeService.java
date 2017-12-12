@@ -25,6 +25,7 @@ import com.aizhixin.cloud.dataanalysis.common.domain.ImportDomain;
 import com.aizhixin.cloud.dataanalysis.common.excelutil.ExcelBasedataHelper;
 import com.aizhixin.cloud.dataanalysis.common.exception.CommonException;
 import com.aizhixin.cloud.dataanalysis.common.exception.ErrorCode;
+import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 
 /**
  * 导入实践数据写入Mongo库
@@ -97,13 +98,14 @@ public class PracticeService {
 					}
 					practice.setProfessionalName(d.getProfessionalName());
 					practice.setUserPhone(d.getUserPhone());
-					if (null != d.getTaskCreatedDate()) {
-						Calendar rightNow = Calendar.getInstance();
-						rightNow.setTime(d.getTaskCreatedDate());
-						rightNow.add(Calendar.DAY_OF_YEAR, 1);// 日期加1天
-						Date taskCreatedDate = rightNow.getTime();
-						practice.setTaskCreatedDate(taskCreatedDate);
-					}
+//					if (null != d.getTaskCreatedDate()) {
+//						Calendar rightNow = Calendar.getInstance();
+//						rightNow.setTime(d.getTaskCreatedDate());
+//						rightNow.add(Calendar.DAY_OF_YEAR, 1);// 日期加1天
+//						Date taskCreatedDate = rightNow.getTime();
+//						practice.setTaskCreatedDate(taskCreatedDate);
+//					}
+					practice.setTaskCreatedDate(DateUtil.randomDate("2017-10-02", "2017-10-15"));
 					// 造数据：公司名称5个，按班级id大小随机取
 					if (practice.getClassId() < 9700) {
 						practice.setCompanyName(CompanyName.getName(1));

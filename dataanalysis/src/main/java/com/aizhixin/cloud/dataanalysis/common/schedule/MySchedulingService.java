@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.aizhixin.cloud.dataanalysis.alertinformation.job.WarnInforJob;
 import com.aizhixin.cloud.dataanalysis.common.service.DistributeLock;
 import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
 import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
@@ -25,6 +26,8 @@ public class MySchedulingService {
     private RollCallJob rollCallJob;
     @Autowired
     private ScoreJob scoreJob;
+    @Autowired
+    private WarnInforJob warnInforJob;
 
 
 //    @Scheduled(cron = "0 0/1 * * * ?")
@@ -142,5 +145,12 @@ public class MySchedulingService {
         } else {
             LOG.info("启动英语四级成绩预警任务，获取锁失败");
         }
+    }
+    
+    @Scheduled(cron = "0 0/1 * * * ?")
+    public void updateWarnStateJob() {
+        if (distributeLock.updateWarnStateJobLock()) {
+        	warnInforJob.updateWarnStateJob();
+        } 
     }
 }

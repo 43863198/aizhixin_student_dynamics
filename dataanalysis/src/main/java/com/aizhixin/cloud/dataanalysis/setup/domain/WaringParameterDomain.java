@@ -17,5 +17,5 @@ public class WaringParameterDomain {
     private int serialNumber;
 
     @ApiModelProperty(value = "参数")
-    private int parameter;
+    private String parameter;
 }

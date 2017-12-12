@@ -23,7 +23,7 @@ import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInfo
 import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
-import com.aizhixin.cloud.dataanalysis.common.constant.WarningType;
+import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.score.domain.ScoreDomain;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.MakeUpScoreCount;
@@ -71,7 +71,7 @@ public class ScoreJob {
 
 		// 获取预警配置
 		List<AlarmSettings> settingsList = alarmSettingsService
-				.getAlarmSettingsByType(WarningType.PerformanceFluctuation.toString());
+				.getAlarmSettingsByType(WarningTypeConstant.PerformanceFluctuation.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 			
 			Calendar c = Calendar.getInstance();
@@ -275,7 +275,7 @@ public class ScoreJob {
 
 		// 获取成绩波动预警配置
 		List<AlarmSettings> settingsList = alarmSettingsService
-				.getAlarmSettingsByType(WarningType.PerformanceFluctuation
+				.getAlarmSettingsByType(WarningTypeConstant.PerformanceFluctuation
 						.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 			
@@ -288,6 +288,9 @@ public class ScoreJob {
 				warnSettingsIdList.add(settings.getId());
 				Long orgId = settings.getOrgId();
 
+				if(StringUtils.isEmpty(settings.getRuleSet())){
+					continue;
+				}
 				String[] warmRuleIds = settings.getRuleSet().split(",");
 				for (String warmRuleId : warmRuleIds) {
 					if (!StringUtils.isEmpty(warmRuleId)) {
@@ -369,8 +372,9 @@ public class ScoreJob {
 										alertInfor.setAlarmSettingsId(alarmSettings
 												.getId());
 										alertInfor
-												.setWarningType(WarningType.PerformanceFluctuation
+												.setWarningType(WarningTypeConstant.PerformanceFluctuation
 														.toString());
+										alertInfor.setWarningCondition("上学期平均绩点为："+scoreFluctuateCount.getSecondAvgradePoint()+",上上学期平均绩点为："+scoreFluctuateCount.getFirstAvgradePoint()+",平均绩点下降："+result);
 										alertInfor.setWarningTime(new Date());
 										alertInfor.setPhone(scoreFluctuateCount.getUserPhone());
 										alertInfor.setOrgId(alarmRule.getOrgId());
@@ -400,7 +404,7 @@ public class ScoreJob {
 
 		// 获取预警配置
 		List<AlarmSettings> settingsList = alarmSettingsService
-				.getAlarmSettingsByType(WarningType.TotalAchievement.toString());
+				.getAlarmSettingsByType(WarningTypeConstant.TotalAchievement.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 			
 			Calendar c = Calendar.getInstance();
@@ -500,7 +504,7 @@ public class ScoreJob {
 
 		// 获取预警配置
 		List<AlarmSettings> settingsList = alarmSettingsService
-				.getAlarmSettingsByType(WarningType.TotalAchievement.toString());
+				.getAlarmSettingsByType(WarningTypeConstant.TotalAchievement.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 			
 			Calendar c = Calendar.getInstance();
@@ -530,6 +534,9 @@ public class ScoreJob {
 				warnSettingsIdList.add(settings.getId());
 				Long orgId = settings.getOrgId();
 
+				if(StringUtils.isEmpty(settings.getRuleSet())){
+					continue;
+				}
 				String[] warmRuleIds = settings.getRuleSet().split(",");
 				for (String warmRuleId : warmRuleIds) {
 					if (!StringUtils.isEmpty(warmRuleId)) {
@@ -583,7 +590,7 @@ public class ScoreJob {
 							AlarmRule alarmRule = alarmRuleMap
 									.get(alarmSettings.getRuleSet());
 							if (null != alarmRule) {
-								if (totalScoreCount.getFailCourseNum() >= alarmRule.getRightParameter()) {
+								if (totalScoreCount.getFailCourseNum() >= Float.parseFloat(alarmRule.getRightParameter())) {
 									WarningInformation alertInfor = new WarningInformation();
 									String alertId = UUID.randomUUID()
 											.toString();
@@ -617,9 +624,10 @@ public class ScoreJob {
 									alertInfor.setAlarmSettingsId(alarmSettings
 											.getId());
 									alertInfor
-											.setWarningType(WarningType.TotalAchievement
+											.setWarningType(WarningTypeConstant.TotalAchievement
 													.toString());
 									alertInfor.setWarningTime(new Date());
+									alertInfor.setWarningCondition("上学期必修课不及格课程数:"+totalScoreCount.getFailCourseNum());
 									alertInfor.setPhone(totalScoreCount.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());
 									alertInforList.add(alertInfor);
@@ -646,7 +654,7 @@ public class ScoreJob {
 
 		// 获取预警配置
 		List<AlarmSettings> settingsList = alarmSettingsService
-				.getAlarmSettingsByType(WarningType.AttendAbnormal.toString());
+				.getAlarmSettingsByType(WarningTypeConstant.AttendAbnormal.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 			
 			Calendar c = Calendar.getInstance();
@@ -676,6 +684,9 @@ public class ScoreJob {
 				warnSettingsIdList.add(settings.getId());
 				Long orgId = settings.getOrgId();
 
+				if(StringUtils.isEmpty(settings.getRuleSet())){
+					continue;
+				}
 				String[] warmRuleIds = settings.getRuleSet().split(",");
 				for (String warmRuleId : warmRuleIds) {
 					if (!StringUtils.isEmpty(warmRuleId)) {
@@ -763,9 +774,10 @@ public class ScoreJob {
 									alertInfor.setAlarmSettingsId(alarmSettings
 											.getId());
 									alertInfor
-											.setWarningType(WarningType.AttendAbnormal
+											.setWarningType(WarningTypeConstant.AttendAbnormal
 													.toString());
 									alertInfor.setWarningTime(new Date());
+									alertInfor.setWarningCondition("上学期不及格必修课程学分为："+totalScoreCount.getRequireCreditCount());
 									alertInfor.setPhone(totalScoreCount.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());
 									alertInforList.add(alertInfor);
@@ -793,7 +805,7 @@ public class ScoreJob {
 
 		// 获取预警配置
 		List<AlarmSettings> settingsList = alarmSettingsService
-				.getAlarmSettingsByType(WarningType.SupplementAchievement.toString());
+				.getAlarmSettingsByType(WarningTypeConstant.SupplementAchievement.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 			
 			Calendar c = Calendar.getInstance();
@@ -904,7 +916,7 @@ public class ScoreJob {
 
 		// 获取预警配置
 		List<AlarmSettings> settingsList = alarmSettingsService
-				.getAlarmSettingsByType(WarningType.SupplementAchievement.toString());
+				.getAlarmSettingsByType(WarningTypeConstant.SupplementAchievement.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 			
 			
@@ -917,6 +929,9 @@ public class ScoreJob {
 				warnSettingsIdList.add(settings.getId());
 				Long orgId = settings.getOrgId();
 
+				if(StringUtils.isEmpty(settings.getRuleSet())){
+					continue;
+				}
 				String[] warmRuleIds = settings.getRuleSet().split(",");
 				for (String warmRuleId : warmRuleIds) {
 					if (!StringUtils.isEmpty(warmRuleId)) {
@@ -966,7 +981,7 @@ public class ScoreJob {
 							AlarmRule alarmRule = alarmRuleMap
 									.get(alarmSettings.getRuleSet());
 							if (null != alarmRule) {
-								if (makeUpScoreCount.getFailCourseNum() >= alarmRule.getRightParameter()) {
+								if (makeUpScoreCount.getFailCourseNum() >= Float.parseFloat(alarmRule.getRightParameter())) {
 									WarningInformation alertInfor = new WarningInformation();
 									String alertId = UUID.randomUUID()
 											.toString();
@@ -998,8 +1013,9 @@ public class ScoreJob {
 									alertInfor.setAlarmSettingsId(alarmSettings
 											.getId());
 									alertInfor
-											.setWarningType(WarningType.SupplementAchievement
+											.setWarningType(WarningTypeConstant.SupplementAchievement
 													.toString());
+									alertInfor.setWarningCondition("三年内不及格课程数:"+makeUpScoreCount.getFailCourseNum());
 									alertInfor.setWarningTime(new Date());
 									alertInfor.setPhone(makeUpScoreCount.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());
@@ -1028,7 +1044,7 @@ public class ScoreJob {
 
 		// 获取预警配置
 		List<AlarmSettings> settingsList = alarmSettingsService
-				.getAlarmSettingsByType(WarningType.Cet.toString());
+				.getAlarmSettingsByType(WarningTypeConstant.Cet.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 			
 			Calendar c = Calendar.getInstance();
@@ -1052,6 +1068,9 @@ public class ScoreJob {
 				warnSettingsIdList.add(settings.getId());
 				Long orgId = settings.getOrgId();
 
+				if(StringUtils.isEmpty(settings.getRuleSet())){
+					continue;
+				}
 				String[] warmRuleIds = settings.getRuleSet().split(",");
 				for (String warmRuleId : warmRuleIds) {
 					if (!StringUtils.isEmpty(warmRuleId)) {
@@ -1131,7 +1150,7 @@ public class ScoreJob {
 								if(null != gradeMap.get(score.getGrade())){
 									grade = gradeMap.get(score.getGrade()).intValue();
 								}
-								if (grade >= alarmRule.getRightParameter()) {
+								if (grade >= Float.parseFloat(alarmRule.getRightParameter())) {
 									WarningInformation alertInfor = new WarningInformation();
 									String alertId = UUID.randomUUID()
 											.toString();
@@ -1163,8 +1182,9 @@ public class ScoreJob {
 									alertInfor.setAlarmSettingsId(alarmSettings
 											.getId());
 									alertInfor
-											.setWarningType(WarningType.Cet
+											.setWarningType(WarningTypeConstant.Cet
 													.toString());
+									alertInfor.setWarningCondition("第"+grade+"学年仍未通过英语四级考试");
 									alertInfor.setWarningTime(new Date());
 									alertInfor.setPhone(score.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());

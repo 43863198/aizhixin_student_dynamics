@@ -15,7 +15,12 @@
     <include file="classpath:liquibase/20171113154645_add_entity_SchoolStatistics.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171201184545_add_entity_PracticeStatistics.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171201205545_add_entity_CetScoreStatistics.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20170523162900_update_entity_PracticeStatistics.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171204165545_add_entity_TeachingScoreStatistics.xml" relativeToChangelogFile="false"/>
+<<<<<<< HEAD
     <include file="classpath:liquibase/20171204165545_add_entity_TeachingScoreDetails.xml" relativeToChangelogFile="false"/>
 
+=======
+    <include file="classpath:liquibase/20171208151500_update_entity_AlarmRule.xml" relativeToChangelogFile="false"/>
+>>>>>>> 4d5c78ded11f14bd670638ea96efc09555a77bcf
 </databaseChangeLog>

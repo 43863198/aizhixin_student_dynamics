@@ -16,12 +16,12 @@ import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformatio
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
-import com.aizhixin.cloud.dataanalysis.common.constant.WarningType;
+import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
-
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
 import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
+
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +63,28 @@ public class AlertWarningInformationService {
 	@Autowired
 	private WarningTypeService warningTypeService;
 
-
+	/**
+	 * 修改预警状态按预警等级和机构id
+	 * @param warningState
+	 * @param warningLevel
+	 * @param orgId
+	 */
+	public void updateWarningStateByWarningLevel(int warningState,int warningLevel,HashSet<Long> orgIds){
+		alertWarningInformationRepository.updateWarningStateByWarningLevel(warningState, warningLevel, orgIds);
+	}
+	
+	public Long countyWarningLevel(int warningState,int warningLevel){
+		return alertWarningInformationRepository.countByDeleteFlagAndWarningStateAndWarningLevel(DataValidity.VALID.getState(),warningState, warningLevel);
+	}
+	
+	/**
+	 * 按预警类型逻辑删除预警信息
+	 * @param warningType
+	 * @param orgId
+	 */
+	public void logicDeleteByOrgIdAndWarnType(String warningType,Long orgId){
+		alertWarningInformationRepository.logicDeleteByOrgIdAndWarnType(warningType, orgId);
+	}
 	
 	RowMapper<RegisterAlertCountDomain> registerCountRm = new RowMapper<RegisterAlertCountDomain>() {
 
@@ -148,7 +169,7 @@ public class AlertWarningInformationService {
 			warningDetailsDTO.setAddress(alertWarningInformation.getAddress());
 			warningDetailsDTO.setParentsContact(alertWarningInformation.getParentsContact());
 			warningDetailsDTO.setWarningTime(alertWarningInformation.getWarningTime());
-			warningDetailsDTO.setWarningName(WarningType.valueOf(alertWarningInformation.getWarningType()).getValue());
+			warningDetailsDTO.setWarningName(WarningTypeConstant.valueOf(alertWarningInformation.getWarningType()).getValue());
 			warningDetailsDTO.setWarningLevel(alertWarningInformation.getWarningLevel());
 			warningInformationDTOList.add(warningDetailsDTO);
 		}
@@ -174,7 +195,7 @@ public class AlertWarningInformationService {
 			domain.setClassName(rs.getString("CLASS_NAME"));
 			domain.setJobNumber(rs.getString("JOB_NUMBER"));
 			domain.setWarningLevel(rs.getInt("WARNING_LEVEL"));
-			domain.setWarningType(WarningType.valueOf(rs.getString("WARNING_TYPE")).getValue());
+			domain.setWarningType(WarningTypeConstant.valueOf(rs.getString("WARNING_TYPE")).getValue());
 			domain.setWarningState(rs.getInt("WARNING_STATE"));
 			domain.setWarningTime(rs.getTimestamp("WARNING_TIME"));
 			return domain;
@@ -523,7 +544,7 @@ public class AlertWarningInformationService {
 				warningDetailsDTO.setWarningState(alertWarningInformation.getWarningState());
 				warningDetailsDTO.setParentsContact(alertWarningInformation.getParentsContact());
 				warningDetailsDTO.setWarningTime(alertWarningInformation.getWarningTime());
-				warningDetailsDTO.setWarningName(WarningType.valueOf(alertWarningInformation.getWarningType()).getValue());
+				warningDetailsDTO.setWarningName(WarningTypeConstant.valueOf(alertWarningInformation.getWarningType()).getValue());
 				warningDetailsDTO.setWarningLevel(alertWarningInformation.getWarningLevel());
 				data.add(warningDetailsDTO);
 			}
@@ -625,7 +646,7 @@ public class AlertWarningInformationService {
 					Object[] d = (Object[]) obj;
 					TypeStatisticsDTO typeStatisticsDTO = new TypeStatisticsDTO();
 					if (null != d[0]) {
-						typeStatisticsDTO.setWarningType(WarningType.valueOf(String.valueOf(d[0])).getValue());
+						typeStatisticsDTO.setWarningType(WarningTypeConstant.valueOf(String.valueOf(d[0])).getValue());
 					}
 					if (null != d[1]) {
 						sum = Integer.valueOf(String.valueOf(d[1]));
@@ -747,7 +768,7 @@ public class AlertWarningInformationService {
 				warningDetailsDTO.setAddress(alertWarningInformation.getAddress());
 				warningDetailsDTO.setParentsContact(alertWarningInformation.getParentsContact());
 				warningDetailsDTO.setWarningTime(alertWarningInformation.getWarningTime());
-				warningDetailsDTO.setWarningName(WarningType.valueOf(alertWarningInformation.getWarningType()).getValue());
+				warningDetailsDTO.setWarningName(WarningTypeConstant.valueOf(alertWarningInformation.getWarningType()).getValue());
 				warningDetailsDTO.setWarningLevel(alertWarningInformation.getWarningLevel());
 				warningDetailsDTO.setWarningState(alertWarningInformation.getWarningState());
 				warningDetailsDTO.setDealTime(alertWarningInformation.getLastModifiedDate());

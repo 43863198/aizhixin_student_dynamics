@@ -9,33 +9,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
-import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.OperaionRecordService;
 import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
-import com.aizhixin.cloud.dataanalysis.common.constant.WarningType;
+import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.common.util.RestUtil;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmRuleService;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
 import com.aizhixin.cloud.dataanalysis.setup.service.ProcessingModeService;
-
 import org.apache.log4j.Logger;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmRule;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
-import com.aizhixin.cloud.dataanalysis.setup.entity.ProcessingMode;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoRespository.StudentRegisterMongoRespository;
 
@@ -64,7 +56,7 @@ public class StudentRegisterJob {
 
 		// 获取预警配置
 		List<AlarmSettings> settingsList = alarmSettingsService
-				.getAlarmSettingsByType(WarningType.Register.toString());
+				.getAlarmSettingsByType(WarningTypeConstant.Register.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
 
@@ -76,6 +68,9 @@ public class StudentRegisterJob {
 				warnSettingsIdList.add(settings.getId());
 				Long orgId = settings.getOrgId();
 
+				if(StringUtils.isEmpty(settings.getRuleSet())){
+					continue;
+				}
 				String[] warmRuleIds = settings.getRuleSet().split(",");
 				for (String warmRuleId : warmRuleIds) {
 					if (!StringUtils.isEmpty(warmRuleId)) {
@@ -136,7 +131,7 @@ public class StudentRegisterJob {
 				// 数据库已生成的处理中预警数据
 				List<WarningInformation> warnDbList = alertWarningInformationService
 						.getWarnInforByState(orgId,
-								WarningType.Register.toString(),
+								WarningTypeConstant.Register.toString(),
 								DataValidity.VALID.getState(),
 								AlertTypeConstant.ALERT_IN_PROCESS);
 				for (WarningInformation warningInfor : warnDbList) {
@@ -153,7 +148,7 @@ public class StudentRegisterJob {
 							AlarmRule alarmRule = alarmRuleMap
 									.get(alarmSettings.getRuleSet());
 							if (null != alarmRule) {
-								if (result >= alarmRule.getRightParameter()) {
+								if (result >= Float.parseFloat(alarmRule.getRightParameter())) {
 									WarningInformation alertInfor = new WarningInformation();
 									String alertId = UUID.randomUUID()
 											.toString();
@@ -187,8 +182,9 @@ public class StudentRegisterJob {
 									alertInfor.setAlarmSettingsId(alarmSettings
 											.getId());
 									alertInfor
-											.setWarningType(WarningType.Register
+											.setWarningType(WarningTypeConstant.Register
 													.toString());
+									alertInfor.setWarningCondition("报到注册截至时间超过天数："+result);
 									alertInfor.setWarningTime(new Date());
 									alertInfor.setPhone(studentRegister.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());
@@ -312,7 +308,7 @@ public class StudentRegisterJob {
 								logger.info("学号为"
 										+ defendantId
 										+ "学生的"
-										+ WarningType.valueOf(warningType)
+										+ WarningTypeConstant.valueOf(warningType)
 												.getValue() + "数据重复异常！");
 								continue;
 							} else {

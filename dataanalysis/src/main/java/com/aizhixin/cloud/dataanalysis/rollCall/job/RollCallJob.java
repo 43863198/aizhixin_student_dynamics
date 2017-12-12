@@ -17,7 +17,7 @@ import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInfo
 import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.constant.RollCallConstant;
-import com.aizhixin.cloud.dataanalysis.common.constant.WarningType;
+import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.common.util.RestUtil;
 import com.aizhixin.cloud.dataanalysis.rollCall.mongoEntity.RollCall;
@@ -68,7 +68,7 @@ public class RollCallJob {
 
 		// 获取预警配置
 		List<AlarmSettings> settingsList = alarmSettingsService
-				.getAlarmSettingsByType(WarningType.Absenteeism.toString());
+				.getAlarmSettingsByType(WarningTypeConstant.Absenteeism.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 			
 			Calendar c = Calendar.getInstance();
@@ -149,7 +149,7 @@ public class RollCallJob {
 
 		// 获取预警配置
 		List<AlarmSettings> settingsList = alarmSettingsService
-				.getAlarmSettingsByType(WarningType.Absenteeism.toString());
+				.getAlarmSettingsByType(WarningTypeConstant.Absenteeism.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 			
 			Calendar c = Calendar.getInstance();
@@ -171,7 +171,10 @@ public class RollCallJob {
 
 				warnSettingsIdList.add(settings.getId());
 				Long orgId = settings.getOrgId();
-
+				
+				if(StringUtils.isEmpty(settings.getRuleSet())){
+					continue;
+				}
 				String[] warmRuleIds = settings.getRuleSet().split(",");
 				for (String warmRuleId : warmRuleIds) {
 					if (!StringUtils.isEmpty(warmRuleId)) {
@@ -224,7 +227,7 @@ public class RollCallJob {
 				// 数据库已生成的处理中预警数据
 				List<WarningInformation> warnDbList = alertWarningInformationService
 						.getWarnInforByState(orgId,
-								WarningType.Absenteeism.toString(),
+								WarningTypeConstant.Absenteeism.toString(),
 								DataValidity.VALID.getState(),
 								AlertTypeConstant.ALERT_IN_PROCESS);
 				for (WarningInformation warningInfor : warnDbList) {
@@ -239,7 +242,7 @@ public class RollCallJob {
 							AlarmRule alarmRule = alarmRuleMap
 									.get(alarmSettings.getRuleSet());
 							if (null != alarmRule) {
-								if (rollCallCount.getOutSchoolTimes() > alarmRule.getRightParameter()) {
+								if (rollCallCount.getOutSchoolTimes() > Float.parseFloat(alarmRule.getRightParameter())) {
 									WarningInformation alertInfor = new WarningInformation();
 									String alertId = UUID.randomUUID()
 											.toString();
@@ -273,9 +276,10 @@ public class RollCallJob {
 									alertInfor.setAlarmSettingsId(alarmSettings
 											.getId());
 									alertInfor
-											.setWarningType(WarningType.Absenteeism
+											.setWarningType(WarningTypeConstant.Absenteeism
 													.toString());
 									alertInfor.setWarningTime(new Date());
+									alertInfor.setWarningCondition("本学期累计旷课次数为:"+rollCallCount.getOutSchoolTimes());
 									alertInfor.setPhone(rollCallCount.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());
 									alertInforList.add(alertInfor);

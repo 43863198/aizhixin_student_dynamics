@@ -20,5 +20,5 @@ public class WarningDescparameterDTO {
     private String describe;
 
     @ApiModelProperty(value = "参数")
-    private int parameter;
+    private String parameter;
 }
