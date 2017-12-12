@@ -147,7 +147,7 @@ public class MySchedulingService {
         }
     }
     
-    @Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "0 0/10 * * * ?")
     public void updateWarnStateJob() {
         if (distributeLock.updateWarnStateJobLock()) {
         	warnInforJob.updateWarnStateJob();

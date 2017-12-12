@@ -313,7 +313,7 @@ public class ScoreJob {
 			for (AlarmRule alarmRule : alarmList) {
 				//成绩波动只取第一条规则
 				if(alarmRule.getSerialNumber() == 1){
-				alarmRuleMap.put(alarmRule.getId(), alarmRule);
+				alarmRuleMap.put(alarmRule.getAlarmSettingsId(), alarmRule);
 				}
 			}
 
@@ -331,7 +331,7 @@ public class ScoreJob {
 				for (ScoreFluctuateCount scoreFluctuateCount : scoreFluctuateCountList) {
 					for (AlarmSettings alarmSettings : val) {
 						AlarmRule alarmRule = alarmRuleMap
-								.get(alarmSettings.getRuleSet());
+								.get(alarmSettings.getId());
 						if (null != alarmRule) {
 							 float result = 0L;
 							 if(!StringUtils.isEmpty(scoreFluctuateCount.getSecondAvgradePoint()) && !StringUtils.isEmpty(scoreFluctuateCount.getFirstAvgradePoint())){
@@ -559,7 +559,7 @@ public class ScoreJob {
 			for (AlarmRule alarmRule : alarmList) {
 				//总评成绩只取第一条规则
 				if(alarmRule.getSerialNumber() == 1){
-				alarmRuleMap.put(alarmRule.getId(), alarmRule);
+				alarmRuleMap.put(alarmRule.getAlarmSettingsId(), alarmRule);
 				}
 			}
 
@@ -588,7 +588,7 @@ public class ScoreJob {
 					for (TotalScoreCount totalScoreCount : totalScoreCountList) {
 						for (AlarmSettings alarmSettings : val) {
 							AlarmRule alarmRule = alarmRuleMap
-									.get(alarmSettings.getRuleSet());
+									.get(alarmSettings.getId());
 							if (null != alarmRule) {
 								if (totalScoreCount.getFailCourseNum() >= Float.parseFloat(alarmRule.getRightParameter())) {
 									WarningInformation alertInfor = new WarningInformation();
@@ -1091,7 +1091,7 @@ public class ScoreJob {
 			List<AlarmRule> alarmList = alarmRuleService
 					.getAlarmRuleByIds(warnRuleIdList);
 			for (AlarmRule alarmRule : alarmList) {
-				alarmRuleMap.put(alarmRule.getId(), alarmRule);
+				alarmRuleMap.put(alarmRule.getAlarmSettingsId(), alarmRule);
 			}
 
 			Iterator iter = alarmMap.entrySet().iterator();
@@ -1144,7 +1144,7 @@ public class ScoreJob {
 					for (Score score : alarmScoreList) {
 						for (AlarmSettings alarmSettings : val) {
 							AlarmRule alarmRule = alarmRuleMap
-									.get(alarmSettings.getRuleSet());
+									.get(alarmSettings.getId());
 							if (null != alarmRule) {
 								int grade = 0;
 								if(null != gradeMap.get(score.getGrade())){
