@@ -37,13 +37,13 @@ public class TeachingScoreService {
         TeachingAchievementDTO teachingAchievementDTO = new TeachingAchievementDTO();
         List<CollegeTeachingAchievementDTO> collegeTeachingAchievementDTOList = new ArrayList<>();
         try {
-            StringBuilder sql = new StringBuilder("SELECT COLLOEGE_NAME,STUDENT_NUM,avgGPA,failPassStuNum, FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
+            StringBuilder sql = new StringBuilder("SELECT COLLOEGE_NAME,STUDENT_NUM,avgGPA,failPassStuNum,CURRICULUM_NUM,CURRICULUM_AVG FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
             if (null != orgId) {
                 sql.append(" and ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
             if (null != grade) {
-                sql.append(" and TEACHER_YEAR = :grade");
+                sql.append(" and GRADE = :grade");
                 condition.put("grade", grade);
             }
             if (null != semester) {
@@ -55,17 +55,18 @@ public class TeachingScoreService {
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
             }
-            List res = sq.getResultList();
+            List<Object> res = sq.getResultList();
             if(null!=res&&res.size()>0){
-//                for(TeachingScoreStatistics ts : res){
-//                    CollegeTeachingAchievementDTO collegeTeachingAchievementDTO = new CollegeTeachingAchievementDTO();
-//
-//
-//
-//
-//
-//                    collegeTeachingAchievementDTOList.add(collegeTeachingAchievementDTO);
-//                }
+                for(Object obj : res){
+                    Object[] d = (Object[])obj;
+                    CollegeTeachingAchievementDTO collegeTeachingAchievementDTO = new CollegeTeachingAchievementDTO();
+
+
+
+
+
+                    collegeTeachingAchievementDTOList.add(collegeTeachingAchievementDTO);
+                }
             }
 
 
