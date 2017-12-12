@@ -8,11 +8,13 @@ import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 
 public interface ScoreMongoRespository extends MongoRepository<Score, String>{
  
-	List<Score> findAllBySchoolYearInAndOrgId(int[] schoolYears,Long orgId);
+	List<Score> findAllBySchoolYearInAndOrgIdAndExamType(int[] schoolYears,Long orgId,String examType);
 	
 	List<Score> findAllByGradeInAndOrgIdAndExamType(String[] grades,Long orgId,String examType);
 	
-	List<Score> findAllBySchoolYearGreaterThanEqualAndOrgId(int beginYear,Long orgId);
+	List<Score> findAllBySchoolYearGreaterThanEqualAndOrgIdAndExamType(int beginYear,Long orgId,String examType);
+	
+	List<Score> findAllByTotalScoreLessThanAndSchoolYearGreaterThanEqualAndExamTypeAndOrgId(String totalScore,int beginYear,String examType,Long orgId);
 	
 	List<Score> findAllByTotalScoreLessThanAndSchoolYearAndSemesterAndOrgIdAndExamType(String totalScore,int schoolYear,int semester,Long orgId,String examType);
 	
