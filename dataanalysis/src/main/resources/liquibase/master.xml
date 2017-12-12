@@ -18,4 +18,6 @@
     <include file="classpath:liquibase/20170523162900_update_entity_PracticeStatistics.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171204165545_add_entity_TeachingScoreStatistics.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171208151500_update_entity_AlarmRule.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20171211162345_add_entity_CourseEvaluate.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20171211171245_add_entity_TeacherEvaluate.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
