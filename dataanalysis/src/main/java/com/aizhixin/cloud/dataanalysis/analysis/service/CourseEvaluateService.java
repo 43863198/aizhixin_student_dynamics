@@ -86,7 +86,7 @@ public class CourseEvaluateService {
                 courseEvaluateDetailDTO.setTeachingClassName(rs.getString("TEACHING_CLASS_NAME"));
                 courseEvaluateDetailDTO.setTeacherName(rs.getString("CHARGE_PERSON"));
                 courseEvaluateDetailDTO.setAvgScore(rs.getFloat("AVG_SCORE"));
-                return null;
+                return courseEvaluateDetailDTO;
             }
         };
         String querySql = "SELECT TEACHING_CLASS_NAME,CHARGE_PERSON,AVG_SCORE  FROM `T_COURSE_EVALUATE` where DELETE_FLAG =" + DataValidity.VALID.getState() + " and ORG_ID=" + orgId + " ";
