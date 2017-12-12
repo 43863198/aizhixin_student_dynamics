@@ -288,6 +288,9 @@ public class ScoreJob {
 				warnSettingsIdList.add(settings.getId());
 				Long orgId = settings.getOrgId();
 
+				if(StringUtils.isEmpty(settings.getRuleSet())){
+					continue;
+				}
 				String[] warmRuleIds = settings.getRuleSet().split(",");
 				for (String warmRuleId : warmRuleIds) {
 					if (!StringUtils.isEmpty(warmRuleId)) {
@@ -371,6 +374,7 @@ public class ScoreJob {
 										alertInfor
 												.setWarningType(WarningTypeConstant.PerformanceFluctuation
 														.toString());
+										alertInfor.setWarningCondition("上学期平均绩点为："+scoreFluctuateCount.getSecondAvgradePoint()+",上上学期平均绩点为："+scoreFluctuateCount.getFirstAvgradePoint()+",平均绩点下降："+result);
 										alertInfor.setWarningTime(new Date());
 										alertInfor.setPhone(scoreFluctuateCount.getUserPhone());
 										alertInfor.setOrgId(alarmRule.getOrgId());
@@ -530,6 +534,9 @@ public class ScoreJob {
 				warnSettingsIdList.add(settings.getId());
 				Long orgId = settings.getOrgId();
 
+				if(StringUtils.isEmpty(settings.getRuleSet())){
+					continue;
+				}
 				String[] warmRuleIds = settings.getRuleSet().split(",");
 				for (String warmRuleId : warmRuleIds) {
 					if (!StringUtils.isEmpty(warmRuleId)) {
@@ -620,6 +627,7 @@ public class ScoreJob {
 											.setWarningType(WarningTypeConstant.TotalAchievement
 													.toString());
 									alertInfor.setWarningTime(new Date());
+									alertInfor.setWarningCondition("上学期必修课不及格课程数:"+totalScoreCount.getFailCourseNum());
 									alertInfor.setPhone(totalScoreCount.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());
 									alertInforList.add(alertInfor);
@@ -676,6 +684,9 @@ public class ScoreJob {
 				warnSettingsIdList.add(settings.getId());
 				Long orgId = settings.getOrgId();
 
+				if(StringUtils.isEmpty(settings.getRuleSet())){
+					continue;
+				}
 				String[] warmRuleIds = settings.getRuleSet().split(",");
 				for (String warmRuleId : warmRuleIds) {
 					if (!StringUtils.isEmpty(warmRuleId)) {
@@ -766,6 +777,7 @@ public class ScoreJob {
 											.setWarningType(WarningTypeConstant.AttendAbnormal
 													.toString());
 									alertInfor.setWarningTime(new Date());
+									alertInfor.setWarningCondition("上学期不及格必修课程学分为："+totalScoreCount.getRequireCreditCount());
 									alertInfor.setPhone(totalScoreCount.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());
 									alertInforList.add(alertInfor);
@@ -917,6 +929,9 @@ public class ScoreJob {
 				warnSettingsIdList.add(settings.getId());
 				Long orgId = settings.getOrgId();
 
+				if(StringUtils.isEmpty(settings.getRuleSet())){
+					continue;
+				}
 				String[] warmRuleIds = settings.getRuleSet().split(",");
 				for (String warmRuleId : warmRuleIds) {
 					if (!StringUtils.isEmpty(warmRuleId)) {
@@ -1000,6 +1015,7 @@ public class ScoreJob {
 									alertInfor
 											.setWarningType(WarningTypeConstant.SupplementAchievement
 													.toString());
+									alertInfor.setWarningCondition("三年内不及格课程数:"+makeUpScoreCount.getFailCourseNum());
 									alertInfor.setWarningTime(new Date());
 									alertInfor.setPhone(makeUpScoreCount.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());
@@ -1052,6 +1068,9 @@ public class ScoreJob {
 				warnSettingsIdList.add(settings.getId());
 				Long orgId = settings.getOrgId();
 
+				if(StringUtils.isEmpty(settings.getRuleSet())){
+					continue;
+				}
 				String[] warmRuleIds = settings.getRuleSet().split(",");
 				for (String warmRuleId : warmRuleIds) {
 					if (!StringUtils.isEmpty(warmRuleId)) {
@@ -1165,6 +1184,7 @@ public class ScoreJob {
 									alertInfor
 											.setWarningType(WarningTypeConstant.Cet
 													.toString());
+									alertInfor.setWarningCondition("第"+grade+"学年仍未通过英语四级考试");
 									alertInfor.setWarningTime(new Date());
 									alertInfor.setPhone(score.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());

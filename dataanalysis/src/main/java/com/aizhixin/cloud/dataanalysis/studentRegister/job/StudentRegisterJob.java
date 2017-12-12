@@ -68,6 +68,9 @@ public class StudentRegisterJob {
 				warnSettingsIdList.add(settings.getId());
 				Long orgId = settings.getOrgId();
 
+				if(StringUtils.isEmpty(settings.getRuleSet())){
+					continue;
+				}
 				String[] warmRuleIds = settings.getRuleSet().split(",");
 				for (String warmRuleId : warmRuleIds) {
 					if (!StringUtils.isEmpty(warmRuleId)) {
@@ -181,6 +184,7 @@ public class StudentRegisterJob {
 									alertInfor
 											.setWarningType(WarningTypeConstant.Register
 													.toString());
+									alertInfor.setWarningCondition("报到注册截至时间超过天数："+result);
 									alertInfor.setWarningTime(new Date());
 									alertInfor.setPhone(studentRegister.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());
