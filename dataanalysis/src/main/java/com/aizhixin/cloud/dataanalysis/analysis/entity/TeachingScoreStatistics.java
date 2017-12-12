@@ -45,7 +45,7 @@ public class TeachingScoreStatistics extends AbstractEntity {
     @Column(name = "AVG_GPA")
     @Getter @Setter private Double avgGPA;
     /**
-     *平均GPA
+     *课程平均分
      */
     @Column(name = "AVG_SCORE")
     @Getter @Setter private Double avgScore;
@@ -65,6 +65,12 @@ public class TeachingScoreStatistics extends AbstractEntity {
     @Column(name = "STATE")
     @Getter @Setter private int state;
 
+    /*
+     * 统计类型
+     */
+    @Column(name = "STATISTICS_TYPE")
+    @Getter @Setter private int statisticsType;
+
 
     /***********新增字段 jianwei.wu*************/
     /**
@@ -72,21 +78,4 @@ public class TeachingScoreStatistics extends AbstractEntity {
      */
     @Column(name = "CURRICULUM_NUM")
     @Getter @Setter private int curriculumNum;
-    /**
-     * 课程平均分
-     */
-    @Column(name = "CURRICULUM_AVG")
-    @Getter @Setter private double curriculumAVG;
-    /*
-   * 学期
-   */
-    @Column(name = "SEMESTER")
-    @Getter @Setter private int semester;
-    /*
-     * 学期
-     */
-    @Column(name = "GRADE")
-    @Getter @Setter private String grade;
-
-
 }
