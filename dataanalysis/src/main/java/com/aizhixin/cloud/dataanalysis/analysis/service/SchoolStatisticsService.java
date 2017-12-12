@@ -63,10 +63,10 @@ public class SchoolStatisticsService {
     	schoolStatisticsRespository.save(statisticsList);
     }
     
-    public Map<String, Object> getStatisticNewstudents(Long orgId, String year, Pageable pageable) {
+    public Map<String, Object> getStatisticNewstudents(Long orgId, String year) {
         Map<String, Object> result = new HashMap<>();
         NewStudentProfileDTO newStudentProfileDTO = new NewStudentProfileDTO();
-        PageData<SchoolStatistics> p = new PageData<>();
+//        PageData<SchoolStatistics> p = new PageData<>();
         Map<String, Object> condition = new HashMap<>();
         Long count = 0L;
         long studentNumber = 0;
@@ -118,13 +118,15 @@ public class SchoolStatisticsService {
             newStudentProfileDTO.setAlreadyPay(alreadyPay);
             newStudentProfileDTO.setConvenienceChannel(convenienceChannel);
             newStudentProfileDTO.setStatisticalTime(time);//后续要改为统计时间
-            Page<SchoolStatistics> schoolStatisticsPage = schoolStatisticsRespository.findPageDataByOrgIdAndTeacherYear(pageable, orgId, year, DataValidity.VALID.getState());
-            p.setData(schoolStatisticsPage.getContent());
-            p.getPage().setTotalElements(count);
-            p.getPage().setPageNumber(pageable.getPageNumber());
-            p.getPage().setTotalPages(schoolStatisticsPage.getTotalPages());
-            p.getPage().setPageSize(pageable.getPageSize());
-            newStudentProfileDTO.setSchoolStatisticsPageData(p);
+            List<SchoolStatistics> schoolStatisticsList = schoolStatisticsRespository.findDataByOrgIdAndTeacherYear(orgId, year, DataValidity.VALID.getState());
+//            Page<SchoolStatistics> schoolStatisticsPage = schoolStatisticsRespository.findPageDataByOrgIdAndTeacherYear(pageable, orgId, year, DataValidity.VALID.getState());
+//            p.setData(schoolStatisticsPage.getContent());
+//            p.getPage().setTotalElements(count);
+//            p.getPage().setPageNumber(pageable.getPageNumber());
+//            p.getPage().setTotalPages(schoolStatisticsPage.getTotalPages());
+//            p.getPage().setPageSize(pageable.getPageSize());
+//            newStudentProfileDTO.setSchoolStatisticsPageData(p);
+              newStudentProfileDTO.setSchoolStatisticsListData(schoolStatisticsList);
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);

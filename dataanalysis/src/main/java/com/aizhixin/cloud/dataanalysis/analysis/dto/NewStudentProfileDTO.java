@@ -15,6 +15,7 @@ import javax.persistence.Column;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author: Created by jianwei.wu
@@ -45,8 +46,8 @@ public class NewStudentProfileDTO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     private  Date statisticalTime = new Date();
-    @ApiModelProperty(value = "分页查询学院新生概况", required = false)
-    PageData<SchoolStatistics> schoolStatisticsPageData;
+    @ApiModelProperty(value = "查询学院新生概况", required = false)
+    List<SchoolStatistics> schoolStatisticsListData;
 
     public NewStudentProfileDTO(Long studentNumber, Long alreadyReport) {
         this.studentNumber = studentNumber==null?0:studentNumber;
