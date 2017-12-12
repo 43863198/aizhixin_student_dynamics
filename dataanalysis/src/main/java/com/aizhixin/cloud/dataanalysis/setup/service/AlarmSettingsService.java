@@ -232,13 +232,9 @@ public class AlarmSettingsService {
                     ruids = ruids + alarmRuleService.save(alarmRule) + ",";
                 }
                 if(!StringUtils.isBlank(ruids)) {
-                    String rid = ruids.substring(0, ruids.length() - 1);
-                    String[] rd = rid.split(",");
-                    for(String d :rd) {
-                        AlarmSettings set = alarmSettingsRepository.findOne(alarmSettingsId);
-                        set.setRuleSet(d);
-                        alarmSettingsRepository.save(set);
-                    }
+                    AlarmSettings set = alarmSettingsRepository.findOne(alarmSettingsId);
+                    set.setRuleSet(ruids.substring(0, ruids.length() - 1));
+                    alarmSettingsRepository.save(set);
                 }
             }
         } catch (Exception e) {
