@@ -1,8 +1,10 @@
 package com.aizhixin.cloud.dataanalysis.analysis.controller;
 
+import com.aizhixin.cloud.dataanalysis.analysis.dto.CourseEvaluateDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.service.CourseEvaluateService;
 import com.aizhixin.cloud.dataanalysis.analysis.service.PracticeStatisticsService;
 import com.aizhixin.cloud.dataanalysis.analysis.service.TeacherEvaluateService;
+import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,13 +40,14 @@ public class TeachingEvaluateController {
      */
     @GetMapping(value = "/courseevaluate", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "课程评价", response = Void.class, notes = "课程评价<br><br><b>@author wangjun</b>")
-    public Map<String, Object> getCourseEvaluate(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-                                                       @ApiParam(value = "学期id", required = true) @RequestParam(value = "semesterId", required = true) String semesterId,
-                                                       @ApiParam(value = "课程名称", required = false) @RequestParam(value = "courseName", required = false) String courseName,
-                                                       @ApiParam(value = "第几页", required = false) @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
-                                                       @ApiParam(value = "每页大小", required = false) @RequestParam(value = "pageSize", required = false) Integer pageSize,
-                                                       @ApiParam(value = "排序升序：asc 降序 desc", required = true) @RequestParam(value = "sort", required = false) String sort) {
-        return courseEvaluateService.getCourseEvaluate(orgId,semesterId,courseName,sort,pageSize,pageNumber);
+    public PageData<CourseEvaluateDTO> getCourseEvaluate(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+                                                         @ApiParam(value = "学期id", required = true) @RequestParam(value = "semesterId", required = true) String semesterId,
+                                                         @ApiParam(value = "grade 学年" , required = false) @RequestParam(value = "grade", required = false) String grade,
+                                                         @ApiParam(value = "课程名称", required = false) @RequestParam(value = "courseName", required = false) String courseName,
+                                                         @ApiParam(value = "第几页", required = false) @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
+                                                         @ApiParam(value = "每页大小", required = false) @RequestParam(value = "pageSize", required = false) Integer pageSize,
+                                                         @ApiParam(value = "排序升序：asc 降序 desc", required = true) @RequestParam(value = "sort", required = false) String sort) {
+        return courseEvaluateService.getCourseEvaluate(orgId,semesterId,grade,courseName,sort,pageSize,pageNumber);
     }
     /**
      * 课程评价详情
@@ -56,11 +59,12 @@ public class TeachingEvaluateController {
     @ApiOperation(httpMethod = "GET", value = "课程评价详情", response = Void.class, notes = "课程评价详情<br><br><b>@author wangjun</b>")
     public Map<String, Object> getCourseEvaluateDetail(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
                                                  @ApiParam(value = "学期id", required = true) @RequestParam(value = "semesterId", required = true) String semesterId,
+                                                       @ApiParam(value = "grade 学年" , required = false) @RequestParam(value = "grade", required = false) String grade,
                                                  @ApiParam(value = "课程编号", required = false) @RequestParam(value = "courseCode", required = false) String courseCode,
                                                  @ApiParam(value = "教学班或授课教师名称", required = false) @RequestParam(value = "name", required = false) String name,
                                                  @ApiParam(value = "第几页", required = false) @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
                                                  @ApiParam(value = "每页大小", required = false) @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return courseEvaluateService.getCourseEvaluateDetail(orgId,semesterId,courseCode,name,pageNumber,pageSize);
+        return courseEvaluateService.getCourseEvaluateDetail(orgId,semesterId,grade,courseCode,name,pageNumber,pageSize);
     }
 
     /**

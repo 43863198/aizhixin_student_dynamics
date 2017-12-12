@@ -2,6 +2,8 @@ package com.aizhixin.cloud.dataanalysis.analysis.service;
 
 import com.aizhixin.cloud.dataanalysis.analysis.dto.CourseEvaluateDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.CourseEvaluateDetailDTO;
+import com.aizhixin.cloud.dataanalysis.common.PageData;
+import com.aizhixin.cloud.dataanalysis.common.PageDomain;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.domain.SortDTO;
 import com.aizhixin.cloud.dataanalysis.common.util.PageJdbcUtil;
@@ -26,7 +28,7 @@ public class CourseEvaluateService {
     @Autowired
     private PageJdbcUtil pageJdbcUtil;
 
-    public Map<String, Object> getCourseEvaluate(long orgId, String semesterId, String courseName, String sort, Integer pageSize, Integer pageNumber) {
+    public PageData<CourseEvaluateDTO> getCourseEvaluate(long orgId, String semesterId,String grade, String courseName, String sort, Integer pageSize, Integer pageNumber) {
         Map<String, Object> result = new HashMap<>();
         List<SortDTO> sortDTOS = new ArrayList();
         RowMapper<CourseEvaluateDTO> rowMapper = new RowMapper<CourseEvaluateDTO>() {
@@ -45,6 +47,10 @@ public class CourseEvaluateService {
             querySql += " and SEMESTER_ID=" + semesterId + " ";
             countSql += " and SEMESTER_ID=" + semesterId + " ";
         }
+        if (null != grade) {
+            querySql += " and TEACHER_YEAR=" + grade + " ";
+            countSql += " and TEACHER_YEAR=" + grade + " ";
+        }
         if (null != courseName) {
             querySql += " and COURSE_NAME like %" + courseName + "% ";
             countSql += " and COURSE_NAME like %" + courseName + "% ";
@@ -59,12 +65,15 @@ public class CourseEvaluateService {
                 sortDTOS.add(sortDTO);
             }
         }
-
-        return pageJdbcUtil
-                .getPageInfor(pageSize, pageNumber, rowMapper, sortDTOS, querySql, countSql);
+       Map map=pageJdbcUtil
+               .getPageInfor(pageSize, pageNumber, rowMapper, sortDTOS, querySql, countSql);
+        PageData<CourseEvaluateDTO> p=new PageData<CourseEvaluateDTO>();
+        p.setData((List) map.get("data"));
+        p.setPage((PageDomain)map.get("page"));
+        return p;
     }
 
-    public Map<String, Object> getCourseEvaluateDetail(long orgId, String semesterId, String courseCode, String name,Integer pageNumber,Integer pageSize) {
+    public Map<String, Object> getCourseEvaluateDetail(long orgId, String semesterId,String grade, String courseCode, String name,Integer pageNumber,Integer pageSize) {
         RowMapper<CourseEvaluateDetailDTO> rowMapper=new RowMapper<CourseEvaluateDetailDTO>() {
             @Override
             public CourseEvaluateDetailDTO mapRow(ResultSet rs, int i) throws SQLException {
@@ -80,6 +89,10 @@ public class CourseEvaluateService {
         if (null != semesterId) {
             querySql += " and SEMESTER_ID=" + semesterId + " ";
             countSql += " and SEMESTER_ID=" + semesterId + " ";
+        }
+        if (null != grade) {
+            querySql += " and TEACHER_YEAR=" + grade + " ";
+            countSql += " and TEACHER_YEAR=" + grade + " ";
         }
         if (null != courseCode) {
             querySql += " and COURSE_CODE=" + courseCode + " ";
