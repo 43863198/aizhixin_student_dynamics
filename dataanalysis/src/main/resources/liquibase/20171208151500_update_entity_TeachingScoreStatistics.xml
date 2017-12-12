@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+
+    <changeSet id="20171204165545" author="jianwei.wu">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="T_TEACHING_SCORE_STATISTICS" columnName="CURRICULUM_NUM"/>
+                <columnExists tableName="T_TEACHING_SCORE_STATISTICS" columnName="CURRICULUM_AVG"/>
+                <columnExists tableName="T_TEACHING_SCORE_STATISTICS" columnName="SEMESTER"/>
+                <columnExists tableName="T_TEACHING_SCORE_STATISTICS" columnName="GRADE"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="T_TEACHING_SCORE_STATISTICS">
+            <column name="CURRICULUM_NUM" type="INT(6)" remarks="学生学号"/>
+            <column name="CURRICULUM_AVG" type="double(6,2)" remarks="学生学号"/>
+            <column name="SEMESTER" type="INT(4)" remarks="学生学号"/>
+            <column name="GRADE" type="VARCHAR(50)" remarks="学年"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>
