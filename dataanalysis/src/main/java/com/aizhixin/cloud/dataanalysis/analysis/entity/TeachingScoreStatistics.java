@@ -64,4 +64,24 @@ public class TeachingScoreStatistics extends AbstractEntity {
    */
     @Column(name = "STATE")
     @Getter @Setter private int state;
+
+
+    /***********新增字段 jianwei.wu*************/
+    /**
+     * 开设课程数
+     */
+    @Column(name = "CURRICULUM_NUM")
+    @Getter @Setter private int curriculumNum;
+    /**
+     * 课程平均分
+     */
+    @Column(name = "CURRICULUM_AVG")
+    @Getter @Setter private double curriculumAVG;
+    /*
+   * 学期
+   */
+    @Column(name = "SEMESTER")
+    @Getter @Setter private int semester;
+
+
 }
