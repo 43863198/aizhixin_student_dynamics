@@ -532,7 +532,7 @@ public class AlertWarningInformationService {
 		int alreadyProcessed = 0;
 		int untreated = 0;
 		try {
-		StringBuilder sql = new StringBuilder("SELECT COUNT(1), SUM(IF(WARNING_STATE = 20, 1, 0)) FROM t_warning_information WHERE 1 = 1");
+		StringBuilder sql = new StringBuilder("SELECT COUNT(1), SUM(IF(WARNING_STATE = 20 OR WARNING_STATE = 40, 1, 0)) FROM t_warning_information WHERE 1 = 1");
 		if(null!=orgId){
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId",orgId);
@@ -617,7 +617,7 @@ public class AlertWarningInformationService {
 		Map<String,Object> result = new HashMap<>();
 		List<CollegeStatisticsDTO> collegeStatisticsDTOList = new ArrayList<>();
 		Map<String, Object> condition = new HashMap<>();
-		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, COUNT(1), SUM(IF(WARNING_STATE = 20, 1, 0)) FROM t_warning_information  WHERE 1 = 1");
+		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, COUNT(1), SUM(IF(WARNING_STATE = 20 OR WARNING_STATE = 40, 1, 0)) FROM t_warning_information  WHERE 1 = 1");
 		if (null != orgId) {
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId", orgId);
@@ -660,7 +660,7 @@ public class AlertWarningInformationService {
 		Map<String,Object> result = new HashMap<>();
 		List<CollegeAlreadyProcessedRatioDTO> collegeAlreadyProcessedRatioDTOArrayList = new ArrayList<>();
 		Map<String, Object> condition = new HashMap<>();
-		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, COUNT(1), SUM(IF(WARNING_STATE = 20, 1, 0)) FROM t_warning_information  WHERE 1 = 1");
+		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, COUNT(1), SUM(IF(WARNING_STATE = 20 OR WARNING_STATE = 40, 1, 0)) FROM t_warning_information  WHERE 1 = 1");
 		if (null != orgId) {
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId", orgId);
@@ -724,8 +724,8 @@ public class AlertWarningInformationService {
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId", orgId);
 		}
-		cql.append(" and DELETE_FLAG = 0 and WARNING_STATE = 20");
-		sql.append(" and DELETE_FLAG = 0 and WARNING_STATE = 20");
+		cql.append(" and DELETE_FLAG = 0 and (WARNING_STATE = 20 OR WARNING_STATE = 40)");
+		sql.append(" and DELETE_FLAG = 0 and (WARNING_STATE = 20 OR WARNING_STATE = 40)");
 		sql.append(" GROUP BY WARNING_TYPE");
 		try {
 			Query cq = em.createNativeQuery(cql.toString());
