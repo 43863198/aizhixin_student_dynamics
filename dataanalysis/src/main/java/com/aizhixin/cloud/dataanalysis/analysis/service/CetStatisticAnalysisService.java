@@ -59,7 +59,7 @@ public class CetStatisticAnalysisService {
             }
             if (null != semester) {
                 cql.append(" and cet.SEMESTER = :semester");
-                sql.append(" and cet.ORG_ID = :semester");
+                sql.append(" and cet.SEMESTER = :semester");
                 condition.put("semester", semester);
             }
             Query cq = em.createNativeQuery(cql.toString());
