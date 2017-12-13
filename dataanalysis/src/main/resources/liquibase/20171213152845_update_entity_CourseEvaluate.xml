@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+    <changeSet id="20171213152845" author="wangjun" runOnChange="true">
+        <renameColumn
+                columnDataType="int(4)"
+                newColumnName="SEMESTER"
+                oldColumnName="SEMESTER_ID"
+                remarks="学期"
+                tableName="T_COURSE_EVALUATE"/>
+        <dropColumn
+                columnName="SEMESTER_NAME"
+                tableName="T_COURSE_EVALUATE"/>
+        <addColumn
+                   tableName="T_COURSE_EVALUATE">
+            <column name="GRADE" type="INT(4)"  remarks="年级"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

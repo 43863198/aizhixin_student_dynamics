@@ -28,4 +28,13 @@
     <include file="classpath:liquibase/201712013112400_update_entity_TeachingScoreStatistics.xml" relativeToChangelogFile="false"/>
    <include file="classpath:liquibase/20171208151500_update_entity_TeachingScoreStatistics.xml" relativeToChangelogFile="false"/>
    <include file="classpath:liquibase/20171212151500_update_entity_AlarmSettings.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20171213152845_update_entity_CourseEvaluate.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20171213151345_update_entity_CetScoreStatistics.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20171213154245_update_entity_PracticeStatistics.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20171213160545_update_entity_SchoolStatistics.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20171213162145_update_entity_TeacherEvaluate.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20171213162445_update_entity_TeachingScoreDetails.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/201712013163200_update_entity_TeachingScoreStatistics.xml" relativeToChangelogFile="false"/>
+
+    <include file="classpath:liquibase/201712013170400_update_entity_TeachingScoreStatistics.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
