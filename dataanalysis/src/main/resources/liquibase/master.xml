@@ -21,6 +21,11 @@
     <include file="classpath:liquibase/20171208151500_update_entity_AlarmRule.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171211162345_add_entity_CourseEvaluate.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171211171245_add_entity_TeacherEvaluate.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20171208151500_update_entity_TeachingScoreStatistics.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/201712013104200_update_entity_TeachingScoreStatistics.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20171213105545_update_entity_CetScoreStatistics.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20171213105945_update_entity_PracticeStatistics.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/201712013112400_update_entity_TeachingScoreStatistics.xml" relativeToChangelogFile="false"/>
    <include file="classpath:liquibase/20171208151500_update_entity_TeachingScoreStatistics.xml" relativeToChangelogFile="false"/>
    <include file="classpath:liquibase/20171212151500_update_entity_AlarmSettings.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

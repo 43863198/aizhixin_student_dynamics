@@ -28,6 +28,8 @@ public class TeachingScoreStatisticsDTO {
     private Double avgScore;
     @ApiModelProperty(value = "学期名称", required = false)
     private String semesterName;
+    @ApiModelProperty(value = "开课数量", required = false)
+    private long curriculumNum;
 
 //    public TeachingScoreStatisticsDTO(String colloegeName, Long colloegeId, Long studentNum, Long failPassStuNum, Double avgGPA, Double avgScore) {
 //        this.colloegeName = colloegeName;
@@ -47,8 +49,9 @@ public class TeachingScoreStatisticsDTO {
         this.avgScore = avgScore;
     }
 
-    public TeachingScoreStatisticsDTO(Double avgGPA, Double avgScore) {
+    public TeachingScoreStatisticsDTO(long curriculumNum,Double avgGPA, Double avgScore) {
         this.avgGPA = avgGPA;
         this.avgScore = avgScore;
+        this.curriculumNum=curriculumNum;
     }
 }
