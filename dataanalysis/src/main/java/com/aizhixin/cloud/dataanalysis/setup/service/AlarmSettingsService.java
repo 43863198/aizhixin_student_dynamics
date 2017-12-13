@@ -294,6 +294,11 @@ public class AlarmSettingsService {
     		scoreJob.makeUpScoreJob();
     		logger.debug("重新生成warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
     	}
+    	if(WarningTypeConstant.LeaveSchool.toString().equals(warningType)){
+    		logger.debug("开始重新生成warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
+    		scoreJob.dropOutJob();
+    		logger.debug("重新生成warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
+    	}
     }
 
 

@@ -262,6 +262,22 @@ public class DistributeLock {
         return getLock(lockPath.toString(), taskPath.toString());
     }
     
+    /**
+     * 退学预警
+     * @return
+     */
+    public boolean getDropOutJobLock() {
+        StringBuilder lockPath = new StringBuilder(zkLockPath);
+        StringBuilder taskPath = new StringBuilder(zkTaskPath);
+        Date current = new Date();
+        String curDayString = DateUtil.format(current);
+        String HHmm = DateUtil.format(current, "HHmm");
+        lockPath.append("/").append(curDayString).append("/dropout/").append(HHmm);
+        taskPath.append("/").append(curDayString).append("/dropout/").append(HHmm);
+
+        return getLock(lockPath.toString(), taskPath.toString());
+    }
+    
     
     /**
      * 修改预警处理状态
