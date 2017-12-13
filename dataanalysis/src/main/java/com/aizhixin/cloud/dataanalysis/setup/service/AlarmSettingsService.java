@@ -53,6 +53,12 @@ public class AlarmSettingsService {
     @Autowired
     private ScoreJob scoreJob;
 
+    public AlarmSettings getAlarmSettingsById(String id){
+        return alarmSettingsRepository.findOne(id);
+    }
+
+
+
     public List<AlarmSettings> getAlarmSettingsByType(String warningType){
         return alarmSettingsRepository.getAlarmSettingsByType(warningType, DataValidity.VALID.getState());
     }
