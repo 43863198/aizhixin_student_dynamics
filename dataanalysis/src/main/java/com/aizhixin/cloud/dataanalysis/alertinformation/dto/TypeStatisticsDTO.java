@@ -19,16 +19,16 @@ public class TypeStatisticsDTO {
     @ApiModelProperty(value = "占比", required = false)
     private String proportion;
 
-    @ApiModelProperty(value = "预警数量", required = false)
+    @ApiModelProperty(value = "数量", required = false)
     protected int sum;
 
-    @ApiModelProperty(value = "一级预警数量", required = false)
+    @ApiModelProperty(value = "一级数量", required = false)
     protected int sum1;
 
-    @ApiModelProperty(value = "二级预警数量", required = false)
+    @ApiModelProperty(value = "二级数量", required = false)
     protected int sum2;
 
-    @ApiModelProperty(value = "三级预警数量", required = false)
+    @ApiModelProperty(value = "三级数量", required = false)
     protected int sum3;
 
 }

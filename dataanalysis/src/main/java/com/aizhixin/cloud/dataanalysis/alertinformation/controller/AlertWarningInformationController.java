@@ -79,6 +79,19 @@ public class AlertWarningInformationController {
         return alertWarningInforService.getStatisticalGrade(orgId);
     }
 
+    /**
+     * 预警汇总
+     *
+     * @param orgId
+     * @return
+     */
+    @GetMapping(value = "/statistical", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "预警汇总", response = Void.class, notes = "预警汇总<br><br><b>@author jianwei.wu</b>")
+    public Map<String,Object>   getStatistical(
+            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
+        return alertWarningInforService.getStatistical(orgId);
+    }
+
 
     /**
      * 院系预警汇总
