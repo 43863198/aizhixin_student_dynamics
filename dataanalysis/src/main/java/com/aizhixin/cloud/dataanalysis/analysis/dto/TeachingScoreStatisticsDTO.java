@@ -54,4 +54,5 @@ public class TeachingScoreStatisticsDTO {
         this.avgScore = avgScore;
         this.curriculumNum=curriculumNum;
     }
+
 }
