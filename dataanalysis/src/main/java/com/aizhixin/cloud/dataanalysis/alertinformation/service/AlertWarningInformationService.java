@@ -19,6 +19,9 @@ import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
+import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmRule;
+import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
+import com.aizhixin.cloud.dataanalysis.setup.service.AlarmRuleService;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
 import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
 
@@ -52,6 +55,8 @@ public class AlertWarningInformationService {
 	private AlertWarningInformationRepository alertWarningInformationRepository;
 	@Autowired
 	private AlarmSettingsService alarmSettingsService;
+	@Autowired
+	private AlarmRuleService alarmRuleService;
 	@Autowired
 	private PageJdbcUtil pageJdbcUtil;
 	@Autowired
@@ -527,7 +532,7 @@ public class AlertWarningInformationService {
 		int alreadyProcessed = 0;
 		int untreated = 0;
 		try {
-		StringBuilder sql = new StringBuilder("SELECT COUNT(1), SUM(IF(WARNING_STATE = 20, 1, 0)) FROM t_warning_information WHERE 1 = 1");
+		StringBuilder sql = new StringBuilder("SELECT COUNT(1), SUM(IF(WARNING_STATE = 20 OR WARNING_STATE = 40, 1, 0)) FROM t_warning_information WHERE 1 = 1");
 		if(null!=orgId){
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId",orgId);
@@ -612,7 +617,7 @@ public class AlertWarningInformationService {
 		Map<String,Object> result = new HashMap<>();
 		List<CollegeStatisticsDTO> collegeStatisticsDTOList = new ArrayList<>();
 		Map<String, Object> condition = new HashMap<>();
-		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, COUNT(1), SUM(IF(WARNING_STATE = 20, 1, 0)) FROM t_warning_information  WHERE 1 = 1");
+		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, COUNT(1), SUM(IF(WARNING_STATE = 20 OR WARNING_STATE = 40, 1, 0)) FROM t_warning_information  WHERE 1 = 1");
 		if (null != orgId) {
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId", orgId);
@@ -655,7 +660,7 @@ public class AlertWarningInformationService {
 		Map<String,Object> result = new HashMap<>();
 		List<CollegeAlreadyProcessedRatioDTO> collegeAlreadyProcessedRatioDTOArrayList = new ArrayList<>();
 		Map<String, Object> condition = new HashMap<>();
-		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, COUNT(1), SUM(IF(WARNING_STATE = 20, 1, 0)) FROM t_warning_information  WHERE 1 = 1");
+		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, COUNT(1), SUM(IF(WARNING_STATE = 20 OR WARNING_STATE = 40, 1, 0)) FROM t_warning_information  WHERE 1 = 1");
 		if (null != orgId) {
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId", orgId);
@@ -712,24 +717,18 @@ public class AlertWarningInformationService {
 		int sum1 = 0;
 		int sum2 = 0;
 		int sum3 = 0;
-		StringBuilder cql = new StringBuilder("SELECT count(1) FROM t_warning_information  WHERE 1 = 1");
-		StringBuilder sql = new StringBuilder("SELECT WARNING_TYPE, count(1), SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3 FROM t_warning_information  WHERE 1 = 1");
+		StringBuilder sql = new StringBuilder("SELECT WARNING_TYPE, count(1), SUM(IF(WARNING_LEVEL = 1 and (WARNING_STATE = 20 OR WARNING_STATE = 40), 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2 and (WARNING_STATE = 20 OR WARNING_STATE = 40), 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3 and (WARNING_STATE = 20 OR WARNING_STATE = 40), 1, 0)) as sum3 FROM t_warning_information  WHERE 1 = 1");
 		if (null != orgId) {
-			cql.append(" and ORG_ID = :orgId");
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId", orgId);
 		}
-		cql.append(" and DELETE_FLAG = 0 and WARNING_STATE = 20");
-		sql.append(" and DELETE_FLAG = 0 and WARNING_STATE = 20");
+		sql.append(" and DELETE_FLAG = 0");
 		sql.append(" GROUP BY WARNING_TYPE");
 		try {
-			Query cq = em.createNativeQuery(cql.toString());
 			Query sq = em.createNativeQuery(sql.toString());
 			for (Map.Entry<String, Object> e : condition.entrySet()) {
-				cq.setParameter(e.getKey(), e.getValue());
 				sq.setParameter(e.getKey(), e.getValue());
 			}
-			total = Integer.valueOf(String.valueOf(cq.getSingleResult()));
 			List<Object> res = sq.getResultList();
 			if (null != res) {
 				for (Object obj : res) {
@@ -739,7 +738,7 @@ public class AlertWarningInformationService {
 						typeStatisticsDTO.setWarningType(WarningTypeConstant.valueOf(String.valueOf(d[0])).getValue());
 					}
 					if (null != d[1]) {
-						sum = Integer.valueOf(String.valueOf(d[1]));
+						total = Integer.valueOf(String.valueOf(d[1]));
 					}
 					if (null != d[2]) {
 						sum1 = Integer.valueOf(String.valueOf(d[2]));
@@ -750,6 +749,7 @@ public class AlertWarningInformationService {
 					if (null != d[4]) {
 						sum3 = Integer.valueOf(String.valueOf(d[4]));
 					}
+					sum = sum1+sum2+sum3;
 					typeStatisticsDTO.setProportion(ProportionUtil.accuracy(sum * 1.0, total * 1.0, 2));
 					typeStatisticsDTO.setSum(sum);
 					typeStatisticsDTO.setSum1(sum1);
@@ -863,6 +863,17 @@ public class AlertWarningInformationService {
 				warningDetailsDTO.setWarningLevel(alertWarningInformation.getWarningLevel());
 				warningDetailsDTO.setWarningState(alertWarningInformation.getWarningState());
 				warningDetailsDTO.setDealTime(alertWarningInformation.getLastModifiedDate());
+				warningDetailsDTO.setWarningCondition(alertWarningInformation.getWarningCondition());
+				String standard = "";
+				if(null!=alertWarningInformation.getAlarmSettingsId()){
+					List<AlarmRule> alarmRuleList = alarmRuleService.getByAlarmSettingId(alertWarningInformation.getAlarmSettingsId());
+					for(AlarmRule ar : alarmRuleList){
+						standard = standard + ar.getName()+ar.getRightParameter()+",";
+					}
+				}
+				if(!StringUtils.isBlank(standard)) {
+					warningDetailsDTO.setWarningStandard(standard.substring(0,standard.length()-1));
+				}
 				List<DealDomain> dealDomainList = new ArrayList<>();
 				List<OperationRecord> operationRecordList = operaionRecordService.getOperationRecordByWInfoId(alertWarningInformation.getId());
                 if(null!=operationRecordList&&operationRecordList.size()>0){

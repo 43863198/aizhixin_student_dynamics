@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+
+    <!-- 四六级英语成绩统计表结构-->
+    <changeSet id="20171213105545" author="jun.wang">
+        <renameColumn
+                columnDataType="int(4)"
+                newColumnName="DELETE_FLAG"
+                oldColumnName="state"
+                remarks="删除标记(0正常,1删除)"
+                tableName="t_cet_statistics"/>
+    </changeSet>
+</databaseChangeLog>

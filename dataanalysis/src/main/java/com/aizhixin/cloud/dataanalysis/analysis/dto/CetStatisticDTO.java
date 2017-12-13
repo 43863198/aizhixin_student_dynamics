@@ -1,10 +1,18 @@
 package com.aizhixin.cloud.dataanalysis.analysis.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.persistence.Column;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import java.util.Date;
 
 /**
  * @author: Created by jianwei.wu
@@ -28,4 +36,11 @@ public class CetStatisticDTO {
     private int cetForePassNum;
     @ApiModelProperty(value = "四级通过率", required = false)
     private String cetForePassRate;
+    @ApiModelProperty(value = "统计时间", required = false)
+    @CreatedDate
+    @Column(name = "STATISTICAL_TIME")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date statisticalTime = new Date();
 }

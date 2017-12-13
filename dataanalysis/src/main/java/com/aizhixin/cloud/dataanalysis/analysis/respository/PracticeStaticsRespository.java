@@ -17,9 +17,9 @@ import java.util.Map;
  * @Date: 2017-11-30
  */
 public interface PracticeStaticsRespository extends JpaRepository<PracticeStatistics, String> {
-    @Query("select new com.aizhixin.cloud.dataanalysis.analysis.dto.PracticeStaticsDTO(sum(a.practiceStudentNum),sum(a.practiceCompanyNum),sum(a.taskNum),sum(a.taskPassNum)) from #{#entityName} a where a.orgId = :orgId and a.state=0 ")
+    @Query("select new com.aizhixin.cloud.dataanalysis.analysis.dto.PracticeStaticsDTO(sum(a.practiceStudentNum),sum(a.practiceCompanyNum),sum(a.taskNum),sum(a.taskPassNum)) from #{#entityName} a where a.orgId = :orgId and a.deleteFlag=0 ")
     PracticeStaticsDTO getPracticeStatics(@Param(value = "orgId")Long orgId);
-    @Query("select a from #{#entityName} a where a.orgId = :orgId and a.teacherYear = :teacherYear and a.state = :state order by a.statisticalTime desc")
-    Page<PracticeStatistics>  findPageDataByOrgIdAndTeacherYear(Pageable pageable, @Param(value = "orgId") Long orgId, @Param(value = "teacherYear") String teacherYear, @Param(value = "state") int state);
+    @Query("select a from #{#entityName} a where a.orgId = :orgId and a.teacherYear = :teacherYear and a.deleteFlag = :deleteFlag order by a.statisticalTime desc")
+    Page<PracticeStatistics>  findPageDataByOrgIdAndTeacherYear(Pageable pageable, @Param(value = "orgId") Long orgId, @Param(value = "teacherYear") String teacherYear, @Param(value = "deleteFlag") int deleteFlag);
 
 }
