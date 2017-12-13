@@ -190,6 +190,7 @@ public class AlarmSettingsService {
         return result;
     }
 
+    @Transactional
     public Map<String, Object> warningSet(AlarmSettingDomain alarmSettingDomain) {
         Map<String, Object> result = new HashMap<>();
         try {
@@ -229,11 +230,11 @@ public class AlarmSettingsService {
                     if (wd.length > 0) {
                         alarmRule.setName(wd[wp.getSerialNumber()-1]);
                     }
-                    ruids  = alarmRuleService.save(alarmRule) + ",";
+                    ruids = ruids + alarmRuleService.save(alarmRule) + ",";
                 }
                 if(!StringUtils.isBlank(ruids)) {
                     AlarmSettings set = alarmSettingsRepository.findOne(alarmSettingsId);
-                    set.setRuleSet(ruids.substring(0,ruids.length()-1));
+                    set.setRuleSet(ruids.substring(0, ruids.length() - 1));
                     alarmSettingsRepository.save(set);
                 }
             }
@@ -288,6 +289,11 @@ public class AlarmSettingsService {
     	if(WarningTypeConstant.SupplementAchievement.toString().equals(warningType)){
     		logger.debug("开始重新生成warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
     		scoreJob.makeUpScoreJob();
+    		logger.debug("重新生成warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
+    	}
+    	if(WarningTypeConstant.LeaveSchool.toString().equals(warningType)){
+    		logger.debug("开始重新生成warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
+    		scoreJob.dropOutJob();
     		logger.debug("重新生成warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
     	}
     }

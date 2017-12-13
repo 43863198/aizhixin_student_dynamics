@@ -283,7 +283,7 @@ public class SchoolStatisticsJob {
 	 * @param schoolYear
 	 */
 	private void setGreenChannelStuNumCount(String orgIds,
-			HashMap<Long, SchoolStatistics> statisticsMap, int schoolYear) {
+			HashMap<Long, SchoolStatistics>   statisticsMap, int schoolYear) {
 		String groupStr1 = "{ $group: {\"_id\": {  \"orgId\": \"$orgId\" ,\"collegeId\" : \"$collegeId\",\"collegeName\" : \"$collegeName\",\"jobNum\" : \"$jobNum\"} } } ";
 		DBObject group1 = (DBObject) JSON.parse(groupStr1);
 		String groupStr2 = "{ $group: {\"_id\": { \"collegeId\" : \"$_id.collegeId\",\"collegeName\" : \"$_id.collegeName\", \"orgId\": \"$_id.orgId\"  }, count : { $sum : 1 }  } }";

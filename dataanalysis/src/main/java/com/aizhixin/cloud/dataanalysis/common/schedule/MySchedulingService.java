@@ -41,7 +41,7 @@ public class MySchedulingService {
     }
 
     
-//    @Scheduled(cron = "0 0/5 * * * ?")
+//    @Scheduled(cron = "0 0/1 * * * ?")
     public void rollCallJob() {
         if (distributeLock.getRollCallLock()) {
             LOG.info("开始启动旷课预警定时任务");
@@ -147,7 +147,17 @@ public class MySchedulingService {
         }
     }
     
-    @Scheduled(cron = "0 0/1 * * * ?")
+//    @Scheduled(cron = "0 0/1 * * * ?")
+    public void dropOutJob() {
+        if (distributeLock.getDropOutJobLock()) {
+            LOG.info("开始启动退学预警定时任务");
+            scoreJob.dropOutJob();
+        } else {
+            LOG.info("启动退学预警任务，获取锁失败");
+        }
+    }
+    
+    @Scheduled(cron = "0 0/10 * * * ?")
     public void updateWarnStateJob() {
         if (distributeLock.updateWarnStateJobLock()) {
         	warnInforJob.updateWarnStateJob();

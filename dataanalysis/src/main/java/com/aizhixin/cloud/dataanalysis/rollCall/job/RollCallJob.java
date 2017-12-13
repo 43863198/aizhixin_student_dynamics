@@ -242,7 +242,7 @@ public class RollCallJob {
 							AlarmRule alarmRule = alarmRuleMap
 									.get(alarmSettings.getRuleSet());
 							if (null != alarmRule) {
-								if (rollCallCount.getOutSchoolTimes() > Float.parseFloat(alarmRule.getRightParameter())) {
+								if (rollCallCount.getOutSchoolTimes() >= Float.parseFloat(alarmRule.getRightParameter())) {
 									WarningInformation alertInfor = new WarningInformation();
 									String alertId = UUID.randomUUID()
 											.toString();

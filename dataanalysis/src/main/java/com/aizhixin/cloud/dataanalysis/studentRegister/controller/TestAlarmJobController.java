@@ -4,6 +4,7 @@
 package com.aizhixin.cloud.dataanalysis.studentRegister.controller;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -14,15 +15,20 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
 import com.aizhixin.cloud.dataanalysis.analysis.job.SchoolStatisticsJob;
+import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
+import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
 import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
 import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
 import com.aizhixin.cloud.dataanalysis.studentRegister.job.StudentRegisterJob;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 /**
  * @author zhengning
@@ -43,6 +49,8 @@ public class TestAlarmJobController {
 	private ScoreJob scoreJob;
 	@Autowired
 	private SchoolStatisticsJob schoolStatisticsJob;
+	@Autowired
+	private AlertWarningInformationService alertWarningInformationService;
 
 
 	@RequestMapping(value = "/rollcallcountjob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -57,8 +65,14 @@ public class TestAlarmJobController {
 
 	@RequestMapping(value = "/rollcalljob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "签到预警定时任务", response = Void.class, notes = "签到预警定时任务<br><br><b>@author zhengning</b>")
-	public ResponseEntity<Map<String, Object>> rollCallJob() {
-
+	public ResponseEntity<Map<String, Object>> rollCallJob(
+			
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId
+			) {
+        if(null == orgId){
+        	orgId = 218L;
+        }
+		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Absenteeism.toString(), orgId);
 		rollCallJob.rollCallJob();
 
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -67,8 +81,13 @@ public class TestAlarmJobController {
 
 	@RequestMapping(value = "/sturegisterjob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "新生报到预警定时任务", response = Void.class, notes = "新生报到预警定时任务<br><br><b>@author zhengning</b>")
-	public ResponseEntity<Map<String, Object>> stuRegisterJob() {
-
+	public ResponseEntity<Map<String, Object>> stuRegisterJob(
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId
+			) {
+        if(null == orgId){
+        	orgId = 218L;
+        }
+		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Absenteeism.toString(), orgId);
 		studentRegisterJob.studenteRegisterJob();
 
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -86,7 +105,13 @@ public class TestAlarmJobController {
 
 	@RequestMapping(value = "/totalscorejob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "总评成绩预警定时任务", response = Void.class, notes = "总评成绩预警定时任务<br><br><b>@author zhengning</b>")
-	public ResponseEntity<Map<String, Object>> totalScoreJob() {
+	public ResponseEntity<Map<String, Object>> totalScoreJob(
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId
+			) {
+        if(null == orgId){
+        	orgId = 218L;
+        }
+		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Absenteeism.toString(), orgId);
 		scoreJob.totalScoreJob();
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
@@ -103,7 +128,13 @@ public class TestAlarmJobController {
 
 	@RequestMapping(value = "/makeupscorejob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "补考成绩预警定时任务", response = Void.class, notes = "补考成绩预警定时任务<br><br><b>@author zhengning</b>")
-	public ResponseEntity<Map<String, Object>> makeUpScoreJob() {
+	public ResponseEntity<Map<String, Object>> makeUpScoreJob(
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId
+			) {
+        if(null == orgId){
+        	orgId = 218L;
+        }
+		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Absenteeism.toString(), orgId);
 		scoreJob.makeUpScoreJob();
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
@@ -119,7 +150,13 @@ public class TestAlarmJobController {
 
 	@RequestMapping(value = "/scorefluctuatejob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "成绩波动预警定时任务", response = Void.class, notes = "成绩波动预警定时任务<br><br><b>@author zhengning</b>")
-	public ResponseEntity<Map<String, Object>> scoreFluctuateJob() {
+	public ResponseEntity<Map<String, Object>> scoreFluctuateJob(
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId
+			) {
+        if(null == orgId){
+        	orgId = 218L;
+        }
+		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Absenteeism.toString(), orgId);
 		scoreJob.scoreFluctuateJob();
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
@@ -127,7 +164,13 @@ public class TestAlarmJobController {
 
 	@RequestMapping(value = "/attendabnormaljob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "修学异常预警定时任务", response = Void.class, notes = "总评成绩统计定时任务执行后,执行修学异常预警定时任务<br><br><b>@author zhengning</b>")
-	public ResponseEntity<Map<String, Object>> attendAbnormalJob() {
+	public ResponseEntity<Map<String, Object>> attendAbnormalJob(
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId
+			) {
+        if(null == orgId){
+        	orgId = 218L;
+        }
+		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Absenteeism.toString(), orgId);
 		scoreJob.attendAbnormalJob();
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
@@ -136,7 +179,13 @@ public class TestAlarmJobController {
 	
 	@RequestMapping(value = "/cet4job", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "英语4级预警定时任务", response = Void.class, notes = "总评成绩统计定时任务执行后,执行英语4级预警定时任务<br><br><b>@author zhengning</b>")
-	public ResponseEntity<Map<String, Object>> cet4Job() {
+	public ResponseEntity<Map<String, Object>> cet4Job(
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId
+			) {
+        if(null == orgId){
+        	orgId = 218L;
+        }
+		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Absenteeism.toString(), orgId);
 		scoreJob.cet4ScoreJob();
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
@@ -147,6 +196,17 @@ public class TestAlarmJobController {
 	@ApiOperation(httpMethod = "GET", value = "学校信息统计定时任务", response = Void.class, notes = "学校信息统计定时任务<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> schoolCountJob() {
 		schoolStatisticsJob.schoolStatisticsJob();
+		Map<String, Object> result = new HashMap<String, Object>();
+		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/processedalert", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "GET", value = "按预警等级处理预警信息", response = Void.class, notes = "处理预警信息<br><br><b>@author zhengning</b>")
+	public ResponseEntity<Map<String, Object>> processedAlert(
+			@ApiParam(value = "orgIds 机构id") @RequestParam(value = "orgIds", required = true) HashSet<Long> orgIds,
+			@ApiParam(value = "warningLevel 预警等级") @RequestParam(value = "warningLevel", required = true) int warningLevel
+			) {
+		alertWarningInformationService.updateWarningStateByWarningLevel(AlertTypeConstant.ALERT_PROCESSED, warningLevel, orgIds);
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}

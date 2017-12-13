@@ -3,6 +3,8 @@
  */
 package com.aizhixin.cloud.dataanalysis.studentRegister.controller;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,6 +20,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -78,12 +81,17 @@ public class TestDataController {
 			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
 			@ApiParam(value = "jobNum 学号") @RequestParam(value = "jobNum", required = true) String jobNum,
 			@ApiParam(value = "stuName 姓名") @RequestParam(value = "stuName", required = true) String stuName,
-			@ApiParam(value = "dayNum 注册报到时间比当前日期推前几天(例子:-2为2天前报到注册)") @RequestParam(value = "dayNum", required = false) int dayNum) {
+			@ApiParam(value = "dayNum 注册报到时间比当前日期推前几天(例子:-2为2天前报到注册,若输入大于0数字默认变为负数)") @RequestParam(value = "dayNum", required = false) int dayNum) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		if (null != orgId && orgId.longValue() > 0L) {
 		} else {
 			orgId = 1L;
 		}
+		
+		if(dayNum > 0){
+			dayNum = 0-dayNum;
+		}
+		
 		List<StudentRegister> stuRegisterList = new ArrayList<StudentRegister>();
 			
 		StudentRegister studentRegister = new StudentRegister();
@@ -300,14 +308,14 @@ public class TestDataController {
 			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
 			@ApiParam(value = "jobNum 学号") @RequestParam(value = "jobNum", required = true) String jobNum,
 			@ApiParam(value = "stuName 姓名") @RequestParam(value = "stuName", required = true) String stuName,
-			@ApiParam(value = "num 下降绩点") @RequestParam(value = "num", required = false) int num) {
+			@ApiParam(value = "num 下降绩点") @RequestParam(value = "num", required = false) String num) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		if (null != orgId && orgId.longValue() > 0L) {
 		} else {
 			orgId = 1L;
 		}
-		if(num == 0){
-			num =1;
+		if(StringUtils.isEmpty(num)){
+			num ="1";
 		}
 		List<Score> scoreList = new ArrayList<Score>();
 			
@@ -330,10 +338,12 @@ public class TestDataController {
 			score.setCourseType(ScoreConstant.REQUIRED_COURSE);
 			score.setExamTime(DateUtil.getMonday(new Date()));
 			score.setExamType(ScoreConstant.EXAM_TYPE_COURSE);
-			score.setTotalScore(String.valueOf((num*10)+50));
+			score.setTotalScore( new BigDecimal(String.valueOf((Float.parseFloat(num)*10)+50)).setScale(2,
+					RoundingMode.HALF_UP).toString());
 			score.setScoreResultType("百分制");
-			score.setCredit(String.valueOf(num));
-			score.setGradePoint(String.valueOf(num+1));
+			score.setCredit(num);
+			score.setGradePoint(new BigDecimal(String.valueOf(Float.parseFloat(num)+1)).setScale(2,
+					RoundingMode.HALF_UP).toString());
 			scoreList.add(score);
 			
 			score = new Score();
@@ -357,7 +367,7 @@ public class TestDataController {
 			score.setExamType(ScoreConstant.EXAM_TYPE_COURSE);
 			score.setTotalScore("60");
 			score.setScoreResultType("百分制");
-			score.setCredit(String.valueOf(num));
+			score.setCredit(num);
 			score.setGradePoint("1");
 			scoreList.add(score);
 		scoreMongoRespository.save(scoreList);
