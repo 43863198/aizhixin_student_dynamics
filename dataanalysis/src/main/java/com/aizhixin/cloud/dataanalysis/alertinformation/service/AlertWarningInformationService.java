@@ -19,6 +19,9 @@ import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
+import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmRule;
+import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
+import com.aizhixin.cloud.dataanalysis.setup.service.AlarmRuleService;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
 import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
 
@@ -52,6 +55,8 @@ public class AlertWarningInformationService {
 	private AlertWarningInformationRepository alertWarningInformationRepository;
 	@Autowired
 	private AlarmSettingsService alarmSettingsService;
+	@Autowired
+	private AlarmRuleService alarmRuleService;
 	@Autowired
 	private PageJdbcUtil pageJdbcUtil;
 	@Autowired
@@ -863,6 +868,17 @@ public class AlertWarningInformationService {
 				warningDetailsDTO.setWarningLevel(alertWarningInformation.getWarningLevel());
 				warningDetailsDTO.setWarningState(alertWarningInformation.getWarningState());
 				warningDetailsDTO.setDealTime(alertWarningInformation.getLastModifiedDate());
+				warningDetailsDTO.setWarningCondition(alertWarningInformation.getWarningCondition());
+				String standard = "";
+				if(null!=alertWarningInformation.getAlarmSettingsId()){
+					List<AlarmRule> alarmRuleList = alarmRuleService.getByAlarmSettingId(alertWarningInformation.getAlarmSettingsId());
+					for(AlarmRule ar : alarmRuleList){
+						standard = standard + ar.getName()+ar.getRightParameter()+",";
+					}
+				}
+				if(!StringUtils.isBlank(standard)) {
+					warningDetailsDTO.setWarningStandard(standard.substring(0,standard.length()-1));
+				}
 				List<DealDomain> dealDomainList = new ArrayList<>();
 				List<OperationRecord> operationRecordList = operaionRecordService.getOperationRecordByWInfoId(alertWarningInformation.getId());
                 if(null!=operationRecordList&&operationRecordList.size()>0){
