@@ -65,22 +65,6 @@ public class TeacherEvaluate extends AbstractEntity {
     @Getter
     @Setter
     private float avgScore;
-
-    /*
-    * 学期名称
-    */
-    @Column(name = "SEMESTER_NAME")
-    @Getter @Setter private String semesterName;
-    /*
-    * 学期id
-    */
-    @Column(name = "SEMESTER_ID")
-    @Getter @Setter private Long semesterId;
-    /*
-    * 学年
-    */
-    @Column(name = "TEACHER_YEAR")
-    @Getter @Setter private int teacherYear;
     /*
  * 班级id
  */
@@ -95,4 +79,21 @@ public class TeacherEvaluate extends AbstractEntity {
     @Getter
     @Setter
     private String className;
+
+    /*
+* 学期
+*/
+    @Column(name = "SEMESTER")
+    @Getter @Setter private int semester;
+
+    /*
+     * 学年
+     */
+    @Column(name = "TEACHER_YEAR")
+    @Getter @Setter private int teacherYear;
+    /**
+     * 年级
+     */
+    @Column(name = "GRADE")
+    @Getter @Setter private int grade;
 }
