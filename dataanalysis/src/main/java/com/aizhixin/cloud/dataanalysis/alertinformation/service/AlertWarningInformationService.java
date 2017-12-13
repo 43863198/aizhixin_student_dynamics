@@ -717,24 +717,18 @@ public class AlertWarningInformationService {
 		int sum1 = 0;
 		int sum2 = 0;
 		int sum3 = 0;
-		StringBuilder cql = new StringBuilder("SELECT count(1) FROM t_warning_information  WHERE 1 = 1");
-		StringBuilder sql = new StringBuilder("SELECT WARNING_TYPE, count(1), SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3 FROM t_warning_information  WHERE 1 = 1");
+		StringBuilder sql = new StringBuilder("SELECT WARNING_TYPE, count(1), SUM(IF(WARNING_LEVEL = 1 and (WARNING_STATE = 20 OR WARNING_STATE = 40), 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2 and (WARNING_STATE = 20 OR WARNING_STATE = 40), 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3 and (WARNING_STATE = 20 OR WARNING_STATE = 40), 1, 0)) as sum3 FROM t_warning_information  WHERE 1 = 1");
 		if (null != orgId) {
-			cql.append(" and ORG_ID = :orgId");
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId", orgId);
 		}
-		cql.append(" and DELETE_FLAG = 0 and (WARNING_STATE = 20 OR WARNING_STATE = 40)");
-		sql.append(" and DELETE_FLAG = 0 and (WARNING_STATE = 20 OR WARNING_STATE = 40)");
+		sql.append(" and DELETE_FLAG = 0");
 		sql.append(" GROUP BY WARNING_TYPE");
 		try {
-			Query cq = em.createNativeQuery(cql.toString());
 			Query sq = em.createNativeQuery(sql.toString());
 			for (Map.Entry<String, Object> e : condition.entrySet()) {
-				cq.setParameter(e.getKey(), e.getValue());
 				sq.setParameter(e.getKey(), e.getValue());
 			}
-			total = Integer.valueOf(String.valueOf(cq.getSingleResult()));
 			List<Object> res = sq.getResultList();
 			if (null != res) {
 				for (Object obj : res) {
@@ -744,7 +738,7 @@ public class AlertWarningInformationService {
 						typeStatisticsDTO.setWarningType(WarningTypeConstant.valueOf(String.valueOf(d[0])).getValue());
 					}
 					if (null != d[1]) {
-						sum = Integer.valueOf(String.valueOf(d[1]));
+						total = Integer.valueOf(String.valueOf(d[1]));
 					}
 					if (null != d[2]) {
 						sum1 = Integer.valueOf(String.valueOf(d[2]));
@@ -755,6 +749,7 @@ public class AlertWarningInformationService {
 					if (null != d[4]) {
 						sum3 = Integer.valueOf(String.valueOf(d[4]));
 					}
+					sum = sum1+sum2+sum3;
 					typeStatisticsDTO.setProportion(ProportionUtil.accuracy(sum * 1.0, total * 1.0, 2));
 					typeStatisticsDTO.setSum(sum);
 					typeStatisticsDTO.setSum1(sum1);
