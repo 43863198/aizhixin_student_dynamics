@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -44,7 +45,7 @@ public class CetStatisticAnalysisService {
         List<CollegeCetStatisticDTO> collegeCetStatisticDTOList = new ArrayList<>();
         Long count = 0L;
         try {
-            StringBuilder cql = new StringBuilder("SELECT COUNT(1) AS count, SUM(cet.CET_FORE_JOIN_NUM) as sumc4, SUM(cet.CET_FORE_PASS_NUM) as sump4, SUM(cet.CET_SIX_JOIN_NUM) as sumc6, SUM(cet.CET_SIX_PASS_NUM) as sump6 FROM T_CET_STATISTICS cet WHERE 1 = 1");
+            StringBuilder cql = new StringBuilder("SELECT COUNT(1) AS count, SUM(cet.CET_FORE_JOIN_NUM) as sumc4, SUM(cet.CET_FORE_PASS_NUM) as sump4, SUM(cet.CET_SIX_JOIN_NUM) as sumc6, SUM(cet.CET_SIX_PASS_NUM) as sump6, max(cet.CREATED_DATE) FROM T_CET_STATISTICS cet WHERE 1 = 1");
             StringBuilder sql = new StringBuilder("SELECT SUM(cet.CET_FORE_JOIN_NUM) as sumc4, SUM(cet.CET_FORE_PASS_NUM) as sump4, SUM(cet.CET_SIX_JOIN_NUM) as sumc6, SUM(cet.CET_SIX_PASS_NUM) as sump6, COLLOEGE_NAME, COLLOEGE_ID FROM T_CET_STATISTICS cet WHERE 1 = 1");
             if (null != orgId) {
                 cql.append(" and cet.ORG_ID = :orgId");
@@ -68,11 +69,12 @@ public class CetStatisticAnalysisService {
                 sq.setParameter(e.getKey(), e.getValue());
             }
             Object[] cres = (Object[]) cq.getSingleResult();
-            if (null != cres && cres.length == 5) {
+            if (null != cres && cres.length == 6) {
                 int count4 = 0;
                 int count6 = 0;
                 int pass4 = 0;
                 int pass6 = 0;
+                Date time = new Date();
                 if (null != cres[0]) {
                     count = Long.valueOf(String.valueOf(cres[0]));
                 }
@@ -88,12 +90,16 @@ public class CetStatisticAnalysisService {
                 if (null != cres[4]) {
                     pass6 = Integer.valueOf(String.valueOf(cres[4]));
                 }
+                if (null != cres[5]) {
+                    time =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(String.valueOf(cres[5]));
+                }
                 cetStatisticDTO.setCetForeJoinNum(count4);
                 cetStatisticDTO.setCetForePassNum(pass4);
                 cetStatisticDTO.setCetForePassRate(ProportionUtil.accuracy(pass4 * 1.0, count4 * 1.0, 2));
                 cetStatisticDTO.setCetSixJoinNum(count6);
                 cetStatisticDTO.setCetSixPassNum(pass6);
                 cetStatisticDTO.setCetSixPassRate(ProportionUtil.accuracy(pass6 * 1.0, count6 * 1.0, 2));
+                cetStatisticDTO.setStatisticalTime(time);
                 if(count>0){
 //                    sq.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
 //                    sq.setMaxResults(pageable.getPageSize());

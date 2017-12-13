@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -38,7 +39,7 @@ public class TeachingScoreService {
         TeachingAchievementDTO teachingAchievementDTO = new TeachingAchievementDTO();
         List<CollegeTeachingAchievementDTO> collegeTeachingAchievementDTOList = new ArrayList<>();
         try {
-            StringBuilder cql = new StringBuilder("SELECT STUDENT_NUM,AVG_GPA,FAIL_PASS_STU_NUM,CURRICULUM_NUM,AVG_SCORE FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
+            StringBuilder cql = new StringBuilder("SELECT STUDENT_NUM,AVG_GPA,FAIL_PASS_STU_NUM,CURRICULUM_NUM,AVG_SCORE, max(CREATED_DATE) FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
             StringBuilder sql = new StringBuilder("SELECT COLLOEGE_NAME,COLLOEGE_ID,STUDENT_NUM,AVG_GPA,FAIL_PASS_STU_NUM,CURRICULUM_NUM,AVG_SCORE FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
             if (null != orgId) {
                 cql.append(" and ORG_ID = :orgId");
@@ -94,6 +95,7 @@ public class TeachingScoreService {
             }
             List<Object> rc = cq.getResultList();
             if(null!=rc&&rc.size()>0){
+                Date time = new Date();
                 Object[] rd = (Object[]) rc.get(0);
                 if(null!=rd[0]){
                     teachingAchievementDTO.setAverageGPA(Integer.valueOf(String.valueOf(rd[0])));
@@ -110,6 +112,10 @@ public class TeachingScoreService {
                 if(null!=rd[4]){
                     teachingAchievementDTO.setCoursesAVGScore(Double.valueOf(String.valueOf(rd[4])));
                 }
+                if(null!=rd[5]){
+                    time =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(String.valueOf(rd[5]));
+                }
+                teachingAchievementDTO.setStatisticalTime(time);
             }
         }catch (Exception e){
             e.printStackTrace();
