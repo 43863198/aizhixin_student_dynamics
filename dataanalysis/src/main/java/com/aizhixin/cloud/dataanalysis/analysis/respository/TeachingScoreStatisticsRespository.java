@@ -3,6 +3,7 @@ package com.aizhixin.cloud.dataanalysis.analysis.respository;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.TeachingScoreStatisticsDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.TeachingScoreStatistics;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,10 +11,11 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface TeachingScoreStatisticsRespository extends JpaRepository<TeachingScoreStatistics,String>{
-    @Query("select new com.aizhixin.cloud.dataanalysis.analysis.dto.TeachingScoreStatisticsDTO(a.colloegeName,a.colloegeId,a.studentNum,a.failPassStuNum,a.avgGPA,a.avgScore) from #{#entityName} a where a.orgId = :orgId and a.deleteFlag=0 ")
-   List<TeachingScoreStatisticsDTO> getTeachingScoreStatisticsByOrgId(@Param(value = "orgId")Long orgId);
-    @Query("select new com.aizhixin.cloud.dataanalysis.analysis.dto.TeachingScoreStatisticsDTO(sum(a.curriculumNum),avg(a.avgGPA),avg(a.avgScore)) from #{#entityName} a where a.orgId = :orgId and a.deleteFlag=0 ")
-    TeachingScoreStatisticsDTO getAvgTeachingScore(@Param(value = "orgId")Long orgId);
+    @Query("select new com.aizhixin.cloud.dataanalysis.analysis.dto.TeachingScoreStatisticsDTO(a.colloegeName,a.colloegeId,a.studentNum,a.failPassStuNum,a.avgGPA,a.avgScore) from #{#entityName} a where a.orgId = :orgId and a.deleteFlag=0  and a.grade=:grade and a.semesterId=:semesterId")
+   List<TeachingScoreStatisticsDTO> getTeachingScoreStatisticsByOrgId(@Param(value = "orgId")Long orgId,@Param(value = "grade")String grade,@Param(value = "semesterId")Long semesterId);
+
+    @Query("select new com.aizhixin.cloud.dataanalysis.analysis.dto.TeachingScoreStatisticsDTO(sum(a.curriculumNum),avg(a.avgGPA),avg(a.avgScore)) from #{#entityName} a where a.orgId = :orgId and a.deleteFlag=0 GROUP BY a.grade,a.semesterId ORDER BY a.grade DESC, a.semesterId DESC")
+    List<TeachingScoreStatisticsDTO> getAvgTeachingScore(Pageable pageable, @Param(value = "orgId")Long orgId);
 
     @Query("select a from #{#entityName} a where a.orgId = :orgId and a.deleteFlag=:deleteFlag and a.statisticsType=:statisticsType")
     TeachingScoreStatistics findByOrgIdAndStatisticsTypeAndDeleteFlag(@Param(value = "orgId")Long orgId,@Param(value = "deleteFlag")int deleteFlag,@Param(value = "statisticsType")int statisticsType);

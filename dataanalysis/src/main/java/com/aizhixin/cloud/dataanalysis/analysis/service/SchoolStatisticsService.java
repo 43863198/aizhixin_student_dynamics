@@ -365,6 +365,10 @@ public class SchoolStatisticsService {
      * @return
      */
     public CetScoreStatisticsDTO getEctStatics(Long orgId) {
+        String sql="SELECT SEMESTER ,TEACHER_YEAR  FROM `t_cet_statistics`  ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
+        Map currentGradeMap= jdbcTemplate.queryForMap(sql);
+        String grade=currentGradeMap.get("TEACHER_YEAR")+"";
+        Long semeter= (Long)currentGradeMap.get("SEMESTER");
         return cetScoreStatisticsRespository.getEctStatics(orgId);
     }
     /**
@@ -375,8 +379,16 @@ public class SchoolStatisticsService {
      */
     public Map<String,Object> getTeachingSoreStatics(Long orgId){
         Map<String,Object> map=new HashMap<String, Object>();
-        TeachingScoreStatisticsDTO obj=teachingScoreStatisticsRespository.getAvgTeachingScore(orgId);
-        List<TeachingScoreStatisticsDTO> list=teachingScoreStatisticsRespository.getTeachingScoreStatisticsByOrgId(orgId);
+        List<TeachingScoreStatisticsDTO> list0=teachingScoreStatisticsRespository.getAvgTeachingScore(new PageRequest(0, 1),orgId);
+        TeachingScoreStatisticsDTO obj=null;
+        if (null!=list0&&list0.size()>0){
+            obj=list0.get(0);
+        }
+        String sql="SELECT c.GRADE as GRADE,c.SEMESTER_ID as SEMESTERID FROM T_TEACHING_SCORE_STATISTICS c ORDER BY c.GRADE DESC,c.SEMESTER_ID DESC LIMIT 1";
+       Map currentGradeMap= jdbcTemplate.queryForMap(sql);
+       String grade=currentGradeMap.get("GRADE")+"";
+       Long semeterId= (Long)currentGradeMap.get("SEMESTERID");
+        List<TeachingScoreStatisticsDTO> list=teachingScoreStatisticsRespository.getTeachingScoreStatisticsByOrgId(orgId,grade,semeterId);
         map.put("courseAndAvgScore",obj);
         map.put("collegeAndAvgScore",list);
         return map;
