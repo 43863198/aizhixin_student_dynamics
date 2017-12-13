@@ -651,6 +651,57 @@ public class AlertWarningInformationService {
 	}
 
 
+	public Map<String,Object> getCollegeProcessedRatio(Long orgId) {
+		Map<String,Object> result = new HashMap<>();
+		List<CollegeAlreadyProcessedRatioDTO> collegeAlreadyProcessedRatioDTOArrayList = new ArrayList<>();
+		Map<String, Object> condition = new HashMap<>();
+		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, COUNT(1), SUM(IF(WARNING_STATE = 20, 1, 0)) FROM t_warning_information  WHERE 1 = 1");
+		if (null != orgId) {
+			sql.append(" and ORG_ID = :orgId");
+			condition.put("orgId", orgId);
+		}
+		sql.append(" and DELETE_FLAG = 0 GROUP BY COLLOGE_ID");
+		try{
+			Query sq = em.createNativeQuery(sql.toString());
+			for (Map.Entry<String, Object> e : condition.entrySet()) {
+				sq.setParameter(e.getKey(), e.getValue());
+			}
+			List<Object> res =  sq.getResultList();
+			if(null!=res){
+				for(Object obj: res){
+					Object[] d = (Object[]) obj;
+					int total = 0;
+					int alreadyProcessed = 0;
+					CollegeAlreadyProcessedRatioDTO collegeAlreadyProcessedRatioDTO = new CollegeAlreadyProcessedRatioDTO();
+					if(null!=d[0]){
+						collegeAlreadyProcessedRatioDTO.setCollegeName(String.valueOf(d[0]));
+					}
+					if(null!=d[1]){
+						total = Integer.valueOf(String.valueOf(d[1]));
+					}
+					if(null!=d[2]){
+						alreadyProcessed = Integer.valueOf(String.valueOf(d[2]));
+					}
+					collegeAlreadyProcessedRatioDTO.setRatio(Double.valueOf(ProportionUtil.accuracy(alreadyProcessed*1.0,total*1.0,2)));
+					collegeAlreadyProcessedRatioDTOArrayList.add(collegeAlreadyProcessedRatioDTO);
+				}
+				Collections.sort(collegeAlreadyProcessedRatioDTOArrayList);
+			}
+		}catch (Exception e){
+			result.put("success",false);
+			result.put("message","获取学院处理率top--10异常！");
+			return result;
+		}
+		result.put("success", true);
+		if(collegeAlreadyProcessedRatioDTOArrayList.size()>10) {
+			result.put("data", collegeAlreadyProcessedRatioDTOArrayList.subList(0,10));
+		}else {
+			result.put("data", collegeAlreadyProcessedRatioDTOArrayList);
+		}
+		return result;
+	}
+
+
 	public Map<String,Object>  getStatisticalType(Long orgId) {
 		Map<String,Object> result = new HashMap<>();
 		List<TypeStatisticsDTO> typeStatisticsDTOList = new ArrayList<>();

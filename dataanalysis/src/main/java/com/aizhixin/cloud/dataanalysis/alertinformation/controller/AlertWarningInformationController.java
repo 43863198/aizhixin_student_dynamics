@@ -107,6 +107,20 @@ public class AlertWarningInformationController {
     }
 
     /**
+     * 院系处理率top---10
+     *
+     * @param orgId
+     * @return
+     */
+    @GetMapping(value = "/collegeprocessedratio", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "院系处理率top---10", response = Void.class, notes = "院系处理率top---10<br><br><b>@author jianwei.wu</b>")
+    public Map<String,Object>   getCollegeProcessedRatio(
+            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
+        return alertWarningInforService.getCollegeProcessedRatio(orgId);
+    }
+
+
+    /**
      * 预警分类汇总
      *
      * @param orgId
