@@ -50,21 +50,12 @@ public class CetScoreStatistics  extends AbstractEntity {
     */
     @Column(name = "CET_SIX_PASS_NUM")
     @Getter @Setter private Long cetSixPassNum;
-    /*
-    * 学期名称
-    */
-    @Column(name = "SEMESTER_NAME")
-    @Getter @Setter private String semesterName;
+
     /*
     * 学期id
     */
-    @Column(name = "SEMESTER_ID")
-    @Getter @Setter private Long semesterId;
-    /*
-    * 数据状态
-    */
-    @Column(name = "STATE")
-    @Getter @Setter private int state;
+    @Column(name = "SEMESTER")
+    @Getter @Setter private int semester;
 
     /*
      * 学年
