@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.aizhixin.cloud.dataanalysis.studentRegister.controller;
+package com.aizhixin.cloud.dataanalysis.simulate.controller;
 
 import java.util.HashMap;
 import java.util.HashSet;
