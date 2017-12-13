@@ -16,17 +16,21 @@ public class CollegeStatisticsDTO implements Comparable<CollegeStatisticsDTO>{
     @ApiModelProperty(value = "院系名称", required = false)
     protected String collegeName ;
 
-    @ApiModelProperty(value = "一级告警数量", required = false)
+    @ApiModelProperty(value = "一级数量", required = false)
     protected int sum1;
 
-    @ApiModelProperty(value = "二级告警数量", required = false)
+    @ApiModelProperty(value = "二级数量", required = false)
     protected int sum2;
 
-    @ApiModelProperty(value = "三级告警数量", required = false)
+    @ApiModelProperty(value = "三级数量", required = false)
     protected int sum3;
 
-    @ApiModelProperty(value = "告警总数量", required = false)
+    @ApiModelProperty(value = "总数量", required = false)
     protected int total;
+
+    @ApiModelProperty(value = "已处理数量", required = false)
+    protected int alreadyProcessed;
+
 
     @Override
     public int compareTo(CollegeStatisticsDTO o) {

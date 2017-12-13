@@ -519,6 +519,50 @@ public class AlertWarningInformationService {
 		return result;
 	}
 
+	public Map<String,Object> getStatistical(Long orgId) {
+		Map<String,Object> result = new HashMap<>();
+		Map<String, Object> condition = new HashMap<>();
+		Map<String, Object> data = new HashMap<>();
+		int sum = 0;
+		int alreadyProcessed = 0;
+		int untreated = 0;
+		try {
+		StringBuilder sql = new StringBuilder("SELECT COUNT(1), SUM(IF(WARNING_STATE = 20, 1, 0)) FROM t_warning_information WHERE 1 = 1");
+		if(null!=orgId){
+			sql.append(" and ORG_ID = :orgId");
+			condition.put("orgId",orgId);
+		}
+		sql.append(" and DELETE_FLAG = 0");
+
+			Query sq = em.createNativeQuery(sql.toString());
+			for (Map.Entry<String, Object> e : condition.entrySet()) {
+				sq.setParameter(e.getKey(), e.getValue());
+			}
+			Object[] cd = (Object[]) sq.getSingleResult();
+			if (null != cd && cd.length == 2) {
+				if(null!=cd[0]) {
+					sum = Integer.valueOf(String.valueOf(cd[0]));
+				}
+				if(null!=cd[1]) {
+					alreadyProcessed = Integer.valueOf(String.valueOf(cd[1]));
+				}
+			}
+			untreated = sum - alreadyProcessed;
+			data.put("total", sum);
+			data.put("alreadyProcessed", alreadyProcessed);
+			data.put("untreated", untreated);
+		}catch (Exception e){
+			e.printStackTrace();
+			result.put("success", false);
+			result.put("message","预警汇总统计异常！");
+			return result;
+		}
+		result.put("success", true);
+		result.put("data", data);
+		return result;
+	}
+
+
 	public Map<String,Object> getLatestinformation(Long orgId) {
 		Map<String,Object> result = new HashMap<>();
 		Map<String, Object> condition = new HashMap<>();
@@ -567,15 +611,13 @@ public class AlertWarningInformationService {
 	public Map<String,Object> getStatisticalCollege(Long orgId) {
 		Map<String,Object> result = new HashMap<>();
 		List<CollegeStatisticsDTO> collegeStatisticsDTOList = new ArrayList<>();
-		List<CollegeStatisticsDTO> subdata = null;
 		Map<String, Object> condition = new HashMap<>();
-		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, count(1) FROM t_warning_information  WHERE 1 = 1");
+		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, COUNT(1), SUM(IF(WARNING_STATE = 20, 1, 0)) FROM t_warning_information  WHERE 1 = 1");
 		if (null != orgId) {
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId", orgId);
 		}
-		sql.append(" and DELETE_FLAG = 0");
-		sql.append(" GROUP BY COLLOGE_ID");
+		sql.append(" and DELETE_FLAG = 0 GROUP BY COLLOGE_ID");
 		try{
 		    Query sq = em.createNativeQuery(sql.toString());
 		    for (Map.Entry<String, Object> e : condition.entrySet()) {
@@ -590,35 +632,73 @@ public class AlertWarningInformationService {
 					collegeStatisticsDTO.setCollegeName(String.valueOf(d[0]));
 				}
 				if(null!=d[1]){
-					collegeStatisticsDTO.setSum1(Integer.valueOf(String.valueOf(d[1])));
+					collegeStatisticsDTO.setTotal(Integer.valueOf(String.valueOf(d[1])));
 				}
 				if(null!=d[2]){
-					collegeStatisticsDTO.setSum2(Integer.valueOf(String.valueOf(d[2])));
-				}
-				if(null!=d[3]){
-					collegeStatisticsDTO.setSum3(Integer.valueOf(String.valueOf(d[3])));
-				}
-				if(null!=d[4]){
-					collegeStatisticsDTO.setTotal(Integer.valueOf(String.valueOf(d[4])));
+					collegeStatisticsDTO.setAlreadyProcessed(Integer.valueOf(String.valueOf(d[2])));
 				}
 				collegeStatisticsDTOList.add(collegeStatisticsDTO);
 			  }
 		   }
-			Collections.sort(collegeStatisticsDTOList);
-			if (collegeStatisticsDTOList.size() > 5) {
-				 subdata = collegeStatisticsDTOList.subList(0, 5);
-			}else {
-				subdata = collegeStatisticsDTOList;
-			}
-			Collections.reverse(subdata);
 		}catch (Exception e){
 			result.put("success",false);
-			result.put("message","按照学院统计每个告警等级的数量异常！");
+			result.put("message","按照学院统计数量异常！");
 			return result;
 		}
 		result.put("success", true);
-		result.put("data", subdata);
+		result.put("data", collegeStatisticsDTOList);
        return result;
+	}
+
+
+	public Map<String,Object> getCollegeProcessedRatio(Long orgId) {
+		Map<String,Object> result = new HashMap<>();
+		List<CollegeAlreadyProcessedRatioDTO> collegeAlreadyProcessedRatioDTOArrayList = new ArrayList<>();
+		Map<String, Object> condition = new HashMap<>();
+		StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, COUNT(1), SUM(IF(WARNING_STATE = 20, 1, 0)) FROM t_warning_information  WHERE 1 = 1");
+		if (null != orgId) {
+			sql.append(" and ORG_ID = :orgId");
+			condition.put("orgId", orgId);
+		}
+		sql.append(" and DELETE_FLAG = 0 GROUP BY COLLOGE_ID");
+		try{
+			Query sq = em.createNativeQuery(sql.toString());
+			for (Map.Entry<String, Object> e : condition.entrySet()) {
+				sq.setParameter(e.getKey(), e.getValue());
+			}
+			List<Object> res =  sq.getResultList();
+			if(null!=res){
+				for(Object obj: res){
+					Object[] d = (Object[]) obj;
+					int total = 0;
+					int alreadyProcessed = 0;
+					CollegeAlreadyProcessedRatioDTO collegeAlreadyProcessedRatioDTO = new CollegeAlreadyProcessedRatioDTO();
+					if(null!=d[0]){
+						collegeAlreadyProcessedRatioDTO.setCollegeName(String.valueOf(d[0]));
+					}
+					if(null!=d[1]){
+						total = Integer.valueOf(String.valueOf(d[1]));
+					}
+					if(null!=d[2]){
+						alreadyProcessed = Integer.valueOf(String.valueOf(d[2]));
+					}
+					collegeAlreadyProcessedRatioDTO.setRatio(Double.valueOf(ProportionUtil.accuracy(alreadyProcessed*1.0,total*1.0,2)));
+					collegeAlreadyProcessedRatioDTOArrayList.add(collegeAlreadyProcessedRatioDTO);
+				}
+				Collections.sort(collegeAlreadyProcessedRatioDTOArrayList);
+			}
+		}catch (Exception e){
+			result.put("success",false);
+			result.put("message","获取学院处理率top--10异常！");
+			return result;
+		}
+		result.put("success", true);
+		if(collegeAlreadyProcessedRatioDTOArrayList.size()>10) {
+			result.put("data", collegeAlreadyProcessedRatioDTOArrayList.subList(0,10));
+		}else {
+			result.put("data", collegeAlreadyProcessedRatioDTOArrayList);
+		}
+		return result;
 	}
 
 
@@ -639,8 +719,8 @@ public class AlertWarningInformationService {
 			sql.append(" and ORG_ID = :orgId");
 			condition.put("orgId", orgId);
 		}
-		cql.append(" and DELETE_FLAG = 0");
-		sql.append(" and DELETE_FLAG = 0");
+		cql.append(" and DELETE_FLAG = 0 and WARNING_STATE = 20");
+		sql.append(" and DELETE_FLAG = 0 and WARNING_STATE = 20");
 		sql.append(" GROUP BY WARNING_TYPE");
 		try {
 			Query cq = em.createNativeQuery(cql.toString());
