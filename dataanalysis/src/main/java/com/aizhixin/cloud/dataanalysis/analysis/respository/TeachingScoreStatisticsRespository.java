@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface TeachingScoreStatisticsRespository extends JpaRepository<TeachingScoreStatistics,String>{
     @Query("select new com.aizhixin.cloud.dataanalysis.analysis.dto.TeachingScoreStatisticsDTO(a.colloegeName,a.colloegeId,a.studentNum,a.failPassStuNum,a.avgGPA,a.avgScore) from #{#entityName} a where a.orgId = :orgId and a.deleteFlag=0  and a.teacherYear=:teacherYear and a.semester=:semester")
-   List<TeachingScoreStatisticsDTO> getTeachingScoreStatisticsByOrgId(@Param(value = "orgId")Long orgId,@Param(value = "teacherYear")int teacherYear,@Param(value = "semester")int semester);
+   List<TeachingScoreStatisticsDTO> getTeachingScoreStatisticsByOrgId(@Param(value = "orgId")Long orgId,@Param(value = "teacherYear")Integer teacherYear,@Param(value = "semester")Integer semester);
 
     @Query("select new com.aizhixin.cloud.dataanalysis.analysis.dto.TeachingScoreStatisticsDTO(sum(a.curriculumNum),avg(a.avgGPA),avg(a.avgScore)) from #{#entityName} a where a.orgId = :orgId and a.deleteFlag=0 GROUP BY a.grade,a.semester ORDER BY a.teacherYear DESC, a.semester DESC")
     List<TeachingScoreStatisticsDTO> getAvgTeachingScore(@Param(value = "orgId")Long orgId);
@@ -20,7 +20,6 @@ public interface TeachingScoreStatisticsRespository extends JpaRepository<Teachi
 
     @Query("select a from #{#entityName} a where a.orgId = :orgId and a.deleteFlag=:deleteFlag and a.statisticsType=:statisticsType")
     TeachingScoreStatistics findByOrgIdAndStatisticsTypeAndDeleteFlag(@Param(value = "orgId")Long orgId,@Param(value = "deleteFlag")int deleteFlag,@Param(value = "statisticsType")int statisticsType);
-
 
 
 }
