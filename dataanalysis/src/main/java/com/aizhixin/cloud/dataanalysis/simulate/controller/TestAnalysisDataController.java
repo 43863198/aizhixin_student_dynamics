@@ -357,20 +357,44 @@ public class TestAnalysisDataController {
 	@ApiOperation(httpMethod = "PUT", value = "修改学情分析学校人数统计数据", response = Void.class, notes = "修改学情分析学校人数统计数据<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> updateSchoolStatistics(
 			@ApiParam(value = "id 记录id") @RequestParam(value = "id", required = false) String id,
-			@ApiParam(value = "teacherYear 学年)") @RequestParam(value = "teacherYear", required = false) int teacherYear,
-//			@ApiParam(value = "teacherYear 学年)") @RequestParam(value = "teacherYear", required = false) int teacherYear,
-//			@ApiParam(value = "teacherYear 学年)") @RequestParam(value = "teacherYear", required = false) int teacherYear,
-//			@ApiParam(value = "teacherYear 学年)") @RequestParam(value = "teacherYear", required = false) int teacherYear,
-//			@ApiParam(value = "teacherYear 学年)") @RequestParam(value = "teacherYear", required = false) int teacherYear,
-//			@ApiParam(value = "teacherYear 学年)") @RequestParam(value = "teacherYear", required = false) int teacherYear,
-//			@ApiParam(value = "teacherYear 学年)") @RequestParam(value = "teacherYear", required = false) int teacherYear,
-			@ApiParam(value = "num teacherYear几年内)") @RequestParam(value = "num", required = false) int num) {
+			@ApiParam(value = "newStudentsCount 新生人数)") @RequestParam(value = "newStudentsCount", required = false) int newStudentsCount,
+			@ApiParam(value = "alreadyReport 已报到人数)") @RequestParam(value = "alreadyReport", required = false) int alreadyReport,
+			@ApiParam(value = "alreadyPay 已缴费人数)") @RequestParam(value = "alreadyPay", required = false) int alreadyPay,
+			@ApiParam(value = "convenienceChannel 绿色通道人数)") @RequestParam(value = "convenienceChannel", required = false) int convenienceChannel,
+			@ApiParam(value = "teacherNumber 院系老师总人数)") @RequestParam(value = "teacherNumber", required = false) int teacherNumber,
+			@ApiParam(value = "studentNumber 院系学生总人数)") @RequestParam(value = "studentNumber", required = false) int studentNumber,
+			@ApiParam(value = "instructorNumber 院系辅导员总人数)") @RequestParam(value = "instructorNumber", required = false) int instructorNumber,
+			@ApiParam(value = "readyGraduation 即将毕业人数)") @RequestParam(value = "readyGraduation", required = false) int readyGraduation) {
 		Map<String, Object> result = new HashMap<String, Object>();
 
 		SchoolStatistics schoolStatistics = schoolStatisticsService
 				.findById(id);
-		
-		
+		if(null != schoolStatistics){
+			if(newStudentsCount > 0){
+				schoolStatistics.setNewStudentsCount(newStudentsCount);
+			}
+			if(alreadyReport > 0){
+				schoolStatistics.setAlreadyReport(alreadyReport);
+			}
+			if(alreadyPay > 0){
+				schoolStatistics.setAlreadyPay(alreadyPay);
+			}
+			if(convenienceChannel > 0){
+				schoolStatistics.setConvenienceChannel(convenienceChannel);
+			}
+			if(teacherNumber > 0){
+				schoolStatistics.setTeacherNumber(teacherNumber);
+			}
+			if(studentNumber > 0){
+				schoolStatistics.setStudentNumber(studentNumber);
+			}
+			if(instructorNumber > 0){
+				schoolStatistics.setInstructorNumber(instructorNumber);
+			}
+			if(readyGraduation > 0){
+				schoolStatistics.setReadyGraduation(readyGraduation);
+			}
+		}
 		schoolStatisticsService.save(schoolStatistics);
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
