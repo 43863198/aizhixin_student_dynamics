@@ -109,7 +109,7 @@ public class ScoreJob {
 			}
 
 			// 清除之前总评成绩不及格统计数据
-			totalScoreCountMongoRespository.deleteAll();
+			scoreFluctuateCountMongoRespository.deleteAll();
 			Iterator iter = alarmMap.entrySet().iterator();
 			while (iter.hasNext()) {
 
