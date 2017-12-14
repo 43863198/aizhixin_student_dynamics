@@ -134,7 +134,7 @@ public class TestAlarmJobController {
         if(null == orgId){
         	orgId = 218L;
         }
-		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Absenteeism.toString(), orgId);
+		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.SupplementAchievement.toString(), orgId);
 		scoreJob.makeUpScoreJob();
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
