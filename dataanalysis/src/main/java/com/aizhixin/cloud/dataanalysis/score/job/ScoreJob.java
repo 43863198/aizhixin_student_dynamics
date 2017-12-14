@@ -436,7 +436,8 @@ public class ScoreJob {
 														+ ",上上学期平均绩点为："
 														+ scoreFluctuateCount
 																.getFirstAvgradePoint()
-														+ ",平均绩点下降：" + result);
+														+ ",平均绩点下降：" + new BigDecimal(result).setScale(2,
+																RoundingMode.HALF_UP).toString());
 										alertInfor.setWarningTime(new Date());
 										alertInfor.setPhone(scoreFluctuateCount
 												.getUserPhone());
