@@ -166,13 +166,13 @@ public class SchoolStatisticsService {
      * @return
      */
     public SchoolProfileDTO getSchoolPersonStatistics(Long orgId) {
-        String sql="SELECT SEMESTER ,TEACHER_YEAR  FROM `t_school_statistics`  ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
+        String sql="SELECT SEMESTER ,TEACHER_YEAR  FROM `t_practice_statistics`  ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
         Map currentGradeMap= jdbcTemplate.queryForMap(sql);
         int teacherYear=Integer.valueOf(currentGradeMap.get("TEACHER_YEAR")+"");
         int semester= Integer.valueOf(currentGradeMap.get("SEMESTER")+"");
         PracticeStaticsDTO practiceStaticsDTO = practiceStaticsRespository.getPracticeStatics(orgId,teacherYear,semester);
 
-        SchoolProfileDTO schoolProfileDTO = schoolStatisticsRespository.getSchoolPersonStatistics(orgId,teacherYear,semester);
+        SchoolProfileDTO schoolProfileDTO = schoolStatisticsRespository.getSchoolPersonStatistics(orgId,teacherYear);
         schoolProfileDTO.setOutSchoolStudent(Long.valueOf(practiceStaticsDTO.getPracticeStudentNum()));
         schoolProfileDTO.setInSchoolStudent(Long.valueOf(schoolProfileDTO.getAllStudent()) - Long.valueOf(schoolProfileDTO.getOutSchoolStudent()));
         return schoolProfileDTO;
