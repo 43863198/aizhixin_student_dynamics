@@ -90,7 +90,6 @@ public class TeachingScoreDetails extends AbstractEntity {
     @Getter
     @Setter
     private String collegeName;
-<<<<<<< HEAD
     /**
      * 学年
      */
@@ -105,10 +104,6 @@ public class TeachingScoreDetails extends AbstractEntity {
     @Getter
     @Setter
     private Integer semester;
-=======
-
-
->>>>>>> afb1d0e1143a5e9bf128bf98a98f0fbfb39ad76f
     /**
      * 平均绩点
      */
@@ -125,34 +120,15 @@ public class TeachingScoreDetails extends AbstractEntity {
     @Column(name = "FAILED_SUBJECTS")
     @Getter @Setter private Integer failedSubjects;
     /*
-     * 不及格科目学分
-     */
-    @Column(name = "FAILING_GRADE_CREDITS")
-<<<<<<< HEAD
-    @Getter @Setter private Float failingGradeCredits;
-    /*
      *年级
      */
     @Column(name = "GRADE")
     @Getter @Setter private Integer grade;
-=======
-    @Getter @Setter private float failingGradeCredits;
-    /*
-* 学期
-*/
-    @Column(name = "SEMESTER")
-    @Getter @Setter private int semester;
 
-    /*
-     * 学年
-     */
-    @Column(name = "TEACHER_YEAR")
-    @Getter @Setter private int teacherYear;
-    /**
-     * 年级
-     */
-    @Column(name = "GRADE")
-    @Getter @Setter private int grade;
->>>>>>> afb1d0e1143a5e9bf128bf98a98f0fbfb39ad76f
+    @Getter @Setter private float failingGradeCredits;
+
+
+
+
 
 }
