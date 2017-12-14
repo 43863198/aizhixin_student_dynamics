@@ -63,6 +63,15 @@ public class SchoolStatisticsService {
     	schoolStatisticsRespository.save(statisticsList);
     }
     
+    public void save(SchoolStatistics statistics){
+    	schoolStatisticsRespository.save(statistics);
+    }
+    
+    public SchoolStatistics findById(String id){
+    	return schoolStatisticsRespository.findOne(id);
+    }
+    
+    
     public Map<String, Object> getStatisticNewstudents(Long orgId, String year) {
         Map<String, Object> result = new HashMap<>();
         NewStudentProfileDTO newStudentProfileDTO = new NewStudentProfileDTO();
