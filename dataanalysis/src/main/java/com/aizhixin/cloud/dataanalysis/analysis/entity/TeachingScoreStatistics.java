@@ -68,26 +68,25 @@ public class TeachingScoreStatistics extends AbstractEntity {
      * 开设课程数
      */
     @Column(name = "CURRICULUM_NUM")
-<<<<<<< HEAD
     @Getter @Setter private Integer curriculumNum;
-=======
-    @Getter @Setter private int curriculumNum;
+
     /*
-* 学期
-*/
+    * 学期
+     */
     @Column(name = "SEMESTER")
-    @Getter @Setter private int semester;
+    @Getter @Setter private Integer semester;
 
     /*
      * 学年
      */
     @Column(name = "TEACHER_YEAR")
-    @Getter @Setter private int teacherYear;
->>>>>>> afb1d0e1143a5e9bf128bf98a98f0fbfb39ad76f
-    /**
-     * 年级
-     */
+    @Getter @Setter private Integer teacherYear;
+
+    /*
+    * 年级
+    */
     @Column(name = "GRADE")
-    @Getter @Setter private int grade;
+    @Getter @Setter private Integer grade;
+
 
 }

@@ -128,7 +128,7 @@ public class SchoolStatisticsAnalysisJob {
 						statisticsMap.put(dto.getCollegeId(), schoolStatistics);
 					} else {
 						schoolStatistics = new SchoolStatistics();
-						schoolStatistics.setTeacherYear(Integer.valueOf(schoolYear));
+						schoolStatistics.setTeacherYear(String.valueOf(schoolYear));
 						if (UserConstant.USER_TYPE_STU == dto.getUserType()) {
 							schoolStatistics.setStudentNumber(dto.getCountNum()
 									.intValue());
@@ -162,7 +162,7 @@ public class SchoolStatisticsAnalysisJob {
 	/**
 	 * 按院系统计当前学年新生人数
 	 * 
-	 * @param domain
+	 * @param
 	 * @param statisticsMap
 	 * @param schoolYear
 	 */
@@ -193,7 +193,7 @@ public class SchoolStatisticsAnalysisJob {
 				statisticsMap.put(collegeId, schoolStatistics);
 			} else {
 				schoolStatistics = new SchoolStatistics();
-				schoolStatistics.setTeacherYear(Integer.valueOf(schoolYear));
+				schoolStatistics.setTeacherYear(String.valueOf(schoolYear));
 				Long orgId = (Long) dbo.get("orgId");
 				schoolStatistics.setOrgId(orgId);
 				schoolStatistics.setCollegeId(collegeId);
@@ -207,7 +207,7 @@ public class SchoolStatisticsAnalysisJob {
 	/**
 	 * 按院系统计已报到人数
 	 * 
-	 * @param domain
+	 * @param
 	 * @param statisticsMap
 	 * @param schoolYear
 	 */
@@ -243,7 +243,7 @@ public class SchoolStatisticsAnalysisJob {
 	/**
 	 * 按院系统计已缴费人数
 	 * 
-	 * @param domain
+	 * @param
 	 * @param statisticsMap
 	 * @param schoolYear
 	 */
@@ -278,7 +278,7 @@ public class SchoolStatisticsAnalysisJob {
 	/**
 	 * 按院系统计绿色通道人数
 	 * 
-	 * @param domain
+	 * @param
 	 * @param statisticsMap
 	 * @param schoolYear
 	 */

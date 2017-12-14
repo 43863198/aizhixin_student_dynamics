@@ -82,24 +82,11 @@ public class SchoolStatistics extends AbstractEntity {
      */
     @Column(name = "READY_GRADUATION")
     @Getter @Setter private int readyGraduation;
-
-    /*
- * 学期
- */
-    @Column(name = "SEMESTER")
-    @Getter @Setter private int semester;
-
     /*
      * 学年
      */
     @Column(name = "TEACHER_YEAR")
-    @Getter @Setter private int teacherYear;
-    /**
-     * 年级
-     */
-    @Column(name = "GRADE")
-    @Getter @Setter private int grade;
-
+    @Getter @Setter private String teacherYear;
     /*
      * 统计时间
      */

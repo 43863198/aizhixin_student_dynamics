@@ -397,7 +397,7 @@ public class SchoolStatisticsService {
      */
     public Map<String,Object> getTeachingSoreStatics(Long orgId){
         Map<String,Object> map=new HashMap<String, Object>();
-        List<TeachingScoreStatisticsDTO> list0=teachingScoreStatisticsRespository.getAvgTeachingScore(new PageRequest(0, 1),orgId);
+        List<TeachingScoreStatisticsDTO> list0=teachingScoreStatisticsRespository.getAvgTeachingScore(orgId);
         TeachingScoreStatisticsDTO obj=null;
         if (null!=list0&&list0.size()>0){
             obj=list0.get(0);
