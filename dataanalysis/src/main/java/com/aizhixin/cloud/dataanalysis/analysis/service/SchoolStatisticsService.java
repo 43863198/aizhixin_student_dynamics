@@ -166,8 +166,13 @@ public class SchoolStatisticsService {
      * @return
      */
     public SchoolProfileDTO getSchoolPersonStatistics(Long orgId) {
-        PracticeStaticsDTO practiceStaticsDTO = practiceStaticsRespository.getPracticeStatics(orgId);
-        SchoolProfileDTO schoolProfileDTO = schoolStatisticsRespository.getSchoolPersonStatistics(orgId);
+        String sql="SELECT SEMESTER ,TEACHER_YEAR  FROM `t_practice_statistics`  ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
+        Map currentGradeMap= jdbcTemplate.queryForMap(sql);
+        int teacherYear=Integer.valueOf(currentGradeMap.get("TEACHER_YEAR")+"");
+        int semester= Integer.valueOf(currentGradeMap.get("SEMESTER")+"");
+        PracticeStaticsDTO practiceStaticsDTO = practiceStaticsRespository.getPracticeStatics(orgId,teacherYear,semester);
+
+        SchoolProfileDTO schoolProfileDTO = schoolStatisticsRespository.getSchoolPersonStatistics(orgId,teacherYear);
         schoolProfileDTO.setOutSchoolStudent(Long.valueOf(practiceStaticsDTO.getPracticeStudentNum()));
         schoolProfileDTO.setInSchoolStudent(Long.valueOf(schoolProfileDTO.getAllStudent()) - Long.valueOf(schoolProfileDTO.getOutSchoolStudent()));
         return schoolProfileDTO;
@@ -355,7 +360,11 @@ public class SchoolStatisticsService {
      * @return
      */
     public PracticeStaticsDTO getPracticeStatics(Long orgId) {
-        return practiceStaticsRespository.getPracticeStatics(orgId);
+        String sql="SELECT SEMESTER ,TEACHER_YEAR  FROM `t_practice_statistics`  ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
+        Map currentGradeMap= jdbcTemplate.queryForMap(sql);
+        int teacherYear=Integer.valueOf(currentGradeMap.get("TEACHER_YEAR")+"");
+        int semester= Integer.valueOf(currentGradeMap.get("SEMESTER")+"");
+        return practiceStaticsRespository.getPracticeStatics(orgId,teacherYear,semester);
     }
 
     /**
@@ -365,7 +374,11 @@ public class SchoolStatisticsService {
      * @return
      */
     public CetScoreStatisticsDTO getEctStatics(Long orgId) {
-        return cetScoreStatisticsRespository.getEctStatics(orgId);
+        String sql="SELECT SEMESTER ,TEACHER_YEAR  FROM `t_cet_statistics`  ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
+        Map currentGradeMap= jdbcTemplate.queryForMap(sql);
+        int teacherYear=Integer.valueOf(currentGradeMap.get("TEACHER_YEAR")+"");
+        int semester= Integer.valueOf(currentGradeMap.get("SEMESTER")+"");
+        return cetScoreStatisticsRespository.getEctStatics(orgId,teacherYear,semester);
     }
     /**
      * 教学成绩首页统计查询
@@ -375,8 +388,16 @@ public class SchoolStatisticsService {
      */
     public Map<String,Object> getTeachingSoreStatics(Long orgId){
         Map<String,Object> map=new HashMap<String, Object>();
-        TeachingScoreStatisticsDTO obj=teachingScoreStatisticsRespository.getAvgTeachingScore(orgId);
-        List<TeachingScoreStatisticsDTO> list=teachingScoreStatisticsRespository.getTeachingScoreStatisticsByOrgId(orgId);
+        List<TeachingScoreStatisticsDTO> list0=teachingScoreStatisticsRespository.getAvgTeachingScore(new PageRequest(0, 1),orgId);
+        TeachingScoreStatisticsDTO obj=null;
+        if (null!=list0&&list0.size()>0){
+            obj=list0.get(0);
+        }
+        String sql="SELECT SEMESTER ,TEACHER_YEAR  FROM `t_teaching_score_statistics`  ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
+       Map currentGradeMap= jdbcTemplate.queryForMap(sql);
+       int teacherYear=Integer.valueOf(currentGradeMap.get("TEACHER_YEAR")+"");
+       int semester= Integer.valueOf(currentGradeMap.get("SEMESTER")+"");
+        List<TeachingScoreStatisticsDTO> list=teachingScoreStatisticsRespository.getTeachingScoreStatisticsByOrgId(orgId,teacherYear,semester);
         map.put("courseAndAvgScore",obj);
         map.put("collegeAndAvgScore",list);
         return map;

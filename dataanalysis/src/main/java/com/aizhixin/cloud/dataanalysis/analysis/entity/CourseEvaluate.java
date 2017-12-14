@@ -82,21 +82,6 @@ public class CourseEvaluate extends AbstractEntity {
     @Getter
     @Setter
     private String chargePersonID;
-    /*
-    * 学期名称
-    */
-    @Column(name = "SEMESTER_NAME")
-    @Getter @Setter private String semesterName;
-    /*
-    * 学期id
-    */
-    @Column(name = "SEMESTER_ID")
-    @Getter @Setter private Long semesterId;
-    /*
-    * 学年
-    */
-    @Column(name = "TEACHER_YEAR")
-    @Getter @Setter private int teacherYear;
 
     /*
       * 教学班id
@@ -112,4 +97,20 @@ public class CourseEvaluate extends AbstractEntity {
     @Getter
     @Setter
     private String teachingClassName;
+    /*
+   * 学期
+   */
+    @Column(name = "SEMESTER")
+    @Getter @Setter private int semester;
+
+    /*
+     * 学年
+     */
+    @Column(name = "TEACHER_YEAR")
+    @Getter @Setter private int teacherYear;
+    /**
+     * 年级
+     */
+    @Column(name = "GRADE")
+    @Getter @Setter private int grade;
 }

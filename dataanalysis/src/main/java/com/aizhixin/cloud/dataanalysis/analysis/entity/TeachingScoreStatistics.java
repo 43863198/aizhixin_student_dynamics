@@ -49,16 +49,7 @@ public class TeachingScoreStatistics extends AbstractEntity {
      */
     @Column(name = "AVG_SCORE")
     @Getter @Setter private Double avgScore;
-    /*
-  * 学期名称
-  */
-    @Column(name = "SEMESTER_NAME")
-    @Getter @Setter private String semesterName;
-    /*
-    * 学期id
-    */
-    @Column(name = "SEMESTER_ID")
-    @Getter @Setter private Long semesterId;
+
     /*
    * 数据状态
    */
@@ -77,14 +68,26 @@ public class TeachingScoreStatistics extends AbstractEntity {
      * 开设课程数
      */
     @Column(name = "CURRICULUM_NUM")
+<<<<<<< HEAD
     @Getter @Setter private Integer curriculumNum;
+=======
+    @Getter @Setter private int curriculumNum;
+    /*
+* 学期
+*/
+    @Column(name = "SEMESTER")
+    @Getter @Setter private int semester;
+
+    /*
+     * 学年
+     */
+    @Column(name = "TEACHER_YEAR")
+    @Getter @Setter private int teacherYear;
+>>>>>>> afb1d0e1143a5e9bf128bf98a98f0fbfb39ad76f
     /**
-     * 年级/学年
+     * 年级
      */
     @Column(name = "GRADE")
-    @Getter
-    @Setter
-    private String grade;
-
+    @Getter @Setter private int grade;
 
 }

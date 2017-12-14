@@ -128,7 +128,7 @@ public class SchoolStatisticsAnalysisJob {
 						statisticsMap.put(dto.getCollegeId(), schoolStatistics);
 					} else {
 						schoolStatistics = new SchoolStatistics();
-						schoolStatistics.setTeacherYear(String.valueOf(schoolYear));
+						schoolStatistics.setTeacherYear(Integer.valueOf(schoolYear));
 						if (UserConstant.USER_TYPE_STU == dto.getUserType()) {
 							schoolStatistics.setStudentNumber(dto.getCountNum()
 									.intValue());
@@ -193,7 +193,7 @@ public class SchoolStatisticsAnalysisJob {
 				statisticsMap.put(collegeId, schoolStatistics);
 			} else {
 				schoolStatistics = new SchoolStatistics();
-				schoolStatistics.setTeacherYear(String.valueOf(schoolYear));
+				schoolStatistics.setTeacherYear(Integer.valueOf(schoolYear));
 				Long orgId = (Long) dbo.get("orgId");
 				schoolStatistics.setOrgId(orgId);
 				schoolStatistics.setCollegeId(collegeId);
