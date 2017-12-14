@@ -125,7 +125,7 @@ public class PracticeStatisticsService {
         result.put("data", practiceStaticsDTO);
         return result;
     }
-    public Map<String, Object> getPracticeTrend(Long orgId, Long colloegeId){
+    public Map<String, Object> getPracticeTrend(Long orgId, Long collegeId){
         Map<String, Object> result = new HashMap<>();
         List res =null;
         Date time = new Date();
@@ -135,8 +135,8 @@ public class PracticeStatisticsService {
                 sql.append(" and ss.ORG_ID ="+orgId);
 
             }
-            if(null != colloegeId){
-                sql.append(" and ss.COLLOEGE_ID = :colloegeId+"+colloegeId);
+            if(null != collegeId){
+                sql.append(" and ss.COLLOEGE_ID = :colloegeId+"+collegeId);
                 sql.append(" and ss.STATISTICS_TYPE = 2");
             }else {
                 sql.append(" and ss.STATISTICS_TYPE = 1");
@@ -152,7 +152,7 @@ public class PracticeStatisticsService {
         result.put("data", res);
         return result;
     }
-    public Map<String,Object> getPracticeDetail(Long orgId,String className, Long colloegeId, String year, Integer pageNumber,Integer pageSize){
+    public Map<String,Object> getPracticeDetail(Long orgId,String className, Long collegeId, String year, Integer pageNumber,Integer pageSize){
         RowMapper <Map> rowMapper= new RowMapper<Map>() {
             @Override
             public Map mapRow(ResultSet rs, int i) throws SQLException {
@@ -168,9 +168,9 @@ public class PracticeStatisticsService {
         };
         String querySql = "SELECT CLASS_ID,CLASS_NAME,PRACTICE_STUDENT_NUM,PRACTICE_COMPANY_NUM,TASK_NUM,TASK_PASS_NUM FROM `t_practice_statistics` where DELETE_FLAG ="+ DataValidity.VALID.getState()+" and STATISTICS_TYPE=3 and ORG_ID="+orgId+" ";
         String countSql = "SELECT count(1) FROM `t_practice_statistics` where DELETE_FLAG ="+DataValidity.VALID.getState()+" and STATISTICS_TYPE=3 and ORG_ID="+orgId+" ";
-        if(null!=colloegeId){
-            querySql+=" and COLLOEGE_ID="+colloegeId+" ";
-            countSql+=" and COLLOEGE_ID="+colloegeId+" ";
+        if(null!=collegeId){
+            querySql+=" and COLLOEGE_ID="+collegeId+" ";
+            countSql+=" and COLLOEGE_ID="+collegeId+" ";
         }
         if(!StringUtils.isEmpty(className)){
             querySql+=" and CLASS_NAME like '%"+className+"%' ";

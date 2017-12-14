@@ -372,10 +372,10 @@ public class TeachingScoreService {
                     Object[] d = (Object[])obj;
                     TeachingScoreStatistics teachingScoreStatistics = new TeachingScoreStatistics();
                     if(null!=d[0]){
-                        teachingScoreStatistics.setColloegeId(Long.valueOf(String.valueOf(d[0])));
+                        teachingScoreStatistics.setCollegeId(Long.valueOf(String.valueOf(d[0])));
                     }
                     if(null!=d[1]){
-                        teachingScoreStatistics.setColloegeName(String.valueOf(d[1]));
+                        teachingScoreStatistics.setCollegeName(String.valueOf(d[1]));
                     }
                     if(null!=d[2]){
                         teachingScoreStatistics.setTeacherYear(Integer.valueOf(String.valueOf(d[2])));
@@ -406,10 +406,10 @@ public class TeachingScoreService {
                     Object[] rd = (Object[])rul;
                     TeachingScoreStatistics otss = new TeachingScoreStatistics();
                     if (null != rd[0]) {
-                        otss.setColloegeId(Long.valueOf(String.valueOf(rd[0])));
+                        otss.setCollegeId(Long.valueOf(String.valueOf(rd[0])));
                     }
                     if (null != rd[1]) {
-                        otss.setColloegeName(String.valueOf(rd[1]));
+                        otss.setCollegeName(String.valueOf(rd[1]));
                     }
                     if (null != rd[2]) {
                         otss.setTeacherYear(Integer.valueOf(String.valueOf(rd[2])));

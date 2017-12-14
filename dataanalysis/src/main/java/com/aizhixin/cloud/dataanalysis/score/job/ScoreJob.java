@@ -1177,7 +1177,7 @@ public class ScoreJob {
 									alertInfor
 											.setWarningType(WarningTypeConstant.SupplementAchievement
 													.toString());
-									alertInfor.setWarningCondition("三年内不及格课程数:"
+									alertInfor.setWarningCondition("补考后上学期总评成绩不及格课程数:"
 											+ makeUpScoreCount
 													.getFailCourseNum());
 									alertInfor.setWarningTime(new Date());
@@ -1486,7 +1486,7 @@ public class ScoreJob {
 											makeUpScoreCount
 													.getFailCourseCredit());
 									alertInfor
-											.setWarningCondition("三年内不及格必修课和选修课累计学分:"
+											.setWarningCondition("不及格必修课和选修课累计学分:"
 													+ failCourseCredit
 															.setScale(
 																	2,

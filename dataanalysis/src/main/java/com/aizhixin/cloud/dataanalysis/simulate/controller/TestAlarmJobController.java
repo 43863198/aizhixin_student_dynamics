@@ -191,6 +191,19 @@ public class TestAlarmJobController {
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
 	
+	@RequestMapping(value = "/dropoutjob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "GET", value = "退学预警定时任务", response = Void.class, notes = "补考成绩统计定时任务执行后,执行退学预警定时任务<br><br><b>@author zhengning</b>")
+	public ResponseEntity<Map<String, Object>> dropOutJob(
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId
+			) {
+        if(null == orgId){
+        	orgId = 218L;
+        }
+		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.LeaveSchool.toString(), orgId);
+		scoreJob.dropOutJob();
+		Map<String, Object> result = new HashMap<String, Object>();
+		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+	}
 	
 	@RequestMapping(value = "/schoolcountjob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "学校信息统计定时任务", response = Void.class, notes = "学校信息统计定时任务<br><br><b>@author zhengning</b>")

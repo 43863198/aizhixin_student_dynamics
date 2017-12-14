@@ -13,9 +13,9 @@ import lombok.Data;
 @Data
 public class ColloegeNewStudentProfileDTO {
     @ApiModelProperty(value = "学院id", required = false)
-    private Long colloegeId;
+    private Long collegeId;
     @ApiModelProperty(value = "学院名称", required = false)
-    private String colloegeName;
+    private String collegeName;
     @ApiModelProperty(value = "新生总数量", required = false)
     private int studentNumber;
     @ApiModelProperty(value = "已报到人数", required = false)
