@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
-import com.aizhixin.cloud.dataanalysis.analysis.job.SchoolStatisticsJob;
+import com.aizhixin.cloud.dataanalysis.analysis.job.SchoolStatisticsAnalysisJob;
 import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
 import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
@@ -48,7 +48,7 @@ public class TestAlarmJobController {
 	@Autowired
 	private ScoreJob scoreJob;
 	@Autowired
-	private SchoolStatisticsJob schoolStatisticsJob;
+	private SchoolStatisticsAnalysisJob schoolStatisticsJob;
 	@Autowired
 	private AlertWarningInformationService alertWarningInformationService;
 

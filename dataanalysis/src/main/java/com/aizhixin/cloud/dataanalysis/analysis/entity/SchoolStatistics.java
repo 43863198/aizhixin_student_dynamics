@@ -40,30 +40,30 @@ public class SchoolStatistics extends AbstractEntity {
      * 新生人数
      */
     @Column(name = "NEW_STUDENTS_COUNT")
-    @Getter @Setter private int newStudentsCount;
+    @Getter @Setter private Integer newStudentsCount;
     /*
      * 已报到人数
      */
     @Column(name = "ALREADY_REPORT")
-    @Getter @Setter private int alreadyReport;
+    @Getter @Setter private Integer alreadyReport;
 
     /*
      * 已完成缴费人数
      */
     @Column(name = "ALREADY_PAY")
-    @Getter @Setter private int alreadyPay;
+    @Getter @Setter private Integer alreadyPay;
 
     /*
     * 便利通道人数
     */
     @Column(name = "CONVENIENCE_CHANNEL")
-    @Getter @Setter private int convenienceChannel;
+    @Getter @Setter private Integer convenienceChannel;
 
     /*
      * 教师人数
      */
     @Column(name = "TEACHER_NUMBER")
-    @Getter @Setter private int teacherNumber;
+    @Getter @Setter private Integer teacherNumber;
 
     /*
      * 学生人数
@@ -75,7 +75,7 @@ public class SchoolStatistics extends AbstractEntity {
      * 辅导员人数
      */
     @Column(name = "INSTRUCTOR_NUMBER")
-    @Getter @Setter private int InstructorNumber;
+    @Getter @Setter private Integer InstructorNumber;
 
     /*
      * 准毕业人数
@@ -99,5 +99,17 @@ public class SchoolStatistics extends AbstractEntity {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     @Getter @Setter protected Date statisticalTime = new Date();
+    /*
+    * 学期
+    */
+    @Column(name = "SEMESTER")
+    @Getter @Setter private Integer semester;
+
+    /*
+    * 年级
+    */
+    @Column(name = "GRADE")
+    @Getter @Setter private Integer grade;
+
 
 }

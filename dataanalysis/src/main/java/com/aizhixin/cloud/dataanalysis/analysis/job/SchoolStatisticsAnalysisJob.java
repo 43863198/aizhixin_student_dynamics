@@ -34,7 +34,7 @@ import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 
 @Component
-public class SchoolStatisticsJob {
+public class SchoolStatisticsAnalysisJob {
 
 	public volatile static boolean flag = true;
 

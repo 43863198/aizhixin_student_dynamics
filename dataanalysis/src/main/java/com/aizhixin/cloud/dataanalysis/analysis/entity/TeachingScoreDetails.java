@@ -91,38 +91,43 @@ public class TeachingScoreDetails extends AbstractEntity {
     @Setter
     private String collegeName;
     /**
-     * 年级
+     * 学年
      */
-    @Column(name = "GRADE")
+    @Column(name = "TEACHER_YEAR")
     @Getter
     @Setter
-    private String grade;
+    private Integer teacherYear;
     /**
-     * 学年学期
+     * 学期
      */
-    @Column(name = "SCHOOL_YEAR")
+    @Column(name = "SEMESTER")
     @Getter
     @Setter
-    private int schoolYear;
+    private Integer semester;
     /**
      * 平均绩点
      */
     @Column(name = "AVERAGE_GPA")
-    @Getter @Setter private float averageGPA;
+    @Getter @Setter private Float averageGPA;
     /*
     * 参考科目数
     */
     @Column(name = "REFERENCE_SUBJECTS")
-    @Getter @Setter private int referenceSubjects;
+    @Getter @Setter private Integer referenceSubjects;
     /*
      * 不及格科目
      */
     @Column(name = "FAILED_SUBJECTS")
-    @Getter @Setter private int failedSubjects;
+    @Getter @Setter private Integer failedSubjects;
     /*
      * 不及格科目学分
      */
     @Column(name = "FAILING_GRADE_CREDITS")
-    @Getter @Setter private float failingGradeCredits;
+    @Getter @Setter private Float failingGradeCredits;
+    /*
+     *年级
+     */
+    @Column(name = "GRADE")
+    @Getter @Setter private Integer grade;
 
 }

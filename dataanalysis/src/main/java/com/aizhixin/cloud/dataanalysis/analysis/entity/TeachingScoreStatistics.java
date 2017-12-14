@@ -63,13 +63,13 @@ public class TeachingScoreStatistics extends AbstractEntity {
    * 数据状态
    */
     @Column(name = "STATE")
-    @Getter @Setter private int state;
+    @Getter @Setter private Integer state;
 
     /*
      * 统计类型
      */
     @Column(name = "STATISTICS_TYPE")
-    @Getter @Setter private int statisticsType;
+    @Getter @Setter private Integer statisticsType;
 
 
     /***********新增字段 jianwei.wu*************/
@@ -77,7 +77,7 @@ public class TeachingScoreStatistics extends AbstractEntity {
      * 开设课程数
      */
     @Column(name = "CURRICULUM_NUM")
-    @Getter @Setter private int curriculumNum;
+    @Getter @Setter private Integer curriculumNum;
     /**
      * 年级/学年
      */
