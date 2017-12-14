@@ -178,31 +178,40 @@ public class TeachingScoreService {
     public Map<String, Object> getTeachingScoreDetail(Long orgId, String collegeIds, String grade, String nj, Pageable pageable) {
         Map<String, Object> result = new HashMap<>();
         PageData<TeachingScoreDetails> p = new PageData<>();
+        List<TeachingScoreDetails> teachingScoreDetailsList = new ArrayList<>();
         Long total = 0L;
         try {
             Map<String, Object> condition = new HashMap<>();
             StringBuilder cql = new StringBuilder("SELECT count(1) FROM T_TEACHING_SCORE_DETAILS  WHERE 1 = 1");
-            StringBuilder sql = new StringBuilder("SELECT * FROM T_TEACHING_SCORE_DETAILS  WHERE 1 = 1");
+            StringBuilder sql = new StringBuilder("SELECT JOB_NUM,USER_NAME,CLASS_NAME,GRADE,COLLEGE_NAME,AVERAGE_GPA,REFERENCE_SUBJECTS,FAILED_SUBJECTS,FAILING_GRADE_CREDITS FROM T_TEACHING_SCORE_DETAILS  WHERE 1 = 1");
             if (null != orgId) {
                 cql.append(" and ORG_ID = :orgId");
                 sql.append(" and ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
             if (null != collegeIds) {
-                String [] cs = grade.split(",");
                 List<String> cc = new ArrayList<>();
-                for (String d : cs) {
-                    cc.add(d);
+                if(collegeIds.indexOf(",")!=-1) {
+                    String[] cs = grade.split(",");
+                    for (String d : cs) {
+                        cc.add(d);
+                    }
+                }else {
+                    cc.add(collegeIds);
                 }
                 cql.append(" and COLLEGE_ID IN :collegeIds");
                 sql.append(" and COLLEGE_ID IN :collegeIds");
                 condition.put("collegeIds", cc);
             }
             if (null != grade) {
-                String [] grades = grade.split(",");
                 List<String> tds = new ArrayList<>();
-                for (String d : grades) {
-                    tds.add(d);
+                if(grade.indexOf(",")!=-1) {
+                    String[] grades = grade.split(",");
+                    for (String d : grades) {
+                        tds.add(d);
+                    }
+                }else {
+                    tds.add(grade);
                 }
                 cql.append(" and GRADE IN :grades");
                 sql.append(" and GRADE IN :grades");
@@ -216,7 +225,7 @@ public class TeachingScoreService {
             cql.append(" and STATISTICS_TYPE = 2");
             sql.append(" and STATISTICS_TYPE = 2");
             Query cq = em.createNativeQuery(cql.toString());
-            Query sq = em.createNativeQuery(sql.toString(), TeachingScoreDetails.class);
+            Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 cq.setParameter(e.getKey(), e.getValue());
                 sq.setParameter(e.getKey(), e.getValue());
@@ -226,7 +235,43 @@ public class TeachingScoreService {
                 sq.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
                 sq.setMaxResults(pageable.getPageSize());
             }
-            p.setData(sq.getResultList());
+            List<Object>  res = sq.getResultList();
+            if(null!=res&&res.size()>0){
+                for(Object obj : res){
+                    Object[] d = (Object[])obj;
+                    TeachingScoreDetails teachingScoreDetails = new TeachingScoreDetails();
+                    if(null!=d[0]){
+                        teachingScoreDetails.setJobNum(String.valueOf(d[0]));
+                    }
+                    if(null!=d[1]){
+                        teachingScoreDetails.setUserName(String.valueOf(d[1]));
+                    }
+                    if(null!=d[2]){
+                        teachingScoreDetails.setClassName(String.valueOf(d[2]));
+                    }
+                    if(null!=d[3]){
+                        teachingScoreDetails.setGrade(Integer.valueOf(String.valueOf(d[3])));
+                    }
+                    if(null!=d[4]){
+                        teachingScoreDetails.setCollegeName(String.valueOf(d[4]));
+                    }
+                    if(null!=d[5]){
+                        teachingScoreDetails.setAverageGPA(Float.valueOf(String.valueOf(d[5])));
+                    }
+                    if(null!=d[6]){
+                        teachingScoreDetails.setReferenceSubjects(Integer.valueOf(String.valueOf(d[6])));
+                    }
+                    if(null!=d[7]){
+                        teachingScoreDetails.setFailedSubjects(Integer.valueOf(String.valueOf(d[6])));
+                    }
+                    if(null!=d[8]){
+                        teachingScoreDetails.setFailingGradeCredits(Float.valueOf(String.valueOf(d[8])));
+                    }
+                    teachingScoreDetailsList.add(teachingScoreDetails);
+                }
+            }
+
+            p.setData(teachingScoreDetailsList);
             p.getPage().setTotalElements(total);
             p.getPage().setPageNumber(pageable.getPageNumber());
             p.getPage().setPageSize(pageable.getPageSize());
