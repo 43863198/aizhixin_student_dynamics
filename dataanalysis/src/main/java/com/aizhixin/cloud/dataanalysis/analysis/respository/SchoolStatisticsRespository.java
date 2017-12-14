@@ -18,7 +18,7 @@ import java.util.List;
  */
 public interface SchoolStatisticsRespository extends JpaRepository<SchoolStatistics, String> {
     @Query("select new com.aizhixin.cloud.dataanalysis.analysis.dto.SchoolProfileDTO(sum(a.studentNumber),sum(a.teacherNumber),sum(a.InstructorNumber),0L,sum(a.readyGraduation)) from #{#entityName} a where a.orgId = :orgId and a.deleteFlag=0 and a.teacherYear=:teacherYear")
-    SchoolProfileDTO getSchoolPersonStatistics(@Param(value = "orgId")Long orgId,@Param(value = "teacherYear")int teacherYear);
+    SchoolProfileDTO getSchoolPersonStatistics(@Param(value = "orgId")Long orgId,@Param(value = "teacherYear")String teacherYear);
 
     @Query("select a from #{#entityName} a where a.orgId = :orgId and a.teacherYear = :teacherYear and a.deleteFlag = :deleteFlag order by a.statisticalTime desc")
     Page<SchoolStatistics> findPageDataByOrgIdAndTeacherYear(Pageable pageable, @Param(value = "orgId") Long orgId, @Param(value = "teacherYear") String teacherYear, @Param(value = "deleteFlag") int deleteFlag);
