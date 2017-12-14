@@ -33,12 +33,12 @@ public class TeachingScoreStatistics extends AbstractEntity {
      * 学生人数
      */
     @Column(name = "STUDENT_NUM")
-    @Getter @Setter private Long studentNum;
+    @Getter @Setter private Integer studentNum;
     /**
      * 不及格人数
      */
     @Column(name = "FAIL_PASS_STU_NUM")
-    @Getter @Setter private Long failPassStuNum;
+    @Getter @Setter private Integer failPassStuNum;
     /**
      *平均GPA
      */
@@ -51,19 +51,11 @@ public class TeachingScoreStatistics extends AbstractEntity {
     @Getter @Setter private Double avgScore;
 
     /*
-   * 数据状态
-   */
-    @Column(name = "STATE")
-    @Getter @Setter private Integer state;
-
-    /*
      * 统计类型
      */
     @Column(name = "STATISTICS_TYPE")
     @Getter @Setter private Integer statisticsType;
 
-
-    /***********新增字段 jianwei.wu*************/
     /**
      * 开设课程数
      */

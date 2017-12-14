@@ -19,9 +19,9 @@ public class TeachingScoreStatisticsDTO {
     @ApiModelProperty(value = "学院id", required = false)
     private Long colloegeId;
     @ApiModelProperty(value = "学生人数", required = false)
-    private Long studentNum;
+    private Integer studentNum;
     @ApiModelProperty(value = "不及格人数", required = false)
-     private Long failPassStuNum;
+     private Integer failPassStuNum;
     @ApiModelProperty(value = "平均GPA", required = false)
      private Double avgGPA;
     @ApiModelProperty(value = "平均GPA", required = false)
@@ -40,7 +40,7 @@ public class TeachingScoreStatisticsDTO {
 //        this.avgScore = avgScore;
 //    }
 
-    public TeachingScoreStatisticsDTO(String colloegeName, Long colloegeId, Long studentNum, Long failPassStuNum, Double avgGPA, Double avgScore) {
+    public TeachingScoreStatisticsDTO(String colloegeName, Long colloegeId, Integer studentNum, Integer failPassStuNum, Double avgGPA, Double avgScore) {
         this.colloegeName = colloegeName;
         this.colloegeId = colloegeId;
         this.studentNum = studentNum;
