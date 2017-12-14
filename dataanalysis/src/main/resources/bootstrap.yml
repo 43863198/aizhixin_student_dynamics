@@ -1,8 +1,8 @@
 spring:
   application:
     name: data-analysis
-#  cloud:
-#    config:
-#      profile: ${spring.profiles.active}
-#      label: master
-#      uri: ${configServerIp}
+  cloud:
+    config:
+      profile: ${spring.profiles.active}
+      label: master
+      uri: ${configServerIp}master
