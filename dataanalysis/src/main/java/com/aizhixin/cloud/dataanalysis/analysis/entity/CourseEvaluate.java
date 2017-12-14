@@ -67,7 +67,7 @@ public class CourseEvaluate extends AbstractEntity {
     @Setter
     private String courseOpenID;
     /*
-    * 开课单位ID
+    * 开课教师
     *
     */
     @Column(name = "CHARGE_PERSON")
@@ -75,7 +75,7 @@ public class CourseEvaluate extends AbstractEntity {
     @Setter
     private String chargePerson;
     /*
-    * 开课单位ID
+    * 开课教师ID
     *
     */
     @Column(name = "CHARGE_PERSON_ID")
