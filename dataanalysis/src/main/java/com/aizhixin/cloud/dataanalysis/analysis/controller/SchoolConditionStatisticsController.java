@@ -104,9 +104,9 @@ public class SchoolConditionStatisticsController {
     @ApiOperation(httpMethod = "GET", value = "迎新学情———趋势分析", response = Void.class, notes = "迎新学情———趋势分析<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object>   getTrend(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "colloegeId 学院id") @RequestParam(value = "colloegeId", required = false) Long colloegeId,
+            @ApiParam(value = "collegeId 学院id") @RequestParam(value = "collegeId", required = false) Long collegeId,
             @ApiParam(value = "typeIndex 指标", required = true) @RequestParam(value = "typeIndex", required = true) int typeIndex) {
-        return schoolStatisticsService.getTrend(orgId, colloegeId, typeIndex);
+        return schoolStatisticsService.getTrend(orgId, collegeId, typeIndex);
     }
 
     /**
@@ -130,14 +130,14 @@ public class SchoolConditionStatisticsController {
     @ApiOperation(httpMethod = "GET", value = "迎新---学院详情", response = Void.class, notes = "迎新---学院详情<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object>   getCollegeDetails(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "colloegeId 学院id(多个用“，”隔开)") @RequestParam(value = "colloegeId", required = false) String colloegeId,
+            @ApiParam(value = "collegeId 学院id(多个用“，”隔开)") @RequestParam(value = "collegeId", required = false) String collegeId,
             @ApiParam(value = "nj 姓名/学号") @RequestParam(value = "nj", required = false) String nj,
             @ApiParam(value = "type 学生类型(1:专科2:本科3:研究生)") @RequestParam(value = "type", required = false) String type,
             @ApiParam(value = "报道情况 isReport(0:未报到；1:已报到；)" ) @RequestParam(value = "isReport", required = false) String isReport,
             @ApiParam(value = "缴费情况 isPay(1:已缴费；2:绿色通道；3:其他)" ) @RequestParam(value = "isPay", required = false) String isPay,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return schoolStatisticsService.getCollegeDetails(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId, colloegeId, nj, type, isReport, isPay);
+        return schoolStatisticsService.getCollegeDetails(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId, collegeId, nj, type, isReport, isPay);
     }
 
     /**
