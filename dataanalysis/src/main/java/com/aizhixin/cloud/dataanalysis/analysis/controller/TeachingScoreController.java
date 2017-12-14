@@ -8,10 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -52,7 +49,7 @@ public class TeachingScoreController {
     @ApiOperation(httpMethod = "GET", value = "教学成绩———趋势分析", response = Void.class, notes = "教学成绩———趋势分析<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object> getTeachingScoreTrendAnalysis(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "collegeId 机构id", required = false) @RequestParam(value = "collegeId", required = false) Long collegeId,
+            @ApiParam(value = "collegeId 学院id", required = false) @RequestParam(value = "collegeId", required = false) Long collegeId,
             @ApiParam(value = "type 分析指标：1:学生人数，2:平均GPA，3:不及格人数，4:课程平均分" , required = true)
             @RequestParam(value = "type", required = true) Integer type) {
         return teachingScoreService.getTeachingScoreTrendAnalysis(orgId, collegeId, type);
@@ -68,12 +65,41 @@ public class TeachingScoreController {
     @ApiOperation(httpMethod = "GET", value = "教学成绩———详情列表", response = Void.class, notes = "教学成绩———详情列表<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object> getTeachingScoreDetail(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "collegeId 机构id 注:多个时候用“，”隔开", required = true) @RequestParam(value = "collegeId", required = true) String collegeId,
+            @ApiParam(value = "collegeId 学院id 注:多个时候用“，”隔开", required = true) @RequestParam(value = "collegeId", required = true) String collegeId,
             @ApiParam(value = "grade 年级 注:多个时候用“，”隔开", required = false) @RequestParam(value = "grade", required = false) String grade,
             @ApiParam(value = "nj 姓名/学号" , required = false) @RequestParam(value = "nj", required = false) String nj,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         return teachingScoreService.getTeachingScoreDetail(orgId, collegeId, grade, nj, PageUtil.createNoErrorPageRequest(pageNumber, pageSize));
+    }
+
+
+
+    /**
+     * 教学成绩———详情列表
+     *
+     * @param orgId
+     * @return
+     */
+    @GetMapping(value = "/adddetail", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "手动添加教学成绩详情", response = Void.class, notes = "手动添加教学成绩详情<br><br><b>@author jianwei.wu</b>")
+    public Map<String,Object> addTeachingScoreDetail(
+            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "collegeId 学院id", required = true) @RequestParam(value = "collegeId", required = true) Long collegeId,
+            @ApiParam(value = "collegeName 学院id", required = true) @RequestParam(value = "collegeName", required = true) String collegeName,
+            @ApiParam(value = "professionalId 专业id", required = true) @RequestParam(value = "professionalId", required = true) Long professionalId,
+            @ApiParam(value = "professionalName 专业名称", required = true) @RequestParam(value = "professionalName", required = true) String professionalName,
+            @ApiParam(value = "classId 班级id", required = true) @RequestParam(value = "classId", required = true) Long classId,
+            @ApiParam(value = "className 班级名称", required = true) @RequestParam(value = "className", required = true) String className,
+            @ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
+            @ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester,
+            @ApiParam(value = "grade 年级", required = true) @RequestParam(value = "grade", required = true) Integer grade,
+            @ApiParam(value = "averageGPA 平均绩点", required = true) @RequestParam(value = "averageGPA", required = true) Double averageGPA,
+            @ApiParam(value = "referenceSubjects 参考科目数", required = true) @RequestParam(value = "referenceSubjects", required = true) Integer referenceSubjects,
+            @ApiParam(value = "failedSubjects 不及格科目", required = true) @RequestParam(value = "failedSubjects", required = true) Integer failedSubjects,
+            @ApiParam(value = "failingGradeCredits 不及格科目学分", required = true) @RequestParam(value = "failingGradeCredits", required = true) Double failingGradeCredits
+    ) {
+        return null;
     }
 
 

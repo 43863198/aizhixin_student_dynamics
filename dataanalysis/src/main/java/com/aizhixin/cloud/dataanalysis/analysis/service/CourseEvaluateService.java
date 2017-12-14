@@ -2,6 +2,8 @@ package com.aizhixin.cloud.dataanalysis.analysis.service;
 
 import com.aizhixin.cloud.dataanalysis.analysis.dto.CourseEvaluateDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.CourseEvaluateDetailDTO;
+import com.aizhixin.cloud.dataanalysis.analysis.entity.CourseEvaluate;
+import com.aizhixin.cloud.dataanalysis.analysis.respository.CourseEvaluateRespository;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.PageDomain;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
@@ -28,6 +30,8 @@ public class CourseEvaluateService {
     private JdbcTemplate jdbcTemplate;
     @Autowired
     private PageJdbcUtil pageJdbcUtil;
+    @Autowired
+    private CourseEvaluateRespository courseEvaluateRespository;
 
     public PageData<CourseEvaluateDTO> getCourseEvaluate(long orgId, String semesterId,String grade,String collegeIds, String courseName, String sort, Integer pageSize, Integer pageNumber) {
         Map<String, Object> result = new HashMap<>();
@@ -45,8 +49,8 @@ public class CourseEvaluateService {
         String querySql = "SELECT COURSE_CODE,COURSE_NAME,avg(AVG_SCORE) as score FROM `T_COURSE_EVALUATE` where DELETE_FLAG =" + DataValidity.VALID.getState() + " and ORG_ID=" + orgId + " ";
         String countSql = "SELECT COURSE_CODE FROM `T_COURSE_EVALUATE` where DELETE_FLAG =" + DataValidity.VALID.getState() + "  and ORG_ID=" + orgId + " ";
         if (!StringUtils.isEmpty(semesterId)) {
-            querySql += " and SEMESTER_ID=" + semesterId + " ";
-            countSql += " and SEMESTER_ID=" + semesterId + " ";
+            querySql += " and SEMESTER=" + semesterId + " ";
+            countSql += " and SEMESTER=" + semesterId + " ";
         }
         if (!StringUtils.isEmpty(grade)) {
             querySql += " and TEACHER_YEAR=" + grade + " ";
@@ -92,8 +96,8 @@ public class CourseEvaluateService {
         String querySql = "SELECT TEACHING_CLASS_NAME,CHARGE_PERSON,AVG_SCORE  FROM `T_COURSE_EVALUATE` where DELETE_FLAG =" + DataValidity.VALID.getState() + " and ORG_ID=" + orgId + " ";
         String countSql = "SELECT count(1) FROM `T_COURSE_EVALUATE` where DELETE_FLAG =" + DataValidity.VALID.getState() + "  and ORG_ID=" + orgId + " ";
         if (!StringUtils.isEmpty(semesterId)) {
-            querySql += " and SEMESTER_ID=" + semesterId + " ";
-            countSql += " and SEMESTER_ID=" + semesterId + " ";
+            querySql += " and SEMESTER=" + semesterId + " ";
+            countSql += " and SEMESTER=" + semesterId + " ";
         }
         if (!StringUtils.isEmpty(grade)) {
             querySql += " and TEACHER_YEAR=" + grade + " ";
@@ -114,5 +118,12 @@ public class CourseEvaluateService {
         p.setData((List) map.get("data"));
         p.setPage((PageDomain)map.get("page"));
         return p;
+    }
+    /**
+     * 课程评价数据
+     * @param statisticsList
+     */
+    public void saveList(List<CourseEvaluate> statisticsList){
+        courseEvaluateRespository.save(statisticsList);
     }
 }
