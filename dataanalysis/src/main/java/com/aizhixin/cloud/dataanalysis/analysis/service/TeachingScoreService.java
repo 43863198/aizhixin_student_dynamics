@@ -377,19 +377,11 @@ public class TeachingScoreService {
                 for (Object obj : res) {
                     Object[] d = (Object[]) obj;
                     TeachingScoreStatistics teachingScoreStatistics = new TeachingScoreStatistics();
-<<<<<<< HEAD
-                    if (null != d[0]) {
-                        teachingScoreStatistics.setColloegeId(Long.valueOf(String.valueOf(d[0])));
-                    }
-                    if (null != d[1]) {
-                        teachingScoreStatistics.setColloegeName(String.valueOf(d[1]));
-=======
                     if(null!=d[0]){
                         teachingScoreStatistics.setCollegeId(Long.valueOf(String.valueOf(d[0])));
                     }
                     if(null!=d[1]){
                         teachingScoreStatistics.setCollegeName(String.valueOf(d[1]));
->>>>>>> 0df94d2f728373ce8bcd6fc1f2b537358f9f8528
                     }
                     if (null != d[2]) {
                         teachingScoreStatistics.setTeacherYear(Integer.valueOf(String.valueOf(d[2])));
@@ -415,7 +407,6 @@ public class TeachingScoreService {
                     teachingScoreStatistics.setOrgId(orgId);
                     teachingScoreStatisticsList.add(teachingScoreStatistics);
                 }
-<<<<<<< HEAD
             }
             if (null != rul) {
                 Object[] rd = (Object[]) rul;
@@ -431,41 +422,6 @@ public class TeachingScoreService {
                 }
                 if (null != rd[3]) {
                     otss.setAvgGPA(Double.valueOf(String.valueOf(rd[3])));
-=======
-                teachingScoreStatisticsRespository.save(teachingScoreStatisticsList);
-                Object  rul = oq.getSingleResult();
-                if(null!=rul) {
-                    Object[] rd = (Object[])rul;
-                    TeachingScoreStatistics otss = new TeachingScoreStatistics();
-                    if (null != rd[0]) {
-                        otss.setCollegeId(Long.valueOf(String.valueOf(rd[0])));
-                    }
-                    if (null != rd[1]) {
-                        otss.setCollegeName(String.valueOf(rd[1]));
-                    }
-                    if (null != rd[2]) {
-                        otss.setTeacherYear(Integer.valueOf(String.valueOf(rd[2])));
-                    }
-                    if (null != rd[3]) {
-                        otss.setSemester(Integer.valueOf(String.valueOf(rd[3])));
-                    }
-                    if (null != rd[4]) {
-                        otss.setStudentNum(Integer.valueOf(String.valueOf(rd[4])));
-                    }
-                    if (null != rd[5]) {
-                        otss.setFailPassStuNum(Integer.valueOf(String.valueOf(rd[5])));
-                    }
-                    if (null != rd[6]) {
-                        otss.setCurriculumNum(Integer.valueOf(String.valueOf(rd[6])));
-                    }
-                    if (null != rd[7]) {
-                        otss.setGrade(Integer.valueOf(String.valueOf(rd[7])));
-                    }
-                    otss.setAvgGPA(new Random().nextDouble() * 10);
-                    otss.setAvgScore(new Random().nextDouble() * 10);
-                    otss.setStatisticsType(1);
-                    teachingScoreStatisticsRespository.save(otss);
->>>>>>> 0df94d2f728373ce8bcd6fc1f2b537358f9f8528
                 }
                 if (null != rd[4]) {
                     otss.setFailPassStuNum(Integer.valueOf(String.valueOf(rd[4])));
