@@ -11,6 +11,8 @@ import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.ScoreFluctuateCount;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.TotalScoreCount;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -31,6 +33,7 @@ import java.util.*;
 @Component
 @Transactional
 public class TeachingScoreService {
+    final static private Logger LOG = LoggerFactory.getLogger(TeachingScoreService.class);
     @Autowired
     private EntityManager em;
     @Autowired
@@ -40,16 +43,16 @@ public class TeachingScoreService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    public void saveStatistics(TeachingScoreStatistics teachingScoreStatistics){
+    public void saveStatistics(TeachingScoreStatistics teachingScoreStatistics) {
         teachingScoreStatisticsRespository.save(teachingScoreStatistics);
     }
 
-    public void saveDetails(TeachingScoreDetails teachingScoreDetails){
+    public void saveDetails(TeachingScoreDetails teachingScoreDetails) {
         teachingScoreDetailsRespository.save(teachingScoreDetails);
     }
 
-    public Map<String,Object> getStatistic(Long orgId, String grade, Integer semester){
-        Map<String,Object> result = new HashMap<>();
+    public Map<String, Object> getStatistic(Long orgId, String grade, Integer semester) {
+        Map<String, Object> result = new HashMap<>();
         Map<String, Object> condition = new HashMap<>();
         TeachingAchievementDTO teachingAchievementDTO = new TeachingAchievementDTO();
         List<CollegeTeachingAchievementDTO> collegeTeachingAchievementDTOList = new ArrayList<>();
@@ -80,112 +83,112 @@ public class TeachingScoreService {
                 sq.setParameter(e.getKey(), e.getValue());
             }
             List<Object> res = sq.getResultList();
-            if(null!=res&&res.size()>0){
-                for(Object obj : res){
-                    Object[] d = (Object[])obj;
+            if (null != res && res.size() > 0) {
+                for (Object obj : res) {
+                    Object[] d = (Object[]) obj;
                     CollegeTeachingAchievementDTO collegeTeachingAchievementDTO = new CollegeTeachingAchievementDTO();
-                    if(null!=d[0]){
+                    if (null != d[0]) {
                         collegeTeachingAchievementDTO.setCollegeName(String.valueOf(d[0]));
                     }
-                    if(null!=d[1]){
+                    if (null != d[1]) {
                         collegeTeachingAchievementDTO.setCollegeId(Long.valueOf(String.valueOf(d[1])));
                     }
-                    if(null!=d[2]){
+                    if (null != d[2]) {
                         collegeTeachingAchievementDTO.setStudentsNum(Integer.valueOf(String.valueOf(d[2])));
                     }
-                    if(null!=d[3]){
+                    if (null != d[3]) {
                         collegeTeachingAchievementDTO.setAverageGPA(Float.valueOf(String.valueOf(d[3])));
                     }
-                    if(null!=d[4]){
+                    if (null != d[4]) {
                         collegeTeachingAchievementDTO.setFailNum(Integer.valueOf(String.valueOf(d[4])));
                     }
-                    if(null!=d[5]){
-                       collegeTeachingAchievementDTO.setCoursesNum(Integer.valueOf(String.valueOf(d[5])));
+                    if (null != d[5]) {
+                        collegeTeachingAchievementDTO.setCoursesNum(Integer.valueOf(String.valueOf(d[5])));
                     }
-                    if(null!=d[6]){
+                    if (null != d[6]) {
                         collegeTeachingAchievementDTO.setCoursesAVGScore(Float.valueOf(String.valueOf(d[6])));
                     }
                     collegeTeachingAchievementDTOList.add(collegeTeachingAchievementDTO);
                 }
             }
             List<Object> rc = cq.getResultList();
-            if(null!=rc&&rc.size()>0){
+            if (null != rc && rc.size() > 0) {
                 Date time = new Date();
                 Object[] rd = (Object[]) rc.get(0);
-                if(null!=rd[0]){
+                if (null != rd[0]) {
                     teachingAchievementDTO.setAverageGPA(Integer.valueOf(String.valueOf(rd[0])));
                 }
-                if(null!=rd[1]){
+                if (null != rd[1]) {
                     teachingAchievementDTO.setAverageGPA(Integer.valueOf(String.valueOf(rd[1])));
                 }
-                if(null!=rd[2]){
+                if (null != rd[2]) {
                     teachingAchievementDTO.setFailNum(Integer.valueOf(String.valueOf(rd[2])));
                 }
-                if(null!=rd[3]){
+                if (null != rd[3]) {
                     teachingAchievementDTO.setCoursesNum(Integer.valueOf(String.valueOf(rd[3])));
                 }
-                if(null!=rd[4]){
+                if (null != rd[4]) {
                     teachingAchievementDTO.setCoursesAVGScore(Double.valueOf(String.valueOf(rd[4])));
                 }
-                if(null!=rd[5]){
-                    time =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(String.valueOf(rd[5]));
+                if (null != rd[5]) {
+                    time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(String.valueOf(rd[5]));
                 }
                 teachingAchievementDTO.setStatisticalTime(time);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
-            result.put("message","获取教学成绩统计信息失败！");
+            result.put("message", "获取教学成绩统计信息失败！");
             return result;
         }
-        result.put("success",true);
-        result.put("collegeTeachingAchievementDTOList",collegeTeachingAchievementDTOList);
+        result.put("success", true);
+        result.put("collegeTeachingAchievementDTOList", collegeTeachingAchievementDTOList);
         result.put("teachingAchievementDTO", teachingAchievementDTO);
         return result;
     }
 
 
-    public Map<String,Object> getTeachingScoreTrendAnalysis(Long orgId, Long collegeId, Integer type){
-        Map<String,Object> result = new HashMap<>();
+    public Map<String, Object> getTeachingScoreTrendAnalysis(Long orgId, Long collegeId, Integer type) {
+        Map<String, Object> result = new HashMap<>();
         List<TrendDTO> trendDTOList = new ArrayList<>();
         Map<String, Object> condition = new HashMap<>();
         try {
             String trend = "";
             trend = TeachingScoreTrendType.getType(type);
-            StringBuilder sql = new StringBuilder("SELECT GRADE,"+trend+" FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
-            if(null!=orgId){
+            StringBuilder sql = new StringBuilder("SELECT GRADE," + trend + " FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
+            if (null != orgId) {
                 sql.append(" and ORG_ID =:orgId ");
-                condition.put("orgId",orgId);
+                condition.put("orgId", orgId);
             }
-            if(null!=collegeId){
+            if (null != collegeId) {
                 sql.append(" and COLLOEGE_ID =:collegeId ");
-                condition.put("collegeId",collegeId);
+                condition.put("collegeId", collegeId);
             }
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
             }
             List<Object> res = sq.getResultList();
-            if(null!=res&&res.size()>0){
-                for(Object obj: res){
-                    Object[] d = (Object[])obj;
+            if (null != res && res.size() > 0) {
+                for (Object obj : res) {
+                    Object[] d = (Object[]) obj;
                     TrendDTO trendDTO = new TrendDTO();
-                    if(null!=d[0]){
-                         trendDTO.setYear(String.valueOf(d[0]));
+                    if (null != d[0]) {
+                        trendDTO.setYear(String.valueOf(d[0]));
                     }
-                    if(null!=d[1]){
+                    if (null != d[1]) {
                         trendDTO.setValue(String.valueOf(d[1]));
                     }
                     trendDTOList.add(trendDTO);
                 }
             }
-        }catch (Exception e){
-            result.put("success",false);
-            result.put("message","获取统计分析数据失败！");
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", "获取统计分析数据失败！");
             return result;
         }
-        result.put("success",true);
-        result.put("data",trendDTOList);
+        result.put("success", true);
+        result.put("data", trendDTOList);
         return result;
     }
 
@@ -206,12 +209,12 @@ public class TeachingScoreService {
             }
             if (null != collegeIds) {
                 List<String> cc = new ArrayList<>();
-                if(collegeIds.indexOf(",")!=-1) {
+                if (collegeIds.indexOf(",") != -1) {
                     String[] cs = grade.split(",");
                     for (String d : cs) {
                         cc.add(d);
                     }
-                }else {
+                } else {
                     cc.add(collegeIds);
                 }
                 cql.append(" and COLLEGE_ID IN :collegeIds");
@@ -220,12 +223,12 @@ public class TeachingScoreService {
             }
             if (null != grade) {
                 List<String> tds = new ArrayList<>();
-                if(grade.indexOf(",")!=-1) {
+                if (grade.indexOf(",") != -1) {
                     String[] grades = grade.split(",");
                     for (String d : grades) {
                         tds.add(d);
                     }
-                }else {
+                } else {
                     tds.add(grade);
                 }
                 cql.append(" and GRADE IN :grades");
@@ -245,41 +248,41 @@ public class TeachingScoreService {
                 cq.setParameter(e.getKey(), e.getValue());
                 sq.setParameter(e.getKey(), e.getValue());
             }
-           total = Long.valueOf(String.valueOf(cq.getSingleResult()));
-            if(null!=total&&total>0){
+            total = Long.valueOf(String.valueOf(cq.getSingleResult()));
+            if (null != total && total > 0) {
                 sq.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
                 sq.setMaxResults(pageable.getPageSize());
             }
-            List<Object>  res = sq.getResultList();
-            if(null!=res&&res.size()>0){
-                for(Object obj : res){
-                    Object[] d = (Object[])obj;
+            List<Object> res = sq.getResultList();
+            if (null != res && res.size() > 0) {
+                for (Object obj : res) {
+                    Object[] d = (Object[]) obj;
                     TeachingScoreDetails teachingScoreDetails = new TeachingScoreDetails();
-                    if(null!=d[0]){
+                    if (null != d[0]) {
                         teachingScoreDetails.setJobNum(String.valueOf(d[0]));
                     }
-                    if(null!=d[1]){
+                    if (null != d[1]) {
                         teachingScoreDetails.setUserName(String.valueOf(d[1]));
                     }
-                    if(null!=d[2]){
+                    if (null != d[2]) {
                         teachingScoreDetails.setClassName(String.valueOf(d[2]));
                     }
-                    if(null!=d[3]){
+                    if (null != d[3]) {
                         teachingScoreDetails.setGrade(Integer.valueOf(String.valueOf(d[3])));
                     }
-                    if(null!=d[4]){
+                    if (null != d[4]) {
                         teachingScoreDetails.setCollegeName(String.valueOf(d[4]));
                     }
-                    if(null!=d[5]){
+                    if (null != d[5]) {
                         teachingScoreDetails.setAvgGPA(Float.valueOf(String.valueOf(d[5])));
                     }
-                    if(null!=d[6]){
+                    if (null != d[6]) {
                         teachingScoreDetails.setReferenceSubjects(Integer.valueOf(String.valueOf(d[6])));
                     }
-                    if(null!=d[7]){
+                    if (null != d[7]) {
                         teachingScoreDetails.setFailedSubjects(Integer.valueOf(String.valueOf(d[6])));
                     }
-                    if(null!=d[8]){
+                    if (null != d[8]) {
                         teachingScoreDetails.setFailingGradeCredits(Float.valueOf(String.valueOf(d[8])));
                     }
                     teachingScoreDetailsList.add(teachingScoreDetails);
@@ -292,26 +295,27 @@ public class TeachingScoreService {
             p.getPage().setPageSize(pageable.getPageSize());
             p.getPage().setTotalPages(PageUtil.cacalatePagesize(total, p.getPage().getPageSize()));
 
-        }catch (Exception e){
+        } catch (Exception e) {
             result.put("success", false);
-            result.put("message","获取教学成绩详情数据异常！");
+            result.put("message", "获取教学成绩详情数据异常！");
         }
         result.put("success", true);
         result.put("data", p);
         return result;
     }
+
     @Transactional
-    public Map<String,Object> addTeachingScoreDetail(Long orgId){
-        Map<String,Object> result = new HashMap<>();
-        try{
+    public Map<String, Object> addTeachingScoreDetail(Long orgId) {
+        Map<String, Object> result = new HashMap<>();
+        try {
             List<TeachingScoreDetails> teachingScoreDetailsList = new ArrayList<>();
             org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
             //条件
             Criteria criteria = Criteria.where("orgId").is(orgId);
             query.addCriteria(criteria);
             List<TotalScoreCount> items = mongoTemplate.find(query, TotalScoreCount.class);
-            if(null!=items&&items.size()>0){
-                for(TotalScoreCount sfc : items){
+            if (null != items && items.size() > 0) {
+                for (TotalScoreCount sfc : items) {
                     TeachingScoreDetails tsd = new TeachingScoreDetails();
                     tsd.setOrgId(orgId);
                     tsd.setJobNum(sfc.getJobNum());
@@ -325,51 +329,53 @@ public class TeachingScoreService {
                     tsd.setCollegeName(sfc.getCollegeName());
                     tsd.setTeacherYear(sfc.getSchoolYear());
                     tsd.setSemester(sfc.getSemester());
-                    tsd.setGrade(Integer.valueOf(sfc.getGrade()));
-                    tsd.setAvgGPA(new Random().nextFloat() * 10);
-                    tsd.setReferenceSubjects(new Random().nextInt() * 10);
+                    if (null != sfc.getGrade()) {
+                        tsd.setGrade(Integer.valueOf(sfc.getGrade()));
+                    }
+                    tsd.setAvgGPA(Float.valueOf(new Random().nextFloat() * 100));
+                    tsd.setReferenceSubjects(new Random().nextInt(100));
                     tsd.setFailedSubjects(tsd.getReferenceSubjects() - 1 > 0 ? tsd.getReferenceSubjects() - 1 : 0);
-                    tsd.setFailedSubjects(tsd.getFailedSubjects()*3);
+                    tsd.setFailedSubjects(tsd.getFailedSubjects() * 3);
                     teachingScoreDetailsList.add(tsd);
                 }
                 teachingScoreDetailsRespository.save(teachingScoreDetailsList);
-                //添加统计数据
-                this.addTeachingScoreStatistics(orgId);
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             result.put("success", false);
-            result.put("message","添加教学成绩详情数据异常！");
+            result.put("message", "添加教学成绩详情数据异常！");
             return result;
         }
         result.put("success", true);
-        result.put("message","添加教学成绩详情数据成功！");
+        result.put("message", "添加教学成绩详情数据成功！");
         return result;
     }
-    @Transactional
-    public Map<String,Object> addTeachingScoreStatistics(Long orgId){
-        Map<String,Object> result = new HashMap<>();
+
+    public Map<String, Object> addTeachingScoreStatistics(Long orgId) {
+        Map<String, Object> result = new HashMap<>();
         List<TeachingScoreStatistics> teachingScoreStatisticsList = new ArrayList<>();
-        try{
+        try {
             Map<String, Object> condition = new HashMap<>();
-            StringBuilder sql = new StringBuilder("SELECT COLLEGE_ID,COLLEGE_NAME,TEACHER_YEAR,SEMESTER,count(1),sum(if(FAILED_SUBJECTS>0? 1:0)), max(REFERENCE_SUBJECTS),GRADE FROM T_TEACHING_SCORE_DETAILS  WHERE 1 = 1");
-            StringBuilder oql = new StringBuilder("SELECT COLLEGE_ID,COLLEGE_NAME,TEACHER_YEAR,SEMESTER,count(1),sum(if(FAILED_SUBJECTS>0? 1:0)), max(REFERENCE_SUBJECTS),GRADE FROM T_TEACHING_SCORE_DETAILS  WHERE 1 = 1");
+            StringBuilder sql = new StringBuilder("SELECT COLLEGE_ID,COLLEGE_NAME,TEACHER_YEAR,SEMESTER,count(1),sum(if(FAILED_SUBJECTS>0,1,0)), max(REFERENCE_SUBJECTS),GRADE FROM T_TEACHING_SCORE_DETAILS  WHERE 1 = 1");
+            StringBuilder oql = new StringBuilder("SELECT TEACHER_YEAR,SEMESTER,count(1),AVG(AVERAGE_GPA),sum(if(FAILED_SUBJECTS>0,1,0)),MAX(REFERENCE_SUBJECTS) FROM T_TEACHING_SCORE_DETAILS  WHERE 1 = 1");
             if (null != orgId) {
                 oql.append(" and ORG_ID = :orgId");
                 sql.append(" and ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
-            sql.append(" GROUP BY TEACHER_YEAR, SEMESTER");
+            oql.append(" GROUP BY TEACHER_YEAR, SEMESTER");
+            sql.append(" GROUP BY COLLEGE_ID, TEACHER_YEAR, SEMESTER");
             Query oq = em.createNativeQuery(oql.toString());
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 oq.setParameter(e.getKey(), e.getValue());
                 sq.setParameter(e.getKey(), e.getValue());
             }
-            List<Object>  res = sq.getResultList();
-            if(null!=res&&res.size()>0){
-                for(Object obj :res) {
-                    Object[] d = (Object[])obj;
+            List<Object> res = sq.getResultList();
+            Object rul = oq.getSingleResult();
+            if (null != res && res.size() > 0) {
+                for (Object obj : res) {
+                    Object[] d = (Object[]) obj;
                     TeachingScoreStatistics teachingScoreStatistics = new TeachingScoreStatistics();
                     if(null!=d[0]){
                         teachingScoreStatistics.setCollegeId(Long.valueOf(String.valueOf(d[0])));
@@ -377,77 +383,72 @@ public class TeachingScoreService {
                     if(null!=d[1]){
                         teachingScoreStatistics.setCollegeName(String.valueOf(d[1]));
                     }
-                    if(null!=d[2]){
+                    if (null != d[2]) {
                         teachingScoreStatistics.setTeacherYear(Integer.valueOf(String.valueOf(d[2])));
                     }
-                    if(null!=d[3]){
+                    if (null != d[3]) {
                         teachingScoreStatistics.setSemester(Integer.valueOf(String.valueOf(d[3])));
                     }
-                    if(null!=d[4]){
+                    if (null != d[4]) {
                         teachingScoreStatistics.setStudentNum(Integer.valueOf(String.valueOf(d[4])));
                     }
-                    if(null!=d[5]){
+                    if (null != d[5]) {
                         teachingScoreStatistics.setFailPassStuNum(Integer.valueOf(String.valueOf(d[5])));
                     }
-                    if(null!=d[6]){
+                    if (null != d[6]) {
                         teachingScoreStatistics.setCurriculumNum(Integer.valueOf(String.valueOf(d[6])));
                     }
-                    if(null!=d[7]){
+                    if (null != d[7]) {
                         teachingScoreStatistics.setGrade(Integer.valueOf(String.valueOf(d[7])));
                     }
                     teachingScoreStatistics.setAvgGPA(new Random().nextDouble() * 10);
                     teachingScoreStatistics.setAvgScore(new Random().nextDouble() * 10);
                     teachingScoreStatistics.setStatisticsType(2);
+                    teachingScoreStatistics.setOrgId(orgId);
                     teachingScoreStatisticsList.add(teachingScoreStatistics);
                 }
-                teachingScoreStatisticsRespository.save(teachingScoreStatisticsList);
-                Object  rul = oq.getSingleResult();
-                if(null!=rul) {
-                    Object[] rd = (Object[])rul;
-                    TeachingScoreStatistics otss = new TeachingScoreStatistics();
-                    if (null != rd[0]) {
-                        otss.setCollegeId(Long.valueOf(String.valueOf(rd[0])));
-                    }
-                    if (null != rd[1]) {
-                        otss.setCollegeName(String.valueOf(rd[1]));
-                    }
-                    if (null != rd[2]) {
-                        otss.setTeacherYear(Integer.valueOf(String.valueOf(rd[2])));
-                    }
-                    if (null != rd[3]) {
-                        otss.setSemester(Integer.valueOf(String.valueOf(rd[3])));
-                    }
-                    if (null != rd[4]) {
-                        otss.setStudentNum(Integer.valueOf(String.valueOf(rd[4])));
-                    }
-                    if (null != rd[5]) {
-                        otss.setFailPassStuNum(Integer.valueOf(String.valueOf(rd[5])));
-                    }
-                    if (null != rd[6]) {
-                        otss.setCurriculumNum(Integer.valueOf(String.valueOf(rd[6])));
-                    }
-                    if (null != rd[7]) {
-                        otss.setGrade(Integer.valueOf(String.valueOf(rd[7])));
-                    }
-                    otss.setAvgGPA(new Random().nextDouble() * 10);
-                    otss.setAvgScore(new Random().nextDouble() * 10);
-                    otss.setStatisticsType(1);
-                    teachingScoreStatisticsRespository.save(otss);
-                }
             }
-        }catch (Exception e){
+            if (null != rul) {
+                Object[] rd = (Object[]) rul;
+                TeachingScoreStatistics otss = new TeachingScoreStatistics();
+                if (null != rd[0]) {
+                    otss.setTeacherYear(Integer.valueOf(String.valueOf(rd[0])));
+                }
+                if (null != rd[1]) {
+                    otss.setSemester(Integer.valueOf(String.valueOf(rd[1])));
+                }
+                if (null != rd[2]) {
+                    otss.setStudentNum(Integer.valueOf(String.valueOf(rd[2])));
+                }
+                if (null != rd[3]) {
+                    otss.setAvgGPA(Double.valueOf(String.valueOf(rd[3])));
+                }
+                if (null != rd[4]) {
+                    otss.setFailPassStuNum(Integer.valueOf(String.valueOf(rd[4])));
+                }
+                if (null != rd[5]) {
+                    otss.setCurriculumNum(Integer.valueOf(String.valueOf(rd[5])));
+                }
+                otss.setAvgScore(new Random().nextDouble() * 100);
+                otss.setStatisticsType(1);
+                otss.setOrgId(orgId);
+                teachingScoreStatisticsList.add(otss);
+            }
+            if (null != teachingScoreStatisticsList && teachingScoreStatisticsList.size() > 0) {
+                teachingScoreStatisticsRespository.save(teachingScoreStatisticsList);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
             result.put("success", false);
-            result.put("message","添加教学成绩统计数据异常！");
+            result.put("message", "添加教学成绩统计数据异常！");
+            LOG.info("添加教学成绩统计数据异常");
             return result;
         }
         result.put("success", true);
-        result.put("message","添加教学成绩统计数据成功！");
+        result.put("message", "添加教学成绩统计数据成功！");
+        LOG.info("添加教学成绩统计数据成功");
         return result;
     }
-
-
-
-
 
 
 }
