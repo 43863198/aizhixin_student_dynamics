@@ -27,7 +27,7 @@ public interface SchoolStatisticsRespository extends JpaRepository<SchoolStatist
     NewStudentProfileDTO getNewStudentStatistics(@Param(value = "orgId")Long orgId);
 
     @Query("select a from #{#entityName} a where a.orgId = :orgId and a.teacherYear = :teacherYear and a.deleteFlag = :deleteFlag order by a.statisticalTime desc")
-    List<SchoolStatistics> findDataByOrgIdAndTeacherYear(@Param(value = "orgId") Long orgId, @Param(value = "teacherYear") String teacherYear, @Param(value = "deleteFlag") int deleteFlag);
+    List<SchoolStatistics> findDataByOrgIdAndTeacherYear(@Param(value = "orgId") Long orgId, @Param(value = "teacherYear") Integer teacherYear, @Param(value = "deleteFlag") int deleteFlag);
 
 
 }

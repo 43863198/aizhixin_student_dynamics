@@ -87,9 +87,7 @@ public class SchoolConditionStatisticsController {
     @ApiOperation(httpMethod = "GET", value = "迎新学情———统计", response = Void.class, notes = "迎新学情———统计<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object>   getStatisticNewstudents(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "year 年" , required = true) @RequestParam(value = "year", required = true) String year
-//            @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
-//            @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize
+            @ApiParam(value = "year 年" , required = true) @RequestParam(value = "year", required = true) Integer year
  ) {
         return schoolStatisticsService.getStatisticNewstudents(orgId,year);
     }

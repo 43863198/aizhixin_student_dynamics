@@ -37,7 +37,7 @@ public class CetStatisticAnalysisService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    public Map<String, Object> getStatistic(Long orgId, String grade, Integer semester) {
+    public Map<String, Object> getStatistic(Long orgId, Integer teacherYear, Integer semester) {
         Map<String, Object> result = new HashMap<>();
 //        PageData<CollegeCetStatisticDTO> p = new PageData<>();
         CetStatisticDTO cetStatisticDTO = new CetStatisticDTO();
@@ -52,10 +52,10 @@ public class CetStatisticAnalysisService {
                 sql.append(" and cet.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
-            if (null != grade) {
-                cql.append(" and cet.TEACHER_YEAR = :grade");
-                sql.append(" and cet.TEACHER_YEAR = :grade");
-                condition.put("grade", grade);
+            if (null != teacherYear) {
+                cql.append(" and cet.TEACHER_YEAR = :teacherYear");
+                sql.append(" and cet.TEACHER_YEAR = :teacherYear");
+                condition.put("teacherYear", teacherYear);
             }
             if (null != semester) {
                 cql.append(" and cet.SEMESTER = :semester");

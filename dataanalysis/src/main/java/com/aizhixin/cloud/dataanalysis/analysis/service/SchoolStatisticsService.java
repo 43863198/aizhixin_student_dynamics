@@ -73,7 +73,7 @@ public class SchoolStatisticsService {
     }
     
     
-    public Map<String, Object> getStatisticNewstudents(Long orgId, String year) {
+    public Map<String, Object> getStatisticNewstudents(Long orgId, Integer teacherYear) {
         Map<String, Object> result = new HashMap<>();
         NewStudentProfileDTO newStudentProfileDTO = new NewStudentProfileDTO();
 //        PageData<SchoolStatistics> p = new PageData<>();
@@ -90,9 +90,9 @@ public class SchoolStatisticsService {
                 sql.append(" and ss.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
-            if (!StringUtils.isEmpty(year)) {
+            if (null!=teacherYear) {
                 sql.append(" and ss.TEACHER_YEAR = :teacherYear");
-                condition.put("teacherYear", year);
+                condition.put("teacherYear", teacherYear);
             }
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
@@ -128,7 +128,7 @@ public class SchoolStatisticsService {
             newStudentProfileDTO.setAlreadyPay(alreadyPay);
             newStudentProfileDTO.setConvenienceChannel(convenienceChannel);
             newStudentProfileDTO.setStatisticalTime(time);//后续要改为统计时间
-            List<SchoolStatistics> schoolStatisticsList = schoolStatisticsRespository.findDataByOrgIdAndTeacherYear(orgId, year, DataValidity.VALID.getState());
+            List<SchoolStatistics> schoolStatisticsList = schoolStatisticsRespository.findDataByOrgIdAndTeacherYear(orgId, teacherYear, DataValidity.VALID.getState());
 //            Page<SchoolStatistics> schoolStatisticsPage = schoolStatisticsRespository.findPageDataByOrgIdAndTeacherYear(pageable, orgId, year, DataValidity.VALID.getState());
 //            p.setData(schoolStatisticsPage.getContent());
 //            p.getPage().setTotalElements(count);
