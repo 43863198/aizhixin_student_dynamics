@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+
+    <changeSet id="201712151013400" author="wangjun">
+        <renameColumn
+                columnDataType="varchar(50)"
+                newColumnName="COLLEGE_NAME"
+                oldColumnName="COLLOEGE_NAME"
+                remarks="学院名称"
+                tableName="T_TEACHING_SCORE_STATISTICS"/>
+        <renameColumn
+                columnDataType="varchar(50)"
+                newColumnName="COLLEGE_ID"
+                oldColumnName="COLLOEGE_ID"
+                remarks="学院名称"
+                tableName="T_TEACHING_SCORE_STATISTICS"/>
+    </changeSet>
+</databaseChangeLog>

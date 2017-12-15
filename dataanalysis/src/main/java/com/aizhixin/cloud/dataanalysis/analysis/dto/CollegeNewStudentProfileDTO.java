@@ -11,7 +11,7 @@ import lombok.Data;
  */
 @ApiModel(description="学院新生概况信息")
 @Data
-public class ColloegeNewStudentProfileDTO {
+public class CollegeNewStudentProfileDTO {
     @ApiModelProperty(value = "学院id", required = false)
     private Long collegeId;
     @ApiModelProperty(value = "学院名称", required = false)

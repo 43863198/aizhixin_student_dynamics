@@ -46,7 +46,7 @@ public class CetStatisticAnalysisService {
         Long count = 0L;
         try {
             StringBuilder cql = new StringBuilder("SELECT COUNT(1) AS count, SUM(cet.CET_FORE_JOIN_NUM) as sumc4, SUM(cet.CET_FORE_PASS_NUM) as sump4, SUM(cet.CET_SIX_JOIN_NUM) as sumc6, SUM(cet.CET_SIX_PASS_NUM) as sump6, max(cet.CREATED_DATE) FROM T_CET_STATISTICS cet WHERE 1 = 1");
-            StringBuilder sql = new StringBuilder("SELECT SUM(cet.CET_FORE_JOIN_NUM) as sumc4, SUM(cet.CET_FORE_PASS_NUM) as sump4, SUM(cet.CET_SIX_JOIN_NUM) as sumc6, SUM(cet.CET_SIX_PASS_NUM) as sump6, COLLOEGE_NAME, COLLOEGE_ID FROM T_CET_STATISTICS cet WHERE 1 = 1");
+            StringBuilder sql = new StringBuilder("SELECT SUM(cet.CET_FORE_JOIN_NUM) as sumc4, SUM(cet.CET_FORE_PASS_NUM) as sump4, SUM(cet.CET_SIX_JOIN_NUM) as sumc6, SUM(cet.CET_SIX_PASS_NUM) as sump6, COLLEGE_NAME, COLLEGE_ID FROM T_CET_STATISTICS cet WHERE 1 = 1");
             if (null != orgId) {
                 cql.append(" and cet.ORG_ID = :orgId");
                 sql.append(" and cet.ORG_ID = :orgId");
@@ -174,7 +174,7 @@ public class CetStatisticAnalysisService {
                 condition.put("orgId", orgId);
             }
             if (null != collegeId) {
-                sql.append(" and cet.COLLOEGE_ID = :collegeId");
+                sql.append(" and cet.COLLEGE_ID = :collegeId");
                 condition.put("collegeId", collegeId);
             }
             sql.append(" group by cet.TEACHER_YEAR");

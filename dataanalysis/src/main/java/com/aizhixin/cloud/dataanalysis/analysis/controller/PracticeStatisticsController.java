@@ -49,11 +49,11 @@ public class PracticeStatisticsController {
     @ApiOperation(httpMethod = "GET", value = "实践学情———统计", response = Void.class, notes = "实践学情———统计<br><br><b>@author wangjun</b>")
     public Map<String,Object>   getStatisticPractice(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "colloegeId 学院id") @RequestParam(value = "colloegeId", required = false) Long colloegeId,
+            @ApiParam(value = "collegeId 学院id") @RequestParam(value = "collegeId", required = false) Long collegeId,
             @ApiParam(value = "year 年" , required = true) @RequestParam(value = "year", required = true) String year,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return practiceStatisticsService.getStatisticPractice(orgId,colloegeId,year, PageUtil.createNoErrorPageRequest(pageNumber, pageSize));
+        return practiceStatisticsService.getStatisticPractice(orgId,collegeId,year, PageUtil.createNoErrorPageRequest(pageNumber, pageSize));
     }
 
     /**
@@ -66,8 +66,8 @@ public class PracticeStatisticsController {
     @ApiOperation(httpMethod = "GET", value = "实践学情———趋势分析", response = Void.class, notes = "实践学情———趋势分析<br><br><b>@author wangjun</b>")
     public Map<String,Object>   getPracticeTrend(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "colloegeId 学院id") @RequestParam(value = "colloegeId", required = false) Long colloegeId) {
-        return practiceStatisticsService.getPracticeTrend(orgId, colloegeId);
+            @ApiParam(value = "collegeId 学院id") @RequestParam(value = "collegeId", required = false) Long collegeId) {
+        return practiceStatisticsService.getPracticeTrend(orgId, collegeId);
     }
     /**
      * 实践学情详情———统计
@@ -80,10 +80,10 @@ public class PracticeStatisticsController {
     public Map<String,Object>   getPracticeDetail(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "className 班级名称", required = false) @RequestParam(value = "className", required = false) String className,
-            @ApiParam(value = "colloegeId 学院id", required = true) @RequestParam(value = "colloegeId", required = true) Long colloegeId,
+            @ApiParam(value = "collegeId 学院id", required = true) @RequestParam(value = "collegeId", required = true) Long collegeId,
             @ApiParam(value = "year 年" , required = true) @RequestParam(value = "year", required = true) String year,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return practiceStatisticsService.getPracticeDetail(orgId,className,colloegeId,year, pageNumber, pageSize);
+        return practiceStatisticsService.getPracticeDetail(orgId,className,collegeId,year, pageNumber, pageSize);
     }
 }
