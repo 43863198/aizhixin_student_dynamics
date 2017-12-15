@@ -124,10 +124,11 @@ public class TeachingScoreDetails extends AbstractEntity {
      */
     @Column(name = "GRADE")
     @Getter @Setter private Integer grade;
-
+    /*
+     *不及格科目学分
+     */
+    @Column(name = "FAILING_GRADE_CREDITS")
     @Getter @Setter private float failingGradeCredits;
-
-
 
 
 
