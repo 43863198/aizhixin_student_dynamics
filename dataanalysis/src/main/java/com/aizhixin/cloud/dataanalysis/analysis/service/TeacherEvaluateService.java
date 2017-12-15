@@ -125,4 +125,18 @@ public class TeacherEvaluateService {
     public void saveList(List<TeacherEvaluate> statisticsList){
         teacherEvaluateRespository.save(statisticsList);
     }
+    /**
+     * 保存评价数据
+     * @param teacherEvaluate
+     */
+    public void save(TeacherEvaluate teacherEvaluate){
+        teacherEvaluateRespository.save(teacherEvaluate);
+    }
+    /**
+     * 保存评价数据
+     * @param teacherEvaluate
+     */
+    public void update(TeacherEvaluate teacherEvaluate){
+        teacherEvaluateRespository.save(teacherEvaluate);
+    }
 }

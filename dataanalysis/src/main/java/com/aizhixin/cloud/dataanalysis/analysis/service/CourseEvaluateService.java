@@ -126,4 +126,18 @@ public class CourseEvaluateService {
     public void saveList(List<CourseEvaluate> statisticsList){
         courseEvaluateRespository.save(statisticsList);
     }
+    /**
+     * 保存评价数据
+     * @param courseEvaluate
+     */
+    public void save(CourseEvaluate courseEvaluate){
+        courseEvaluateRespository.save(courseEvaluate);
+    }
+    /**
+     * 保存评价数据
+     * @param courseEvaluate
+     */
+    public void update(CourseEvaluate courseEvaluate){
+        courseEvaluateRespository.save(courseEvaluate);
+    }
 }

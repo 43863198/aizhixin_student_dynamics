@@ -16,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -28,7 +25,7 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("/v1/generate/evaluate")
-@Api(description = "教学评价API")
+@Api(description = "教学评价测试数据API")
 public class TestAnalysisDataEvaluateController {
     @Autowired
     private CourseEvaluateService courseEvaluateService;
@@ -720,6 +717,78 @@ public class TestAnalysisDataEvaluateController {
         }
         teacherEvaluateService.saveList(list);
         Map<String, Object> result = new HashMap<String, Object>();
+        return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+    }
+    /**
+     * 增加课程评价
+     * @param
+     * @return
+     */
+    @PostMapping(value = "/addcourseevaluate", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "POST", value = "课程评价", response = Void.class, notes = "增加课程评价数据<br><br><b>@author wangjun</b>")
+    public ResponseEntity<Map<String, Object>> addCourseEvaluate(@ApiParam(value = "增加课程评价数据") @RequestBody CourseEvaluate courseEvaluate) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        try{
+            courseEvaluateService.save(courseEvaluate);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<Map<String, Object>>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+    }
+    /**
+     * 修改课程评价
+     * @param
+     * @return
+     */
+    @PostMapping(value = "/updatecourseevaluate", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "PUT", value = "课程评价", response = Void.class, notes = "修改课程评价数据<br><br><b>@author wangjun</b>")
+    public ResponseEntity<Map<String, Object>> updateCourseEvaluate(@ApiParam(value = "修改课程评价数据") @RequestBody CourseEvaluate courseEvaluate) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        try{
+            courseEvaluateService.update(courseEvaluate);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<Map<String, Object>>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+    }
+    /**
+     * 增加教师评价
+     * @param
+     * @return
+     */
+    @PostMapping(value = "/addteacherevaluate", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "POST", value = "教师评价", response = Void.class, notes = "增加教师评价数据<br><br><b>@author wangjun</b>")
+    public ResponseEntity<Map<String, Object>> addCourseEvaluate(@ApiParam(value = "增加教师评价数据") @RequestBody TeacherEvaluate teacherEvaluate) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        try{
+            teacherEvaluateService.save(teacherEvaluate);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<Map<String, Object>>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+    }
+    /**
+     * 修改教师评价
+     * @param
+     * @return
+     */
+    @PostMapping(value = "/updateteacherevaluate", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "PUT", value = "教师评价", response = Void.class, notes = "修改教师评价数据<br><br><b>@author wangjun</b>")
+    public ResponseEntity<Map<String, Object>> updateCourseEvaluate(@ApiParam(value = "修改教师评价数据") @RequestBody TeacherEvaluate teacherEvaluate) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        try{
+            teacherEvaluateService.save(teacherEvaluate);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<Map<String, Object>>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
         return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
     }
 }

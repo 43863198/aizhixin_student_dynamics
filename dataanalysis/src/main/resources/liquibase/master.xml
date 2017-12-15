@@ -37,4 +37,5 @@
     <include file="classpath:liquibase/201712013163200_update_entity_TeachingScoreStatistics.xml" relativeToChangelogFile="false"/>
 
     <include file="classpath:liquibase/201712013170400_update_entity_TeachingScoreStatistics.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/201712151013400_update_entity_TeachingScoreStatistics.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
