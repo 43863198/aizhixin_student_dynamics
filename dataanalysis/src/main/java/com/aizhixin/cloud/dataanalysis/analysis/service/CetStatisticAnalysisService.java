@@ -4,11 +4,14 @@ import com.aizhixin.cloud.dataanalysis.alertinformation.dto.CollegeWarningInfoDT
 import com.aizhixin.cloud.dataanalysis.analysis.dto.CetStatisticDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.CollegeCetStatisticDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.TrendDTO;
+import com.aizhixin.cloud.dataanalysis.analysis.entity.CetScoreStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolStatistics;
+import com.aizhixin.cloud.dataanalysis.analysis.respository.CetScoreStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -36,6 +40,21 @@ public class CetStatisticAnalysisService {
     private EntityManager em;
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private CetScoreStatisticsRespository cetScoreStatisticsRespository;
+    
+    public void saveList(List<CetScoreStatistics> cetScoreStatisticsList){
+    	cetScoreStatisticsRespository.save(cetScoreStatisticsList);
+    }
+    
+    public void save(CetScoreStatistics cetScoreStatistics){
+    	cetScoreStatisticsRespository.save(cetScoreStatistics);
+    }
+    
+    public CetScoreStatistics findById(String id){
+    	return cetScoreStatisticsRespository.findOne(id);
+    }
+    
 
     public Map<String,Object> getStatistic(Long orgId, String grade, Integer semester){
         Map<String,Object> result = new HashMap<>();

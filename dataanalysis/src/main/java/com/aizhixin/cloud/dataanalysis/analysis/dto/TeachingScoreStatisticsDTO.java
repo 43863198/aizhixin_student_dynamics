@@ -31,9 +31,9 @@ public class TeachingScoreStatisticsDTO {
     @ApiModelProperty(value = "开课数量", required = false)
     private long curriculumNum;
 
-//    public TeachingScoreStatisticsDTO(String colloegeName, Long colloegeId, Long studentNum, Long failPassStuNum, Double avgGPA, Double avgScore) {
-//        this.colloegeName = colloegeName;
-//        this.colloegeId = colloegeId;
+//    public TeachingScoreStatisticsDTO(String collegeName, Long collegeId, Long studentNum, Long failPassStuNum, Double avgGPA, Double avgScore) {
+//        this.collegeName = collegeName;
+//        this.collegeId = collegeId;
 //        this.studentNum = studentNum;
 //        this.failPassStuNum = failPassStuNum;
 //        this.avgGPA = avgGPA;
