@@ -15,9 +15,9 @@ import lombok.*;
 @NoArgsConstructor
 public class TeachingScoreStatisticsDTO {
     @ApiModelProperty(value = "学院名称", required = false)
-    private String colloegeName;
+    private String collegeName;
     @ApiModelProperty(value = "学院id", required = false)
-    private Long colloegeId;
+    private Long collegeId;
     @ApiModelProperty(value = "学生人数", required = false)
     private Integer studentNum;
     @ApiModelProperty(value = "不及格人数", required = false)
@@ -40,9 +40,10 @@ public class TeachingScoreStatisticsDTO {
 //        this.avgScore = avgScore;
 //    }
 
-    public TeachingScoreStatisticsDTO(String colloegeName, Long colloegeId, Integer studentNum, Integer failPassStuNum, Double avgGPA, Double avgScore) {
-        this.colloegeName = colloegeName;
-        this.colloegeId = colloegeId;
+
+    public TeachingScoreStatisticsDTO(String collegeName, Long collegeId, Integer studentNum, Integer failPassStuNum, Double avgGPA, Double avgScore) {
+        this.collegeName = collegeName;
+        this.collegeId = collegeId;
         this.studentNum = studentNum;
         this.failPassStuNum = failPassStuNum;
         this.avgGPA = avgGPA;
