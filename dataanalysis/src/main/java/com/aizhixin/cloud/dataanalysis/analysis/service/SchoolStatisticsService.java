@@ -211,8 +211,8 @@ public class SchoolStatisticsService {
                         condition.put("orgId", orgId);
                     }
                     if (null != collegeId) {
-                        sql.append(" and COLLOEGE_ID = :colloegeId");
-                        condition.put("colloegeId", collegeId);
+                        sql.append(" and COLLEGE_ID = :collegeId");
+                        condition.put("collegeId", collegeId);
                     }
                     sql.append(" GROUP BY TEACHER_YEAR");
                     Query sq = em.createNativeQuery(sql.toString());
@@ -240,8 +240,8 @@ public class SchoolStatisticsService {
                         condition.put("orgId", orgId);
                     }
                     if (null != collegeId) {
-                        sql.append(" and COLLOEGE_ID = :colloegeId");
-                        condition.put("colloegeId", collegeId);
+                        sql.append(" and COLLEGE_ID = :collegeId");
+                        condition.put("collegeId", collegeId);
                     }
                     sql.append(" GROUP BY TEACHER_YEAR");
                     Query sq = em.createNativeQuery(sql.toString());
@@ -269,8 +269,8 @@ public class SchoolStatisticsService {
                         condition.put("orgId", orgId);
                     }
                     if (null != collegeId) {
-                        sql.append(" and COLLOEGE_ID = :colloegeId");
-                        condition.put("colloegeId", collegeId);
+                        sql.append(" and COLLEGE_ID = :collegeId");
+                        condition.put("collegeId", collegeId);
                     }
                     sql.append(" GROUP BY TEACHER_YEAR");
                     Query sq = em.createNativeQuery(sql.toString());
@@ -298,8 +298,8 @@ public class SchoolStatisticsService {
                         condition.put("orgId", orgId);
                     }
                     if (null != collegeId) {
-                        sql.append(" and COLLOEGE_ID = :colloegeId");
-                        condition.put("colloegeId", collegeId);
+                        sql.append(" and COLLEGE_ID = :collegeId");
+                        condition.put("collegeId", collegeId);
                     }
                     sql.append(" GROUP BY TEACHER_YEAR");
                     Query sq = em.createNativeQuery(sql.toString());
@@ -327,8 +327,8 @@ public class SchoolStatisticsService {
                         condition.put("orgId", orgId);
                     }
                     if (null != collegeId) {
-                        sql.append(" and COLLOEGE_ID = :colloegeId");
-                        condition.put("colloegeId", collegeId);
+                        sql.append(" and COLLEGE_ID = :collegeId");
+                        condition.put("collegeId", collegeId);
                     }
                     sql.append(" GROUP BY TEACHER_YEAR");
                     Query sq = em.createNativeQuery(sql.toString());

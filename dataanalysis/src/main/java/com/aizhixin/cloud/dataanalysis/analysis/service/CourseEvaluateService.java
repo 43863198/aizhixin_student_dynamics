@@ -33,7 +33,7 @@ public class CourseEvaluateService {
     @Autowired
     private CourseEvaluateRespository courseEvaluateRespository;
 
-    public PageData<CourseEvaluateDTO> getCourseEvaluate(long orgId, String semesterId,String grade,String collegeIds, String courseName, String sort, Integer pageSize, Integer pageNumber) {
+    public PageData<CourseEvaluateDTO> getCourseEvaluate(long orgId, String semesterId,String teacherYear,String collegeIds, String courseName, String sort, Integer pageSize, Integer pageNumber) {
         Map<String, Object> result = new HashMap<>();
         List<SortDTO> sortDTOS = new ArrayList();
         RowMapper<CourseEvaluateDTO> rowMapper = new RowMapper<CourseEvaluateDTO>() {
@@ -52,9 +52,9 @@ public class CourseEvaluateService {
             querySql += " and SEMESTER=" + semesterId + " ";
             countSql += " and SEMESTER=" + semesterId + " ";
         }
-        if (!StringUtils.isEmpty(grade)) {
-            querySql += " and TEACHER_YEAR=" + grade + " ";
-            countSql += " and TEACHER_YEAR=" + grade + " ";
+        if (!StringUtils.isEmpty(teacherYear)) {
+            querySql += " and TEACHER_YEAR=" + teacherYear + " ";
+            countSql += " and TEACHER_YEAR=" + teacherYear + " ";
         }
         if (!StringUtils.isEmpty(collegeIds)) {
             querySql += " and COLLEGE_ID IN (" + collegeIds + ") ";
@@ -82,7 +82,7 @@ public class CourseEvaluateService {
         return p;
     }
 
-    public PageData<CourseEvaluateDetailDTO> getCourseEvaluateDetail(long orgId, String semesterId,String grade, String courseCode, String name,Integer pageNumber,Integer pageSize) {
+    public PageData<CourseEvaluateDetailDTO> getCourseEvaluateDetail(long orgId, String semesterId,String teacherYear, String courseCode, String name,Integer pageNumber,Integer pageSize) {
         RowMapper<CourseEvaluateDetailDTO> rowMapper=new RowMapper<CourseEvaluateDetailDTO>() {
             @Override
             public CourseEvaluateDetailDTO mapRow(ResultSet rs, int i) throws SQLException {
@@ -99,9 +99,9 @@ public class CourseEvaluateService {
             querySql += " and SEMESTER=" + semesterId + " ";
             countSql += " and SEMESTER=" + semesterId + " ";
         }
-        if (!StringUtils.isEmpty(grade)) {
-            querySql += " and TEACHER_YEAR=" + grade + " ";
-            countSql += " and TEACHER_YEAR=" + grade + " ";
+        if (!StringUtils.isEmpty(teacherYear)) {
+            querySql += " and TEACHER_YEAR=" + teacherYear + " ";
+            countSql += " and TEACHER_YEAR=" + teacherYear + " ";
         }
         if (!StringUtils.isEmpty(courseCode)) {
             querySql += " and COURSE_CODE='" + courseCode + "' ";

@@ -74,7 +74,7 @@ public class PracticeStatisticsService {
                 condition.put("teacherYear", year);
             }
             if (null != collegeId) {
-                sql.append(" and ss.COLLOEGE_ID = :collegeId");
+                sql.append(" and ss.COLLEGE_ID = :collegeId");
                 condition.put("collegeId", collegeId);
             }
             Query sq = em.createNativeQuery(sql.toString());
@@ -136,7 +136,7 @@ public class PracticeStatisticsService {
 
             }
             if(null != collegeId){
-                sql.append(" and ss.COLLOEGE_ID = :colloegeId+"+collegeId);
+                sql.append(" and ss.COLLEGE_ID = :collegeId+"+collegeId);
                 sql.append(" and ss.STATISTICS_TYPE = 2");
             }else {
                 sql.append(" and ss.STATISTICS_TYPE = 1");
@@ -169,8 +169,8 @@ public class PracticeStatisticsService {
         String querySql = "SELECT CLASS_ID,CLASS_NAME,PRACTICE_STUDENT_NUM,PRACTICE_COMPANY_NUM,TASK_NUM,TASK_PASS_NUM FROM `t_practice_statistics` where DELETE_FLAG ="+ DataValidity.VALID.getState()+" and STATISTICS_TYPE=3 and ORG_ID="+orgId+" ";
         String countSql = "SELECT count(1) FROM `t_practice_statistics` where DELETE_FLAG ="+DataValidity.VALID.getState()+" and STATISTICS_TYPE=3 and ORG_ID="+orgId+" ";
         if(null!=collegeId){
-            querySql+=" and COLLOEGE_ID="+collegeId+" ";
-            countSql+=" and COLLOEGE_ID="+collegeId+" ";
+            querySql+=" and COLLEGE_ID="+collegeId+" ";
+            countSql+=" and COLLEGE_ID="+collegeId+" ";
         }
         if(!StringUtils.isEmpty(className)){
             querySql+=" and CLASS_NAME like '%"+className+"%' ";

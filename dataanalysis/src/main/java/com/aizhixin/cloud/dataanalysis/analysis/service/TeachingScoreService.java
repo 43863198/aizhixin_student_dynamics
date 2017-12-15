@@ -55,7 +55,7 @@ public class TeachingScoreService {
         List<CollegeTeachingAchievementDTO> collegeTeachingAchievementDTOList = new ArrayList<>();
         try {
             StringBuilder cql = new StringBuilder("SELECT STUDENT_NUM,AVG_GPA,FAIL_PASS_STU_NUM,CURRICULUM_NUM,AVG_SCORE, max(CREATED_DATE) FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
-            StringBuilder sql = new StringBuilder("SELECT COLLOEGE_NAME,COLLOEGE_ID,STUDENT_NUM,AVG_GPA,FAIL_PASS_STU_NUM,CURRICULUM_NUM,AVG_SCORE FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
+            StringBuilder sql = new StringBuilder("SELECT COLLEGE_NAME,COLLEGE_ID,STUDENT_NUM,AVG_GPA,FAIL_PASS_STU_NUM,CURRICULUM_NUM,AVG_SCORE FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
             if (null != orgId) {
                 cql.append(" and ORG_ID = :orgId");
                 sql.append(" and ORG_ID = :orgId");
@@ -158,7 +158,7 @@ public class TeachingScoreService {
                 condition.put("orgId",orgId);
             }
             if(null!=collegeId){
-                sql.append(" and COLLOEGE_ID =:collegeId ");
+                sql.append(" and COLLEGE_ID =:collegeId ");
                 condition.put("collegeId",collegeId);
             }
             Query sq = em.createNativeQuery(sql.toString());
