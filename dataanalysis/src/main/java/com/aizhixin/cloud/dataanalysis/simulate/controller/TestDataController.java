@@ -329,16 +329,16 @@ public class TestDataController {
 			score.setOrgId(orgId);
 			score.setProfessionalId(1L);
 			score.setProfessionalName("测试专业");
-			score.setSchoolYear(2017);
-			score.setGrade("2017");
-			score.setSemester(1);
+			score.setSchoolYear(2016);
+			score.setGrade("2016");
+			score.setSemester(2);
 			score.setUserName(stuName);
 			score.setScheduleId(UUID.randomUUID().toString());
 			score.setCourseName("英语四级");
 			score.setCourseType(ScoreConstant.REQUIRED_COURSE);
 			score.setExamTime(DateUtil.getMonday(new Date()));
 			score.setExamType(ScoreConstant.EXAM_TYPE_COURSE);
-			score.setTotalScore( new BigDecimal(String.valueOf((Float.parseFloat(num)*10)+50)).setScale(2,
+			score.setTotalScore( new BigDecimal(String.valueOf((Float.parseFloat(num)*10)+60)).setScale(2,
 					RoundingMode.HALF_UP).toString());
 			score.setScoreResultType("百分制");
 			score.setCredit(num);
@@ -356,9 +356,9 @@ public class TestDataController {
 			score.setOrgId(orgId);
 			score.setProfessionalId(1L);
 			score.setProfessionalName("测试专业");
-			score.setSchoolYear(2016);
-			score.setGrade("2016");
-			score.setSemester(2);
+			score.setSchoolYear(2017);
+			score.setGrade("2017");
+			score.setSemester(1);
 			score.setUserName(stuName);
 			score.setScheduleId(UUID.randomUUID().toString());
 			score.setCourseName("英语四级");

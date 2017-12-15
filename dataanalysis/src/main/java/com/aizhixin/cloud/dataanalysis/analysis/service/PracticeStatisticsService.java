@@ -1,12 +1,15 @@
 package com.aizhixin.cloud.dataanalysis.analysis.service;
 
 import com.aizhixin.cloud.dataanalysis.analysis.dto.PracticeStaticsDTO;
+import com.aizhixin.cloud.dataanalysis.analysis.entity.CetScoreStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.PracticeStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.PracticeStaticsRespository;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.util.PageJdbcUtil;
+
 import liquibase.util.StringUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -44,6 +48,21 @@ public class PracticeStatisticsService {
     private EntityManager em;
     @Autowired
     private PageJdbcUtil pageJdbcUtil;
+    
+    public void saveList(List<PracticeStatistics> practiceStatisticsList){
+    	practiceStaticsRespository.save(practiceStatisticsList);
+    }
+    
+    public void save(PracticeStatistics practiceStatistics){
+    	practiceStaticsRespository.save(practiceStatistics);
+    }
+    
+    public PracticeStatistics findById(String id){
+    	return practiceStaticsRespository.findOne(id);
+    }
+    
+    
+    
     public Map<String,Object> getStatistics(Long orgId){
 
 
