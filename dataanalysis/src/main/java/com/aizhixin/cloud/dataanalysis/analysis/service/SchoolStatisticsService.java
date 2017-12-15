@@ -181,7 +181,7 @@ public class SchoolStatisticsService {
         int semester= Integer.valueOf(currentGradeMap.get("SEMESTER")+"");
         PracticeStaticsDTO practiceStaticsDTO = practiceStaticsRespository.getPracticeStatics(orgId,teacherYear,semester);
 
-        SchoolProfileDTO schoolProfileDTO = schoolStatisticsRespository.getSchoolPersonStatistics(orgId,teacherYear);
+        SchoolProfileDTO schoolProfileDTO = schoolStatisticsRespository.getSchoolPersonStatistics(orgId,teacherYear+"");
         schoolProfileDTO.setOutSchoolStudent(Long.valueOf(practiceStaticsDTO.getPracticeStudentNum()));
         schoolProfileDTO.setInSchoolStudent(Long.valueOf(schoolProfileDTO.getAllStudent()) - Long.valueOf(schoolProfileDTO.getOutSchoolStudent()));
         return schoolProfileDTO;
@@ -197,7 +197,7 @@ public class SchoolStatisticsService {
         return schoolStatisticsRespository.getNewStudentStatistics(orgId);
     }
 
-    public Map<String, Object> getTrend(Long orgId, Long colloegeId, int typeIndex) {
+    public Map<String, Object> getTrend(Long orgId, Long collegeId, int typeIndex) {
         Map<String, Object> result = new HashMap<>();
         List<TrendDTO> trendDTOList = new ArrayList<>();
         Map<String, Object> condition = new HashMap<>();
@@ -210,9 +210,9 @@ public class SchoolStatisticsService {
                         sql.append(" and ORG_ID = :orgId");
                         condition.put("orgId", orgId);
                     }
-                    if (null != colloegeId) {
+                    if (null != collegeId) {
                         sql.append(" and COLLOEGE_ID = :colloegeId");
-                        condition.put("colloegeId", colloegeId);
+                        condition.put("colloegeId", collegeId);
                     }
                     sql.append(" GROUP BY TEACHER_YEAR");
                     Query sq = em.createNativeQuery(sql.toString());
@@ -239,9 +239,9 @@ public class SchoolStatisticsService {
                         sql.append(" and ORG_ID = :orgId");
                         condition.put("orgId", orgId);
                     }
-                    if (null != colloegeId) {
+                    if (null != collegeId) {
                         sql.append(" and COLLOEGE_ID = :colloegeId");
-                        condition.put("colloegeId", colloegeId);
+                        condition.put("colloegeId", collegeId);
                     }
                     sql.append(" GROUP BY TEACHER_YEAR");
                     Query sq = em.createNativeQuery(sql.toString());
@@ -268,9 +268,9 @@ public class SchoolStatisticsService {
                         sql.append(" and ORG_ID = :orgId");
                         condition.put("orgId", orgId);
                     }
-                    if (null != colloegeId) {
+                    if (null != collegeId) {
                         sql.append(" and COLLOEGE_ID = :colloegeId");
-                        condition.put("colloegeId", colloegeId);
+                        condition.put("colloegeId", collegeId);
                     }
                     sql.append(" GROUP BY TEACHER_YEAR");
                     Query sq = em.createNativeQuery(sql.toString());
@@ -297,9 +297,9 @@ public class SchoolStatisticsService {
                         sql.append(" and ORG_ID = :orgId");
                         condition.put("orgId", orgId);
                     }
-                    if (null != colloegeId) {
+                    if (null != collegeId) {
                         sql.append(" and COLLOEGE_ID = :colloegeId");
-                        condition.put("colloegeId", colloegeId);
+                        condition.put("colloegeId", collegeId);
                     }
                     sql.append(" GROUP BY TEACHER_YEAR");
                     Query sq = em.createNativeQuery(sql.toString());
@@ -326,9 +326,9 @@ public class SchoolStatisticsService {
                         sql.append(" and ORG_ID = :orgId");
                         condition.put("orgId", orgId);
                     }
-                    if (null != colloegeId) {
+                    if (null != collegeId) {
                         sql.append(" and COLLOEGE_ID = :colloegeId");
-                        condition.put("colloegeId", colloegeId);
+                        condition.put("colloegeId", collegeId);
                     }
                     sql.append(" GROUP BY TEACHER_YEAR");
                     Query sq = em.createNativeQuery(sql.toString());
@@ -387,7 +387,7 @@ public class SchoolStatisticsService {
         Map currentGradeMap= jdbcTemplate.queryForMap(sql);
         int teacherYear=Integer.valueOf(currentGradeMap.get("TEACHER_YEAR")+"");
         int semester= Integer.valueOf(currentGradeMap.get("SEMESTER")+"");
-        return cetScoreStatisticsRespository.getEctStatics(orgId,teacherYear,semester);
+        return cetScoreStatisticsRespository.getEctStatics(orgId,teacherYear+"",semester);
     }
     /**
      * 教学成绩首页统计查询
