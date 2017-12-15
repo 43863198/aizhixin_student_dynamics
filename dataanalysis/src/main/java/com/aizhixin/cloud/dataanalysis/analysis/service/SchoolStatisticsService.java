@@ -53,6 +53,7 @@ public class SchoolStatisticsService {
     private TeachingScoreStatisticsRespository teachingScoreStatisticsRespository;
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    @Autowired
     private MongoTemplate mongoTemplate;
 
     /**
