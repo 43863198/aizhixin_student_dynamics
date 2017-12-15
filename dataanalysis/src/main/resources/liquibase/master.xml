@@ -35,6 +35,12 @@
     <include file="classpath:liquibase/20171213162145_update_entity_TeacherEvaluate.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171213162445_update_entity_TeachingScoreDetails.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/201712013163200_update_entity_TeachingScoreStatistics.xml" relativeToChangelogFile="false"/>
-
+    <include file="classpath:liquibase/20171214163200_update_entity_TeachingScoreDetails.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/201712013170400_update_entity_TeachingScoreStatistics.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/201712151013400_update_entity_TeachingScoreStatistics.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20171215102745_update_entity_CetScoreStatistics.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/201712151032945_update_entity_PracticeStatistics.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20171215103545_update_entity_SchoolStatistics.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/201712154112400_update_entity_ModifyTeacherYearType.xml" relativeToChangelogFile="false"/>
+
 </databaseChangeLog>

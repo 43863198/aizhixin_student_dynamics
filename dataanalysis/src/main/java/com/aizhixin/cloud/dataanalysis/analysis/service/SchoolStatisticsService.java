@@ -53,6 +53,7 @@ public class SchoolStatisticsService {
     private TeachingScoreStatisticsRespository teachingScoreStatisticsRespository;
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    @Autowired
     private MongoTemplate mongoTemplate;
 
     /**
@@ -72,7 +73,7 @@ public class SchoolStatisticsService {
     }
     
     
-    public Map<String, Object> getStatisticNewstudents(Long orgId, String year) {
+    public Map<String, Object> getStatisticNewstudents(Long orgId, Integer teacherYear) {
         Map<String, Object> result = new HashMap<>();
         NewStudentProfileDTO newStudentProfileDTO = new NewStudentProfileDTO();
 //        PageData<SchoolStatistics> p = new PageData<>();
@@ -89,9 +90,9 @@ public class SchoolStatisticsService {
                 sql.append(" and ss.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
-            if (!StringUtils.isEmpty(year)) {
+            if (null!=teacherYear) {
                 sql.append(" and ss.TEACHER_YEAR = :teacherYear");
-                condition.put("teacherYear", year);
+                condition.put("teacherYear", teacherYear);
             }
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
@@ -127,7 +128,7 @@ public class SchoolStatisticsService {
             newStudentProfileDTO.setAlreadyPay(alreadyPay);
             newStudentProfileDTO.setConvenienceChannel(convenienceChannel);
             newStudentProfileDTO.setStatisticalTime(time);//后续要改为统计时间
-            List<SchoolStatistics> schoolStatisticsList = schoolStatisticsRespository.findDataByOrgIdAndTeacherYear(orgId, year, DataValidity.VALID.getState());
+            List<SchoolStatistics> schoolStatisticsList = schoolStatisticsRespository.findDataByOrgIdAndTeacherYear(orgId, teacherYear, DataValidity.VALID.getState());
 //            Page<SchoolStatistics> schoolStatisticsPage = schoolStatisticsRespository.findPageDataByOrgIdAndTeacherYear(pageable, orgId, year, DataValidity.VALID.getState());
 //            p.setData(schoolStatisticsPage.getContent());
 //            p.getPage().setTotalElements(count);
@@ -181,7 +182,7 @@ public class SchoolStatisticsService {
         int semester= Integer.valueOf(currentGradeMap.get("SEMESTER")+"");
         PracticeStaticsDTO practiceStaticsDTO = practiceStaticsRespository.getPracticeStatics(orgId,teacherYear,semester);
 
-        SchoolProfileDTO schoolProfileDTO = schoolStatisticsRespository.getSchoolPersonStatistics(orgId,teacherYear);
+        SchoolProfileDTO schoolProfileDTO = schoolStatisticsRespository.getSchoolPersonStatistics(orgId,teacherYear+"");
         schoolProfileDTO.setOutSchoolStudent(Long.valueOf(practiceStaticsDTO.getPracticeStudentNum()));
         schoolProfileDTO.setInSchoolStudent(Long.valueOf(schoolProfileDTO.getAllStudent()) - Long.valueOf(schoolProfileDTO.getOutSchoolStudent()));
         return schoolProfileDTO;
@@ -211,8 +212,8 @@ public class SchoolStatisticsService {
                         condition.put("orgId", orgId);
                     }
                     if (null != collegeId) {
-                        sql.append(" and COLLOEGE_ID = :colloegeId");
-                        condition.put("colloegeId", collegeId);
+                        sql.append(" and COLLEGE_ID = :collegeId");
+                        condition.put("collegeId", collegeId);
                     }
                     sql.append(" GROUP BY TEACHER_YEAR");
                     Query sq = em.createNativeQuery(sql.toString());
@@ -240,8 +241,8 @@ public class SchoolStatisticsService {
                         condition.put("orgId", orgId);
                     }
                     if (null != collegeId) {
-                        sql.append(" and COLLOEGE_ID = :colloegeId");
-                        condition.put("colloegeId", collegeId);
+                        sql.append(" and COLLEGE_ID = :collegeId");
+                        condition.put("collegeId", collegeId);
                     }
                     sql.append(" GROUP BY TEACHER_YEAR");
                     Query sq = em.createNativeQuery(sql.toString());
@@ -269,8 +270,8 @@ public class SchoolStatisticsService {
                         condition.put("orgId", orgId);
                     }
                     if (null != collegeId) {
-                        sql.append(" and COLLOEGE_ID = :colloegeId");
-                        condition.put("colloegeId", collegeId);
+                        sql.append(" and COLLEGE_ID = :collegeId");
+                        condition.put("collegeId", collegeId);
                     }
                     sql.append(" GROUP BY TEACHER_YEAR");
                     Query sq = em.createNativeQuery(sql.toString());
@@ -298,8 +299,8 @@ public class SchoolStatisticsService {
                         condition.put("orgId", orgId);
                     }
                     if (null != collegeId) {
-                        sql.append(" and COLLOEGE_ID = :colloegeId");
-                        condition.put("colloegeId", collegeId);
+                        sql.append(" and COLLEGE_ID = :collegeId");
+                        condition.put("collegeId", collegeId);
                     }
                     sql.append(" GROUP BY TEACHER_YEAR");
                     Query sq = em.createNativeQuery(sql.toString());
@@ -327,8 +328,8 @@ public class SchoolStatisticsService {
                         condition.put("orgId", orgId);
                     }
                     if (null != collegeId) {
-                        sql.append(" and COLLOEGE_ID = :colloegeId");
-                        condition.put("colloegeId", collegeId);
+                        sql.append(" and COLLEGE_ID = :collegeId");
+                        condition.put("collegeId", collegeId);
                     }
                     sql.append(" GROUP BY TEACHER_YEAR");
                     Query sq = em.createNativeQuery(sql.toString());
@@ -387,7 +388,7 @@ public class SchoolStatisticsService {
         Map currentGradeMap= jdbcTemplate.queryForMap(sql);
         int teacherYear=Integer.valueOf(currentGradeMap.get("TEACHER_YEAR")+"");
         int semester= Integer.valueOf(currentGradeMap.get("SEMESTER")+"");
-        return cetScoreStatisticsRespository.getEctStatics(orgId,teacherYear,semester);
+        return cetScoreStatisticsRespository.getEctStatics(orgId,teacherYear+"",semester);
     }
     /**
      * 教学成绩首页统计查询

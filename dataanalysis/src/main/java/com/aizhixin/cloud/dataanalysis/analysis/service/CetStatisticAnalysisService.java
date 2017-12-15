@@ -56,8 +56,8 @@ public class CetStatisticAnalysisService {
     }
     
 
-    public Map<String,Object> getStatistic(Long orgId, String grade, Integer semester){
-        Map<String,Object> result = new HashMap<>();
+    public Map<String, Object> getStatistic(Long orgId, Integer teacherYear, Integer semester) {
+        Map<String, Object> result = new HashMap<>();
 //        PageData<CollegeCetStatisticDTO> p = new PageData<>();
         CetStatisticDTO cetStatisticDTO = new CetStatisticDTO();
         Map<String, Object> condition = new HashMap<>();
@@ -65,16 +65,16 @@ public class CetStatisticAnalysisService {
         Long count = 0L;
         try {
             StringBuilder cql = new StringBuilder("SELECT COUNT(1) AS count, SUM(cet.CET_FORE_JOIN_NUM) as sumc4, SUM(cet.CET_FORE_PASS_NUM) as sump4, SUM(cet.CET_SIX_JOIN_NUM) as sumc6, SUM(cet.CET_SIX_PASS_NUM) as sump6, max(cet.CREATED_DATE) FROM T_CET_STATISTICS cet WHERE 1 = 1");
-            StringBuilder sql = new StringBuilder("SELECT SUM(cet.CET_FORE_JOIN_NUM) as sumc4, SUM(cet.CET_FORE_PASS_NUM) as sump4, SUM(cet.CET_SIX_JOIN_NUM) as sumc6, SUM(cet.CET_SIX_PASS_NUM) as sump6, COLLOEGE_NAME, COLLOEGE_ID FROM T_CET_STATISTICS cet WHERE 1 = 1");
+            StringBuilder sql = new StringBuilder("SELECT SUM(cet.CET_FORE_JOIN_NUM) as sumc4, SUM(cet.CET_FORE_PASS_NUM) as sump4, SUM(cet.CET_SIX_JOIN_NUM) as sumc6, SUM(cet.CET_SIX_PASS_NUM) as sump6, COLLEGE_NAME, COLLEGE_ID FROM T_CET_STATISTICS cet WHERE 1 = 1");
             if (null != orgId) {
                 cql.append(" and cet.ORG_ID = :orgId");
                 sql.append(" and cet.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
-            if (null != grade) {
-                cql.append(" and cet.TEACHER_YEAR = :grade");
-                sql.append(" and cet.TEACHER_YEAR = :grade");
-                condition.put("grade", grade);
+            if (null != teacherYear) {
+                cql.append(" and cet.TEACHER_YEAR = :teacherYear");
+                sql.append(" and cet.TEACHER_YEAR = :teacherYear");
+                condition.put("teacherYear", teacherYear);
             }
             if (null != semester) {
                 cql.append(" and cet.SEMESTER = :semester");
@@ -110,7 +110,7 @@ public class CetStatisticAnalysisService {
                     pass6 = Integer.valueOf(String.valueOf(cres[4]));
                 }
                 if (null != cres[5]) {
-                    time =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(String.valueOf(cres[5]));
+                    time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(String.valueOf(cres[5]));
                 }
                 cetStatisticDTO.setCetForeJoinNum(count4);
                 cetStatisticDTO.setCetForePassNum(pass4);
@@ -119,7 +119,7 @@ public class CetStatisticAnalysisService {
                 cetStatisticDTO.setCetSixPassNum(pass6);
                 cetStatisticDTO.setCetSixPassRate(ProportionUtil.accuracy(pass6 * 1.0, count6 * 1.0, 2));
                 cetStatisticDTO.setStatisticalTime(time);
-                if(count>0){
+                if (count > 0) {
 //                    sq.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
 //                    sq.setMaxResults(pageable.getPageSize());
                     List<Object> rd = sq.getResultList();
@@ -127,26 +127,26 @@ public class CetStatisticAnalysisService {
                         for (Object obj : rd) {
                             Object[] d = (Object[]) obj;
                             int ccount4 = 0;
-                            int ccount6= 0;
+                            int ccount6 = 0;
                             int cpass4 = 0;
                             int cpass6 = 0;
                             CollegeCetStatisticDTO collegeCetStatisticDTO = new CollegeCetStatisticDTO();
                             if (null != d[0]) {
                                 ccount4 = Integer.valueOf(String.valueOf(d[0]));
                             }
-                            if(null!=d[1]){
+                            if (null != d[1]) {
                                 ccount6 = Integer.valueOf(String.valueOf(d[1]));
                             }
-                            if(null!=d[2]){
+                            if (null != d[2]) {
                                 cpass4 = Integer.valueOf(String.valueOf(d[2]));
                             }
-                            if(null!=d[3]){
+                            if (null != d[3]) {
                                 cpass6 = Integer.valueOf(String.valueOf(d[3]));
                             }
-                            if(null!=d[4]) {
+                            if (null != d[4]) {
                                 collegeCetStatisticDTO.setCollegeName(String.valueOf(d[4]));
                             }
-                            if(null!=d[5]){
+                            if (null != d[5]) {
                                 collegeCetStatisticDTO.setCollegeId(Long.valueOf(String.valueOf(d[5])));
                             }
                             collegeCetStatisticDTO.setCetForeJoinNum(ccount4);
@@ -165,21 +165,21 @@ public class CetStatisticAnalysisService {
 //            p.getPage().setPageNumber(pageable.getPageNumber());
 //            p.getPage().setTotalPages((int)Math.ceil(count/pageable.getPageSize())+1);
 //            p.getPage().setPageSize(pageable.getPageSize());
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
-            result.put("message","获取英语四六级统计信息失败！");
+            result.put("message", "获取英语四六级统计信息失败！");
             return result;
         }
-        result.put("success",true);
-        result.put("cetStatisticDTO",cetStatisticDTO);
-        result.put("dataList",collegeCetStatisticDTOList);
+        result.put("success", true);
+        result.put("cetStatisticDTO", cetStatisticDTO);
+        result.put("dataList", collegeCetStatisticDTOList);
         return result;
     }
 
 
-    public Map<String,Object> getCetTrendAnalysis(Long orgId, Long collegeId, Integer type){
-        Map<String,Object> result = new HashMap<>();
+    public Map<String, Object> getCetTrendAnalysis(Long orgId, Long collegeId, Integer type) {
+        Map<String, Object> result = new HashMap<>();
         List<TrendDTO> trendDTOList = new ArrayList<>();
         Map<String, Object> condition = new HashMap<>();
         try {
@@ -193,7 +193,7 @@ public class CetStatisticAnalysisService {
                 condition.put("orgId", orgId);
             }
             if (null != collegeId) {
-                sql.append(" and cet.COLLOEGE_ID = :collegeId");
+                sql.append(" and cet.COLLEGE_ID = :collegeId");
                 condition.put("collegeId", collegeId);
             }
             sql.append(" group by cet.TEACHER_YEAR");
@@ -249,13 +249,13 @@ public class CetStatisticAnalysisService {
 
                 }
             }
-        }catch (Exception e){
-            result.put("success",false);
-            result.put("message","获取统计分析数据失败！");
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", "获取统计分析数据失败！");
             return result;
         }
-        result.put("success",true);
-        result.put("data",trendDTOList);
+        result.put("success", true);
+        result.put("data", trendDTOList);
         return result;
     }
 
@@ -275,27 +275,36 @@ public class CetStatisticAnalysisService {
             //条件
             Criteria criteria = Criteria.where("orgId").is(orgId);
             if (null != collegeId) {
-                String[] cid = collegeId.split(",");
                 Set<Long> collegeIds = new HashSet<>();
-                for (String d : cid) {
-                    collegeIds.add(Long.valueOf(d));
+                if (grade.indexOf(",") != -1) {
+                    String[] cid = collegeId.split(",");
+                    for (String d : cid) {
+                        collegeIds.add(Long.valueOf(d));
+                    }
+                } else {
+                    collegeIds.add(Long.valueOf(collegeId));
                 }
+
                 criteria.and("collegeId").in(collegeIds);
             }
             if (null != grade) {
-                String[] td = grade.split(",");
                 List<String> tds = new ArrayList<>();
-                for (String d : td) {
-                    tds.add(d);
+                if (grade.indexOf(",") != -1) {
+                    String[] td = grade.split(",");
+                    for (String d : td) {
+                        tds.add(d);
+                    }
+                }else {
+                    tds.add(grade);
                 }
                 criteria.and("grade").in(tds);
             }
             if (null != type) {
-                if(type==4) {
+                if (type == 4) {
                     criteria.and("examType").is("cet4");
-                }else if(type==6){
+                } else if (type == 6) {
                     criteria.and("examType").is("cet6");
-                }else {
+                } else {
                     criteria.orOperator(criteria.where("examType").is("cet4"), criteria.where("examType").is("cet6"));
                 }
             }
@@ -304,11 +313,11 @@ public class CetStatisticAnalysisService {
             total = mongoTemplate.count(query, StudentRegister.class);
             // mongoTemplate.find 查询结果集
             items = mongoTemplate.find(query.with(pageable), Score.class);
-        }catch (Exception e){
+        } catch (Exception e) {
             result.put("success", false);
-            result.put("message","获取数据异常！");
+            result.put("message", "获取数据异常！");
         }
-        p.getPage().setTotalPages((int)Math.ceil(total/page.getPageSize())+1);
+        p.getPage().setTotalPages((int) Math.ceil(total / page.getPageSize()) + 1);
         p.getPage().setPageNumber(page.getPageNumber());
         p.getPage().setPageSize(page.getPageSize());
         p.getPage().setTotalElements(total);

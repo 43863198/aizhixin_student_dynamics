@@ -26,12 +26,12 @@ public class PracticeStatistics extends AbstractEntity {
     /*
    * 学院名称
    */
-    @Column(name = "COLLOEGE_NAME")
+    @Column(name = "COLLEGE_NAME")
     @Getter @Setter private String collegeName;
     /*
     * 学院id
     */
-    @Column(name = "COLLOEGE_ID")
+    @Column(name = "COLLEGE_ID")
     @Getter @Setter private Long collegeId;
 
     /*

@@ -868,7 +868,7 @@ public class AlertWarningInformationService {
 				if(null!=alertWarningInformation.getAlarmSettingsId()){
 					List<AlarmRule> alarmRuleList = alarmRuleService.getByAlarmSettingId(alertWarningInformation.getAlarmSettingsId());
 					for(AlarmRule ar : alarmRuleList){
-						standard = standard + ar.getName()+ar.getRightParameter()+",";
+						standard = standard + ar.getName()+":"+ar.getRightParameter()+"或";
 					}
 				}
 				if(!StringUtils.isBlank(standard)) {

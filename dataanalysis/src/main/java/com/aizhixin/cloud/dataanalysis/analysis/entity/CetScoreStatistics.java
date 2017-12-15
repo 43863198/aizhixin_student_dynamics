@@ -23,12 +23,12 @@ public class CetScoreStatistics  extends AbstractEntity {
     /*
    * 学院名称
    */
-    @Column(name = "COLLOEGE_NAME")
+    @Column(name = "COLLEGE_NAME")
     @Getter @Setter private String collegeName;
     /*
     * 学院id
     */
-    @Column(name = "COLLOEGE_ID")
+    @Column(name = "COLLEGE_ID")
     @Getter @Setter private Long collegeId;
     /*
     * 四级参加人数
@@ -60,7 +60,7 @@ public class CetScoreStatistics  extends AbstractEntity {
      * 学年
      */
     @Column(name = "TEACHER_YEAR")
-    @Getter @Setter private String teacherYear;
+    @Getter @Setter private Integer teacherYear;
     /*
     * 统计类型
     */
