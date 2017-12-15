@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+
+    <changeSet id="2017121541142400" author="jianwei.wu">
+        <modifyDataType
+                columnName="TEACHER_YEAR"
+                newDataType="int(11)"
+                tableName="T_TEACHER_EVALUATE"/>
+        <modifyDataType
+                columnName="TEACHER_YEAR"
+                newDataType="int(11)"
+                tableName="T_SCHOOL_STATISTICS"/>
+        <modifyDataType
+                columnName="TEACHER_YEAR"
+                newDataType="int(11)"
+                tableName="T_COURSE_EVALUATE"/>
+        <modifyDataType
+                columnName="TEACHER_YEAR"
+                newDataType="int(11)"
+                tableName="T_CET_STATISTICS"/>
+    </changeSet>
+</databaseChangeLog>

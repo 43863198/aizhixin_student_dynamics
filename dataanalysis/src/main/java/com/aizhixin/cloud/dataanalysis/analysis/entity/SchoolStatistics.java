@@ -86,7 +86,7 @@ public class SchoolStatistics extends AbstractEntity {
      * 学年
      */
     @Column(name = "TEACHER_YEAR")
-    @Getter @Setter private String teacherYear;
+    @Getter @Setter private Integer teacherYear;
     /*
      * 统计时间
      */

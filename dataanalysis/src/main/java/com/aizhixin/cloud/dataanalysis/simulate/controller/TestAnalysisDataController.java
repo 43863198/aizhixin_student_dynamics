@@ -74,7 +74,7 @@ public class TestAnalysisDataController {
 			SchoolStatistics schoolStatistics1 = new SchoolStatistics();
 			schoolStatistics1.setId(UUID.randomUUID().toString());
 			schoolStatistics1.setOrgId(orgId);
-			schoolStatistics1.setTeacherYear(String.valueOf(teacherYear - i));
+			schoolStatistics1.setTeacherYear(Integer.valueOf(teacherYear - i));
 			schoolStatistics1.setCollegeName("机械与控制工程学院");
 			schoolStatistics1.setCollegeId(1722L);
 			schoolStatistics1.setNewStudentsCount(365 - s);
@@ -94,7 +94,7 @@ public class TestAnalysisDataController {
 			SchoolStatistics schoolStatistics2 = new SchoolStatistics();
 			schoolStatistics2.setId(UUID.randomUUID().toString());
 			schoolStatistics2.setOrgId(orgId);
-			schoolStatistics2.setTeacherYear(String.valueOf(teacherYear - i));
+			schoolStatistics2.setTeacherYear(Integer.valueOf(teacherYear - i));
 			schoolStatistics2.setCollegeName("外国语学院");
 			schoolStatistics2.setCollegeId(1758L);
 			schoolStatistics2.setNewStudentsCount(204 - s);
@@ -114,7 +114,7 @@ public class TestAnalysisDataController {
 			SchoolStatistics schoolStatistics3 = new SchoolStatistics();
 			schoolStatistics3.setId(UUID.randomUUID().toString());
 			schoolStatistics3.setOrgId(orgId);
-			schoolStatistics3.setTeacherYear(String.valueOf(teacherYear - i));
+			schoolStatistics3.setTeacherYear(Integer.valueOf(teacherYear - i));
 			schoolStatistics3.setCollegeName("测绘地理信息学院");
 			schoolStatistics3.setCollegeId(1724L);
 			schoolStatistics3.setNewStudentsCount(206 - s);
@@ -134,7 +134,7 @@ public class TestAnalysisDataController {
 			SchoolStatistics schoolStatistics4 = new SchoolStatistics();
 			schoolStatistics4.setId(UUID.randomUUID().toString());
 			schoolStatistics4.setOrgId(orgId);
-			schoolStatistics4.setTeacherYear(String.valueOf(teacherYear - i));
+			schoolStatistics4.setTeacherYear(Integer.valueOf(teacherYear - i));
 			schoolStatistics4.setCollegeName("人文社会科学学院");
 			schoolStatistics4.setCollegeId(1754L);
 			schoolStatistics4.setNewStudentsCount(306 - s);
@@ -154,7 +154,7 @@ public class TestAnalysisDataController {
 			SchoolStatistics schoolStatistics5 = new SchoolStatistics();
 			schoolStatistics5.setId(UUID.randomUUID().toString());
 			schoolStatistics5.setOrgId(orgId);
-			schoolStatistics5.setTeacherYear(String.valueOf(teacherYear - i));
+			schoolStatistics5.setTeacherYear(Integer.valueOf(teacherYear - i));
 			schoolStatistics5.setCollegeName("化学与生物工程学院");
 			schoolStatistics5.setCollegeId(1720L);
 			schoolStatistics5.setNewStudentsCount(345 - s);
@@ -174,7 +174,7 @@ public class TestAnalysisDataController {
 			SchoolStatistics schoolStatistics6 = new SchoolStatistics();
 			schoolStatistics6.setId(UUID.randomUUID().toString());
 			schoolStatistics6.setOrgId(orgId);
-			schoolStatistics6.setTeacherYear(String.valueOf(teacherYear - i));
+			schoolStatistics6.setTeacherYear(Integer.valueOf(teacherYear - i));
 			schoolStatistics6.setCollegeName("旅游学院");
 			schoolStatistics6.setCollegeId(1752L);
 			schoolStatistics6.setNewStudentsCount(265 - s);
@@ -194,7 +194,7 @@ public class TestAnalysisDataController {
 			SchoolStatistics schoolStatistics7 = new SchoolStatistics();
 			schoolStatistics7.setId(UUID.randomUUID().toString());
 			schoolStatistics7.setOrgId(orgId);
-			schoolStatistics7.setTeacherYear(String.valueOf(teacherYear - i));
+			schoolStatistics7.setTeacherYear(Integer.valueOf(teacherYear - i));
 			schoolStatistics7.setCollegeName("信息科学与工程学院");
 			schoolStatistics7.setCollegeId(1718L);
 			schoolStatistics7.setNewStudentsCount(545 - s);
@@ -214,7 +214,7 @@ public class TestAnalysisDataController {
 			SchoolStatistics schoolStatistics8 = new SchoolStatistics();
 			schoolStatistics8.setId(UUID.randomUUID().toString());
 			schoolStatistics8.setOrgId(orgId);
-			schoolStatistics8.setTeacherYear(String.valueOf(teacherYear - i));
+			schoolStatistics8.setTeacherYear(Integer.valueOf(teacherYear - i));
 			schoolStatistics8.setCollegeName("管理学院");
 			schoolStatistics8.setCollegeId(1750L);
 			schoolStatistics8.setNewStudentsCount(745 - s);
@@ -234,7 +234,7 @@ public class TestAnalysisDataController {
 			SchoolStatistics schoolStatistics9 = new SchoolStatistics();
 			schoolStatistics9.setId(UUID.randomUUID().toString());
 			schoolStatistics9.setOrgId(orgId);
-			schoolStatistics9.setTeacherYear(String.valueOf(teacherYear - i));
+			schoolStatistics9.setTeacherYear(Integer.valueOf(teacherYear - i));
 			schoolStatistics9.setCollegeName("材料科学与工程学院");
 			schoolStatistics9.setCollegeId(1716L);
 			schoolStatistics9.setNewStudentsCount(357 - s);
@@ -254,7 +254,7 @@ public class TestAnalysisDataController {
 			SchoolStatistics schoolStatistics10 = new SchoolStatistics();
 			schoolStatistics10.setId(UUID.randomUUID().toString());
 			schoolStatistics10.setOrgId(orgId);
-			schoolStatistics10.setTeacherYear(String.valueOf(teacherYear - i));
+			schoolStatistics10.setTeacherYear(Integer.valueOf(teacherYear - i));
 			schoolStatistics10.setCollegeName("理学院");
 			schoolStatistics10.setCollegeId(1748L);
 			schoolStatistics10.setNewStudentsCount(307 - s);
@@ -274,7 +274,7 @@ public class TestAnalysisDataController {
 			SchoolStatistics schoolStatistics11 = new SchoolStatistics();
 			schoolStatistics11.setId(UUID.randomUUID().toString());
 			schoolStatistics11.setOrgId(orgId);
-			schoolStatistics11.setTeacherYear(String.valueOf(teacherYear - i));
+			schoolStatistics11.setTeacherYear(Integer.valueOf(teacherYear - i));
 			schoolStatistics11.setCollegeName("土木与建筑工程学院");
 			schoolStatistics11.setCollegeId(1714L);
 			schoolStatistics11.setNewStudentsCount(467 - s);
@@ -294,7 +294,7 @@ public class TestAnalysisDataController {
 			SchoolStatistics schoolStatistics12 = new SchoolStatistics();
 			schoolStatistics12.setId(UUID.randomUUID().toString());
 			schoolStatistics12.setOrgId(orgId);
-			schoolStatistics12.setTeacherYear(String.valueOf(teacherYear - i));
+			schoolStatistics12.setTeacherYear(Integer.valueOf(teacherYear - i));
 			schoolStatistics12.setCollegeName("环境科学与工程学院");
 			schoolStatistics12.setCollegeId(1712L);
 			schoolStatistics12.setNewStudentsCount(331);
@@ -314,7 +314,7 @@ public class TestAnalysisDataController {
 			SchoolStatistics schoolStatistics13 = new SchoolStatistics();
 			schoolStatistics13.setId(UUID.randomUUID().toString());
 			schoolStatistics13.setOrgId(orgId);
-			schoolStatistics13.setTeacherYear(String.valueOf(teacherYear - i));
+			schoolStatistics13.setTeacherYear(Integer.valueOf(teacherYear - i));
 			schoolStatistics13.setCollegeName("地球科学学院");
 			schoolStatistics13.setCollegeId(1710L);
 			schoolStatistics13.setNewStudentsCount(240 - s);
@@ -334,7 +334,7 @@ public class TestAnalysisDataController {
 			SchoolStatistics schoolStatistics14 = new SchoolStatistics();
 			schoolStatistics14.setId(UUID.randomUUID().toString());
 			schoolStatistics14.setOrgId(orgId);
-			schoolStatistics14.setTeacherYear(String.valueOf(teacherYear - i));
+			schoolStatistics14.setTeacherYear(Integer.valueOf(teacherYear - i));
 			schoolStatistics14.setCollegeName("艺术学院");
 			schoolStatistics14.setCollegeId(1760L);
 			schoolStatistics14.setNewStudentsCount(391 - s);

@@ -108,7 +108,7 @@ public class TeachingScoreDetails extends AbstractEntity {
      * 平均绩点
      */
     @Column(name = "AVERAGE_GPA")
-    @Getter @Setter private Float avgGPA;
+    @Getter @Setter private Double avgGPA;
     /*
     * 参考科目数
     */
@@ -128,7 +128,7 @@ public class TeachingScoreDetails extends AbstractEntity {
      *不及格科目学分
      */
     @Column(name = "FAILING_GRADE_CREDITS")
-    @Getter @Setter private float failingGradeCredits;
+    @Getter @Setter private Double failingGradeCredits;
 
 
 

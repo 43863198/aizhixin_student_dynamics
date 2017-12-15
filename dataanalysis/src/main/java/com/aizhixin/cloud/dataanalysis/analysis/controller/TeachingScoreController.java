@@ -85,21 +85,28 @@ public class TeachingScoreController {
     @ApiOperation(httpMethod = "GET", value = "手动添加教学成绩详情", response = Void.class, notes = "手动添加教学成绩详情<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object> addTeachingScoreDetail(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId
-//            @ApiParam(value = "collegeId 学院id", required = true) @RequestParam(value = "collegeId", required = true) Long collegeId,
-//            @ApiParam(value = "collegeName 学院id", required = true) @RequestParam(value = "collegeName", required = true) String collegeName,
-//            @ApiParam(value = "professionalId 专业id", required = true) @RequestParam(value = "professionalId", required = true) Long professionalId,
-//            @ApiParam(value = "professionalName 专业名称", required = true) @RequestParam(value = "professionalName", required = true) String professionalName,
-//            @ApiParam(value = "classId 班级id", required = true) @RequestParam(value = "classId", required = true) Long classId,
-//            @ApiParam(value = "className 班级名称", required = true) @RequestParam(value = "className", required = true) String className,
-//            @ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
-//            @ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester,
-//            @ApiParam(value = "grade 年级", required = true) @RequestParam(value = "grade", required = true) Integer grade,
-//            @ApiParam(value = "averageGPA 平均绩点", required = true) @RequestParam(value = "averageGPA", required = true) Double averageGPA,
-//            @ApiParam(value = "referenceSubjects 参考科目数", required = true) @RequestParam(value = "referenceSubjects", required = true) Integer referenceSubjects,
-//            @ApiParam(value = "failedSubjects 不及格科目", required = true) @RequestParam(value = "failedSubjects", required = true) Integer failedSubjects,
-//            @ApiParam(value = "failingGradeCredits 不及格科目学分", required = true) @RequestParam(value = "failingGradeCredits", required = true) Double failingGradeCredits
     ) {
         return teachingScoreService.addTeachingScoreDetail(orgId);
+    }
+    /**
+     * 手动修改教学成绩详情
+     *
+     * @param
+     * @return
+     */
+    @GetMapping(value = "/modifydetail", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "PUT", value = "手动修改教学成绩详情", response = Void.class, notes = "手动修改教学成绩详情<br><br><b>@author jianwei.wu</b>")
+    public Map<String,Object> modifyTeachingScoreDetail(
+            @ApiParam(value = "id 详情id" , required = true) @RequestParam(value = "orgId", required = true) String id,
+            @ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
+            @ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester,
+            @ApiParam(value = "grade 年级", required = true) @RequestParam(value = "grade", required = true) Integer grade,
+            @ApiParam(value = "averageGPA 平均绩点", required = true) @RequestParam(value = "averageGPA", required = true) Double averageGPA,
+            @ApiParam(value = "referenceSubjects 参考科目数", required = true) @RequestParam(value = "referenceSubjects", required = true) Integer referenceSubjects,
+            @ApiParam(value = "failedSubjects 不及格科目", required = true) @RequestParam(value = "failedSubjects", required = true) Integer failedSubjects,
+            @ApiParam(value = "failingGradeCredits 不及格科目学分", required = true) @RequestParam(value = "failingGradeCredits", required = true) Double failingGradeCredits
+    ) {
+        return teachingScoreService.modifyTeachingScoreDetail(id,teacherYear,semester,grade,averageGPA,referenceSubjects,failedSubjects,failingGradeCredits);
     }
     /**
      * 手动添加教学成绩统计
@@ -113,6 +120,8 @@ public class TeachingScoreController {
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
         return teachingScoreService.addTeachingScoreStatistics(orgId);
     }
+
+
 
 
 
