@@ -62,6 +62,8 @@ public class CetStatisticAnalysisService {
                 sql.append(" and cet.SEMESTER = :semester");
                 condition.put("semester", semester);
             }
+            cql.append(" and cet.DELETE_FLAG = 0");
+            sql.append(" and cet.DELETE_FLAG = 0");
             Query cq = em.createNativeQuery(cql.toString());
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
@@ -177,6 +179,7 @@ public class CetStatisticAnalysisService {
                 sql.append(" and cet.COLLEGE_ID = :collegeId");
                 condition.put("collegeId", collegeId);
             }
+            sql.append(" and cet.DELETE_FLAG = 0");
             sql.append(" group by cet.TEACHER_YEAR");
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
