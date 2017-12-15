@@ -274,7 +274,7 @@ public class TeachingScoreService {
                         teachingScoreDetails.setCollegeName(String.valueOf(d[4]));
                     }
                     if (null != d[5]) {
-                        teachingScoreDetails.setAvgGPA(Float.valueOf(String.valueOf(d[5])));
+                        teachingScoreDetails.setAvgGPA(Double.valueOf(String.valueOf(d[5])));
                     }
                     if (null != d[6]) {
                         teachingScoreDetails.setReferenceSubjects(Integer.valueOf(String.valueOf(d[6])));
@@ -283,7 +283,7 @@ public class TeachingScoreService {
                         teachingScoreDetails.setFailedSubjects(Integer.valueOf(String.valueOf(d[6])));
                     }
                     if (null != d[8]) {
-                        teachingScoreDetails.setFailingGradeCredits(Float.valueOf(String.valueOf(d[8])));
+                        teachingScoreDetails.setFailingGradeCredits(Double.valueOf(String.valueOf(d[8])));
                     }
                     teachingScoreDetailsList.add(teachingScoreDetails);
                 }
@@ -332,7 +332,7 @@ public class TeachingScoreService {
                     if (null != sfc.getGrade()) {
                         tsd.setGrade(Integer.valueOf(sfc.getGrade()));
                     }
-                    tsd.setAvgGPA(Float.valueOf(new Random().nextFloat() * 100));
+                    tsd.setAvgGPA(Double.valueOf(new Random().nextDouble() * 100));
                     tsd.setReferenceSubjects(new Random().nextInt(100));
                     tsd.setFailedSubjects(tsd.getReferenceSubjects() - 1 > 0 ? tsd.getReferenceSubjects() - 1 : 0);
                     tsd.setFailedSubjects(tsd.getFailedSubjects() * 3);
@@ -402,7 +402,7 @@ public class TeachingScoreService {
                         teachingScoreStatistics.setGrade(Integer.valueOf(String.valueOf(d[7])));
                     }
                     teachingScoreStatistics.setAvgGPA(new Random().nextDouble() * 10);
-                    teachingScoreStatistics.setAvgScore(new Random().nextDouble() * 10);
+                    teachingScoreStatistics.setAvgScore(new Random().nextDouble() * 100);
                     teachingScoreStatistics.setStatisticsType(2);
                     teachingScoreStatistics.setOrgId(orgId);
                     teachingScoreStatisticsList.add(teachingScoreStatistics);
@@ -450,5 +450,43 @@ public class TeachingScoreService {
         return result;
     }
 
+    public Map<String, Object> modifyTeachingScoreDetail(String id,Integer teacherYear,Integer semester,Integer grade,
+                                                         Double averageGPA,Integer referenceSubjects,Integer failedSubjects,Double failingGradeCredits){
+        Map<String, Object> result = new HashMap<>();
+        try {
+            TeachingScoreDetails teachingScoreDetails = teachingScoreDetailsRespository.findOne(id);
+            if(null!=teachingScoreDetails){
+                if(null!=teacherYear){
+                    teachingScoreDetails.setTeacherYear(teacherYear);
+                }
+                if(null!=semester){
+                    teachingScoreDetails.setSemester(semester);
+                }
+                if(null!=grade){
+                    teachingScoreDetails.setGrade(grade);
+                }
+                if(null!=averageGPA){
+                    teachingScoreDetails.setAvgGPA(averageGPA);
+                }
+                if(null!=referenceSubjects){
+                    teachingScoreDetails.setReferenceSubjects(referenceSubjects);
+                }
+                if(null!=failedSubjects){
+                    teachingScoreDetails.setFailedSubjects(failedSubjects);
+                }
+                if(null!=failingGradeCredits){
+                    teachingScoreDetails.setFailingGradeCredits(failingGradeCredits);
+                }
+                teachingScoreDetailsRespository.save(teachingScoreDetails);
+            }
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", "修改教学成绩详情数据异常！");
+            return result;
+        }
+        result.put("success", true);
+        result.put("message", "修改教学成绩详情数据异常！");
+        return result;
+    }
 
 }

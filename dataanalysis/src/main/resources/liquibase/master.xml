@@ -41,4 +41,6 @@
     <include file="classpath:liquibase/20171215102745_update_entity_CetScoreStatistics.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/201712151032945_update_entity_PracticeStatistics.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171215103545_update_entity_SchoolStatistics.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/201712154112400_update_entity_ModifyTeacherYearType.xml" relativeToChangelogFile="false"/>
+
 </databaseChangeLog>
