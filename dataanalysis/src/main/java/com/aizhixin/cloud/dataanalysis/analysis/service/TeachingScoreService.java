@@ -74,8 +74,8 @@ public class TeachingScoreService {
                 sql.append(" and SEMESTER = :semester");
                 condition.put("semester", semester);
             }
-            cql.append(" and STATISTICS_TYPE = 1");
-            sql.append(" and STATISTICS_TYPE = 2");
+            cql.append(" and STATISTICS_TYPE = 1 and DELETE_FLAG = 0");
+            sql.append(" and STATISTICS_TYPE = 2 and DELETE_FLAG = 0");
             Query cq = em.createNativeQuery(cql.toString());
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
@@ -119,7 +119,7 @@ public class TeachingScoreService {
                     teachingAchievementDTO.setAverageGPA(Integer.valueOf(String.valueOf(rd[0])));
                 }
                 if (null != rd[1]) {
-                    teachingAchievementDTO.setAverageGPA(Integer.valueOf(String.valueOf(rd[1])));
+                    teachingAchievementDTO.setAverageGPA(Double.valueOf(String.valueOf(rd[1])));
                 }
                 if (null != rd[2]) {
                     teachingAchievementDTO.setFailNum(Integer.valueOf(String.valueOf(rd[2])));
@@ -154,8 +154,14 @@ public class TeachingScoreService {
         Map<String, Object> condition = new HashMap<>();
         try {
             String trend = "";
-            trend = TeachingScoreTrendType.getType(type);
-            StringBuilder sql = new StringBuilder("SELECT GRADE," + trend + " FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
+            if(null!=type) {
+                if (type == 1 || type == 3) {
+                    trend = " SUM(" + TeachingScoreTrendType.getType(type) + ")";
+                } else {
+                    trend = " AVG(" + TeachingScoreTrendType.getType(type) + ")";
+                }
+            }
+            StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR," + trend + " FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
             if (null != orgId) {
                 sql.append(" and ORG_ID =:orgId ");
                 condition.put("orgId", orgId);
@@ -164,6 +170,7 @@ public class TeachingScoreService {
                 sql.append(" and COLLEGE_ID =:collegeId ");
                 condition.put("collegeId",collegeId);
             }
+            sql.append(" and DELETE_FLAG = 0 GROUP BY TEACHER_YEAR");
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
@@ -240,8 +247,8 @@ public class TeachingScoreService {
                 sql.append(" and (USER_NAME = :nj OR JOB_NUM = :nj)");
                 condition.put("nj", nj);
             }
-            cql.append(" and STATISTICS_TYPE = 2");
-            sql.append(" and STATISTICS_TYPE = 2");
+            cql.append(" and STATISTICS_TYPE = 2 and DELETE_FLAG = 0");
+            sql.append(" and STATISTICS_TYPE = 2 and DELETE_FLAG = 0");
             Query cq = em.createNativeQuery(cql.toString());
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
@@ -308,6 +315,7 @@ public class TeachingScoreService {
     public Map<String, Object> addTeachingScoreDetail(Long orgId) {
         Map<String, Object> result = new HashMap<>();
         try {
+            teachingScoreDetailsRespository.deleteByOrgId(orgId);
             List<TeachingScoreDetails> teachingScoreDetailsList = new ArrayList<>();
             org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
             //条件
@@ -363,6 +371,8 @@ public class TeachingScoreService {
                 sql.append(" and ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
+            oql.append(" and DELETE_FLAG = 0");
+            sql.append(" and DELETE_FLAG = 0");
             oql.append(" GROUP BY TEACHER_YEAR, SEMESTER");
             sql.append(" GROUP BY COLLEGE_ID, TEACHER_YEAR, SEMESTER");
             Query oq = em.createNativeQuery(oql.toString());
