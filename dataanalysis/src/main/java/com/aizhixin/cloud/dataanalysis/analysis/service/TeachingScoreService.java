@@ -247,8 +247,8 @@ public class TeachingScoreService {
                 sql.append(" and (USER_NAME = :nj OR JOB_NUM = :nj)");
                 condition.put("nj", nj);
             }
-            cql.append(" and STATISTICS_TYPE = 2 and DELETE_FLAG = 0");
-            sql.append(" and STATISTICS_TYPE = 2 and DELETE_FLAG = 0");
+            cql.append(" and DELETE_FLAG = 0");
+            sql.append(" and DELETE_FLAG = 0");
             Query cq = em.createNativeQuery(cql.toString());
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
