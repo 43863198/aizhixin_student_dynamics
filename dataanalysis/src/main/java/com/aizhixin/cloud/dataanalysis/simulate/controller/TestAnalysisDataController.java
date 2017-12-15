@@ -438,7 +438,7 @@ public class TestAnalysisDataController {
 			CetScoreStatistics cetScoreStatistics1 = new CetScoreStatistics();
 			cetScoreStatistics1.setId(UUID.randomUUID().toString());
 			cetScoreStatistics1.setOrgId(orgId);
-			cetScoreStatistics1.setTeacherYear(String.valueOf((teacherYear-i)));
+			cetScoreStatistics1.setTeacherYear(Integer.valueOf((teacherYear-i)));
 			cetScoreStatistics1.setCollegeName("机械与控制工程学院");
 			cetScoreStatistics1.setCollegeId(1722L);
 			cetScoreStatistics1.setCetForeJoinNum(1142-s);
@@ -454,7 +454,7 @@ public class TestAnalysisDataController {
 			CetScoreStatistics cetScoreStatistics2 = new CetScoreStatistics();
 			cetScoreStatistics2.setId(UUID.randomUUID().toString());
 			cetScoreStatistics2.setOrgId(orgId);
-			cetScoreStatistics2.setTeacherYear(String.valueOf(teacherYear-i));
+			cetScoreStatistics2.setTeacherYear(Integer.valueOf(teacherYear-i));
 			cetScoreStatistics2.setCollegeName("外国语学院");
 			cetScoreStatistics2.setCollegeId(1758L);
 			cetScoreStatistics2.setCetForeJoinNum(734-s);
@@ -470,7 +470,7 @@ public class TestAnalysisDataController {
 			CetScoreStatistics cetScoreStatistics3 = new CetScoreStatistics();
 			cetScoreStatistics3.setId(UUID.randomUUID().toString());
 			cetScoreStatistics3.setOrgId(orgId);
-			cetScoreStatistics3.setTeacherYear(String.valueOf(teacherYear - i));
+			cetScoreStatistics3.setTeacherYear(Integer.valueOf(teacherYear - i));
 			cetScoreStatistics3.setCollegeName("测绘地理信息学院");
 			cetScoreStatistics3.setCollegeId(1724L);
 			cetScoreStatistics3.setCetForeJoinNum(765-s);
@@ -486,7 +486,7 @@ public class TestAnalysisDataController {
 			CetScoreStatistics cetScoreStatistics4 = new CetScoreStatistics();
 			cetScoreStatistics4.setId(UUID.randomUUID().toString());
 			cetScoreStatistics4.setOrgId(orgId);
-			cetScoreStatistics4.setTeacherYear(String.valueOf(teacherYear - i));
+			cetScoreStatistics4.setTeacherYear(Integer.valueOf(teacherYear - i));
 			cetScoreStatistics4.setCollegeName("人文社会科学学院");
 			cetScoreStatistics4.setCollegeId(1754L);
 			cetScoreStatistics4.setCetForeJoinNum(665-s);
@@ -502,7 +502,7 @@ public class TestAnalysisDataController {
 			CetScoreStatistics cetScoreStatistics5 = new CetScoreStatistics();
 			cetScoreStatistics5.setId(UUID.randomUUID().toString());
 			cetScoreStatistics5.setOrgId(orgId);
-			cetScoreStatistics5.setTeacherYear(String.valueOf(teacherYear - i));
+			cetScoreStatistics5.setTeacherYear(Integer.valueOf(teacherYear - i));
 			cetScoreStatistics5.setCollegeName("化学与生物工程学院");
 			cetScoreStatistics5.setCollegeId(1720L);
 			cetScoreStatistics5.setCetForeJoinNum(1225-s);
@@ -518,7 +518,7 @@ public class TestAnalysisDataController {
 			CetScoreStatistics cetScoreStatistics6 = new CetScoreStatistics();
 			cetScoreStatistics6.setId(UUID.randomUUID().toString());
 			cetScoreStatistics6.setOrgId(orgId);
-			cetScoreStatistics6.setTeacherYear(String.valueOf(teacherYear - i));
+			cetScoreStatistics6.setTeacherYear(Integer.valueOf(teacherYear - i));
 			cetScoreStatistics6.setCollegeName("旅游学院");
 			cetScoreStatistics6.setCollegeId(1752L);
 			cetScoreStatistics6.setCetForeJoinNum(675-s);
@@ -534,7 +534,7 @@ public class TestAnalysisDataController {
 			CetScoreStatistics cetScoreStatistics7 = new CetScoreStatistics();
 			cetScoreStatistics7.setId(UUID.randomUUID().toString());
 			cetScoreStatistics7.setOrgId(orgId);
-			cetScoreStatistics7.setTeacherYear(String.valueOf(teacherYear - i));
+			cetScoreStatistics7.setTeacherYear(Integer.valueOf(teacherYear - i));
 			cetScoreStatistics7.setCollegeName("信息科学与工程学院");
 			cetScoreStatistics7.setCollegeId(1718L);
 			cetScoreStatistics7.setCetForeJoinNum(1675-s);
@@ -550,7 +550,7 @@ public class TestAnalysisDataController {
 			CetScoreStatistics cetScoreStatistics8 = new CetScoreStatistics();
 			cetScoreStatistics8.setId(UUID.randomUUID().toString());
 			cetScoreStatistics8.setOrgId(orgId);
-			cetScoreStatistics8.setTeacherYear(String.valueOf(teacherYear - i));
+			cetScoreStatistics8.setTeacherYear(Integer.valueOf(teacherYear - i));
 			cetScoreStatistics8.setCollegeName("管理学院");
 			cetScoreStatistics8.setCollegeId(1750L);
 			cetScoreStatistics8.setCetForeJoinNum(2175-s);
@@ -566,7 +566,7 @@ public class TestAnalysisDataController {
 			CetScoreStatistics cetScoreStatistics9 = new CetScoreStatistics();
 			cetScoreStatistics9.setId(UUID.randomUUID().toString());
 			cetScoreStatistics9.setOrgId(orgId);
-			cetScoreStatistics9.setTeacherYear(String.valueOf(teacherYear - i));
+			cetScoreStatistics9.setTeacherYear(Integer.valueOf(teacherYear - i));
 			cetScoreStatistics9.setCollegeName("材料科学与工程学院");
 			cetScoreStatistics9.setCollegeId(1716L);
 			cetScoreStatistics9.setCetForeJoinNum(1075-s);
@@ -582,7 +582,7 @@ public class TestAnalysisDataController {
 			CetScoreStatistics cetScoreStatistics10 = new CetScoreStatistics();
 			cetScoreStatistics10.setId(UUID.randomUUID().toString());
 			cetScoreStatistics10.setOrgId(orgId);
-			cetScoreStatistics10.setTeacherYear(String.valueOf(teacherYear - i));
+			cetScoreStatistics10.setTeacherYear(Integer.valueOf(teacherYear - i));
 			cetScoreStatistics10.setCollegeName("理学院");
 			cetScoreStatistics10.setCollegeId(1748L);
 			cetScoreStatistics10.setCetForeJoinNum(975-s);
@@ -598,7 +598,7 @@ public class TestAnalysisDataController {
 			CetScoreStatistics cetScoreStatistics11 = new CetScoreStatistics();
 			cetScoreStatistics11.setId(UUID.randomUUID().toString());
 			cetScoreStatistics11.setOrgId(orgId);
-			cetScoreStatistics11.setTeacherYear(String.valueOf(teacherYear - i));
+			cetScoreStatistics11.setTeacherYear(Integer.valueOf(teacherYear - i));
 			cetScoreStatistics11.setCollegeName("土木与建筑工程学院");
 			cetScoreStatistics11.setCollegeId(1714L);
 			cetScoreStatistics11.setCetForeJoinNum(1475-s);
@@ -614,7 +614,7 @@ public class TestAnalysisDataController {
 			CetScoreStatistics cetScoreStatistics12 = new CetScoreStatistics();
 			cetScoreStatistics12.setId(UUID.randomUUID().toString());
 			cetScoreStatistics12.setOrgId(orgId);
-			cetScoreStatistics12.setTeacherYear(String.valueOf(teacherYear - i));
+			cetScoreStatistics12.setTeacherYear(Integer.valueOf(teacherYear - i));
 			cetScoreStatistics12.setCollegeName("环境科学与工程学院");
 			cetScoreStatistics12.setCollegeId(1712L);
 			cetScoreStatistics12.setCetForeJoinNum(675-s);
@@ -630,7 +630,7 @@ public class TestAnalysisDataController {
 			CetScoreStatistics cetScoreStatistics13 = new CetScoreStatistics();
 			cetScoreStatistics13.setId(UUID.randomUUID().toString());
 			cetScoreStatistics13.setOrgId(orgId);
-			cetScoreStatistics13.setTeacherYear(String.valueOf(teacherYear - i));
+			cetScoreStatistics13.setTeacherYear(Integer.valueOf(teacherYear - i));
 			cetScoreStatistics13.setCollegeName("地球科学学院");
 			cetScoreStatistics13.setCollegeId(1710L);
 			cetScoreStatistics13.setCetForeJoinNum(625-s);
@@ -646,7 +646,7 @@ public class TestAnalysisDataController {
 			CetScoreStatistics cetScoreStatistics14 = new CetScoreStatistics();
 			cetScoreStatistics14.setId(UUID.randomUUID().toString());
 			cetScoreStatistics14.setOrgId(orgId);
-			cetScoreStatistics14.setTeacherYear(String.valueOf(teacherYear - i));
+			cetScoreStatistics14.setTeacherYear(Integer.valueOf(teacherYear - i));
 			cetScoreStatistics14.setCollegeName("艺术学院");
 			cetScoreStatistics14.setCollegeId(1760L);
 			cetScoreStatistics14.setCetForeJoinNum(825-s);
