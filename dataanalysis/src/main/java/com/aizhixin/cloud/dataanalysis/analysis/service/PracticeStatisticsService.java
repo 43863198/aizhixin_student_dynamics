@@ -128,7 +128,7 @@ public class PracticeStatisticsService {
             practiceStaticsDTO.setTaskNum(taskNum);
             practiceStaticsDTO.setTaskPassNum(taskPassNum);
             practiceStaticsDTO.setStatisticalTime(time);//后续要改为统计时间
-            Page<PracticeStatistics> practiceStatisticsPage = practiceStaticsRespository.findPageDataByOrgIdAndTeacherYear(pageable, orgId, year, 0);
+            Page<PracticeStatistics> practiceStatisticsPage = practiceStaticsRespository.findPageDataByOrgIdAndTeacherYear(pageable, orgId, Integer.valueOf(year), 0);
             p.setData(practiceStatisticsPage.getContent());
             p.getPage().setTotalElements(count);
             p.getPage().setPageNumber(pageable.getPageNumber());
