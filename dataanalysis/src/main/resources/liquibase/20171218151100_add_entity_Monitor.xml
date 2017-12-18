@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<property name="now" value="now()" dbms="mysql,h2" />
+	<property name="now" value="current_timestamp" dbms="postgresql" />
+	<property name="now" value="sysdate" dbms="oracle" />
+	<changeSet id="20171218151100" author="zhengning"
+		runOnChange="true">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="T_Teaching_Schedule_Statistics" />
+				<tableExists tableName="T_Abnormal_Attendance_Statistics" />
+				<tableExists tableName="T_Abnormal_Teaching_Statistics" />
+			</not>
+		</preConditions>
+		<createTable tableName="T_Teaching_Schedule_Statistics"
+			remarks="当日排课统计表">
+			<column name="ID" type="VARCHAR(50)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ORG_ID" type="BIGINT" remarks="机构id" />
+			<column name="COURSE_NUM1" type="int" remarks="1，2节排课数量" />
+			<column name="COURSE_NUM3" type="int" remarks="3，4节排课数量" />
+			<column name="COURSE_NUM5" type="int" remarks="5，6节排课数量" />
+			<column name="COURSE_NUM7" type="int" remarks="7，8节排课数量" />
+			<column name="COURSE_NUM9" type="int" remarks="9，10节排课数量" />
+			<column name="COURSE_NUM11" type="int" remarks="11，12节排课数量" />
+			<column name="STATISTICAL_TIME" type="VARCHAR(20)" remarks="统计时间" />
+			<column name="CREATED_BY" type="BIGINT" remarks="创建人ID" />
+			<column name="CREATED_DATE" type="DATETIME" defaultValueDate="${now}"
+				remarks="创建时间" />
+			<column name="LAST_MODIFIED_BY" type="BIGINT" remarks="最后一次修改人ID" />
+			<column name="LAST_MODIFIED_DATE" type="DATETIME"
+				defaultValueDate="${now}" remarks="最后一次修改时间" />
+			<column name="DELETE_FLAG" type="INT(4)" defaultValueNumeric="0"
+				remarks="删除标记(0正常,1删除)" />
+		</createTable>
+
+		<createTable tableName="T_Abnormal_Attendance_Statistics"
+			remarks="学生异常考勤统计表">
+			<column name="ID" type="VARCHAR(50)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ORG_ID" type="BIGINT" remarks="机构id" />
+			<column name="LATE_NUM" type="int" remarks="迟到人数" />
+			<column name="LEAVE_EARLY_NUM" type="int" remarks="早退人数" />
+			<column name="ABSENTEEISM_NUM" type="int" remarks="旷课人数" />
+			<column name="LEAVE_NUM" type="int" remarks="请假人数" />
+			<column name="STATISTICAL_TIME" type="VARCHAR(20)" remarks="统计时间" />
+			<column name="CREATED_BY" type="BIGINT" remarks="创建人ID" />
+			<column name="CREATED_DATE" type="DATETIME" defaultValueDate="${now}"
+				remarks="创建时间" />
+			<column name="LAST_MODIFIED_BY" type="BIGINT" remarks="最后一次修改人ID" />
+			<column name="LAST_MODIFIED_DATE" type="DATETIME"
+				defaultValueDate="${now}" remarks="最后一次修改时间" />
+			<column name="DELETE_FLAG" type="INT(4)" defaultValueNumeric="0"
+				remarks="删除标记(0正常,1删除)" />
+		</createTable>
+
+		<createTable tableName="T_Abnormal_Teaching_Statistics"
+			remarks="教学异常统计数据">
+			<column name="ID" type="VARCHAR(50)">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="ORG_ID" type="BIGINT" remarks="机构id" />
+			<column name="LATE_NUM" type="int" remarks="上课迟到教师人数" />
+			<column name="LEAVE_EARLY_NUM" type="int" remarks="下课早退教师人数" />
+			<column name="TEACHING_NUM" type="int" remarks="有教学任务教师人数" />
+			<column name="STOP_CLASS_NUM" type="int" remarks="调停课教师人次" />
+			<column name="CHANGE_LECTURER_NUM" type="int" remarks="更换主讲教师人次" />
+			<column name="STATISTICAL_TIME" type="VARCHAR(20)" remarks="统计时间" />
+			<column name="CREATED_BY" type="BIGINT" remarks="创建人ID" />
+			<column name="CREATED_DATE" type="DATETIME" defaultValueDate="${now}"
+				remarks="创建时间" />
+			<column name="LAST_MODIFIED_BY" type="BIGINT" remarks="最后一次修改人ID" />
+			<column name="LAST_MODIFIED_DATE" type="DATETIME"
+				defaultValueDate="${now}" remarks="最后一次修改时间" />
+			<column name="DELETE_FLAG" type="INT(4)" defaultValueNumeric="0"
+				remarks="删除标记(0正常,1删除)" />
+		</createTable>
+	</changeSet>
+</databaseChangeLog>

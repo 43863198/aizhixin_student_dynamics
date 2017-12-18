@@ -15,15 +15,15 @@ public class AbnormalAttendanceDomain {
     @Getter @Setter private int lateNum;
     
     @ApiModelProperty(value = "早退人数")
-    @Getter @Setter private int leaveEarly;
+    @Getter @Setter private int leaveEarlyNum;
     
     @ApiModelProperty(value = "旷课人数")
-    @Getter @Setter private int AbsenteeismNum;
+    @Getter @Setter private int absenteeismNum;
     
     @ApiModelProperty(value = "请假人数")
     @Getter @Setter private int leaveNum;
     
     @ApiModelProperty(value = "统计时间")
-    @Getter @Setter private String Statisticalime;
+    @Getter @Setter private String statisticalTime;
     
 }
