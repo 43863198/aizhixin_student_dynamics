@@ -185,8 +185,8 @@ public class PracticeStatisticsService {
                 return map;
             }
         };
-        String querySql = "SELECT CLASS_ID,CLASS_NAME,PRACTICE_STUDENT_NUM,PRACTICE_COMPANY_NUM,TASK_NUM,TASK_PASS_NUM FROM `t_practice_statistics` where DELETE_FLAG ="+ DataValidity.VALID.getState()+" and STATISTICS_TYPE=3 and ORG_ID="+orgId+" ";
-        String countSql = "SELECT count(1) FROM `t_practice_statistics` where DELETE_FLAG ="+DataValidity.VALID.getState()+" and STATISTICS_TYPE=3 and ORG_ID="+orgId+" ";
+        String querySql = "SELECT CLASS_ID,CLASS_NAME,PRACTICE_STUDENT_NUM,PRACTICE_COMPANY_NUM,TASK_NUM,TASK_PASS_NUM FROM `t_practice_statistics` where DELETE_FLAG ="+ DataValidity.VALID.getState()+"  and ORG_ID="+orgId+" ";
+        String countSql = "SELECT count(1) FROM `t_practice_statistics` where DELETE_FLAG ="+DataValidity.VALID.getState()+"  and ORG_ID="+orgId+" ";
         if(null!=collegeId){
             querySql+=" and COLLEGE_ID="+collegeId+" ";
             countSql+=" and COLLEGE_ID="+collegeId+" ";
