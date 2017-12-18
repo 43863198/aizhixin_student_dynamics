@@ -4,7 +4,9 @@
 package com.aizhixin.cloud.dataanalysis.monitor.controller;
 
 
+import com.aizhixin.cloud.dataanalysis.monitor.dto.AlarmDTO;
 import com.aizhixin.cloud.dataanalysis.monitor.dto.CollegeGpaDTO;
+import com.aizhixin.cloud.dataanalysis.monitor.dto.CourseEvaluateDTO;
 import com.aizhixin.cloud.dataanalysis.monitor.service.MonitorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +41,30 @@ public class MonitorController {
 	 * @return
 	 */
 	@GetMapping(value = "/collegegpa", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(httpMethod = "GET", value = "首页教学成绩信息", response = Void.class, notes = "首页教学成绩统计信息<br><br><b>@author 王俊</b>")
+	@ApiOperation(httpMethod = "GET", value = "大屏监控学院平均Gpa", response = Void.class, notes = "大屏监控学院平均Gpa<br><br><b>@author 王俊</b>")
 	public List<CollegeGpaDTO> getCollegeGpa(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
 		return monitorService.getCollegeGpa(orgId);
 	}
-
+	/**
+	 * 大屏监控课程综合评分
+	 * @param orgId
+	 * @return
+	 */
+	@GetMapping(value = "/coursescore", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "GET", value = "大屏监课程综合评分", response = Void.class, notes = "大屏监课程综合评分<br><br><b>@author 王俊</b>")
+	public CourseEvaluateDTO getCourseScore(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
+		return monitorService.getCourseScore(orgId);
+	}
+	/**
+	 * 大屏监控预警处理情况
+	 * @param orgId
+	 * @return
+	 */
+	@GetMapping(value = "/alarm", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "GET", value = "大屏监控预警处理情况", response = Void.class, notes = "大屏监控预警处理情况<br><br><b>@author 王俊</b>")
+	public AlarmDTO getAlarm(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
+		return monitorService.getAlarm(orgId);
+	}
 
 
 }
