@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+    <changeSet id="201712181132845" author="wangjun" runOnChange="true">
+        <addColumn
+                   tableName="T_COURSE_EVALUATE">
+            <column name="COURSE_TYPE" type="INT(4)"  remarks="课程类型：1必修，2选修，3其他"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>
