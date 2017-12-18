@@ -315,12 +315,12 @@ public class TeachingScoreService {
     public Map<String, Object> addTeachingScoreDetail(Long orgId) {
         Map<String, Object> result = new HashMap<>();
         try {
-            teachingScoreDetailsRespository.deleteByOrgId(orgId);
+//            teachingScoreDetailsRespository.deleteByOrgId(orgId);
             List<TeachingScoreDetails> teachingScoreDetailsList = new ArrayList<>();
             org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
             //条件
             Criteria criteria = Criteria.where("orgId").is(orgId);
-            query.addCriteria(criteria);
+            query.addCriteria(criteria).limit(100);
             List<TotalScoreCount> items = mongoTemplate.find(query, TotalScoreCount.class);
             if (null != items && items.size() > 0) {
                 for (TotalScoreCount sfc : items) {
