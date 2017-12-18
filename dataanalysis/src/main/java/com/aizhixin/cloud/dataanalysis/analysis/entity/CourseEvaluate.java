@@ -113,4 +113,9 @@ public class CourseEvaluate extends AbstractEntity {
      */
     @Column(name = "GRADE")
     @Getter @Setter private Integer grade;
+    /**
+     * 课程类型 1必修 2选修 3其他
+     */
+    @Column(name = "COURSE_TYPE")
+    @Getter @Setter private Integer courseType;
 }

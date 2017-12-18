@@ -87,18 +87,18 @@ public class PracticeStatistics extends AbstractEntity {
   * 学期
   */
     @Column(name = "SEMESTER")
-    @Getter @Setter private int semester;
+    @Getter @Setter private Integer semester;
 
     /*
      * 学年
      */
     @Column(name = "TEACHER_YEAR")
-    @Getter @Setter private int teacherYear;
+    @Getter @Setter private Integer teacherYear;
     /**
      * 年级
      */
     @Column(name = "GRADE")
-    @Getter @Setter private int grade;
+    @Getter @Setter private Integer grade;
     /*
     * 统计时间
     */
