@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class CetStatisticsAnalysisJob {
-    private Logger logger = Logger.getLogger(this.getClass());
+    private Logger logger = Logger.getLogger(CetStatisticsAnalysisJob.class);
     @Autowired
     private MongoTemplate mongoTemplate;
 
