@@ -29,7 +29,7 @@ public class testController {
     @ApiOperation(httpMethod = "GET", value = "查看mogo 成绩数据", response = Void.class, notes = "查看mogo 成绩数据<br><br><b>@author wangjun</b>")
     public Map<String,Object> getLookScore(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
-        return teachingScoreAnalysisJob.getLookScore(orgId,null,2017,1);
+        return teachingScoreAnalysisJob.getLookScore(orgId);
     }
 
 }
