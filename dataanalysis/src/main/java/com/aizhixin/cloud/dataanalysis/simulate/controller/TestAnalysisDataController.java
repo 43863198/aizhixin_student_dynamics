@@ -53,7 +53,7 @@ public class TestAnalysisDataController {
 	private PracticeStatisticsService practiceStatisticsService;
 
 	@RequestMapping(value = "/addschoolstatistics", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(httpMethod = "POST", value = "生成学情分析学校人数统计数据", response = Void.class, notes = "生成学情分析学校人数统计数据<br><br><b>@author zhengning</b>")
+	@ApiOperation(httpMethod = "POST", value = "生成学情分析学校人数统计数据(生成模拟数据前会清空表数据请谨慎使用)", response = Void.class, notes = "生成学情分析学校人数统计数据<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> addSchoolStatistics(
 			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
 			@ApiParam(value = "teacherYear 学年)") @RequestParam(value = "teacherYear", required = true) int teacherYear,
@@ -410,7 +410,7 @@ public class TestAnalysisDataController {
 	
 	
 	@RequestMapping(value = "/addcetstatistics", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(httpMethod = "POST", value = "生成学情分析英语等级考试统计数据", response = Void.class, notes = "生成学情分析英语等级考试统计数据<br><br><b>@author zhengning</b>")
+	@ApiOperation(httpMethod = "POST", value = "生成学情分析英语等级考试统计数据(生成模拟数据前会清空表数据请谨慎使用)", response = Void.class, notes = "生成学情分析英语等级考试统计数据<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> addCetStatistics(
 			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
 			@ApiParam(value = "teacherYear 学年)") @RequestParam(value = "teacherYear", required = true) int teacherYear,
@@ -698,7 +698,7 @@ public class TestAnalysisDataController {
 	
 	
 	@RequestMapping(value = "/addpracticestatistics", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(httpMethod = "POST", value = "生成学情分析学生实践统计数据", response = Void.class, notes = "生成学情分析学生实践统计数据<br><br><b>@author zhengning</b>")
+	@ApiOperation(httpMethod = "POST", value = "生成学情分析学生实践统计数据(生成模拟数据前会清空表数据请谨慎使用)", response = Void.class, notes = "生成学情分析学生实践统计数据<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> addracticeStatistics(
 			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
 			@ApiParam(value = "teacherYear 学年)") @RequestParam(value = "teacherYear", required = true) int teacherYear,
