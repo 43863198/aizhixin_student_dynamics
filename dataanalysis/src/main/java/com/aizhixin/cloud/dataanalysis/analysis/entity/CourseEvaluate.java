@@ -1,13 +1,16 @@
 package com.aizhixin.cloud.dataanalysis.analysis.entity;
 
 import com.aizhixin.cloud.dataanalysis.common.entity.AbstractEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "T_COURSE_EVALUATE")
@@ -118,4 +121,14 @@ public class CourseEvaluate extends AbstractEntity {
      */
     @Column(name = "COURSE_TYPE")
     @Getter @Setter private Integer courseType;
+    /*
+* 统计时间
+*/
+    @ApiModelProperty(value = "统计时间")
+    @CreatedDate
+    @Column(name = "STATISTICAL_TIME")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Getter @Setter protected Date statisticalTime = new Date();
 }

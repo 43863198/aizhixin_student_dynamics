@@ -42,10 +42,11 @@ public class TeacherEvaluateService {
                 teacherEvaluateDTO.setTeacherId(rs.getString("TEACHER_ID"));
                 teacherEvaluateDTO.setTeacherName(rs.getString("TEACHER_NAME"));
                 teacherEvaluateDTO.setAvgScore(rs.getFloat("score"));
+                teacherEvaluateDTO.setStatisticalTime(rs.getTimestamp("STATISTICAL_TIME"));
                 return teacherEvaluateDTO;
             }
         };
-        String querySql = "SELECT TEACHER_NAME,TEACHER_ID,avg(AVG_SCORE) as score FROM `T_TEACHER_EVALUATE` where DELETE_FLAG =" + DataValidity.VALID.getState() + " and ORG_ID=" + orgId + " ";
+        String querySql = "SELECT TEACHER_NAME,TEACHER_ID,avg(AVG_SCORE) as score ,max(STATISTICAL_TIME) as STATISTICAL_TIME FROM `T_TEACHER_EVALUATE` where DELETE_FLAG =" + DataValidity.VALID.getState() + " and ORG_ID=" + orgId + " ";
         String countSql = "SELECT TEACHER_ID FROM `T_TEACHER_EVALUATE` where DELETE_FLAG =" + DataValidity.VALID.getState() + "  and ORG_ID=" + orgId + " ";
         if (!StringUtils.isEmpty(semesterId)) {
             querySql += " and SEMESTER=" + semesterId + " ";
