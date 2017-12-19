@@ -32,6 +32,10 @@ public class TeachingScheduleStatisticsService {
     	return teachingScheduleStatisticsRespository.findOne(id);
     }
     
+    public TeachingScheduleStatistics findByOrgIdAndStatisticalTime(Long orgId,String todayStr){
+    	return teachingScheduleStatisticsRespository.findOneByOrgIdAndStatisticalTime(orgId,todayStr);
+    }
+    
     public TeachingScheduleDomain findByOrgId(Long orgId){
     	
     	TeachingScheduleDomain domain = new TeachingScheduleDomain();

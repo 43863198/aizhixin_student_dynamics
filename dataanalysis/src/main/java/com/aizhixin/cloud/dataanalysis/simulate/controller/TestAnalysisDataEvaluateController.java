@@ -48,132 +48,83 @@ public class TestAnalysisDataEvaluateController {
         if(num == 0){
             num = 1;
         }
-        List<CourseEvaluate> courseEvaluates=new ArrayList<CourseEvaluate>();
+        List<CourseEvaluate> list=new ArrayList<CourseEvaluate>();
         for(int i=0;i<num;i++){
+            for(int j=1;j<3;j++){
+                int max = 5;
+                int min = 2;
+                Random random = new Random();
+                int s = 0;
+                if (i > 0) {
+                    s = random.nextInt(max) % (max - min + 1) + min;
+                }
             CourseEvaluate courseEvaluate1=new CourseEvaluate();
 
             courseEvaluate1.setId(UUID.randomUUID().toString());
             courseEvaluate1.setOrgId(orgId);
             courseEvaluate1.setTeacherYear(teacherYear-i);
             courseEvaluate1.setCollegeName("机械与控制工程学院");
-            courseEvaluate1.setCollegeId(1721L);
+            courseEvaluate1.setCollegeId(1722L);
             courseEvaluate1.setCourseCode("90090");
             courseEvaluate1.setCourseName("大学物理");
-            courseEvaluate1.setChargePersonID("2756");
-            courseEvaluate1.setChargePerson("杨端翠");
-            courseEvaluate1.setAvgScore(4.2f);
+            courseEvaluate1.setChargePersonID("182504");
+            courseEvaluate1.setChargePerson("雷军乐");
+            courseEvaluate1.setAvgScore(4.2f+s);
             courseEvaluate1.setCourseOpenDepartment("机械与控制工程学院");
-            courseEvaluate1.setCourseOpenID("207");
+            courseEvaluate1.setCourseOpenID("1722");
             courseEvaluate1.setGrade(2017);
-            courseEvaluate1.setSemester(1);
-            courseEvaluate1.setTeachingClassId("614");;
-            courseEvaluate1.setTeachingClassName("自动化05-1");
+            courseEvaluate1.setSemester(j);
+            courseEvaluate1.setTeachingClassId("10384");;
+            courseEvaluate1.setTeachingClassName("机械2016-1班");
 
-            courseEvaluates.add(courseEvaluate1);
-
-            CourseEvaluate courseEvaluate11=new CourseEvaluate();
-
-            courseEvaluate11.setId(UUID.randomUUID().toString());
-            courseEvaluate11.setOrgId(orgId);
-            courseEvaluate11.setTeacherYear(teacherYear-i);
-            courseEvaluate11.setCollegeName("机械与控制工程学院");
-            courseEvaluate11.setCollegeId(1721L);
-            courseEvaluate11.setCourseCode("90090");
-            courseEvaluate11.setCourseName("大学物理");
-            courseEvaluate11.setChargePersonID("2756");
-            courseEvaluate11.setChargePerson("杨端翠");
-            courseEvaluate11.setAvgScore(4.2f);
-            courseEvaluate11.setCourseOpenDepartment("机械与控制工程学院");
-            courseEvaluate11.setCourseOpenID("207");
-            courseEvaluate11.setGrade(2017);
-            courseEvaluate11.setSemester(2);
-            courseEvaluate11.setTeachingClassId("614");;
-            courseEvaluate11.setTeachingClassName("自动化05-1");
-
-            courseEvaluates.add(courseEvaluate11);
+            list.add(courseEvaluate1);
 
             CourseEvaluate courseEvaluate2=new CourseEvaluate();
 
             courseEvaluate2.setId(UUID.randomUUID().toString());
             courseEvaluate2.setOrgId(orgId);
             courseEvaluate2.setTeacherYear(teacherYear-i);
-            courseEvaluate2.setCollegeName("计算机学院");
+            courseEvaluate2.setCollegeName("机械与控制工程学院");
             courseEvaluate2.setCollegeId(1722L);
-            courseEvaluate2.setCourseCode("040060");
-            courseEvaluate2.setCourseName("面向对象与C++--040060--1");
+            courseEvaluate2.setCourseCode("182504");
+            courseEvaluate2.setCourseName("大学物理");
             courseEvaluate2.setChargePersonID("22");
-            courseEvaluate2.setChargePerson("陆二庆");
-            courseEvaluate2.setAvgScore(4.8f);
+            courseEvaluate2.setChargePerson("雷军乐");
+            courseEvaluate2.setAvgScore(4.8f-s);
             courseEvaluate2.setCourseOpenDepartment("机械与控制工程学院");
             courseEvaluate2.setCourseOpenID("207");
             courseEvaluate2.setGrade(2017);
-            courseEvaluate2.setSemester(1);
-            courseEvaluate2.setTeachingClassId("615");;
-            courseEvaluate2.setTeachingClassName("高计维04-1");
+            courseEvaluate2.setSemester(j);
+            courseEvaluate2.setTeachingClassId("10386");;
+            courseEvaluate2.setTeachingClassName("机械2016-2班");
 
-            courseEvaluates.add(courseEvaluate2);
+            list.add(courseEvaluate2);
 
-            CourseEvaluate courseEvaluate22=new CourseEvaluate();
-
-            courseEvaluate22.setId(UUID.randomUUID().toString());
-            courseEvaluate22.setOrgId(orgId);
-            courseEvaluate22.setTeacherYear(teacherYear-i);
-            courseEvaluate22.setCollegeName("计算机学院");
-            courseEvaluate22.setCollegeId(1722L);
-            courseEvaluate22.setCourseCode("040060");
-            courseEvaluate22.setCourseName("面向对象与C++--040060--1");
-            courseEvaluate22.setChargePersonID("22");
-            courseEvaluate22.setChargePerson("陆二庆");
-            courseEvaluate22.setAvgScore(4.1f);
-            courseEvaluate22.setCourseOpenDepartment("机械与控制工程学院");
-            courseEvaluate22.setCourseOpenID("207");
-            courseEvaluate22.setGrade(2017);
-            courseEvaluate22.setSemester(2);
-            courseEvaluate22.setTeachingClassId("615");;
-            courseEvaluate22.setTeachingClassName("高计维04-1");
-
-            courseEvaluates.add(courseEvaluate22);
+                if (i > 0) {
+                    s = random.nextInt(max) % (max - min + 1) + min;
+                }
             CourseEvaluate courseEvaluate3=new CourseEvaluate();
 
             courseEvaluate3.setId(UUID.randomUUID().toString());
             courseEvaluate3.setOrgId(orgId);
             courseEvaluate3.setTeacherYear(teacherYear-i);
-            courseEvaluate3.setCollegeName("管理工程学院");
-            courseEvaluate3.setCollegeId(1723L);
+            courseEvaluate3.setCollegeName("外国语学院");
+            courseEvaluate3.setCollegeId(1758L);
             courseEvaluate3.setCourseCode("334600");
-            courseEvaluate3.setCourseName("第三方物流管理X--334600--1");
-            courseEvaluate3.setChargePersonID("27156");
-            courseEvaluate3.setChargePerson("蒋爱华");
-            courseEvaluate3.setAvgScore(4.9f);
-            courseEvaluate3.setCourseOpenDepartment("管理工程学院");
-            courseEvaluate3.setCourseOpenID("20712");
+            courseEvaluate3.setCourseName("日语");
+            courseEvaluate3.setChargePersonID("182522");
+            courseEvaluate3.setChargePerson("杨艳");
+            courseEvaluate3.setAvgScore(4.9f+s);
+            courseEvaluate3.setCourseOpenDepartment("外国语学院");
+            courseEvaluate3.setCourseOpenID("1758");
             courseEvaluate3.setGrade(2017);
-            courseEvaluate3.setSemester(1);
+            courseEvaluate3.setSemester(j);
             courseEvaluate3.setTeachingClassId("616");;
-            courseEvaluate3.setTeachingClassName("信管-1");
+            courseEvaluate3.setTeachingClassName("日语2016-1班");
 
-            courseEvaluates.add(courseEvaluate3);
+            list.add(courseEvaluate3);
 
-            CourseEvaluate courseEvaluate33=new CourseEvaluate();
 
-            courseEvaluate33.setId(UUID.randomUUID().toString());
-            courseEvaluate33.setOrgId(orgId);
-            courseEvaluate33.setTeacherYear(teacherYear-i);
-            courseEvaluate33.setCollegeName("人文学院");
-            courseEvaluate33.setCollegeId(1723L);
-            courseEvaluate33.setCourseCode("510740");
-            courseEvaluate33.setCourseName("美学基础--510740--1");
-            courseEvaluate33.setChargePersonID("2756");
-            courseEvaluate33.setChargePerson("王柳");
-            courseEvaluate33.setAvgScore(4.2f);
-            courseEvaluate33.setCourseOpenDepartment("人文学院");
-            courseEvaluate33.setCourseOpenID("20107");
-            courseEvaluate33.setGrade(2017);
-            courseEvaluate33.setSemester(2);
-            courseEvaluate33.setTeachingClassId("6144");;
-            courseEvaluate33.setTeachingClassName("美学-1");
-
-            courseEvaluates.add(courseEvaluate33);
 
 
             CourseEvaluate courseEvaluate4=new CourseEvaluate();
@@ -181,214 +132,140 @@ public class TestAnalysisDataEvaluateController {
             courseEvaluate4.setId(UUID.randomUUID().toString());
             courseEvaluate4.setOrgId(orgId);
             courseEvaluate4.setTeacherYear(teacherYear-i);
-            courseEvaluate4.setCollegeName("电信学院");
+            courseEvaluate4.setCollegeName("测绘地理信息学院");
             courseEvaluate4.setCollegeId(1724L);
             courseEvaluate4.setCourseCode("040080");
-            courseEvaluate4.setCourseName("微机原理--040080--1");
-            courseEvaluate4.setChargePersonID("27756");
-            courseEvaluate4.setChargePerson("王吉林");
-            courseEvaluate4.setAvgScore(4.2f);
-            courseEvaluate4.setCourseOpenDepartment("电信学院");
+            courseEvaluate4.setCourseName("测绘");
+            courseEvaluate4.setChargePersonID("182508");
+            courseEvaluate4.setChargePerson("范冬林");
+            courseEvaluate4.setAvgScore(4.2f+s);
+            courseEvaluate4.setCourseOpenDepartment("测绘地理信息学院");
             courseEvaluate4.setCourseOpenID("1724");
             courseEvaluate4.setGrade(2017);
-            courseEvaluate4.setSemester(1);
-            courseEvaluate4.setTeachingClassId("710");;
-            courseEvaluate4.setTeachingClassName("通信03-1");
+            courseEvaluate4.setSemester(j);
+            courseEvaluate4.setTeachingClassId("10286");;
+            courseEvaluate4.setTeachingClassName("测绘类2016-5班");
 
-            courseEvaluates.add(courseEvaluate4);
+            list.add(courseEvaluate4);
 
-            CourseEvaluate courseEvaluate44=new CourseEvaluate();
-
-            courseEvaluate44.setId(UUID.randomUUID().toString());
-            courseEvaluate44.setOrgId(orgId);
-            courseEvaluate44.setTeacherYear(teacherYear-i);
-            courseEvaluate44.setCollegeName("电信学院");
-            courseEvaluate44.setCollegeId(1724L);
-            courseEvaluate44.setCourseCode("040080");
-            courseEvaluate44.setCourseName("微机原理--040080--1");
-            courseEvaluate44.setChargePersonID("27756");
-            courseEvaluate44.setChargePerson("王吉林");
-            courseEvaluate44.setAvgScore(4.2f);
-            courseEvaluate44.setCourseOpenDepartment("电信学院");
-            courseEvaluate44.setCourseOpenID("1724");
-            courseEvaluate44.setGrade(2017);
-            courseEvaluate44.setSemester(1);
-            courseEvaluate44.setTeachingClassId("710");;
-            courseEvaluate44.setTeachingClassName("通信03-1");
-
-            courseEvaluates.add(courseEvaluate44);
 
             CourseEvaluate courseEvaluate5=new CourseEvaluate();
 
             courseEvaluate5.setId(UUID.randomUUID().toString());
             courseEvaluate5.setOrgId(orgId);
             courseEvaluate5.setTeacherYear(teacherYear-i);
-            courseEvaluate5.setCollegeName("电子信息技术学院");
-            courseEvaluate5.setCollegeId(1725L);
+            courseEvaluate5.setCollegeName("人文社会科学学院");
+            courseEvaluate5.setCollegeId(1754L);
             courseEvaluate5.setCourseCode("510520");
-            courseEvaluate5.setCourseName("计算机知识及应用初步--510520--4");
-            courseEvaluate5.setChargePersonID("3211");
-            courseEvaluate5.setChargePerson("朱继元");
-            courseEvaluate5.setAvgScore(4.2f);
-            courseEvaluate5.setCourseOpenDepartment("电子信息技术学院");
-            courseEvaluate5.setCourseOpenID("1725");
+            courseEvaluate5.setCourseName("广告学");
+            courseEvaluate5.setChargePersonID("182528");
+            courseEvaluate5.setChargePerson("程丽");
+            courseEvaluate5.setAvgScore(4.2f+s);
+            courseEvaluate5.setCourseOpenDepartment("人文社会科学学院");
+            courseEvaluate5.setCourseOpenID("1754");
             courseEvaluate5.setGrade(2017);
-            courseEvaluate5.setSemester(1);
-            courseEvaluate5.setTeachingClassId("614");;
-            courseEvaluate5.setTeachingClassName("计算机05-1");
+            courseEvaluate5.setSemester(j);
+            courseEvaluate5.setTeachingClassId("10428");;
+            courseEvaluate5.setTeachingClassName("广告2016-1班");
 
-            courseEvaluates.add(courseEvaluate5);
+            list.add(courseEvaluate5);
 
-            CourseEvaluate courseEvaluate55=new CourseEvaluate();
 
-            courseEvaluate55.setId(UUID.randomUUID().toString());
-            courseEvaluate55.setOrgId(orgId);
-            courseEvaluate55.setTeacherYear(teacherYear-i);
-            courseEvaluate55.setCollegeName("电子信息技术学院");
-            courseEvaluate55.setCollegeId(1725L);
-            courseEvaluate55.setCourseCode("510520");
-            courseEvaluate55.setCourseName("计算机知识及应用初步--510520--4");
-            courseEvaluate55.setChargePersonID("3211");
-            courseEvaluate55.setChargePerson("朱继元");
-            courseEvaluate55.setAvgScore(4.2f);
-            courseEvaluate55.setCourseOpenDepartment("电子信息技术学院");
-            courseEvaluate55.setCourseOpenID("1725");
-            courseEvaluate55.setGrade(2017);
-            courseEvaluate55.setSemester(2);
-            courseEvaluate55.setTeachingClassId("614");;
-            courseEvaluate55.setTeachingClassName("计算机05-1");
-
-            courseEvaluates.add(courseEvaluate55);
 
             CourseEvaluate courseEvaluate6=new CourseEvaluate();
 
             courseEvaluate6.setId(UUID.randomUUID().toString());
             courseEvaluate6.setOrgId(orgId);
             courseEvaluate6.setTeacherYear(teacherYear-i);
-            courseEvaluate6.setCollegeName("土木与建筑工程学院");
-            courseEvaluate6.setCollegeId(1726L);
+            courseEvaluate6.setCollegeName("化学与生物工程学院");
+            courseEvaluate6.setCollegeId(1720L);
             courseEvaluate6.setCourseCode("311860");
-            courseEvaluate6.setCourseName("工程监理概论X--311860--1");
+            courseEvaluate6.setCourseName("生物工程");
             courseEvaluate6.setChargePersonID("275116");
             courseEvaluate6.setChargePerson("刘帅");
             courseEvaluate6.setAvgScore(4.2f);
-            courseEvaluate6.setCourseOpenDepartment("土木与建筑工程学院");
-            courseEvaluate6.setCourseOpenID("1726");
+            courseEvaluate6.setCourseOpenDepartment("化学与生物工程学院");
+            courseEvaluate6.setCourseOpenID("1720");
             courseEvaluate6.setGrade(2017);
-            courseEvaluate6.setSemester(1);
-            courseEvaluate6.setTeachingClassId("614");;
-            courseEvaluate6.setTeachingClassName("资勘04-1");
+            courseEvaluate6.setSemester(j);
+            courseEvaluate6.setTeachingClassId("10360");;
+            courseEvaluate6.setTeachingClassName("生物工程2016-1班");
 
-            courseEvaluates.add(courseEvaluate6);
+            list.add(courseEvaluate6);
 
-            CourseEvaluate courseEvaluate66=new CourseEvaluate();
-
-            courseEvaluate66.setId(UUID.randomUUID().toString());
-            courseEvaluate66.setOrgId(orgId);
-            courseEvaluate66.setTeacherYear(teacherYear-i);
-            courseEvaluate66.setCollegeName("土木与建筑工程学院");
-            courseEvaluate66.setCollegeId(1726L);
-            courseEvaluate66.setCourseCode("311860");
-            courseEvaluate66.setCourseName("工程监理概论X--311860--1");
-            courseEvaluate66.setChargePersonID("275116");
-            courseEvaluate66.setChargePerson("刘帅");
-            courseEvaluate66.setAvgScore(4.2f);
-            courseEvaluate66.setCourseOpenDepartment("土木与建筑工程学院");
-            courseEvaluate66.setCourseOpenID("1726");
-            courseEvaluate66.setGrade(2017);
-            courseEvaluate66.setSemester(2);
-            courseEvaluate66.setTeachingClassId("614");;
-            courseEvaluate66.setTeachingClassName("资勘04-1");
-
-            courseEvaluates.add(courseEvaluate66);
+                if (i > 0) {
+                    s = random.nextInt(max) % (max - min + 1) + min;
+                }
 
             CourseEvaluate courseEvaluate7=new CourseEvaluate();
 
             courseEvaluate7.setId(UUID.randomUUID().toString());
             courseEvaluate7.setOrgId(orgId);
             courseEvaluate7.setTeacherYear(teacherYear-i);
-            courseEvaluate7.setCollegeName("艺术学院");
-            courseEvaluate7.setCollegeId(1727L);
+            courseEvaluate7.setCollegeName("旅游学院");
+            courseEvaluate7.setCollegeId(1752L);
             courseEvaluate7.setCourseCode("322732");
-            courseEvaluate7.setCourseName("素描2--322732--1");
-            courseEvaluate7.setChargePersonID("275216");
-            courseEvaluate7.setChargePerson("陈曦");
+            courseEvaluate7.setCourseName("风景园林");
+            courseEvaluate7.setChargePersonID("183974");
+            courseEvaluate7.setChargePerson("罗薇");
             courseEvaluate7.setAvgScore(4.9f);
-            courseEvaluate7.setCourseOpenDepartment("艺术学院");
-            courseEvaluate7.setCourseOpenID("1727");
+            courseEvaluate7.setCourseOpenDepartment("旅游学院");
+            courseEvaluate7.setCourseOpenID("1752");
             courseEvaluate7.setGrade(2017);
-            courseEvaluate7.setSemester(1);
-            courseEvaluate7.setTeachingClassId("614");;
-            courseEvaluate7.setTeachingClassName("艺术视传05-3");
+            courseEvaluate7.setSemester(j);
+            courseEvaluate7.setTeachingClassId("10422");
+            courseEvaluate7.setTeachingClassName("风景园林2016-1班");
 
-            courseEvaluates.add(courseEvaluate7);
+            list.add(courseEvaluate7);
 
-            CourseEvaluate courseEvaluate77=new CourseEvaluate();
 
-            courseEvaluate77.setId(UUID.randomUUID().toString());
-            courseEvaluate77.setOrgId(orgId);
-            courseEvaluate77.setTeacherYear(teacherYear-i);
-            courseEvaluate77.setCollegeName("艺术学院");
-            courseEvaluate77.setCollegeId(1727L);
-            courseEvaluate77.setCourseCode("322732");
-            courseEvaluate77.setCourseName("素描2--322732--1");
-            courseEvaluate77.setChargePersonID("275216");
-            courseEvaluate77.setChargePerson("陈曦");
-            courseEvaluate77.setAvgScore(4.9f);
-            courseEvaluate77.setCourseOpenDepartment("艺术学院");
-            courseEvaluate77.setCourseOpenID("1727");
-            courseEvaluate77.setGrade(2017);
-            courseEvaluate77.setSemester(2);
-            courseEvaluate77.setTeachingClassId("614");;
-            courseEvaluate77.setTeachingClassName("艺术视传05-3");
-
-            courseEvaluates.add(courseEvaluate77);
 
             CourseEvaluate courseEvaluate8=new CourseEvaluate();
 
             courseEvaluate8.setId(UUID.randomUUID().toString());
             courseEvaluate8.setOrgId(orgId);
             courseEvaluate8.setTeacherYear(teacherYear-i);
-            courseEvaluate8.setCollegeName("外国语学院");
-            courseEvaluate8.setCollegeId(1728L);
+            courseEvaluate8.setCollegeName("信息科学与工程学院");
+            courseEvaluate8.setCollegeId(1718L);
             courseEvaluate8.setCourseCode("511730");
-            courseEvaluate8.setCourseName("中级英语口语--511730--3");
-            courseEvaluate8.setChargePersonID("2751216");
-            courseEvaluate8.setChargePerson("刘光艳");
-            courseEvaluate8.setAvgScore(4.5f);
-            courseEvaluate8.setCourseOpenDepartment("外国语学院");
-            courseEvaluate8.setCourseOpenID("1728");
+            courseEvaluate8.setCourseName("信息科学");
+            courseEvaluate8.setChargePersonID("183200");
+            courseEvaluate8.setChargePerson("蒋存波");
+            courseEvaluate8.setAvgScore(4.5f+s);
+            courseEvaluate8.setCourseOpenDepartment("信息科学与工程学院");
+            courseEvaluate8.setCourseOpenID("1718");
             courseEvaluate8.setGrade(2017);
-            courseEvaluate8.setSemester(1);
-            courseEvaluate8.setTeachingClassId("614121");;
-            courseEvaluate8.setTeachingClassName("会计05-2");
+            courseEvaluate8.setSemester(j);
+            courseEvaluate8.setTeachingClassId("10530");;
+            courseEvaluate8.setTeachingClassName("电信类2016-2班");
 
-            courseEvaluates.add(courseEvaluate8);
+            list.add(courseEvaluate8);
 
-            CourseEvaluate courseEvaluate88=new CourseEvaluate();
+            CourseEvaluate courseEvaluate9=new CourseEvaluate();
 
-            courseEvaluate88.setId(UUID.randomUUID().toString());
-            courseEvaluate88.setOrgId(orgId);
-            courseEvaluate88.setTeacherYear(teacherYear-i);
-            courseEvaluate88.setCollegeName("外国语学院");
-            courseEvaluate88.setCollegeId(1728L);
-            courseEvaluate88.setCourseCode("511730");
-            courseEvaluate88.setCourseName("中级英语口语--511730--3");
-            courseEvaluate88.setChargePersonID("2751216");
-            courseEvaluate88.setChargePerson("刘光艳");
-            courseEvaluate88.setAvgScore(4.5f);
-            courseEvaluate88.setCourseOpenDepartment("外国语学院");
-            courseEvaluate88.setCourseOpenID("1728");
-            courseEvaluate88.setGrade(2017);
-            courseEvaluate88.setSemester(1);
-            courseEvaluate88.setTeachingClassId("614121");;
-            courseEvaluate88.setTeachingClassName("会计05-2");
+            courseEvaluate9.setId(UUID.randomUUID().toString());
+            courseEvaluate9.setOrgId(orgId);
+            courseEvaluate9.setTeacherYear(teacherYear-i);
+            courseEvaluate9.setCollegeName("管理学院");
+            courseEvaluate9.setCollegeId(1750L);
+            courseEvaluate9.setCourseCode("511730");
+            courseEvaluate9.setCourseName("国际贸易");
+            courseEvaluate9.setChargePersonID("183980");
+            courseEvaluate9.setChargePerson("李隽波");
+            courseEvaluate9.setAvgScore(4.5f);
+            courseEvaluate9.setCourseOpenDepartment("管理学院");
+            courseEvaluate9.setCourseOpenID("1750");
+            courseEvaluate9.setGrade(2017);
+            courseEvaluate9.setSemester(j);
+            courseEvaluate9.setTeachingClassId("10334");;
+            courseEvaluate9.setTeachingClassName("国贸2016-1班");
 
-            courseEvaluates.add(courseEvaluate88);
-        }
-        courseEvaluateService.saveList(courseEvaluates);
+            list.add(courseEvaluate9);
+        }}
+        courseEvaluateService.saveList(list);
         Map<String, Object> result = new HashMap<String, Object>();
         return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+
     }
     /**
      * 教师评价
@@ -409,312 +286,200 @@ public class TestAnalysisDataEvaluateController {
         }
         List<TeacherEvaluate> list=new ArrayList<TeacherEvaluate>();
         for(int i=0;i<num;i++){
+            for(int j=1;j<3;j++){
+                int max = 5;
+                int min = 2;
+                Random random = new Random();
+                int s = 0;
+                if (i > 0) {
+                    s = random.nextInt(max) % (max - min + 1) + min;
+                }
+                TeacherEvaluate teacherEvaluate1=new TeacherEvaluate();
 
-            TeacherEvaluate teacherEvaluate1=new TeacherEvaluate();
+                teacherEvaluate1.setId(UUID.randomUUID().toString());
+                teacherEvaluate1.setOrgId(orgId);
+                teacherEvaluate1.setTeacherYear(teacherYear-i);
+                teacherEvaluate1.setCollegeName("机械与控制工程学院");
+                teacherEvaluate1.setCollegeId(1722L);
+                teacherEvaluate1.setCourseCode("90090");
+                teacherEvaluate1.setCourseName("大学物理");
+                teacherEvaluate1.setTeacherId("182504");
+                teacherEvaluate1.setTeacherName("雷军乐");
+                teacherEvaluate1.setAvgScore(4.2f+s);
+                teacherEvaluate1.setGrade(2017);
+                teacherEvaluate1.setSemester(j);
+                teacherEvaluate1.setClassId("10384");
+                teacherEvaluate1.setClassName("机械2016-1班");
 
-            teacherEvaluate1.setId(UUID.randomUUID().toString());
-            teacherEvaluate1.setOrgId(orgId);
-            teacherEvaluate1.setTeacherYear(teacherYear-i);
-            teacherEvaluate1.setCollegeName("机械与控制工程学院");
-            teacherEvaluate1.setCollegeId(1721L);
-            teacherEvaluate1.setCourseCode("90090");
-            teacherEvaluate1.setCourseName("大学物理");
-            teacherEvaluate1.setTeacherId("2756");
-            teacherEvaluate1.setTeacherName("杨端翠");
-            teacherEvaluate1.setAvgScore(4.2f);
-            teacherEvaluate1.setGrade(2017);
-            teacherEvaluate1.setSemester(1);
-            teacherEvaluate1.setClassId("614");;
-            teacherEvaluate1.setClassName("自动化05-1");
+                list.add(teacherEvaluate1);
 
-            list.add(teacherEvaluate1);
+                TeacherEvaluate teacherEvaluate2=new TeacherEvaluate();
 
-            TeacherEvaluate teacherEvaluate11=new TeacherEvaluate();
+                teacherEvaluate2.setId(UUID.randomUUID().toString());
+                teacherEvaluate2.setOrgId(orgId);
+                teacherEvaluate2.setTeacherYear(teacherYear-i);
+                teacherEvaluate2.setCollegeName("机械与控制工程学院");
+                teacherEvaluate2.setCollegeId(1722L);
+                teacherEvaluate2.setCourseCode("182504");
+                teacherEvaluate2.setCourseName("大学物理");
+                teacherEvaluate2.setTeacherId("22");
+                teacherEvaluate2.setTeacherName("雷军乐");
+                teacherEvaluate2.setAvgScore(4.8f-s);
+                teacherEvaluate2.setGrade(2017);
+                teacherEvaluate2.setSemester(j);
+                teacherEvaluate2.setClassId("10386");;
+                teacherEvaluate2.setClassId("机械2016-2班");
 
-            teacherEvaluate11.setId(UUID.randomUUID().toString());
-            teacherEvaluate11.setOrgId(orgId);
-            teacherEvaluate11.setTeacherYear(teacherYear-i);
-            teacherEvaluate11.setCollegeName("机械与控制工程学院");
-            teacherEvaluate11.setCollegeId(1721L);
-            teacherEvaluate11.setCourseCode("90090");
-            teacherEvaluate11.setCourseName("大学物理");
-            teacherEvaluate11.setTeacherId("2756");
-            teacherEvaluate11.setTeacherName("杨端翠");
-            teacherEvaluate11.setAvgScore(4.2f);
-            teacherEvaluate11.setGrade(2017);
-            teacherEvaluate11.setSemester(2);
-            teacherEvaluate11.setClassId("614");;
-            teacherEvaluate11.setClassName("自动化05-1");
+                list.add(teacherEvaluate2);
 
-            list.add(teacherEvaluate11);
+                if (i > 0) {
+                    s = random.nextInt(max) % (max - min + 1) + min;
+                }
+                TeacherEvaluate teacherEvaluate3=new TeacherEvaluate();
 
-            TeacherEvaluate teacherEvaluate2=new TeacherEvaluate();
+                teacherEvaluate3.setId(UUID.randomUUID().toString());
+                teacherEvaluate3.setOrgId(orgId);
+                teacherEvaluate3.setTeacherYear(teacherYear-i);
+                teacherEvaluate3.setCollegeName("外国语学院");
+                teacherEvaluate3.setCollegeId(1758L);
+                teacherEvaluate3.setCourseCode("334600");
+                teacherEvaluate3.setCourseName("日语");
+                teacherEvaluate3.setTeacherId("182522");
+                teacherEvaluate3.setTeacherName("杨艳");
+                teacherEvaluate3.setAvgScore(4.9f+s);
+                teacherEvaluate3.setGrade(2017);
+                teacherEvaluate3.setSemester(j);
+                teacherEvaluate3.setClassId("616");;
+                teacherEvaluate3.setClassId("日语2016-1班");
 
-            teacherEvaluate2.setId(UUID.randomUUID().toString());
-            teacherEvaluate2.setOrgId(orgId);
-            teacherEvaluate2.setTeacherYear(teacherYear-i);
-            teacherEvaluate2.setCollegeName("计算机学院");
-            teacherEvaluate2.setCollegeId(1722L);
-            teacherEvaluate2.setCourseCode("040060");
-            teacherEvaluate2.setCourseName("面向对象与C++--040060--1");
-            teacherEvaluate2.setTeacherId("22");
-            teacherEvaluate2.setTeacherName("陆二庆");
-            teacherEvaluate2.setAvgScore(4.8f);
-            teacherEvaluate2.setGrade(2017);
-            teacherEvaluate2.setSemester(1);
-            teacherEvaluate2.setClassId("615");;
-            teacherEvaluate2.setClassName("高计维04-1");
-
-            list.add(teacherEvaluate2);
-
-            TeacherEvaluate teacherEvaluate22=new TeacherEvaluate();
-
-            teacherEvaluate22.setId(UUID.randomUUID().toString());
-            teacherEvaluate22.setOrgId(orgId);
-            teacherEvaluate22.setTeacherYear(teacherYear-i);
-            teacherEvaluate22.setCollegeName("计算机学院");
-            teacherEvaluate22.setCollegeId(1722L);
-            teacherEvaluate22.setCourseCode("040060");
-            teacherEvaluate22.setCourseName("面向对象与C++--040060--1");
-            teacherEvaluate22.setTeacherId("22");
-            teacherEvaluate22.setTeacherName("陆二庆");
-            teacherEvaluate22.setAvgScore(4.1f);
-            teacherEvaluate22.setGrade(2017);
-            teacherEvaluate22.setSemester(2);
-            teacherEvaluate22.setClassId("615");;
-            teacherEvaluate22.setClassName("高计维04-1");
-
-            list.add(teacherEvaluate22);
-            TeacherEvaluate teacherEvaluate3=new TeacherEvaluate();
-
-            teacherEvaluate3.setId(UUID.randomUUID().toString());
-            teacherEvaluate3.setOrgId(orgId);
-            teacherEvaluate3.setTeacherYear(teacherYear-i);
-            teacherEvaluate3.setCollegeName("管理工程学院");
-            teacherEvaluate3.setCollegeId(1723L);
-            teacherEvaluate3.setCourseCode("334600");
-            teacherEvaluate3.setCourseName("第三方物流管理X--334600--1");
-            teacherEvaluate3.setTeacherId("27156");
-            teacherEvaluate3.setTeacherName("蒋爱华");
-            teacherEvaluate3.setAvgScore(4.9f);
-            teacherEvaluate3.setGrade(2017);
-            teacherEvaluate3.setSemester(1);
-            teacherEvaluate3.setClassId("616");;
-            teacherEvaluate3.setClassName("信管-1");
-
-            list.add(teacherEvaluate3);
-
-            TeacherEvaluate teacherEvaluate33=new TeacherEvaluate();
-
-            teacherEvaluate33.setId(UUID.randomUUID().toString());
-            teacherEvaluate33.setOrgId(orgId);
-            teacherEvaluate33.setTeacherYear(teacherYear-i);
-            teacherEvaluate33.setCollegeName("人文学院");
-            teacherEvaluate33.setCollegeId(1723L);
-            teacherEvaluate33.setCourseCode("510740");
-            teacherEvaluate33.setCourseName("美学基础--510740--1");
-            teacherEvaluate33.setTeacherId("2756");
-            teacherEvaluate33.setTeacherName("王柳");
-            teacherEvaluate33.setAvgScore(4.2f);
-            teacherEvaluate33.setGrade(2017);
-            teacherEvaluate33.setSemester(2);
-            teacherEvaluate33.setClassId("6144");;
-            teacherEvaluate33.setClassName("美学-1");
-
-            list.add(teacherEvaluate33);
+                list.add(teacherEvaluate3);
 
 
-            TeacherEvaluate teacherEvaluate4=new TeacherEvaluate();
 
-            teacherEvaluate4.setId(UUID.randomUUID().toString());
-            teacherEvaluate4.setOrgId(orgId);
-            teacherEvaluate4.setTeacherYear(teacherYear-i);
-            teacherEvaluate4.setCollegeName("电信学院");
-            teacherEvaluate4.setCollegeId(1724L);
-            teacherEvaluate4.setCourseCode("040080");
-            teacherEvaluate4.setCourseName("微机原理--040080--1");
-            teacherEvaluate4.setTeacherId("27756");
-            teacherEvaluate4.setTeacherName("王吉林");
-            teacherEvaluate4.setAvgScore(4.2f);
-            teacherEvaluate4.setGrade(2017);
-            teacherEvaluate4.setSemester(1);
-            teacherEvaluate4.setClassId("710");;
-            teacherEvaluate4.setClassName("通信03-1");
 
-            list.add(teacherEvaluate4);
+                TeacherEvaluate teacherEvaluate4=new TeacherEvaluate();
 
-            TeacherEvaluate teacherEvaluate44=new TeacherEvaluate();
+                teacherEvaluate4.setId(UUID.randomUUID().toString());
+                teacherEvaluate4.setOrgId(orgId);
+                teacherEvaluate4.setTeacherYear(teacherYear-i);
+                teacherEvaluate4.setCollegeName("测绘地理信息学院");
+                teacherEvaluate4.setCollegeId(1724L);
+                teacherEvaluate4.setCourseCode("040080");
+                teacherEvaluate4.setCourseName("测绘");
+                teacherEvaluate4.setTeacherId("182508");
+                teacherEvaluate4.setTeacherName("范冬林");
+                teacherEvaluate4.setAvgScore(4.2f+s);
+                teacherEvaluate4.setGrade(2017);
+                teacherEvaluate4.setSemester(j);
+                teacherEvaluate4.setClassId("10286");;
+                teacherEvaluate4.setClassId("测绘类2016-5班");
 
-            teacherEvaluate44.setId(UUID.randomUUID().toString());
-            teacherEvaluate44.setOrgId(orgId);
-            teacherEvaluate44.setTeacherYear(teacherYear-i);
-            teacherEvaluate44.setCollegeName("电信学院");
-            teacherEvaluate44.setCollegeId(1724L);
-            teacherEvaluate44.setCourseCode("040080");
-            teacherEvaluate44.setCourseName("微机原理--040080--1");
-            teacherEvaluate44.setTeacherId("27756");
-            teacherEvaluate44.setTeacherName("王吉林");
-            teacherEvaluate44.setAvgScore(4.2f);
-            teacherEvaluate44.setGrade(2017);
-            teacherEvaluate44.setSemester(1);
-            teacherEvaluate44.setClassId("710");;
-            teacherEvaluate44.setClassName("通信03-1");
+                list.add(teacherEvaluate4);
 
-            list.add(teacherEvaluate44);
 
-            TeacherEvaluate teacherEvaluate5=new TeacherEvaluate();
+                TeacherEvaluate teacherEvaluate5=new TeacherEvaluate();
 
-            teacherEvaluate5.setId(UUID.randomUUID().toString());
-            teacherEvaluate5.setOrgId(orgId);
-            teacherEvaluate5.setTeacherYear(teacherYear-i);
-            teacherEvaluate5.setCollegeName("电子信息技术学院");
-            teacherEvaluate5.setCollegeId(1725L);
-            teacherEvaluate5.setCourseCode("510520");
-            teacherEvaluate5.setCourseName("计算机知识及应用初步--510520--4");
-            teacherEvaluate5.setTeacherId("3211");
-            teacherEvaluate5.setTeacherName("朱继元");
-            teacherEvaluate5.setAvgScore(4.2f);
-            teacherEvaluate5.setGrade(2017);
-            teacherEvaluate5.setSemester(1);
-            teacherEvaluate5.setClassId("614");;
-            teacherEvaluate5.setClassName("计算机05-1");
+                teacherEvaluate5.setId(UUID.randomUUID().toString());
+                teacherEvaluate5.setOrgId(orgId);
+                teacherEvaluate5.setTeacherYear(teacherYear-i);
+                teacherEvaluate5.setCollegeName("人文社会科学学院");
+                teacherEvaluate5.setCollegeId(1754L);
+                teacherEvaluate5.setCourseCode("510520");
+                teacherEvaluate5.setCourseName("广告学");
+                teacherEvaluate5.setTeacherId("182528");
+                teacherEvaluate5.setTeacherName("程丽");
+                teacherEvaluate5.setAvgScore(4.2f+s);
+                teacherEvaluate5.setGrade(2017);
+                teacherEvaluate5.setSemester(j);
+                teacherEvaluate5.setClassId("10428");;
+                teacherEvaluate5.setClassId("广告2016-1班");
 
-            list.add(teacherEvaluate5);
+                list.add(teacherEvaluate5);
 
-            TeacherEvaluate teacherEvaluate55=new TeacherEvaluate();
 
-            teacherEvaluate55.setId(UUID.randomUUID().toString());
-            teacherEvaluate55.setOrgId(orgId);
-            teacherEvaluate55.setTeacherYear(teacherYear-i);
-            teacherEvaluate55.setCollegeName("电子信息技术学院");
-            teacherEvaluate55.setCollegeId(1725L);
-            teacherEvaluate55.setCourseCode("510520");
-            teacherEvaluate55.setCourseName("计算机知识及应用初步--510520--4");
-            teacherEvaluate55.setTeacherId("3211");
-            teacherEvaluate55.setTeacherName("朱继元");
-            teacherEvaluate55.setAvgScore(4.2f);
-            teacherEvaluate55.setGrade(2017);
-            teacherEvaluate55.setSemester(2);
-            teacherEvaluate55.setClassId("614");;
-            teacherEvaluate55.setClassName("计算机05-1");
 
-            list.add(teacherEvaluate55);
+                TeacherEvaluate teacherEvaluate6=new TeacherEvaluate();
 
-            TeacherEvaluate teacherEvaluate6=new TeacherEvaluate();
+                teacherEvaluate6.setId(UUID.randomUUID().toString());
+                teacherEvaluate6.setOrgId(orgId);
+                teacherEvaluate6.setTeacherYear(teacherYear-i);
+                teacherEvaluate6.setCollegeName("化学与生物工程学院");
+                teacherEvaluate6.setCollegeId(1720L);
+                teacherEvaluate6.setCourseCode("311860");
+                teacherEvaluate6.setCourseName("生物工程");
+                teacherEvaluate6.setTeacherId("275116");
+                teacherEvaluate6.setTeacherName("刘帅");
+                teacherEvaluate6.setAvgScore(4.2f);
+                teacherEvaluate6.setGrade(2017);
+                teacherEvaluate6.setSemester(j);
+                teacherEvaluate6.setClassId("10360");;
+                teacherEvaluate6.setClassId("生物工程2016-1班");
 
-            teacherEvaluate6.setId(UUID.randomUUID().toString());
-            teacherEvaluate6.setOrgId(orgId);
-            teacherEvaluate6.setTeacherYear(teacherYear-i);
-            teacherEvaluate6.setCollegeName("土木与建筑工程学院");
-            teacherEvaluate6.setCollegeId(1726L);
-            teacherEvaluate6.setCourseCode("311860");
-            teacherEvaluate6.setCourseName("工程监理概论X--311860--1");
-            teacherEvaluate6.setTeacherId("275116");
-            teacherEvaluate6.setTeacherName("刘帅");
-            teacherEvaluate6.setAvgScore(4.2f);
-            teacherEvaluate6.setGrade(2017);
-            teacherEvaluate6.setSemester(1);
-            teacherEvaluate6.setClassId("614");;
-            teacherEvaluate6.setClassName("资勘04-1");
+                list.add(teacherEvaluate6);
 
-            list.add(teacherEvaluate6);
+                if (i > 0) {
+                    s = random.nextInt(max) % (max - min + 1) + min;
+                }
 
-            TeacherEvaluate teacherEvaluate66=new TeacherEvaluate();
+                TeacherEvaluate teacherEvaluate7=new TeacherEvaluate();
 
-            teacherEvaluate66.setId(UUID.randomUUID().toString());
-            teacherEvaluate66.setOrgId(orgId);
-            teacherEvaluate66.setTeacherYear(teacherYear-i);
-            teacherEvaluate66.setCollegeName("土木与建筑工程学院");
-            teacherEvaluate66.setCollegeId(1726L);
-            teacherEvaluate66.setCourseCode("311860");
-            teacherEvaluate66.setCourseName("工程监理概论X--311860--1");
-            teacherEvaluate66.setTeacherId("275116");
-            teacherEvaluate66.setTeacherName("刘帅");
-            teacherEvaluate66.setAvgScore(4.2f);
-            teacherEvaluate66.setGrade(2017);
-            teacherEvaluate66.setSemester(2);
-            teacherEvaluate66.setClassId("614");;
-            teacherEvaluate66.setClassName("资勘04-1");
+                teacherEvaluate7.setId(UUID.randomUUID().toString());
+                teacherEvaluate7.setOrgId(orgId);
+                teacherEvaluate7.setTeacherYear(teacherYear-i);
+                teacherEvaluate7.setCollegeName("旅游学院");
+                teacherEvaluate7.setCollegeId(1752L);
+                teacherEvaluate7.setCourseCode("322732");
+                teacherEvaluate7.setCourseName("风景园林");
+                teacherEvaluate7.setTeacherId("183974");
+                teacherEvaluate7.setTeacherName("罗薇");
+                teacherEvaluate7.setAvgScore(4.9f);
+                teacherEvaluate7.setGrade(2017);
+                teacherEvaluate7.setSemester(j);
+                teacherEvaluate7.setClassId("10422");
+                teacherEvaluate7.setClassId("风景园林2016-1班");
 
-            list.add(teacherEvaluate66);
+                list.add(teacherEvaluate7);
 
-            TeacherEvaluate teacherEvaluate7=new TeacherEvaluate();
 
-            teacherEvaluate7.setId(UUID.randomUUID().toString());
-            teacherEvaluate7.setOrgId(orgId);
-            teacherEvaluate7.setTeacherYear(teacherYear-i);
-            teacherEvaluate7.setCollegeName("艺术学院");
-            teacherEvaluate7.setCollegeId(1727L);
-            teacherEvaluate7.setCourseCode("322732");
-            teacherEvaluate7.setCourseName("素描2--322732--1");
-            teacherEvaluate7.setTeacherId("275216");
-            teacherEvaluate7.setTeacherName("陈曦");
-            teacherEvaluate7.setAvgScore(4.9f);
-            teacherEvaluate7.setGrade(2017);
-            teacherEvaluate7.setSemester(1);
-            teacherEvaluate7.setClassId("614");;
-            teacherEvaluate7.setClassName("艺术视传05-3");
 
-            list.add(teacherEvaluate7);
+                TeacherEvaluate teacherEvaluate8=new TeacherEvaluate();
 
-            TeacherEvaluate teacherEvaluate77=new TeacherEvaluate();
+                teacherEvaluate8.setId(UUID.randomUUID().toString());
+                teacherEvaluate8.setOrgId(orgId);
+                teacherEvaluate8.setTeacherYear(teacherYear-i);
+                teacherEvaluate8.setCollegeName("信息科学与工程学院");
+                teacherEvaluate8.setCollegeId(1718L);
+                teacherEvaluate8.setCourseCode("511730");
+                teacherEvaluate8.setCourseName("信息科学");
+                teacherEvaluate8.setTeacherId("183200");
+                teacherEvaluate8.setTeacherName("蒋存波");
+                teacherEvaluate8.setAvgScore(4.5f+s);
+                teacherEvaluate8.setGrade(2017);
+                teacherEvaluate8.setSemester(j);
+                teacherEvaluate8.setClassId("10530");;
+                teacherEvaluate8.setClassId("电信类2016-2班");
 
-            teacherEvaluate77.setId(UUID.randomUUID().toString());
-            teacherEvaluate77.setOrgId(orgId);
-            teacherEvaluate77.setTeacherYear(teacherYear-i);
-            teacherEvaluate77.setCollegeName("艺术学院");
-            teacherEvaluate77.setCollegeId(1727L);
-            teacherEvaluate77.setCourseCode("322732");
-            teacherEvaluate77.setCourseName("素描2--322732--1");
-            teacherEvaluate77.setTeacherId("275216");
-            teacherEvaluate77.setTeacherName("陈曦");
-            teacherEvaluate77.setAvgScore(4.9f);
-            teacherEvaluate77.setGrade(2017);
-            teacherEvaluate77.setSemester(2);
-            teacherEvaluate77.setClassId("614");;
-            teacherEvaluate77.setClassName("艺术视传05-3");
+                list.add(teacherEvaluate8);
 
-            list.add(teacherEvaluate77);
+                TeacherEvaluate teacherEvaluate9=new TeacherEvaluate();
 
-            TeacherEvaluate teacherEvaluate8=new TeacherEvaluate();
+                teacherEvaluate9.setId(UUID.randomUUID().toString());
+                teacherEvaluate9.setOrgId(orgId);
+                teacherEvaluate9.setTeacherYear(teacherYear-i);
+                teacherEvaluate9.setCollegeName("管理学院");
+                teacherEvaluate9.setCollegeId(1750L);
+                teacherEvaluate9.setCourseCode("511730");
+                teacherEvaluate9.setCourseName("国际贸易");
+                teacherEvaluate9.setTeacherId("183980");
+                teacherEvaluate9.setTeacherName("李隽波");
+                teacherEvaluate9.setAvgScore(4.5f);
+                teacherEvaluate9.setGrade(2017);
+                teacherEvaluate9.setSemester(j);
+                teacherEvaluate9.setClassId("10334");;
+                teacherEvaluate9.setClassId("国贸2016-1班");
 
-            teacherEvaluate8.setId(UUID.randomUUID().toString());
-            teacherEvaluate8.setOrgId(orgId);
-            teacherEvaluate8.setTeacherYear(teacherYear-i);
-            teacherEvaluate8.setCollegeName("外国语学院");
-            teacherEvaluate8.setCollegeId(1728L);
-            teacherEvaluate8.setCourseCode("511730");
-            teacherEvaluate8.setCourseName("中级英语口语--511730--3");
-            teacherEvaluate8.setTeacherId("2751216");
-            teacherEvaluate8.setTeacherName("刘光艳");
-            teacherEvaluate8.setAvgScore(4.5f);
-            teacherEvaluate8.setGrade(2017);
-            teacherEvaluate8.setSemester(1);
-            teacherEvaluate8.setClassId("614121");;
-            teacherEvaluate8.setClassName("会计05-2");
-
-            list.add(teacherEvaluate8);
-
-            TeacherEvaluate teacherEvaluate88=new TeacherEvaluate();
-
-            teacherEvaluate88.setId(UUID.randomUUID().toString());
-            teacherEvaluate88.setOrgId(orgId);
-            teacherEvaluate88.setTeacherYear(teacherYear-i);
-            teacherEvaluate88.setCollegeName("外国语学院");
-            teacherEvaluate88.setCollegeId(1728L);
-            teacherEvaluate88.setCourseCode("511730");
-            teacherEvaluate88.setCourseName("中级英语口语--511730--3");
-            teacherEvaluate88.setTeacherId("2751216");
-            teacherEvaluate88.setTeacherName("刘光艳");
-            teacherEvaluate88.setAvgScore(4.5f);
-            teacherEvaluate88.setGrade(2017);
-            teacherEvaluate88.setSemester(1);
-            teacherEvaluate88.setClassId("614121");;
-            teacherEvaluate88.setClassName("会计05-2");
-
-            list.add(teacherEvaluate88);
-
-        }
+                list.add(teacherEvaluate9);
+        }}
         teacherEvaluateService.saveList(list);
         Map<String, Object> result = new HashMap<String, Object>();
         return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);

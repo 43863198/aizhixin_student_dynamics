@@ -85,7 +85,7 @@ public class MakeUpScoreCount {
 	/**
 	 * 不及格课程学分
 	 */
-	private String failCourseCredit;
+	private float failCourseCredit;
 	
 	
 	/**

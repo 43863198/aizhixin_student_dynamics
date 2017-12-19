@@ -12,5 +12,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface TeachingScheduleStatisticsRespository extends JpaRepository<TeachingScheduleStatistics, String> {
 
 	TeachingScheduleStatistics findOneByOrgIdAndStatisticalTime(Long orgId,String statisticalTime);
+	
+	
 }
 

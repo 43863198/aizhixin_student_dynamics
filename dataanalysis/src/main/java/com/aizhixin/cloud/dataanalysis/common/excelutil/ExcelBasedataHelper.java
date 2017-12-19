@@ -191,12 +191,12 @@ public class ExcelBasedataHelper {
 					}
 					String grade = getCellStringValue(row, 8);
 					String scheduleId = getCellStringValue(row, 17);
-					String credit = getCellStringValue(row, 18);
+					float credit = Float.valueOf(getCellStringValue(row, 18));
 					String examTime = getCellStringValue(row, 16);
-					String usualScore = getCellStringValue(row, 23);
+					float usualScore = Float.valueOf(getCellStringValue(row, 23));
 					String courseType = getCellStringValue(row, 20);
-					String totalScore = getCellStringValue(row, 21);
-					String gradePoint = getCellStringValue(row, 22);
+					float totalScore = Float.valueOf(getCellStringValue(row, 21));
+					float gradePoint = Float.valueOf(getCellStringValue(row, 22));
 					String userPhone = getCellStringValue(row, 4);
 					list.add(new ScoreDomain(line, orgId, jobNum, userId, userName, classId, className, professionalId,
 							professionalName, collegeId, collegeName, userPhone, semester, schoolYear, scheduleId, courseType,

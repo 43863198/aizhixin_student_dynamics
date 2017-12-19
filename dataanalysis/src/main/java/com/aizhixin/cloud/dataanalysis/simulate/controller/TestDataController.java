@@ -195,10 +195,10 @@ public class TestDataController {
 			score.setCourseType(ScoreConstant.REQUIRED_COURSE);
 			score.setExamTime(DateUtil.getMonday(new Date()));
 			score.setExamType(ScoreConstant.EXAM_TYPE_COURSE);
-			score.setTotalScore("33");
+			score.setTotalScore(33);
 			score.setScoreResultType("百分制");
-			score.setCredit(String.valueOf(num));
-			score.setGradePoint("0");
+			score.setCredit(Float.valueOf(num));
+			score.setGradePoint(0);
 
 			scoreList.add(score);
 	
@@ -243,10 +243,10 @@ public class TestDataController {
 			score.setCourseType(ScoreConstant.REQUIRED_COURSE);
 			score.setExamTime(DateUtil.getMonday(new Date()));
 			score.setExamType(ScoreConstant.EXAM_TYPE_COURSE);
-			score.setTotalScore("33");
+			score.setTotalScore(33);
 			score.setScoreResultType("百分制");
-			score.setCredit(String.valueOf(num));
-			score.setGradePoint("0");
+			score.setCredit(Float.valueOf(num));
+			score.setGradePoint(0);
 			scoreList.add(score);
             }	
 		scoreMongoRespository.save(scoreList);
@@ -291,10 +291,10 @@ public class TestDataController {
 			score.setCourseType(ScoreConstant.REQUIRED_COURSE);
 			score.setExamTime(DateUtil.getMonday(new Date()));
 			score.setExamType(ScoreConstant.EXAM_TYPE_COURSE);
-			score.setTotalScore("33");
+			score.setTotalScore(33);
 			score.setScoreResultType("百分制");
-			score.setCredit(String.valueOf(num));
-			score.setGradePoint("0");
+			score.setCredit(Float.valueOf(num));
+			score.setGradePoint(0);
 			scoreList.add(score);
             }	
 		scoreMongoRespository.save(scoreList);
@@ -308,14 +308,14 @@ public class TestDataController {
 			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
 			@ApiParam(value = "jobNum 学号") @RequestParam(value = "jobNum", required = true) String jobNum,
 			@ApiParam(value = "stuName 姓名") @RequestParam(value = "stuName", required = true) String stuName,
-			@ApiParam(value = "num 下降绩点") @RequestParam(value = "num", required = false) String num) {
+			@ApiParam(value = "num 下降绩点") @RequestParam(value = "num", required = false) Float num) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		if (null != orgId && orgId.longValue() > 0L) {
 		} else {
 			orgId = 1L;
 		}
 		if(StringUtils.isEmpty(num)){
-			num ="1";
+			num = 1F;
 		}
 		List<Score> scoreList = new ArrayList<Score>();
 			
@@ -338,12 +338,10 @@ public class TestDataController {
 			score.setCourseType(ScoreConstant.REQUIRED_COURSE);
 			score.setExamTime(DateUtil.getMonday(new Date()));
 			score.setExamType(ScoreConstant.EXAM_TYPE_COURSE);
-			score.setTotalScore( new BigDecimal(String.valueOf((Float.parseFloat(num)*10)+60)).setScale(2,
-					RoundingMode.HALF_UP).toString());
+			score.setTotalScore(num * 10 + 60);
 			score.setScoreResultType("百分制");
 			score.setCredit(num);
-			score.setGradePoint(new BigDecimal(String.valueOf(Float.parseFloat(num)+1)).setScale(2,
-					RoundingMode.HALF_UP).toString());
+			score.setGradePoint(num + 1);
 			scoreList.add(score);
 			
 			score = new Score();
@@ -365,10 +363,10 @@ public class TestDataController {
 			score.setCourseType(ScoreConstant.REQUIRED_COURSE);
 			score.setExamTime(DateUtil.getMonday(new Date()));
 			score.setExamType(ScoreConstant.EXAM_TYPE_COURSE);
-			score.setTotalScore("60");
+			score.setTotalScore(60);
 			score.setScoreResultType("百分制");
 			score.setCredit(num);
-			score.setGradePoint("1");
+			score.setGradePoint(1);
 			scoreList.add(score);
 		scoreMongoRespository.save(scoreList);
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
@@ -401,8 +399,8 @@ public class TestDataController {
 			score.setOrgId(orgId);
 			score.setProfessionalId(1L);
 			score.setProfessionalName("测试专业");
-			score.setSchoolYear(2017-num);
-			score.setGrade(String.valueOf(2017-num));
+			score.setSchoolYear(2017 - num);
+			score.setGrade(String.valueOf(2017 - num));
 			score.setSemester(1);
 			score.setUserName(stuName);
 			score.setScheduleId(UUID.randomUUID().toString());
@@ -410,10 +408,10 @@ public class TestDataController {
 			score.setCourseType(ScoreConstant.REQUIRED_COURSE);
 			score.setExamTime(DateUtil.getMonday(new Date()));
 			score.setExamType(ScoreConstant.EXAM_TYPE_CET4);
-			score.setTotalScore("410");
+			score.setTotalScore(410);
 			score.setScoreResultType("百分制");
-			score.setCredit(String.valueOf(num));
-			score.setGradePoint("0");
+			score.setCredit(Float.valueOf(num));
+			score.setGradePoint(0);
 			scoreList.add(score);
 		scoreMongoRespository.save(scoreList);
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);

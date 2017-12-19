@@ -32,6 +32,10 @@ public class AbnormalAttendanceStatisticsService {
     	return abnormalAttendanceStatisticsRespository.findOne(id);
     }
     
+    public AbnormalAttendanceStatistics findByOrgIdAndStatisticalTime(Long orgId,String todayStr){
+    	return abnormalAttendanceStatisticsRespository.findOneByOrgIdAndStatisticalTime(orgId,todayStr);
+    }
+    
     public AbnormalAttendanceDomain findByOrgId(Long orgId){
     	
     	AbnormalAttendanceDomain domain = new AbnormalAttendanceDomain();

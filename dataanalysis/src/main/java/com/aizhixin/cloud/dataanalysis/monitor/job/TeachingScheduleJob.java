@@ -62,12 +62,12 @@ public class TeachingScheduleJob {
 	public List<TeachingScheduleDTO> teachingScheduleCount(String orgIds,String teachDate) {
 
 		String ddDbName = authUtilService.getDdDbName();
-		String querySql = "SELECT ORGAN_ID,PERIOD_NO,count(id) as countNum FROM "+ddDbName+"`.dd_schedule` where ORGAN_ID in ("+orgIds+") and TEACH_DATE = '"+teachDate+"' GROUP BY ORGAN_ID,PERIOD_NO";
+		String querySql = "SELECT ORGAN_ID,PERIOD_NO,count(id) as countNum FROM "+ddDbName+".`dd_schedule` where ORGAN_ID in ("+orgIds+") and TEACH_DATE = '"+teachDate+"' GROUP BY ORGAN_ID,PERIOD_NO";
 
 		return pageJdbcUtil.getInfo(querySql, teachingScheduleRm);
 	}
 
-	@Scheduled(cron = "0 0/1 * * * ?")
+//	@Scheduled(cron = "0 0/1 * * * ?")
 	public void getTeachingScheduleJob() {
 
 		String teachDate =DateUtil

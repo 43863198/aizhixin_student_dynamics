@@ -36,10 +36,10 @@ public class CetStatisticAnalysisController {
     @ApiOperation(httpMethod = "GET", value = "cet———统计", response = Void.class, notes = "cet———统计<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object> getStatisticCet(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "teacherYear 学年" , required = true) @RequestParam(value = "grade", required = true) Integer grade,
+            @ApiParam(value = "teacherYear 学年" , required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
             @ApiParam(value = "semester 学期" , required = true) @RequestParam(value = "semester", required = true) Integer semester
     ) {
-        return cetStatisticAnalysisService.getStatistic(orgId, grade, semester);
+        return cetStatisticAnalysisService.getStatistic(orgId, teacherYear, semester);
     }
 
     /**

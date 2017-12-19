@@ -181,7 +181,7 @@ public class ScoreService {
 					score.setGradePoint(d.getGradePoint());
 					score.setGrade(d.getGrade());
 					score.setSchoolYear(d.getSchoolYear());
-					score.setTotalScore(String.valueOf(Double.valueOf(d.getTotalScore()) + 345.00));
+					score.setTotalScore(Float.valueOf(d.getTotalScore() + 345));
 					score.setUserPhone(d.getUserPhone());
 					score.setExamType(ScoreConstant.EXAM_TYPE_CET4);
 					if (d.getExamTime() != null) {
