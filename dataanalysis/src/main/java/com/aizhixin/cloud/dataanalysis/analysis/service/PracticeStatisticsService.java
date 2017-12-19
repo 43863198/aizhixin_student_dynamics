@@ -5,6 +5,7 @@ import com.aizhixin.cloud.dataanalysis.analysis.entity.CetScoreStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.PracticeStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.PracticeStaticsRespository;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
+import com.aizhixin.cloud.dataanalysis.common.PageDomain;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.util.PageJdbcUtil;
 
@@ -65,20 +66,11 @@ public class PracticeStatisticsService {
     	return practiceStaticsRespository.findOne(id);
     }
     
-    
-    
-    public Map<String,Object> getStatistics(Long orgId){
 
-
-
-
-        return null;
-    }
-
-    public Map<String, Object> getStatisticPractice(Long orgId,Long collegeId, String year, Pageable pageable) {
+    public Map<String, Object> getStatisticPractice(Long orgId,Long collegeId, String year, Integer pageNumber,Integer pageSize) {
         Map<String, Object> result = new HashMap<>();
         PracticeStaticsDTO practiceStaticsDTO = new PracticeStaticsDTO();
-        PageData<PracticeStatistics> p = new PageData<>();
+        PageData p = new PageData();
         Map<String, Object> condition = new HashMap<>();
         Long count = 0L;
         long practiceStudentNum = 0;
@@ -132,17 +124,36 @@ public class PracticeStatisticsService {
             practiceStaticsDTO.setTaskNum(taskNum);
             practiceStaticsDTO.setTaskPassNum(taskPassNum);
             practiceStaticsDTO.setStatisticalTime(time);//后续要改为统计时间
-            Page<PracticeStatistics> practiceStatisticsPage = practiceStaticsRespository.findPageDataByOrgIdAndTeacherYear(pageable, orgId, Integer.valueOf(year), 0);
-            p.setData(practiceStatisticsPage.getContent());
-            p.getPage().setTotalElements(count);
-            p.getPage().setPageNumber(pageable.getPageNumber());
-            p.getPage().setTotalPages(practiceStatisticsPage.getTotalPages());
-            p.getPage().setPageSize(pageable.getPageSize());
+            RowMapper<PracticeStatistics> rowMapper=new RowMapper<PracticeStatistics>() {
+                @Override
+                public PracticeStatistics mapRow(ResultSet rs, int i) throws SQLException {
+                    PracticeStatistics practiceStatistics=new PracticeStatistics();
+                    practiceStatistics.setCollegeId(rs.getLong("collegeId"));
+                    practiceStatistics.setCollegeName(rs.getString("collegeName"));
+                    practiceStatistics.setPracticeCompanyNum(rs.getLong("practiceCompanyNum"));
+                    practiceStatistics.setTaskNum(rs.getLong("taskNum"));
+                    practiceStatistics.setTaskPassNum(rs.getLong("taskPassNum"));
+                    return practiceStatistics;
+                }
+            };
+            String listSql="select avg(a.COLLEGE_NAME) as collegeName,max(a.COLLEGE_ID) as collegeId,sum(a.PRACTICE_COMPANY_NUM) as practiceCompanyNum,sum(a.TASK_NUM) as taskNum,sum(a.TASK_PASS_NUM) as taskPassNum from T_PRACTICE_STATISTICS a where a.ORG_ID = "+orgId+" and a.TEACHER_YEAR = "+year+" and a.DELETE_FLAG = 0  group by a.COLLEGE_ID";
+            String countSql="select count(1) from T_PRACTICE_STATISTICS a where a.ORG_ID = "+orgId+" and a.TEACHER_YEAR = "+year+" and a.DELETE_FLAG = 0  group by a.COLLEGE_ID";
+           Map map= pageJdbcUtil
+                    .getPageInfor(pageSize, pageNumber,
+                            rowMapper, null, listSql, countSql);
+            //Page<PracticeStatistics> practiceStatisticsPage = practiceStaticsRespository.findPageDataByOrgIdAndTeacherYear(pageable, orgId, Integer.valueOf(year), 0);
+            List pageData=(List)map.get("data");
+            p.setData(pageData);
+            p.setPage((PageDomain)map.get("page"));
+//            p.getPage().setTotalElements(count);
+//            p.getPage().setPageNumber(pageable.getPageNumber());
+//            p.getPage().setTotalPages(practiceStatisticsPage.getTotalPages());
+//            p.getPage().setPageSize(pageable.getPageSize());
             practiceStaticsDTO.setPracticeStatisticsPageData(p);
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
-            result.put("message", "获取学校新生统计信息异常！");
+            result.put("message", "获取实践统计信息异常！");
         }
         result.put("success", true);
         result.put("data", practiceStaticsDTO);

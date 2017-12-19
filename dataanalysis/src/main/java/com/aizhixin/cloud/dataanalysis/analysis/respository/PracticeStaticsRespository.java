@@ -20,7 +20,7 @@ import java.util.Map;
 public interface PracticeStaticsRespository extends JpaRepository<PracticeStatistics, String> {
     @Query("select new com.aizhixin.cloud.dataanalysis.analysis.dto.PracticeStaticsDTO(sum(a.practiceStudentNum),sum(a.practiceCompanyNum),sum(a.taskNum),sum(a.taskPassNum)) from #{#entityName} a where a.orgId = :orgId and a.deleteFlag=0 and a.teacherYear=:teacherYear and a.semester=:semester")
     PracticeStaticsDTO getPracticeStatics(@Param(value = "orgId")Long orgId,@Param(value = "teacherYear")int teacherYear,@Param(value = "semester")int semester);
-    @Query("select a from #{#entityName} a where a.orgId = :orgId and a.teacherYear = :teacherYear and a.deleteFlag = :deleteFlag order by a.statisticalTime desc")
+    @Query("select avg(a.collegeName) as collegeName,max(a.collegeId) as collegeId,sum(a.practiceStudentNum) as practiceStudentNum,sum(a.practiceCompanyNum) as practiceCompanyNum,sum(a.taskNum) as taskNum,sum(a.taskPassNum) as taskPassNum from #{#entityName} a where a.orgId = :orgId and a.teacherYear = :teacherYear and a.deleteFlag = :deleteFlag  group by a.collegeId")
     Page<PracticeStatistics>  findPageDataByOrgIdAndTeacherYear(Pageable pageable, @Param(value = "orgId") Long orgId, @Param(value = "teacherYear") Integer teacherYear, @Param(value = "deleteFlag") int deleteFlag);
 
     void deleteByOrgId(Long orgId);

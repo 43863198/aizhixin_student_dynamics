@@ -43,10 +43,11 @@ public class CourseEvaluateService {
                 courseEvaluateDTO.setCourseCode(rs.getString("COURSE_CODE"));
                 courseEvaluateDTO.setCourseName(rs.getString("COURSE_NAME"));
                 courseEvaluateDTO.setAvgScore(rs.getFloat("score"));
+                courseEvaluateDTO.setStatisticalTime(rs.getTimestamp("STATISTICAL_TIME"));
                 return courseEvaluateDTO;
             }
         };
-        String querySql = "SELECT COURSE_CODE,COURSE_NAME,avg(AVG_SCORE) as score FROM `T_COURSE_EVALUATE` where DELETE_FLAG =" + DataValidity.VALID.getState() + " and ORG_ID=" + orgId + " ";
+        String querySql = "SELECT COURSE_CODE,COURSE_NAME,avg(AVG_SCORE) as score,max(STATISTICAL_TIME) as STATISTICAL_TIME FROM `T_COURSE_EVALUATE` where DELETE_FLAG =" + DataValidity.VALID.getState() + " and ORG_ID=" + orgId + " ";
         String countSql = "SELECT COURSE_CODE FROM `T_COURSE_EVALUATE` where DELETE_FLAG =" + DataValidity.VALID.getState() + "  and ORG_ID=" + orgId + " ";
         if (!StringUtils.isEmpty(semesterId)) {
             querySql += " and SEMESTER=" + semesterId + " ";
@@ -79,6 +80,7 @@ public class CourseEvaluateService {
         PageData<CourseEvaluateDTO> p=new PageData<CourseEvaluateDTO>();
         p.setData((List) map.get("data"));
         p.setPage((PageDomain)map.get("page"));
+
         return p;
     }
 

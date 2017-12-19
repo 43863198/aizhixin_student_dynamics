@@ -53,7 +53,7 @@ public class PracticeStatisticsController {
             @ApiParam(value = "year 年" , required = true) @RequestParam(value = "year", required = true) String year,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return practiceStatisticsService.getStatisticPractice(orgId,collegeId,year, PageUtil.createNoErrorPageRequest(pageNumber, pageSize));
+        return practiceStatisticsService.getStatisticPractice(orgId,collegeId,year, pageNumber, pageSize);
     }
 
     /**
