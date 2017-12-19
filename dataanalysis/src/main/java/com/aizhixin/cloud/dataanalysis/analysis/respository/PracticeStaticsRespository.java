@@ -2,6 +2,7 @@ package com.aizhixin.cloud.dataanalysis.analysis.respository;
 
 import com.aizhixin.cloud.dataanalysis.analysis.dto.PracticeStaticsDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.PracticeStatistics;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,4 +23,5 @@ public interface PracticeStaticsRespository extends JpaRepository<PracticeStatis
     @Query("select a from #{#entityName} a where a.orgId = :orgId and a.teacherYear = :teacherYear and a.deleteFlag = :deleteFlag order by a.statisticalTime desc")
     Page<PracticeStatistics>  findPageDataByOrgIdAndTeacherYear(Pageable pageable, @Param(value = "orgId") Long orgId, @Param(value = "teacherYear") Integer teacherYear, @Param(value = "deleteFlag") int deleteFlag);
 
+    void deleteByOrgId(Long orgId);
 }

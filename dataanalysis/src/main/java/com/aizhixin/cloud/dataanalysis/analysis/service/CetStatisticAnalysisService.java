@@ -43,6 +43,10 @@ public class CetStatisticAnalysisService {
     @Autowired
     private CetScoreStatisticsRespository cetScoreStatisticsRespository;
     
+    public void deleteAllByOrgId(Long orgId){
+    	cetScoreStatisticsRespository.deleteByOrgId(orgId);
+    }
+    
     public void saveList(List<CetScoreStatistics> cetScoreStatisticsList){
     	cetScoreStatisticsRespository.save(cetScoreStatisticsList);
     }

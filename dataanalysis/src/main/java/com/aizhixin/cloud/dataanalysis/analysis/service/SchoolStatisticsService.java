@@ -56,6 +56,10 @@ public class SchoolStatisticsService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    public void deleteAllByOrgId(Long orgId){
+    	schoolStatisticsRespository.deleteByOrgId(orgId);
+    }
+    
     /**
      * 批量保存学校统计数据
      * @param statisticsList

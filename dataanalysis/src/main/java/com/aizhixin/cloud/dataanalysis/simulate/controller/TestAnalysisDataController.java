@@ -357,6 +357,7 @@ public class TestAnalysisDataController {
 
 		}
 
+		schoolStatisticsService.deleteAllByOrgId(orgId);
 	    schoolStatisticsService.saveList(schoolStatisticsList);
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
@@ -659,6 +660,7 @@ public class TestAnalysisDataController {
 
 		}
 
+		cetStatisticAnalysisService.deleteAllByOrgId(orgId);
 		cetStatisticAnalysisService.saveList(cetStatisticsList);
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
@@ -1251,6 +1253,7 @@ public class TestAnalysisDataController {
 
 		}
 
+		practiceStatisticsService.deleteAllByOrgId(orgId);
 		practiceStatisticsService.saveList(practiceStatisticsList);
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
