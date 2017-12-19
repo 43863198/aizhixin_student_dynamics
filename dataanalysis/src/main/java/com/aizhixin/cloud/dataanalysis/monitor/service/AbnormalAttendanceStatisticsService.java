@@ -24,6 +24,10 @@ public class AbnormalAttendanceStatisticsService {
     	abnormalAttendanceStatisticsRespository.save(abnormalAttendanceStatistics);
     }
     
+    public void saveList(List<AbnormalAttendanceStatistics> abnormalAttendanceStatisticsList){
+    	abnormalAttendanceStatisticsRespository.save(abnormalAttendanceStatisticsList);
+    }
+    
     public AbnormalAttendanceStatistics findById(String id){
     	return abnormalAttendanceStatisticsRespository.findOne(id);
     }

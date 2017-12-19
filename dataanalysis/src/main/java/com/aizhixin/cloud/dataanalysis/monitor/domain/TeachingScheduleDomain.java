@@ -29,6 +29,15 @@ public class TeachingScheduleDomain {
     @ApiModelProperty(value = "11，12节排课数量")
     @Getter @Setter private int courseNum11;
     
+    @ApiModelProperty(value = "13，14节排课数量")
+    @Getter @Setter private int courseNum13;
+    
+    @ApiModelProperty(value = "15，16节排课数量")
+    @Getter @Setter private int courseNum15;
+    
+    @ApiModelProperty(value = "17，18节排课数量")
+    @Getter @Setter private int courseNum17;
+    
     @ApiModelProperty(value = "统计时间")
     @Getter @Setter private String statisticalTime;
 

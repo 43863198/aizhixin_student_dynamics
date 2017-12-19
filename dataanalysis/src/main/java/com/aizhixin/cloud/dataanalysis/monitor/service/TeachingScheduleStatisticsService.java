@@ -24,6 +24,10 @@ public class TeachingScheduleStatisticsService {
     	teachingScheduleStatisticsRespository.save(teachingScheduleStatistics);
     }
     
+    public void saveList(List<TeachingScheduleStatistics> teachingScheduleStatisticsList){
+    	teachingScheduleStatisticsRespository.save(teachingScheduleStatisticsList);
+    }
+    
     public TeachingScheduleStatistics findById(String id){
     	return teachingScheduleStatisticsRespository.findOne(id);
     }
