@@ -256,7 +256,7 @@ public class CetStatisticAnalysisService {
     }
 
 
-    public Map<String, Object> getCetDetail(Long orgId, String collegeId, String grade, Integer type, Pageable page) {
+    public Map<String, Object> getCetDetail(Long orgId, String collegeId, Integer teacherYear, Integer semester, String grade, Integer type, Pageable page) {
         Map<String, Object> result = new HashMap<>();
         PageData<Score> p = new PageData<>();
         List<Score> items = new ArrayList<>();
@@ -283,6 +283,13 @@ public class CetStatisticAnalysisService {
 
                 criteria.and("collegeId").in(collegeIds);
             }
+
+            if(null!=teacherYear){
+                criteria.and("schoolYear").is(teacherYear);
+            }
+            if(null!=semester){
+                criteria.and("semester").is(semester);
+            }
             if (null != grade) {
                 List<String> tds = new ArrayList<>();
                 if (grade.indexOf(",") != -1) {
@@ -306,7 +313,7 @@ public class CetStatisticAnalysisService {
             }
             query.addCriteria(criteria);
             //mongoTemplate.count计算总数
-            total = mongoTemplate.count(query, StudentRegister.class);
+            total = mongoTemplate.count(query, Score.class);
             // mongoTemplate.find 查询结果集
             items = mongoTemplate.find(query.with(pageable), Score.class);
         } catch (Exception e) {
