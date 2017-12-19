@@ -115,6 +115,18 @@ public class DistributeLock {
 
         return getLock(lockPath.toString(), taskPath.toString());
     }
+    
+    public boolean getRollCallDayLock() {
+        StringBuilder lockPath = new StringBuilder(zkLockPath);
+        StringBuilder taskPath = new StringBuilder(zkTaskPath);
+        Date current = new Date();
+        String curDayString = DateUtil.format(current);
+        String HHmm = DateUtil.format(current, "HHmm");
+        lockPath.append("/").append(curDayString).append("/rcallday/").append(HHmm);
+        taskPath.append("/").append(curDayString).append("/rcallday/").append(HHmm);
+
+        return getLock(lockPath.toString(), taskPath.toString());
+    }
 
     /**
      * 旷课信息统计
@@ -294,6 +306,20 @@ public class DistributeLock {
 
         return getLock(lockPath.toString(), taskPath.toString());
     }
+    
+    
+    public boolean getTeachingScheduleLock() {
+        StringBuilder lockPath = new StringBuilder(zkLockPath);
+        StringBuilder taskPath = new StringBuilder(zkTaskPath);
+        Date current = new Date();
+        String curDayString = DateUtil.format(current);
+        String HHmm = DateUtil.format(current, "HHmm");
+        lockPath.append("/").append(curDayString).append("/teasch/").append(HHmm);
+        taskPath.append("/").append(curDayString).append("/teasch/").append(HHmm);
+
+        return getLock(lockPath.toString(), taskPath.toString());
+    }
+
     
     public void cleanZookeeperTaskData() {
         delete();

@@ -70,7 +70,13 @@ public class TestMonitorDataController {
 	@ApiOperation(httpMethod = "POST", value = "今日排课数量", response = Void.class, notes = "今日排课数量<br><br><b>@author zhengning</b>")
 	public ResponseEntity<TeachingScheduleStatistics> todayCourseNumAdd(
 			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = true) Long orgId) {
-		TeachingScheduleStatistics teachingScheduleStatistics = new TeachingScheduleStatistics();
+		
+		
+		TeachingScheduleStatistics teachingScheduleStatistics = null;
+		teachingScheduleStatistics = teachingScheduleStatisticsService.findByOrgIdAndStatisticalTime(orgId, DateUtil.getCurrentTime(DateUtil.FORMAT_SHORT));
+		if(null == teachingScheduleStatistics){
+			teachingScheduleStatistics = new TeachingScheduleStatistics();
+		}
 		teachingScheduleStatistics.setOrgId(orgId);
 		int max = 20;
 		int min = 10;
@@ -126,7 +132,11 @@ public class TestMonitorDataController {
 	@ApiOperation(httpMethod = "POST", value = "学生异常出勤统计", response = Void.class, notes = "学生异常出勤统计<br><br><b>@author zhengning</b>")
 	public ResponseEntity<AbnormalAttendanceStatistics> abnormalAttendanceAdd(
 			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = true) Long orgId) {
-		AbnormalAttendanceStatistics abnormalAttendanceStatistics = new AbnormalAttendanceStatistics();
+		AbnormalAttendanceStatistics abnormalAttendanceStatistics = null;
+		abnormalAttendanceStatistics = abnormalAttendanceStatisticsService.findByOrgIdAndStatisticalTime(orgId, DateUtil.getCurrentTime(DateUtil.FORMAT_SHORT));
+		if(null == abnormalAttendanceStatistics){
+			abnormalAttendanceStatistics = new AbnormalAttendanceStatistics();
+		}
 		int max = 20;
 		int min = 10;
 		Random random = new Random();
@@ -174,6 +184,10 @@ public class TestMonitorDataController {
 	public ResponseEntity<AbnormalTeachingStatistics> abnormalTeachingAdd(
 			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = true) Long orgId) {
 		AbnormalTeachingStatistics abnormalTeachingStatistics = new AbnormalTeachingStatistics();
+		abnormalTeachingStatistics = abnormalTeachingStatisticsService.findByOrgIdAndStatisticalTime(orgId, DateUtil.getCurrentTime(DateUtil.FORMAT_SHORT));
+		if(null == abnormalTeachingStatistics){
+			abnormalTeachingStatistics = new AbnormalTeachingStatistics();
+		}
 		int max = 20;
 		int min = 10;
 		Random random = new Random();

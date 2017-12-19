@@ -63,6 +63,28 @@ public class TeachingScheduleStatistics extends AbstractEntity {
 	@Getter
 	@Setter
 	private Integer courseNum11;
+	
+	/*
+	 * 13，14节排课数量
+	 */
+	@Column(name = "COURSE_NUM13")
+	@Getter
+	@Setter
+	private Integer courseNum13;
+	/*
+	 *15，16节排课数量
+	 */
+	@Column(name = "COURSE_NUM15")
+	@Getter
+	@Setter
+	private Integer courseNum15;
+	/*
+	 * 17，18节排课数量
+	 */
+	@Column(name = "COURSE_NUM17")
+	@Getter
+	@Setter
+	private Integer courseNum17;
 	/*
 	 * 统计时间
 	 */

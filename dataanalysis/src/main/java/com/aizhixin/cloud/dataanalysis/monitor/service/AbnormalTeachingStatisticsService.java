@@ -29,6 +29,10 @@ public class AbnormalTeachingStatisticsService {
     	return abnormalTeachingStatisticsRespository.findOne(id);
     }
     
+    public AbnormalTeachingStatistics findByOrgIdAndStatisticalTime(Long orgId,String todayStr){
+    	return abnormalTeachingStatisticsRespository.findOneByOrgIdAndStatisticalTime(orgId,todayStr);
+    }
+    
     public AbnormalTeachingDomain findByOrgId(Long orgId){
     	AbnormalTeachingDomain domain = new AbnormalTeachingDomain();
     	List<AbnormalTeachingStatistics> list = abnormalTeachingStatisticsRespository.findFirst1ByOrgIdOrderByCreatedDateDesc(orgId);

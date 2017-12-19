@@ -44,6 +44,7 @@
     <include file="classpath:liquibase/201712154112400_update_entity_ModifyTeacherYearType.xml" relativeToChangelogFile="false"/>
 	<include file="classpath:liquibase/20171218151100_add_entity_Monitor.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/201712181132845_update_entity_CourseEvaluate.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20171219180700_update_entity_Monitor.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171219154445_update_entity_TeacherEvaluate.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171219153445_update_entity_CourseEvaluate.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

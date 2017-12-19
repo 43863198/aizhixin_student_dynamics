@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.job.WarnInforJob;
 import com.aizhixin.cloud.dataanalysis.common.service.DistributeLock;
+import com.aizhixin.cloud.dataanalysis.monitor.job.RollCallDayJob;
+import com.aizhixin.cloud.dataanalysis.monitor.job.TeachingScheduleJob;
 import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
 import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
 import com.aizhixin.cloud.dataanalysis.studentRegister.job.StudentRegisterJob;
@@ -28,6 +30,10 @@ public class MySchedulingService {
     private ScoreJob scoreJob;
     @Autowired
     private WarnInforJob warnInforJob;
+    @Autowired
+    private RollCallDayJob rollCallDayJob;
+    @Autowired
+    private TeachingScheduleJob teachingScheduleJob;
 
 
 //    @Scheduled(cron = "0 0/1 * * * ?")
@@ -162,5 +168,25 @@ public class MySchedulingService {
         if (distributeLock.updateWarnStateJobLock()) {
         	warnInforJob.updateWarnStateJob();
         } 
+    }
+    
+    @Scheduled(cron = "0 0 0/3 * * ?")
+    public void rollCallDayJob() {
+        if (distributeLock.getRollCallDayLock()) {
+            LOG.info("开始实时监控考勤统计定时任务");
+            rollCallDayJob.rollCallDayCountJob();
+        } else {
+            LOG.info("启动实时监控考勤统计，获取锁失败");
+        }
+    }
+    
+    @Scheduled(cron = "0 0 0/3 * * ?")
+    public void teachingScheduleJob() {
+        if (distributeLock.getTeachingScheduleLock()) {
+            LOG.info("开始实时监控排课统计定时任务");
+            teachingScheduleJob.getTeachingScheduleJob();;
+        } else {
+            LOG.info("启动实时监控排课统计，获取锁失败");
+        }
     }
 }

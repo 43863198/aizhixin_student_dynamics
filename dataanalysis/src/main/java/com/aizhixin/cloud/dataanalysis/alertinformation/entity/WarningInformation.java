@@ -1,6 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.alertinformation.entity;
 
-import com.aizhixin.cloud.dataanalysis.common.entity.AbstractEntity;
+import com.aizhixin.cloud.dataanalysis.common.entity.AbstractStringIdEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -13,7 +13,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
 import java.util.Date;
 
@@ -25,7 +24,7 @@ import java.util.Date;
 @Entity
 @Table(name = "T_WARNING_INFORMATION")
 @ToString
-public class WarningInformation extends AbstractEntity {
+public class WarningInformation extends AbstractStringIdEntity {
 
     /*
    *  告警人id
