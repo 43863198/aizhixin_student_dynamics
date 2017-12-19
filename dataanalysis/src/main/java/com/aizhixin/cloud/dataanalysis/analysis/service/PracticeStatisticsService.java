@@ -7,10 +7,13 @@ import com.aizhixin.cloud.dataanalysis.analysis.respository.PracticeStaticsRespo
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.PageDomain;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
+import com.aizhixin.cloud.dataanalysis.common.logging.AspectLog;
 import com.aizhixin.cloud.dataanalysis.common.util.PageJdbcUtil;
 
 import liquibase.util.StringUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +44,7 @@ import static liquibase.util.StringUtils.*;
 @Component
 @Transactional
 public class PracticeStatisticsService {
+    final static private Logger LOG = LoggerFactory.getLogger(PracticeStatisticsService.class);
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
@@ -176,6 +180,7 @@ public class PracticeStatisticsService {
 
         } catch (Exception e) {
             e.printStackTrace();
+            LOG.warn("获取实践学情趋势:{}", e);
             result.put("success", false);
             result.put("message", "获取实践学情趋势信息异常！");
         }
