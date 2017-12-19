@@ -145,15 +145,12 @@ public class PracticeStatisticsService {
             List pageData=(List)map.get("data");
             p.setData(pageData);
             p.setPage((PageDomain)map.get("page"));
-//            p.getPage().setTotalElements(count);
-//            p.getPage().setPageNumber(pageable.getPageNumber());
-//            p.getPage().setTotalPages(practiceStatisticsPage.getTotalPages());
-//            p.getPage().setPageSize(pageable.getPageSize());
             practiceStaticsDTO.setPracticeStatisticsPageData(p);
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
             result.put("message", "获取实践统计信息异常！");
+            return result;
         }
         result.put("success", true);
         result.put("data", practiceStaticsDTO);
