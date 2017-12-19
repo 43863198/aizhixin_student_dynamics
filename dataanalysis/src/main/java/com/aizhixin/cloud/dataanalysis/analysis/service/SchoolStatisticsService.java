@@ -429,18 +429,26 @@ public class SchoolStatisticsService {
             //条件
             Criteria criteria = Criteria.where("orgId").is(orgId);
             if (null != collegeId) {
-                String[] cid = collegeId.split(",");
                 Set<Long> collegeIds = new HashSet<>();
-                for (String d : cid) {
-                    collegeIds.add(Long.valueOf(d));
+                if (collegeId.indexOf(",") != -1) {
+                    String[] cid = collegeId.split(",");
+                    for (String d : cid) {
+                       collegeIds.add(Long.valueOf(d));
+                     }
+                }else {
+                    collegeIds.add(Long.valueOf(collegeId));
                 }
                 criteria.and("collegeId").in(collegeIds);
             }
             if (null != type) {
-                String[] td = type.split(",");
                 List tds = new ArrayList<>();
-                for (String d : td) {
-                    tds.add(Integer.valueOf(d));
+                if(type.indexOf(",") != -1) {
+                    String[] td = type.split(",");
+                    for (String d : td) {
+                        tds.add(Integer.valueOf(d));
+                    }
+                }else {
+                    tds.add(Integer.valueOf(type));
                 }
                 criteria.and("education").in(tds);
             }
@@ -448,16 +456,12 @@ public class SchoolStatisticsService {
                 criteria.and("isRegister").is(Integer.valueOf(isReport));
             }
             if (null != isPay) {
-                String[] td = type.split(",");
-                for (String d : td) {
-                    if (d.equals("1")) {
+                    if (isPay.equals("1")) {
                         criteria.and("isPay").is(1);
                     }
-                    if (d.equals("2")) {
+                    if (isPay.equals("2")) {
                         criteria.and("isGreenChannel").is(1);
                     }
-                }
-
             }
             if(!org.apache.commons.lang.StringUtils.isBlank(nj)){
                 criteria.orOperator(criteria.where("userName").regex(".*?\\" +nj+ ".*"), criteria.where("jobNum").is(nj));
