@@ -24,19 +24,19 @@ public class ScoreDomain extends StudentInfoDomain {
     @Getter @Setter private String courseType;
 	
     @ApiModelProperty(value = "usualScore 平时成绩", position=5)
-    @Getter @Setter private String usualScore;
+    @Getter @Setter private float usualScore;
 	
     @ApiModelProperty(value = "credit 所得学分", position=6)
-    @Getter @Setter private String credit;
+    @Getter @Setter private float credit;
 	
     @ApiModelProperty(value = "gradePoint 绩点", position=7)
-    @Getter @Setter private String gradePoint;
+    @Getter @Setter private float gradePoint;
     
     @ApiModelProperty(value = "examTime 考试时间", position=8)
     @Getter @Setter private String examTime;
     
     @ApiModelProperty(value = "totalScore 课程成绩", position=9)
-    @Getter @Setter private String totalScore;
+    @Getter @Setter private float totalScore;
     
     @ApiModelProperty(value = "grade 年级", position=10)
     @Getter @Setter private String grade;
@@ -45,8 +45,8 @@ public class ScoreDomain extends StudentInfoDomain {
 
 	public ScoreDomain(Integer line, Long orgId, String jobNum, Long userId, String userName, Long classId,
 			String className, Long professionalId, String professionalName, Long collegeId, String collegeName,
-			String userPhone, int semester, int schoolYear, String scheduleId, String courseType, String usualScore,
-			String credit, String gradePoint, String examTime, String totalScore, String grade) {
+			String userPhone, int semester, int schoolYear, String scheduleId, String courseType, float usualScore,
+                       float credit, float gradePoint, String examTime, float totalScore, String grade) {
 		super(line, orgId, jobNum, userId, userName, classId, className, professionalId, professionalName, collegeId,
 				collegeName, userPhone);
 		this.semester = semester;

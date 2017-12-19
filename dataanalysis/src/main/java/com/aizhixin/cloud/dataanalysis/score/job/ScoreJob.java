@@ -539,8 +539,7 @@ public class ScoreJob {
 								&& ScoreConstant.REQUIRED_COURSE.equals(score
 										.getCourseType())) {
 							totalScoreCount.setFailRequiredCourseNum(1);
-							totalScoreCount.setRequireCreditCount(score
-									.getCredit());
+							totalScoreCount.setRequireCreditCount(score.getCredit());
 						}
 						totalScoreCountMap.put(score.getJobNum(),
 								totalScoreCount);
@@ -560,11 +559,7 @@ public class ScoreJob {
 										totalScoreCount.getRequireCreditCount());
 								totalCredits = totalCredits.add(new BigDecimal(
 										score.getCredit()));
-								totalScoreCount
-										.setRequireCreditCount(totalCredits
-												.setScale(2,
-														RoundingMode.HALF_UP)
-												.toString());
+								totalScoreCount.setRequireCreditCount(Float.valueOf(totalCredits.setScale(2, RoundingMode.HALF_UP).toString()));
 							}
 						}
 						totalScoreCount.setFailCourseNum(totalScoreCount
@@ -854,9 +849,7 @@ public class ScoreJob {
 										.getRequireCreditCount())) {
 									continue;
 								}
-								if (Float.parseFloat(totalScoreCount
-										.getRequireCreditCount()) >= Float
-										.parseFloat(String.valueOf(alarmRule
+								if (totalScoreCount.getRequireCreditCount() >= Float.parseFloat(String.valueOf(alarmRule
 												.getRightParameter()))) {
 									WarningInformation alertInfor = new WarningInformation();
 									String alertId = UUID.randomUUID()
@@ -1001,8 +994,8 @@ public class ScoreJob {
 						float totalGradePoint = 0.0f;
 						for (Score score : courseScoreList) {
 							if (!StringUtils.isEmpty(score.getGradePoint())) {
-								totalGradePoint += Float.parseFloat(score
-										.getGradePoint());
+								totalGradePoint += score
+										.getGradePoint();
 							}
 						}
 						if (totalGradePoint < 1.0f) {
@@ -1037,12 +1030,11 @@ public class ScoreJob {
 								makeUpScoreCount
 										.setFailCourseNum(makeUpScoreCount
 												.getFailCourseNum() + 1);
-								float totalCredit = Float.parseFloat(score
-										.getCredit())
-										+ Float.parseFloat(makeUpScoreCount
-												.getFailCourseCredit());
-								makeUpScoreCount.setFailCourseCredit(String
-										.valueOf(totalCredit));
+								float totalCredit = score
+										.getCredit()
+										+ makeUpScoreCount
+												.getFailCourseCredit();
+								makeUpScoreCount.setFailCourseCredit(totalCredit);
 								makeUpScoreCountMap.put(score.getJobNum(),
 										makeUpScoreCount);
 							}
@@ -1289,8 +1281,7 @@ public class ScoreJob {
 					}
 					Score tmpScore = userScoreMap.get(score.getJobNum());
 					if (null != tmpScore) {
-						if (Float.parseFloat(score.getTotalScore()) > Float
-								.parseFloat(tmpScore.getTotalScore())) {
+						if (score.getTotalScore() > tmpScore.getTotalScore()) {
 							userScoreMap.put(score.getJobNum(), score);
 						}
 					} else {
@@ -1304,7 +1295,7 @@ public class ScoreJob {
 							.next();
 					Score score = (Score) userScoreEntry.getValue();
 
-					if (Float.parseFloat(score.getTotalScore()) < Float
+					if (score.getTotalScore() < Float
 							.parseFloat(ScoreConstant.CET_PASS_SCORE_LINE)) {
 						alarmScoreList.add(score);
 					}
@@ -1445,8 +1436,8 @@ public class ScoreJob {
 							AlarmRule alarmRule = alarmRuleMap
 									.get(alarmSettings.getRuleSet());
 							if (null != alarmRule) {
-								if (Float.parseFloat(makeUpScoreCount
-										.getFailCourseCredit()) >= Float
+								if (makeUpScoreCount
+										.getFailCourseCredit() >= Float
 										.parseFloat(alarmRule
 												.getRightParameter())) {
 									WarningInformation alertInfor = new WarningInformation();

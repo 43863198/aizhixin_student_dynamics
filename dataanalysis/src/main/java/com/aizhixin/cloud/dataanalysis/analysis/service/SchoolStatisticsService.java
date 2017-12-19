@@ -81,7 +81,6 @@ public class SchoolStatisticsService {
     public Map<String, Object> getStatisticNewstudents(Long orgId, Integer teacherYear) {
         Map<String, Object> result = new HashMap<>();
         NewStudentProfileDTO newStudentProfileDTO = new NewStudentProfileDTO();
-//        PageData<SchoolStatistics> p = new PageData<>();
         Map<String, Object> condition = new HashMap<>();
         Long count = 0L;
         long studentNumber = 0;
@@ -134,13 +133,6 @@ public class SchoolStatisticsService {
             newStudentProfileDTO.setConvenienceChannel(convenienceChannel);
             newStudentProfileDTO.setStatisticalTime(time);//后续要改为统计时间
             List<SchoolStatistics> schoolStatisticsList = schoolStatisticsRespository.findDataByOrgIdAndTeacherYear(orgId, teacherYear, DataValidity.VALID.getState());
-//            Page<SchoolStatistics> schoolStatisticsPage = schoolStatisticsRespository.findPageDataByOrgIdAndTeacherYear(pageable, orgId, year, DataValidity.VALID.getState());
-//            p.setData(schoolStatisticsPage.getContent());
-//            p.getPage().setTotalElements(count);
-//            p.getPage().setPageNumber(pageable.getPageNumber());
-//            p.getPage().setTotalPages(schoolStatisticsPage.getTotalPages());
-//            p.getPage().setPageSize(pageable.getPageSize());
-//            newStudentProfileDTO.setSchoolStatisticsPageData(p);
               newStudentProfileDTO.setSchoolStatisticsListData(schoolStatisticsList);
         } catch (Exception e) {
             e.printStackTrace();
@@ -481,15 +473,28 @@ public class SchoolStatisticsService {
                 criteria.and("isRegister").is(Integer.valueOf(isReport));
             }
             if (null != isPay) {
-                    if (isPay.equals("1")) {
+                List<String> pay = new ArrayList<>();
+                if (isPay.indexOf(",") != -1) {
+                    String[] py = type.split(",");
+                    for (String s : py) {
+                        pay.add(s);
+                    }
+                }else {
+                    pay.add(isPay);
+                }
+                    if (pay.contains("1")) {
                         criteria.and("isPay").is(1);
                     }
-                    if (isPay.equals("2")) {
+                    if (isPay.contains("2")) {
                         criteria.and("isGreenChannel").is(1);
+                    }
+                    if(isPay.contains("3")) {
+                        criteria.and("isPay").nin(1);
+                        criteria.and("isGreenChannel").nin(1);
                     }
             }
             if(!org.apache.commons.lang.StringUtils.isBlank(nj)){
-                criteria.orOperator(criteria.where("userName").regex(".*?\\" +nj+ ".*"), criteria.where("jobNum").is(nj));
+                criteria.orOperator(criteria.where("userName").regex(".*?\\" + nj + ".*"), criteria.where("jobNum").is(nj));
             }
             query.addCriteria(criteria);
             //mongoTemplate.count计算总数
@@ -505,7 +510,7 @@ public class SchoolStatisticsService {
         p.getPage().setPageSize(page.getPageSize());
         p.getPage().setTotalElements(total);
         p.setData(items);
-        result.put("success", true);
+            result.put("success", true);
         result.put("data", p);
         return result;
     }

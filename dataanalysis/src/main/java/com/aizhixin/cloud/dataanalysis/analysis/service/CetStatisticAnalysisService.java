@@ -62,7 +62,6 @@ public class CetStatisticAnalysisService {
 
     public Map<String, Object> getStatistic(Long orgId, Integer teacherYear, Integer semester) {
         Map<String, Object> result = new HashMap<>();
-//        PageData<CollegeCetStatisticDTO> p = new PageData<>();
         CetStatisticDTO cetStatisticDTO = new CetStatisticDTO();
         Map<String, Object> condition = new HashMap<>();
         List<CollegeCetStatisticDTO> collegeCetStatisticDTOList = new ArrayList<>();
@@ -126,8 +125,6 @@ public class CetStatisticAnalysisService {
                 cetStatisticDTO.setCetSixPassRate(ProportionUtil.accuracy(pass6 * 1.0, count6 * 1.0, 2));
                 cetStatisticDTO.setStatisticalTime(time);
                 if (count > 0) {
-//                    sq.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
-//                    sq.setMaxResults(pageable.getPageSize());
                     List<Object> rd = sq.getResultList();
                     if (null != rd && rd.size() > 0) {
                         for (Object obj : rd) {
@@ -166,11 +163,6 @@ public class CetStatisticAnalysisService {
                     }
                 }
             }
-//            p.setData(collegeCetStatisticDTOList);
-//            p.getPage().setTotalElements(count);
-//            p.getPage().setPageNumber(pageable.getPageNumber());
-//            p.getPage().setTotalPages((int)Math.ceil(count/pageable.getPageSize())+1);
-//            p.getPage().setPageSize(pageable.getPageSize());
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
