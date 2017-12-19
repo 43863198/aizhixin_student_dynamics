@@ -121,22 +121,22 @@ public class Score {
 	/**
 	 * 期中成绩
 	 */
-	private String midtermScore;
+	private float midtermScore;
 	
 	/**
 	 * 期末成绩
 	 */
-	private String finalScore;
+	private float finalScore;
 	
 	/**
 	 * 平时成绩
 	 */
-	private String usualScore;
+	private float usualScore;
 	
 	/**
 	 * 总评成绩
 	 */
-	private String totalScore;
+	private float totalScore;
 	
 	/**
 	 * 成绩类型: course:课程成绩,英语四级:cet4,英语六级:cet6
@@ -152,12 +152,12 @@ public class Score {
 	/**
 	 * 所得学分
 	 */
-	private String credit;
+	private float credit;
 	
 	/**
 	 * 绩点
 	 */
-	private String gradePoint;
+	private float gradePoint;
 	
 	/**
 	 * 备注

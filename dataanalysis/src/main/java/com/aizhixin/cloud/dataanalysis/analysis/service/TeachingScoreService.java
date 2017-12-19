@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -97,7 +98,7 @@ public class TeachingScoreService {
                         collegeTeachingAchievementDTO.setStudentsNum(Integer.valueOf(String.valueOf(d[2])));
                     }
                     if (null != d[3]) {
-                        collegeTeachingAchievementDTO.setAverageGPA(Float.valueOf(String.valueOf(d[3])));
+                        collegeTeachingAchievementDTO.setAverageGPA(new BigDecimal((double)Float.valueOf(String.valueOf(d[3]))).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue());
                     }
                     if (null != d[4]) {
                         collegeTeachingAchievementDTO.setFailNum(Integer.valueOf(String.valueOf(d[4])));
@@ -106,7 +107,7 @@ public class TeachingScoreService {
                         collegeTeachingAchievementDTO.setCoursesNum(Integer.valueOf(String.valueOf(d[5])));
                     }
                     if (null != d[6]) {
-                        collegeTeachingAchievementDTO.setCoursesAVGScore(Float.valueOf(String.valueOf(d[6])));
+                        collegeTeachingAchievementDTO.setCoursesAVGScore(new BigDecimal((double)Float.valueOf(String.valueOf(d[6]))).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue());
                     }
                     collegeTeachingAchievementDTOList.add(collegeTeachingAchievementDTO);
                 }
@@ -395,6 +396,8 @@ public class TeachingScoreService {
                     }
                     if (null != d[2]) {
                         teachingScoreStatistics.setTeacherYear(Integer.valueOf(String.valueOf(d[2])));
+                        teachingScoreStatistics.setGrade(Integer.valueOf(String.valueOf(d[2])));
+
                     }
                     if (null != d[3]) {
                         teachingScoreStatistics.setSemester(Integer.valueOf(String.valueOf(d[3])));
@@ -423,6 +426,7 @@ public class TeachingScoreService {
                 TeachingScoreStatistics otss = new TeachingScoreStatistics();
                 if (null != rd[0]) {
                     otss.setTeacherYear(Integer.valueOf(String.valueOf(rd[0])));
+                    otss.setGrade(Integer.valueOf(String.valueOf(rd[0])));
                 }
                 if (null != rd[1]) {
                     otss.setSemester(Integer.valueOf(String.valueOf(rd[1])));
