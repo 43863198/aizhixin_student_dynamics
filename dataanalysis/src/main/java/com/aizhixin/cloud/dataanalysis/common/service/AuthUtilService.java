@@ -49,6 +49,12 @@ public class AuthUtilService {
 	public String getOrgDbName() {
 		return orgBackDbName;
 	}
+	@Value("${dl.dd.back.dbname}")
+	private String ddBackDbName;
+
+	public String getDdDbName() {
+		return ddBackDbName;
+	}
 
 	@Cacheable(value = "authorCache")
 	public AccountDTO getSsoUserInfo(String token) {
