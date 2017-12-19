@@ -170,7 +170,7 @@ public class MySchedulingService {
         } 
     }
     
-//    @Scheduled(cron = "0 0 0/3 * * ?")
+    @Scheduled(cron = "0 0 0/3 * * ?")
     public void rollCallDayJob() {
         if (distributeLock.getRollCallDayLock()) {
             LOG.info("开始实时监控考勤统计定时任务");
@@ -180,7 +180,7 @@ public class MySchedulingService {
         }
     }
     
-//  @Scheduled(cron = "0 0 0/3 * * ?")
+    @Scheduled(cron = "0 0 0/3 * * ?")
     public void teachingScheduleJob() {
         if (distributeLock.getTeachingScheduleLock()) {
             LOG.info("开始实时监控排课统计定时任务");
