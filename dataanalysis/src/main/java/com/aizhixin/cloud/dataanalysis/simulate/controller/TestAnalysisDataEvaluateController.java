@@ -248,7 +248,7 @@ public class TestAnalysisDataEvaluateController {
             courseEvaluate9.setTeacherYear(teacherYear-i);
             courseEvaluate9.setCollegeName("管理学院");
             courseEvaluate9.setCollegeId(1750L);
-            courseEvaluate9.setCourseCode("511730");
+            courseEvaluate9.setCourseCode("511731");
             courseEvaluate9.setCourseName("国际贸易");
             courseEvaluate9.setChargePersonID("183980");
             courseEvaluate9.setChargePerson("李隽波");
@@ -468,7 +468,7 @@ public class TestAnalysisDataEvaluateController {
                 teacherEvaluate9.setTeacherYear(teacherYear-i);
                 teacherEvaluate9.setCollegeName("管理学院");
                 teacherEvaluate9.setCollegeId(1750L);
-                teacherEvaluate9.setCourseCode("511730");
+                teacherEvaluate9.setCourseCode("511731");
                 teacherEvaluate9.setCourseName("国际贸易");
                 teacherEvaluate9.setTeacherId("183980");
                 teacherEvaluate9.setTeacherName("李隽波");
