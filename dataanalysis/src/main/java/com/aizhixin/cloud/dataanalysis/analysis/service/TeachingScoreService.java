@@ -117,7 +117,7 @@ public class TeachingScoreService {
                 Date time = new Date();
                 Object[] rd = (Object[]) rc.get(0);
                 if (null != rd[0]) {
-                    teachingAchievementDTO.setAverageGPA(Integer.valueOf(String.valueOf(rd[0])));
+                    teachingAchievementDTO.setStudentsNum(Integer.valueOf(String.valueOf(rd[0])));
                 }
                 if (null != rd[1]) {
                     teachingAchievementDTO.setAverageGPA(Double.valueOf(String.valueOf(rd[1])));
@@ -474,7 +474,8 @@ public class TeachingScoreService {
                     teachingScoreDetails.setTeacherYear(teacherYear);
                 }
                 if(null!=semester){
-                    teachingScoreDetails.setSemester(semester);
+//                    teachingScoreDetails.setSemester(semester);
+                    teachingScoreDetails.setSemester(new Random().nextInt(2)+1);
                 }
                 if(null!=grade){
                     teachingScoreDetails.setGrade(grade);
