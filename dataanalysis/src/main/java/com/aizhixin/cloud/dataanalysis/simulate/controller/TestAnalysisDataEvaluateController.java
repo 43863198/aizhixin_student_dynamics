@@ -328,7 +328,7 @@ public class TestAnalysisDataEvaluateController {
                 teacherEvaluate2.setGrade(2017);
                 teacherEvaluate2.setSemester(j);
                 teacherEvaluate2.setClassId("10386");;
-                teacherEvaluate2.setClassId("机械2016-2班");
+                teacherEvaluate2.setClassName("机械2016-2班");
 
                 list.add(teacherEvaluate2);
 
@@ -350,7 +350,7 @@ public class TestAnalysisDataEvaluateController {
                 teacherEvaluate3.setGrade(2017);
                 teacherEvaluate3.setSemester(j);
                 teacherEvaluate3.setClassId("616");;
-                teacherEvaluate3.setClassId("日语2016-1班");
+                teacherEvaluate3.setClassName("日语2016-1班");
 
                 list.add(teacherEvaluate3);
 
@@ -372,7 +372,7 @@ public class TestAnalysisDataEvaluateController {
                 teacherEvaluate4.setGrade(2017);
                 teacherEvaluate4.setSemester(j);
                 teacherEvaluate4.setClassId("10286");;
-                teacherEvaluate4.setClassId("测绘类2016-5班");
+                teacherEvaluate4.setClassName("测绘类2016-5班");
 
                 list.add(teacherEvaluate4);
 
@@ -392,7 +392,7 @@ public class TestAnalysisDataEvaluateController {
                 teacherEvaluate5.setGrade(2017);
                 teacherEvaluate5.setSemester(j);
                 teacherEvaluate5.setClassId("10428");;
-                teacherEvaluate5.setClassId("广告2016-1班");
+                teacherEvaluate5.setClassName("广告2016-1班");
 
                 list.add(teacherEvaluate5);
 
@@ -413,7 +413,7 @@ public class TestAnalysisDataEvaluateController {
                 teacherEvaluate6.setGrade(2017);
                 teacherEvaluate6.setSemester(j);
                 teacherEvaluate6.setClassId("10360");;
-                teacherEvaluate6.setClassId("生物工程2016-1班");
+                teacherEvaluate6.setClassName("生物工程2016-1班");
 
                 list.add(teacherEvaluate6);
 
@@ -436,7 +436,7 @@ public class TestAnalysisDataEvaluateController {
                 teacherEvaluate7.setGrade(2017);
                 teacherEvaluate7.setSemester(j);
                 teacherEvaluate7.setClassId("10422");
-                teacherEvaluate7.setClassId("风景园林2016-1班");
+                teacherEvaluate7.setClassName("风景园林2016-1班");
 
                 list.add(teacherEvaluate7);
 
@@ -457,7 +457,7 @@ public class TestAnalysisDataEvaluateController {
                 teacherEvaluate8.setGrade(2017);
                 teacherEvaluate8.setSemester(j);
                 teacherEvaluate8.setClassId("10530");;
-                teacherEvaluate8.setClassId("电信类2016-2班");
+                teacherEvaluate8.setClassName("电信类2016-2班");
 
                 list.add(teacherEvaluate8);
 
@@ -476,7 +476,7 @@ public class TestAnalysisDataEvaluateController {
                 teacherEvaluate9.setGrade(2017);
                 teacherEvaluate9.setSemester(j);
                 teacherEvaluate9.setClassId("10334");;
-                teacherEvaluate9.setClassId("国贸2016-1班");
+                teacherEvaluate9.setClassName("国贸2016-1班");
 
                 list.add(teacherEvaluate9);
         }}

@@ -96,11 +96,11 @@ public class TeachingEvaluateController {
     @ApiOperation(httpMethod = "GET", value = "教师评价详情", response = Void.class, notes = "教师评价详情<br><br><b>@author wangjun</b>")
     public PageData<TeacherEvaluateDetailDTO> getTeacherEvaluateDetail(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
                                                                        @ApiParam(value = "学期", required = true) @RequestParam(value = "semester", required = true) String semester,
-                                                                       @ApiParam(value = "grade 学年" , required = false) @RequestParam(value = "grade", required = false) String grade,
+                                                                       @ApiParam(value = "teacherYear 学年" , required = false) @RequestParam(value = "teacherYear", required = false) String teacherYear,
                                                                        @ApiParam(value = "教师id", required = false) @RequestParam(value = "teacherId", required = false) String teacherId,
                                                                        @ApiParam(value = "课程名称", required = false) @RequestParam(value = "className", required = false) String className,
                                                                        @ApiParam(value = "第几页", required = false) @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
                                                                        @ApiParam(value = "每页大小", required = false) @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return teacherEvaluateService.getTeacherEvaluateDetail(orgId,semester,grade,teacherId,className,pageNumber,pageSize);
+        return teacherEvaluateService.getTeacherEvaluateDetail(orgId,semester,teacherYear,teacherId,className,pageNumber,pageSize);
     }
 }
