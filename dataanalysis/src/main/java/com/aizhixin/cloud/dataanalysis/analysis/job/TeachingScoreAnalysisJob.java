@@ -25,7 +25,9 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.mapreduce.GroupBy;
 import org.springframework.data.mongodb.core.mapreduce.GroupByResults;
+import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -91,7 +93,21 @@ public class TeachingScoreAnalysisJob {
             //参考人数统计
             Criteria criteria = Criteria.where("orgId").is(orgId);
             criteria.and("scoreResultType").is(ScoreConstant.RESULT_TYPE_100);
+
             query.addCriteria(criteria).limit(1000);
+
+
+            DBObject dbObject = new BasicDBObject();
+            BasicDBObject fieldsObject=new BasicDBObject();
+            //指定返回的字段
+            fieldsObject.put("collegeId", true);
+            fieldsObject.put("collegeName", true);
+            fieldsObject.put("scheduleId", true);
+
+            Query querys = new BasicQuery(dbObject,fieldsObject).limit(100);
+            List<Score> user = mongoTemplate.find(querys, Score.class);
+
+
             //mongoTemplate.count计算总数
            long total = mongoTemplate.count(query, StudentRegister.class);
             // mongoTemplate.find 查询结果集
@@ -126,8 +142,11 @@ public class TeachingScoreAnalysisJob {
             criteria.and("schoolYear").is(schoolYear);
             criteria.and("semester").is(semester);
             query.addCriteria(criteria);
+
+
             long totalt = mongoTemplate.count(query, Score.class);
             tss.setStudentNum(new Long(totalt).intValue());
+
             AggregationResults<BasicDBObject> countts = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(criteria),
@@ -139,57 +158,15 @@ public class TeachingScoreAnalysisJob {
                 ctss.setTeacherYear(schoolYear);
                 ctss.setSemester(semester);
                 ctss.setStatisticsType(2); //按学院统计
+
+
+
+
             }
 
 
 
 
-
-
-            //平均GPA
-            Criteria criteriaAVG = Criteria.where("orgId").is(orgId);
-            criteriaAVG.and("scoreResultType").is(ScoreConstant.RESULT_TYPE_100);
-            criteriaAVG.and("schoolYear").is(schoolYear);
-            criteriaAVG.and("semester").is(semester);
-            criteriaAVG.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
-            query.addCriteria(criteriaAVG);
-
-            AggregationResults<BasicDBObject> GPAavg = mongoTemplate.aggregate(
-                    Aggregation.newAggregation(
-                            Aggregation.match(criteria),
-                            Aggregation.group("orgId").avg("gradePoint").as("GPAavg")),
-                    Score.class,BasicDBObject.class);
-
-            AggregationResults<BasicDBObject> GPAavgs = mongoTemplate.aggregate(
-                    Aggregation.newAggregation(
-                            Aggregation.match(criteria),
-                            Aggregation.group("collegeId").avg("gradePoint").as("GPAavg")),
-                    Score.class,BasicDBObject.class);
-
-
-            AggregationResults<BasicDBObject> courseNumber = mongoTemplate.aggregate(
-                    Aggregation.newAggregation(
-                            Aggregation.match(criteria),
-                            Aggregation.group("orgId").count().as("courseCount")),
-                    Score.class,BasicDBObject.class);
-
-            AggregationResults<BasicDBObject> courseNumbers = mongoTemplate.aggregate(
-                    Aggregation.newAggregation(
-                            Aggregation.match(criteria),
-                            Aggregation.group("collegeId").count().as("courseCount")),
-                    Score.class,BasicDBObject.class);
-
-            AggregationResults<BasicDBObject> courseAVG = mongoTemplate.aggregate(
-                    Aggregation.newAggregation(
-                            Aggregation.match(criteria),
-                            Aggregation.group("orgId").avg("totalScore").as("courseAVG")),
-                    Score.class,BasicDBObject.class);
-
-            AggregationResults<BasicDBObject> courseAVGs = mongoTemplate.aggregate(
-                    Aggregation.newAggregation(
-                            Aggregation.match(criteria),
-                            Aggregation.group("collegeId").avg("totalScore").as("courseAVG")),
-                    Score.class,BasicDBObject.class);
 
             //不及格人数统计
             Criteria criteriFail = Criteria.where("orgId").is(orgId);
@@ -199,11 +176,12 @@ public class TeachingScoreAnalysisJob {
             criteriFail.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
             query.addCriteria(criteriFail);
             long total = mongoTemplate.count(query, Score.class);
-            AggregationResults<BasicDBObject> counts = mongoTemplate.aggregate(
+
+            AggregationResults<BasicDBObject> ccount = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
-                            Aggregation.match(criteriFail),
+                            Aggregation.match(criteria),
                             Aggregation.group("collegeId").count().as("count")),
-                    Score.class,BasicDBObject.class);
+                    Score.class, BasicDBObject.class);
 
 
 
@@ -212,14 +190,6 @@ public class TeachingScoreAnalysisJob {
 
 
 
-
-//            logger.info(a.iterator());
-//            Integer count = 0;
-//            int i = 0;
-//            while (a.iterator().hasNext()){
-//                count = count + a.getMappedResults().get(i).getInt("count");
-//                i++;
-//            }
 
 
 

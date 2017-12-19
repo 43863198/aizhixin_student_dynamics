@@ -190,10 +190,6 @@ public class CetStatisticAnalysisService {
         Map<String, Object> condition = new HashMap<>();
         try {
             StringBuilder sql = new StringBuilder("SELECT SUM(cet.CET_FORE_JOIN_NUM) as sumc4, SUM(cet.CET_FORE_PASS_NUM) as sump4, SUM(cet.CET_SIX_JOIN_NUM) as sumc6, SUM(cet.CET_SIX_PASS_NUM) as sump6, cet.TEACHER_YEAR FROM T_CET_STATISTICS cet WHERE 1 = 1");
-            Query sq = em.createNativeQuery(sql.toString());
-            for (Map.Entry<String, Object> e : condition.entrySet()) {
-                sq.setParameter(e.getKey(), e.getValue());
-            }
             if (null != orgId) {
                 sql.append(" and cet.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
@@ -204,6 +200,7 @@ public class CetStatisticAnalysisService {
             }
             sql.append(" and cet.DELETE_FLAG = 0");
             sql.append(" group by cet.TEACHER_YEAR");
+            Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
             }

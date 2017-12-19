@@ -40,6 +40,7 @@ import com.aizhixin.cloud.dataanalysis.monitor.domain.AbnormalTeachingDomain;
 import com.aizhixin.cloud.dataanalysis.monitor.dto.AlarmDTO;
 import com.aizhixin.cloud.dataanalysis.monitor.dto.CollegeGpaDTO;
 import com.aizhixin.cloud.dataanalysis.monitor.dto.CourseEvaluateDTO;
+import com.aizhixin.cloud.dataanalysis.monitor.dto.SchoolStudentStateDTO;
 import com.aizhixin.cloud.dataanalysis.monitor.service.MonitorService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -103,7 +104,16 @@ public class MonitorController {
 	public AlarmDTO getAlarm(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
 		return monitorService.getAlarm(orgId);
 	}
-
+	/**
+	 * 大屏监控人数统计
+	 * @param orgId
+	 * @return
+	 */
+	@GetMapping(value = "/persons", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "GET", value = "大屏监控人数统计", response = Void.class, notes = "大屏监控人数统计<br><br><b>@author 王俊</b>")
+	public SchoolStudentStateDTO getPersons(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
+		return monitorService.getPersons(orgId);
+	}
 
 	@RequestMapping(value = "/todaycoursenum", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "今日排课数量", response = Void.class, notes = "今日排课数量<br><br><b>@author zhengning</b>")

@@ -1,10 +1,13 @@
 package com.aizhixin.cloud.dataanalysis.monitor.service;
 
 import com.aizhixin.cloud.dataanalysis.common.exception.CommonException;
+import com.aizhixin.cloud.dataanalysis.common.service.AuthUtilService;
 import com.aizhixin.cloud.dataanalysis.monitor.dto.AlarmDTO;
 import com.aizhixin.cloud.dataanalysis.monitor.dto.CollegeGpaDTO;
 import com.aizhixin.cloud.dataanalysis.monitor.dto.CourseEvaluateDTO;
+import com.aizhixin.cloud.dataanalysis.monitor.dto.SchoolStudentStateDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -12,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +26,8 @@ import java.util.Map;
 public class MonitorService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
+    @Autowired
+    private AuthUtilService authUtilService;
     public List<CollegeGpaDTO> getCollegeGpa(Long orgId) {
         RowMapper<CollegeGpaDTO> mapper = new RowMapper<CollegeGpaDTO>() {
             @Override
@@ -35,7 +41,14 @@ public class MonitorService {
         };
         List<CollegeGpaDTO> result;
         String currentGradeSql = "SELECT SEMESTER ,TEACHER_YEAR  FROM `t_teaching_score_statistics`  where ORG_ID=" + orgId + "   ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
-        Map currentGradeMap = jdbcTemplate.queryForMap(currentGradeSql);
+
+        Map currentGradeMap=new HashMap() ;
+        try {
+            currentGradeMap= jdbcTemplate.queryForMap(currentGradeSql);
+        }catch (EmptyResultDataAccessException emptyResultDataAccessException){
+            return null;
+        }
+
         int teacherYear = Integer.valueOf(currentGradeMap.get("TEACHER_YEAR") + "");
         int semester = Integer.valueOf(currentGradeMap.get("SEMESTER") + "");
         String sql = "SELECT COLLEGE_ID ,COLLEGE_NAME,AVG_SCORE  FROM `t_teaching_score_statistics` where ORG_ID=" + orgId + " ";
@@ -45,6 +58,7 @@ public class MonitorService {
         if (0 != semester) {
             sql += " and SEMESTER=" + semester;
         }
+        sql+=" ORDER BY AVG_SCORE DESC limit 10";
         result = jdbcTemplate.query(sql, mapper);
         return result;
     }
@@ -61,11 +75,11 @@ public class MonitorService {
         };
         CourseEvaluateDTO result=null;
         String currentGradeSql = "SELECT SEMESTER ,TEACHER_YEAR  FROM `t_course_evaluate`  where ORG_ID="+orgId+"   ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
-        Map currentGradeMap=new HashMap();
+        Map currentGradeMap=new HashMap() ;
         try {
-            currentGradeMap=jdbcTemplate.queryForMap(currentGradeSql);
-        }catch (NumberFormatException e){
-              return null;
+            currentGradeMap= jdbcTemplate.queryForMap(currentGradeSql);
+        }catch (EmptyResultDataAccessException emptyResultDataAccessException){
+            return null;
         }
 
         int teacherYear = Integer.valueOf(currentGradeMap.get("TEACHER_YEAR") + "");
@@ -100,7 +114,12 @@ public class MonitorService {
         };
         AlarmDTO alarmDTO=null;
         String currentGradeSql = "SELECT TEACHING_YEAR  FROM `t_warning_information`  where ORG_ID=" + orgId + " and DELETE_FLAG=0 and TEACHING_YEAR<>'null' ORDER BY TEACHING_YEAR DESC LIMIT 1";
-        Map currentGradeMap = jdbcTemplate.queryForMap(currentGradeSql);
+        Map currentGradeMap=new HashMap() ;
+        try {
+            currentGradeMap= jdbcTemplate.queryForMap(currentGradeSql);
+        }catch (EmptyResultDataAccessException emptyResultDataAccessException){
+            return null;
+        }
         int teacherYear = Integer.valueOf(currentGradeMap.get("TEACHING_YEAR") + "");
         String sql="SELECT MAX(CASE a.alarm WHEN 'alarm' then a.count ELSE 0 END) 'alarmTotal',MAX(CASE a.alarm WHEN 'dealwithTotal' then a.count ELSE 0 END) 'dealwithTotal' FROM( ";
         String tempSql1="SELECT count(1) as count, 'alarm'  FROM t_warning_information WHERE DELETE_FLAG=0  and ORG_ID=" + orgId + "" ;
@@ -112,5 +131,33 @@ public class MonitorService {
         sql+=tempSql1+" UNION ALL "+tempSql2+" ) a";
         alarmDTO=jdbcTemplate.queryForObject(sql,rowMapper);
         return alarmDTO;
+    }
+    public SchoolStudentStateDTO getPersons(Long orgId){
+        RowMapper<SchoolStudentStateDTO> rowMapper=new RowMapper<SchoolStudentStateDTO>() {
+            @Override
+            public SchoolStudentStateDTO mapRow(ResultSet rs, int i) throws SQLException {
+                SchoolStudentStateDTO schoolStudentStateDTO=new SchoolStudentStateDTO();
+                schoolStudentStateDTO.setAllStudent(rs.getInt("allstudent"));
+                schoolStudentStateDTO.setLeaveSchoolStudent(rs.getInt("leavestudent"));
+                schoolStudentStateDTO.setOutSchoolStudent(rs.getInt("outstudent"));
+                schoolStudentStateDTO.setInSchoolStudent(schoolStudentStateDTO.getAllStudent()-schoolStudentStateDTO.getLeaveSchoolStudent()-schoolStudentStateDTO.getOutSchoolStudent());
+                return schoolStudentStateDTO;
+            }
+        };
+        SchoolStudentStateDTO result=new SchoolStudentStateDTO();
+//t_user t_electric_fence_statistics dd_student_leave_schedule
+        String sql="SELECT MAX(CASE a.allstudent WHEN 'allstudent' then a.count ELSE 0 END) 'allstudent',MAX(CASE a.allstudent WHEN 'outstudent' then a.count ELSE 0 END) 'outstudent',MAX(CASE a.allstudent WHEN 'leavestudent' then a.count ELSE 0 END) 'leavestudent' FROM( ";
+        String tempSql1="SELECT COUNT(1) as count, 'allstudent' FROM "+authUtilService.getOrgDbName()+".t_user where USER_TYPE=70 AND DELETE_FLAG=0 and ORG_ID=" + orgId + "" ;
+        String tempSql2="SELECT COUNT(1) as count, 'outstudent' FROM "+authUtilService.getOrgDbName()+".t_electric_fence_statistics WHERE SEMIH_OUT_COUNT>0 AND DELETE_FLAG=0 AND  ORG_ID=" + orgId + "" ;
+        String tempSql3="SELECT COUNT(1) as count, 'leavestudent' FROM "+authUtilService.getDdDbName()+".dd_student_leave_schedule WHERE DELETE_FLAG=0 AND  schedule_id in (SELECT id FROM "+authUtilService.getDdDbName()+".dd_schedule where organ_id="+orgId+" )" ;
+        Date date=new Date();
+        SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+        String timeZone=" BETWEEN '"+df.format(date)+" 08:00:00'  AND '"+df.format(date)+" 18:00:00'";
+        tempSql2+=" AND CREATED_DATE "+timeZone;
+        tempSql3+=" AND CREATED_DATE "+timeZone;
+        sql+=tempSql1+" UNION ALL "+tempSql2+" UNION ALL "+tempSql3+" ) a";
+        result=jdbcTemplate.queryForObject(sql,rowMapper);
+        return result;
+
     }
 }

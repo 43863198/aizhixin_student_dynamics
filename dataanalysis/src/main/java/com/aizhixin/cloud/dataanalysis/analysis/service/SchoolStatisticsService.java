@@ -16,6 +16,7 @@ import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegist
 import liquibase.util.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -181,7 +182,12 @@ public class SchoolStatisticsService {
      */
     public SchoolProfileDTO getSchoolPersonStatistics(Long orgId) {
         String sql="SELECT SEMESTER ,TEACHER_YEAR  FROM `t_practice_statistics` where ORG_ID="+orgId+"  ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
-        Map currentGradeMap= jdbcTemplate.queryForMap(sql);
+        Map currentGradeMap=new HashMap() ;
+        try {
+            currentGradeMap= jdbcTemplate.queryForMap(sql);
+        }catch (EmptyResultDataAccessException emptyResultDataAccessException){
+            return null;
+        }
         int teacherYear=Integer.valueOf(currentGradeMap.get("TEACHER_YEAR")+"");
         int semester= Integer.valueOf(currentGradeMap.get("SEMESTER")+"");
         PracticeStaticsDTO practiceStaticsDTO = practiceStaticsRespository.getPracticeStatics(orgId,teacherYear,semester);
@@ -375,7 +381,12 @@ public class SchoolStatisticsService {
      */
     public PracticeStaticsDTO getPracticeStatics(Long orgId) {
         String sql="SELECT SEMESTER ,TEACHER_YEAR  FROM `t_practice_statistics`  where ORG_ID="+orgId+"  ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
-        Map currentGradeMap= jdbcTemplate.queryForMap(sql);
+        Map currentGradeMap=new HashMap() ;
+        try {
+            currentGradeMap= jdbcTemplate.queryForMap(sql);
+        }catch (EmptyResultDataAccessException emptyResultDataAccessException){
+            return null;
+        }
         int teacherYear=Integer.valueOf(currentGradeMap.get("TEACHER_YEAR")+"");
         int semester= Integer.valueOf(currentGradeMap.get("SEMESTER")+"");
         return practiceStaticsRespository.getPracticeStatics(orgId,teacherYear,semester);
@@ -389,7 +400,12 @@ public class SchoolStatisticsService {
      */
     public CetScoreStatisticsDTO getEctStatics(Long orgId) {
         String sql="SELECT SEMESTER ,TEACHER_YEAR  FROM `t_cet_statistics`  where ORG_ID="+orgId+" ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
-        Map currentGradeMap= jdbcTemplate.queryForMap(sql);
+        Map currentGradeMap=new HashMap() ;
+        try {
+            currentGradeMap= jdbcTemplate.queryForMap(sql);
+        }catch (EmptyResultDataAccessException emptyResultDataAccessException){
+            return null;
+        }
         int teacherYear=Integer.valueOf(currentGradeMap.get("TEACHER_YEAR")+"");
         int semester= Integer.valueOf(currentGradeMap.get("SEMESTER")+"");
         return cetScoreStatisticsRespository.getEctStatics(orgId,teacherYear,semester);
@@ -408,7 +424,12 @@ public class SchoolStatisticsService {
             obj=list0.get(0);
         }
         String sql="SELECT SEMESTER ,TEACHER_YEAR  FROM `t_teaching_score_statistics`  where ORG_ID="+orgId+" ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
-       Map currentGradeMap= jdbcTemplate.queryForMap(sql);
+        Map currentGradeMap=new HashMap() ;
+        try {
+            currentGradeMap= jdbcTemplate.queryForMap(sql);
+        }catch (EmptyResultDataAccessException emptyResultDataAccessException){
+            return null;
+        }
        int teacherYear=Integer.valueOf(currentGradeMap.get("TEACHER_YEAR")+"");
        int semester= Integer.valueOf(currentGradeMap.get("SEMESTER")+"");
         List<TeachingScoreStatisticsDTO> list=teachingScoreStatisticsRespository.getTeachingScoreStatisticsByOrgId(orgId,teacherYear,semester);
@@ -433,18 +454,26 @@ public class SchoolStatisticsService {
             //条件
             Criteria criteria = Criteria.where("orgId").is(orgId);
             if (null != collegeId) {
-                String[] cid = collegeId.split(",");
                 Set<Long> collegeIds = new HashSet<>();
-                for (String d : cid) {
-                    collegeIds.add(Long.valueOf(d));
+                if (collegeId.indexOf(",") != -1) {
+                    String[] cid = collegeId.split(",");
+                    for (String d : cid) {
+                       collegeIds.add(Long.valueOf(d));
+                     }
+                }else {
+                    collegeIds.add(Long.valueOf(collegeId));
                 }
                 criteria.and("collegeId").in(collegeIds);
             }
             if (null != type) {
-                String[] td = type.split(",");
                 List tds = new ArrayList<>();
-                for (String d : td) {
-                    tds.add(Integer.valueOf(d));
+                if(type.indexOf(",") != -1) {
+                    String[] td = type.split(",");
+                    for (String d : td) {
+                        tds.add(Integer.valueOf(d));
+                    }
+                }else {
+                    tds.add(Integer.valueOf(type));
                 }
                 criteria.and("education").in(tds);
             }
@@ -452,16 +481,12 @@ public class SchoolStatisticsService {
                 criteria.and("isRegister").is(Integer.valueOf(isReport));
             }
             if (null != isPay) {
-                String[] td = type.split(",");
-                for (String d : td) {
-                    if (d.equals("1")) {
+                    if (isPay.equals("1")) {
                         criteria.and("isPay").is(1);
                     }
-                    if (d.equals("2")) {
+                    if (isPay.equals("2")) {
                         criteria.and("isGreenChannel").is(1);
                     }
-                }
-
             }
             if(!org.apache.commons.lang.StringUtils.isBlank(nj)){
                 criteria.orOperator(criteria.where("userName").regex(".*?\\" +nj+ ".*"), criteria.where("jobNum").is(nj));
