@@ -3,6 +3,7 @@ package com.aizhixin.cloud.dataanalysis.analysis.respository;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.NewStudentProfileDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.SchoolProfileDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolStatistics;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,6 +30,6 @@ public interface SchoolStatisticsRespository extends JpaRepository<SchoolStatist
     @Query("select a from #{#entityName} a where a.orgId = :orgId and a.teacherYear = :teacherYear and a.deleteFlag = :deleteFlag order by a.statisticalTime desc")
     List<SchoolStatistics> findDataByOrgIdAndTeacherYear(@Param(value = "orgId") Long orgId, @Param(value = "teacherYear") Integer teacherYear, @Param(value = "deleteFlag") int deleteFlag);
 
-
+    void deleteByOrgId(Long orgId);
 }
 
