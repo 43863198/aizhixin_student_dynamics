@@ -320,7 +320,7 @@ public class TeachingScoreService {
             org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
             //条件
             Criteria criteria = Criteria.where("orgId").is(orgId);
-            query.addCriteria(criteria).limit(100);
+            query.addCriteria(criteria).limit(10000);
             List<TotalScoreCount> items = mongoTemplate.find(query, TotalScoreCount.class);
             if (null != items && items.size() > 0) {
                 for (TotalScoreCount sfc : items) {

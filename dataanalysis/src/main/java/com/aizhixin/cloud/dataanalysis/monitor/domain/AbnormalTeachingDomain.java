@@ -15,7 +15,7 @@ public class AbnormalTeachingDomain {
     @Getter @Setter private int lateNum;
     
     @ApiModelProperty(value = "下课早退教师人数")
-    @Getter @Setter private int leaveEarly;
+    @Getter @Setter private int leaveEarlyNum;
     
     @ApiModelProperty(value = "有教学任务教师人数")
     @Getter @Setter private int teachingNum;
@@ -27,5 +27,5 @@ public class AbnormalTeachingDomain {
     @Getter @Setter private int changeLecturerNum;
     
     @ApiModelProperty(value = "统计时间")
-    @Getter @Setter private String Statisticalime;
+    @Getter @Setter private String statisticalTime;
 }

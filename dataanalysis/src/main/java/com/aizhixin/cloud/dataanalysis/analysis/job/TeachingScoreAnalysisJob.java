@@ -2,6 +2,7 @@ package com.aizhixin.cloud.dataanalysis.analysis.job;
 
 import com.aizhixin.cloud.dataanalysis.analysis.dto.SchoolStatisticsDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolStatistics;
+import com.aizhixin.cloud.dataanalysis.analysis.entity.TeachingScoreStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.service.TeachingScoreService;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
@@ -24,7 +25,9 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.mapreduce.GroupBy;
 import org.springframework.data.mongodb.core.mapreduce.GroupByResults;
+import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -80,41 +83,117 @@ public class TeachingScoreAnalysisJob {
     }
 
 
-
-
-    public Map<String, Object> getLookScore(Long orgId,Long collegeId,int schoolYear,int semester) {
+    public Map<String, Object> getLookScore(Long orgId) {
         Map<String, Object> result = new HashMap<>();
-        List<Score> items = new ArrayList<>();
-        long total = 0L;
+        List<Score> items = null;
         try {
             //创建查询条件对象
             org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
-            //条件
+
+            //参考人数统计
+            Criteria criteria = Criteria.where("orgId").is(orgId);
+            criteria.and("scoreResultType").is(ScoreConstant.RESULT_TYPE_100);
+
+            query.addCriteria(criteria).limit(1000);
+
+
+            DBObject dbObject = new BasicDBObject();
+            BasicDBObject fieldsObject=new BasicDBObject();
+            //指定返回的字段
+            fieldsObject.put("collegeId", true);
+            fieldsObject.put("collegeName", true);
+            fieldsObject.put("scheduleId", true);
+
+            Query querys = new BasicQuery(dbObject,fieldsObject).limit(100);
+            List<Score> user = mongoTemplate.find(querys, Score.class);
+
+
+            //mongoTemplate.count计算总数
+           long total = mongoTemplate.count(query, StudentRegister.class);
+            // mongoTemplate.find 查询结果集
+            items = mongoTemplate.find(query, Score.class);
+         logger.info(items.size());
+
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", "获取数据异常！");
+        }
+        result.put("success",  items);
+        return result;
+    }
+
+
+
+    public Map<String, Object> getLookScores(Long orgId,int schoolYear,int semester) {
+        Map<String, Object> result = new HashMap<>();
+        List<TeachingScoreStatistics> tssList  = new ArrayList<>();
+        try {
+            TeachingScoreStatistics tss = new TeachingScoreStatistics();
+            tss.setOrgId(orgId);
+            tss.setTeacherYear(schoolYear);
+            tss.setSemester(semester);
+            tss.setStatisticsType(1); //全校统计
+            List<TeachingScoreStatistics> ctssList = new ArrayList<>();
+            //创建查询条件对象
+            org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
+            //参考人数统计
             Criteria criteria = Criteria.where("orgId").is(orgId);
             criteria.and("scoreResultType").is(ScoreConstant.RESULT_TYPE_100);
             criteria.and("schoolYear").is(schoolYear);
             criteria.and("semester").is(semester);
-            criteria.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
             query.addCriteria(criteria);
-            //mongoTemplate.count计算总数
-            total = mongoTemplate.count(query, Score.class);
 
-            AggregationResults<BasicDBObject> a = mongoTemplate.aggregate(
+
+            long totalt = mongoTemplate.count(query, Score.class);
+            tss.setStudentNum(new Long(totalt).intValue());
+
+            AggregationResults<BasicDBObject> countts = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(criteria),
-                            Aggregation.group("collegeId").count().as("count")),
-                            Score.class,BasicDBObject.class);
-            logger.info(a.iterator());
-            Integer count = 0;
-            int i = 0;
-            while (a.iterator().hasNext()){
-                count = count + a.getMappedResults().get(i).getInt("count");
-                i++;
+                            Aggregation.group("collegeId").count().as("count").avg("gradePoint").as("GPAavg").avg("totalScore").as("courseAVG")),
+                    Score.class,BasicDBObject.class);
+            while (countts.iterator().hasNext()){
+                TeachingScoreStatistics ctss = new TeachingScoreStatistics();
+                ctss.setOrgId(orgId);
+                ctss.setTeacherYear(schoolYear);
+                ctss.setSemester(semester);
+                ctss.setStatisticsType(2); //按学院统计
+
+
+
+
             }
 
 
-//            // mongoTemplate.find 查询结果集
-//            items = mongoTemplate.find(query, Score.class);
+
+
+
+            //不及格人数统计
+            Criteria criteriFail = Criteria.where("orgId").is(orgId);
+            criteriFail.and("scoreResultType").is(ScoreConstant.RESULT_TYPE_100);
+            criteriFail.and("schoolYear").is(schoolYear);
+            criteriFail.and("semester").is(semester);
+            criteriFail.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
+            query.addCriteria(criteriFail);
+            long total = mongoTemplate.count(query, Score.class);
+
+            AggregationResults<BasicDBObject> ccount = mongoTemplate.aggregate(
+                    Aggregation.newAggregation(
+                            Aggregation.match(criteria),
+                            Aggregation.group("collegeId").count().as("count")),
+                    Score.class, BasicDBObject.class);
+
+
+
+
+
+
+
+
+
+
+
+
 
         } catch (Exception e) {
             result.put("success", false);

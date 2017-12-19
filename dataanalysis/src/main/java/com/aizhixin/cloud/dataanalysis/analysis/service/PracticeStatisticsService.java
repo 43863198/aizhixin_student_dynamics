@@ -50,6 +50,10 @@ public class PracticeStatisticsService {
     @Autowired
     private PageJdbcUtil pageJdbcUtil;
     
+    public void deleteAllByOrgId(Long orgId){
+    	practiceStaticsRespository.deleteByOrgId(orgId);
+    }
+    
     public void saveList(List<PracticeStatistics> practiceStatisticsList){
     	practiceStaticsRespository.save(practiceStatisticsList);
     }

@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @ApiModel(description="今日排课数据")
-public class TodayCourseDomain {
+public class TeachingScheduleDomain {
 	
 	@ApiModelProperty(value = "机构id")
 	@Getter @Setter private Long orgId;
@@ -30,6 +30,6 @@ public class TodayCourseDomain {
     @Getter @Setter private int courseNum11;
     
     @ApiModelProperty(value = "统计时间")
-    @Getter @Setter private String Statisticalime;
+    @Getter @Setter private String statisticalTime;
 
 }
