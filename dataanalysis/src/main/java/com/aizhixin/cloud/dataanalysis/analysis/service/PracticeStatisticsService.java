@@ -140,8 +140,8 @@ public class PracticeStatisticsService {
                     return practiceStatistics;
                 }
             };
-            String listSql="select avg(a.COLLEGE_NAME) as collegeName,max(a.COLLEGE_ID) as collegeId,sum(a.PRACTICE_COMPANY_NUM) as practiceCompanyNum,sum(a.TASK_NUM) as taskNum,sum(a.TASK_PASS_NUM) as taskPassNum from T_PRACTICE_STATISTICS a where a.ORG_ID = "+orgId+" and a.TEACHER_YEAR = "+year+" and a.DELETE_FLAG = 0  group by a.COLLEGE_ID";
-            String countSql="select count(1) from T_PRACTICE_STATISTICS a where a.ORG_ID = "+orgId+" and a.TEACHER_YEAR = "+year+" and a.DELETE_FLAG = 0  group by a.COLLEGE_ID";
+            String listSql="select max(a.COLLEGE_NAME) as collegeName,max(a.COLLEGE_ID) as collegeId,sum(a.PRACTICE_COMPANY_NUM) as practiceCompanyNum,sum(a.TASK_NUM) as taskNum,sum(a.TASK_PASS_NUM) as taskPassNum from T_PRACTICE_STATISTICS a where a.ORG_ID = "+orgId+" and a.TEACHER_YEAR = "+year+" and a.DELETE_FLAG = 0  group by a.COLLEGE_ID";
+            String countSql="select count(1) from (select a.COLLEGE_ID from T_PRACTICE_STATISTICS a where a.ORG_ID = "+orgId+" and a.TEACHER_YEAR = "+year+" and a.DELETE_FLAG = 0  group by a.COLLEGE_ID) ss";
            Map map= pageJdbcUtil
                     .getPageInfor(pageSize, pageNumber,
                             rowMapper, null, listSql, countSql);
@@ -154,6 +154,7 @@ public class PracticeStatisticsService {
             e.printStackTrace();
             result.put("success", false);
             result.put("message", "获取实践统计信息异常！");
+            LOG.warn("获取实践统计信息异常{}",e);
             return result;
         }
         result.put("success", true);
