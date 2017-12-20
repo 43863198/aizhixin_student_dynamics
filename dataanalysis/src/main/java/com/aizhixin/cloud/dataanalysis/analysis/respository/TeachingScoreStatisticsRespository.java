@@ -5,6 +5,7 @@ import com.aizhixin.cloud.dataanalysis.analysis.entity.TeachingScoreStatistics;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -23,5 +24,10 @@ public interface TeachingScoreStatisticsRespository extends JpaRepository<Teachi
     @Query("select a from #{#entityName} a where a.orgId = :orgId and a.deleteFlag=:deleteFlag and a.statisticsType=:statisticsType")
     TeachingScoreStatistics findByOrgIdAndStatisticsTypeAndDeleteFlag(@Param(value = "orgId")Long orgId,@Param(value = "deleteFlag")int deleteFlag,@Param(value = "statisticsType")int statisticsType);
 
+
+    //物理删除
+    @Modifying
+    @Query("delete from #{#entityName} a where a.orgId = :orgId")
+    void deleteByOrgId(@Param(value = "orgId") Long orgId);
 
 }
