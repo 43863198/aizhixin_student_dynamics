@@ -267,7 +267,7 @@ public class CetStatisticAnalysisService {
             Criteria criteria = Criteria.where("orgId").is(orgId);
             if (null != collegeId) {
                 Set<Long> collegeIds = new HashSet<>();
-                if (grade.indexOf(",") != -1) {
+                if (collegeId.indexOf(",") != -1) {
                     String[] cid = collegeId.split(",");
                     for (String d : cid) {
                         collegeIds.add(Long.valueOf(d));
@@ -282,9 +282,9 @@ public class CetStatisticAnalysisService {
             if(null!=teacherYear){
                 criteria.and("schoolYear").is(teacherYear);
             }
-            if(null!=semester){
-                criteria.and("semester").is(semester);
-            }
+//            if(null!=semester){
+//                criteria.and("semester").is(semester);
+//            }
             if (null != grade) {
                 List<String> tds = new ArrayList<>();
                 if (grade.indexOf(",") != -1) {

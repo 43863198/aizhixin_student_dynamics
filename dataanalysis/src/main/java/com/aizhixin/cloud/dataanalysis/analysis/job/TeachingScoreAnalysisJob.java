@@ -101,8 +101,8 @@ public class TeachingScoreAnalysisJob {
             AggregationResults<BasicDBObject> countts = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(criteria),
-                            Aggregation.group("collegeId").first("collegeName").as("collegeName").count().as("count").avg("gradePoint").as("GPAavg").avg("totalScore").as("courseAVG"),
-                            Aggregation.project("collegeId").and("cid").previousOperation()
+                            Aggregation.group("collegeId").first("collegeName").as("collegeName").count().as("count").avg("gradePoint").as("GPAavg").avg("totalScore").as("courseAVG")
+//                            Aggregation.project("collegeId").and("cid").previousOperation()
                     ),
                     Score.class, BasicDBObject.class);
             int i = 0;
@@ -134,8 +134,8 @@ public class TeachingScoreAnalysisJob {
             AggregationResults<BasicDBObject> failCount = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(criteriFail),
-                            Aggregation.group("collegeId").count().as("count"),
-                            Aggregation.project("collegeId").and("cid").previousOperation()
+                            Aggregation.group("collegeId").count().as("count")
+//                            Aggregation.project("collegeId").and("cid").previousOperation()
                     ),
                     Score.class, BasicDBObject.class);
             int j = 0;
@@ -177,8 +177,8 @@ public class TeachingScoreAnalysisJob {
                             Aggregation.match(criteria),
                             Aggregation.group("userId").avg("gradePoint").as("GPAavg")
                                     .first("jobNum").as("jobNum").first("userName").as("userName").first("className").as("className")
-                                    .first("grade").as("grade").first("collegeId").as("collegeId").first("collegeName").as("collegeName"),
-                            Aggregation.project("userId").and("uid").previousOperation()
+                                    .first("grade").as("grade").first("collegeId").as("collegeId").first("collegeName").as("collegeName")
+//                            Aggregation.project("userId").and("uid").previousOperation()
                     ),
                     Score.class, BasicDBObject.class);
 
@@ -204,8 +204,8 @@ public class TeachingScoreAnalysisJob {
             AggregationResults<BasicDBObject> scheduleStatis = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(criteria),
-                            Aggregation.group("userId", "scheduleId").count().as("count"),
-                            Aggregation.project("userId").and("userId").previousOperation()
+                            Aggregation.group("userId", "scheduleId").count().as("count")
+//                            Aggregation.project("userId").and("userId").previousOperation()
                     ),
                     Score.class, BasicDBObject.class);
 
@@ -264,19 +264,51 @@ public class TeachingScoreAnalysisJob {
             //参考人数统计
             Criteria criteria = Criteria.where("orgId").is(orgId);
             criteria.and("scoreResultType").is(ScoreConstant.RESULT_TYPE_100);
-            query.addCriteria(criteria).limit(1000);
+//            query.addCriteria(criteria).limit(1000);
+//
+//            items = mongoTemplate.find(query, Score.class);
 
-            items = mongoTemplate.find(query, Score.class);
-
-//            scoreMongoRespository.save(items);
 
             AggregationResults<BasicDBObject> countts = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(criteria),
-                            Aggregation.group("collegeId", "scheduleId").first("collegeName").as("collegeName").count().as("count").avg("gradePoint").as("GPAavg").avg("totalScore").as("courseAVG"),
-                            Aggregation.project("collegeId", "scheduleId").and("cid").previousOperation()
+                            Aggregation.group("collegeId").first("collegeName").as("collegeName").count().as("count").avg("gradePoint").as("GPAavg").avg("totalScore").as("courseAVG")
+//                            Aggregation.project("collegeId").and("cid").previousOperation()
                     ),
                     Score.class, BasicDBObject.class);
+
+            AggregationResults<BasicDBObject> failCount = mongoTemplate.aggregate(
+                    Aggregation.newAggregation(
+                            Aggregation.match(criteria),
+                            Aggregation.group("collegeId").count().as("count")
+//                            Aggregation.project("collegeId").and("cid").previousOperation()
+                    ),
+                    Score.class, BasicDBObject.class);
+
+            AggregationResults<BasicDBObject> scheduleDetails = mongoTemplate.aggregate(
+                    Aggregation.newAggregation(
+                            Aggregation.match(criteria),
+                            Aggregation.group("userId").avg("gradePoint").as("GPAavg")
+                                    .first("jobNum").as("jobNum").first("userName").as("userName").first("className").as("className")
+                                    .first("grade").as("grade").first("collegeId").as("collegeId").first("collegeName").as("collegeName")
+//                            Aggregation.project("userId").and("uid").previousOperation()
+                    ),
+                    Score.class, BasicDBObject.class);
+
+            AggregationResults<BasicDBObject> scheduleStatis = mongoTemplate.aggregate(
+                    Aggregation.newAggregation(
+                            Aggregation.match(criteria),
+                            Aggregation.group( "scheduleId","userId").count().as("count")
+//                            Aggregation.project("userId").and("userId").previousOperation()
+                    ),
+                    Score.class, BasicDBObject.class);
+
+            AggregationResults<BasicDBObject> scheduleFail = mongoTemplate.aggregate(
+                    Aggregation.newAggregation(
+                            Aggregation.match(criteria),
+                            Aggregation.group("userId").count().as("count")),
+                    Score.class, BasicDBObject.class);
+
 
 
             //mongoTemplate.count计算总数

@@ -67,7 +67,7 @@ public class TeachingScoreController {
             @ApiParam(value = "teacherYear 学年" , required = false) @RequestParam(value = "teacherYear", required = false) Integer teacherYear,
             @ApiParam(value = "semester 学期" , required = false) @RequestParam(value = "semester", required = false) Integer semester,
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "collegeId 学院id 注:多个时候用“，”隔开", required = true) @RequestParam(value = "collegeId", required = true) String collegeId,
+            @ApiParam(value = "collegeId 学院id 注:多个时候用“，”隔开", required = false) @RequestParam(value = "collegeId", required = false) String collegeId,
             @ApiParam(value = "grade 年级 注:多个时候用“，”隔开", required = false) @RequestParam(value = "grade", required = false) String grade,
             @ApiParam(value = "nj 姓名/学号" , required = false) @RequestParam(value = "nj", required = false) String nj,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,

@@ -485,8 +485,8 @@ public class TeachingScoreService {
                     teachingScoreDetails.setTeacherYear(teacherYear);
                 }
                 if(null!=semester){
-//                    teachingScoreDetails.setSemester(semester);
-                    teachingScoreDetails.setSemester(new Random().nextInt(2)+1);
+                    teachingScoreDetails.setSemester(semester);
+//                    teachingScoreDetails.setSemester(new Random().nextInt(2)+1);
                 }
                 if(null!=grade){
                     teachingScoreDetails.setGrade(grade);
