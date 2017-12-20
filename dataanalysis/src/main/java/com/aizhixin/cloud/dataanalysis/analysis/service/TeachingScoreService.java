@@ -331,7 +331,7 @@ public class TeachingScoreService {
             org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
             //条件
             Criteria criteria = Criteria.where("orgId").is(orgId);
-            query.addCriteria(criteria).limit(10000);
+            query.addCriteria(criteria).limit(5000);
             List<Score> items = mongoTemplate.find(query, Score.class);
             if (null != items && items.size() > 0) {
                 for (Score sfc : items) {
@@ -351,7 +351,7 @@ public class TeachingScoreService {
                     if (null != sfc.getGrade()) {
                         tsd.setGrade(Integer.valueOf(sfc.getGrade()));
                     }
-                    tsd.setAvgGPA((double)(Math.random()*10)%6);
+                    tsd.setAvgGPA((Math.random()*10)%6);
                     tsd.setReferenceSubjects(new Random().nextInt(100));
                     tsd.setFailedSubjects(tsd.getReferenceSubjects() - 1 > 0 ? tsd.getReferenceSubjects() - 1 : 0);
                     tsd.setFailedSubjects(tsd.getFailedSubjects() * 3);
@@ -425,7 +425,7 @@ public class TeachingScoreService {
                     if (null != d[7]) {
                         teachingScoreStatistics.setGrade(Integer.valueOf(String.valueOf(d[7])));
                     }
-                    teachingScoreStatistics.setAvgGPA((double)(Math.random()*10)%6);
+                    teachingScoreStatistics.setAvgGPA((Math.random()*10)%6);
                     teachingScoreStatistics.setAvgScore(new Random().nextDouble() * 100);
                     teachingScoreStatistics.setStatisticsType(2);
                     teachingScoreStatistics.setOrgId(orgId);
