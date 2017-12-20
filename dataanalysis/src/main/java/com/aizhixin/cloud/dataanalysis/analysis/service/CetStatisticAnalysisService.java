@@ -112,7 +112,7 @@ public class CetStatisticAnalysisService {
                     pass6 = Integer.valueOf(String.valueOf(cres[3]));
                 }
                 if (null != cres[4]) {
-                    time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(String.valueOf(cres[5]));
+                    time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(String.valueOf(cres[4]));
                 }
                 cetStatisticDTO.setCetForeJoinNum(count4);
                 cetStatisticDTO.setCetForePassNum(pass4);
