@@ -25,9 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.CetScoreStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.PracticeStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolStatistics;
+import com.aizhixin.cloud.dataanalysis.analysis.job.SchoolStatisticsAnalysisJob;
 import com.aizhixin.cloud.dataanalysis.analysis.service.CetStatisticAnalysisService;
 import com.aizhixin.cloud.dataanalysis.analysis.service.PracticeStatisticsService;
 import com.aizhixin.cloud.dataanalysis.analysis.service.SchoolStatisticsService;
+import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
 
 import io.swagger.annotations.Api;
@@ -51,7 +53,23 @@ public class TestAnalysisDataController {
 	private CetStatisticAnalysisService cetStatisticAnalysisService;
 	@Autowired
 	private PracticeStatisticsService practiceStatisticsService;
-
+	@Autowired
+	private SchoolStatisticsAnalysisJob schoolStatisticsAnalysisJob;
+	
+	@RequestMapping(value = "/schoolstatisticsjob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "GET", value = "迎新统计定时任务", response = Void.class, notes = "迎新统计定时任务<br><br><b>@author zhengning</b>")
+	public ResponseEntity<Map<String, Object>> schoolStatisticsjob(
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId
+			) {
+        if(null == orgId){
+        	orgId = 218L;
+        }
+        schoolStatisticsService.deleteAllByOrgId(orgId);
+        schoolStatisticsAnalysisJob.schoolStatisticsJob();
+		Map<String, Object> result = new HashMap<String, Object>();
+		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+	}
+	
 	@RequestMapping(value = "/addschoolstatistics", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "POST", value = "生成学情分析学校人数统计数据(生成模拟数据前会清空表数据请谨慎使用)", response = Void.class, notes = "生成学情分析学校人数统计数据<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> addSchoolStatistics(
@@ -434,7 +452,12 @@ public class TestAnalysisDataController {
 			cetScoreStatistics1.setCetSixJoinNum(645-s);
 			cetScoreStatistics1.setCetSixPassNum(378-s);
 			cetScoreStatistics1.setSemester(j);
-			cetStatisticsList.add(cetScoreStatistics1);
+			
+			if(cetScoreStatistics1.getTeacherYear() == 2017 && cetScoreStatistics1.getSemester() == 2){
+				continue;
+			}else{
+				cetStatisticsList.add(cetScoreStatistics1);
+			}
 
 			random = new Random();
 			s = random.nextInt(max) % (max - min + 1) + min;
@@ -711,7 +734,11 @@ public class TestAnalysisDataController {
 			practiceStatistics1.setTaskNum(545L-(s*4));
 			practiceStatistics1.setTaskPassNum(530L-(s*4));
 			practiceStatistics1.setSemester(j);
-			practiceStatisticsList.add(practiceStatistics1);
+			if(practiceStatistics1.getTeacherYear() == 2017 && practiceStatistics1.getSemester() == 2){
+				continue;
+			}else{
+				practiceStatisticsList.add(practiceStatistics1);
+			}
 			
 			random = new Random();
 			s = random.nextInt(max) % (max - min + 1) + min;
