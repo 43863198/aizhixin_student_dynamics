@@ -184,9 +184,7 @@ public class PracticeStatisticsService {
             }
             if(null != collegeId){
                 sql.append(" and ss.COLLEGE_ID = :collegeId+"+collegeId);
-                sql.append(" and ss.STATISTICS_TYPE = 2");
             }else {
-                sql.append(" and ss.STATISTICS_TYPE = 1");
             }
             res = jdbcTemplate.queryForList(sql.toString());
 
