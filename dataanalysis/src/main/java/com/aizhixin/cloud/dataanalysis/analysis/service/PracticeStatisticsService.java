@@ -71,7 +71,7 @@ public class PracticeStatisticsService {
     }
     
 
-    public Map<String, Object> getStatisticPractice(Long orgId,Long collegeId, String year, Integer pageNumber,Integer pageSize) {
+    public Map<String, Object> getStatisticPractice(Long orgId, String teacherYear,Integer semester, Integer pageNumber,Integer pageSize) {
         Map<String, Object> result = new HashMap<>();
         PracticeStaticsDTO practiceStaticsDTO = new PracticeStaticsDTO();
         PageData p = new PageData();
@@ -84,18 +84,29 @@ public class PracticeStatisticsService {
         Date time = new Date();
         try {
             StringBuilder sql = new StringBuilder("SELECT COUNT(1) AS count, SUM(ss.PRACTICE_STUDENT_NUM) as sum, SUM(ss.PRACTICE_COMPANY_NUM) as rsum, SUM(ss.TASK_NUM) as psum, SUM(ss.TASK_PASS_NUM) as csum, max(ss.STATISTICAL_TIME) FROM T_PRACTICE_STATISTICS ss WHERE 1 = 1");
+            String listSql="select max(a.COLLEGE_NAME) as collegeName,max(a.COLLEGE_ID) as collegeId,sum(a.PRACTICE_COMPANY_NUM) as practiceCompanyNum,sum(a.TASK_NUM) as taskNum,sum(a.TASK_PASS_NUM) as taskPassNum from T_PRACTICE_STATISTICS a where  a.DELETE_FLAG = 0 ";
+            String countSql="select count(1) from (select a.COLLEGE_ID from T_PRACTICE_STATISTICS a where a.DELETE_FLAG = 0";
+           //   group by a.COLLEGE_ID
+            //    group by a.COLLEGE_ID) ss
             if (null != orgId) {
                 sql.append(" and ss.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
+                listSql+=" AND a.ORG_ID = "+orgId+" ";
+                countSql+=" AND a.ORG_ID = "+orgId+" ";
             }
-            if (!isEmpty(year)) {
+            if (!isEmpty(teacherYear)) {
                 sql.append(" and ss.TEACHER_YEAR = :teacherYear");
-                condition.put("teacherYear", year);
+                condition.put("teacherYear", teacherYear);
+                listSql+=" AND a.TEACHER_YEAR = "+teacherYear+" ";
+                countSql+=" AND a.TEACHER_YEAR = "+teacherYear+"  ";
             }
-            if (null != collegeId) {
-                sql.append(" and ss.COLLEGE_ID = :collegeId");
-                condition.put("collegeId", collegeId);
+            if (null != semester) {
+                sql.append(" and ss.SEMESTER = :semester");
+                condition.put("semester", semester);
+                listSql+=" AND a.SEMESTER = "+semester+" ";
+                countSql+=" AND a.SEMESTER = "+semester+"  ";
             }
+            countSql+=" ) ss";
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
@@ -140,8 +151,7 @@ public class PracticeStatisticsService {
                     return practiceStatistics;
                 }
             };
-            String listSql="select max(a.COLLEGE_NAME) as collegeName,max(a.COLLEGE_ID) as collegeId,sum(a.PRACTICE_COMPANY_NUM) as practiceCompanyNum,sum(a.TASK_NUM) as taskNum,sum(a.TASK_PASS_NUM) as taskPassNum from T_PRACTICE_STATISTICS a where a.ORG_ID = "+orgId+" and a.TEACHER_YEAR = "+year+" and a.DELETE_FLAG = 0  group by a.COLLEGE_ID";
-            String countSql="select count(1) from (select a.COLLEGE_ID from T_PRACTICE_STATISTICS a where a.ORG_ID = "+orgId+" and a.TEACHER_YEAR = "+year+" and a.DELETE_FLAG = 0  group by a.COLLEGE_ID) ss";
+
            Map map= pageJdbcUtil
                     .getPageInfor(pageSize, pageNumber,
                             rowMapper, null, listSql, countSql);
