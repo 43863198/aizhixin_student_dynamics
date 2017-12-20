@@ -332,9 +332,9 @@ public class TeachingScoreService {
             //条件
             Criteria criteria = Criteria.where("orgId").is(orgId);
             query.addCriteria(criteria).limit(10000);
-            List<TotalScoreCount> items = mongoTemplate.find(query, TotalScoreCount.class);
+            List<Score> items = mongoTemplate.find(query, Score.class);
             if (null != items && items.size() > 0) {
-                for (TotalScoreCount sfc : items) {
+                for (Score sfc : items) {
                     TeachingScoreDetails tsd = new TeachingScoreDetails();
                     tsd.setOrgId(orgId);
                     tsd.setJobNum(sfc.getJobNum());
@@ -351,7 +351,7 @@ public class TeachingScoreService {
                     if (null != sfc.getGrade()) {
                         tsd.setGrade(Integer.valueOf(sfc.getGrade()));
                     }
-                    tsd.setAvgGPA(Double.valueOf(new Random().nextDouble() * 100));
+                    tsd.setAvgGPA((double)(Math.random()*10)%6);
                     tsd.setReferenceSubjects(new Random().nextInt(100));
                     tsd.setFailedSubjects(tsd.getReferenceSubjects() - 1 > 0 ? tsd.getReferenceSubjects() - 1 : 0);
                     tsd.setFailedSubjects(tsd.getFailedSubjects() * 3);
@@ -425,7 +425,7 @@ public class TeachingScoreService {
                     if (null != d[7]) {
                         teachingScoreStatistics.setGrade(Integer.valueOf(String.valueOf(d[7])));
                     }
-                    teachingScoreStatistics.setAvgGPA(new Random().nextDouble() * 10);
+                    teachingScoreStatistics.setAvgGPA((double)(Math.random()*10)%6);
                     teachingScoreStatistics.setAvgScore(new Random().nextDouble() * 100);
                     teachingScoreStatistics.setStatisticsType(2);
                     teachingScoreStatistics.setOrgId(orgId);
