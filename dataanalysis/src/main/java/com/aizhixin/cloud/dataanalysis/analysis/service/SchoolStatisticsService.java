@@ -431,7 +431,7 @@ public class SchoolStatisticsService {
     }
 
 
-    public Map<String, Object> getCollegeDetails(Pageable page,Long orgId, String collegeId, String nj, String type,String isReport,String isPay) {
+    public Map<String, Object> getCollegeDetails(Pageable page,Integer teacherYear,Long orgId, String collegeId, String nj, String type,String isReport,String isPay) {
         Map<String, Object> result = new HashMap<>();
         PageData<StudentRegister> p = new PageData<>();
         List<StudentRegister> items = new ArrayList<>();
@@ -445,6 +445,9 @@ public class SchoolStatisticsService {
             org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
             //条件
             Criteria criteria = Criteria.where("orgId").is(orgId);
+            if(null!=teacherYear){
+                criteria.and("schoolYear").is(teacherYear);
+            }
             if (null != collegeId) {
                 Set<Long> collegeIds = new HashSet<>();
                 if (collegeId.indexOf(",") != -1) {

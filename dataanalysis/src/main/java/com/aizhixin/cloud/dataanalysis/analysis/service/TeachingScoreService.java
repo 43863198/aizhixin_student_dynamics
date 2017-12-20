@@ -52,7 +52,7 @@ public class TeachingScoreService {
         teachingScoreDetailsRespository.save(teachingScoreDetails);
     }
 
-    public Map<String, Object> getStatistic(Long orgId, String grade, Integer semester) {
+    public Map<String, Object> getStatistic(Long orgId, Integer teacherYear, Integer semester) {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> condition = new HashMap<>();
         TeachingAchievementDTO teachingAchievementDTO = new TeachingAchievementDTO();
@@ -65,10 +65,10 @@ public class TeachingScoreService {
                 sql.append(" and ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
-            if (null != grade) {
-                cql.append(" and GRADE = :grade");
-                sql.append(" and GRADE = :grade");
-                condition.put("grade", grade);
+            if (null != teacherYear) {
+                cql.append(" and TEACHER_YEAR = :teacherYear");
+                sql.append(" and TEACHER_YEAR = :teacherYear");
+                condition.put("teacherYear", teacherYear);
             }
             if (null != semester) {
                 cql.append(" and SEMESTER = :semester");
@@ -201,7 +201,7 @@ public class TeachingScoreService {
     }
 
 
-    public Map<String, Object> getTeachingScoreDetail(Long orgId, String collegeIds, String grade, String nj, Pageable pageable) {
+    public Map<String, Object> getTeachingScoreDetail(Integer teacherYear, Integer semester, Long orgId, String collegeIds, String grade, String nj, Pageable pageable) {
         Map<String, Object> result = new HashMap<>();
         PageData<TeachingScoreDetails> p = new PageData<>();
         List<TeachingScoreDetails> teachingScoreDetailsList = new ArrayList<>();
@@ -210,6 +210,16 @@ public class TeachingScoreService {
             Map<String, Object> condition = new HashMap<>();
             StringBuilder cql = new StringBuilder("SELECT count(1) FROM T_TEACHING_SCORE_DETAILS  WHERE 1 = 1");
             StringBuilder sql = new StringBuilder("SELECT JOB_NUM,USER_NAME,CLASS_NAME,GRADE,COLLEGE_NAME,AVERAGE_GPA,REFERENCE_SUBJECTS,FAILED_SUBJECTS,FAILING_GRADE_CREDITS FROM T_TEACHING_SCORE_DETAILS  WHERE 1 = 1");
+            if (null != teacherYear) {
+                cql.append(" and TEACHER_YEAR = :teacherYear");
+                sql.append(" and TEACHER_YEAR = :teacherYear");
+                condition.put("teacherYear", teacherYear);
+            }
+            if (null != semester) {
+                cql.append(" and SEMESTER = :semester");
+                sql.append(" and SEMESTER = :semester");
+                condition.put("semester", semester);
+            }
             if (null != orgId) {
                 cql.append(" and ORG_ID = :orgId");
                 sql.append(" and ORG_ID = :orgId");
