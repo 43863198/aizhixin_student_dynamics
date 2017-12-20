@@ -351,7 +351,7 @@ public class TeachingScoreService {
                     if (null != sfc.getGrade()) {
                         tsd.setGrade(Integer.valueOf(sfc.getGrade()));
                     }
-                    tsd.setAvgGPA((Math.random()*10)%6);
+                    tsd.setAvgGPA(new BigDecimal((Math.random()*10)%6).setScale(2,   BigDecimal.ROUND_HALF_UP).doubleValue());
                     tsd.setReferenceSubjects(new Random().nextInt(100));
                     tsd.setFailedSubjects(tsd.getReferenceSubjects() - 1 > 0 ? tsd.getReferenceSubjects() - 1 : 0);
                     tsd.setFailedSubjects(tsd.getFailedSubjects() * 3);
