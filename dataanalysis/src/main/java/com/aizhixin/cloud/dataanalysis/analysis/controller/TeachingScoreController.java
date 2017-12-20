@@ -34,9 +34,9 @@ public class TeachingScoreController {
     @ApiOperation(httpMethod = "GET", value = "教学成绩———统计", response = Void.class, notes = "教学成绩———统计<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object> getStatisticTeachingScore(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "grade 学年" , required = false) @RequestParam(value = "grade", required = false) String grade,
+            @ApiParam(value = "teacherYear 学年" , required = false) @RequestParam(value = "teacherYear", required = false) Integer teacherYear,
             @ApiParam(value = "semester 学期" , required = false) @RequestParam(value = "semester", required = false) Integer semester) {
-        return teachingScoreService.getStatistic(orgId, grade, semester);
+        return teachingScoreService.getStatistic(orgId, teacherYear, semester);
     }
 
     /**
@@ -64,13 +64,15 @@ public class TeachingScoreController {
     @GetMapping(value = "/detail", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "教学成绩———详情列表", response = Void.class, notes = "教学成绩———详情列表<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object> getTeachingScoreDetail(
+            @ApiParam(value = "teacherYear 学年" , required = false) @RequestParam(value = "teacherYear", required = false) Integer teacherYear,
+            @ApiParam(value = "semester 学期" , required = false) @RequestParam(value = "semester", required = false) Integer semester,
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "collegeId 学院id 注:多个时候用“，”隔开", required = true) @RequestParam(value = "collegeId", required = true) String collegeId,
             @ApiParam(value = "grade 年级 注:多个时候用“，”隔开", required = false) @RequestParam(value = "grade", required = false) String grade,
             @ApiParam(value = "nj 姓名/学号" , required = false) @RequestParam(value = "nj", required = false) String nj,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return teachingScoreService.getTeachingScoreDetail(orgId, collegeId, grade, nj, PageUtil.createNoErrorPageRequest(pageNumber, pageSize));
+        return teachingScoreService.getTeachingScoreDetail(teacherYear,semester,orgId, collegeId, grade, nj, PageUtil.createNoErrorPageRequest(pageNumber, pageSize));
     }
 
 

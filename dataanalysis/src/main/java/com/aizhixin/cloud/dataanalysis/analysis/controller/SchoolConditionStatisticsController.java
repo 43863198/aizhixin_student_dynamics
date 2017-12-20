@@ -87,9 +87,9 @@ public class SchoolConditionStatisticsController {
     @ApiOperation(httpMethod = "GET", value = "迎新学情———统计", response = Void.class, notes = "迎新学情———统计<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object>   getStatisticNewstudents(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "year 年" , required = true) @RequestParam(value = "year", required = true) Integer year
+            @ApiParam(value = "teacherYear 学年" , required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear
  ) {
-        return schoolStatisticsService.getStatisticNewstudents(orgId,year);
+        return schoolStatisticsService.getStatisticNewstudents(orgId,teacherYear);
     }
 
     /**
@@ -127,6 +127,7 @@ public class SchoolConditionStatisticsController {
     @GetMapping(value = "/collegedetail", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "迎新---学院详情", response = Void.class, notes = "迎新---学院详情<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object>   getCollegeDetails(
+            @ApiParam(value = "teacherYear 学年" , required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "collegeId 学院id(多个用“，”隔开)") @RequestParam(value = "collegeId", required = false) String collegeId,
             @ApiParam(value = "nj 姓名/学号") @RequestParam(value = "nj", required = false) String nj,
@@ -135,7 +136,7 @@ public class SchoolConditionStatisticsController {
             @ApiParam(value = "缴费情况 isPay(1:已缴费；2:绿色通道；3:其他)" ) @RequestParam(value = "isPay", required = false) String isPay,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return schoolStatisticsService.getCollegeDetails(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId, collegeId, nj, type, isReport, isPay);
+        return schoolStatisticsService.getCollegeDetails(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), teacherYear,orgId, collegeId, nj, type, isReport, isPay);
     }
 
     /**
