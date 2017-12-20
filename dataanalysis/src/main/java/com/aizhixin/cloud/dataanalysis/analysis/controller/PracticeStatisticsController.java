@@ -81,9 +81,10 @@ public class PracticeStatisticsController {
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "className 班级名称", required = false) @RequestParam(value = "className", required = false) String className,
             @ApiParam(value = "collegeId 学院id", required = true) @RequestParam(value = "collegeId", required = true) Long collegeId,
-            @ApiParam(value = "year 年" , required = true) @RequestParam(value = "year", required = true) String year,
+            @ApiParam(value = "teacherYear 年" , required = true) @RequestParam(value = "teacherYear", required = true) String teacherYear,
+            @ApiParam(value = "semester学期" , required = true) @RequestParam(value = "semester", required = true) Integer semester,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return practiceStatisticsService.getPracticeDetail(orgId,className,collegeId,year, pageNumber, pageSize);
+        return practiceStatisticsService.getPracticeDetail(orgId,className,collegeId,teacherYear,semester, pageNumber, pageSize);
     }
 }
