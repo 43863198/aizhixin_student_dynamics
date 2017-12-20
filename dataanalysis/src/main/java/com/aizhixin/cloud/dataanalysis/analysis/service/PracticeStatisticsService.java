@@ -106,7 +106,8 @@ public class PracticeStatisticsService {
                 listSql+=" AND a.SEMESTER = "+semester+" ";
                 countSql+=" AND a.SEMESTER = "+semester+"  ";
             }
-            countSql+=" ) ss";
+            listSql+="  group by a.COLLEGE_ID";
+            countSql+=" group by a.COLLEGE_ID) ss";
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
