@@ -86,6 +86,7 @@ public class CetStatisticAnalysisService {
             }
             cql.append(" and cet.DELETE_FLAG = 0");
             sql.append(" and cet.DELETE_FLAG = 0");
+            sql.append(" GROUP BY cet.COLLEGE_ID");
             Query cq = em.createNativeQuery(cql.toString());
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
@@ -93,7 +94,7 @@ public class CetStatisticAnalysisService {
                 sq.setParameter(e.getKey(), e.getValue());
             }
             Object[] cres = (Object[]) cq.getSingleResult();
-            if (null != cres && cres.length == 6) {
+            if (null != cres) {
                 int count4 = 0;
                 int count6 = 0;
                 int pass4 = 0;
