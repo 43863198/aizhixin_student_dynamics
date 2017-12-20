@@ -65,9 +65,8 @@ public class CetStatisticAnalysisService {
         CetStatisticDTO cetStatisticDTO = new CetStatisticDTO();
         Map<String, Object> condition = new HashMap<>();
         List<CollegeCetStatisticDTO> collegeCetStatisticDTOList = new ArrayList<>();
-        Long count = 0L;
         try {
-            StringBuilder cql = new StringBuilder("SELECT COUNT(1) AS count, SUM(cet.CET_FORE_JOIN_NUM) as sumc4, SUM(cet.CET_FORE_PASS_NUM) as sump4, SUM(cet.CET_SIX_JOIN_NUM) as sumc6, SUM(cet.CET_SIX_PASS_NUM) as sump6, max(cet.CREATED_DATE) FROM T_CET_STATISTICS cet WHERE 1 = 1");
+            StringBuilder cql = new StringBuilder("SELECT SUM(cet.CET_FORE_JOIN_NUM) as sumc4, SUM(cet.CET_FORE_PASS_NUM) as sump4, SUM(cet.CET_SIX_JOIN_NUM) as sumc6, SUM(cet.CET_SIX_PASS_NUM) as sump6, max(cet.CREATED_DATE) FROM T_CET_STATISTICS cet WHERE 1 = 1");
             StringBuilder sql = new StringBuilder("SELECT SUM(cet.CET_FORE_JOIN_NUM) as sumc4, SUM(cet.CET_FORE_PASS_NUM) as sump4, SUM(cet.CET_SIX_JOIN_NUM) as sumc6, SUM(cet.CET_SIX_PASS_NUM) as sump6, COLLEGE_NAME, COLLEGE_ID FROM T_CET_STATISTICS cet WHERE 1 = 1");
             if (null != orgId) {
                 cql.append(" and cet.ORG_ID = :orgId");
@@ -101,21 +100,18 @@ public class CetStatisticAnalysisService {
                 int pass6 = 0;
                 Date time = new Date();
                 if (null != cres[0]) {
-                    count = Long.valueOf(String.valueOf(cres[0]));
+                    count4 = Integer.valueOf(String.valueOf(cres[0]));
                 }
                 if (null != cres[1]) {
-                    count4 = Integer.valueOf(String.valueOf(cres[1]));
+                    pass4 = Integer.valueOf(String.valueOf(cres[1]));
                 }
                 if (null != cres[2]) {
-                    pass4 = Integer.valueOf(String.valueOf(cres[2]));
+                    count6 = Integer.valueOf(String.valueOf(cres[2]));
                 }
                 if (null != cres[3]) {
-                    count6 = Integer.valueOf(String.valueOf(cres[3]));
+                    pass6 = Integer.valueOf(String.valueOf(cres[3]));
                 }
                 if (null != cres[4]) {
-                    pass6 = Integer.valueOf(String.valueOf(cres[4]));
-                }
-                if (null != cres[5]) {
                     time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(String.valueOf(cres[5]));
                 }
                 cetStatisticDTO.setCetForeJoinNum(count4);
@@ -125,8 +121,7 @@ public class CetStatisticAnalysisService {
                 cetStatisticDTO.setCetSixPassNum(pass6);
                 cetStatisticDTO.setCetSixPassRate(ProportionUtil.accuracy(pass6 * 1.0, count6 * 1.0, 2));
                 cetStatisticDTO.setStatisticalTime(time);
-                if (count > 0) {
-                    List<Object> rd = sq.getResultList();
+                List<Object> rd = sq.getResultList();
                     if (null != rd && rd.size() > 0) {
                         for (Object obj : rd) {
                             Object[] d = (Object[]) obj;
@@ -139,10 +134,10 @@ public class CetStatisticAnalysisService {
                                 ccount4 = Integer.valueOf(String.valueOf(d[0]));
                             }
                             if (null != d[1]) {
-                                ccount6 = Integer.valueOf(String.valueOf(d[1]));
+                                cpass4  = Integer.valueOf(String.valueOf(d[1]));
                             }
                             if (null != d[2]) {
-                                cpass4 = Integer.valueOf(String.valueOf(d[2]));
+                                ccount6 = Integer.valueOf(String.valueOf(d[2]));
                             }
                             if (null != d[3]) {
                                 cpass6 = Integer.valueOf(String.valueOf(d[3]));
@@ -162,7 +157,6 @@ public class CetStatisticAnalysisService {
                             collegeCetStatisticDTOList.add(collegeCetStatisticDTO);
                         }
                     }
-                }
             }
         } catch (Exception e) {
             e.printStackTrace();
