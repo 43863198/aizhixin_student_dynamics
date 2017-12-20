@@ -323,7 +323,7 @@ public class TestAnalysisDataEvaluateController {
                 teacherEvaluate2.setCourseCode("182504");
                 teacherEvaluate2.setCourseName("大学物理");
                 teacherEvaluate2.setTeacherId("22");
-                teacherEvaluate2.setTeacherName("雷军乐");
+                teacherEvaluate2.setTeacherName("雷军");
                 teacherEvaluate2.setAvgScore(4.8f-s);
                 teacherEvaluate2.setGrade(2017);
                 teacherEvaluate2.setSemester(j);
