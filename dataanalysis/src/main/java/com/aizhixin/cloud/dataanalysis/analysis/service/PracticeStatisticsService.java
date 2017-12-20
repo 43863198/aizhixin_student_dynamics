@@ -199,7 +199,7 @@ public class PracticeStatisticsService {
         result.put("data", res);
         return result;
     }
-    public Map<String,Object> getPracticeDetail(Long orgId,String className, Long collegeId, String year, Integer pageNumber,Integer pageSize){
+    public Map<String,Object> getPracticeDetail(Long orgId,String className, Long collegeId, String teacherYear,Integer semester, Integer pageNumber,Integer pageSize){
         RowMapper <Map> rowMapper= new RowMapper<Map>() {
             @Override
             public Map mapRow(ResultSet rs, int i) throws SQLException {
@@ -223,9 +223,13 @@ public class PracticeStatisticsService {
             querySql+=" and CLASS_NAME like '%"+className+"%' ";
             countSql+=" and CLASS_NAME like '%"+className+"%' ";
         }
-        if(!isEmpty(year)){
-            querySql+=" and TEACHER_YEAR="+year+" ";
-            countSql+=" and TEACHER_YEAR="+year+" ";
+        if(!isEmpty(teacherYear)){
+            querySql+=" and TEACHER_YEAR="+teacherYear+" ";
+            countSql+=" and TEACHER_YEAR="+teacherYear+" ";
+        }
+        if(null!=semester){
+            querySql+=" and SEMESTER="+semester+" ";
+            countSql+=" and SEMESTER="+semester+" ";
         }
         return pageJdbcUtil
                 .getPageInfor(pageSize, pageNumber,
