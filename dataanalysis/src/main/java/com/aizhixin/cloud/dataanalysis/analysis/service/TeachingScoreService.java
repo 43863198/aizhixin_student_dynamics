@@ -98,7 +98,7 @@ public class TeachingScoreService {
                         collegeTeachingAchievementDTO.setStudentsNum(Integer.valueOf(String.valueOf(d[2])));
                     }
                     if (null != d[3]) {
-                        collegeTeachingAchievementDTO.setAverageGPA(new BigDecimal((double)Float.valueOf(String.valueOf(d[3]))).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue());
+                        collegeTeachingAchievementDTO.setAverageGPA(new BigDecimal(Double.valueOf(String.valueOf(d[3]))).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                     }
                     if (null != d[4]) {
                         collegeTeachingAchievementDTO.setFailNum(Integer.valueOf(String.valueOf(d[4])));
@@ -107,7 +107,7 @@ public class TeachingScoreService {
                         collegeTeachingAchievementDTO.setCoursesNum(Integer.valueOf(String.valueOf(d[5])));
                     }
                     if (null != d[6]) {
-                        collegeTeachingAchievementDTO.setCoursesAVGScore(new BigDecimal((double)Float.valueOf(String.valueOf(d[6]))).setScale(2, BigDecimal.ROUND_HALF_UP).floatValue());
+                        collegeTeachingAchievementDTO.setCoursesAVGScore(new BigDecimal(Double.valueOf(String.valueOf(d[6]))).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                     }
                     collegeTeachingAchievementDTOList.add(collegeTeachingAchievementDTO);
                 }
@@ -120,7 +120,7 @@ public class TeachingScoreService {
                     teachingAchievementDTO.setStudentsNum(Integer.valueOf(String.valueOf(rd[0])));
                 }
                 if (null != rd[1]) {
-                    teachingAchievementDTO.setAverageGPA(Double.valueOf(String.valueOf(rd[1])));
+                    teachingAchievementDTO.setAverageGPA(new BigDecimal(Double.valueOf(String.valueOf(rd[1]))).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                 }
                 if (null != rd[2]) {
                     teachingAchievementDTO.setFailNum(Integer.valueOf(String.valueOf(rd[2])));
@@ -129,7 +129,7 @@ public class TeachingScoreService {
                     teachingAchievementDTO.setCoursesNum(Integer.valueOf(String.valueOf(rd[3])));
                 }
                 if (null != rd[4]) {
-                    teachingAchievementDTO.setCoursesAVGScore(Double.valueOf(String.valueOf(rd[4])));
+                    teachingAchievementDTO.setCoursesAVGScore(new BigDecimal(Double.valueOf(String.valueOf(rd[4]))).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                 }
                 if (null != rd[5]) {
                     time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(String.valueOf(rd[5]));
@@ -316,7 +316,7 @@ public class TeachingScoreService {
     public Map<String, Object> addTeachingScoreDetail(Long orgId) {
         Map<String, Object> result = new HashMap<>();
         try {
-//            teachingScoreDetailsRespository.deleteByOrgId(orgId);
+            teachingScoreDetailsRespository.deleteByOrgId(orgId);
             List<TeachingScoreDetails> teachingScoreDetailsList = new ArrayList<>();
             org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
             //条件
@@ -364,6 +364,7 @@ public class TeachingScoreService {
         Map<String, Object> result = new HashMap<>();
         List<TeachingScoreStatistics> teachingScoreStatisticsList = new ArrayList<>();
         try {
+            teachingScoreStatisticsRespository.deleteByOrgId(orgId);
             Map<String, Object> condition = new HashMap<>();
             StringBuilder sql = new StringBuilder("SELECT COLLEGE_ID,COLLEGE_NAME,TEACHER_YEAR,SEMESTER,count(1),sum(if(FAILED_SUBJECTS>0,1,0)), max(REFERENCE_SUBJECTS),GRADE FROM T_TEACHING_SCORE_DETAILS  WHERE 1 = 1");
             StringBuilder oql = new StringBuilder("SELECT TEACHER_YEAR,SEMESTER,count(1),AVG(AVERAGE_GPA),sum(if(FAILED_SUBJECTS>0,1,0)),MAX(REFERENCE_SUBJECTS) FROM T_TEACHING_SCORE_DETAILS  WHERE 1 = 1");
