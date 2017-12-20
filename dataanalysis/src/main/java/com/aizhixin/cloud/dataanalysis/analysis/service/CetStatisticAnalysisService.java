@@ -211,7 +211,7 @@ public class CetStatisticAnalysisService {
                             if (null != d[4]) {
                                 trendDTO.setYear(String.valueOf(d[4]));
                             }
-                            trendDTO.setValue(ProportionUtil.accuracy(pass4 * 1.0, count4 * 1.0, 2));
+                            trendDTO.setValue(ProportionUtil.accuracy(pass4 * 1.0, count4 * 1.0, 2)+"%");
                             trendDTOList.add(trendDTO);
                         }
                     }
@@ -233,7 +233,7 @@ public class CetStatisticAnalysisService {
                             if (null != d[4]) {
                                 trendDTO.setYear(String.valueOf(d[4]));
                             }
-                            trendDTO.setValue(ProportionUtil.accuracy(pass6 * 1.0, count6 * 1.0, 2));
+                            trendDTO.setValue(ProportionUtil.accuracy(pass6 * 1.0, count6 * 1.0, 2)+"%");
                             trendDTOList.add(trendDTO);
                         }
                     }
