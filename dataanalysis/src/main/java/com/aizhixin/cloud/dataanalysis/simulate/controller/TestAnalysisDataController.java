@@ -930,7 +930,7 @@ public class TestAnalysisDataController {
 			practiceStatistics6a.setPracticeStudentNum(48L-s);
 			practiceStatistics6a.setPracticeCompanyNum(1L+i);
 			practiceStatistics6a.setTaskNum(479L-(s*4));
-			practiceStatistics6a.setTaskPassNum(468L-(s*4));
+			practiceStatistics6a.setTaskPassNum(463L-(s*4));
 			practiceStatistics6a.setSemester(j);
 			practiceStatisticsList.add(practiceStatistics6a);
 			
@@ -948,8 +948,8 @@ public class TestAnalysisDataController {
 			practiceStatistics6.setClassName("风景园林2016-2班");
 			practiceStatistics6.setPracticeStudentNum(49L-s);
 			practiceStatistics6.setPracticeCompanyNum(1L+i);
-			practiceStatistics6.setTaskNum(415L-(s*4));
-			practiceStatistics6.setTaskPassNum(490L-(s*4));
+			practiceStatistics6.setTaskNum(489L-(s*4));
+			practiceStatistics6.setTaskPassNum(460L-(s*4));
 			practiceStatistics6.setSemester(j);
 			practiceStatisticsList.add(practiceStatistics6);
 
