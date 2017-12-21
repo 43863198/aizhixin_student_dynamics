@@ -112,7 +112,7 @@ public class CetStatisticAnalysisService {
                     pass6 = Integer.valueOf(String.valueOf(cres[3]));
                 }
                 if (null != cres[4]) {
-                    time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(String.valueOf(cres[5]));
+                    time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(String.valueOf(cres[4]));
                 }
                 cetStatisticDTO.setCetForeJoinNum(count4);
                 cetStatisticDTO.setCetForePassNum(pass4);
@@ -211,7 +211,7 @@ public class CetStatisticAnalysisService {
                             if (null != d[4]) {
                                 trendDTO.setYear(String.valueOf(d[4]));
                             }
-                            trendDTO.setValue(ProportionUtil.accuracy(pass4 * 1.0, count4 * 1.0, 2));
+                            trendDTO.setValue(ProportionUtil.accuracy(pass4 * 1.0, count4 * 1.0, 2)+"%");
                             trendDTOList.add(trendDTO);
                         }
                     }
@@ -233,7 +233,7 @@ public class CetStatisticAnalysisService {
                             if (null != d[4]) {
                                 trendDTO.setYear(String.valueOf(d[4]));
                             }
-                            trendDTO.setValue(ProportionUtil.accuracy(pass6 * 1.0, count6 * 1.0, 2));
+                            trendDTO.setValue(ProportionUtil.accuracy(pass6 * 1.0, count6 * 1.0, 2)+"%");
                             trendDTOList.add(trendDTO);
                         }
                     }
@@ -267,7 +267,7 @@ public class CetStatisticAnalysisService {
             Criteria criteria = Criteria.where("orgId").is(orgId);
             if (null != collegeId) {
                 Set<Long> collegeIds = new HashSet<>();
-                if (grade.indexOf(",") != -1) {
+                if (collegeId.indexOf(",") != -1) {
                     String[] cid = collegeId.split(",");
                     for (String d : cid) {
                         collegeIds.add(Long.valueOf(d));
@@ -282,9 +282,9 @@ public class CetStatisticAnalysisService {
             if(null!=teacherYear){
                 criteria.and("schoolYear").is(teacherYear);
             }
-            if(null!=semester){
-                criteria.and("semester").is(semester);
-            }
+//            if(null!=semester){
+//                criteria.and("semester").is(semester);
+//            }
             if (null != grade) {
                 List<String> tds = new ArrayList<>();
                 if (grade.indexOf(",") != -1) {

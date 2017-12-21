@@ -82,14 +82,13 @@ public class SchoolStatisticsService {
         Map<String, Object> result = new HashMap<>();
         NewStudentProfileDTO newStudentProfileDTO = new NewStudentProfileDTO();
         Map<String, Object> condition = new HashMap<>();
-        Long count = 0L;
         long studentNumber = 0;
         long alreadyReport = 0;
         int alreadyPay = 0;
         int convenienceChannel = 0;
         Date time = new Date();
         try {
-            StringBuilder sql = new StringBuilder("SELECT COUNT(1) AS count, SUM(ss.NEW_STUDENTS_COUNT) as sum, SUM(ss.ALREADY_REPORT) as rsum, SUM(ss.ALREADY_PAY) as psum, SUM(ss.CONVENIENCE_CHANNEL) as csum, max(ss.STATISTICAL_TIME) FROM T_SCHOOL_STATISTICS ss WHERE 1 = 1");
+            StringBuilder sql = new StringBuilder("SELECT SUM(ss.NEW_STUDENTS_COUNT) as sum, SUM(ss.ALREADY_REPORT) as rsum, SUM(ss.ALREADY_PAY) as psum, SUM(ss.CONVENIENCE_CHANNEL) as csum, max(ss.STATISTICAL_TIME) FROM T_SCHOOL_STATISTICS ss WHERE 1 = 1");
             if (null != orgId) {
                 sql.append(" and ss.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
@@ -107,22 +106,19 @@ public class SchoolStatisticsService {
             if (null != res) {
                 Object[] d = (Object[]) res;
                 if (null != d[0]) {
-                    count = Long.valueOf(String.valueOf(d[0]));
+                    studentNumber = Integer.valueOf(String.valueOf(d[0]));
                 }
                 if (null != d[1]) {
-                    studentNumber = Integer.valueOf(String.valueOf(d[1]));
+                    alreadyReport = Integer.valueOf(String.valueOf(d[1]));
                 }
                 if (null != d[2]) {
-                    alreadyReport = Integer.valueOf(String.valueOf(d[2]));
+                    alreadyPay = Integer.valueOf(String.valueOf(d[2]));
                 }
                 if (null != d[3]) {
-                    alreadyPay = Integer.valueOf(String.valueOf(d[3]));
+                    convenienceChannel = Integer.valueOf(String.valueOf(d[3]));
                 }
                 if (null != d[4]) {
-                    convenienceChannel = Integer.valueOf(String.valueOf(d[4]));
-                }
-                if (null != d[5]) {
-                    time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(String.valueOf(d[5]));
+                    time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(String.valueOf(d[4]));
                 }
             }
             newStudentProfileDTO.setStudentNumber(studentNumber);
@@ -289,7 +285,7 @@ public class SchoolStatisticsService {
                                 trendDTO.setYear(String.valueOf(d[0]));
                             }
                             if (null != d[1] && null != d[2]) {
-                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2));
+                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2)+"%");
                             }
                             trendDTOList.add(trendDTO);
                         }
@@ -318,7 +314,7 @@ public class SchoolStatisticsService {
                                 trendDTO.setYear(String.valueOf(d[0]));
                             }
                             if (null != d[1] && null != d[2]) {
-                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2));
+                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2)+"%");
                             }
                             trendDTOList.add(trendDTO);
                         }
@@ -347,7 +343,7 @@ public class SchoolStatisticsService {
                                 trendDTO.setYear(String.valueOf(d[0]));
                             }
                             if (null != d[1] && null != d[2]) {
-                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2));
+                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2)+"%");
                             }
                             trendDTOList.add(trendDTO);
                         }
@@ -473,7 +469,12 @@ public class SchoolStatisticsService {
                 criteria.and("education").in(tds);
             }
             if (null != isReport) {
-                criteria.and("isRegister").is(Integer.valueOf(isReport));
+                if(isReport.equals("0")){
+                     criteria.and("actualRegisterDate").is(null);
+                }
+                if(isReport.equals("1")){
+                    criteria.and("actualRegisterDate").ne(null);
+                }
             }
             if (null != isPay) {
                 List<String> pay = new ArrayList<>();
