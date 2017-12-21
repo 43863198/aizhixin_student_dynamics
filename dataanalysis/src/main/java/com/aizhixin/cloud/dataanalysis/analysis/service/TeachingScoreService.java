@@ -335,7 +335,8 @@ public class TeachingScoreService {
             //条件
             Criteria criteria = Criteria.where("orgId").is(orgId);
             criteria.and("schoolYear").is(teacherYear);
-            query.addCriteria(criteria).limit(5000);
+            criteria.and("semester").is(semester);
+            query.addCriteria(criteria);
             AggregationResults<BasicDBObject> scheduleDetails = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(criteria),
@@ -360,6 +361,7 @@ public class TeachingScoreService {
                 tsd.setAvgGPA(scheduleDetails.getMappedResults().get(i).getDouble("GPAavg"));
                 tsd.setReferenceSubjects(new Random().nextInt(10));
                 tsd.setFailedSubjects(tsd.getReferenceSubjects() - 2 > 0 ? tsd.getReferenceSubjects() - 1 : 0);
+                tsd.setFailingGradeCredits(tsd.getFailedSubjects()*1.2);
                 teachingScoreDetailsList.add(tsd);
             }
             teachingScoreDetailsRespository.save(teachingScoreDetailsList);

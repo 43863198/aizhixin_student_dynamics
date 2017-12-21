@@ -105,6 +105,9 @@ public class TestAnalysisDataController {
 			ss.setTeacherYear(Integer.valueOf(teacherYear));
 			ss.setCollegeName(isReport.getMappedResults().get(i).getString("collegeName"));
 			ss.setCollegeId(isReport.getMappedResults().get(i).getLong("_id"));
+			ss.setNewStudentsCount(0);
+			ss.setAlreadyPay(0);
+			ss.setConvenienceChannel(0);
 			ss.setAlreadyReport(count);
 			schoolStatisticsList.add(ss);
 		}
@@ -123,7 +126,6 @@ public class TestAnalysisDataController {
 			Long id = isPay.getMappedResults().get(j).getLong("_id");
 			int count = isPay.getMappedResults().get(j).getInt("count");
 			for(SchoolStatistics ss: schoolStatisticsList) {
-
 				if(ss.getCollegeId().equals(id)) {
 					ss.setAlreadyPay(count);
 					break;
