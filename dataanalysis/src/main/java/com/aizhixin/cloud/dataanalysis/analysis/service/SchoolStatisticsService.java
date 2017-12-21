@@ -60,6 +60,10 @@ public class SchoolStatisticsService {
     public void deleteAllByOrgId(Long orgId){
     	schoolStatisticsRespository.deleteByOrgId(orgId);
     }
+
+    public void deleteByOrgIdAndTeacherYear(Long orgId, Integer teacherYear){
+        schoolStatisticsRespository.deleteByOrgIdAndTeacherYear(orgId,teacherYear);
+    }
     
     /**
      * 批量保存学校统计数据
@@ -468,14 +472,6 @@ public class SchoolStatisticsService {
                 }
                 criteria.and("education").in(tds);
             }
-            if (null != isReport) {
-                if(isReport.equals("0")){
-                     criteria.and("actualRegisterDate").is(null);
-                }
-                if(isReport.equals("1")){
-                    criteria.and("actualRegisterDate").ne(null);
-                }
-            }
             if (null != isPay) {
                 List<String> pay = new ArrayList<>();
                 if (isPay.indexOf(",") != -1) {
@@ -486,17 +482,29 @@ public class SchoolStatisticsService {
                 }else {
                     pay.add(isPay);
                 }
-                    if (pay.contains("1")) {
-                        criteria.and("isPay").is(1);
-                    }
-                    if (isPay.contains("2")) {
-                        criteria.and("isGreenChannel").is(1);
-                    }
-                    if(isPay.contains("3")) {
-                        criteria.and("isPay").nin(1);
-                        criteria.and("isGreenChannel").nin(1);
-                    }
+                if (pay.contains("1")) {
+                    criteria.and("isPay").is(1);
+                }else {
+                    criteria.and("isGreenChannel").is(1);
+                }
+                if (isPay.contains("2")) {
+                    criteria.and("isGreenChannel").is(1);
+                }
+                if(isPay.contains("3")) {
+                    criteria.and("isPay").nin(1);
+                    criteria.and("isGreenChannel").nin(1);
+                }
             }
+
+            if (null != isReport) {
+                if(isReport.equals("0")){
+                     criteria.and("actualRegisterDate").is(null);
+                }
+                if(isReport.equals("1")){
+                    criteria.and("actualRegisterDate").ne(null);
+                }
+            }
+
             if(!org.apache.commons.lang.StringUtils.isBlank(nj)){
                 criteria.orOperator(criteria.where("userName").regex(".*?\\" + nj + ".*"), criteria.where("jobNum").is(nj));
             }
@@ -505,6 +513,12 @@ public class SchoolStatisticsService {
             total = mongoTemplate.count(query, StudentRegister.class);
             // mongoTemplate.find 查询结果集
             items = mongoTemplate.find(query.with(pageable), StudentRegister.class);
+            for(StudentRegister sr: items){
+                if(sr.getActualRegisterDate()!=null){
+                    sr.setIsRegister(1);
+                    sr.setIsPay(1);
+                }
+            }
         }catch (Exception e){
             result.put("success", false);
             result.put("message","获取数据异常！");

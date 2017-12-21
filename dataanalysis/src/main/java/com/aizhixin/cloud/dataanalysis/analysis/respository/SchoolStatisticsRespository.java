@@ -31,5 +31,7 @@ public interface SchoolStatisticsRespository extends JpaRepository<SchoolStatist
     List<SchoolStatistics> findDataByOrgIdAndTeacherYear(@Param(value = "orgId") Long orgId, @Param(value = "teacherYear") Integer teacherYear, @Param(value = "deleteFlag") int deleteFlag);
 
     void deleteByOrgId(Long orgId);
+
+    void deleteByOrgIdAndTeacherYear(Long orgId,Integer teacherYear);
 }
 
