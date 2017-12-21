@@ -354,7 +354,6 @@ public class TeachingScoreService {
                     tsd.setAvgGPA(new BigDecimal((Math.random()*10)%5).setScale(2,   BigDecimal.ROUND_HALF_DOWN).doubleValue());
                     tsd.setReferenceSubjects(new Random().nextInt(100));
                     tsd.setFailedSubjects(tsd.getReferenceSubjects() - 1 > 0 ? tsd.getReferenceSubjects() - 1 : 0);
-                    tsd.setFailedSubjects(tsd.getFailedSubjects() * 3);
                     teachingScoreDetailsList.add(tsd);
                 }
                 teachingScoreDetailsRespository.save(teachingScoreDetailsList);

@@ -285,7 +285,7 @@ public class SchoolStatisticsService {
                                 trendDTO.setYear(String.valueOf(d[0]));
                             }
                             if (null != d[1] && null != d[2]) {
-                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2)+"%");
+                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2));
                             }
                             trendDTOList.add(trendDTO);
                         }
@@ -314,7 +314,7 @@ public class SchoolStatisticsService {
                                 trendDTO.setYear(String.valueOf(d[0]));
                             }
                             if (null != d[1] && null != d[2]) {
-                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2)+"%");
+                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2));
                             }
                             trendDTOList.add(trendDTO);
                         }
@@ -343,7 +343,7 @@ public class SchoolStatisticsService {
                                 trendDTO.setYear(String.valueOf(d[0]));
                             }
                             if (null != d[1] && null != d[2]) {
-                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2)+"%");
+                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2));
                             }
                             trendDTOList.add(trendDTO);
                         }
