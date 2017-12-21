@@ -491,8 +491,8 @@ public class SchoolStatisticsService {
                     criteria.and("isGreenChannel").is(1);
                 }
                 if(isPay.contains("3")) {
-                    criteria.and("isPay").nin(1);
-                    criteria.and("isGreenChannel").nin(1);
+                    criteria.and("isPay").ne(1);
+                    criteria.and("isGreenChannel").ne(1);
                 }
             }
 
