@@ -99,12 +99,13 @@ public class TestAnalysisDataController {
 				),
 				StudentRegister.class, BasicDBObject.class);
 		for (int i =0;i<isReport.getMappedResults().size();i++){
+			int count = isReport.getMappedResults().get(i).getInt("count");
 			SchoolStatistics ss = new SchoolStatistics();
 			ss.setOrgId(orgId);
 			ss.setTeacherYear(Integer.valueOf(teacherYear));
-            ss.setCollegeName(isReport.getMappedResults().get(i).getString("collegeName"));
+			ss.setCollegeName(isReport.getMappedResults().get(i).getString("collegeName"));
 			ss.setCollegeId(isReport.getMappedResults().get(i).getLong("_id"));
-			ss.setAlreadyReport(isReport.getMappedResults().get(i).getInt("count"));
+			ss.setAlreadyReport(count);
 			schoolStatisticsList.add(ss);
 		}
 
@@ -120,9 +121,11 @@ public class TestAnalysisDataController {
 
 		for (int j =0;j<isPay.getMappedResults().size();j++){
 			Long id = isPay.getMappedResults().get(j).getLong("_id");
+			int count = isPay.getMappedResults().get(j).getInt("count");
 			for(SchoolStatistics ss: schoolStatisticsList) {
+
 				if(ss.getCollegeId().equals(id)) {
-					ss.setAlreadyPay(isPay.getMappedResults().get(j).getInt("count"));
+					ss.setAlreadyPay(count);
 					break;
 				}
 			}
@@ -140,9 +143,10 @@ public class TestAnalysisDataController {
 
 		for (int m=0;m <isGreenChannel.getMappedResults().size();m++){
 			Long id = isGreenChannel.getMappedResults().get(m).getLong("_id");
+			int count = isGreenChannel.getMappedResults().get(m).getInt("count");
 			for(SchoolStatistics ss: schoolStatisticsList) {
 				if(ss.getCollegeId().equals(id)) {
-					ss.setAlreadyPay(isGreenChannel.getMappedResults().get(m).getInt("count"));
+					ss.setAlreadyPay(count);
 					break;
 				}
 			}
@@ -160,9 +164,10 @@ public class TestAnalysisDataController {
 
 	    for(int n =0;n<count.getMappedResults().size();n++){
 			Long id = count.getMappedResults().get(n).getLong("_id");
+			int total = count.getMappedResults().get(n).getInt("count");
 			for(SchoolStatistics ss: schoolStatisticsList) {
 				if(ss.getCollegeId().equals(id)){
-					ss.setNewStudentsCount(count.getMappedResults().get(n).getInt("count"));
+					ss.setNewStudentsCount(total);
 					int max = 40;
 					int min = 5;
 					Random random = new Random();
