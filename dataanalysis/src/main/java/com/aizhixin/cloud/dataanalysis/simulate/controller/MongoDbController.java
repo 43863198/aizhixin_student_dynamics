@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -87,7 +88,7 @@ public class MongoDbController {
 	public ResponseEntity<Map<String, Object>> addList(
 //			@ApiParam(value = "jsonList json字符串") @RequestParam(value = "jsonList", required = true) List<String> jsonList,
 //			@ApiParam(value = "objectName json字符串") @RequestParam(value = "objectName", required = true) String objectName
-			@ApiParam(value = "mongoDataDomain mongo数据集合(jsonList和objectName不能为空)") @RequestParam(value = "mongoDataDomain", required = true) MongoDataDomain mongoDataDomain
+			@ApiParam(value = "mongoDataDomain mongo数据集合(jsonList和objectName不能为空)") @RequestBody MongoDataDomain mongoDataDomain
 			) {
 		
 //		String json = " {\"orgId\" : 123,\"jobNum\" : \"3172090711105\",\"userName\" : \"吴丽燕\",\"classId\" : 1606,\"className\" : \"应用物理2017-1班\",\"professionalId\" : 248,\"professionalName\" : \"应用物理学\",\"collegeId\" : 232,\"collegeName\" : \"理学院\",\"userPhone\" : \"18777745902\",\"semester\" : 2,\"schoolYear\" : 2017,\"outSchoolTimes\" : 2,\"lateTimes\" : 0,\"leaveTimes\" : 0}";
