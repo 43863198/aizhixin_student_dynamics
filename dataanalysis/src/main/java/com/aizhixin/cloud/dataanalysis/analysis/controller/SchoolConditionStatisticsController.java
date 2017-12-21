@@ -1,12 +1,11 @@
 package com.aizhixin.cloud.dataanalysis.analysis.controller;
 
-import com.aizhixin.cloud.dataanalysis.analysis.dto.CetScoreStatisticsDTO;
-import com.aizhixin.cloud.dataanalysis.analysis.dto.NewStudentProfileDTO;
-import com.aizhixin.cloud.dataanalysis.analysis.dto.PracticeStaticsDTO;
-import com.aizhixin.cloud.dataanalysis.analysis.dto.SchoolProfileDTO;
+import com.aizhixin.cloud.dataanalysis.analysis.dto.*;
+import com.aizhixin.cloud.dataanalysis.analysis.service.CourseEvaluateService;
 import com.aizhixin.cloud.dataanalysis.analysis.service.SchoolStatisticsService;
 import com.aizhixin.cloud.dataanalysis.alertinformation.domain.DealDomain;
 import com.aizhixin.cloud.dataanalysis.analysis.service.SchoolStatisticsService;
+import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.studentRegister.service.StudentRegisterService;
 import io.swagger.annotations.Api;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,7 +35,8 @@ public class SchoolConditionStatisticsController {
     private SchoolStatisticsService schoolStatisticsService;
     @Autowired
     private StudentRegisterService studentRegisterService;
-
+    @Autowired
+    private CourseEvaluateService courseEvaluateService;
     /**
      * 全校人数统计信息
      * @param orgId
@@ -150,7 +151,17 @@ public class SchoolConditionStatisticsController {
         return schoolStatisticsService.getTeachingSoreStatics(orgId);
     }
 
-
+    /**
+     * 首页首页课程评价
+     * Integer pageSize, Integer pageNumber
+     * @param orgId
+     * @return
+     */
+    @GetMapping(value = "/homecourseevaluate", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "首页课程评价", response = Void.class, notes = "首页课程评价<br><br><b>@author wangjun</b>")
+    public List<CourseEvaluateDTO> getHomeCourseEvaluate(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
+        return courseEvaluateService.getHomeCourseEvaluate(orgId);
+    }
 
 
 
