@@ -86,9 +86,11 @@ public class TeachingScoreController {
     @GetMapping(value = "/adddetail", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "手动添加教学成绩详情", response = Void.class, notes = "手动添加教学成绩详情<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object> addTeachingScoreDetail(
-            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId
+            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "teacherYear 学年" , required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
+            @ApiParam(value = "semester 学期" , required = true) @RequestParam(value = "semester", required = true) Integer semester
     ) {
-        return teachingScoreService.addTeachingScoreDetail(orgId);
+        return teachingScoreService.addTeachingScoreDetail(orgId,teacherYear,semester);
     }
     /**
      * 手动修改教学成绩详情
