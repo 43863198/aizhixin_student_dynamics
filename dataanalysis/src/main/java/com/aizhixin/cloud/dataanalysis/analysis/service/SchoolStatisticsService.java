@@ -517,22 +517,17 @@ public class SchoolStatisticsService {
             total = mongoTemplate.count(query, StudentRegister.class);
             // mongoTemplate.find 查询结果集
             items = mongoTemplate.find(query.with(pageable), StudentRegister.class);
-            for(StudentRegister sr: items){
-                if(sr.getActualRegisterDate()!=null){
-                    sr.setIsRegister(1);
-                    sr.setIsPay(1);
-                }
-            }
         }catch (Exception e){
             result.put("success", false);
             result.put("message","获取数据异常！");
+            return result;
         }
         p.getPage().setTotalPages((int)Math.ceil(total/page.getPageSize())+1);
         p.getPage().setPageNumber(page.getPageNumber());
         p.getPage().setPageSize(page.getPageSize());
         p.getPage().setTotalElements(total);
         p.setData(items);
-            result.put("success", true);
+        result.put("success", true);
         result.put("data", p);
         return result;
     }

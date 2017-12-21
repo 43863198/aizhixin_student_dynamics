@@ -105,20 +105,18 @@ public class TeachingScoreAnalysisJob {
 //                            Aggregation.project("collegeId").and("cid").previousOperation()
                     ),
                     Score.class, BasicDBObject.class);
-            int i = 0;
-            while (countts.iterator().hasNext()){
+            for (int i=0;i<countts.getMappedResults().size();i++){
                 TeachingScoreStatistics ctss = new TeachingScoreStatistics();
                 ctss.setOrgId(orgId);
                 ctss.setTeacherYear(schoolYear);
                 ctss.setSemester(semester);
                 ctss.setStatisticsType(2); //按学院统计
-                ctss.setCollegeId(countts.getMappedResults().get(i).getLong("cid"));
+                ctss.setCollegeId(countts.getMappedResults().get(i).getLong("_id"));
                 ctss.setCollegeName(countts.getMappedResults().get(i).getString("collegeName"));
                 ctss.setStudentNum(countts.getMappedResults().get(i).getInt("count"));
                 ctss.setAvgGPA(new BigDecimal(countts.getMappedResults().get(i).getDouble("GPAavg")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                 ctss.setAvgScore(new BigDecimal(countts.getMappedResults().get(i).getDouble("courseAVG")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                 tssList.add(ctss);
-                i++;
             }
 
             //创建查询条件对象
@@ -138,16 +136,15 @@ public class TeachingScoreAnalysisJob {
 //                            Aggregation.project("collegeId").and("cid").previousOperation()
                     ),
                     Score.class, BasicDBObject.class);
-            int j = 0;
-            while (failCount.iterator().hasNext()) {
+
+            for ( int j = 0;j<failCount.getMappedResults().size();j++) {
                 for(TeachingScoreStatistics ts:  tssList){
-                    Long collegeId = countts.getMappedResults().get(j).getLong("cid");
+                    Long collegeId = countts.getMappedResults().get(j).getLong("_id");
                     if(collegeId.equals(ts.getCollegeId())){
                         ts.setFailPassStuNum(countts.getMappedResults().get(j).getInt("count"));
                         break;
                     }
                 }
-                j++;
             }
             tssList.add(tss);
             teachingScoreService.saveStatistics(tss);
