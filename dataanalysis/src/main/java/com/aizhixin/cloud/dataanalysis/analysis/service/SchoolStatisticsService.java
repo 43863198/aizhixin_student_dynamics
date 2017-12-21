@@ -473,7 +473,10 @@ public class SchoolStatisticsService {
                 criteria.and("education").in(tds);
             }
             if (null != isPay) {
-                Criteria sc = new Criteria();
+                Criteria c = new Criteria();
+                Criteria c1 = new Criteria();
+                Criteria c2 = new Criteria();
+                Criteria c3 = new Criteria();
                 List<String> pay = new ArrayList<>();
                 if (isPay.indexOf(",") != -1) {
                     String[] py = isPay.split(",");
@@ -485,19 +488,30 @@ public class SchoolStatisticsService {
                 }
                 int flag = 0;
                 if(pay.contains("3")){
+                    flag = 5;
+                }
+                if(pay.contains("1")&&!pay.contains("2")&&flag!=5){
+                    flag = 1;
+                }
+                if(!pay.contains("1")&&pay.contains("2")&&flag!=5){
+                    flag = 2;
+                }
+                if(pay.contains("1")&&pay.contains("2")&&flag!=5){
                     flag = 3;
                 }
-                if(pay.contains("1")&&flag!=3){
-                    sc.where("isPay").is(1);
+                if(flag==1){
+                    criteria.and("isPay").is(1);
                 }
-                if(pay.contains("2")&&flag!=3){
-                    sc.where("isGreenChannel").is(1);
+                if(flag==2){
+                    criteria.and("isGreenChannel").is(1);
                 }
-                if (flag==3) {
-                    sc.where("isPay").ne(1);
-                    sc.where("isGreenChannel").ne(1);
+                if(flag==3){
+                    criteria.orOperator(criteria.where("isPay").is(1), criteria.where("isGreenChannel").is(1));
                 }
-                criteria.orOperator(sc);
+                if (flag==5) {
+                    criteria.and("isPay").ne(1);
+                    criteria.and("isGreenChannel").ne(1);
+                }
             }
 
             if (null != isReport) {
@@ -518,10 +532,12 @@ public class SchoolStatisticsService {
             // mongoTemplate.find 查询结果集
             items = mongoTemplate.find(query.with(pageable), StudentRegister.class);
         }catch (Exception e){
+            e.printStackTrace();
             result.put("success", false);
             result.put("message","获取数据异常！");
             return result;
         }
+
         p.getPage().setTotalPages((int)Math.ceil(total/page.getPageSize())+1);
         p.getPage().setPageNumber(page.getPageNumber());
         p.getPage().setPageSize(page.getPageSize());
