@@ -63,7 +63,6 @@ public class ExcelBasedataHelper {
 	}
 
 	public List<StudentRegisterDomain> readStudentRegisterFromInputStream(String name) {
-		LOG.debug("star.........readStudentRegister");
 		List<StudentRegisterDomain> list = new ArrayList<>();
 		ExcelUtil util = new ExcelUtil(name);
 		Sheet sheet = util.getSheet("new");
@@ -88,13 +87,17 @@ public class ExcelBasedataHelper {
 					String actualRegisterDate = getCellStringValue(row, 39);
 					int isPay = 0;
 					int isGreenChannel = 0;
-					if (!"".equals(getCellStringValue(row, 69)) && getCellStringValue(row, 69).length() > 0) {
+					if (null != row.getCell(69)){
 						isGreenChannel = 1;// 银行卡号
 						isPay = 1;
 					}
-					int isRegister = 0;
+//					String n = getCellStringValue(row, 69);
+//					System.out.println(n);
+//					if (!"".equals(getCellStringValue(row, 69)) && getCellStringValue(row, 69).length() > 0) {
+//					}
+					int isRegister = 1;
 					if ("".equals(actualRegisterDate) || actualRegisterDate.length() <= 0) {
-						isRegister = 1;
+						isRegister = 0;
 					}
 					list.add(new StudentRegisterDomain(line, jobNum, grade, isRegister, actualRegisterDate, schoolYear,
 							isPay, isGreenChannel));
@@ -111,7 +114,6 @@ public class ExcelBasedataHelper {
 		return list;
 	}
 	public List<StudentInfoDomain> readStudentInfoFromInputStream(String name) {
-		LOG.debug("star.........readStudentInfo");
 		List<StudentInfoDomain> list = new ArrayList<>();
 		ExcelUtil util = new ExcelUtil(name);
 		Sheet sheet = util.getSheet("new");

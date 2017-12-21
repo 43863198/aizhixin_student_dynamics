@@ -423,10 +423,11 @@ public class TestDataController {
 //			@ApiParam(value = "studentInfoFile 学生信息文件", required = true) @RequestParam(value = "studentInfoFile") MultipartFile studentInfoFile,
 //			@ApiParam(value = "dataBaseFile 基础数据文件", required = true) @RequestParam(value = "dataBaseFile") MultipartFile dataBaseFile,
 //			@ApiParam(value = "newStudentInfoFile 基础数据文件", required = true) @RequestParam(value = "newStudentInfoFile") MultipartFile newStudentInfoFile,
-			@DateTimeFormat(pattern = "yyyy-MM-dd") @ApiParam(value = "registerDate 报到日期,传参时日期天数加1,<br/>时间格式：yyyy-MM-dd") @RequestParam(value = "registerDate", required = false) Date registerDate,
-			@ApiParam(value = "orgId 学校ID", required = true) @RequestParam(value = "orgId") Long orgId) {
-			registerService.importData("开发环境桂林理工17级旧学生信息（新生报到使用）.xlsx", 
-					"新生报到17级数据.xlsx", "开发环境桂林理工17级新学生信息.xlsx", registerDate, orgId);
+//			@DateTimeFormat(pattern = "yyyy-MM-dd") @ApiParam(value = "registerDate 报到日期,传参时日期天数加1,<br/>时间格式：yyyy-MM-dd") @RequestParam(value = "registerDate", required = false) Date registerDate,
+//			@ApiParam(value = "orgId 学校ID") @RequestParam(value = "orgId") Long orgId
+			) {
+			registerService.importData("开发环境桂林理工14-16级学生信息.xlsx", 
+					"学生（学工类）信息2014-2016.xlsx", "开发环境桂林理工学生信息替换文件.xlsx");
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
