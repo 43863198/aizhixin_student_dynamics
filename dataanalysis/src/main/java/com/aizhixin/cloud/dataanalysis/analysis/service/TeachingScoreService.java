@@ -11,11 +11,14 @@ import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.ScoreFluctuateCount;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.TotalScoreCount;
+import com.mongodb.BasicDBObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -323,7 +326,7 @@ public class TeachingScoreService {
     }
 
     @Transactional
-    public Map<String, Object> addTeachingScoreDetail(Long orgId) {
+    public Map<String, Object> addTeachingScoreDetail(Long orgId,Integer teacherYear,Integer semester) {
         Map<String, Object> result = new HashMap<>();
         try {
             teachingScoreDetailsRespository.deleteByOrgId(orgId);
@@ -331,34 +334,35 @@ public class TeachingScoreService {
             org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
             //条件
             Criteria criteria = Criteria.where("orgId").is(orgId);
+            criteria.and("schoolYear").is(teacherYear);
             query.addCriteria(criteria).limit(5000);
-            List<Score> items = mongoTemplate.find(query, Score.class);
-            if (null != items && items.size() > 0) {
-                for (Score sfc : items) {
-                    TeachingScoreDetails tsd = new TeachingScoreDetails();
-                    tsd.setOrgId(orgId);
-                    tsd.setJobNum(sfc.getJobNum());
-                    tsd.setUserId(sfc.getUserId());
-                    tsd.setUserName(sfc.getUserName());
-                    tsd.setClassId(sfc.getClassId());
-                    tsd.setClassName(sfc.getClassName());
-                    tsd.setProfessionalId(sfc.getProfessionalId());
-                    tsd.setProfessionalName(sfc.getProfessionalName());
-                    tsd.setCollegeId(sfc.getCollegeId());
-                    tsd.setCollegeName(sfc.getCollegeName());
-                    tsd.setTeacherYear(sfc.getSchoolYear());
-                    tsd.setSemester(sfc.getSemester());
-                    if (null != sfc.getGrade()) {
-                        tsd.setGrade(Integer.valueOf(sfc.getGrade()));
-                    }
-                    tsd.setAvgGPA(new BigDecimal((Math.random()*10)%5).setScale(2,   BigDecimal.ROUND_HALF_DOWN).doubleValue());
-                    tsd.setReferenceSubjects(new Random().nextInt(100));
-                    tsd.setFailedSubjects(tsd.getReferenceSubjects() - 1 > 0 ? tsd.getReferenceSubjects() - 1 : 0);
-                    teachingScoreDetailsList.add(tsd);
-                }
-                teachingScoreDetailsRespository.save(teachingScoreDetailsList);
-            }
+            AggregationResults<BasicDBObject> scheduleDetails = mongoTemplate.aggregate(
+                    Aggregation.newAggregation(
+                            Aggregation.match(criteria),
+                            Aggregation.group("userId").avg("gradePoint").as("GPAavg")
+                                    .first("jobNum").as("jobNum").first("userName").as("userName").first("className").as("className")
+                                    .first("grade").as("grade").first("collegeId").as("collegeId").first("collegeName").as("collegeName")
+                    ),
+                    Score.class, BasicDBObject.class);
 
+            for (int i =0;i<scheduleDetails.getMappedResults().size();i++){
+                TeachingScoreDetails tsd = new TeachingScoreDetails();
+                tsd.setOrgId(orgId);
+                tsd.setTeacherYear(teacherYear);
+                tsd.setSemester(semester);
+                tsd.setCollegeId(scheduleDetails.getMappedResults().get(i).getLong("collegeId"));
+                tsd.setCollegeName(scheduleDetails.getMappedResults().get(i).getString("collegeName"));
+                tsd.setUserId(scheduleDetails.getMappedResults().get(i).getLong("_id"));
+                tsd.setUserName(scheduleDetails.getMappedResults().get(i).getString("userName"));
+                tsd.setJobNum(scheduleDetails.getMappedResults().get(i).getString("jobNum"));
+                tsd.setGrade(scheduleDetails.getMappedResults().get(i).getInt("grade"));
+                tsd.setClassName(scheduleDetails.getMappedResults().get(i).getString("className"));
+                tsd.setAvgGPA(scheduleDetails.getMappedResults().get(i).getDouble("GPAavg"));
+                tsd.setReferenceSubjects(new Random().nextInt(10));
+                tsd.setFailedSubjects(tsd.getReferenceSubjects() - 2 > 0 ? tsd.getReferenceSubjects() - 1 : 0);
+                teachingScoreDetailsList.add(tsd);
+            }
+            teachingScoreDetailsRespository.save(teachingScoreDetailsList);
         } catch (Exception e) {
             result.put("success", false);
             result.put("message", "添加教学成绩详情数据异常！");
