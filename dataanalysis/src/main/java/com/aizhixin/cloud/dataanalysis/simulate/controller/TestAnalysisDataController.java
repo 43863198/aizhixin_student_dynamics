@@ -89,27 +89,57 @@ public class TestAnalysisDataController {
 //		criterias.and("schoolYear").is(teacherYear);
 //		List<StudentRegister> items = mongoTemplate.find(query.addCriteria(criterias).limit(100),StudentRegister.class);
 
+		Criteria criteria = Criteria.where("orgId").is(orgId);
+		criteria.and("schoolYear").is(teacherYear);
+		AggregationResults<BasicDBObject> count = mongoTemplate.aggregate(
+				Aggregation.newAggregation(
+						Aggregation.match(criteria),
+						Aggregation.group("collegeId").first("collegeName").as("collegeName").count().as("count")
+				),
+				StudentRegister.class, BasicDBObject.class);
+
+		for(int n =0;n<count.getMappedResults().size();n++){
+			SchoolStatistics ss = new SchoolStatistics();
+			ss.setOrgId(orgId);
+			ss.setTeacherYear(Integer.valueOf(teacherYear));
+			ss.setAlreadyReport(0);
+			ss.setAlreadyPay(0);
+			ss.setConvenienceChannel(0);
+			ss.setCollegeName(count.getMappedResults().get(n).getString("collegeName"));
+			ss.setCollegeId(count.getMappedResults().get(n).getLong("_id"));
+			ss.setNewStudentsCount(count.getMappedResults().get(n).getInt("count"));
+			int max = 40;
+			int min = 5;
+			Random random = new Random();
+			int s = 0;
+			s = random.nextInt(max) % (max - min + 1) + min;
+			ss.setTeacherNumber(20+s);
+			ss.setStudentNumber(1000 + s);
+			ss.setInstructorNumber(20 + s);
+			ss.setReadyGraduation(300 + s);
+			ss.setStatisticalTime(new Date());
+			ss.setConvenienceChannel(0);
+			schoolStatisticsList.add(ss);
+		}
+
 		Criteria criteriaReport = Criteria.where("orgId").is(orgId);
 		criteriaReport.and("schoolYear").is(teacherYear);
 		criteriaReport.and("isRegister").is(1);
 		AggregationResults<BasicDBObject> isReport = mongoTemplate.aggregate(
 				Aggregation.newAggregation(
 						Aggregation.match(criteriaReport),
-						Aggregation.group("collegeId").first("collegeName").as("collegeName").count().as("count")
+						Aggregation.group("collegeId").count().as("count")
 				),
 				StudentRegister.class, BasicDBObject.class);
 		for (int i =0;i<isReport.getMappedResults().size();i++){
-			int count = isReport.getMappedResults().get(i).getInt("count");
-			SchoolStatistics ss = new SchoolStatistics();
-			ss.setOrgId(orgId);
-			ss.setTeacherYear(Integer.valueOf(teacherYear));
-			ss.setCollegeName(isReport.getMappedResults().get(i).getString("collegeName"));
-			ss.setCollegeId(isReport.getMappedResults().get(i).getLong("_id"));
-			ss.setNewStudentsCount(0);
-			ss.setAlreadyPay(0);
-			ss.setConvenienceChannel(0);
-			ss.setAlreadyReport(count);
-			schoolStatisticsList.add(ss);
+			Long rid = isReport.getMappedResults().get(i).getLong("_id");
+			int total = isReport.getMappedResults().get(i).getInt("count");
+			for(SchoolStatistics ss: schoolStatisticsList) {
+				if(ss.getCollegeId().equals(rid)) {
+					ss.setAlreadyReport(total);
+					break;
+				}
+			}
 		}
 
 		Criteria criteriaPay = Criteria.where("orgId").is(orgId);
@@ -123,11 +153,11 @@ public class TestAnalysisDataController {
 				StudentRegister.class, BasicDBObject.class);
 
 		for (int j =0;j<isPay.getMappedResults().size();j++){
-			Long id = isPay.getMappedResults().get(j).getLong("_id");
-			int count = isPay.getMappedResults().get(j).getInt("count");
+			Long pid = isPay.getMappedResults().get(j).getLong("_id");
+			int pcount = isPay.getMappedResults().get(j).getInt("count");
 			for(SchoolStatistics ss: schoolStatisticsList) {
-				if(ss.getCollegeId().equals(id)) {
-					ss.setAlreadyPay(count);
+				if(ss.getCollegeId().equals(pid)) {
+					ss.setAlreadyPay(pcount);
 					break;
 				}
 			}
@@ -144,47 +174,17 @@ public class TestAnalysisDataController {
 				StudentRegister.class, BasicDBObject.class);
 
 		for (int m=0;m <isGreenChannel.getMappedResults().size();m++){
-			Long id = isGreenChannel.getMappedResults().get(m).getLong("_id");
-			int count = isGreenChannel.getMappedResults().get(m).getInt("count");
+			Long cid = isGreenChannel.getMappedResults().get(m).getLong("_id");
+			int ccount = isGreenChannel.getMappedResults().get(m).getInt("count");
 			for(SchoolStatistics ss: schoolStatisticsList) {
-				if(ss.getCollegeId().equals(id)) {
-					ss.setAlreadyPay(count);
+				if(ss.getCollegeId().equals(cid)) {
+					ss.setConvenienceChannel(ccount);
 					break;
 				}
 			}
 		}
 
-		Criteria criteria = Criteria.where("orgId").is(orgId);
-		criteria.and("schoolYear").is(teacherYear);
-		AggregationResults<BasicDBObject> count = mongoTemplate.aggregate(
-				Aggregation.newAggregation(
-						Aggregation.match(criteria),
-						Aggregation.group("collegeId").count().as("count")
-				),
-				StudentRegister.class, BasicDBObject.class);
 
-	    for(int n =0;n<count.getMappedResults().size();n++){
-			Long id = count.getMappedResults().get(n).getLong("_id");
-			int total = count.getMappedResults().get(n).getInt("count");
-			for(SchoolStatistics ss: schoolStatisticsList) {
-				if(ss.getCollegeId().equals(id)){
-					ss.setNewStudentsCount(total);
-					int max = 40;
-					int min = 5;
-					Random random = new Random();
-					int s = 0;
-					s = random.nextInt(max) % (max - min + 1) + min;
-					random = new Random();
-					ss.setTeacherNumber(20+s);
-					ss.setStudentNumber(1000+s );
-					ss.setInstructorNumber(20+s);
-					ss.setReadyGraduation(300+s);
-					ss.setStatisticalTime(new Date());
-					ss.setConvenienceChannel(0);
-					break;
-				}
-			}
-		}
 		schoolStatisticsService.deleteByOrgIdAndTeacherYear(orgId,teacherYear);
 		schoolStatisticsService.saveList(schoolStatisticsList);
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
