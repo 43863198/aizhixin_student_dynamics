@@ -43,6 +43,7 @@ import com.aizhixin.cloud.dataanalysis.monitor.domain.TeachingScheduleDomain;
 import com.aizhixin.cloud.dataanalysis.monitor.entity.AbnormalAttendanceStatistics;
 import com.aizhixin.cloud.dataanalysis.monitor.entity.AbnormalTeachingStatistics;
 import com.aizhixin.cloud.dataanalysis.monitor.entity.TeachingScheduleStatistics;
+import com.aizhixin.cloud.dataanalysis.simulate.domain.MongoDataDomain;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 
@@ -84,20 +85,21 @@ public class MongoDbController {
 	@RequestMapping(value = "/addlist", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "POST", value = "增加数据", response = Void.class, notes = "增加数据<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> addList(
-			@ApiParam(value = "jsonList json字符串") @RequestParam(value = "jsonList", required = true) List<String> jsonList,
-			@ApiParam(value = "objectName json字符串") @RequestParam(value = "objectName", required = true) String objectName
+//			@ApiParam(value = "jsonList json字符串") @RequestParam(value = "jsonList", required = true) List<String> jsonList,
+//			@ApiParam(value = "objectName json字符串") @RequestParam(value = "objectName", required = true) String objectName
+			@ApiParam(value = "mongoDataDomain mongo数据集合(jsonList和objectName不能为空)") @RequestParam(value = "mongoDataDomain", required = true) MongoDataDomain mongoDataDomain
 			) {
 		
 //		String json = " {\"orgId\" : 123,\"jobNum\" : \"3172090711105\",\"userName\" : \"吴丽燕\",\"classId\" : 1606,\"className\" : \"应用物理2017-1班\",\"professionalId\" : 248,\"professionalName\" : \"应用物理学\",\"collegeId\" : 232,\"collegeName\" : \"理学院\",\"userPhone\" : \"18777745902\",\"semester\" : 2,\"schoolYear\" : 2017,\"outSchoolTimes\" : 2,\"lateTimes\" : 0,\"leaveTimes\" : 0}";
 		ArrayList<DBObject> list = new ArrayList<DBObject>();
-		if(null != jsonList && !jsonList.isEmpty()){
-			for(String json :jsonList){
+		if(null != mongoDataDomain && null != mongoDataDomain.getJsonList() && !mongoDataDomain.getJsonList().isEmpty()){
+			for(String json : mongoDataDomain.getJsonList()){
 				DBObject bson = (DBObject)JSON.parse(json);
 				list.add(bson);
 			}
 		}
 		
-		mongoTemplate.getCollection(objectName).insert(list);
+		mongoTemplate.getCollection(mongoDataDomain.getObjectName()).insert(list);
 		
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
