@@ -85,6 +85,10 @@ public class TestAnalysisDataController {
 		List<SchoolStatistics> schoolStatisticsList = new ArrayList<SchoolStatistics>();
 		Query query = new Query();
 
+//		Criteria criterias = Criteria.where("orgId").is(orgId);
+//		criterias.and("schoolYear").is(teacherYear);
+//		List<StudentRegister> items = mongoTemplate.find(query.addCriteria(criterias).limit(100),StudentRegister.class);
+
 		Criteria criteriaReport = Criteria.where("orgId").is(orgId);
 		criteriaReport.and("schoolYear").is(teacherYear);
 		criteriaReport.and("actualRegisterDate").ne(null);
@@ -94,58 +98,57 @@ public class TestAnalysisDataController {
 						Aggregation.group("collegeId").first("collegeName").as("collegeName").count().as("count")
 				),
 				StudentRegister.class, BasicDBObject.class);
-		int i = 0;
-		while (isReport.iterator().hasNext()){
+		for (int i =0;i<isReport.getMappedResults().size();i++){
 			SchoolStatistics ss = new SchoolStatistics();
 			ss.setOrgId(orgId);
 			ss.setTeacherYear(Integer.valueOf(teacherYear));
             ss.setCollegeName(isReport.getMappedResults().get(i).getString("collegeName"));
 			ss.setCollegeId(isReport.getMappedResults().get(i).getLong("_id"));
 			ss.setAlreadyReport(isReport.getMappedResults().get(i).getInt("count"));
+			ss.setAlreadyPay(isReport.getMappedResults().get(i).getInt("count"));
 			schoolStatisticsList.add(ss);
-			i++;
 		}
 
-		Criteria criteriaPay = Criteria.where("orgId").is(orgId);
-		criteriaPay.and("schoolYear").is(teacherYear);
-		criteriaPay.and("isPay").is(1);
-		AggregationResults<BasicDBObject> isPay = mongoTemplate.aggregate(
-				Aggregation.newAggregation(
-						Aggregation.match(criteriaPay),
-						Aggregation.group("collegeId").count().as("count")
-				),
-				Score.class, BasicDBObject.class);
-		int j = 0;
-		while (isPay.iterator().hasNext()){
-			for(SchoolStatistics ss: schoolStatisticsList) {
-				if(ss.getCollegeId().equals(isPay.getMappedResults().get(j).getString("_id"))) {
-					ss.setAlreadyPay(isPay.getMappedResults().get(j).getInt("count"));
-					break;
-				}
-			}
-			j++;
-		}
-
-		Criteria criteriaGreenChannel = Criteria.where("orgId").is(orgId);
-		criteriaGreenChannel.and("schoolYear").is(teacherYear);
-		criteriaGreenChannel.and("isGreenChannel").is(1);
-		AggregationResults<BasicDBObject> isGreenChannel = mongoTemplate.aggregate(
-				Aggregation.newAggregation(
-						Aggregation.match(criteriaGreenChannel),
-						Aggregation.group("collegeId").count().as("count")
-				),
-				Score.class, BasicDBObject.class);
-
-		int m = 0;
-		while (isGreenChannel.iterator().hasNext()){
-			for(SchoolStatistics ss: schoolStatisticsList) {
-				if(ss.getCollegeId().equals(isGreenChannel.getMappedResults().get(m).getString("_id"))) {
-					ss.setAlreadyPay(isGreenChannel.getMappedResults().get(m).getInt("count"));
-					break;
-				}
-			}
-			m++;
-		}
+//		Criteria criteriaPay = Criteria.where("orgId").is(orgId);
+//		criteriaPay.and("schoolYear").is(teacherYear);
+//		criteriaPay.and("isPay").is(1);
+//		AggregationResults<BasicDBObject> isPay = mongoTemplate.aggregate(
+//				Aggregation.newAggregation(
+//						Aggregation.match(criteriaPay),
+//						Aggregation.group("collegeId").count().as("count")
+//				),
+//				StudentRegister.class, BasicDBObject.class);
+//		int j = 0;
+//		while (isPay.iterator().hasNext()){
+//			for(SchoolStatistics ss: schoolStatisticsList) {
+//				if(ss.getCollegeId().equals(isPay.getMappedResults().get(j).getString("_id"))) {
+//					ss.setAlreadyPay(isPay.getMappedResults().get(j).getInt("count"));
+//					break;
+//				}
+//			}
+//			j++;
+//		}
+//
+//		Criteria criteriaGreenChannel = Criteria.where("orgId").is(orgId);
+//		criteriaGreenChannel.and("schoolYear").is(teacherYear);
+//		criteriaGreenChannel.and("isGreenChannel").is(1);
+//		AggregationResults<BasicDBObject> isGreenChannel = mongoTemplate.aggregate(
+//				Aggregation.newAggregation(
+//						Aggregation.match(criteriaGreenChannel),
+//						Aggregation.group("collegeId").count().as("count")
+//				),
+//				StudentRegister.class, BasicDBObject.class);
+//
+//		int m = 0;
+//		while (isGreenChannel.iterator().hasNext()){
+//			for(SchoolStatistics ss: schoolStatisticsList) {
+//				if(ss.getCollegeId().equals(isGreenChannel.getMappedResults().get(m).getString("_id"))) {
+//					ss.setAlreadyPay(isGreenChannel.getMappedResults().get(m).getInt("count"));
+//					break;
+//				}
+//			}
+//			m++;
+//		}
 
 		Criteria criteria = Criteria.where("orgId").is(orgId);
 		criteria.and("schoolYear").is(teacherYear);
@@ -155,28 +158,31 @@ public class TestAnalysisDataController {
 						Aggregation.group("collegeId").count().as("count")
 				),
 				StudentRegister.class, BasicDBObject.class);
-		int n = 0;
-		while (count.iterator().hasNext()){
+
+	    for(int n =0;n<count.getMappedResults().size();n++){
 			for(SchoolStatistics ss: schoolStatisticsList) {
-				if(ss.getCollegeId().equals(count.getMappedResults().get(n).getString("_id"))) {
+				Long id = count.getMappedResults().get(n).getLong("_id");
+				if(ss.getCollegeId().equals(id)){
 					ss.setNewStudentsCount(count.getMappedResults().get(n).getInt("count"));
-					ss.setTeacherNumber(20+n%5);
-					ss.setStudentNumber(1000+n*4 );
-					ss.setInstructorNumber(20+n%7);
-					ss.setReadyGraduation(300+n*9);
+					int max = 40;
+					int min = 5;
+					Random random = new Random();
+					int s = 0;
+					s = random.nextInt(max) % (max - min + 1) + min;
+					random = new Random();
+					ss.setTeacherNumber(20+s);
+					ss.setStudentNumber(1000+s );
+					ss.setInstructorNumber(20+s);
+					ss.setReadyGraduation(300+s);
 					ss.setStatisticalTime(new Date());
+					ss.setConvenienceChannel(0);
 					break;
 				}
 			}
-			n++;
 		}
-
-
-
-
-
-
-
+		schoolStatisticsService.deleteByOrgIdAndTeacherYear(orgId,teacherYear);
+		schoolStatisticsService.saveList(schoolStatisticsList);
+		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 
 //		if (null != orgId && orgId.longValue() > 0L) {
 //		} else {
@@ -460,10 +466,10 @@ public class TestAnalysisDataController {
 //			schoolStatisticsList.add(schoolStatistics14);
 
 //		}
-
-		schoolStatisticsService.deleteAllByOrgId(orgId);
-	    schoolStatisticsService.saveList(schoolStatisticsList);
-		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+//
+//		schoolStatisticsService.deleteByOrgIdAndTeacherYear(orgId,teacherYear);
+//	    schoolStatisticsService.saveList(schoolStatisticsList);
+//		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/updateschoolStatistics", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
