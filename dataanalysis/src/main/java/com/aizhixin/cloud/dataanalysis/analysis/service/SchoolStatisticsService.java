@@ -482,15 +482,17 @@ public class SchoolStatisticsService {
                 }else {
                     pay.add(isPay);
                 }
-                if (pay.contains("1")) {
+                int flag = 0;
+                if(pay.contains("3")){
+                    flag = 3;
+                }
+                if(pay.contains("1")&&flag!=3){
                     criteria.and("isPay").is(1);
-                }else {
+                }
+                if(pay.contains("2")&&flag!=3){
                     criteria.and("isGreenChannel").is(1);
                 }
-                if (isPay.contains("2")) {
-                    criteria.and("isGreenChannel").is(1);
-                }
-                if(isPay.contains("3")) {
+                if (flag==3) {
                     criteria.and("isPay").ne(1);
                     criteria.and("isGreenChannel").ne(1);
                 }
