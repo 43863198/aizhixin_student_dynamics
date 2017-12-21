@@ -473,9 +473,10 @@ public class SchoolStatisticsService {
                 criteria.and("education").in(tds);
             }
             if (null != isPay) {
+                Criteria sc = new Criteria();
                 List<String> pay = new ArrayList<>();
                 if (isPay.indexOf(",") != -1) {
-                    String[] py = type.split(",");
+                    String[] py = isPay.split(",");
                     for (String s : py) {
                         pay.add(s);
                     }
@@ -487,23 +488,24 @@ public class SchoolStatisticsService {
                     flag = 3;
                 }
                 if(pay.contains("1")&&flag!=3){
-                    criteria.and("isPay").is(1);
+                    sc.where("isPay").is(1);
                 }
                 if(pay.contains("2")&&flag!=3){
-                    criteria.and("isGreenChannel").is(1);
+                    sc.where("isGreenChannel").is(1);
                 }
                 if (flag==3) {
-                    criteria.and("isPay").ne(1);
-                    criteria.and("isGreenChannel").ne(1);
+                    sc.where("isPay").ne(1);
+                    sc.where("isGreenChannel").ne(1);
                 }
+                criteria.orOperator(sc);
             }
 
             if (null != isReport) {
                 if(isReport.equals("0")){
-                     criteria.and("actualRegisterDate").is(null);
+                    criteria.and("isRegister").is(0);
                 }
                 if(isReport.equals("1")){
-                    criteria.and("actualRegisterDate").ne(null);
+                    criteria.and("isRegister").is(1);
                 }
             }
 
