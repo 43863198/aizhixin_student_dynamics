@@ -91,7 +91,7 @@ public class TestAnalysisDataController {
 
 		Criteria criteriaReport = Criteria.where("orgId").is(orgId);
 		criteriaReport.and("schoolYear").is(teacherYear);
-		criteriaReport.and("actualRegisterDate").ne(null);
+		criteriaReport.and("isRegister").is(1);
 		AggregationResults<BasicDBObject> isReport = mongoTemplate.aggregate(
 				Aggregation.newAggregation(
 						Aggregation.match(criteriaReport),
@@ -152,7 +152,6 @@ public class TestAnalysisDataController {
 					break;
 				}
 			}
-			m++;
 		}
 
 		Criteria criteria = Criteria.where("orgId").is(orgId);
