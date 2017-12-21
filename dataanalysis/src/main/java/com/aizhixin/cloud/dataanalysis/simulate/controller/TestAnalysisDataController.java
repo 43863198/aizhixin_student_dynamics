@@ -85,10 +85,6 @@ public class TestAnalysisDataController {
 		List<SchoolStatistics> schoolStatisticsList = new ArrayList<SchoolStatistics>();
 		Query query = new Query();
 
-//		Criteria criterias = Criteria.where("orgId").is(orgId);
-//		criterias.and("schoolYear").is(teacherYear);
-//		List<StudentRegister> items = mongoTemplate.find(query.addCriteria(criterias).limit(100),StudentRegister.class);
-
 		Criteria criteria = Criteria.where("orgId").is(orgId);
 		criteria.and("schoolYear").is(teacherYear);
 		AggregationResults<BasicDBObject> count = mongoTemplate.aggregate(
