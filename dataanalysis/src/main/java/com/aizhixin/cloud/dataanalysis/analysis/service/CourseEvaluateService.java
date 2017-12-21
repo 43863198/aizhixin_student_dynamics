@@ -11,6 +11,7 @@ import com.aizhixin.cloud.dataanalysis.common.domain.SortDTO;
 import com.aizhixin.cloud.dataanalysis.common.util.PageJdbcUtil;
 import liquibase.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -32,21 +33,49 @@ public class CourseEvaluateService {
     private PageJdbcUtil pageJdbcUtil;
     @Autowired
     private CourseEvaluateRespository courseEvaluateRespository;
+//
+RowMapper<CourseEvaluateDTO> rowMapper = new RowMapper<CourseEvaluateDTO>() {
+    @Override
+    public CourseEvaluateDTO mapRow(ResultSet rs, int i) throws SQLException {
+        CourseEvaluateDTO courseEvaluateDTO = new CourseEvaluateDTO();
+        courseEvaluateDTO.setCourseCode(rs.getString("COURSE_CODE"));
+        courseEvaluateDTO.setCourseName(rs.getString("COURSE_NAME"));
+        courseEvaluateDTO.setAvgScore(rs.getFloat("score"));
+        courseEvaluateDTO.setStatisticalTime(rs.getTimestamp("STATISTICAL_TIME"));
+        return courseEvaluateDTO;
+    }
+};
+public List<CourseEvaluateDTO> getHomeCourseEvaluate(long orgId) {
+    List<CourseEvaluateDTO> result = new ArrayList<>();
+    List<SortDTO> sortDTOS = new ArrayList();
 
+    String sql="SELECT SEMESTER ,TEACHER_YEAR  FROM `T_COURSE_EVALUATE`  where ORG_ID="+orgId+" ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
+    Map currentGradeMap=new HashMap() ;
+    try {
+        currentGradeMap= jdbcTemplate.queryForMap(sql);
+    }catch (EmptyResultDataAccessException emptyResultDataAccessException){
+        return null;
+    }
+    String teacherYear=currentGradeMap.get("TEACHER_YEAR")+"";
+    String semester= currentGradeMap.get("SEMESTER")+"";
+    String querySql = "SELECT * FROM (SELECT COURSE_CODE,COURSE_NAME,avg(AVG_SCORE) as score,max(STATISTICAL_TIME) as STATISTICAL_TIME FROM `T_COURSE_EVALUATE` where DELETE_FLAG =" + DataValidity.VALID.getState() + " and ORG_ID=" + orgId + " ";
+    if (!StringUtils.isEmpty(semester)) {
+        querySql += " and SEMESTER=" + semester + " ";
+    }
+    if (!StringUtils.isEmpty(teacherYear)) {
+        querySql += " and TEACHER_YEAR=" + teacherYear + " ";
+    }
+
+    querySql += "  group by COURSE_CODE) aa ORDER BY aa.score DESC LIMIT 10";
+
+    result=jdbcTemplate.query(querySql,rowMapper);
+
+
+    return result;
+}
     public PageData<CourseEvaluateDTO> getCourseEvaluate(long orgId, String semesterId,String teacherYear,String collegeIds, String courseName, String sort, Integer pageSize, Integer pageNumber) {
         Map<String, Object> result = new HashMap<>();
         List<SortDTO> sortDTOS = new ArrayList();
-        RowMapper<CourseEvaluateDTO> rowMapper = new RowMapper<CourseEvaluateDTO>() {
-            @Override
-            public CourseEvaluateDTO mapRow(ResultSet rs, int i) throws SQLException {
-                CourseEvaluateDTO courseEvaluateDTO = new CourseEvaluateDTO();
-                courseEvaluateDTO.setCourseCode(rs.getString("COURSE_CODE"));
-                courseEvaluateDTO.setCourseName(rs.getString("COURSE_NAME"));
-                courseEvaluateDTO.setAvgScore(rs.getFloat("score"));
-                courseEvaluateDTO.setStatisticalTime(rs.getTimestamp("STATISTICAL_TIME"));
-                return courseEvaluateDTO;
-            }
-        };
         String querySql = "SELECT COURSE_CODE,COURSE_NAME,avg(AVG_SCORE) as score,max(STATISTICAL_TIME) as STATISTICAL_TIME FROM `T_COURSE_EVALUATE` where DELETE_FLAG =" + DataValidity.VALID.getState() + " and ORG_ID=" + orgId + " ";
         String countSql = "SELECT COURSE_CODE FROM `T_COURSE_EVALUATE` where DELETE_FLAG =" + DataValidity.VALID.getState() + "  and ORG_ID=" + orgId + " ";
         if (!StringUtils.isEmpty(semesterId)) {
@@ -141,5 +170,8 @@ public class CourseEvaluateService {
      */
     public void update(CourseEvaluate courseEvaluate){
         courseEvaluateRespository.save(courseEvaluate);
+    }
+    public void deleteAllByOrgId(Long orgId){
+        courseEvaluateRespository.deleteByOrgId(orgId);
     }
 }

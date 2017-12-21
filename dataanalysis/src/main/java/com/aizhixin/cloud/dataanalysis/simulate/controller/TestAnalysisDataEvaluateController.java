@@ -262,6 +262,7 @@ public class TestAnalysisDataEvaluateController {
 
             list.add(courseEvaluate9);
         }}
+        courseEvaluateService.deleteAllByOrgId(orgId);
         courseEvaluateService.saveList(list);
         Map<String, Object> result = new HashMap<String, Object>();
         return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
@@ -480,6 +481,7 @@ public class TestAnalysisDataEvaluateController {
 
                 list.add(teacherEvaluate9);
         }}
+        teacherEvaluateService.deleteAllByOrgId(orgId);
         teacherEvaluateService.saveList(list);
         Map<String, Object> result = new HashMap<String, Object>();
         return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);

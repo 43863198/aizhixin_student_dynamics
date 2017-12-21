@@ -140,4 +140,7 @@ public class TeacherEvaluateService {
     public void update(TeacherEvaluate teacherEvaluate){
         teacherEvaluateRespository.save(teacherEvaluate);
     }
+    public void deleteAllByOrgId(Long orgId){
+        teacherEvaluateRespository.deleteByOrgId(orgId);
+    }
 }
