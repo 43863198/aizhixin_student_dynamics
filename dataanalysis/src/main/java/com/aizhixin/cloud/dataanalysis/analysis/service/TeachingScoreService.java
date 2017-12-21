@@ -336,7 +336,7 @@ public class TeachingScoreService {
             Criteria criteria = Criteria.where("orgId").is(orgId);
             criteria.and("schoolYear").is(teacherYear);
             criteria.and("semester").is(semester);
-            query.addCriteria(criteria);
+//            query.addCriteria(criteria);
             AggregationResults<BasicDBObject> scheduleDetails = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(criteria),
@@ -356,7 +356,9 @@ public class TeachingScoreService {
                 tsd.setUserId(scheduleDetails.getMappedResults().get(i).getLong("_id"));
                 tsd.setUserName(scheduleDetails.getMappedResults().get(i).getString("userName"));
                 tsd.setJobNum(scheduleDetails.getMappedResults().get(i).getString("jobNum"));
-                tsd.setGrade(scheduleDetails.getMappedResults().get(i).getInt("grade"));
+                if(null!=scheduleDetails.getMappedResults().get(i).getString("grade")){
+                    tsd.setGrade(Integer.valueOf(scheduleDetails.getMappedResults().get(i).getString("grade")));
+                }
                 tsd.setClassName(scheduleDetails.getMappedResults().get(i).getString("className"));
                 tsd.setAvgGPA(scheduleDetails.getMappedResults().get(i).getDouble("GPAavg"));
                 tsd.setReferenceSubjects(new Random().nextInt(10));
@@ -366,6 +368,7 @@ public class TeachingScoreService {
             }
             teachingScoreDetailsRespository.save(teachingScoreDetailsList);
         } catch (Exception e) {
+            e.printStackTrace();
             result.put("success", false);
             result.put("message", "添加教学成绩详情数据异常！");
             return result;
