@@ -105,50 +105,49 @@ public class TestAnalysisDataController {
             ss.setCollegeName(isReport.getMappedResults().get(i).getString("collegeName"));
 			ss.setCollegeId(isReport.getMappedResults().get(i).getLong("_id"));
 			ss.setAlreadyReport(isReport.getMappedResults().get(i).getInt("count"));
-			ss.setAlreadyPay(isReport.getMappedResults().get(i).getInt("count"));
 			schoolStatisticsList.add(ss);
 		}
 
-//		Criteria criteriaPay = Criteria.where("orgId").is(orgId);
-//		criteriaPay.and("schoolYear").is(teacherYear);
-//		criteriaPay.and("isPay").is(1);
-//		AggregationResults<BasicDBObject> isPay = mongoTemplate.aggregate(
-//				Aggregation.newAggregation(
-//						Aggregation.match(criteriaPay),
-//						Aggregation.group("collegeId").count().as("count")
-//				),
-//				StudentRegister.class, BasicDBObject.class);
-//		int j = 0;
-//		while (isPay.iterator().hasNext()){
-//			for(SchoolStatistics ss: schoolStatisticsList) {
-//				if(ss.getCollegeId().equals(isPay.getMappedResults().get(j).getString("_id"))) {
-//					ss.setAlreadyPay(isPay.getMappedResults().get(j).getInt("count"));
-//					break;
-//				}
-//			}
-//			j++;
-//		}
-//
-//		Criteria criteriaGreenChannel = Criteria.where("orgId").is(orgId);
-//		criteriaGreenChannel.and("schoolYear").is(teacherYear);
-//		criteriaGreenChannel.and("isGreenChannel").is(1);
-//		AggregationResults<BasicDBObject> isGreenChannel = mongoTemplate.aggregate(
-//				Aggregation.newAggregation(
-//						Aggregation.match(criteriaGreenChannel),
-//						Aggregation.group("collegeId").count().as("count")
-//				),
-//				StudentRegister.class, BasicDBObject.class);
-//
-//		int m = 0;
-//		while (isGreenChannel.iterator().hasNext()){
-//			for(SchoolStatistics ss: schoolStatisticsList) {
-//				if(ss.getCollegeId().equals(isGreenChannel.getMappedResults().get(m).getString("_id"))) {
-//					ss.setAlreadyPay(isGreenChannel.getMappedResults().get(m).getInt("count"));
-//					break;
-//				}
-//			}
-//			m++;
-//		}
+		Criteria criteriaPay = Criteria.where("orgId").is(orgId);
+		criteriaPay.and("schoolYear").is(teacherYear);
+		criteriaPay.and("isPay").is(1);
+		AggregationResults<BasicDBObject> isPay = mongoTemplate.aggregate(
+				Aggregation.newAggregation(
+						Aggregation.match(criteriaPay),
+						Aggregation.group("collegeId").count().as("count")
+				),
+				StudentRegister.class, BasicDBObject.class);
+
+		for (int j =0;j<isPay.getMappedResults().size();j++){
+			Long id = isPay.getMappedResults().get(j).getLong("_id");
+			for(SchoolStatistics ss: schoolStatisticsList) {
+				if(ss.getCollegeId().equals(id)) {
+					ss.setAlreadyPay(isPay.getMappedResults().get(j).getInt("count"));
+					break;
+				}
+			}
+		}
+
+		Criteria criteriaGreenChannel = Criteria.where("orgId").is(orgId);
+		criteriaGreenChannel.and("schoolYear").is(teacherYear);
+		criteriaGreenChannel.and("isGreenChannel").is(1);
+		AggregationResults<BasicDBObject> isGreenChannel = mongoTemplate.aggregate(
+				Aggregation.newAggregation(
+						Aggregation.match(criteriaGreenChannel),
+						Aggregation.group("collegeId").count().as("count")
+				),
+				StudentRegister.class, BasicDBObject.class);
+
+		for (int m=0;m <isGreenChannel.getMappedResults().size();m++){
+			Long id = isGreenChannel.getMappedResults().get(m).getLong("_id");
+			for(SchoolStatistics ss: schoolStatisticsList) {
+				if(ss.getCollegeId().equals(id)) {
+					ss.setAlreadyPay(isGreenChannel.getMappedResults().get(m).getInt("count"));
+					break;
+				}
+			}
+			m++;
+		}
 
 		Criteria criteria = Criteria.where("orgId").is(orgId);
 		criteria.and("schoolYear").is(teacherYear);
@@ -160,8 +159,8 @@ public class TestAnalysisDataController {
 				StudentRegister.class, BasicDBObject.class);
 
 	    for(int n =0;n<count.getMappedResults().size();n++){
+			Long id = count.getMappedResults().get(n).getLong("_id");
 			for(SchoolStatistics ss: schoolStatisticsList) {
-				Long id = count.getMappedResults().get(n).getLong("_id");
 				if(ss.getCollegeId().equals(id)){
 					ss.setNewStudentsCount(count.getMappedResults().get(n).getInt("count"));
 					int max = 40;

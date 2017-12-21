@@ -483,18 +483,17 @@ public class SchoolStatisticsService {
                     pay.add(isPay);
                 }
                 if (pay.contains("1")) {
-//                    criteria.and("isPay").is(1);
-                    isReport = "1";
+                    criteria.and("isPay").is(1);
                 }else {
                     criteria.and("isGreenChannel").is(1);
                 }
-//                if (isPay.contains("2")) {
-//                    criteria.and("isGreenChannel").is(1);
-//                }
-//                if(isPay.contains("3")) {
-//                    criteria.and("isPay").nin(1);
-//                    criteria.and("isGreenChannel").nin(1);
-//                }
+                if (isPay.contains("2")) {
+                    criteria.and("isGreenChannel").is(1);
+                }
+                if(isPay.contains("3")) {
+                    criteria.and("isPay").nin(1);
+                    criteria.and("isGreenChannel").nin(1);
+                }
             }
 
             if (null != isReport) {
