@@ -17,4 +17,6 @@ public interface CetScoreStatisticsRespository extends JpaRepository<CetScoreSta
 
     void deleteByOrgId(Long orgId);
 
+    void deleteByOrgIdAndTeacherYearAndSemester(Long orgId, Integer teacherYear, Integer semester);
+
 }
