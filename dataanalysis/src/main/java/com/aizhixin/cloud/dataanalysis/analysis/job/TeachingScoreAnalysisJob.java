@@ -9,6 +9,7 @@ import com.aizhixin.cloud.dataanalysis.score.mongoRespository.ScoreMongoResposit
 import com.aizhixin.cloud.dataanalysis.setup.domain.WarningTypeDomain;
 import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
 import com.mongodb.BasicDBObject;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -223,10 +224,17 @@ public class TeachingScoreAnalysisJob {
                     tsd.setUserId(userId);
                     tsd.setUserName(scheduleDetails.getMappedResults().get(i).getString("userName"));
                     tsd.setJobNum(scheduleDetails.getMappedResults().get(i).getString("jobNum"));
+                    tsd.setClassName(scheduleDetails.getMappedResults().get(i).getString("className"));
                     if (null != scheduleDetails.getMappedResults().get(i).get("grade")) {
                         tsd.setGrade(Integer.valueOf(scheduleDetails.getMappedResults().get(i).getString("grade")));
+                    }else{
+                        if(!StringUtils.isBlank(tsd.getClassName())){
+                            if (tsd.getClassName().indexOf("-") != -1) {
+                                int flag = tsd.getClassName().indexOf("-");
+                                tsd.setGrade(Integer.valueOf(tsd.getClassName().substring(flag-4,flag)));
+                            }
+                        }
                     }
-                    tsd.setClassName(scheduleDetails.getMappedResults().get(i).getString("className"));
                     if(null!=scheduleDetails.getMappedResults().get(i).get("GPAavg")) {
                         tsd.setAvgGPA(scheduleDetails.getMappedResults().get(i).getDouble("GPAavg"));
                     }

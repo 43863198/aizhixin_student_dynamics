@@ -430,11 +430,7 @@ public class SchoolStatisticsService {
      */
     public HomeData<TeachingScoreStatisticsDTO> getTeachingSoreStatics(Long orgId){
         Map<String,Object> map=new HashMap<String, Object>();
-        List<TeachingScoreStatisticsDTO> list0=teachingScoreStatisticsRespository.getAvgTeachingScore(orgId);
-        TeachingScoreStatisticsDTO obj=null;
-        if (null!=list0&&list0.size()>0){
-            obj=list0.get(0);
-        }
+
         String sql="SELECT SEMESTER ,TEACHER_YEAR  FROM `t_teaching_score_statistics`  where ORG_ID="+orgId+" ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
         Map currentGradeMap=new HashMap() ;
         try {
@@ -444,7 +440,12 @@ public class SchoolStatisticsService {
         }
        int teacherYear=Integer.valueOf(currentGradeMap.get("TEACHER_YEAR")+"");
        int semester= Integer.valueOf(currentGradeMap.get("SEMESTER")+"");
-        List<TeachingScoreStatisticsDTO> list=teachingScoreStatisticsRespository.getTeachingScoreStatisticsByOrgId(orgId,teacherYear,semester);
+        List<TeachingScoreStatisticsDTO> list=teachingScoreStatisticsRespository.getTeachingScoreStatisticsByOrgId(orgId, teacherYear, semester);
+        List<TeachingScoreStatisticsDTO> list0=teachingScoreStatisticsRespository.getAvgTeachingScore(orgId, teacherYear, semester);
+        TeachingScoreStatisticsDTO obj=null;
+        if (null!=list0&&list0.size()>0){
+            obj=list0.get(0);
+        }
         HomeData<TeachingScoreStatisticsDTO> h=new HomeData();
         TeacherlYearData teacherlYearData=new TeacherlYearData();
         teacherlYearData.setSemester(semester);

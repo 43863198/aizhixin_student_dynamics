@@ -17,8 +17,8 @@ public interface TeachingScoreStatisticsRespository extends JpaRepository<Teachi
    List<TeachingScoreStatisticsDTO> getTeachingScoreStatisticsByOrgId(@Param(value = "orgId")Long orgId,@Param(value = "teacherYear")int teacherYear,@Param(value = "semester")int semester);
 
 
-    @Query("select new com.aizhixin.cloud.dataanalysis.analysis.dto.TeachingScoreStatisticsDTO(sum(a.curriculumNum),avg(a.avgGPA),avg(a.avgScore)) from #{#entityName} a where a.orgId = :orgId and a.deleteFlag=0 and a.statisticsType=2 GROUP BY a.grade,a.semester ORDER BY a.teacherYear DESC, a.semester DESC")
-    List<TeachingScoreStatisticsDTO> getAvgTeachingScore(@Param(value = "orgId")Long orgId);
+    @Query("select new com.aizhixin.cloud.dataanalysis.analysis.dto.TeachingScoreStatisticsDTO(a.curriculumNum,a.avgGPA,a.avgScore) from #{#entityName} a where a.orgId = :orgId and a.deleteFlag=0 and a.teacherYear=:teacherYear and a.semester=:semester and a.statisticsType = 1")
+    List<TeachingScoreStatisticsDTO> getAvgTeachingScore(@Param(value = "orgId")Long orgId,@Param(value = "teacherYear")int teacherYear,@Param(value = "semester")int semester);
 
 
     @Query("select a from #{#entityName} a where a.orgId = :orgId and a.deleteFlag=:deleteFlag and a.statisticsType=:statisticsType")
@@ -27,8 +27,7 @@ public interface TeachingScoreStatisticsRespository extends JpaRepository<Teachi
 
     //物理删除
     @Modifying
-    @Query("delete from #{#entityName} a where a.orgId = :orgId and a.teacherYear = :teacherYear and a.semester = :semester")
-    void deleteByOrgId(@Param(value = "orgId") Long orgId,@Param(value = "teacherYear") Integer teacherYear,@Param(value = "semester") Integer semester);
-
+    @Query("delete from #{#entityName} a where a.orgId = :orgId")
+    void deleteByOrgId(@Param(value = "orgId") Long orgId);
 
 }
