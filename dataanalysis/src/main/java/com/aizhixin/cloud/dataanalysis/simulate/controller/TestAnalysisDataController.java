@@ -63,7 +63,7 @@ public class TestAnalysisDataController {
 	@Autowired
 	private MongoTemplate mongoTemplate;
 
-	@RequestMapping(value = "/addschoolstatistics", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/addschoolstatistics", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "生成学情分析学校人数统计", response = Void.class, notes = "生成学情分析学校人数统计<br><br><b>@author  jianwei.wu</b>")
 	public Map<String, Object> addSchoolStatistics(
 			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
@@ -72,7 +72,7 @@ public class TestAnalysisDataController {
 		return schoolStatisticsAnalysisJob.schoolStatistics(orgId, teacherYear);
 	}
 
-	@GetMapping(value = "/adddetail", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/addteachingscoredetail", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "手动添加教学成绩详情", response = Void.class, notes = "手动添加教学成绩详情<br><br><b>@author jianwei.wu</b>")
 	public Map<String, Object> addTeachingScoreDetail(
 			@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
@@ -81,7 +81,7 @@ public class TestAnalysisDataController {
 	) {
 		return teachingScoreAnalysisJob.teachingScoreDetails(orgId, teacherYear, semester);
 	}
-
+	@GetMapping(value = "/addteachingscorestatistics", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "手动添加教学成绩统计", response = Void.class, notes = "手动添加教学成绩统计<br><br><b>@author jianwei.wu</b>")
 	public Map<String, Object> addTeachingScoreStatistics(
 			@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
@@ -90,7 +90,7 @@ public class TestAnalysisDataController {
 	) {
 		return teachingScoreAnalysisJob.teachingScoreStatistics(orgId, teacherYear, semester);
 	}
-
+	@GetMapping(value = "/addcetscorestatistics", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "手动添加cet成绩统计", response = Void.class, notes = "手动添加cet成绩统计<br><br><b>@author jianwei.wu</b>")
 	public Map<String, Object> cetScoreStatistics(
 			@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
