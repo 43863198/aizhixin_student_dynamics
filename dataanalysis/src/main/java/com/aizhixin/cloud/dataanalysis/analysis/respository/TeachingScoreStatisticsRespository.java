@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface TeachingScoreStatisticsRespository extends JpaRepository<TeachingScoreStatistics,String>{
 
-    @Query("select new com.aizhixin.cloud.dataanalysis.analysis.dto.TeachingScoreStatisticsDTO(a.collegeName,a.collegeId,a.studentNum,a.failPassStuNum,a.avgGPA,a.avgScore) from #{#entityName} a where a.orgId = :orgId and a.deleteFlag=0  and a.teacherYear=:teacherYear and a.semester=:semester and a.statisticsType=2")
+    @Query("select new com.aizhixin.cloud.dataanalysis.analysis.dto.TeachingScoreStatisticsDTO(a.collegeName,a.collegeId,a.studentNum,a.failPassStuNum,a.avgGPA,a.avgScore) from #{#entityName} a where a.orgId = :orgId and a.deleteFlag=0  and a.teacherYear=:teacherYear and a.semester=:semester and a.statisticsType=1")
    List<TeachingScoreStatisticsDTO> getTeachingScoreStatisticsByOrgId(@Param(value = "orgId")Long orgId,@Param(value = "teacherYear")int teacherYear,@Param(value = "semester")int semester);
 
 
