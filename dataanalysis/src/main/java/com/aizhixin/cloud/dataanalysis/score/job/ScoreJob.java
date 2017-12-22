@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -44,6 +45,7 @@ import com.aizhixin.cloud.dataanalysis.setup.service.ProcessingModeService;
 @Component
 public class ScoreJob {
 
+	private Logger logger = Logger.getLogger(this.getClass());
 	@Autowired
 	private ScoreService scoreService;
 	@Autowired
@@ -1246,6 +1248,9 @@ public class ScoreJob {
 			HashMap<String, AlarmRule> alarmRuleMap = new HashMap<String, AlarmRule>();
 			List<AlarmRule> alarmList = alarmRuleService
 					.getAlarmRuleByIds(warnRuleIdList);
+			if(null != alarmList){
+				logger.debug("alarmList.size()----------"+alarmList.size());
+				}
 			for (AlarmRule alarmRule : alarmList) {
 				alarmRuleMap.put(alarmRule.getAlarmSettingsId(), alarmRule);
 			}
@@ -1271,6 +1276,9 @@ public class ScoreJob {
 				List<Score> scoreList = scoreMongoRespository
 						.findAllByGradeInAndOrgIdAndExamType(grades, orgId,
 								ScoreConstant.EXAM_TYPE_CET4);
+				if(null != scoreList){
+				logger.debug("scoreList.size()---------"+scoreList.size());
+				}
 				HashMap<String, Score> userScoreMap = new HashMap<String, Score>();
 				// 去重后的英语四级不合格成绩集合
 				List<Score> alarmScoreList = new ArrayList<Score>();
