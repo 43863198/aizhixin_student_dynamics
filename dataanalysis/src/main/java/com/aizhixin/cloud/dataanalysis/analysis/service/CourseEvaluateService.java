@@ -1,7 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.analysis.service;
 
-import com.aizhixin.cloud.dataanalysis.analysis.dto.CourseEvaluateDTO;
-import com.aizhixin.cloud.dataanalysis.analysis.dto.CourseEvaluateDetailDTO;
+import com.aizhixin.cloud.dataanalysis.analysis.dto.*;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.CourseEvaluate;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.CourseEvaluateRespository;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
@@ -45,7 +44,7 @@ RowMapper<CourseEvaluateDTO> rowMapper = new RowMapper<CourseEvaluateDTO>() {
         return courseEvaluateDTO;
     }
 };
-public List<CourseEvaluateDTO> getHomeCourseEvaluate(long orgId) {
+public HomeData<CourseEvaluateDTO> getHomeCourseEvaluate(long orgId) {
     List<CourseEvaluateDTO> result = new ArrayList<>();
     List<SortDTO> sortDTOS = new ArrayList();
 
@@ -69,9 +68,14 @@ public List<CourseEvaluateDTO> getHomeCourseEvaluate(long orgId) {
     querySql += "  group by COURSE_CODE) aa ORDER BY aa.score DESC LIMIT 10";
 
     result=jdbcTemplate.query(querySql,rowMapper);
+    HomeData<CourseEvaluateDTO> h=new HomeData();
+    TeacherlYearData teacherlYearData=new TeacherlYearData();
+    teacherlYearData.setSemester(Integer.valueOf(semester));
+    teacherlYearData.setTeacherYear(Integer.valueOf(teacherYear));
+    h.setTeacherlYearData(teacherlYearData);
+    h.setData(result);
+    return h;
 
-
-    return result;
 }
     public PageData<CourseEvaluateDTO> getCourseEvaluate(long orgId, String semesterId,String teacherYear,String collegeIds, String courseName, String sort, Integer pageSize, Integer pageNumber) {
         Map<String, Object> result = new HashMap<>();

@@ -172,7 +172,7 @@ public class SchoolStatisticsService {
      * @param orgId
      * @return
      */
-    public SchoolProfileDTO getSchoolPersonStatistics(Long orgId) {
+    public HomeData<SchoolProfileDTO> getSchoolPersonStatistics(Long orgId) {
         String sql="SELECT SEMESTER ,TEACHER_YEAR  FROM `t_practice_statistics` where ORG_ID="+orgId+"  ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
         Map currentGradeMap=new HashMap() ;
         try {
@@ -187,7 +187,13 @@ public class SchoolStatisticsService {
         SchoolProfileDTO schoolProfileDTO = schoolStatisticsRespository.getSchoolPersonStatistics(orgId,teacherYear);
         schoolProfileDTO.setOutSchoolStudent(Long.valueOf(practiceStaticsDTO.getPracticeStudentNum()));
         schoolProfileDTO.setInSchoolStudent(Long.valueOf(schoolProfileDTO.getAllStudent()) - Long.valueOf(schoolProfileDTO.getOutSchoolStudent()));
-        return schoolProfileDTO;
+        HomeData<SchoolProfileDTO> h=new HomeData();
+        TeacherlYearData teacherlYearData=new TeacherlYearData();
+        teacherlYearData.setSemester(semester);
+        teacherlYearData.setTeacherYear(teacherYear);
+        h.setTeacherlYearData(teacherlYearData);
+        h.setObjData(schoolProfileDTO);
+        return h;
     }
 
     /**
@@ -371,7 +377,7 @@ public class SchoolStatisticsService {
      * @param orgId
      * @return
      */
-    public PracticeStaticsDTO getPracticeStatics(Long orgId) {
+    public HomeData<PracticeStaticsDTO> getPracticeStatics(Long orgId) {
         String sql="SELECT SEMESTER ,TEACHER_YEAR  FROM `t_practice_statistics`  where ORG_ID="+orgId+"  ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
         Map currentGradeMap=new HashMap() ;
         try {
@@ -381,7 +387,14 @@ public class SchoolStatisticsService {
         }
         int teacherYear=Integer.valueOf(currentGradeMap.get("TEACHER_YEAR")+"");
         int semester= Integer.valueOf(currentGradeMap.get("SEMESTER")+"");
-        return practiceStaticsRespository.getPracticeStatics(orgId,teacherYear,semester);
+        PracticeStaticsDTO practiceStaticsDTO=practiceStaticsRespository.getPracticeStatics(orgId,teacherYear,semester);
+        HomeData<PracticeStaticsDTO> h=new HomeData();
+        TeacherlYearData teacherlYearData=new TeacherlYearData();
+        teacherlYearData.setSemester(semester);
+        teacherlYearData.setTeacherYear(teacherYear);
+        h.setTeacherlYearData(teacherlYearData);
+        h.setObjData(practiceStaticsDTO);
+        return h;
     }
 
     /**
@@ -390,7 +403,7 @@ public class SchoolStatisticsService {
      * @param orgId
      * @return
      */
-    public CetScoreStatisticsDTO getEctStatics(Long orgId) {
+    public HomeData<CetScoreStatisticsDTO> getEctStatics(Long orgId) {
         String sql="SELECT SEMESTER ,TEACHER_YEAR  FROM `t_cet_statistics`  where ORG_ID="+orgId+" ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
         Map currentGradeMap=new HashMap() ;
         try {
@@ -400,7 +413,14 @@ public class SchoolStatisticsService {
         }
         int teacherYear=Integer.valueOf(currentGradeMap.get("TEACHER_YEAR")+"");
         int semester= Integer.valueOf(currentGradeMap.get("SEMESTER")+"");
-        return cetScoreStatisticsRespository.getEctStatics(orgId,teacherYear,semester);
+        CetScoreStatisticsDTO cetScoreStatisticsDTO=cetScoreStatisticsRespository.getEctStatics(orgId,teacherYear,semester);
+        HomeData<CetScoreStatisticsDTO> h=new HomeData();
+        TeacherlYearData teacherlYearData=new TeacherlYearData();
+        teacherlYearData.setSemester(semester);
+        teacherlYearData.setTeacherYear(teacherYear);
+        h.setTeacherlYearData(teacherlYearData);
+        h.setObjData(cetScoreStatisticsDTO);
+        return h;
     }
     /**
      * 教学成绩首页统计查询
@@ -408,7 +428,7 @@ public class SchoolStatisticsService {
      * @param orgId
      * @return
      */
-    public Map<String,Object> getTeachingSoreStatics(Long orgId){
+    public HomeData<TeachingScoreStatisticsDTO> getTeachingSoreStatics(Long orgId){
         Map<String,Object> map=new HashMap<String, Object>();
         List<TeachingScoreStatisticsDTO> list0=teachingScoreStatisticsRespository.getAvgTeachingScore(orgId);
         TeachingScoreStatisticsDTO obj=null;
@@ -425,9 +445,15 @@ public class SchoolStatisticsService {
        int teacherYear=Integer.valueOf(currentGradeMap.get("TEACHER_YEAR")+"");
        int semester= Integer.valueOf(currentGradeMap.get("SEMESTER")+"");
         List<TeachingScoreStatisticsDTO> list=teachingScoreStatisticsRespository.getTeachingScoreStatisticsByOrgId(orgId,teacherYear,semester);
-        map.put("courseAndAvgScore",obj);
-        map.put("collegeAndAvgScore",list);
-        return map;
+        HomeData<TeachingScoreStatisticsDTO> h=new HomeData();
+        TeacherlYearData teacherlYearData=new TeacherlYearData();
+        teacherlYearData.setSemester(semester);
+        teacherlYearData.setTeacherYear(teacherYear);
+        h.setTeacherlYearData(teacherlYearData);
+        h.setObjData(obj);
+        h.setData(list);
+        return h;
+
     }
 
 

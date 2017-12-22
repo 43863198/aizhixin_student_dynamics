@@ -44,7 +44,7 @@ public class SchoolConditionStatisticsController {
      */
     @GetMapping(value = "/getSchoolPersonStatistics", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "全校人数统计信息", response = Void.class, notes = "首页全校人数统计信息<br><br><b>@author 王俊</b>")
-    public SchoolProfileDTO getSchoolPersonStatistics(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
+    public HomeData<SchoolProfileDTO> getSchoolPersonStatistics(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
         return schoolStatisticsService.getSchoolPersonStatistics(orgId);
     }
     /**
@@ -64,7 +64,7 @@ public class SchoolConditionStatisticsController {
      */
     @GetMapping(value = "/getPracticeStatistics", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "首页实践学情统计信息", response = Void.class, notes = "首页实践学情统计信息<br><br><b>@author 王俊</b>")
-    public PracticeStaticsDTO getPracticeStatistics(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
+    public HomeData<PracticeStaticsDTO> getPracticeStatistics(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
         return schoolStatisticsService.getPracticeStatics(orgId);
     }
     /**
@@ -74,7 +74,7 @@ public class SchoolConditionStatisticsController {
      */
     @GetMapping(value = "/getEctStatics", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "首页四六级学情统计信息", response = Void.class, notes = "首页四六级学情统计信息<br><br><b>@author 王俊</b>")
-    public CetScoreStatisticsDTO getEctStatics(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
+    public HomeData<CetScoreStatisticsDTO> getEctStatics(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
         return schoolStatisticsService.getEctStatics(orgId);
     }
 
@@ -147,7 +147,7 @@ public class SchoolConditionStatisticsController {
      */
     @GetMapping(value = "/getTeachingSoreStatics", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "首页教学成绩信息", response = Void.class, notes = "首页教学成绩统计信息<br><br><b>@author 王俊</b>")
-    public Map<String,Object> getTeachingSoreStatics(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
+    public HomeData<TeachingScoreStatisticsDTO> getTeachingSoreStatics(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
         return schoolStatisticsService.getTeachingSoreStatics(orgId);
     }
 
@@ -159,7 +159,7 @@ public class SchoolConditionStatisticsController {
      */
     @GetMapping(value = "/homecourseevaluate", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "首页课程评价", response = Void.class, notes = "首页课程评价<br><br><b>@author wangjun</b>")
-    public List<CourseEvaluateDTO> getHomeCourseEvaluate(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
+    public HomeData<CourseEvaluateDTO> getHomeCourseEvaluate(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
         return courseEvaluateService.getHomeCourseEvaluate(orgId);
     }
 
