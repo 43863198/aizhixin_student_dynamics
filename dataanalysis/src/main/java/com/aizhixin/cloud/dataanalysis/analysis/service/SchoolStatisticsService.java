@@ -214,7 +214,7 @@ public class SchoolStatisticsService {
             String trend = TrendType.getType(typeIndex);
             if (null != trend) {
                 if (trend.equals("NEW_STUDENTS_COUNT") || trend.equals("ALREADY_REPORT") || trend.equals("ALREADY_PAY") || trend.equals("CONVENIENCE_CHANNEL")) {
-                    StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR, SUM(" + trend + ") FROM T_SCHOOL_STATISTICS  WHERE 1 = 1");
+                        StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR, SUM(" + trend + ") FROM T_SCHOOL_STATISTICS  WHERE 1 = 1");
                     if (null != orgId) {
                         sql.append(" and ORG_ID = :orgId");
                         condition.put("orgId", orgId);
