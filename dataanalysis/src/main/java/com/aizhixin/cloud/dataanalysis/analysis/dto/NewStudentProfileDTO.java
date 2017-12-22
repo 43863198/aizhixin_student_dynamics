@@ -37,6 +37,8 @@ public class NewStudentProfileDTO {
     private String proportion="0";
     @ApiModelProperty(value = "完成缴费人数", required = false)
     private int alreadyPay=0;
+    @ApiModelProperty(value = "学年", required = false)
+    private Integer teacherYear;
     @ApiModelProperty(value = "走绿色通道人数", required = false)
     private int convenienceChannel;
     @ApiModelProperty(value = "统计时间", required = false)
@@ -49,10 +51,11 @@ public class NewStudentProfileDTO {
     @ApiModelProperty(value = "查询学院新生概况", required = false)
     List<SchoolStatistics> schoolStatisticsListData;
 
-    public NewStudentProfileDTO(Long studentNumber, Long alreadyReport) {
+    public NewStudentProfileDTO(Long studentNumber, Long alreadyReport,Integer teacherYear) {
         this.studentNumber = studentNumber==null?0:studentNumber;
         this.alreadyReport = alreadyReport==null?0:alreadyReport;
         this.unreported = this.studentNumber-this.alreadyReport;
+        this.teacherYear=teacherYear;
         if(this.studentNumber==0){
             this.proportion="0";
         }else {
