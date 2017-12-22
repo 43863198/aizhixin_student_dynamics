@@ -58,6 +58,14 @@ public class TeachingScoreService {
     public void saveDetails(TeachingScoreDetails teachingScoreDetails) {
         teachingScoreDetailsRespository.save(teachingScoreDetails);
     }
+    public void deleteScoreStatistics(Long orgId,Integer teacherYear, Integer semester) {
+        teachingScoreStatisticsRespository.deleteByOrgIdAndTeacherAndSemester(orgId, teacherYear, semester);
+    }
+    public void deleteScoreDeatail(Long orgId,Integer teacherYear, Integer semester) {
+        teachingScoreDetailsRespository.deleteByOrgIdAndTeacherAndSemester(orgId, teacherYear, semester);
+    }
+
+
     public void saveDetailsList(List<TeachingScoreDetails> tsdList) {
         teachingScoreDetailsRespository.save(tsdList);
     }

@@ -23,5 +23,10 @@ public interface TeachingScoreDetailsRespository extends JpaRepository<TeachingS
     @Query("delete from #{#entityName} a where a.orgId = :orgId and a.teacherYear = :teacherYear and a.semester = :semester")
     void deleteByOrgId(@Param(value = "orgId") Long orgId, @Param(value = "teacherYear") Integer teacherYear,@Param(value = "semester") Integer semester);
 
+    //物理删除
+    @Modifying
+    @Query("delete from #{#entityName} a where a.orgId = :orgId and a.deleteFlag=0 and a.teacherYear=:teacherYear and a.semester=:semester")
+    void deleteByOrgIdAndTeacherAndSemester(@Param(value = "orgId")Long orgId,@Param(value = "teacherYear")int teacherYear,@Param(value = "semester")int semester);
+
 
 }
