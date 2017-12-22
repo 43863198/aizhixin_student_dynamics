@@ -63,19 +63,19 @@ public class TestAnalysisDataController {
 	@Autowired
 	private MongoTemplate mongoTemplate;
 	
-	@RequestMapping(value = "/schoolstatisticsjob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(httpMethod = "GET", value = "迎新统计定时任务", response = Void.class, notes = "迎新统计定时任务<br><br><b>@author zhengning</b>")
-	public ResponseEntity<Map<String, Object>> schoolStatisticsjob(
-			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId
-			) {
-        if(null == orgId){
-        	orgId = 218L;
-        }
-        schoolStatisticsService.deleteAllByOrgId(orgId);
-        schoolStatisticsAnalysisJob.schoolStatisticsJob();
-		Map<String, Object> result = new HashMap<String, Object>();
-		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
-	}
+//	@RequestMapping(value = "/schoolstatisticsjob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+//	@ApiOperation(httpMethod = "GET", value = "迎新统计定时任务", response = Void.class, notes = "迎新统计定时任务<br><br><b>@author zhengning</b>")
+//	public ResponseEntity<Map<String, Object>> schoolStatisticsjob(
+//			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId
+//			) {
+//        if(null == orgId){
+//        	orgId = 218L;
+//        }
+//        schoolStatisticsService.deleteAllByOrgId(orgId);
+//        schoolStatisticsAnalysisJob.schoolStatisticsJob();
+//		Map<String, Object> result = new HashMap<String, Object>();
+//		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+//	}
 	
 	@RequestMapping(value = "/addschoolstatistics", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "生成学情分析学校人数统计数据(生成模拟数据前会清空表数据请谨慎使用)", response = Void.class, notes = "生成学情分析学校人数统计数据<br><br><b>@author zhengning</b>")
