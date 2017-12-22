@@ -65,6 +65,7 @@ public class TeachingScoreAnalysisJob {
         Map<String, Object> result = new HashMap<>();
         List<TeachingScoreStatistics> tssList  = new ArrayList<>();
         try {
+            teachingScoreService.deleteScoreStatistics(orgId,schoolYear,semester);
             TeachingScoreStatistics tss = new TeachingScoreStatistics();
             tss.setOrgId(orgId);
             tss.setTeacherYear(schoolYear);
@@ -194,6 +195,7 @@ public class TeachingScoreAnalysisJob {
         Map<String, Object> result = new HashMap<>();
         List<TeachingScoreDetails> tsdList = new ArrayList<>();
         try {
+            teachingScoreService.deleteScoreDeatail(orgId,schoolYear,semester);
             //参考人数统计
             Criteria criteria = Criteria.where("orgId").is(orgId);
             criteria.and("schoolYear").is(schoolYear);
