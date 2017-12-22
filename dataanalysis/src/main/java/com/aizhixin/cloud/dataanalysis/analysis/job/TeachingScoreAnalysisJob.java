@@ -4,6 +4,8 @@ import com.aizhixin.cloud.dataanalysis.analysis.dto.SchoolStatisticsDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.TeachingScoreDetails;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.TeachingScoreStatistics;
+import com.aizhixin.cloud.dataanalysis.analysis.respository.TeachingScoreDetailsRespository;
+import com.aizhixin.cloud.dataanalysis.analysis.respository.TeachingScoreStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.service.TeachingScoreService;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
@@ -32,6 +34,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
@@ -48,12 +51,13 @@ public class TeachingScoreAnalysisJob {
     @Autowired
     private MongoTemplate mongoTemplate;
     @Autowired
-    private TeachingScoreService teachingScoreService;
-    @Autowired
     private WarningTypeService warningTypeService;
     @Autowired
     private ScoreMongoRespository scoreMongoRespository;
-
+    @Autowired
+    private TeachingScoreDetailsRespository teachingScoreDetailsRespository;
+    @Autowired
+    private TeachingScoreStatisticsRespository teachingScoreStatisticsRespository;
 
     public void schoolStatisticsJob() {
 
@@ -75,17 +79,17 @@ public class TeachingScoreAnalysisJob {
             }
         }
     }
-
-    public Map<String, Object> teachingScoreStatistics(Long orgId,int schoolYear,int semester) {
+    @Transactional
+    public Map<String, Object> teachingScoreStatistics(Long orgId,Integer schoolYear,Integer semester) {
         Map<String, Object> result = new HashMap<>();
         List<TeachingScoreStatistics> tssList  = new ArrayList<>();
-        TeachingScoreStatistics tss = new TeachingScoreStatistics();
         try {
+            teachingScoreStatisticsRespository.deleteByOrgId(orgId,schoolYear,semester);
+            TeachingScoreStatistics tss = new TeachingScoreStatistics();
             tss.setOrgId(orgId);
             tss.setTeacherYear(schoolYear);
             tss.setSemester(semester);
             tss.setStatisticsType(1); //全校统计
-            List<TeachingScoreStatistics> ctssList = new ArrayList<>();
             //创建查询条件对象
             org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
             //参考人数统计
@@ -93,27 +97,67 @@ public class TeachingScoreAnalysisJob {
             criteria.and("scoreResultType").is(ScoreConstant.RESULT_TYPE_100);
             criteria.and("schoolYear").is(schoolYear);
             criteria.and("semester").is(semester);
-            query.addCriteria(criteria);
+            criteria.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
 
-            long total = mongoTemplate.count(query, Score.class);
-            tss.setStudentNum(new Long(total).intValue());
-
-            AggregationResults<BasicDBObject> countts = mongoTemplate.aggregate(
+            AggregationResults<BasicDBObject> orgSchedule = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(criteria),
-                            Aggregation.group("collegeId").first("collegeName").as("collegeName").count().as("count").avg("gradePoint").as("GPAavg").avg("totalScore").as("courseAVG")
-//                            Aggregation.project("collegeId").and("cid").previousOperation()
+                            Aggregation.group("scheduleId")),
+                    Score.class, BasicDBObject.class);
+            AggregationResults<BasicDBObject> orgUser = mongoTemplate.aggregate(
+                    Aggregation.newAggregation(
+                            Aggregation.match(criteria),
+                            Aggregation.group("userId")),
+                    Score.class, BasicDBObject.class);
+            tss.setCurriculumNum(orgSchedule.getMappedResults().size());
+            tss.setStudentNum(orgUser.getMappedResults().size());
+            Criteria tcriteriFail = Criteria.where("orgId").is(orgId);
+            tcriteriFail.and("scoreResultType").is(ScoreConstant.RESULT_TYPE_100);
+            tcriteriFail.and("schoolYear").is(schoolYear);
+            tcriteriFail.and("semester").is(semester);
+            tcriteriFail.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
+            tcriteriFail.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
+            AggregationResults<BasicDBObject> orgUserFail = mongoTemplate.aggregate(
+                    Aggregation.newAggregation(
+                            Aggregation.match(tcriteriFail),
+                            Aggregation.group("userId")),
+                    Score.class, BasicDBObject.class);
+            tss.setFailPassStuNum(orgUserFail.getMappedResults().size());
+            tssList.add(tss);
+            //院级统计
+            Criteria ccriteria = Criteria.where("orgId").is(orgId);
+            ccriteria.and("scoreResultType").is(ScoreConstant.RESULT_TYPE_100);
+            ccriteria.and("schoolYear").is(schoolYear);
+            ccriteria.and("semester").is(semester);
+            ccriteria.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
+            AggregationResults<BasicDBObject> countts = mongoTemplate.aggregate(
+                    Aggregation.newAggregation(
+                            Aggregation.match(ccriteria),
+                            Aggregation.group("collegeId").first("collegeName").as("collegeName").avg("gradePoint").as("GPAavg").avg("totalScore").as("courseAVG")
                     ),
                     Score.class, BasicDBObject.class);
             for (int i=0;i<countts.getMappedResults().size();i++){
+                Long collegeId = countts.getMappedResults().get(i).getLong("_id");
+                ccriteria.and("collegeId").is(collegeId);
+                AggregationResults<BasicDBObject> schedule = mongoTemplate.aggregate(
+                        Aggregation.newAggregation(
+                                Aggregation.match(criteria),
+                                Aggregation.group("scheduleId")),
+                        Score.class, BasicDBObject.class);
+                AggregationResults<BasicDBObject> user = mongoTemplate.aggregate(
+                        Aggregation.newAggregation(
+                                Aggregation.match(criteria),
+                                Aggregation.group("userId")),
+                        Score.class, BasicDBObject.class);
                 TeachingScoreStatistics ctss = new TeachingScoreStatistics();
                 ctss.setOrgId(orgId);
                 ctss.setTeacherYear(schoolYear);
                 ctss.setSemester(semester);
                 ctss.setStatisticsType(2); //按学院统计
-                ctss.setCollegeId(countts.getMappedResults().get(i).getLong("_id"));
+                ctss.setCollegeId(collegeId);
+                ctss.setCurriculumNum(schedule.getMappedResults().size());
                 ctss.setCollegeName(countts.getMappedResults().get(i).getString("collegeName"));
-                ctss.setStudentNum(countts.getMappedResults().get(i).getInt("count"));
+                ctss.setStudentNum(user.getMappedResults().size());
                 ctss.setAvgGPA(new BigDecimal(countts.getMappedResults().get(i).getDouble("GPAavg")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                 ctss.setAvgScore(new BigDecimal(countts.getMappedResults().get(i).getDouble("courseAVG")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                 tssList.add(ctss);
@@ -121,33 +165,23 @@ public class TeachingScoreAnalysisJob {
 
             //创建查询条件对象
             org.springframework.data.mongodb.core.query.Query queryFail = new org.springframework.data.mongodb.core.query.Query();
-            //不及格人数统计
+            //院不及格人数统计
             Criteria criteriFail = Criteria.where("orgId").is(orgId);
             criteriFail.and("scoreResultType").is(ScoreConstant.RESULT_TYPE_100);
             criteriFail.and("schoolYear").is(schoolYear);
             criteriFail.and("semester").is(semester);
+            criteriFail.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
             criteriFail.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
-            long failTotal = mongoTemplate.count(query, Score.class);
-            tss.setFailPassStuNum(new Long(failTotal).intValue());
-            AggregationResults<BasicDBObject> failCount = mongoTemplate.aggregate(
-                    Aggregation.newAggregation(
-                            Aggregation.match(criteriFail),
-                            Aggregation.group("collegeId").count().as("count")
-//                            Aggregation.project("collegeId").and("cid").previousOperation()
-                    ),
-                    Score.class, BasicDBObject.class);
-
-            for ( int j = 0;j<failCount.getMappedResults().size();j++) {
-                for(TeachingScoreStatistics ts:  tssList){
-                    Long collegeId = countts.getMappedResults().get(j).getLong("_id");
-                    if(collegeId.equals(ts.getCollegeId())){
-                        ts.setFailPassStuNum(countts.getMappedResults().get(j).getInt("count"));
-                        break;
-                    }
-                }
+            for(TeachingScoreStatistics ts:  tssList){
+                criteriFail.and("collegeId").is(ts.getCollegeId());
+                AggregationResults<BasicDBObject> failUser = mongoTemplate.aggregate(
+                        Aggregation.newAggregation(
+                                Aggregation.match(criteriFail),
+                                Aggregation.group("userId")),
+                        Score.class, BasicDBObject.class);
+                ts.setFailPassStuNum(failUser.getMappedResults().size());
             }
-            tssList.add(tss);
-            teachingScoreService.saveStatistics(tss);
+            teachingScoreStatisticsRespository.save(tssList);
         } catch (Exception e) {
             result.put("success", false);
             result.put("message", "定时统计教学成绩失败！");
@@ -156,11 +190,12 @@ public class TeachingScoreAnalysisJob {
         result.put("message", "定时统计教学成绩成功");
         return result;
     }
-
-    public Map<String, Object> teachingScoreDetails(Long orgId,int schoolYear,int semester) {
+    @Transactional
+    public Map<String, Object> teachingScoreDetails(Long orgId,Integer schoolYear,Integer semester) {
         Map<String, Object> result = new HashMap<>();
         List<TeachingScoreDetails> tsdList = new ArrayList<>();
         try {
+            teachingScoreDetailsRespository.deleteByOrgId(orgId,schoolYear,semester);
             //创建查询条件对象
             org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
             //参考人数统计
@@ -168,163 +203,70 @@ public class TeachingScoreAnalysisJob {
             criteria.and("scoreResultType").is(ScoreConstant.RESULT_TYPE_100);
             criteria.and("schoolYear").is(schoolYear);
             criteria.and("semester").is(semester);
-
+            criteria.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
             AggregationResults<BasicDBObject> scheduleDetails = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(criteria),
-                            Aggregation.group("userId").avg("gradePoint").as("GPAavg")
+                            Aggregation.group("userId").avg("gradePoint").as("GPAavg").count().as("count")
                                     .first("jobNum").as("jobNum").first("userName").as("userName").first("className").as("className")
                                     .first("grade").as("grade").first("collegeId").as("collegeId").first("collegeName").as("collegeName")
-//                            Aggregation.project("userId").and("uid").previousOperation()
                     ),
                     Score.class, BasicDBObject.class);
 
-            int i = 0;
-            while (scheduleDetails.iterator().hasNext()){
+
+            for (int i =0;i<scheduleDetails.getMappedResults().size();i++){
+                Long userId = scheduleDetails.getMappedResults().get(i).getLong("_id");
                 TeachingScoreDetails tsd = new TeachingScoreDetails();
                 tsd.setOrgId(orgId);
                 tsd.setTeacherYear(schoolYear);
                 tsd.setSemester(semester);
+                tsd.setReferenceSubjects(scheduleDetails.getMappedResults().get(i).getInt("count"));
                 tsd.setCollegeId(scheduleDetails.getMappedResults().get(i).getLong("collegeId"));
                 tsd.setCollegeName(scheduleDetails.getMappedResults().get(i).getString("collegeName"));
-                tsd.setUserId(scheduleDetails.getMappedResults().get(i).getLong("uid"));
+                tsd.setUserId(userId);
                 tsd.setUserName(scheduleDetails.getMappedResults().get(i).getString("userName"));
                 tsd.setJobNum(scheduleDetails.getMappedResults().get(i).getString("jobNum"));
-                tsd.setGrade(scheduleDetails.getMappedResults().get(i).getInt("grade"));
-                tsd.setClassName(scheduleDetails.getMappedResults().get(i).getString("className"));
-                tsd.setAvgGPA(scheduleDetails.getMappedResults().get(i).getDouble("count"));
-                tsdList.add(tsd);
-                i++;
-            }
-
-
-            AggregationResults<BasicDBObject> scheduleStatis = mongoTemplate.aggregate(
-                    Aggregation.newAggregation(
-                            Aggregation.match(criteria),
-                            Aggregation.group("userId", "scheduleId").count().as("count")
-//                            Aggregation.project("userId").and("userId").previousOperation()
-                    ),
-                    Score.class, BasicDBObject.class);
-
-            int j = 0;
-            while (scheduleStatis.iterator().hasNext()){
-                for(TeachingScoreDetails ts:  tsdList){
-                    Long userId = scheduleStatis.getMappedResults().get(j).getLong("userId");
-                    if(userId.equals(ts.getUserId())){
-                        ts.setReferenceSubjects(scheduleStatis.getMappedResults().get(j).getInt("count"));
-                        break;
-                    }
+                if(null!=scheduleDetails.getMappedResults().get(i).getString("grade")) {
+                    tsd.setGrade(Integer.valueOf(scheduleDetails.getMappedResults().get(i).getString("grade")));
                 }
-                j++;
+                tsd.setClassName(scheduleDetails.getMappedResults().get(i).getString("className"));
+                tsd.setAvgGPA(scheduleDetails.getMappedResults().get(i).getDouble("GPAavg"));
+                tsdList.add(tsd);
             }
 
-            //不及格人数统计
+            //不及格
             Criteria criteriFail = Criteria.where("orgId").is(orgId);
             criteriFail.and("scoreResultType").is(ScoreConstant.RESULT_TYPE_100);
             criteriFail.and("schoolYear").is(schoolYear);
             criteriFail.and("semester").is(semester);
+            criteriFail.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
             criteriFail.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
             AggregationResults<BasicDBObject> scheduleFail = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(criteriFail),
                             Aggregation.group("userId").count().as("count")),
                     Score.class, BasicDBObject.class);
-            int x = 0;
-            while (scheduleFail.iterator().hasNext()){
+
+            for (int x = 0;x<scheduleFail.getMappedResults().size();x++){
+                Long userId = scheduleFail.getMappedResults().get(x).getLong("_id");
                 for(TeachingScoreDetails ts:  tsdList){
-                    Long userId = scheduleFail.getMappedResults().get(x).getLong("userId");
                     if(userId.equals(ts.getUserId())){
                         ts.setFailedSubjects(scheduleFail.getMappedResults().get(x).getInt("count"));
                         break;
                     }
                 }
-                x++;
             }
+            teachingScoreDetailsRespository.save(tsdList);
 
         } catch (Exception e) {
+            e.printStackTrace();
             result.put("success", false);
             result.put("message", "定时统计学生成绩失败！");
+            return result;
         }
         result.put("success", true);
         result.put("message", "定时统计学生成绩成功！");
         return result;
     }
-
-   /*****************************************编写测试查看数据**********************************************/
-    public Map<String, Object> getLookScore(Long orgId) {
-        Map<String, Object> result = new HashMap<>();
-        List<Score> items = null;
-        try {
-            //创建查询条件对象
-            org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
-
-            //参考人数统计
-            Criteria criteria = Criteria.where("orgId").is(orgId);
-            criteria.and("scoreResultType").is(ScoreConstant.RESULT_TYPE_100);
-//            query.addCriteria(criteria).limit(1000);
-//
-//            items = mongoTemplate.find(query, Score.class);
-
-
-            AggregationResults<BasicDBObject> countts = mongoTemplate.aggregate(
-                    Aggregation.newAggregation(
-                            Aggregation.match(criteria),
-                            Aggregation.group("collegeId").first("collegeName").as("collegeName").count().as("count").avg("gradePoint").as("GPAavg").avg("totalScore").as("courseAVG")
-//                            Aggregation.project("collegeId").and("cid").previousOperation()
-                    ),
-                    Score.class, BasicDBObject.class);
-
-            AggregationResults<BasicDBObject> failCount = mongoTemplate.aggregate(
-                    Aggregation.newAggregation(
-                            Aggregation.match(criteria),
-                            Aggregation.group("collegeId").count().as("count")
-//                            Aggregation.project("collegeId").and("cid").previousOperation()
-                    ),
-                    Score.class, BasicDBObject.class);
-
-            AggregationResults<BasicDBObject> scheduleDetails = mongoTemplate.aggregate(
-                    Aggregation.newAggregation(
-                            Aggregation.match(criteria),
-                            Aggregation.group("userId").avg("gradePoint").as("GPAavg")
-                                    .first("jobNum").as("jobNum").first("userName").as("userName").first("className").as("className")
-                                    .first("grade").as("grade").first("collegeId").as("collegeId").first("collegeName").as("collegeName")
-//                            Aggregation.project("userId").and("uid").previousOperation()
-                    ),
-                    Score.class, BasicDBObject.class);
-
-            AggregationResults<BasicDBObject> scheduleStatis = mongoTemplate.aggregate(
-                    Aggregation.newAggregation(
-                            Aggregation.match(criteria),
-                            Aggregation.group( "scheduleId","userId").count().as("count")
-//                            Aggregation.project("userId").and("userId").previousOperation()
-                    ),
-                    Score.class, BasicDBObject.class);
-
-            AggregationResults<BasicDBObject> scheduleFail = mongoTemplate.aggregate(
-                    Aggregation.newAggregation(
-                            Aggregation.match(criteria),
-                            Aggregation.group("userId").count().as("count")),
-                    Score.class, BasicDBObject.class);
-
-
-
-            //mongoTemplate.count计算总数
-            long total = mongoTemplate.count(query, Score.class);
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            result.put("success", false);
-            result.put("message", "获取数据异常！");
-            return result;
-        }
-        result.put("success",  items);
-        return result;
-    }
-
-
-
-
-
 
 }

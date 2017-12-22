@@ -6,6 +6,8 @@ package com.aizhixin.cloud.dataanalysis.simulate.controller;
 import java.util.*;
 
 import com.aizhixin.cloud.dataanalysis.analysis.entity.TeachingScoreDetails;
+import com.aizhixin.cloud.dataanalysis.analysis.job.CetStatisticsAnalysisJob;
+import com.aizhixin.cloud.dataanalysis.analysis.job.TeachingScoreAnalysisJob;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 import com.mongodb.BasicDBObject;
 import org.slf4j.Logger;
@@ -19,10 +21,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.aizhixin.cloud.dataanalysis.analysis.entity.CetScoreStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.PracticeStatistics;
@@ -58,6 +57,10 @@ public class TestAnalysisDataController {
 	@Autowired
 	private SchoolStatisticsAnalysisJob schoolStatisticsAnalysisJob;
 	@Autowired
+	private TeachingScoreAnalysisJob teachingScoreAnalysisJob;
+	@Autowired
+	private CetStatisticsAnalysisJob cetStatisticsAnalysisJob;
+	@Autowired
 	private MongoTemplate mongoTemplate;
 	
 	@RequestMapping(value = "/schoolstatisticsjob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -74,116 +77,43 @@ public class TestAnalysisDataController {
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
 	
-	@RequestMapping(value = "/addschoolstatistics", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(httpMethod = "POST", value = "生成学情分析学校人数统计数据(生成模拟数据前会清空表数据请谨慎使用)", response = Void.class, notes = "生成学情分析学校人数统计数据<br><br><b>@author zhengning</b>")
-	public ResponseEntity<Map<String, Object>> addSchoolStatistics(
+	@RequestMapping(value = "/addschoolstatistics", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "GET", value = "生成学情分析学校人数统计数据(生成模拟数据前会清空表数据请谨慎使用)", response = Void.class, notes = "生成学情分析学校人数统计数据<br><br><b>@author zhengning</b>")
+	public Map<String, Object> addSchoolStatistics(
 			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
 			@ApiParam(value = "teacherYear 学年)") @RequestParam(value = "teacherYear", required = true) int teacherYear
-//			@ApiParam(value = "num teacherYear几年内)") @RequestParam(value = "num", required = false) int num) {
-	){
-		Map<String, Object> result = new HashMap<String, Object>();
-		List<SchoolStatistics> schoolStatisticsList = new ArrayList<SchoolStatistics>();
-		Query query = new Query();
-
-		Criteria criteria = Criteria.where("orgId").is(orgId);
-		criteria.and("schoolYear").is(teacherYear);
-		AggregationResults<BasicDBObject> count = mongoTemplate.aggregate(
-				Aggregation.newAggregation(
-						Aggregation.match(criteria),
-						Aggregation.group("collegeId").first("collegeName").as("collegeName").count().as("count")
-				),
-				StudentRegister.class, BasicDBObject.class);
-
-		for(int n =0;n<count.getMappedResults().size();n++){
-			SchoolStatistics ss = new SchoolStatistics();
-			ss.setOrgId(orgId);
-			ss.setTeacherYear(Integer.valueOf(teacherYear));
-			ss.setAlreadyReport(0);
-			ss.setAlreadyPay(0);
-			ss.setConvenienceChannel(0);
-			ss.setCollegeName(count.getMappedResults().get(n).getString("collegeName"));
-			ss.setCollegeId(count.getMappedResults().get(n).getLong("_id"));
-			ss.setNewStudentsCount(count.getMappedResults().get(n).getInt("count"));
-			int max = 40;
-			int min = 5;
-			Random random = new Random();
-			int s = 0;
-			s = random.nextInt(max) % (max - min + 1) + min;
-			ss.setTeacherNumber(20+s);
-			ss.setStudentNumber(1000 + s);
-			ss.setInstructorNumber(20 + s);
-			ss.setReadyGraduation(300 + s);
-			ss.setStatisticalTime(new Date());
-			ss.setConvenienceChannel(0);
-			schoolStatisticsList.add(ss);
+	) {
+		return schoolStatisticsAnalysisJob.schoolStatistics(orgId, teacherYear);
+	   }
+		@GetMapping(value = "/adddetail", produces = MediaType.APPLICATION_JSON_VALUE)
+		@ApiOperation(httpMethod = "GET", value = "手动添加教学成绩详情", response = Void.class, notes = "手动添加教学成绩详情<br><br><b>@author jianwei.wu</b>")
+		public Map<String,Object> addTeachingScoreDetail(
+				@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+				@ApiParam(value = "teacherYear 学年" , required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
+				@ApiParam(value = "semester 学期" , required = true) @RequestParam(value = "semester", required = true) Integer semester
+		) {
+			return teachingScoreAnalysisJob.teachingScoreDetails(orgId,teacherYear,semester);
 		}
 
-		Criteria criteriaReport = Criteria.where("orgId").is(orgId);
-		criteriaReport.and("schoolYear").is(teacherYear);
-		criteriaReport.and("isRegister").is(1);
-		AggregationResults<BasicDBObject> isReport = mongoTemplate.aggregate(
-				Aggregation.newAggregation(
-						Aggregation.match(criteriaReport),
-						Aggregation.group("collegeId").count().as("count")
-				),
-				StudentRegister.class, BasicDBObject.class);
-		for (int i =0;i<isReport.getMappedResults().size();i++){
-			Long rid = isReport.getMappedResults().get(i).getLong("_id");
-			int total = isReport.getMappedResults().get(i).getInt("count");
-			for(SchoolStatistics ss: schoolStatisticsList) {
-				if(ss.getCollegeId().equals(rid)) {
-					ss.setAlreadyReport(total);
-					break;
-				}
-			}
+		@ApiOperation(httpMethod = "GET", value = "手动添加教学成绩统计", response = Void.class, notes = "手动添加教学成绩统计<br><br><b>@author jianwei.wu</b>")
+		public Map<String,Object> addTeachingScoreStatistics(
+				@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+				@ApiParam(value = "teacherYear 学年" , required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
+				@ApiParam(value = "semester 学期" , required = true) @RequestParam(value = "semester", required = true) Integer semester
+		) {
+			return teachingScoreAnalysisJob.teachingScoreStatistics(orgId, teacherYear, semester);
 		}
 
-		Criteria criteriaPay = Criteria.where("orgId").is(orgId);
-		criteriaPay.and("schoolYear").is(teacherYear);
-		criteriaPay.and("isPay").is(1);
-		AggregationResults<BasicDBObject> isPay = mongoTemplate.aggregate(
-				Aggregation.newAggregation(
-						Aggregation.match(criteriaPay),
-						Aggregation.group("collegeId").count().as("count")
-				),
-				StudentRegister.class, BasicDBObject.class);
-
-		for (int j =0;j<isPay.getMappedResults().size();j++){
-			Long pid = isPay.getMappedResults().get(j).getLong("_id");
-			int pcount = isPay.getMappedResults().get(j).getInt("count");
-			for(SchoolStatistics ss: schoolStatisticsList) {
-				if(ss.getCollegeId().equals(pid)) {
-					ss.setAlreadyPay(pcount);
-					break;
-				}
-			}
-		}
-
-		Criteria criteriaGreenChannel = Criteria.where("orgId").is(orgId);
-		criteriaGreenChannel.and("schoolYear").is(teacherYear);
-		criteriaGreenChannel.and("isGreenChannel").is(1);
-		AggregationResults<BasicDBObject> isGreenChannel = mongoTemplate.aggregate(
-				Aggregation.newAggregation(
-						Aggregation.match(criteriaGreenChannel),
-						Aggregation.group("collegeId").count().as("count")
-				),
-				StudentRegister.class, BasicDBObject.class);
-
-		for (int m=0;m <isGreenChannel.getMappedResults().size();m++){
-			Long cid = isGreenChannel.getMappedResults().get(m).getLong("_id");
-			int ccount = isGreenChannel.getMappedResults().get(m).getInt("count");
-			for(SchoolStatistics ss: schoolStatisticsList) {
-				if(ss.getCollegeId().equals(cid)) {
-					ss.setConvenienceChannel(ccount);
-					break;
-				}
-			}
-		}
+	@ApiOperation(httpMethod = "GET", value = "手动添加cet成绩统计", response = Void.class, notes = "手动添加cet成绩统计<br><br><b>@author jianwei.wu</b>")
+	public Map<String,Object> cetScoreStatistics(
+			@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+			@ApiParam(value = "teacherYear 学年" , required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
+			@ApiParam(value = "semester 学期" , required = true) @RequestParam(value = "semester", required = true) Integer semester
+	) {
+		return cetStatisticsAnalysisJob.cetScoreStatistics(orgId, teacherYear, semester);
+	}
 
 
-		schoolStatisticsService.deleteByOrgIdAndTeacherYear(orgId,teacherYear);
-		schoolStatisticsService.saveList(schoolStatisticsList);
-		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 
 //		if (null != orgId && orgId.longValue() > 0L) {
 //		} else {
@@ -471,7 +401,7 @@ public class TestAnalysisDataController {
 //		schoolStatisticsService.deleteByOrgIdAndTeacherYear(orgId,teacherYear);
 //	    schoolStatisticsService.saveList(schoolStatisticsList);
 //		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
-	}
+//	}
 
 	@RequestMapping(value = "/updateschoolStatistics", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "PUT", value = "修改学情分析学校人数统计数据", response = Void.class, notes = "修改学情分析学校人数统计数据<br><br><b>@author zhengning</b>")

@@ -2,12 +2,7 @@ package com.aizhixin.cloud.dataanalysis.analysis.job;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.SchoolStatisticsDTO;
@@ -18,9 +13,19 @@ import com.aizhixin.cloud.dataanalysis.common.service.AuthUtilService;
 import com.aizhixin.cloud.dataanalysis.common.util.PageJdbcUtil;
 import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
 
+import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -32,6 +37,9 @@ import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Component
 public class SchoolStatisticsAnalysisJob {
@@ -86,6 +94,125 @@ public class SchoolStatisticsAnalysisJob {
 				+ ") GROUP BY COLLEGE_ID,USER_TYPE;";
 
 		return pageJdbcUtil.getInfo(querySql, peopleRm);
+	}
+
+	public Map<String, Object> schoolStatistics(Long orgId, int teacherYear) {
+		Map<String, Object> result = new HashMap<>();
+		List<SchoolStatistics> schoolStatisticsList = new ArrayList<SchoolStatistics>();
+		List<SchoolStatisticsDTO> countList = this.peopleNumCount(orgId.toString());
+		try{
+		Criteria criteria = Criteria.where("orgId").is(orgId);
+		criteria.and("schoolYear").is(teacherYear);
+		AggregationResults<BasicDBObject> count = mongoTemplate.aggregate(
+				Aggregation.newAggregation(
+						Aggregation.match(criteria),
+						Aggregation.group("collegeId").first("collegeName").as("collegeName").count().as("count")
+				),
+				StudentRegister.class, BasicDBObject.class);
+		for (int n = 0; n < count.getMappedResults().size(); n++) {
+			SchoolStatistics ss = new SchoolStatistics();
+			ss.setOrgId(orgId);
+			ss.setTeacherYear(Integer.valueOf(teacherYear));
+			ss.setAlreadyReport(0);
+			ss.setAlreadyPay(0);
+			ss.setConvenienceChannel(0);
+			ss.setCollegeName(count.getMappedResults().get(n).getString("collegeName"));
+			ss.setCollegeId(count.getMappedResults().get(n).getLong("_id"));
+			ss.setNewStudentsCount(count.getMappedResults().get(n).getInt("count"));
+			for (SchoolStatisticsDTO dto : countList) {
+				if (null != dto) {
+					if (UserConstant.USER_TYPE_STU == dto.getUserType()) {
+							ss.setStudentNumber(dto.getCountNum().intValue());
+					}
+					if (UserConstant.USER_TYPE_TEACHER == dto.getUserType()) {
+						ss.setTeacherNumber(dto.getCountNum().intValue());
+					}
+				}
+			}
+			int max = 40;
+			int min = 5;
+			Random random = new Random();
+			int s = 0;
+			s = random.nextInt(max) % (max - min + 1) + min;
+			ss.setInstructorNumber(20 + s);
+			ss.setReadyGraduation(300 + s);
+			ss.setStatisticalTime(new Date());
+			ss.setConvenienceChannel(0);
+			schoolStatisticsList.add(ss);
+		}
+
+		Criteria criteriaReport = Criteria.where("orgId").is(orgId);
+		criteriaReport.and("schoolYear").is(teacherYear);
+		criteriaReport.and("isRegister").is(1);
+		AggregationResults<BasicDBObject> isReport = mongoTemplate.aggregate(
+				Aggregation.newAggregation(
+						Aggregation.match(criteriaReport),
+						Aggregation.group("collegeId").count().as("count")
+				),
+				StudentRegister.class, BasicDBObject.class);
+		for (int i = 0; i < isReport.getMappedResults().size(); i++) {
+			Long rid = isReport.getMappedResults().get(i).getLong("_id");
+			int total = isReport.getMappedResults().get(i).getInt("count");
+			for (SchoolStatistics ss : schoolStatisticsList) {
+				if (ss.getCollegeId().equals(rid)) {
+					ss.setAlreadyReport(total);
+					break;
+				}
+			}
+		}
+
+		Criteria criteriaPay = Criteria.where("orgId").is(orgId);
+		criteriaPay.and("schoolYear").is(teacherYear);
+		criteriaPay.and("isPay").is(1);
+		AggregationResults<BasicDBObject> isPay = mongoTemplate.aggregate(
+				Aggregation.newAggregation(
+						Aggregation.match(criteriaPay),
+						Aggregation.group("collegeId").count().as("count")
+				),
+				StudentRegister.class, BasicDBObject.class);
+
+		for (int j = 0; j < isPay.getMappedResults().size(); j++) {
+			Long pid = isPay.getMappedResults().get(j).getLong("_id");
+			int pcount = isPay.getMappedResults().get(j).getInt("count");
+			for (SchoolStatistics ss : schoolStatisticsList) {
+				if (ss.getCollegeId().equals(pid)) {
+					ss.setAlreadyPay(pcount);
+					break;
+				}
+			}
+		}
+		Criteria criteriaGreenChannel = Criteria.where("orgId").is(orgId);
+		criteriaGreenChannel.and("schoolYear").is(teacherYear);
+		criteriaGreenChannel.and("isGreenChannel").is(1);
+		AggregationResults<BasicDBObject> isGreenChannel = mongoTemplate.aggregate(
+				Aggregation.newAggregation(
+						Aggregation.match(criteriaGreenChannel),
+						Aggregation.group("collegeId").count().as("count")
+				),
+				StudentRegister.class, BasicDBObject.class);
+
+		for (int m = 0; m < isGreenChannel.getMappedResults().size(); m++) {
+			Long cid = isGreenChannel.getMappedResults().get(m).getLong("_id");
+			int ccount = isGreenChannel.getMappedResults().get(m).getInt("count");
+			for (SchoolStatistics ss : schoolStatisticsList) {
+				if (ss.getCollegeId().equals(cid)) {
+					ss.setConvenienceChannel(ccount);
+					break;
+				}
+			}
+		}
+		schoolStatisticsService.deleteByOrgIdAndTeacherYear(orgId, teacherYear);
+		schoolStatisticsService.saveList(schoolStatisticsList);
+
+
+	}catch (Exception e){
+			result.put("success", false);
+			result.put("message", "定时统计教学成绩失败！");
+			return result;
+		}
+	    result.put("success", true);
+	    result.put("message", "定时统计教学成绩成功");
+	    return result;
 	}
 
 //	 @Scheduled(cron = "0 0/15 * * * ?")
