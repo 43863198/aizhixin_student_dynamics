@@ -129,7 +129,6 @@ public class SchoolStatisticsAnalysisJob {
 						if (UserConstant.USER_TYPE_TEACHER == dto.getUserType()) {
 							ss.setTeacherNumber(dto.getCountNum().intValue());
 						}
-						break;
 					}
 				}
 			}
