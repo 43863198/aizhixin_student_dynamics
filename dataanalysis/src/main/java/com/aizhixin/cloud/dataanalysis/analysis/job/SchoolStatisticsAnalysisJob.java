@@ -207,11 +207,11 @@ public class SchoolStatisticsAnalysisJob {
 
 	}catch (Exception e){
 			result.put("success", false);
-			result.put("message", "定时统计教学成绩失败！");
+			result.put("message", "定时统计学校概况失败！");
 			return result;
 		}
 	    result.put("success", true);
-	    result.put("message", "定时统计教学成绩成功");
+	    result.put("message", "定时统计学校概况成功！");
 	    return result;
 	}
 
