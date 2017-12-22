@@ -1295,8 +1295,7 @@ public class ScoreJob {
 							.next();
 					Score score = (Score) userScoreEntry.getValue();
 
-					if (score.getTotalScore() < Float
-							.parseFloat(ScoreConstant.CET_PASS_SCORE_LINE)) {
+					if (score.getTotalScore() < ScoreConstant.CET_PASS_SCORE_LINE) {
 						alarmScoreList.add(score);
 					}
 				}

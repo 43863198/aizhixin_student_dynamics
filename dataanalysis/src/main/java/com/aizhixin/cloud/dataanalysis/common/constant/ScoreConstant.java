@@ -3,10 +3,10 @@ package com.aizhixin.cloud.dataanalysis.common.constant;
 public class ScoreConstant {
 
 	//及格分数线
-	public final static float PASS_SCORE_LINE = 60f;
+	public final static float PASS_SCORE_LINE = 60;
 	
 	//英语四级及格分数线
-	public final static String CET_PASS_SCORE_LINE = "425";
+	public final static float CET_PASS_SCORE_LINE = 425;
 	
 	//课程类型：必修
 	public final static String REQUIRED_COURSE = "require";

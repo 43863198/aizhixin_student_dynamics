@@ -5,16 +5,14 @@ import com.aizhixin.cloud.dataanalysis.analysis.respository.CetScoreStatisticsRe
 import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 import com.mongodb.BasicDBObject;
-import io.swagger.annotations.ApiParam;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +25,7 @@ import java.util.Map;
  * @Date: 2017-12-13
  */
 @Component
+@Transactional
 public class CetStatisticsAnalysisJob {
     private Logger logger = Logger.getLogger(CetStatisticsAnalysisJob.class);
     @Autowired
@@ -34,12 +33,10 @@ public class CetStatisticsAnalysisJob {
     @Autowired
     private CetScoreStatisticsRespository cetScoreStatisticsRespository;
 
-
     public Map<String, Object> cetScoreStatistics(Long orgId, int teacherYear,int semester) {
         Map<String, Object> result = new HashMap<String, Object>();
         List<CetScoreStatistics> cetList = new ArrayList<>();
         try {
-            org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
             //英语四级参加人数统计
             Criteria cet4 = Criteria.where("orgId").is(orgId);
             cet4.and("schoolYear").is(teacherYear);
@@ -57,6 +54,8 @@ public class CetStatisticsAnalysisJob {
                 cet.setOrgId(orgId);
                 cet.setTeacherYear(teacherYear);
                 cet.setSemester(semester);
+                cet.setCetForePassNum(0);
+                cet.setCetSixPassNum(0);
                 cet.setCollegeId(collegeCet4.getMappedResults().get(i).getLong("_id"));
                 cet.setCollegeName(collegeCet4.getMappedResults().get(i).getString("collegeName"));
                 if(null!=collegeCet4.getMappedResults().get(i).getString("grade")) {
@@ -69,7 +68,7 @@ public class CetStatisticsAnalysisJob {
             Criteria cet4Pass = Criteria.where("orgId").is(orgId);
             cet4Pass.and("schoolYear").is(teacherYear);
             cet4Pass.and("semester").is(semester);
-            cet4Pass.and("examType").is(ScoreConstant.EXAM_TYPE_CET4);
+            cet4.and("examType").is(ScoreConstant.EXAM_TYPE_CET4);
             cet4Pass.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
             AggregationResults<BasicDBObject> collegeCet4Pass = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
@@ -124,8 +123,10 @@ public class CetStatisticsAnalysisJob {
             }
             cetScoreStatisticsRespository.save(cetList);
         } catch (Exception e) {
+            e.printStackTrace();
             result.put("success", false);
             result.put("message", "定时统计英语cet成绩失败！");
+            return result;
         }
         result.put("success", true);
         result.put("message", "定时统计英语cet成绩成功!");
