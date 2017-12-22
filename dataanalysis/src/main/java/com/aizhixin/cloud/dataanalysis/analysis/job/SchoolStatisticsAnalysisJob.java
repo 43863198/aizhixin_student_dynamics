@@ -157,7 +157,10 @@ public class SchoolStatisticsAnalysisJob {
 				StudentRegister.class, BasicDBObject.class);
 		for (int i = 0; i < isReport.getMappedResults().size(); i++) {
 			Long rid = isReport.getMappedResults().get(i).getLong("_id");
-			int total = isReport.getMappedResults().get(i).getInt("count");
+			int total = 0;
+			if(null!=isReport.getMappedResults().get(i).get("count")) {
+				 total = isReport.getMappedResults().get(i).getInt("count");
+			}
 			for (SchoolStatistics ss : schoolStatisticsList) {
 				if (ss.getCollegeId().equals(rid)) {
 					ss.setAlreadyReport(total);
