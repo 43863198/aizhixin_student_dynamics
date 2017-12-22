@@ -1206,14 +1206,11 @@ public class ScoreJob {
 			Calendar c = Calendar.getInstance();
 			// 当前年份
 			int nowYear = c.get(Calendar.YEAR);
-			int grade2 = nowYear - 1;
-			int grade3 = nowYear - 2;
-			int grade4 = nowYear - 3;
-		    Set grades = new HashSet();
-		    grades.add(grade2);
-		    grades.add(grade3);
-		    grades.add(grade4);
-			HashMap<Integer, Integer> gradeMap = new HashMap<Integer, Integer>();
+			String grade2 = String.valueOf(nowYear - 1);
+			String grade3 = String.valueOf(nowYear - 2);
+			String grade4 = String.valueOf(nowYear - 3);
+			String[] grades = new String[] { grade2, grade3, grade4 };
+			HashMap<String, Integer> gradeMap = new HashMap<String, Integer>();
 			gradeMap.put(grade2, 2);
 			gradeMap.put(grade3, 3);
 			gradeMap.put(grade4, 4);
@@ -1272,7 +1269,7 @@ public class ScoreJob {
 				// WarningType.TotalAchievement.toString());
 				// 按orgId查询成绩信息
 				List<Score> scoreList = scoreMongoRespository
-						.findAllBySchoolYearInAndOrgIdAndExamType(grades, orgId,
+						.findAllByGradeInAndOrgIdAndExamType(grades, orgId,
 								ScoreConstant.EXAM_TYPE_CET4);
 				HashMap<String, Score> userScoreMap = new HashMap<String, Score>();
 				// 去重后的英语四级不合格成绩集合
