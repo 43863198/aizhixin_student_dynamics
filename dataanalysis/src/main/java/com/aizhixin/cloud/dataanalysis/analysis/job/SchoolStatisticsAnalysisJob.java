@@ -110,6 +110,7 @@ public class SchoolStatisticsAnalysisJob {
 				),
 				StudentRegister.class, BasicDBObject.class);
 		for (int n = 0; n < count.getMappedResults().size(); n++) {
+			Long collegeId = count.getMappedResults().get(n).getLong("_id");
 			SchoolStatistics ss = new SchoolStatistics();
 			ss.setOrgId(orgId);
 			ss.setTeacherYear(Integer.valueOf(teacherYear));
@@ -117,15 +118,17 @@ public class SchoolStatisticsAnalysisJob {
 			ss.setAlreadyPay(0);
 			ss.setConvenienceChannel(0);
 			ss.setCollegeName(count.getMappedResults().get(n).getString("collegeName"));
-			ss.setCollegeId(count.getMappedResults().get(n).getLong("_id"));
+			ss.setCollegeId(collegeId);
 			ss.setNewStudentsCount(count.getMappedResults().get(n).getInt("count"));
 			for (SchoolStatisticsDTO dto : countList) {
 				if (null != dto) {
-					if (UserConstant.USER_TYPE_STU == dto.getUserType()) {
+					if(dto.getCollegeId().equals(collegeId)) {
+						if (UserConstant.USER_TYPE_STU == dto.getUserType()) {
 							ss.setStudentNumber(dto.getCountNum().intValue());
-					}
-					if (UserConstant.USER_TYPE_TEACHER == dto.getUserType()) {
-						ss.setTeacherNumber(dto.getCountNum().intValue());
+						}
+						if (UserConstant.USER_TYPE_TEACHER == dto.getUserType()) {
+							ss.setTeacherNumber(dto.getCountNum().intValue());
+						}
 					}
 				}
 			}
