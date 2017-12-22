@@ -1,16 +1,19 @@
 package com.aizhixin.cloud.dataanalysis.score.mongoRespository;
 
 import java.util.List;
+import java.util.Set;
+
 import org.springframework.data.mongodb.repository.MongoRepository;
+
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 
 
 
 public interface ScoreMongoRespository extends MongoRepository<Score, String>{
  
-	List<Score> findAllBySchoolYearInAndOrgIdAndExamType(int[] schoolYears,Long orgId,String examType);
+	List<Score> findAllBySchoolYearInAndOrgIdAndExamType(Set<Integer> schoolYears,Long orgId,String examType);
 	
-	List<Score> findAllByGradeInAndOrgIdAndExamType(String[] grades,Long orgId,String examType);
+//	List<Score> findAllByGradeInAndOrgIdAndExamType(String[] grades,Long orgId,String examType);
 	
 	List<Score> findAllBySchoolYearGreaterThanEqualAndOrgIdAndExamType(int beginYear,Long orgId,String examType);
 	
