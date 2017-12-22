@@ -116,6 +116,8 @@ public class SchoolStatisticsAnalysisJob {
 			ss.setTeacherYear(Integer.valueOf(teacherYear));
 			ss.setAlreadyReport(0);
 			ss.setAlreadyPay(0);
+			ss.setStudentNumber(0);
+			ss.setTeacherNumber(0);
 			ss.setConvenienceChannel(0);
 			ss.setCollegeName(count.getMappedResults().get(n).getString("collegeName"));
 			ss.setCollegeId(collegeId);
