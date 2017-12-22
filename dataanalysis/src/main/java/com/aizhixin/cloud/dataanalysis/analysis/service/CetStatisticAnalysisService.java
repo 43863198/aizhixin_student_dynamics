@@ -325,5 +325,8 @@ public class CetStatisticAnalysisService {
         return result;
     }
 
+    public void  deleteCetStatistics(Long orgId,Integer teacherYear,Integer semester){
+        cetScoreStatisticsRespository.deleteByOrgIdAndTeacherYearAndSemester(orgId, teacherYear, semester);
+    }
 
 }

@@ -62,7 +62,7 @@ public class SchoolStatisticsService {
     }
 
     public void deleteByOrgIdAndTeacherYear(Long orgId, Integer teacherYear){
-        schoolStatisticsRespository.deleteByOrgIdAndTeacherYear(orgId,teacherYear);
+        schoolStatisticsRespository.deleteByOrgIdAndTeacherYear(orgId, teacherYear);
     }
     
     /**
@@ -413,7 +413,7 @@ public class SchoolStatisticsService {
         }
         int teacherYear=Integer.valueOf(currentGradeMap.get("TEACHER_YEAR")+"");
         int semester= Integer.valueOf(currentGradeMap.get("SEMESTER")+"");
-        CetScoreStatisticsDTO cetScoreStatisticsDTO=cetScoreStatisticsRespository.getEctStatics(orgId,teacherYear,semester);
+        CetScoreStatisticsDTO cetScoreStatisticsDTO=cetScoreStatisticsRespository.getEctStatics(orgId, teacherYear, semester);
         HomeData<CetScoreStatisticsDTO> h=new HomeData();
         TeacherlYearData teacherlYearData=new TeacherlYearData();
         teacherlYearData.setSemester(semester);
@@ -574,4 +574,11 @@ public class SchoolStatisticsService {
         result.put("data", p);
         return result;
     }
+
+
+    public void  deleteSchollStatistics(Long orgId,Integer teacherYear){
+        schoolStatisticsRespository.deleteByOrgIdAndTeacherYear(orgId,teacherYear);
+    }
+
+
 }

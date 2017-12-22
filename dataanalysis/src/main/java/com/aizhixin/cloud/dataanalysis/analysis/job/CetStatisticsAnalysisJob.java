@@ -37,6 +37,7 @@ public class CetStatisticsAnalysisJob {
         Map<String, Object> result = new HashMap<String, Object>();
         List<CetScoreStatistics> cetList = new ArrayList<>();
         try {
+            cetScoreStatisticsRespository.deleteByOrgIdAndTeacherYearAndSemester(orgId, teacherYear,semester);
             //英语四级参加人数统计
             Criteria cet4 = Criteria.where("orgId").is(orgId);
             cet4.and("schoolYear").is(teacherYear);

@@ -101,6 +101,7 @@ public class SchoolStatisticsAnalysisJob {
 		List<SchoolStatistics> schoolStatisticsList = new ArrayList<SchoolStatistics>();
 		List<SchoolStatisticsDTO> countList = this.peopleNumCount(orgId.toString());
 		try{
+			schoolStatisticsService.deleteByOrgIdAndTeacherYear(orgId,teacherYear);
 		Criteria criteria = Criteria.where("orgId").is(orgId);
 		criteria.and("schoolYear").is(teacherYear);
 		AggregationResults<BasicDBObject> count = mongoTemplate.aggregate(
