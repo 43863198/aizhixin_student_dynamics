@@ -20,8 +20,8 @@ import java.util.List;
 public interface TeachingScoreDetailsRespository extends JpaRepository<TeachingScoreDetails,String> {
     //物理删除
     @Modifying
-    @Query("delete from #{#entityName} a where a.orgId = :orgId")
-    void deleteByOrgId(@Param(value = "orgId") Long orgId);
+    @Query("delete from #{#entityName} a where a.orgId = :orgId and a.teacherYear = :teacherYear and a.semester = :semester")
+    void deleteByOrgId(@Param(value = "orgId") Long orgId, @Param(value = "teacherYear") Integer teacherYear,@Param(value = "semester") Integer semester);
 
 
 }

@@ -1,5 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.analysis.controller;
 
+import com.aizhixin.cloud.dataanalysis.analysis.job.TeachingScoreAnalysisJob;
 import com.aizhixin.cloud.dataanalysis.analysis.service.CetStatisticAnalysisService;
 import com.aizhixin.cloud.dataanalysis.analysis.service.TeachingScoreService;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class TeachingScoreController {
     @Autowired
     private TeachingScoreService teachingScoreService;
+
 
     /**
      * 教学成绩———统计
@@ -77,21 +79,7 @@ public class TeachingScoreController {
 
 
 
-    /**
-     * 手动添加教学成绩详情
-     *
-     * @param orgId
-     * @return
-     */
-    @GetMapping(value = "/adddetail", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "手动添加教学成绩详情", response = Void.class, notes = "手动添加教学成绩详情<br><br><b>@author jianwei.wu</b>")
-    public Map<String,Object> addTeachingScoreDetail(
-            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "teacherYear 学年" , required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
-            @ApiParam(value = "semester 学期" , required = true) @RequestParam(value = "semester", required = true) Integer semester
-    ) {
-        return teachingScoreService.addTeachingScoreDetail(orgId,teacherYear,semester);
-    }
+
     /**
      * 手动修改教学成绩详情
      *
@@ -112,20 +100,6 @@ public class TeachingScoreController {
     ) {
         return teachingScoreService.modifyTeachingScoreDetail(id,teacherYear,semester,grade,averageGPA,referenceSubjects,failedSubjects,failingGradeCredits);
     }
-    /**
-     * 手动添加教学成绩统计
-     *
-     * @param orgId
-     * @return
-     */
-    @GetMapping(value = "/addstatistics", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "手动添加教学成绩统计", response = Void.class, notes = "手动添加教学成绩统计<br><br><b>@author jianwei.wu</b>")
-    public Map<String,Object> addTeachingScoreStatistics(
-            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
-        return teachingScoreService.addTeachingScoreStatistics(orgId);
-    }
-
-
 
 
 
