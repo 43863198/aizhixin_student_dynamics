@@ -202,6 +202,8 @@ public class TeachingScoreAnalysisJob {
                 tsd.setOrgId(orgId);
                 tsd.setTeacherYear(schoolYear);
                 tsd.setSemester(semester);
+                tsd.setFailedSubjects(0);
+                tsd.setFailingGradeCredits(0.0);
                 tsd.setReferenceSubjects(scheduleDetails.getMappedResults().get(i).getInt("count"));
                 tsd.setCollegeId(scheduleDetails.getMappedResults().get(i).getLong("collegeId"));
                 tsd.setCollegeName(scheduleDetails.getMappedResults().get(i).getString("collegeName"));
@@ -225,7 +227,7 @@ public class TeachingScoreAnalysisJob {
             AggregationResults<BasicDBObject> scheduleFail = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(criteriFail),
-                            Aggregation.group("userId").count().as("count")),
+                            Aggregation.group("userId").count().as("count").sum("credit").as("credit")),
                     Score.class, BasicDBObject.class);
 
             for (int x = 0;x<scheduleFail.getMappedResults().size();x++){
@@ -233,6 +235,7 @@ public class TeachingScoreAnalysisJob {
                 for(TeachingScoreDetails ts:  tsdList){
                     if(userId.equals(ts.getUserId())){
                         ts.setFailedSubjects(scheduleFail.getMappedResults().get(x).getInt("count"));
+                        ts.setFailedSubjects(Integer.parseInt(String.valueOf(scheduleFail.getMappedResults().get(x).getDouble("credit"))));
                         break;
                     }
                 }
