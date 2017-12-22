@@ -180,6 +180,8 @@ public class TeachingScoreService {
             if(null!=collegeId){
                 sql.append(" and COLLEGE_ID =:collegeId ");
                 condition.put("collegeId",collegeId);
+            }else {
+                sql.append(" and STATISTICS_TYPE = 1");
             }
             sql.append(" and DELETE_FLAG = 0 GROUP BY TEACHER_YEAR");
             Query sq = em.createNativeQuery(sql.toString());
