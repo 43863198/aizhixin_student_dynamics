@@ -575,7 +575,6 @@ public class SchoolStatisticsService {
         return result;
     }
 
-
     public void  deleteSchollStatistics(Long orgId,Integer teacherYear){
         schoolStatisticsRespository.deleteByOrgIdAndTeacherYear(orgId,teacherYear);
     }

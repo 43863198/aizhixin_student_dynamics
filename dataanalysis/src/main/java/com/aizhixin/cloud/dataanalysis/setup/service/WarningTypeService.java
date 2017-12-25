@@ -39,7 +39,7 @@ public class WarningTypeService {
         warningTypeRespository.save(warningTypeList);
     }
 
-    public List<WarningTypeDomain> getAllOrgId(){
+    public List<WarningTypeDomain>  getAllOrgId(){
     	return warningTypeRespository.getAllOrgId();
     }
     

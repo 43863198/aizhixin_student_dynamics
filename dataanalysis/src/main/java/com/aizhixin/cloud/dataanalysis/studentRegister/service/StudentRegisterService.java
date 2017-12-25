@@ -44,6 +44,9 @@ public class StudentRegisterService {
 	private StudentRegisterMongoRespository respository;
 	@Autowired
 	private ExcelBasedataHelper basedataHelper;
+	@Autowired
+	private MongoTemplate mongoTemplate;
+
 
 	public void importData(String studentInfoFile, String dataBaseFile, String importFile) {
 		LOG.debug("star.........getStudentInfos..14-16");
@@ -164,4 +167,42 @@ public class StudentRegisterService {
 		respository.save(stuRegisterList);
 		System.out.println(stuRegisterList.size());
 	}
+
+
+   /*********************************修改新生注册信息*******************************/
+	public Map<String, Object> modifyNewStudentDetails(Long orgId, Integer teacherYear) {
+		List<StudentRegister> items = null;
+		Map<String, Object> result = new HashMap<>();
+		try {
+			//创建查询条件对象
+			org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
+			//条件
+			Criteria criteria = Criteria.where("orgId").is(orgId);
+			if(null!=teacherYear){
+				criteria.and("schoolYear").is(teacherYear);
+			}
+			query.addCriteria(criteria);
+			//mongoTemplate.count计算总数
+			long total = mongoTemplate.count(query, StudentRegister.class);
+			// mongoTemplate.find 查询结果集
+			items = mongoTemplate.find(query, StudentRegister.class);
+			if(null!=items){
+				for(StudentRegister sr: items){
+					if(null!=sr.getActualRegisterDate()){
+						sr.setIsRegister(1);
+					}
+				}
+			}
+			respository.save(items);
+		}catch (Exception e){
+			e.printStackTrace();
+			result.put("success", false);
+			result.put("message","修改新生数据异常！");
+			return result;
+		}
+		result.put("success", true);
+		result.put("message", "修改新生数据成功！");
+		return result;
+	}
+
 }
