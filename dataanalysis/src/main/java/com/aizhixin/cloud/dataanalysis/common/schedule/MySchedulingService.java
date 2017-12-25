@@ -1,5 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.common.schedule;
 
+import com.aizhixin.cloud.dataanalysis.analysis.job.CetStatisticsAnalysisJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,8 @@ public class MySchedulingService {
     private RollCallDayJob rollCallDayJob;
     @Autowired
     private TeachingScheduleJob teachingScheduleJob;
+    @Autowired
+    private CetStatisticsAnalysisJob cetStatisticsAnalysisJob;
 
 
 //    @Scheduled(cron = "0 0/1 * * * ?")
@@ -189,4 +192,24 @@ public class MySchedulingService {
             LOG.info("启动实时监控排课统计，获取锁失败");
         }
     }
+
+//    /**
+//     * 英语四六级定时统计资源锁
+//     */
+//    @Scheduled(cron = "0 0 23 * * ?")
+//    public void cetScheduleJob() {
+//        if (distributeLock.getCetScheduleLock()) {
+//            LOG.info("开始英语四六级统计定时任务");
+//            cetStatisticsAnalysisJob.cetScoreStatistics();;
+//        } else {
+//            LOG.info("启动英语四六级统计，获取锁失败");
+//        }
+//    }
+
+
+
+
+
+
+
 }

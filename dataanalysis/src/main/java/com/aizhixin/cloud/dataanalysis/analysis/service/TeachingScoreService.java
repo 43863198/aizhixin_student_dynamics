@@ -180,7 +180,7 @@ public class TeachingScoreService {
                     trend = " AVG(" + TeachingScoreTrendType.getType(type) + ")";
                 }
             }
-            StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR," + trend + " FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
+            StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR," + trend + ",SEMESTER  FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
             if (null != orgId) {
                 sql.append(" and ORG_ID =:orgId ");
                 condition.put("orgId", orgId);
@@ -191,7 +191,7 @@ public class TeachingScoreService {
             }else {
                 sql.append(" and STATISTICS_TYPE = 1");
             }
-            sql.append(" and DELETE_FLAG = 0 GROUP BY TEACHER_YEAR");
+            sql.append(" and DELETE_FLAG = 0 GROUP BY TEACHER_YEAR,SEMESTER");
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
@@ -207,6 +207,10 @@ public class TeachingScoreService {
                     if (null != d[1]) {
                         trendDTO.setValue(String.valueOf(d[1]));
                     }
+                    if (null != d[2]) {
+                        trendDTO.setSemester(String.valueOf(d[2]));
+                    }
+
                     trendDTOList.add(trendDTO);
                 }
             }
