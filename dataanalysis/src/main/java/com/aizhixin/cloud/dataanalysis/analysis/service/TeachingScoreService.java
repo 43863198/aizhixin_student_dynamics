@@ -318,7 +318,7 @@ public class TeachingScoreService {
                         teachingScoreDetails.setReferenceSubjects(Integer.valueOf(String.valueOf(d[6])));
                     }
                     if (null != d[7]) {
-                        teachingScoreDetails.setFailedSubjects(Integer.valueOf(String.valueOf(d[6])));
+                        teachingScoreDetails.setFailedSubjects(Integer.valueOf(String.valueOf(d[7])));
                     }
                     if (null != d[8]) {
                         teachingScoreDetails.setFailingGradeCredits(Double.valueOf(String.valueOf(d[8])));

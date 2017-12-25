@@ -9,6 +9,7 @@ import com.aizhixin.cloud.dataanalysis.analysis.entity.TeachingScoreDetails;
 import com.aizhixin.cloud.dataanalysis.analysis.job.CetStatisticsAnalysisJob;
 import com.aizhixin.cloud.dataanalysis.analysis.job.TeachingScoreAnalysisJob;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
+import com.aizhixin.cloud.dataanalysis.studentRegister.service.StudentRegisterService;
 import com.mongodb.BasicDBObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +63,8 @@ public class TestAnalysisDataController {
 	private CetStatisticsAnalysisJob cetStatisticsAnalysisJob;
 	@Autowired
 	private MongoTemplate mongoTemplate;
+	@Autowired
+	private StudentRegisterService studentRegisterService;
 
 	@GetMapping(value = "/addschoolstatistics", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "生成学情分析学校人数统计", response = Void.class, notes = "生成学情分析学校人数统计<br><br><b>@author  jianwei.wu</b>")
@@ -98,6 +101,15 @@ public class TestAnalysisDataController {
 			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
 	) {
 		return cetStatisticsAnalysisJob.cetScoreStatistics(orgId, teacherYear, semester);
+	}
+
+	@GetMapping(value = "/modifynewstudentinfo", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "GET", value = "手动修改新生报到注册状态", response = Void.class, notes = "手动修改新生报到注册状态<br><br><b>@author jianwei.wu</b>")
+	public Map<String, Object> modifyNewStudentInfo(
+			@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear
+	) {
+		return studentRegisterService.modifyNewStudentDetails(orgId, teacherYear);
 	}
 
 
