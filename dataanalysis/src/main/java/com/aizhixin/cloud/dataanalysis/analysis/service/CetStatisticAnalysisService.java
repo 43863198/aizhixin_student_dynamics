@@ -176,7 +176,7 @@ public class CetStatisticAnalysisService {
         List<TrendDTO> trendDTOList = new ArrayList<>();
         Map<String, Object> condition = new HashMap<>();
         try {
-            StringBuilder sql = new StringBuilder("SELECT SUM(cet.CET_FORE_JOIN_NUM) as sumc4, SUM(cet.CET_FORE_PASS_NUM) as sump4, SUM(cet.CET_SIX_JOIN_NUM) as sumc6, SUM(cet.CET_SIX_PASS_NUM) as sump6, cet.TEACHER_YEAR FROM T_CET_STATISTICS cet WHERE 1 = 1");
+            StringBuilder sql = new StringBuilder("SELECT SUM(cet.CET_FORE_JOIN_NUM) as sumc4, SUM(cet.CET_FORE_PASS_NUM) as sump4, SUM(cet.CET_SIX_JOIN_NUM) as sumc6, SUM(cet.CET_SIX_PASS_NUM) as sump6, cet.TEACHER_YEAR, cet.SEMESTER FROM T_CET_STATISTICS cet WHERE 1 = 1");
             if (null != orgId) {
                 sql.append(" and cet.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
@@ -186,7 +186,7 @@ public class CetStatisticAnalysisService {
                 condition.put("collegeId", collegeId);
             }
             sql.append(" and cet.DELETE_FLAG = 0");
-            sql.append(" group by cet.TEACHER_YEAR");
+            sql.append(" group by cet.TEACHER_YEAR,cet.SEMESTER");
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
@@ -211,6 +211,10 @@ public class CetStatisticAnalysisService {
                             if (null != d[4]) {
                                 trendDTO.setYear(String.valueOf(d[4]));
                             }
+                            if (null != d[5]) {
+                                trendDTO.setSemester(String.valueOf(d[5]));
+                            }
+
                             trendDTO.setValue(ProportionUtil.accuracy(pass4 * 1.0, count4 * 1.0, 2));
                             trendDTOList.add(trendDTO);
                         }

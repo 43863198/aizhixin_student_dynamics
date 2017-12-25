@@ -12,8 +12,10 @@ import lombok.Data;
 @ApiModel(description="趋势")
 @Data
 public class TrendDTO {
-    @ApiModelProperty(value = "年", required = false)
+    @ApiModelProperty(value = "学年", required = false)
     private String year;
+    @ApiModelProperty(value = "学期", required = false)
+    private String semester;
     @ApiModelProperty(value = "值", required = false)
     private String value;
 }

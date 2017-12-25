@@ -50,9 +50,6 @@ public class SchoolYearTermController {
     @ApiOperation(httpMethod = "GET", value = "课程评价", response = Void.class, notes = "根据类型获取学年学期")
     public List<TeacherlYearData> getSchoolYearTerm(@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = true) Long orgId,
                                                     @ApiParam(value = "type:英语四六级:1,迎新学情:2 ,教学成绩:3,教师评价:4,课程评价:5,课程评价:6") @RequestParam(value = "type", required = true) Integer type){
-
-
-
        return schoolYearTermService.getSchoolYearTerm(orgId,type);
 
     }
