@@ -6,9 +6,12 @@ package com.aizhixin.cloud.dataanalysis.analysis.constant;
  * @Date: 2017-12-25
  */
 public enum DataType {
-    cet("英语四六级",1),
-    StudentRegister("学生注册",2),
-    TeachingScore("教学成绩",3);
+    t_cet_statistics("英语四六级",1),
+    t_school_statistics("迎新学情",2),
+    t_teaching_score_statistics("教学成绩",3),
+    t_teacher_evaluate("教师评价",4),
+    t_course_evaluate("课程评价",5),
+    t_practice_statistics("课程评价",6);
 
     // 成员变量
     private String name;

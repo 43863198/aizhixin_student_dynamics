@@ -782,11 +782,11 @@ public class TestAnalysisDataController {
 			practiceStatistics1.setTaskNum(545L-(s*4));
 			practiceStatistics1.setTaskPassNum(530L-(s*4));
 			practiceStatistics1.setSemester(j);
-			if(practiceStatistics1.getTeacherYear() == 2017 && practiceStatistics1.getSemester() == 2){
-				continue;
-			}else{
+//			if(practiceStatistics1.getTeacherYear() == 2017 && practiceStatistics1.getSemester() == 2){
+//				continue;
+//			}else{
 				practiceStatisticsList.add(practiceStatistics1);
-			}
+//			}
 
 			random = new Random();
 			s = random.nextInt(max) % (max - min + 1) + min;
