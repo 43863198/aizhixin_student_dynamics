@@ -42,31 +42,19 @@ public class TeachingScoreAnalysisJob {
     private TeachingScoreService teachingScoreService;
 
     public void schoolStatisticsJob() {
-
-        Calendar c = Calendar.getInstance();
-        // 当前年份
-        int schoolYear = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int semester = 1;
-        if(month>7){
-            semester = 2;
-        }
-        List<WarningTypeDomain> orgIdList = warningTypeService.getAllOrgId();
-        if (null != orgIdList && orgIdList.size() > 0) {
-            for (WarningTypeDomain domain : orgIdList) {
-                if (domain.getSetupCloseFlag()==10) {
-                    this.teachingScoreStatistics(domain.getOrgId(),schoolYear,semester);
-                    this.teachingScoreDetails(domain.getOrgId(),schoolYear,semester);
-                }
-            }
-        }
+        Date statisticsDate = new Date();
+//
+//
+//         this.teachingScoreStatistics(domain.getOrgId(), schoolYear, semester);
+//        this.teachingScoreDetails(domain.getOrgId(), schoolYear, semester);
     }
+
     @Transactional
-    public Map<String, Object> teachingScoreStatistics(Long orgId, Integer schoolYear,Integer semester) {
+    public Map<String, Object> teachingScoreStatistics(Long orgId, Integer schoolYear, Integer semester) {
         Map<String, Object> result = new HashMap<>();
-        List<TeachingScoreStatistics> tssList  = new ArrayList<>();
+        List<TeachingScoreStatistics> tssList = new ArrayList<>();
         try {
-            teachingScoreService.deleteScoreStatistics(orgId,schoolYear,semester);
+            teachingScoreService.deleteScoreStatistics(orgId, schoolYear, semester);
             TeachingScoreStatistics tss = new TeachingScoreStatistics();
             tss.setOrgId(orgId);
             tss.setTeacherYear(schoolYear);
@@ -92,11 +80,11 @@ public class TeachingScoreAnalysisJob {
                             Aggregation.match(criterias),
                             Aggregation.group("orgId").avg("gradePoint").as("GPAavg").avg("totalScore").as("courseAVG")),
                     Score.class, BasicDBObject.class);
-            if(null!=avg.getMappedResults().get(0)) {
-                if(null!=avg.getMappedResults().get(0).get("GPAavg")){
+            if (null != avg.getMappedResults().get(0)) {
+                if (null != avg.getMappedResults().get(0).get("GPAavg")) {
                     tss.setAvgGPA(avg.getMappedResults().get(0).getDouble("GPAavg"));
                 }
-                if(null!=avg.getMappedResults().get(0).get("courseAVG")) {
+                if (null != avg.getMappedResults().get(0).get("courseAVG")) {
                     tss.setAvgScore(avg.getMappedResults().get(0).getDouble("courseAVG"));
                 }
             }
@@ -125,7 +113,7 @@ public class TeachingScoreAnalysisJob {
                             Aggregation.group("collegeId").first("collegeName").as("collegeName").avg("gradePoint").as("GPAavg").avg("totalScore").as("courseAVG")
                     ),
                     Score.class, BasicDBObject.class);
-            for (int i=0;i<countts.getMappedResults().size();i++){
+            for (int i = 0; i < countts.getMappedResults().size(); i++) {
                 Long collegeId = countts.getMappedResults().get(i).getLong("_id");
                 Criteria ccriteriaSub = Criteria.where("orgId").is(orgId);
                 ccriteriaSub.and("schoolYear").is(schoolYear);
@@ -151,10 +139,10 @@ public class TeachingScoreAnalysisJob {
                 ctss.setCurriculumNum(schedule.getMappedResults().size());
                 ctss.setCollegeName(countts.getMappedResults().get(i).getString("collegeName"));
                 ctss.setStudentNum(user.getMappedResults().size());
-                if(null!=countts.getMappedResults().get(i).get("GPAavg")) {
+                if (null != countts.getMappedResults().get(i).get("GPAavg")) {
                     ctss.setAvgGPA(new BigDecimal(countts.getMappedResults().get(i).getDouble("GPAavg")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                 }
-                if(null!=countts.getMappedResults().get(i).get("courseAVG")) {
+                if (null != countts.getMappedResults().get(i).get("courseAVG")) {
                     ctss.setAvgScore(new BigDecimal(countts.getMappedResults().get(i).getDouble("courseAVG")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                 }
                 tssList.add(ctss);
@@ -166,7 +154,7 @@ public class TeachingScoreAnalysisJob {
             criteriFail.and("semester").is(semester);
             criteriFail.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
             criteriFail.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
-            for(TeachingScoreStatistics fts:  tssList){
+            for (TeachingScoreStatistics fts : tssList) {
                 Criteria criteriFailSub = Criteria.where("orgId").is(orgId);
                 criteriFailSub.and("schoolYear").is(schoolYear);
                 criteriFailSub.and("semester").is(semester);
@@ -191,12 +179,13 @@ public class TeachingScoreAnalysisJob {
         result.put("message", "定时统计教学成绩成功");
         return result;
     }
+
     @Transactional
-    public Map<String, Object> teachingScoreDetails(Long orgId,Integer schoolYear,Integer semester) {
+    public Map<String, Object> teachingScoreDetails(Long orgId, Integer schoolYear, Integer semester) {
         Map<String, Object> result = new HashMap<>();
         List<TeachingScoreDetails> tsdList = new ArrayList<>();
         try {
-            teachingScoreService.deleteScoreDeatail(orgId,schoolYear,semester);
+            teachingScoreService.deleteScoreDeatail(orgId, schoolYear, semester);
             //参考人数统计
             Criteria criteria = Criteria.where("orgId").is(orgId);
             criteria.and("schoolYear").is(schoolYear);
@@ -210,7 +199,7 @@ public class TeachingScoreAnalysisJob {
                                     .first("grade").as("grade").first("collegeId").as("collegeId").first("collegeName").as("collegeName")
                     ),
                     Score.class, BasicDBObject.class);
-            for (int i =0;i<scheduleDetails.getMappedResults().size();i++){
+            for (int i = 0; i < scheduleDetails.getMappedResults().size(); i++) {
                 Long userId = scheduleDetails.getMappedResults().get(i).getLong("_id");
                 TeachingScoreDetails tsd = new TeachingScoreDetails();
                 tsd.setOrgId(orgId);
@@ -218,8 +207,8 @@ public class TeachingScoreAnalysisJob {
                 tsd.setSemester(semester);
                 tsd.setFailedSubjects(0);
                 tsd.setFailingGradeCredits(0.0);
-                if(null!=scheduleDetails.getMappedResults().get(i)) {
-                    if(null!=scheduleDetails.getMappedResults().get(i).get("count")) {
+                if (null != scheduleDetails.getMappedResults().get(i)) {
+                    if (null != scheduleDetails.getMappedResults().get(i).get("count")) {
                         tsd.setReferenceSubjects(scheduleDetails.getMappedResults().get(i).getInt("count"));
                     }
                     tsd.setCollegeId(scheduleDetails.getMappedResults().get(i).getLong("collegeId"));
@@ -230,15 +219,15 @@ public class TeachingScoreAnalysisJob {
                     tsd.setClassName(scheduleDetails.getMappedResults().get(i).getString("className"));
                     if (null != scheduleDetails.getMappedResults().get(i).get("grade")) {
                         tsd.setGrade(Integer.valueOf(scheduleDetails.getMappedResults().get(i).getString("grade")));
-                    }else{
-                        if(!StringUtils.isBlank(tsd.getClassName())){
+                    } else {
+                        if (!StringUtils.isBlank(tsd.getClassName())) {
                             if (tsd.getClassName().indexOf("-") != -1) {
                                 int flag = tsd.getClassName().indexOf("-");
-                                tsd.setGrade(Integer.valueOf(tsd.getClassName().substring(flag-4,flag)));
+                                tsd.setGrade(Integer.valueOf(tsd.getClassName().substring(flag - 4, flag)));
                             }
                         }
                     }
-                    if(null!=scheduleDetails.getMappedResults().get(i).get("GPAavg")) {
+                    if (null != scheduleDetails.getMappedResults().get(i).get("GPAavg")) {
                         tsd.setAvgGPA(scheduleDetails.getMappedResults().get(i).getDouble("GPAavg"));
                     }
                 }
@@ -257,14 +246,14 @@ public class TeachingScoreAnalysisJob {
                             Aggregation.group("userId").count().as("count").sum("credit").as("credit")),
                     Score.class, BasicDBObject.class);
 
-            for (int x = 0;x<scheduleFail.getMappedResults().size();x++){
+            for (int x = 0; x < scheduleFail.getMappedResults().size(); x++) {
                 Long userId = scheduleFail.getMappedResults().get(x).getLong("_id");
-                for(TeachingScoreDetails ts:  tsdList){
-                    if(userId.equals(ts.getUserId())){
-                        if(null!=scheduleFail.getMappedResults().get(x).get("count")) {
+                for (TeachingScoreDetails ts : tsdList) {
+                    if (userId.equals(ts.getUserId())) {
+                        if (null != scheduleFail.getMappedResults().get(x).get("count")) {
                             ts.setFailedSubjects(scheduleFail.getMappedResults().get(x).getInt("count"));
                         }
-                            if(null!=scheduleFail.getMappedResults().get(x).get("credit")) {
+                        if (null != scheduleFail.getMappedResults().get(x).get("credit")) {
                             ts.setFailingGradeCredits(scheduleFail.getMappedResults().get(x).getDouble("credit"));
                         }
                         break;
