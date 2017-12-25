@@ -11,7 +11,7 @@ public enum DataType {
     t_teaching_score_statistics("教学成绩",3),
     t_teacher_evaluate("教师评价",4),
     t_course_evaluate("课程评价",5),
-    t_practice_statistics("课程评价",6);
+    t_practice_statistics("实践评价",6);
 
     // 成员变量
     private String name;
