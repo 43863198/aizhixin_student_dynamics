@@ -177,7 +177,7 @@ public class PracticeStatisticsService {
         List res =null;
         Date time = new Date();
         try {
-            StringBuilder sql = new StringBuilder("SELECT sum(ss.TASK_NUM) as taskNum, sum(ss.TASK_PASS_NUM) as taskPassNum,max(ss.TEACHER_YEAR) as teacherYear FROM T_PRACTICE_STATISTICS ss WHERE 1 = 1");
+            StringBuilder sql = new StringBuilder("SELECT sum(ss.TASK_NUM) as taskNum, sum(ss.TASK_PASS_NUM) as taskPassNum,ss.TEACHER_YEAR as teacherYear,SEMESTER FROM T_PRACTICE_STATISTICS ss WHERE 1 = 1");
             if (null != orgId) {
                 sql.append(" and ss.ORG_ID ="+orgId);
 
@@ -186,7 +186,7 @@ public class PracticeStatisticsService {
                 sql.append(" and ss.COLLEGE_ID = "+collegeId);
             }else {
             }
-            sql.append(" group by ss.TEACHER_YEAR");
+            sql.append(" group by ss.TEACHER_YEAR ss.SEMESTER");
             res = jdbcTemplate.queryForList(sql.toString());
 
         } catch (Exception e) {
