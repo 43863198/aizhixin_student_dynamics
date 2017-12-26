@@ -20,6 +20,8 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +49,12 @@ public class TeachingScoreAnalysisJob {
     private SchoolYearTermService schoolYearTermService;
 
     public Map<String, Object> teachingScoreStatistics() {
+        teachingScoreStatisticsAsync();
+        return null;
+    }
+
+    @Async
+    public void teachingScoreStatisticsAsync() {
         Map<String, Object> result = new HashMap<>();
         Set<SchoolYearTerm> sytList = new HashSet<>();
         try {
@@ -78,17 +86,13 @@ public class TeachingScoreAnalysisJob {
             schoolYearTermService.saveSchoolYearTerm(sytList);
         } catch (Exception e) {
             e.printStackTrace();
-            result.put("success", false);
-            result.put("message", "定时统计教学成绩失败！");
-            return result;
+            logger.info("定时统计教学成绩失败！");
         }
-        result.put("success", true);
-        result.put("message", "定时统计教学成绩成功");
-        return result;
+        logger.info("定时统计教学成绩成功！");
     }
 
     @Transactional
-    public Map<String, Object> teachingScoreStatistics(Long orgId, Integer schoolYear, Integer semester) {
+    public void teachingScoreStatistics(Long orgId, Integer schoolYear, Integer semester) {
         Map<String, Object> result = new HashMap<>();
         List<TeachingScoreStatistics> tssList = new ArrayList<>();
         try {
@@ -210,17 +214,13 @@ public class TeachingScoreAnalysisJob {
             teachingScoreService.saveStatisticsList(tssList);
         } catch (Exception e) {
             e.printStackTrace();
-            result.put("success", false);
-            result.put("message", "定时统计教学成绩失败！");
-            return result;
+            logger.info("定时统计教学成绩失败！");
         }
-        result.put("success", true);
-        result.put("message", "定时统计教学成绩成功");
-        return result;
+        logger.info("定时统计教学成绩成功");
     }
 
     @Transactional
-    public Map<String, Object> teachingScoreDetails(Long orgId, Integer schoolYear, Integer semester) {
+    public void teachingScoreDetails(Long orgId, Integer schoolYear, Integer semester) {
         Map<String, Object> result = new HashMap<>();
         List<TeachingScoreDetails> tsdList = new ArrayList<>();
         try {
@@ -320,13 +320,9 @@ public class TeachingScoreAnalysisJob {
 
         } catch (Exception e) {
             e.printStackTrace();
-            result.put("success", false);
-            result.put("message", "定时统计学生成绩失败！");
-            return result;
+            logger.info("定时统计学生成绩失败！");
         }
-        result.put("success", true);
-        result.put("message", "定时统计学生成绩成功！");
-        return result;
+        logger.info("定时统计学生成绩成功！");
     }
 
 }
