@@ -232,6 +232,9 @@ public class CetStatisticAnalysisService {
                             if (null != d[4]) {
                                 trendDTO.setYear(String.valueOf(d[4]));
                             }
+                            if (null != d[5]) {
+                               trendDTO.setSemester(String.valueOf(d[5]));
+                            }
                             trendDTO.setValue(ProportionUtil.accuracy(pass6 * 1.0, count6 * 1.0, 2));
                             trendDTOList.add(trendDTO);
                         }
