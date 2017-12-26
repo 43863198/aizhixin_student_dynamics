@@ -8,9 +8,6 @@ import com.aizhixin.cloud.dataanalysis.analysis.service.SchoolYearTermService;
 import com.aizhixin.cloud.dataanalysis.analysis.service.TeachingScoreService;
 import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
-import com.aizhixin.cloud.dataanalysis.score.mongoRespository.ScoreMongoRespository;
-import com.aizhixin.cloud.dataanalysis.setup.domain.WarningTypeDomain;
-import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
 import com.mongodb.BasicDBObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -19,9 +16,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,10 +35,6 @@ public class TeachingScoreAnalysisJob {
     @Autowired
     private MongoTemplate mongoTemplate;
     @Autowired
-    private WarningTypeService warningTypeService;
-    @Autowired
-    private ScoreMongoRespository scoreMongoRespository;
-    @Autowired
     private TeachingScoreService teachingScoreService;
     @Autowired
     private SchoolYearTermService schoolYearTermService;
@@ -55,7 +46,6 @@ public class TeachingScoreAnalysisJob {
 
     @Async
     public void teachingScoreStatisticsAsync() {
-        Map<String, Object> result = new HashMap<>();
         Set<SchoolYearTerm> sytList = new HashSet<>();
         try {
             Criteria ytc = Criteria.where("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
@@ -93,7 +83,6 @@ public class TeachingScoreAnalysisJob {
 
     @Transactional
     public void teachingScoreStatistics(Long orgId, Integer schoolYear, Integer semester) {
-        Map<String, Object> result = new HashMap<>();
         List<TeachingScoreStatistics> tssList = new ArrayList<>();
         try {
             teachingScoreService.deleteScoreStatistics(orgId, schoolYear, semester);
@@ -221,7 +210,6 @@ public class TeachingScoreAnalysisJob {
 
     @Transactional
     public void teachingScoreDetails(Long orgId, Integer schoolYear, Integer semester) {
-        Map<String, Object> result = new HashMap<>();
         List<TeachingScoreDetails> tsdList = new ArrayList<>();
         try {
             teachingScoreService.deleteScoreDeatail(orgId, schoolYear, semester);

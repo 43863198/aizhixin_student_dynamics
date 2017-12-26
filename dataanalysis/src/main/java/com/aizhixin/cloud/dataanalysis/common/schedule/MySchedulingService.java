@@ -35,8 +35,6 @@ public class MySchedulingService {
     private RollCallDayJob rollCallDayJob;
     @Autowired
     private TeachingScheduleJob teachingScheduleJob;
-    @Autowired
-    private CetStatisticsAnalysisJob cetStatisticsAnalysisJob;
 
 
 //    @Scheduled(cron = "0 0/1 * * * ?")

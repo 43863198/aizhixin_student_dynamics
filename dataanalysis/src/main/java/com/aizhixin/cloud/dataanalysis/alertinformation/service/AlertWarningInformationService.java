@@ -1,10 +1,7 @@
 package com.aizhixin.cloud.dataanalysis.alertinformation.service;
 
-import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -20,7 +17,6 @@ import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmRule;
-import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmRuleService;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
 import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
@@ -48,19 +44,14 @@ import javax.persistence.Query;
 @Component
 @Transactional
 public class AlertWarningInformationService {
-
 	@Autowired
 	private EntityManager em;
 	@Autowired
 	private AlertWarningInformationRepository alertWarningInformationRepository;
 	@Autowired
-	private AlarmSettingsService alarmSettingsService;
-	@Autowired
 	private AlarmRuleService alarmRuleService;
 	@Autowired
 	private PageJdbcUtil pageJdbcUtil;
-	@Autowired
-	private AuthUtilService authUtilService;
 	@Autowired
 	private  OperaionRecordService operaionRecordService;
 	@Autowired
