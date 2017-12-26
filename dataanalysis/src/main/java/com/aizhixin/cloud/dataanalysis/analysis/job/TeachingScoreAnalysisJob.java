@@ -191,7 +191,8 @@ public class TeachingScoreAnalysisJob {
             criteriFail.and("schoolYear").is(schoolYear);
             criteriFail.and("semester").is(semester);
             criteriFail.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
-            criteriFail.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
+//            criteriFail.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
+            criteriFail.and("gradePoint").is(0);
             for (TeachingScoreStatistics fts : tssList) {
                 Criteria criteriFailSub = Criteria.where("orgId").is(orgId);
                 criteriFailSub.and("schoolYear").is(schoolYear);
@@ -245,9 +246,18 @@ public class TeachingScoreAnalysisJob {
                 tsd.setSemester(semester);
                 tsd.setFailedSubjects(0);
                 tsd.setFailingGradeCredits(0.0);
-                if (null != scheduleDetails.getMappedResults().get(i)) {
-                    if (null != scheduleDetails.getMappedResults().get(i).get("count")) {
-                        tsd.setReferenceSubjects(scheduleDetails.getMappedResults().get(i).getInt("count"));
+                Criteria criteriaSub = Criteria.where("orgId").is(orgId);
+                criteriaSub.and("schoolYear").is(schoolYear);
+                criteriaSub.and("semester").is(semester);
+                criteriaSub.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
+                criteriaSub.and("userId").is(userId);
+                AggregationResults<BasicDBObject> scheduleCount = mongoTemplate.aggregate(
+                        Aggregation.newAggregation(Aggregation.match(criteriaSub), Aggregation.group("scheduleId").count().as("count")),
+                        Score.class, BasicDBObject.class);
+
+                if (null != scheduleCount.getMappedResults().get(i)) {
+                    if (null != scheduleCount) {
+                        tsd.setReferenceSubjects(scheduleCount.getMappedResults().size());
                     }
                     tsd.setCollegeId(scheduleDetails.getMappedResults().get(i).getLong("collegeId"));
                     tsd.setCollegeName(scheduleDetails.getMappedResults().get(i).getString("collegeName"));
@@ -277,7 +287,8 @@ public class TeachingScoreAnalysisJob {
             criteriFail.and("schoolYear").is(schoolYear);
             criteriFail.and("semester").is(semester);
             criteriFail.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
-            criteriFail.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
+//            criteriFail.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
+            criteriFail.and("gradePoint").is(0);
             AggregationResults<BasicDBObject> scheduleFail = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(criteriFail),
@@ -286,10 +297,18 @@ public class TeachingScoreAnalysisJob {
 
             for (int x = 0; x < scheduleFail.getMappedResults().size(); x++) {
                 Long userId = scheduleFail.getMappedResults().get(x).getLong("_id");
+                Criteria criteriaFailSub = Criteria.where("orgId").is(orgId);
+                criteriaFailSub.and("schoolYear").is(schoolYear);
+                criteriaFailSub.and("semester").is(semester);
+                criteriaFailSub.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
+                criteriaFailSub.and("userId").is(userId);
+                AggregationResults<BasicDBObject> scheduleFailCount = mongoTemplate.aggregate(
+                        Aggregation.newAggregation(Aggregation.match(criteriaFailSub), Aggregation.group("scheduleId")),
+                        Score.class, BasicDBObject.class);
                 for (TeachingScoreDetails ts : tsdList) {
                     if (userId.equals(ts.getUserId())) {
-                        if (null != scheduleFail.getMappedResults().get(x).get("count")) {
-                            ts.setFailedSubjects(scheduleFail.getMappedResults().get(x).getInt("count"));
+                        if (null != scheduleFailCount) {
+                            ts.setFailedSubjects(scheduleFailCount.getMappedResults().size());
                         }
                         if (null != scheduleFail.getMappedResults().get(x).get("credit")) {
                             ts.setFailingGradeCredits(scheduleFail.getMappedResults().get(x).getDouble("credit"));
