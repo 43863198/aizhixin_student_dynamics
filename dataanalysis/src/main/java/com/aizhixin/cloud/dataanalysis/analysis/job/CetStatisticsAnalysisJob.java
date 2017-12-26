@@ -1,7 +1,10 @@
 package com.aizhixin.cloud.dataanalysis.analysis.job;
 
+import com.aizhixin.cloud.dataanalysis.analysis.constant.DataType;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.CetScoreStatistics;
+import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolYearTerm;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.CetScoreStatisticsRespository;
+import com.aizhixin.cloud.dataanalysis.analysis.service.SchoolYearTermService;
 import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 import com.mongodb.BasicDBObject;
@@ -14,10 +17,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author: Created by jianwei.wu
@@ -32,6 +32,52 @@ public class CetStatisticsAnalysisJob {
     private MongoTemplate mongoTemplate;
     @Autowired
     private CetScoreStatisticsRespository cetScoreStatisticsRespository;
+    @Autowired
+    private SchoolYearTermService schoolYearTermService;
+
+    @Transactional
+    public Map<String, Object>  cetScoreStatistics() {
+        Map<String, Object> result = new HashMap<String, Object>();
+        Set<SchoolYearTerm> sytList = new HashSet<>();
+        try {
+        Criteria c4 = Criteria.where("examType").is(ScoreConstant.EXAM_TYPE_CET4);
+        Criteria c6 = Criteria.where("examType").is(ScoreConstant.EXAM_TYPE_CET6);
+        Criteria ct = new Criteria();
+        ct.orOperator(c4, c6);
+        AggregationResults<BasicDBObject> ytGroup = mongoTemplate.aggregate(
+                Aggregation.newAggregation(
+                        Aggregation.match(ct),
+                        Aggregation.group("orgId", "schoolYear", "semester").first("orgId").as("orgId").first("schoolYear").as("schoolYear")
+                                .first("semester").as("semester")
+                ), Score.class, BasicDBObject.class);
+
+        if (null != ytGroup) {
+            for (int x = 0; x < ytGroup.getMappedResults().size(); x++) {
+                SchoolYearTerm syt = new SchoolYearTerm();
+                syt.setOrgId(ytGroup.getMappedResults().get(x).getLong("orgId"));
+                syt.setTeacherYear(ytGroup.getMappedResults().get(x).getInt("schoolYear"));
+                syt.setSemester(ytGroup.getMappedResults().get(x).getInt("semester"));
+                sytList.add(syt);
+            }
+        }
+        if(sytList.size()>1){
+            for(SchoolYearTerm yt: sytList){
+                this.cetScoreStatistics(yt.getOrgId(),yt.getTeacherYear(),yt.getSemester());
+                yt.setDataType(DataType.t_cet_statistics.getIndex()+"");
+                schoolYearTermService.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
+            }
+        }
+        schoolYearTermService.saveSchoolYearTerm(sytList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message", "定时统计英语cet成绩失败！");
+            return result;
+        }
+        result.put("success", true);
+        result.put("message", "定时统计英语cet成绩成功!");
+        return result;
+    }
 
     public Map<String, Object> cetScoreStatistics(Long orgId, int teacherYear,int semester) {
         Map<String, Object> result = new HashMap<String, Object>();
