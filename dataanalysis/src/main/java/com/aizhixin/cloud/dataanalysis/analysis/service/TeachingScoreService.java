@@ -250,28 +250,28 @@ public class TeachingScoreService {
                 condition.put("orgId", orgId);
             }
             if (null != collegeIds) {
-                List<String> cc = new ArrayList<>();
+                List<Long> cc = new ArrayList<>();
                 if (collegeIds.indexOf(",") != -1) {
-                    String[] cs = grade.split(",");
+                    String[] cs = collegeIds.split(",");
                     for (String d : cs) {
-                        cc.add(d);
+                        cc.add(Long.valueOf(d));
                     }
                 } else {
-                    cc.add(collegeIds);
+                    cc.add(Long.valueOf(collegeIds));
                 }
                 cql.append(" and COLLEGE_ID IN :collegeIds");
                 sql.append(" and COLLEGE_ID IN :collegeIds");
                 condition.put("collegeIds", cc);
             }
             if (null != grade) {
-                List<String> tds = new ArrayList<>();
+                List<Integer> tds = new ArrayList<>();
                 if (grade.indexOf(",") != -1) {
                     String[] grades = grade.split(",");
                     for (String d : grades) {
-                        tds.add(d);
+                        tds.add(Integer.valueOf(d));
                     }
                 } else {
-                    tds.add(grade);
+                    tds.add(Integer.valueOf(grade));
                 }
                 cql.append(" and GRADE IN :grades");
                 sql.append(" and GRADE IN :grades");
@@ -358,7 +358,6 @@ public class TeachingScoreService {
                 }
                 if(null!=semester){
                     teachingScoreDetails.setSemester(semester);
-//                    teachingScoreDetails.setSemester(new Random().nextInt(2)+1);
                 }
                 if(null!=grade){
                     teachingScoreDetails.setGrade(grade);
