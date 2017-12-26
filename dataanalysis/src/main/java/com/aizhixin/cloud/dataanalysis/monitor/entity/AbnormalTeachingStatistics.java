@@ -27,35 +27,35 @@ public class AbnormalTeachingStatistics extends AbstractEntity {
 	@Column(name = "LATE_NUM")
 	@Getter
 	@Setter
-	private Integer lateNum;
+	private Integer lateNum =0;
 	/*
 	 *下课早退教师人数
 	 */
 	@Column(name = "LEAVE_EARLY_NUM")
 	@Getter
 	@Setter
-	private Integer leaveEarlyNum;
+	private Integer leaveEarlyNum =0;
 	/*
 	 *有教学任务教师人数
 	 */
 	@Column(name = "TEACHING_NUM")
 	@Getter
 	@Setter
-	private Integer teachingNum;
+	private Integer teachingNum =0;
 	/*
 	 * 调停课教师人次
 	 */
 	@Column(name = "STOP_CLASS_NUM")
 	@Getter
 	@Setter
-	private Integer stopClassNum;
+	private Integer stopClassNum =0;
 	/*
 	 *更换主讲教师人次
 	 */
 	@Column(name = "CHANGE_LECTURER_NUM")
 	@Getter
 	@Setter
-	private Integer changeLecturerNum;
+	private Integer changeLecturerNum =0;
 	/*
 	 * 统计时间
 	 */

@@ -26,28 +26,28 @@ public class AbnormalAttendanceStatistics extends AbstractEntity {
 	@Column(name = "LATE_NUM")
 	@Getter
 	@Setter
-	private Integer lateNum;
+	private Integer lateNum =0;
 	/*
 	 * 早退人数
 	 */
 	@Column(name = "LEAVE_EARLY_NUM")
 	@Getter
 	@Setter
-	private Integer leaveEarlyNum;
+	private Integer leaveEarlyNum =0;
 	/*
 	 * 旷课人数
 	 */
 	@Column(name = "ABSENTEEISM_NUM")
 	@Getter
 	@Setter
-	private Integer absenteeismNum;
+	private Integer absenteeismNum =0;
 	/*
 	 * 请假人数
 	 */
 	@Column(name = "LEAVE_NUM")
 	@Getter
 	@Setter
-	private Integer leaveNum;
+	private Integer leaveNum =0;
 	/*
 	 * 统计时间
 	 */

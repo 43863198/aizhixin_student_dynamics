@@ -27,42 +27,42 @@ public class TeachingScheduleStatistics extends AbstractEntity {
 	@Column(name = "COURSE_NUM1")
 	@Getter
 	@Setter
-	private Integer courseNum1;
+	private Integer courseNum1 =0;
 	/*
 	 * 3，4节排课数量
 	 */
 	@Column(name = "COURSE_NUM3")
 	@Getter
 	@Setter
-	private Integer courseNum3;
+	private Integer courseNum3 =0;
 	/*
 	 * 5，6节排课数量
 	 */
 	@Column(name = "COURSE_NUM5")
 	@Getter
 	@Setter
-	private Integer courseNum5;
+	private Integer courseNum5 =0;
 	/*
 	 * 7，8节排课数量
 	 */
 	@Column(name = "COURSE_NUM7")
 	@Getter
 	@Setter
-	private Integer courseNum7;
+	private Integer courseNum7 =0;
 	/*
 	 * 9，10节排课数量
 	 */
 	@Column(name = "COURSE_NUM9")
 	@Getter
 	@Setter
-	private Integer courseNum9;
+	private Integer courseNum9 =0;
 	/*
 	 * 11，12节排课数量
 	 */
 	@Column(name = "COURSE_NUM11")
 	@Getter
 	@Setter
-	private Integer courseNum11;
+	private Integer courseNum11 =0;
 	
 	/*
 	 * 13，14节排课数量
@@ -70,21 +70,21 @@ public class TeachingScheduleStatistics extends AbstractEntity {
 	@Column(name = "COURSE_NUM13")
 	@Getter
 	@Setter
-	private Integer courseNum13;
+	private Integer courseNum13 =0;
 	/*
 	 *15，16节排课数量
 	 */
 	@Column(name = "COURSE_NUM15")
 	@Getter
 	@Setter
-	private Integer courseNum15;
+	private Integer courseNum15 =0;
 	/*
 	 * 17，18节排课数量
 	 */
 	@Column(name = "COURSE_NUM17")
 	@Getter
 	@Setter
-	private Integer courseNum17;
+	private Integer courseNum17 =0;
 	/*
 	 * 统计时间
 	 */
