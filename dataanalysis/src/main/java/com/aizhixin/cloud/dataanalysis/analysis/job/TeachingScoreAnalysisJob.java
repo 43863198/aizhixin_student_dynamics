@@ -299,6 +299,7 @@ public class TeachingScoreAnalysisJob {
                 criteriaFailSub.and("schoolYear").is(schoolYear);
                 criteriaFailSub.and("semester").is(semester);
                 criteriaFailSub.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
+                criteriaFailSub.and("gradePoint").is(0);
                 criteriaFailSub.and("userId").is(userId);
                 AggregationResults<BasicDBObject> scheduleFailCount = mongoTemplate.aggregate(
                         Aggregation.newAggregation(Aggregation.match(criteriaFailSub), Aggregation.group("scheduleId")),
