@@ -193,23 +193,4 @@ public class MySchedulingService {
         }
     }
 
-//    /**
-//     * 英语四六级定时统计资源锁
-//     */
-//    @Scheduled(cron = "0 0 23 * * ?")
-//    public void cetScheduleJob() {
-//        if (distributeLock.getCetScheduleLock()) {
-//            LOG.info("开始英语四六级统计定时任务");
-//            cetStatisticsAnalysisJob.cetScoreStatistics();;
-//        } else {
-//            LOG.info("启动英语四六级统计，获取锁失败");
-//        }
-//    }
-
-
-
-
-
-
-
 }

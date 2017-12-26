@@ -41,14 +41,6 @@ public class TeachingScoreAnalysisJob {
     @Autowired
     private TeachingScoreService teachingScoreService;
 
-    public void schoolStatisticsJob() {
-        Date statisticsDate = new Date();
-//
-//
-//         this.teachingScoreStatistics(domain.getOrgId(), schoolYear, semester);
-//        this.teachingScoreDetails(domain.getOrgId(), schoolYear, semester);
-    }
-
     @Transactional
     public Map<String, Object> teachingScoreStatistics(Long orgId, Integer schoolYear, Integer semester) {
         Map<String, Object> result = new HashMap<>();
