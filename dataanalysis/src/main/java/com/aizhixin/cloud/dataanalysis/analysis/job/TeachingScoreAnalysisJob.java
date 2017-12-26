@@ -255,7 +255,6 @@ public class TeachingScoreAnalysisJob {
                         Aggregation.newAggregation(Aggregation.match(criteriaSub), Aggregation.group("scheduleId").count().as("count")),
                         Score.class, BasicDBObject.class);
 
-                if (null != scheduleCount.getMappedResults().get(i)) {
                     if (null != scheduleCount) {
                         tsd.setReferenceSubjects(scheduleCount.getMappedResults().size());
                     }
@@ -278,7 +277,6 @@ public class TeachingScoreAnalysisJob {
                     if (null != scheduleDetails.getMappedResults().get(i).get("GPAavg")) {
                         tsd.setAvgGPA(scheduleDetails.getMappedResults().get(i).getDouble("GPAavg"));
                     }
-                }
                 tsdList.add(tsd);
             }
 
