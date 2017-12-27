@@ -300,13 +300,13 @@ public class CetStatisticAnalysisService {
             }
             if (null != type) {
                 if (type == 4) {
-                    criteria.and("examType").is("cet4");
+                    criteria.and("examType").is(ScoreConstant.EXAM_TYPE_CET4);
                 } else if (type == 6) {
-                    criteria.and("examType").is("cet6");
+                    criteria.and("examType").is(ScoreConstant.EXAM_TYPE_CET6);
                 }
                 criteria.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
             }else {
-                criteria.orOperator(criteria.where("examType").is("cet4"), criteria.where("examType").is("cet6"));
+                criteria.orOperator(criteria.where("examType").is(ScoreConstant.EXAM_TYPE_CET4), criteria.where("examType").is(ScoreConstant.EXAM_TYPE_CET6));
             }
             if(null!=nj){
                 criteria.orOperator(criteria.where("jobNum").is(nj), criteria.where("userName").regex(".*?\\" + nj + ".*"));
