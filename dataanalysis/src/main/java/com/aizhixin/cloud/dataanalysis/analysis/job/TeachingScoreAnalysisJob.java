@@ -16,6 +16,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,6 +100,7 @@ public class TeachingScoreAnalysisJob {
             criterias.and("schoolYear").is(schoolYear);
             criterias.and("semester").is(semester);
             criterias.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
+            criterias.and("gradePoint").ne(null);
             AggregationResults<BasicDBObject> orgSchedule = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(criterias),
@@ -128,7 +130,8 @@ public class TeachingScoreAnalysisJob {
             tcriteriFail.and("schoolYear").is(schoolYear);
             tcriteriFail.and("semester").is(semester);
             tcriteriFail.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
-            tcriteriFail.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
+//            tcriteriFail.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
+            tcriteriFail.and("gradePoint").is(0);
             AggregationResults<BasicDBObject> orgUserFail = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(tcriteriFail),
@@ -141,6 +144,7 @@ public class TeachingScoreAnalysisJob {
             ccriteria.and("schoolYear").is(schoolYear);
             ccriteria.and("semester").is(semester);
             ccriteria.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
+            ccriteria.and("gradePoint").ne(null);
             AggregationResults<BasicDBObject> countts = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(ccriteria),
@@ -153,6 +157,7 @@ public class TeachingScoreAnalysisJob {
                 ccriteriaSub.and("schoolYear").is(schoolYear);
                 ccriteriaSub.and("semester").is(semester);
                 ccriteriaSub.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
+                ccriteriaSub.and("gradePoint").ne(null);
                 ccriteriaSub.and("collegeId").is(collegeId);
                 AggregationResults<BasicDBObject> schedule = mongoTemplate.aggregate(
                         Aggregation.newAggregation(
@@ -221,6 +226,7 @@ public class TeachingScoreAnalysisJob {
             criteria.and("schoolYear").is(schoolYear);
             criteria.and("semester").is(semester);
             criteria.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
+            criteria.and("gradePoint").ne(null);
             AggregationResults<BasicDBObject> scheduleDetails = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(criteria),
@@ -266,6 +272,9 @@ public class TeachingScoreAnalysisJob {
                     }
                     if (null != scheduleDetails.getMappedResults().get(i).get("GPAavg")) {
                         tsd.setAvgGPA(scheduleDetails.getMappedResults().get(i).getDouble("GPAavg"));
+                        if(tsd.getAvgGPA()==0){
+                            tsd.setFailedSubjects(tsd.getReferenceSubjects()  );
+                        }
                     }
                 tsdList.add(tsd);
             }
@@ -292,12 +301,22 @@ public class TeachingScoreAnalysisJob {
                 criteriaFailSub.and("gradePoint").is(0);
                 criteriaFailSub.and("userId").is(userId);
                 AggregationResults<BasicDBObject> scheduleFailCount = mongoTemplate.aggregate(
-                        Aggregation.newAggregation(Aggregation.match(criteriaFailSub), Aggregation.group("scheduleId")),
+                        Aggregation.newAggregation(Aggregation.match(criteriaFailSub), Aggregation.group("scheduleId")
+                                .first("scheduleId").as("scheduleId")),
                         Score.class, BasicDBObject.class);
-                for(int z=0;z<scheduleFailCount.getMappedResults().size();z++){
-
-                }
-
+//                for(int z=0;z<scheduleFailCount.getMappedResults().size();z++){
+//                     String scheduleId = scheduleFailCount.getMappedResults().get(z).getString("scheduleId");
+//                    Criteria passCriteria = Criteria.where("orgId").is(orgId);
+//                    passCriteria.and("schoolYear").is(schoolYear);
+//                    passCriteria.and("semester").is(semester);
+//                    passCriteria.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
+//                    passCriteria.and("userId").is(userId);
+//                    passCriteria.and("scheduleId").is(scheduleId);
+//                    long passCount = mongoTemplate.count(new Query().addCriteria(passCriteria),Score.class);
+//                    if(passCount>0){
+//
+//                    }
+//                }
                 for (TeachingScoreDetails ts : tsdList) {
                     if (userId.equals(ts.getUserId())) {
                         if (null != scheduleFailCount) {
