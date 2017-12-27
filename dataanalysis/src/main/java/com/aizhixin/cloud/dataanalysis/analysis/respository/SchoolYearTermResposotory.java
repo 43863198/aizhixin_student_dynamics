@@ -6,4 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface SchoolYearTermResposotory extends JpaRepository<SchoolYearTerm,String> {
     void deleteByOrgId(Long orgId);
     void deleteByOrgIdAndDataType(Long orgId,String dataType);
+
+
+
+
+
 }

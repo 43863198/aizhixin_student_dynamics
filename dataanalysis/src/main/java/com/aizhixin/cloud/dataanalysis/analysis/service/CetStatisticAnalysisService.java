@@ -296,7 +296,7 @@ public class CetStatisticAnalysisService {
             }
             if (null != type) {
                 if (type.indexOf(",") != -1) {
-                    criteria.and("examType").ne(ScoreConstant.EXAM_TYPE_COURSE);
+                    criteria.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
                 }else {
                     if (type.equals("4")) {
                         criteria.and("examType").is(ScoreConstant.EXAM_TYPE_CET4);
@@ -306,6 +306,8 @@ public class CetStatisticAnalysisService {
                     }
                     criteria.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
                 }
+            }else {
+                criteria.and("examType").ne(ScoreConstant.EXAM_TYPE_COURSE);
             }
             if(null!=nj){
                 criteria.orOperator(criteria.where("jobNum").is(nj), criteria.where("userName").regex(".*?\\" + nj + ".*"));
