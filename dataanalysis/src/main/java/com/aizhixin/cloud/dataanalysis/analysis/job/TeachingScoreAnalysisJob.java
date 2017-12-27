@@ -33,7 +33,6 @@ public class TeachingScoreAnalysisJob {
     private MongoTemplate mongoTemplate;
     @Autowired
     private SchoolYearTermService schoolYearTermService;
-
     @Async
     @Transactional
     public Map<String, Object> teachingScoreStatisticsAsync() {
@@ -78,6 +77,5 @@ public class TeachingScoreAnalysisJob {
         reslut.put("message", "统计教学成绩启动成功！");
         return reslut;
     }
-
 
 }
