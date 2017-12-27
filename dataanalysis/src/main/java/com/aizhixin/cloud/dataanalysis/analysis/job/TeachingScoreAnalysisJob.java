@@ -31,8 +31,6 @@ public class TeachingScoreAnalysisJob {
     @Autowired
     private MongoTemplate mongoTemplate;
     @Autowired
-    private SchoolYearTermService schoolYearTermService;
-    @Autowired
     private TeachingScoreDetailAnalysis teachingScoreDetailAnalysis;
 
 
@@ -63,7 +61,6 @@ public class TeachingScoreAnalysisJob {
             if(sytList.size()>1){
                 teachingScoreStatisticsAnalysis.teachingScoreStatistics(sytList);
                 teachingScoreDetailAnalysis.teachingScoreDetails(sytList);
-//                schoolYearTermService.saveSchoolYearTerm(sytList);
             }
         } catch (Exception e) {
             e.printStackTrace();

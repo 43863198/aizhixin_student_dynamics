@@ -103,41 +103,41 @@ public class SchoolStatisticsAnalysisJob {
 		return pageJdbcUtil.getInfo(querySql, peopleRm);
 	}
 
-	public Map<String, Object> schoolStatistics() {
-		Map<String, Object> result = new HashMap<>();
-		Set<SchoolYearTerm> sytList = new HashSet<>();
-		try {
-			AggregationResults<BasicDBObject> ytGroup = mongoTemplate.aggregate(
-					Aggregation.newAggregation(
-							Aggregation.group("orgId", "schoolYear").first("orgId").as("orgId").first("schoolYear").as("schoolYear")
-					), StudentRegister.class, BasicDBObject.class);
-
-			if (null != ytGroup) {
-				for (int x = 0; x < ytGroup.getMappedResults().size(); x++) {
-						SchoolYearTerm syt = new SchoolYearTerm();
-						syt.setOrgId(ytGroup.getMappedResults().get(x).getLong("orgId"));
-						syt.setTeacherYear(ytGroup.getMappedResults().get(x).getInt("schoolYear"));
-						sytList.add(syt);
-				}
-			}
-			if(sytList.size()>1){
-				for(SchoolYearTerm yt: sytList){
-						this.schoolStatistics(yt.getOrgId(), yt.getTeacherYear());
-						yt.setDataType(DataType.t_school_statistics.getIndex()+"");
-						schoolYearTermService.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
-					}
-			}
-			schoolYearTermService.saveSchoolYearTerm(sytList);
-
-		}catch (Exception e){
-			result.put("success", false);
-			result.put("message", "定时统计学校概况失败！");
-			return result;
-		}
-		result.put("success", true);
-		result.put("message", "定时统计学校概况成功！");
-		return result;
-	}
+//	public Map<String, Object> schoolStatistics() {
+//		Map<String, Object> result = new HashMap<>();
+//		Set<SchoolYearTerm> sytList = new HashSet<>();
+//		try {
+//			AggregationResults<BasicDBObject> ytGroup = mongoTemplate.aggregate(
+//					Aggregation.newAggregation(
+//							Aggregation.group("orgId", "schoolYear").first("orgId").as("orgId").first("schoolYear").as("schoolYear")
+//					), StudentRegister.class, BasicDBObject.class);
+//
+//			if (null != ytGroup) {
+//				for (int x = 0; x < ytGroup.getMappedResults().size(); x++) {
+//						SchoolYearTerm syt = new SchoolYearTerm();
+//						syt.setOrgId(ytGroup.getMappedResults().get(x).getLong("orgId"));
+//						syt.setTeacherYear(ytGroup.getMappedResults().get(x).getInt("schoolYear"));
+//						sytList.add(syt);
+//				}
+//			}
+//			if(sytList.size()>1){
+//				for(SchoolYearTerm yt: sytList){
+//						this.schoolStatistics(yt.getOrgId(), yt.getTeacherYear());
+//						yt.setDataType(DataType.t_school_statistics.getIndex()+"");
+//						schoolYearTermService.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
+//					}
+//			}
+//			schoolYearTermService.saveSchoolYearTerm(sytList);
+//
+//		}catch (Exception e){
+//			result.put("success", false);
+//			result.put("message", "定时统计学校概况失败！");
+//			return result;
+//		}
+//		result.put("success", true);
+//		result.put("message", "定时统计学校概况成功！");
+//		return result;
+//	}
 
 
 
