@@ -260,8 +260,6 @@ public class CetStatisticAnalysisService {
             Sort sort = new Sort(Sort.Direction.DESC, "id");
             //创建分页模板Pageable
             Pageable pageable = new PageRequest(page.getPageNumber(), page.getPageSize(), sort);
-            //创建查询条件对象
-            org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
             //条件
             Criteria criteria = Criteria.where("orgId").is(orgId);
             if (null != collegeId) {
@@ -309,11 +307,10 @@ public class CetStatisticAnalysisService {
             if(null!=nj){
                 criteria.orOperator(criteria.where("jobNum").is(nj), criteria.where("userName").regex(".*?\\" + nj + ".*"));
             }
-            query.addCriteria(criteria);
             //mongoTemplate.count计算总数
-            long total = mongoTemplate.count(query, Score.class);
+            long total = mongoTemplate.count(new org.springframework.data.mongodb.core.query.Query().addCriteria(criteria), Score.class);
             // mongoTemplate.find 查询结果集
-            List<Score> items  = mongoTemplate.find(query.with(pageable), Score.class);
+            List<Score> items  = mongoTemplate.find(new org.springframework.data.mongodb.core.query.Query().addCriteria(criteria).with(pageable), Score.class);
 
             p.getPage().setTotalPages((int) Math.ceil(total / page.getPageSize()));
             p.getPage().setPageNumber(page.getPageNumber());

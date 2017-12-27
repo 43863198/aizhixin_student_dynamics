@@ -16,7 +16,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,12 +39,7 @@ public class TeachingScoreAnalysisJob {
     @Autowired
     private SchoolYearTermService schoolYearTermService;
 
-    public Map<String, Object> teachingScoreStatistics() {
-        Map<String, Object> reslut = new HashMap<>();
-        teachingScoreStatisticsAsync();
-        reslut.put("message","教学成绩统计任务开始...");
-        return reslut;
-    }
+
     @Async
     public Map<String, Object> teachingScoreStatisticsAsync() {
         Map<String, Object> reslut = new HashMap<>();
@@ -217,10 +211,10 @@ public class TeachingScoreAnalysisJob {
             teachingScoreService.saveStatisticsList(tssList);
         } catch (Exception e) {
             e.printStackTrace();
-            logger.info("定时统计教学成绩失败！");
+            logger.info("统计教学成绩失败！");
             return;
         }
-        logger.info("定时统计教学成绩成功!");
+        logger.info("统计教学成绩成功!");
     }
 
     @Transactional
@@ -340,10 +334,10 @@ public class TeachingScoreAnalysisJob {
 
         } catch (Exception e) {
             e.printStackTrace();
-            logger.info("定时统计学生成绩详情失败！");
+            logger.info("统计学生成绩详情失败！");
             return;
         }
-        logger.info("定时统计学生成绩详情成功！");
+        logger.info("统计学生成绩详情成功！");
     }
 
 }
