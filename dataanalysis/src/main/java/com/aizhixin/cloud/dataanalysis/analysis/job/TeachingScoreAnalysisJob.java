@@ -41,6 +41,7 @@ public class TeachingScoreAnalysisJob {
 
 
     @Async
+    @Transactional
     public Map<String, Object> teachingScoreStatisticsAsync() {
         Map<String, Object> reslut = new HashMap<>();
         Set<SchoolYearTerm> sytList = new HashSet<>();
@@ -85,7 +86,6 @@ public class TeachingScoreAnalysisJob {
     }
 
     @Transactional
-    @Async
     public void teachingScoreStatistics(Long orgId, Integer schoolYear, Integer semester) {
         List<TeachingScoreStatistics> tssList = new ArrayList<>();
         try {
@@ -218,7 +218,6 @@ public class TeachingScoreAnalysisJob {
     }
 
     @Transactional
-    @Async
     public void teachingScoreDetails(Long orgId, Integer schoolYear, Integer semester) {
         List<TeachingScoreDetails> tsdList = new ArrayList<>();
         try {
