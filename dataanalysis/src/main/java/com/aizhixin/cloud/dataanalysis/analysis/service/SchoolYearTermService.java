@@ -37,9 +37,15 @@ public class SchoolYearTermService {
         schoolYearTermResposotory.deleteByOrgIdAndDataType(orgId, dataType);
     }
 
-    public void saveSchoolYearTerm(Set<SchoolYearTerm> schoolYearTerms) {
-        schoolYearTermResposotory.save(schoolYearTerms);
-    }
+//    public void saveSchoolYearTerm(Set<SchoolYearTerm> schoolYearTerms) {
+//        for(SchoolYearTerm yt: schoolYearTerms){
+//            if(null!=yt.getSemester()&&null!=yt.getTeacherYear()) {
+//                yt.setDataType(DataType.t_teaching_score_statistics.getIndex() + "");
+//                this.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
+//            }
+//        }
+//        schoolYearTermResposotory.save(schoolYearTerms);
+//    }
 
 
     public List<TeacherlYearData> getSchoolYearTerm(Long orgId,Integer type) {
