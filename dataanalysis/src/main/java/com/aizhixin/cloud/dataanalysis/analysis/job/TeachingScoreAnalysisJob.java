@@ -1,13 +1,13 @@
 package com.aizhixin.cloud.dataanalysis.analysis.job;
 
+import com.aizhixin.cloud.dataanalysis.analysis.constant.DataType;
+import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolYearTerm;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.TeachingScoreDetails;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.TeachingScoreStatistics;
+import com.aizhixin.cloud.dataanalysis.analysis.service.SchoolYearTermService;
 import com.aizhixin.cloud.dataanalysis.analysis.service.TeachingScoreService;
 import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
-import com.aizhixin.cloud.dataanalysis.score.mongoRespository.ScoreMongoRespository;
-import com.aizhixin.cloud.dataanalysis.setup.domain.WarningTypeDomain;
-import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
 import com.mongodb.BasicDBObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -16,6 +16,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,38 +35,57 @@ public class TeachingScoreAnalysisJob {
     @Autowired
     private MongoTemplate mongoTemplate;
     @Autowired
-    private WarningTypeService warningTypeService;
-    @Autowired
-    private ScoreMongoRespository scoreMongoRespository;
-    @Autowired
     private TeachingScoreService teachingScoreService;
+    @Autowired
+    private SchoolYearTermService schoolYearTermService;
 
-    public void schoolStatisticsJob() {
+    public Map<String, Object> teachingScoreStatistics() {
+        teachingScoreStatisticsAsync();
+        return null;
+    }
 
-        Calendar c = Calendar.getInstance();
-        // 当前年份
-        int schoolYear = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int semester = 1;
-        if(month>7){
-            semester = 2;
-        }
-        List<WarningTypeDomain> orgIdList = warningTypeService.getAllOrgId();
-        if (null != orgIdList && orgIdList.size() > 0) {
-            for (WarningTypeDomain domain : orgIdList) {
-                if (domain.getSetupCloseFlag()==10) {
-                    this.teachingScoreStatistics(domain.getOrgId(),schoolYear,semester);
-                    this.teachingScoreDetails(domain.getOrgId(),schoolYear,semester);
+    @Async
+    public void teachingScoreStatisticsAsync() {
+        Set<SchoolYearTerm> sytList = new HashSet<>();
+        try {
+            Criteria ytc = Criteria.where("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
+            AggregationResults<BasicDBObject> ytGroup = mongoTemplate.aggregate(
+                    Aggregation.newAggregation(
+                            Aggregation.match(ytc),
+                            Aggregation.group("orgId", "schoolYear", "semester").first("orgId").as("orgId").first("schoolYear").as("schoolYear")
+                                    .first("semester").as("semester")
+                    ), Score.class, BasicDBObject.class);
+
+            if (null != ytGroup) {
+                for (int x = 0; x < ytGroup.getMappedResults().size(); x++) {
+                    SchoolYearTerm syt = new SchoolYearTerm();
+                    syt.setOrgId(ytGroup.getMappedResults().get(x).getLong("orgId"));
+                    syt.setTeacherYear(ytGroup.getMappedResults().get(x).getInt("schoolYear"));
+                    syt.setSemester(ytGroup.getMappedResults().get(x).getInt("semester"));
+                    sytList.add(syt);
                 }
             }
+            if(sytList.size()>1){
+                for(SchoolYearTerm yt: sytList){
+                    this.teachingScoreStatistics(yt.getOrgId(), yt.getTeacherYear(), yt.getSemester());
+                    this.teachingScoreDetails(yt.getOrgId(), yt.getTeacherYear(), yt.getSemester());
+                    yt.setDataType(DataType.t_cet_statistics.getIndex()+"");
+                    schoolYearTermService.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
+                }
+            }
+            schoolYearTermService.saveSchoolYearTerm(sytList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("定时统计教学成绩失败！");
         }
+        logger.info("定时统计教学成绩成功！");
     }
+
     @Transactional
-    public Map<String, Object> teachingScoreStatistics(Long orgId, Integer schoolYear,Integer semester) {
-        Map<String, Object> result = new HashMap<>();
-        List<TeachingScoreStatistics> tssList  = new ArrayList<>();
+    public void teachingScoreStatistics(Long orgId, Integer schoolYear, Integer semester) {
+        List<TeachingScoreStatistics> tssList = new ArrayList<>();
         try {
-            teachingScoreService.deleteScoreStatistics(orgId,schoolYear,semester);
+            teachingScoreService.deleteScoreStatistics(orgId, schoolYear, semester);
             TeachingScoreStatistics tss = new TeachingScoreStatistics();
             tss.setOrgId(orgId);
             tss.setTeacherYear(schoolYear);
@@ -91,11 +111,11 @@ public class TeachingScoreAnalysisJob {
                             Aggregation.match(criterias),
                             Aggregation.group("orgId").avg("gradePoint").as("GPAavg").avg("totalScore").as("courseAVG")),
                     Score.class, BasicDBObject.class);
-            if(null!=avg.getMappedResults().get(0)) {
-                if(null!=avg.getMappedResults().get(0).get("GPAavg")){
+            if (null != avg.getMappedResults().get(0)) {
+                if (null != avg.getMappedResults().get(0).get("GPAavg")) {
                     tss.setAvgGPA(avg.getMappedResults().get(0).getDouble("GPAavg"));
                 }
-                if(null!=avg.getMappedResults().get(0).get("courseAVG")) {
+                if (null != avg.getMappedResults().get(0).get("courseAVG")) {
                     tss.setAvgScore(avg.getMappedResults().get(0).getDouble("courseAVG"));
                 }
             }
@@ -124,7 +144,7 @@ public class TeachingScoreAnalysisJob {
                             Aggregation.group("collegeId").first("collegeName").as("collegeName").avg("gradePoint").as("GPAavg").avg("totalScore").as("courseAVG")
                     ),
                     Score.class, BasicDBObject.class);
-            for (int i=0;i<countts.getMappedResults().size();i++){
+            for (int i = 0; i < countts.getMappedResults().size(); i++) {
                 Long collegeId = countts.getMappedResults().get(i).getLong("_id");
                 Criteria ccriteriaSub = Criteria.where("orgId").is(orgId);
                 ccriteriaSub.and("schoolYear").is(schoolYear);
@@ -150,10 +170,10 @@ public class TeachingScoreAnalysisJob {
                 ctss.setCurriculumNum(schedule.getMappedResults().size());
                 ctss.setCollegeName(countts.getMappedResults().get(i).getString("collegeName"));
                 ctss.setStudentNum(user.getMappedResults().size());
-                if(null!=countts.getMappedResults().get(i).get("GPAavg")) {
+                if (null != countts.getMappedResults().get(i).get("GPAavg")) {
                     ctss.setAvgGPA(new BigDecimal(countts.getMappedResults().get(i).getDouble("GPAavg")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                 }
-                if(null!=countts.getMappedResults().get(i).get("courseAVG")) {
+                if (null != countts.getMappedResults().get(i).get("courseAVG")) {
                     ctss.setAvgScore(new BigDecimal(countts.getMappedResults().get(i).getDouble("courseAVG")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                 }
                 tssList.add(ctss);
@@ -164,8 +184,9 @@ public class TeachingScoreAnalysisJob {
             criteriFail.and("schoolYear").is(schoolYear);
             criteriFail.and("semester").is(semester);
             criteriFail.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
-            criteriFail.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
-            for(TeachingScoreStatistics fts:  tssList){
+//            criteriFail.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
+            criteriFail.and("gradePoint").is(0);
+            for (TeachingScoreStatistics fts : tssList) {
                 Criteria criteriFailSub = Criteria.where("orgId").is(orgId);
                 criteriFailSub.and("schoolYear").is(schoolYear);
                 criteriFailSub.and("semester").is(semester);
@@ -182,20 +203,16 @@ public class TeachingScoreAnalysisJob {
             teachingScoreService.saveStatisticsList(tssList);
         } catch (Exception e) {
             e.printStackTrace();
-            result.put("success", false);
-            result.put("message", "定时统计教学成绩失败！");
-            return result;
+            logger.info("定时统计教学成绩失败！");
         }
-        result.put("success", true);
-        result.put("message", "定时统计教学成绩成功");
-        return result;
+        logger.info("定时统计教学成绩成功");
     }
+
     @Transactional
-    public Map<String, Object> teachingScoreDetails(Long orgId,Integer schoolYear,Integer semester) {
-        Map<String, Object> result = new HashMap<>();
+    public void teachingScoreDetails(Long orgId, Integer schoolYear, Integer semester) {
         List<TeachingScoreDetails> tsdList = new ArrayList<>();
         try {
-            teachingScoreService.deleteScoreDeatail(orgId,schoolYear,semester);
+            teachingScoreService.deleteScoreDeatail(orgId, schoolYear, semester);
             //参考人数统计
             Criteria criteria = Criteria.where("orgId").is(orgId);
             criteria.and("schoolYear").is(schoolYear);
@@ -209,7 +226,7 @@ public class TeachingScoreAnalysisJob {
                                     .first("grade").as("grade").first("collegeId").as("collegeId").first("collegeName").as("collegeName")
                     ),
                     Score.class, BasicDBObject.class);
-            for (int i =0;i<scheduleDetails.getMappedResults().size();i++){
+            for (int i = 0; i < scheduleDetails.getMappedResults().size(); i++) {
                 Long userId = scheduleDetails.getMappedResults().get(i).getLong("_id");
                 TeachingScoreDetails tsd = new TeachingScoreDetails();
                 tsd.setOrgId(orgId);
@@ -217,9 +234,17 @@ public class TeachingScoreAnalysisJob {
                 tsd.setSemester(semester);
                 tsd.setFailedSubjects(0);
                 tsd.setFailingGradeCredits(0.0);
-                if(null!=scheduleDetails.getMappedResults().get(i)) {
-                    if(null!=scheduleDetails.getMappedResults().get(i).get("count")) {
-                        tsd.setReferenceSubjects(scheduleDetails.getMappedResults().get(i).getInt("count"));
+                Criteria criteriaSub = Criteria.where("orgId").is(orgId);
+                criteriaSub.and("schoolYear").is(schoolYear);
+                criteriaSub.and("semester").is(semester);
+                criteriaSub.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
+                criteriaSub.and("userId").is(userId);
+                AggregationResults<BasicDBObject> scheduleCount = mongoTemplate.aggregate(
+                        Aggregation.newAggregation(Aggregation.match(criteriaSub), Aggregation.group("scheduleId").count().as("count")),
+                        Score.class, BasicDBObject.class);
+
+                    if (null != scheduleCount) {
+                        tsd.setReferenceSubjects(scheduleCount.getMappedResults().size());
                     }
                     tsd.setCollegeId(scheduleDetails.getMappedResults().get(i).getLong("collegeId"));
                     tsd.setCollegeName(scheduleDetails.getMappedResults().get(i).getString("collegeName"));
@@ -229,18 +254,17 @@ public class TeachingScoreAnalysisJob {
                     tsd.setClassName(scheduleDetails.getMappedResults().get(i).getString("className"));
                     if (null != scheduleDetails.getMappedResults().get(i).get("grade")) {
                         tsd.setGrade(Integer.valueOf(scheduleDetails.getMappedResults().get(i).getString("grade")));
-                    }else{
-                        if(!StringUtils.isBlank(tsd.getClassName())){
+                    } else {
+                        if (!StringUtils.isBlank(tsd.getClassName())) {
                             if (tsd.getClassName().indexOf("-") != -1) {
                                 int flag = tsd.getClassName().indexOf("-");
-                                tsd.setGrade(Integer.valueOf(tsd.getClassName().substring(flag-4,flag)));
+                                tsd.setGrade(Integer.valueOf(tsd.getClassName().substring(flag - 4, flag)));
                             }
                         }
                     }
-                    if(null!=scheduleDetails.getMappedResults().get(i).get("GPAavg")) {
+                    if (null != scheduleDetails.getMappedResults().get(i).get("GPAavg")) {
                         tsd.setAvgGPA(scheduleDetails.getMappedResults().get(i).getDouble("GPAavg"));
                     }
-                }
                 tsdList.add(tsd);
             }
 
@@ -249,21 +273,31 @@ public class TeachingScoreAnalysisJob {
             criteriFail.and("schoolYear").is(schoolYear);
             criteriFail.and("semester").is(semester);
             criteriFail.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
-            criteriFail.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
+//            criteriFail.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
+            criteriFail.and("gradePoint").is(0);
             AggregationResults<BasicDBObject> scheduleFail = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(criteriFail),
                             Aggregation.group("userId").count().as("count").sum("credit").as("credit")),
                     Score.class, BasicDBObject.class);
 
-            for (int x = 0;x<scheduleFail.getMappedResults().size();x++){
+            for (int x = 0; x < scheduleFail.getMappedResults().size(); x++) {
                 Long userId = scheduleFail.getMappedResults().get(x).getLong("_id");
-                for(TeachingScoreDetails ts:  tsdList){
-                    if(userId.equals(ts.getUserId())){
-                        if(null!=scheduleFail.getMappedResults().get(x).get("count")) {
-                            ts.setFailedSubjects(scheduleFail.getMappedResults().get(x).getInt("count"));
+                Criteria criteriaFailSub = Criteria.where("orgId").is(orgId);
+                criteriaFailSub.and("schoolYear").is(schoolYear);
+                criteriaFailSub.and("semester").is(semester);
+                criteriaFailSub.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
+                criteriaFailSub.and("gradePoint").is(0);
+                criteriaFailSub.and("userId").is(userId);
+                AggregationResults<BasicDBObject> scheduleFailCount = mongoTemplate.aggregate(
+                        Aggregation.newAggregation(Aggregation.match(criteriaFailSub), Aggregation.group("scheduleId")),
+                        Score.class, BasicDBObject.class);
+                for (TeachingScoreDetails ts : tsdList) {
+                    if (userId.equals(ts.getUserId())) {
+                        if (null != scheduleFailCount) {
+                            ts.setFailedSubjects(scheduleFailCount.getMappedResults().size());
                         }
-                            if(null!=scheduleFail.getMappedResults().get(x).get("credit")) {
+                        if (null != scheduleFail.getMappedResults().get(x).get("credit")) {
                             ts.setFailingGradeCredits(scheduleFail.getMappedResults().get(x).getDouble("credit"));
                         }
                         break;
@@ -274,13 +308,9 @@ public class TeachingScoreAnalysisJob {
 
         } catch (Exception e) {
             e.printStackTrace();
-            result.put("success", false);
-            result.put("message", "定时统计学生成绩失败！");
-            return result;
+            logger.info("定时统计学生成绩失败！");
         }
-        result.put("success", true);
-        result.put("message", "定时统计学生成绩成功！");
-        return result;
+        logger.info("定时统计学生成绩成功！");
     }
 
 }

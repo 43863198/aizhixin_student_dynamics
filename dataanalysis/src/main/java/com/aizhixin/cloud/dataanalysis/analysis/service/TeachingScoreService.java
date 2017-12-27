@@ -180,7 +180,7 @@ public class TeachingScoreService {
                     trend = " AVG(" + TeachingScoreTrendType.getType(type) + ")";
                 }
             }
-            StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR," + trend + " FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
+            StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR," + trend + ",SEMESTER  FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
             if (null != orgId) {
                 sql.append(" and ORG_ID =:orgId ");
                 condition.put("orgId", orgId);
@@ -191,7 +191,7 @@ public class TeachingScoreService {
             }else {
                 sql.append(" and STATISTICS_TYPE = 1");
             }
-            sql.append(" and DELETE_FLAG = 0 GROUP BY TEACHER_YEAR");
+            sql.append(" and DELETE_FLAG = 0 GROUP BY TEACHER_YEAR,SEMESTER");
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
@@ -207,6 +207,10 @@ public class TeachingScoreService {
                     if (null != d[1]) {
                         trendDTO.setValue(String.valueOf(d[1]));
                     }
+                    if (null != d[2]) {
+                        trendDTO.setSemester(String.valueOf(d[2]));
+                    }
+
                     trendDTOList.add(trendDTO);
                 }
             }
@@ -246,28 +250,28 @@ public class TeachingScoreService {
                 condition.put("orgId", orgId);
             }
             if (null != collegeIds) {
-                List<String> cc = new ArrayList<>();
+                List<Long> cc = new ArrayList<>();
                 if (collegeIds.indexOf(",") != -1) {
-                    String[] cs = grade.split(",");
+                    String[] cs = collegeIds.split(",");
                     for (String d : cs) {
-                        cc.add(d);
+                        cc.add(Long.valueOf(d));
                     }
                 } else {
-                    cc.add(collegeIds);
+                    cc.add(Long.valueOf(collegeIds));
                 }
                 cql.append(" and COLLEGE_ID IN :collegeIds");
                 sql.append(" and COLLEGE_ID IN :collegeIds");
                 condition.put("collegeIds", cc);
             }
             if (null != grade) {
-                List<String> tds = new ArrayList<>();
+                List<Integer> tds = new ArrayList<>();
                 if (grade.indexOf(",") != -1) {
                     String[] grades = grade.split(",");
                     for (String d : grades) {
-                        tds.add(d);
+                        tds.add(Integer.valueOf(d));
                     }
                 } else {
-                    tds.add(grade);
+                    tds.add(Integer.valueOf(grade));
                 }
                 cql.append(" and GRADE IN :grades");
                 sql.append(" and GRADE IN :grades");
@@ -318,7 +322,7 @@ public class TeachingScoreService {
                         teachingScoreDetails.setReferenceSubjects(Integer.valueOf(String.valueOf(d[6])));
                     }
                     if (null != d[7]) {
-                        teachingScoreDetails.setFailedSubjects(Integer.valueOf(String.valueOf(d[6])));
+                        teachingScoreDetails.setFailedSubjects(Integer.valueOf(String.valueOf(d[7])));
                     }
                     if (null != d[8]) {
                         teachingScoreDetails.setFailingGradeCredits(Double.valueOf(String.valueOf(d[8])));
@@ -354,7 +358,6 @@ public class TeachingScoreService {
                 }
                 if(null!=semester){
                     teachingScoreDetails.setSemester(semester);
-//                    teachingScoreDetails.setSemester(new Random().nextInt(2)+1);
                 }
                 if(null!=grade){
                     teachingScoreDetails.setGrade(grade);

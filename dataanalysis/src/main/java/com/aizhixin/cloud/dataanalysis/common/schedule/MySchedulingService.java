@@ -1,5 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.common.schedule;
 
+import com.aizhixin.cloud.dataanalysis.analysis.job.CetStatisticsAnalysisJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -189,4 +190,5 @@ public class MySchedulingService {
             LOG.info("启动实时监控排课统计，获取锁失败");
         }
     }
+
 }

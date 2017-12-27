@@ -176,7 +176,7 @@ public class CetStatisticAnalysisService {
         List<TrendDTO> trendDTOList = new ArrayList<>();
         Map<String, Object> condition = new HashMap<>();
         try {
-            StringBuilder sql = new StringBuilder("SELECT SUM(cet.CET_FORE_JOIN_NUM) as sumc4, SUM(cet.CET_FORE_PASS_NUM) as sump4, SUM(cet.CET_SIX_JOIN_NUM) as sumc6, SUM(cet.CET_SIX_PASS_NUM) as sump6, cet.TEACHER_YEAR FROM T_CET_STATISTICS cet WHERE 1 = 1");
+            StringBuilder sql = new StringBuilder("SELECT SUM(cet.CET_FORE_JOIN_NUM) as sumc4, SUM(cet.CET_FORE_PASS_NUM) as sump4, SUM(cet.CET_SIX_JOIN_NUM) as sumc6, SUM(cet.CET_SIX_PASS_NUM) as sump6, cet.TEACHER_YEAR, cet.SEMESTER FROM T_CET_STATISTICS cet WHERE 1 = 1");
             if (null != orgId) {
                 sql.append(" and cet.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
@@ -186,7 +186,7 @@ public class CetStatisticAnalysisService {
                 condition.put("collegeId", collegeId);
             }
             sql.append(" and cet.DELETE_FLAG = 0");
-            sql.append(" group by cet.TEACHER_YEAR");
+            sql.append(" group by cet.TEACHER_YEAR,cet.SEMESTER");
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
@@ -200,7 +200,6 @@ public class CetStatisticAnalysisService {
                 if (null != res) {
                     for (Object obj : res) {
                         Object[] d = (Object[]) obj;
-                        if (d.length == 5) {
                             TrendDTO trendDTO = new TrendDTO();
                             if (null != d[0]) {
                                 count4 = Integer.valueOf(String.valueOf(d[0]));
@@ -211,18 +210,18 @@ public class CetStatisticAnalysisService {
                             if (null != d[4]) {
                                 trendDTO.setYear(String.valueOf(d[4]));
                             }
+                            if (null != d[5]) {
+                                trendDTO.setSemester(String.valueOf(d[5]));
+                            }
                             trendDTO.setValue(ProportionUtil.accuracy(pass4 * 1.0, count4 * 1.0, 2));
                             trendDTOList.add(trendDTO);
                         }
-                    }
-
                 }
             }
             if (type == 6) {
                 if (null != res) {
                     for (Object obj : res) {
                         Object[] d = (Object[]) obj;
-                        if (d.length == 5) {
                             TrendDTO trendDTO = new TrendDTO();
                             if (null != d[2]) {
                                 count6 = Integer.valueOf(String.valueOf(d[2]));
@@ -233,12 +232,13 @@ public class CetStatisticAnalysisService {
                             if (null != d[4]) {
                                 trendDTO.setYear(String.valueOf(d[4]));
                             }
+                            if (null != d[5]) {
+                               trendDTO.setSemester(String.valueOf(d[5]));
+                            }
                             trendDTO.setValue(ProportionUtil.accuracy(pass6 * 1.0, count6 * 1.0, 2));
                             trendDTOList.add(trendDTO);
                         }
                     }
-
-                }
             }
         } catch (Exception e) {
             result.put("success", false);
@@ -251,7 +251,7 @@ public class CetStatisticAnalysisService {
     }
 
 
-    public Map<String, Object> getCetDetail(Long orgId, String collegeId, Integer teacherYear, Integer semester, String grade, Integer type, Pageable page) {
+    public Map<String, Object> getCetDetail(Long orgId, String collegeId, Integer teacherYear, Integer semester, String grade, Integer type, String nj, Pageable page) {
         Map<String, Object> result = new HashMap<>();
         PageData<Score> p = new PageData<>();
         List<Score> items = new ArrayList<>();
@@ -282,9 +282,9 @@ public class CetStatisticAnalysisService {
             if(null!=teacherYear){
                 criteria.and("schoolYear").is(teacherYear);
             }
-//            if(null!=semester){
-//                criteria.and("semester").is(semester);
-//            }
+            if(null!=semester){
+                criteria.and("semester").is(semester);
+            }
             if (null != grade) {
                 List<String> tds = new ArrayList<>();
                 if (grade.indexOf(",") != -1) {
@@ -305,6 +305,9 @@ public class CetStatisticAnalysisService {
                 } else {
                     criteria.orOperator(criteria.where("examType").is("cet4"), criteria.where("examType").is("cet6"));
                 }
+            }
+            if(null!=nj){
+                criteria.orOperator(criteria.where("jobNum").is(nj), criteria.where("userName").regex(".*?\\" + nj + ".*"));
             }
             query.addCriteria(criteria);
             //mongoTemplate.count计算总数

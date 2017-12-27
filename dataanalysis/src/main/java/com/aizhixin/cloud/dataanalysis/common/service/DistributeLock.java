@@ -319,8 +319,69 @@ public class DistributeLock {
 
         return getLock(lockPath.toString(), taskPath.toString());
     }
+//    /****************************************学情资源锁***********************************************/
+//    /**
+//     * 英语四六级定时统计资源锁
+//     * @return
+//     */
+//    public boolean getCetScheduleLock() {
+//        StringBuilder lockPath = new StringBuilder(zkLockPath);
+//        StringBuilder taskPath = new StringBuilder(zkTaskPath);
+//        Date current = new Date();
+//        String curDayString = DateUtil.format(current);
+//        lockPath.append("/").append(curDayString).append("/cet/");
+//        taskPath.append("/").append(curDayString).append("/cet/");
+//
+//        return getLock(lockPath.toString(), taskPath.toString());
+//    }
+//
+//    /**
+//     * 教学成绩统计定时统计资源锁
+//     * @return
+//     */
+//    public boolean getTeachingScoreStatisticScheduleLock() {
+//        StringBuilder lockPath = new StringBuilder(zkLockPath);
+//        StringBuilder taskPath = new StringBuilder(zkTaskPath);
+//        Date current = new Date();
+//        String curDayString = DateUtil.format(current);
+//        lockPath.append("/").append(curDayString).append("/teachingScoreStatistic/");
+//        taskPath.append("/").append(curDayString).append("/teachingScoreStatistic/");
+//
+//        return getLock(lockPath.toString(), taskPath.toString());
+//    }
+//
+//    /**
+//     * 教学成绩详情定时统计资源锁
+//     * @return
+//     */
+//    public boolean getTeachingScoreDetailScheduleLock() {
+//        StringBuilder lockPath = new StringBuilder(zkLockPath);
+//        StringBuilder taskPath = new StringBuilder(zkTaskPath);
+//        Date current = new Date();
+//        String curDayString = DateUtil.format(current);
+//        lockPath.append("/").append(curDayString).append("/teachingDetail/");
+//        taskPath.append("/").append(curDayString).append("/teachingDetail/");
+//
+//        return getLock(lockPath.toString(), taskPath.toString());
+//    }
+//
+//    /**
+//     * 学校概况统计定时统计资源锁
+//     * @return
+//     */
+//    public boolean getSchollStatisticScheduleLock() {
+//        StringBuilder lockPath = new StringBuilder(zkLockPath);
+//        StringBuilder taskPath = new StringBuilder(zkTaskPath);
+//        Date current = new Date();
+//        String curDayString = DateUtil.format(current);
+//        lockPath.append("/").append(curDayString).append("/schollStatistic/");
+//        taskPath.append("/").append(curDayString).append("/schollStatistic/");
+//
+//        return getLock(lockPath.toString(), taskPath.toString());
+//    }
 
-    
+
+
     public void cleanZookeeperTaskData() {
         delete();
     }

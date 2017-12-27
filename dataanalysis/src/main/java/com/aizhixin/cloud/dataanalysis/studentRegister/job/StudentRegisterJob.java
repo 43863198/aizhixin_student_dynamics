@@ -13,7 +13,6 @@ import java.util.UUID;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
-import com.aizhixin.cloud.dataanalysis.alertinformation.service.OperaionRecordService;
 import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
@@ -22,7 +21,6 @@ import com.aizhixin.cloud.dataanalysis.common.util.RestUtil;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmRuleService;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
 import com.aizhixin.cloud.dataanalysis.setup.service.ProcessingModeService;
-
 import org.apache.log4j.Logger;
 
 import net.sf.json.JSONArray;
@@ -48,15 +46,9 @@ public class StudentRegisterJob {
 	@Autowired
 	private AlarmRuleService alarmRuleService;
 	@Autowired
-	private RestUtil restUtil;
-	@Autowired
 	private StudentRegisterMongoRespository stuRegisterMongoRespository;
 	@Autowired
 	private AlertWarningInformationService alertWarningInformationService;
-	@Autowired
-	private ProcessingModeService processingModeService;
-	@Autowired
-	private OperaionRecordService operaionRecordService;
 
 	public void studenteRegisterJob() {
 
