@@ -36,13 +36,13 @@ public class TeachingScoreDetailAnalysis {
 
     @Transactional
     public void teachingScoreDetails(Set<SchoolYearTerm> schoolYearTermList) {
-        List<TeachingScoreDetails> tsdList = new ArrayList<>();
         try {
-            for(SchoolYearTerm schoolYearTerm : schoolYearTermList) {
-            Long orgId = schoolYearTerm.getOrgId();
-            Integer schoolYear = schoolYearTerm.getTeacherYear();
-            Integer semester = schoolYearTerm.getSemester();
-            if (null != orgId && null != schoolYear && null != semester) {
+            for (SchoolYearTerm schoolYearTerm : schoolYearTermList) {
+                Long orgId = schoolYearTerm.getOrgId();
+                Integer schoolYear = schoolYearTerm.getTeacherYear();
+                Integer semester = schoolYearTerm.getSemester();
+                if (null != orgId && null != schoolYear && null != semester) {
+                    List<TeachingScoreDetails> tsdList = new ArrayList<>();
                     teachingScoreService.deleteScoreDeatail(orgId, schoolYear, semester);
                     Criteria criteria = Criteria.where("orgId").is(orgId);
                     criteria.and("schoolYear").is(schoolYear);
@@ -150,9 +150,10 @@ public class TeachingScoreDetailAnalysis {
                             }
                         }
                     }
+
+                    teachingScoreService.saveDetailsList(tsdList);
+                }
             }
-        }
-            teachingScoreService.saveDetailsList(tsdList);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -161,7 +162,6 @@ public class TeachingScoreDetailAnalysis {
         }
         logger.info("统计学生成绩详情成功！");
     }
-
 
 
 }
