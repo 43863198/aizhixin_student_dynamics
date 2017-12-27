@@ -67,16 +67,19 @@ public class TeachingScoreAnalysisJob {
             }
             if(sytList.size()>1){
                 for(SchoolYearTerm yt: sytList){
-                    this.teachingScoreStatistics(yt.getOrgId(), yt.getTeacherYear(), yt.getSemester());
-                    this.teachingScoreDetails(yt.getOrgId(), yt.getTeacherYear(), yt.getSemester());
-                    yt.setDataType(DataType.t_cet_statistics.getIndex()+"");
-                    schoolYearTermService.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
+                    if(null!=yt.getSemester()&&null!=yt.getTeacherYear()) {
+                        this.teachingScoreStatistics(yt.getOrgId(), yt.getTeacherYear(), yt.getSemester());
+                        this.teachingScoreDetails(yt.getOrgId(), yt.getTeacherYear(), yt.getSemester());
+                        yt.setDataType(DataType.t_teaching_score_statistics.getIndex() + "");
+                        schoolYearTermService.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
+                    }
                 }
             }
             schoolYearTermService.saveSchoolYearTerm(sytList);
         } catch (Exception e) {
             e.printStackTrace();
             logger.info("定时统计教学成绩失败！");
+            return;
         }
         logger.info("定时统计教学成绩成功！");
     }
@@ -204,8 +207,9 @@ public class TeachingScoreAnalysisJob {
         } catch (Exception e) {
             e.printStackTrace();
             logger.info("定时统计教学成绩失败！");
+            return;
         }
-        logger.info("定时统计教学成绩成功");
+        logger.info("定时统计教学成绩成功!");
     }
 
     @Transactional
@@ -221,7 +225,7 @@ public class TeachingScoreAnalysisJob {
             AggregationResults<BasicDBObject> scheduleDetails = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(criteria),
-                            Aggregation.group("userId").avg("gradePoint").as("GPAavg").count().as("count")
+                            Aggregation.group("userId").avg("gradePoint").as("GPAavg")
                                     .first("jobNum").as("jobNum").first("userName").as("userName").first("className").as("className")
                                     .first("grade").as("grade").first("collegeId").as("collegeId").first("collegeName").as("collegeName")
                     ),
@@ -240,9 +244,8 @@ public class TeachingScoreAnalysisJob {
                 criteriaSub.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
                 criteriaSub.and("userId").is(userId);
                 AggregationResults<BasicDBObject> scheduleCount = mongoTemplate.aggregate(
-                        Aggregation.newAggregation(Aggregation.match(criteriaSub), Aggregation.group("scheduleId").count().as("count")),
+                        Aggregation.newAggregation(Aggregation.match(criteriaSub), Aggregation.group("scheduleId")),
                         Score.class, BasicDBObject.class);
-
                     if (null != scheduleCount) {
                         tsd.setReferenceSubjects(scheduleCount.getMappedResults().size());
                     }
@@ -278,7 +281,7 @@ public class TeachingScoreAnalysisJob {
             AggregationResults<BasicDBObject> scheduleFail = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(criteriFail),
-                            Aggregation.group("userId").count().as("count").sum("credit").as("credit")),
+                            Aggregation.group("userId").sum("credit").as("credit")),
                     Score.class, BasicDBObject.class);
 
             for (int x = 0; x < scheduleFail.getMappedResults().size(); x++) {
@@ -308,9 +311,10 @@ public class TeachingScoreAnalysisJob {
 
         } catch (Exception e) {
             e.printStackTrace();
-            logger.info("定时统计学生成绩失败！");
+            logger.info("定时统计学生成绩详情失败！");
+            return;
         }
-        logger.info("定时统计学生成绩成功！");
+        logger.info("定时统计学生成绩详情成功！");
     }
 
 }
