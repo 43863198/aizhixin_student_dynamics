@@ -5,34 +5,23 @@ package com.aizhixin.cloud.dataanalysis.simulate.controller;
 
 import java.util.*;
 
-import com.aizhixin.cloud.dataanalysis.analysis.entity.TeachingScoreDetails;
 import com.aizhixin.cloud.dataanalysis.analysis.job.CetStatisticsAnalysisJob;
-import com.aizhixin.cloud.dataanalysis.analysis.job.TeachingScoreAnalysisJob;
-import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
+import com.aizhixin.cloud.dataanalysis.analysis.job.TeachingScoreStatisticsJob;
 import com.aizhixin.cloud.dataanalysis.studentRegister.service.StudentRegisterService;
-import com.mongodb.BasicDBObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.aizhixin.cloud.dataanalysis.analysis.entity.CetScoreStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.PracticeStatistics;
-import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.job.SchoolStatisticsAnalysisJob;
 import com.aizhixin.cloud.dataanalysis.analysis.service.CetStatisticAnalysisService;
 import com.aizhixin.cloud.dataanalysis.analysis.service.PracticeStatisticsService;
 import com.aizhixin.cloud.dataanalysis.analysis.service.SchoolStatisticsService;
-import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
-import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -50,15 +39,11 @@ public class TestAnalysisDataController {
 			.getLogger(TestAnalysisDataController.class);
 
 	@Autowired
-	private SchoolStatisticsService schoolStatisticsService;
-	@Autowired
-	private CetStatisticAnalysisService cetStatisticAnalysisService;
-	@Autowired
 	private PracticeStatisticsService practiceStatisticsService;
 	@Autowired
 	private SchoolStatisticsAnalysisJob schoolStatisticsAnalysisJob;
 	@Autowired
-	private TeachingScoreAnalysisJob teachingScoreAnalysisJob;
+	private TeachingScoreStatisticsJob teachingScoreStatisticsJob;
 	@Autowired
 	private CetStatisticsAnalysisJob cetStatisticsAnalysisJob;
 	@Autowired
@@ -93,7 +78,7 @@ public class TestAnalysisDataController {
 //			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
 	) {
 //		return teachingScoreAnalysisJob.teachingScoreStatistics(orgId, teacherYear, semester);
-		return teachingScoreAnalysisJob.teachingScoreStatistics();
+		return teachingScoreStatisticsJob.teachingScoreStatistics();
 	}
 	@GetMapping(value = "/addcetscorestatistics", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "手动添加cet成绩统计", response = Void.class, notes = "手动添加cet成绩统计<br><br><b>@author jianwei.wu</b>")
