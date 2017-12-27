@@ -101,6 +101,7 @@ public class TeachingScoreStatisticsAnalysis {
                                 tsd.setFailedSubjects(tsd.getReferenceSubjects());
                             }
                         }
+                        logger.info("教学成绩详情统计完成！");
                         tsdList.add(tsd);
                     }
 
@@ -140,9 +141,9 @@ public class TeachingScoreStatisticsAnalysis {
                             }
                         }
                     }
-
+                    logger.info("教学成绩详情数"+tsdList.size());
                     teachingScoreService.saveDetailsList(tsdList);
-
+                   /***********************************教学成绩统计************************************************************/
                     List<TeachingScoreStatistics> tssList = new ArrayList<>();
                     teachingScoreService.deleteScoreStatistics(orgId, schoolYear, semester);
                     TeachingScoreStatistics tss = new TeachingScoreStatistics();
