@@ -36,6 +36,7 @@ public class TeachingScoreStatisticsAnalysis {
     @Autowired
     private TeachingScoreService teachingScoreService;
 
+    @Transactional
     public void teachingScoreStatistics(Set<SchoolYearTerm> schoolYearTermList) {
         List<TeachingScoreStatistics> tssList = new ArrayList<>();
         try {
@@ -86,7 +87,6 @@ public class TeachingScoreStatisticsAnalysis {
                     tcriteriFail.and("schoolYear").is(schoolYear);
                     tcriteriFail.and("semester").is(semester);
                     tcriteriFail.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
-//            tcriteriFail.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
                     tcriteriFail.and("gradePoint").is(0);
                     AggregationResults<BasicDBObject> orgUserFail = mongoTemplate.aggregate(
                             Aggregation.newAggregation(
@@ -148,7 +148,6 @@ public class TeachingScoreStatisticsAnalysis {
                     criteriFail.and("schoolYear").is(schoolYear);
                     criteriFail.and("semester").is(semester);
                     criteriFail.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
-//            criteriFail.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
                     criteriFail.and("gradePoint").is(0);
                     for (TeachingScoreStatistics fts : tssList) {
                         Criteria criteriFailSub = Criteria.where("orgId").is(orgId);

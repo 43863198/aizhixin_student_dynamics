@@ -67,7 +67,7 @@ public class CetStatisticsAnalysisJob {
                 schoolYearTermService.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
             }
         }
-        schoolYearTermService.saveSchoolYearTerm(sytList);
+//        schoolYearTermService.saveSchoolYearTerm(sytList);
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);

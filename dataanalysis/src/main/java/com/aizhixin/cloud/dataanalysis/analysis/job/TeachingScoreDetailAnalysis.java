@@ -34,15 +34,15 @@ public class TeachingScoreDetailAnalysis {
     @Autowired
     private TeachingScoreService teachingScoreService;
 
+    @Transactional
     public void teachingScoreDetails(Set<SchoolYearTerm> schoolYearTermList) {
         List<TeachingScoreDetails> tsdList = new ArrayList<>();
         try {
-        for(SchoolYearTerm schoolYearTerm : schoolYearTermList) {
+            for(SchoolYearTerm schoolYearTerm : schoolYearTermList) {
             Long orgId = schoolYearTerm.getOrgId();
             Integer schoolYear = schoolYearTerm.getTeacherYear();
             Integer semester = schoolYearTerm.getSemester();
             if (null != orgId && null != schoolYear && null != semester) {
-
                     teachingScoreService.deleteScoreDeatail(orgId, schoolYear, semester);
                     Criteria criteria = Criteria.where("orgId").is(orgId);
                     criteria.and("schoolYear").is(schoolYear);
@@ -106,7 +106,6 @@ public class TeachingScoreDetailAnalysis {
                     criteriFail.and("schoolYear").is(schoolYear);
                     criteriFail.and("semester").is(semester);
                     criteriFail.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
-//            criteriFail.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
                     criteriFail.and("gradePoint").is(0);
                     AggregationResults<BasicDBObject> scheduleFail = mongoTemplate.aggregate(
                             Aggregation.newAggregation(
