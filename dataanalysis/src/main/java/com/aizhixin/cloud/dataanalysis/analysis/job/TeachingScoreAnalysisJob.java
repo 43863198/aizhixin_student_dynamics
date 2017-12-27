@@ -24,7 +24,6 @@ import java.util.*;
  * @Date: 2017-12-18
  */
 @Component
-@Transactional
 public class TeachingScoreAnalysisJob {
     private Logger logger = Logger.getLogger(TeachingScoreAnalysisJob.class);
     @Autowired
@@ -34,7 +33,6 @@ public class TeachingScoreAnalysisJob {
     @Autowired
     private SchoolYearTermService schoolYearTermService;
     @Async
-    @Transactional
     public Map<String, Object> teachingScoreStatisticsAsync() {
         Map<String, Object> reslut = new HashMap<>();
         Set<SchoolYearTerm> sytList = new HashSet<>();

@@ -295,17 +295,17 @@ public class CetStatisticAnalysisService {
                 criteria.and("grade").in(tds);
             }
             if (null != type) {
-                if (type.indexOf(",") == -1) {
+                if (type.indexOf(",") != -1) {
+                    criteria.and("examType").ne(ScoreConstant.EXAM_TYPE_COURSE);
+                }else {
                     if (type.equals("4")) {
                         criteria.and("examType").is(ScoreConstant.EXAM_TYPE_CET4);
                     }
                     if (type.equals("6")) {
                         criteria.and("examType").is(ScoreConstant.EXAM_TYPE_CET6);
                     }
+                    criteria.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
                 }
-                criteria.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
-            }else {
-                criteria.orOperator(criteria.where("examType").is(ScoreConstant.EXAM_TYPE_CET4), criteria.where("examType").is(ScoreConstant.EXAM_TYPE_CET6));
             }
             if(null!=nj){
                 criteria.orOperator(criteria.where("jobNum").is(nj), criteria.where("userName").regex(".*?\\" + nj + ".*"));

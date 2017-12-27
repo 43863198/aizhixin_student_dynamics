@@ -34,7 +34,6 @@ public class TeachingScoreStatisticsAnalysis {
     @Autowired
     private TeachingScoreService teachingScoreService;
 
-    @Transactional
     public void teachingScoreStatistics(Long orgId, Integer schoolYear, Integer semester) {
         List<TeachingScoreStatistics> tssList = new ArrayList<>();
         try {
@@ -157,6 +156,7 @@ public class TeachingScoreStatisticsAnalysis {
                         Score.class, BasicDBObject.class);
                 fts.setFailPassStuNum(failUser.getMappedResults().size());
             }
+
             teachingScoreService.saveStatisticsList(tssList);
         } catch (Exception e) {
             e.printStackTrace();
@@ -166,7 +166,6 @@ public class TeachingScoreStatisticsAnalysis {
         logger.info("统计教学成绩成功!");
     }
 
-    @Transactional
     public void teachingScoreDetails(Long orgId, Integer schoolYear, Integer semester) {
         List<TeachingScoreDetails> tsdList = new ArrayList<>();
         try {
