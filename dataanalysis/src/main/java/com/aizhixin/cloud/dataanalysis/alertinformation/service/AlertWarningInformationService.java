@@ -162,7 +162,7 @@ public class AlertWarningInformationService {
 			warningDetailsDTO.setCollogeName(alertWarningInformation.getCollogeName());
 			warningDetailsDTO.setProfessionalName(alertWarningInformation.getProfessionalName());
 			warningDetailsDTO.setClassName(alertWarningInformation.getClassName());
-			warningDetailsDTO.setTeachingYear(alertWarningInformation.getTeachingYear());
+			warningDetailsDTO.setTeacherYear(alertWarningInformation.getTeacherYear());
 			warningDetailsDTO.setPhone(alertWarningInformation.getPhone());
 			warningDetailsDTO.setAddress(alertWarningInformation.getAddress());
 			warningDetailsDTO.setParentsContact(alertWarningInformation.getParentsContact());
@@ -585,7 +585,7 @@ public class AlertWarningInformationService {
 				warningDetailsDTO.setCollogeName(alertWarningInformation.getCollogeName());
 				warningDetailsDTO.setProfessionalName(alertWarningInformation.getProfessionalName());
 				warningDetailsDTO.setClassName(alertWarningInformation.getClassName());
-				warningDetailsDTO.setTeachingYear(alertWarningInformation.getTeachingYear());
+				warningDetailsDTO.setTeacherYear(alertWarningInformation.getTeacherYear());
 				warningDetailsDTO.setPhone(alertWarningInformation.getPhone());
 				warningDetailsDTO.setAddress(alertWarningInformation.getAddress());
 				warningDetailsDTO.setWarningState(alertWarningInformation.getWarningState());
@@ -845,7 +845,7 @@ public class AlertWarningInformationService {
 				warningDetailsDTO.setCollogeName(alertWarningInformation.getCollogeName());
 				warningDetailsDTO.setProfessionalName(alertWarningInformation.getProfessionalName());
 				warningDetailsDTO.setClassName(alertWarningInformation.getClassName());
-				warningDetailsDTO.setTeachingYear(alertWarningInformation.getTeachingYear());
+				warningDetailsDTO.setTeacherYear(alertWarningInformation.getTeacherYear());
 				warningDetailsDTO.setPhone(alertWarningInformation.getPhone());
 				warningDetailsDTO.setAddress(alertWarningInformation.getAddress());
 				warningDetailsDTO.setParentsContact(alertWarningInformation.getParentsContact());

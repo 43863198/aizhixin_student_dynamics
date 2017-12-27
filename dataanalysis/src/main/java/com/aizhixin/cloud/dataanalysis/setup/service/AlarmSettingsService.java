@@ -253,7 +253,7 @@ public class AlarmSettingsService {
         return result;
     }
     
-//    @Async
+    @Async
     public void rebuildAlertInfor(String warningType,Long orgId){
     	
     	logger.debug("开始删除warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");

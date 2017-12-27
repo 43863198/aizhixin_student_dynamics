@@ -1,6 +1,7 @@
 package com.aizhixin.cloud.dataanalysis.studentRegister.job;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
 import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
@@ -18,12 +20,18 @@ import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.common.util.RestUtil;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmRuleService;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
+import com.aizhixin.cloud.dataanalysis.setup.service.ProcessingModeService;
+
 import org.apache.log4j.Logger;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmRule;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
@@ -36,6 +44,7 @@ public class StudentRegisterJob {
 
 	private Logger logger = Logger.getLogger(this.getClass());
 	@Autowired
+	@Lazy
 	private AlarmSettingsService alarmSettingsService;
 	@Autowired
 	private AlarmRuleService alarmRuleService;
@@ -52,6 +61,19 @@ public class StudentRegisterJob {
 		if (null != settingsList && settingsList.size() > 0) {
 			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
 
+			
+			Calendar c = Calendar.getInstance();
+			// 当前年份
+			int schoolYear = c.get(Calendar.YEAR);
+			// 当前月份
+			int month = c.get(Calendar.MONTH);
+			// 当前学期编号
+			int semester = 2;
+			if (month > 1 && month < 9) {
+				semester = 1;
+			}
+			
+			
 			Set<String> warnRuleIdList = new HashSet<String>();
 			Set<String> warnSettingsIdList = new HashSet<String>();
 			// 按orgId归类告警等级阀值
@@ -165,8 +187,8 @@ public class StudentRegisterJob {
 									alertInfor
 											.setProfessionalName(studentRegister
 													.getProfessionalName());
-									alertInfor.setTeachingYear(String.valueOf(studentRegister
-											.getSchoolYear()));
+									alertInfor.setSemester(semester);
+									alertInfor.setTeacherYear(schoolYear);
 									alertInfor.setWarningLevel(alarmSettings
 											.getWarningLevel());
 									alertInfor
@@ -341,7 +363,7 @@ public class StudentRegisterJob {
 							awinfo.setPhone(phone);
 						}
 						if (null != teachingYear) {
-							awinfo.setTeachingYear(teachingYear);
+							awinfo.setTeacherYear(Integer.parseInt(teachingYear));
 						}
 						if (i % 77 == 0) {
 							awinfo.setWarningLevel(1);
