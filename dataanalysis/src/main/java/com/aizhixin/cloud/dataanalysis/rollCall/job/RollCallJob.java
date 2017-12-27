@@ -34,6 +34,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -49,6 +50,7 @@ public class RollCallJob {
 
 	private Logger logger = Logger.getLogger(this.getClass());
 	@Autowired
+	@Lazy
 	private AlarmSettingsService alarmSettingsService;
 	@Autowired
 	private AlarmRuleService alarmRuleService;

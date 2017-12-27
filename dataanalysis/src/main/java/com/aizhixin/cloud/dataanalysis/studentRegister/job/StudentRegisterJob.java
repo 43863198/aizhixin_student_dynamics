@@ -21,12 +21,14 @@ import com.aizhixin.cloud.dataanalysis.common.util.RestUtil;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmRuleService;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
 import com.aizhixin.cloud.dataanalysis.setup.service.ProcessingModeService;
+
 import org.apache.log4j.Logger;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -42,6 +44,7 @@ public class StudentRegisterJob {
 
 	private Logger logger = Logger.getLogger(this.getClass());
 	@Autowired
+	@Lazy
 	private AlarmSettingsService alarmSettingsService;
 	@Autowired
 	private AlarmRuleService alarmRuleService;
