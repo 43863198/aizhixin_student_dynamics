@@ -11,20 +11,11 @@
     <changeSet id="20171226110800" author="zhengning">
          <dropColumn columnName="SEMESTER_ID" tableName="t_warning_information"/>
          <dropColumn columnName="SEMESTER_NAME" tableName="t_warning_information"/>
+         <dropColumn columnName="TEACHING_YEAR" tableName="t_warning_information"/>
          
-         <modifyDataType
-                columnName="TEACHING_YEAR"
-                newDataType="int(11)"
-                tableName="t_warning_information"/>
-          <renameColumn
-                columnDataType="INT(11)"
-                newColumnName="TEACHER_YEAR"
-                oldColumnName="TEACHING_YEAR"
-                remarks="学年"
-                tableName="t_warning_information"/>
-        
         <addColumn
                    tableName="t_warning_information">
+             <column name="TEACHER_YEAR" type="INT(11)"  remarks="学年"/>       
             <column name="SEMESTER" type="INT(11)"  remarks="学期"/>
         </addColumn>        
     </changeSet>
