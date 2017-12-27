@@ -101,7 +101,7 @@ public class TeachingScoreStatisticsAnalysis {
                                 tsd.setFailedSubjects(tsd.getReferenceSubjects());
                             }
                         }
-                        logger.info("教学成绩详情统计完成！");
+                        logger.info(orgId+":"+schoolYear+":"+semester+"教学成绩详情:"+i);
                         tsdList.add(tsd);
                     }
 
@@ -141,7 +141,7 @@ public class TeachingScoreStatisticsAnalysis {
                             }
                         }
                     }
-                    logger.info("教学成绩详情数"+tsdList.size());
+                    logger.info(orgId+":"+schoolYear+":"+semester+"保存教学成绩详情数据:"+tsdList.size());
                     teachingScoreService.saveDetailsList(tsdList);
                    /***********************************教学成绩统计************************************************************/
                     List<TeachingScoreStatistics> tssList = new ArrayList<>();
@@ -206,8 +206,8 @@ public class TeachingScoreStatisticsAnalysis {
                                     Aggregation.group("collegeId").first("collegeName").as("collegeName").avg("gradePoint").as("GPAavg").avg("totalScore").as("courseAVG")
                             ),
                             Score.class, BasicDBObject.class);
-                    for (int i = 0; i < countts.getMappedResults().size(); i++) {
-                        Long collegeId = countts.getMappedResults().get(i).getLong("_id");
+                    for (int j = 0; j < countts.getMappedResults().size(); j++) {
+                        Long collegeId = countts.getMappedResults().get(j).getLong("_id");
                         Criteria ccriteriaSub = Criteria.where("orgId").is(orgId);
                         ccriteriaSub.and("schoolYear").is(schoolYear);
                         ccriteriaSub.and("semester").is(semester);
@@ -231,13 +231,13 @@ public class TeachingScoreStatisticsAnalysis {
                         ctss.setStatisticsType(2); //按学院统计
                         ctss.setCollegeId(collegeId);
                         ctss.setCurriculumNum(schedule.getMappedResults().size());
-                        ctss.setCollegeName(countts.getMappedResults().get(i).getString("collegeName"));
+                        ctss.setCollegeName(countts.getMappedResults().get(j).getString("collegeName"));
                         ctss.setStudentNum(user.getMappedResults().size());
-                        if (null != countts.getMappedResults().get(i).get("GPAavg")) {
-                            ctss.setAvgGPA(new BigDecimal(countts.getMappedResults().get(i).getDouble("GPAavg")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                        if (null != countts.getMappedResults().get(j).get("GPAavg")) {
+                            ctss.setAvgGPA(new BigDecimal(countts.getMappedResults().get(j).getDouble("GPAavg")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                         }
-                        if (null != countts.getMappedResults().get(i).get("courseAVG")) {
-                            ctss.setAvgScore(new BigDecimal(countts.getMappedResults().get(i).getDouble("courseAVG")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                        if (null != countts.getMappedResults().get(j).get("courseAVG")) {
+                            ctss.setAvgScore(new BigDecimal(countts.getMappedResults().get(j).getDouble("courseAVG")).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                         }
                         tssList.add(ctss);
                     }
