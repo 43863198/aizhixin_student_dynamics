@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+
+    <changeSet id="20171226110800" author="zhengning">
+         <dropColumn columnName="SEMESTER_ID" tableName="t_warning_information"/>
+         <dropColumn columnName="SEMESTER_NAME" tableName="t_warning_information"/>
+         
+         <modifyDataType
+                columnName="TEACHING_YEAR"
+                newDataType="int(11)"
+                tableName="t_warning_information"/>
+          <renameColumn
+                columnDataType="INT(11)"
+                newColumnName="TEACHER_YEAR"
+                oldColumnName="TEACHING_YEAR"
+                remarks="学年"
+                tableName="t_warning_information"/>
+        
+        <addColumn
+                   tableName="t_warning_information">
+            <column name="SEMESTER" type="INT(11)"  remarks="学期"/>
+        </addColumn>        
+    </changeSet>
+</databaseChangeLog>

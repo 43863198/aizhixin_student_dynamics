@@ -83,7 +83,7 @@ public class ScoreJob {
 			int month = c.get(Calendar.MONTH);
 			// 当前学期编号
 			int semester = 2;
-			if (month > 2 && month < 9) {
+			if (month > 1 && month < 9) {
 				semester = 1;
 			}
 			// 上学期编号
@@ -316,6 +316,17 @@ public class ScoreJob {
 						.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 
+			Calendar c = Calendar.getInstance();
+			// 当前年份
+			int schoolYear = c.get(Calendar.YEAR);
+			// 当前月份
+			int month = c.get(Calendar.MONTH);
+			// 当前学期编号
+			int semester = 2;
+			if (month > 1 && month < 9) {
+				semester = 1;
+			}
+			
 			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
 			Set<String> warnRuleIdList = new HashSet<String>();
 			Set<String> warnSettingsIdList = new HashSet<String>();
@@ -428,6 +439,8 @@ public class ScoreJob {
 										alertInfor
 												.setAlarmSettingsId(alarmSettings
 														.getId());
+										alertInfor.setSemester(semester);
+										alertInfor.setTeacherYear(schoolYear);
 										alertInfor
 												.setWarningType(WarningTypeConstant.PerformanceFluctuation
 														.toString());
@@ -482,7 +495,7 @@ public class ScoreJob {
 			int month = c.get(Calendar.MONTH);
 			// 当前学期编号
 			int semester = 2;
-			if (month > 2 && month < 9) {
+			if (month > 1 && month < 9) {
 				semester = 1;
 			}
 			// 上学期编号
@@ -511,8 +524,8 @@ public class ScoreJob {
 				Long orgId = (Long) entry.getKey();
 
 				List<Score> scoreList = scoreMongoRespository
-						.findAllByTotalScoreLessThanAndSchoolYearAndSemesterAndOrgIdAndExamType(
-								ScoreConstant.PASS_SCORE_LINE, schoolYear,
+						.findAllByGradePointAndSchoolYearAndSemesterAndOrgIdAndExamType(
+								0, schoolYear,
 								lastSemester, orgId,
 								ScoreConstant.EXAM_TYPE_COURSE);
 				for (Score score : scoreList) {
@@ -606,7 +619,7 @@ public class ScoreJob {
 			int month = c.get(Calendar.MONTH);
 			// 当前学期编号
 			int semester = 2;
-			if (month > 2 && month < 9) {
+			if (month > 1 && month < 9) {
 				semester = 1;
 			}
 
@@ -714,9 +727,8 @@ public class ScoreJob {
 									alertInfor
 											.setProfessionalName(totalScoreCount
 													.getProfessionalName());
-									alertInfor.setTeachingYear(String
-											.valueOf(totalScoreCount
-													.getSchoolYear()));
+									alertInfor.setTeacherYear(totalScoreCount
+													.getSchoolYear());
 									alertInfor.setWarningLevel(alarmSettings
 											.getWarningLevel());
 									alertInfor
@@ -727,6 +739,8 @@ public class ScoreJob {
 											.setWarningType(WarningTypeConstant.TotalAchievement
 													.toString());
 									alertInfor.setWarningTime(new Date());
+									alertInfor.setSemester(semester);
+									alertInfor.setTeacherYear(schoolYear);
 									alertInfor
 											.setWarningCondition("上学期必修课不及格课程数:"
 													+ totalScoreCount
@@ -769,7 +783,7 @@ public class ScoreJob {
 			int month = c.get(Calendar.MONTH);
 			// 当前学期编号
 			int semester = 2;
-			if (month > 2 && month < 9) {
+			if (month > 1 && month < 9) {
 				semester = 1;
 			}
 
@@ -877,9 +891,8 @@ public class ScoreJob {
 									alertInfor
 											.setProfessionalName(totalScoreCount
 													.getProfessionalName());
-									alertInfor.setTeachingYear(String
-											.valueOf(totalScoreCount
-													.getSchoolYear()));
+									alertInfor.setTeacherYear(totalScoreCount
+													.getSchoolYear());
 									alertInfor.setWarningLevel(alarmSettings
 											.getWarningLevel());
 									alertInfor
@@ -896,6 +909,8 @@ public class ScoreJob {
 															.getRequireCreditCount());
 									alertInfor.setPhone(totalScoreCount
 											.getUserPhone());
+									alertInfor.setSemester(semester);
+									alertInfor.setTeacherYear(schoolYear);
 									alertInfor.setOrgId(alarmRule.getOrgId());
 									alertInforList.add(alertInfor);
 
@@ -1070,6 +1085,17 @@ public class ScoreJob {
 						.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 
+			Calendar c = Calendar.getInstance();
+			// 当前年份
+			int schoolYear = c.get(Calendar.YEAR);
+			// 当前月份
+			int month = c.get(Calendar.MONTH);
+			// 当前学期编号
+			int semester = 2;
+			if (month > 1 && month < 9) {
+				semester = 1;
+			}
+			
 			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
 			Set<String> warnRuleIdList = new HashSet<String>();
 			Set<String> warnSettingsIdList = new HashSet<String>();
@@ -1174,6 +1200,8 @@ public class ScoreJob {
 									alertInfor.setWarningCondition("补考后上学期总评成绩不及格课程数:"
 											+ makeUpScoreCount
 													.getFailCourseNum());
+									alertInfor.setSemester(semester);
+									alertInfor.setTeacherYear(schoolYear);
 									alertInfor.setWarningTime(new Date());
 									alertInfor.setPhone(makeUpScoreCount
 											.getUserPhone());
@@ -1207,6 +1235,14 @@ public class ScoreJob {
 
 			Calendar c = Calendar.getInstance();
 			// 当前年份
+			int schoolYear = c.get(Calendar.YEAR);
+			// 当前月份
+			int month = c.get(Calendar.MONTH);
+			// 当前学期编号
+			int semester = 2;
+			if (month > 1 && month < 9) {
+				semester = 1;
+			}
 			int nowYear = c.get(Calendar.YEAR);
 			String grade2 = String.valueOf(nowYear - 1);
 			String grade3 = String.valueOf(nowYear - 2);
@@ -1351,6 +1387,8 @@ public class ScoreJob {
 													.toString());
 									alertInfor.setWarningCondition("第" + grade
 											+ "学年仍未通过英语四级考试");
+									alertInfor.setSemester(semester);
+									alertInfor.setTeacherYear(schoolYear);
 									alertInfor.setWarningTime(new Date());
 									alertInfor.setPhone(score.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());
@@ -1383,6 +1421,12 @@ public class ScoreJob {
 		if (null != settingsList && settingsList.size() > 0) {
 
 			Calendar c = Calendar.getInstance();
+			int month = c.get(Calendar.MONTH);
+			// 当前学期编号
+			int semester = 2;
+			if (month > 1 && month < 9) {
+				semester = 1;
+			}
 			// 当前年份
 			int endYear = c.get(Calendar.YEAR);
 			// 前三年
@@ -1493,6 +1537,8 @@ public class ScoreJob {
 									alertInfor.setWarningTime(new Date());
 									alertInfor.setPhone(makeUpScoreCount
 											.getUserPhone());
+									alertInfor.setSemester(semester);
+									alertInfor.setTeacherYear(endYear);
 									alertInfor.setOrgId(alarmRule.getOrgId());
 									alertInforList.add(alertInfor);
 

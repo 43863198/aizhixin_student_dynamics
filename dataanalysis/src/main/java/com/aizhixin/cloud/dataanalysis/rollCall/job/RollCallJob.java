@@ -78,7 +78,7 @@ public class RollCallJob {
 			int month = c.get(Calendar.MONTH);
 			//当前学期编号
 			int semester = 2;
-			if( month > 2 && month < 9){
+			if( month > 1 && month < 9){
 				semester = 1;
 			}
 			
@@ -159,7 +159,7 @@ public class RollCallJob {
 			int month = c.get(Calendar.MONTH);
 			//当前学期编号
 			int semester = 2;
-			if( month > 2 && month < 9){
+			if( month > 1 && month < 9){
 				semester = 1;
 			}
 			
@@ -267,8 +267,9 @@ public class RollCallJob {
 									alertInfor
 											.setProfessionalName(rollCallCount
 													.getProfessionalName());
-									alertInfor.setTeachingYear(String.valueOf(rollCallCount
-											.getSchoolYear()));
+									alertInfor.setTeacherYear(rollCallCount
+											.getSchoolYear());
+									alertInfor.setSemester(rollCallCount.getSemester());
 									alertInfor.setWarningLevel(alarmSettings
 											.getWarningLevel());
 									alertInfor

@@ -21,5 +21,7 @@ public interface ScoreMongoRespository extends MongoRepository<Score, String>{
 	
 	List<Score> findAllByTotalScoreLessThanAndSchoolYearAndSemesterAndOrgIdAndExamType(float totalScore,int schoolYear,int semester,Long orgId,String examType);
 	
+	List<Score> findAllByGradePointAndSchoolYearAndSemesterAndOrgIdAndExamType(float gradePoint,int schoolYear,int semester,Long orgId,String examType);
+	
 	List<Score> findAllByTotalScoreGreaterThanEqualAndSchoolYearAndSemesterAndOrgIdAndExamType(float totalScore,int schoolYear,int semester,Long orgId,String examType);
 }

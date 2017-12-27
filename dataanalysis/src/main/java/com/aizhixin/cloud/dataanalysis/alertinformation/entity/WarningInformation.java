@@ -91,11 +91,6 @@ public class WarningInformation extends AbstractStringIdEntity {
     @Column(name = "CLASS_NAME")
     @Getter @Setter private String className;
 
-    /*
-     * 学年
-     */
-    @Column(name = "TEACHING_YEAR")
-    @Getter @Setter private String teachingYear;
 
     /*
      * 手机号
@@ -152,17 +147,6 @@ public class WarningInformation extends AbstractStringIdEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Getter @Setter protected Date warningTime = new Date();
 
-    /*
-     * 学期id
-     */
-    @Column(name = "SEMESTER_ID")
-    @Getter @Setter private Long semesterId;
-
-    /*
-    * 学期名称
-    */
-    @Column(name = "SEMESTER_NAME")
-    @Getter @Setter private String semesterName;
 
     /*
      * 预警引擎设置id
@@ -182,4 +166,15 @@ public class WarningInformation extends AbstractStringIdEntity {
     @Column(name = "WARNING_SOURCE")
     @Getter @Setter private String warningSource;
 
+    
+    /*
+    * 学期
+    */
+    @Column(name = "SEMESTER")
+    @Getter @Setter private Integer semester;
+    /*
+     * 学年
+     */
+    @Column(name = "TEACHER_YEAR")
+    @Getter @Setter private Integer teacherYear;
 }
