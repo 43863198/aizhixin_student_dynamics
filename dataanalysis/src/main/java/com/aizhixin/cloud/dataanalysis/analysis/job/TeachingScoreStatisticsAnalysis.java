@@ -17,7 +17,6 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -60,6 +59,7 @@ public class TeachingScoreStatisticsAnalysis {
                                             .first("grade").as("grade").first("collegeId").as("collegeId").first("collegeName").as("collegeName")
                             ),
                             Score.class, BasicDBObject.class);
+                    logger.info(scheduleDetails.getMappedResults().size()+"@@@"+orgId);
                     for (int i = 0; i < scheduleDetails.getMappedResults().size(); i++) {
                         Long userId = scheduleDetails.getMappedResults().get(i).getLong("_id");
                         TeachingScoreDetails tsd = new TeachingScoreDetails();
@@ -242,11 +242,6 @@ public class TeachingScoreStatisticsAnalysis {
                     }
 
                     //院不及格人数统计
-//                    Criteria criteriStatisticFail = Criteria.where("orgId").is(orgId);
-//                    criteriStatisticFail.and("schoolYear").is(schoolYear);
-//                    criteriStatisticFail.and("semester").is(semester);
-//                    criteriStatisticFail.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
-//                    criteriFail.and("gradePoint").is(0);
                     for (TeachingScoreStatistics fts : tssList) {
                         Criteria criteriFailSub = Criteria.where("orgId").is(orgId);
                         criteriFailSub.and("schoolYear").is(schoolYear);
