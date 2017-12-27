@@ -34,7 +34,6 @@ public class TeachingScoreStatisticsAnalysis {
     @Autowired
     private TeachingScoreService teachingScoreService;
 
-
     @Transactional
     public void teachingScoreStatistics(Long orgId, Integer schoolYear, Integer semester) {
         List<TeachingScoreStatistics> tssList = new ArrayList<>();
@@ -50,7 +49,7 @@ public class TeachingScoreStatisticsAnalysis {
             criterias.and("schoolYear").is(schoolYear);
             criterias.and("semester").is(semester);
             criterias.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
-            criterias.and("gradePoint").ne(null);
+            criterias.and("gradePoint").gte(0);
             AggregationResults<BasicDBObject> orgSchedule = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(criterias),
@@ -94,7 +93,7 @@ public class TeachingScoreStatisticsAnalysis {
             ccriteria.and("schoolYear").is(schoolYear);
             ccriteria.and("semester").is(semester);
             ccriteria.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
-            ccriteria.and("gradePoint").ne(null);
+            ccriteria.and("gradePoint").gte(0);
             AggregationResults<BasicDBObject> countts = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(ccriteria),
@@ -107,7 +106,7 @@ public class TeachingScoreStatisticsAnalysis {
                 ccriteriaSub.and("schoolYear").is(schoolYear);
                 ccriteriaSub.and("semester").is(semester);
                 ccriteriaSub.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
-                ccriteriaSub.and("gradePoint").ne(null);
+                ccriteriaSub.and("gradePoint").gte(0);
                 ccriteriaSub.and("collegeId").is(collegeId);
                 AggregationResults<BasicDBObject> schedule = mongoTemplate.aggregate(
                         Aggregation.newAggregation(
@@ -176,7 +175,7 @@ public class TeachingScoreStatisticsAnalysis {
             criteria.and("schoolYear").is(schoolYear);
             criteria.and("semester").is(semester);
             criteria.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
-            criteria.and("gradePoint").ne(null);
+            criteria.and("gradePoint").gte(0);
             AggregationResults<BasicDBObject> scheduleDetails = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(criteria),
