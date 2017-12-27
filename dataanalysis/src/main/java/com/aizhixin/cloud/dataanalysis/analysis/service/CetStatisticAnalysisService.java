@@ -8,6 +8,7 @@ import com.aizhixin.cloud.dataanalysis.analysis.entity.CetScoreStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.CetScoreStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
+import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
@@ -254,15 +255,11 @@ public class CetStatisticAnalysisService {
     public Map<String, Object> getCetDetail(Long orgId, String collegeId, Integer teacherYear, Integer semester, String grade, Integer type, String nj, Pageable page) {
         Map<String, Object> result = new HashMap<>();
         PageData<Score> p = new PageData<>();
-        List<Score> items = new ArrayList<>();
-        long total = 0L;
         try {
             //创建排序模板Sort
             Sort sort = new Sort(Sort.Direction.DESC, "id");
             //创建分页模板Pageable
             Pageable pageable = new PageRequest(page.getPageNumber(), page.getPageSize(), sort);
-            //创建查询条件对象
-            org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
             //条件
             Criteria criteria = Criteria.where("orgId").is(orgId);
             if (null != collegeId) {
@@ -299,30 +296,31 @@ public class CetStatisticAnalysisService {
             }
             if (null != type) {
                 if (type == 4) {
-                    criteria.and("examType").is("cet4");
+                    criteria.and("examType").is(ScoreConstant.EXAM_TYPE_CET4);
                 } else if (type == 6) {
-                    criteria.and("examType").is("cet6");
-                } else {
-                    criteria.orOperator(criteria.where("examType").is("cet4"), criteria.where("examType").is("cet6"));
+                    criteria.and("examType").is(ScoreConstant.EXAM_TYPE_CET6);
                 }
+                criteria.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
+            }else {
+                criteria.orOperator(criteria.where("examType").is(ScoreConstant.EXAM_TYPE_CET4), criteria.where("examType").is(ScoreConstant.EXAM_TYPE_CET6));
             }
             if(null!=nj){
                 criteria.orOperator(criteria.where("jobNum").is(nj), criteria.where("userName").regex(".*?\\" + nj + ".*"));
             }
-            query.addCriteria(criteria);
             //mongoTemplate.count计算总数
-            total = mongoTemplate.count(query, Score.class);
+            long total = mongoTemplate.count(new org.springframework.data.mongodb.core.query.Query().addCriteria(criteria), Score.class);
             // mongoTemplate.find 查询结果集
-            items = mongoTemplate.find(query.with(pageable), Score.class);
+            List<Score> items  = mongoTemplate.find(new org.springframework.data.mongodb.core.query.Query().addCriteria(criteria).with(pageable), Score.class);
+
+            p.getPage().setTotalPages(((int)total + page.getPageSize() - 1) / page.getPageSize());
+            p.getPage().setPageNumber(page.getPageNumber());
+            p.getPage().setPageSize(page.getPageSize());
+            p.getPage().setTotalElements(total);
+            p.setData(items);
         } catch (Exception e) {
             result.put("success", false);
             result.put("message", "获取数据异常！");
         }
-        p.getPage().setTotalPages((int) Math.ceil(total / page.getPageSize()) + 1);
-        p.getPage().setPageNumber(page.getPageNumber());
-        p.getPage().setPageSize(page.getPageSize());
-        p.getPage().setTotalElements(total);
-        p.setData(items);
         result.put("success", true);
         result.put("data", p);
         return result;
