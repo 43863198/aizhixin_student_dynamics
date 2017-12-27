@@ -32,6 +32,8 @@ public class TeachingScoreAnalysisJob {
     private MongoTemplate mongoTemplate;
     @Autowired
     private SchoolYearTermService schoolYearTermService;
+
+
     @Async
     public Map<String, Object> teachingScoreStatisticsAsync() {
         Map<String, Object> reslut = new HashMap<>();
