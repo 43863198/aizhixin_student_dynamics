@@ -255,8 +255,6 @@ public class CetStatisticAnalysisService {
     public Map<String, Object> getCetDetail(Long orgId, String collegeId, Integer teacherYear, Integer semester, String grade, Integer type, String nj, Pageable page) {
         Map<String, Object> result = new HashMap<>();
         PageData<Score> p = new PageData<>();
-        List<Score> items = new ArrayList<>();
-        long total = 0L;
         try {
             //创建排序模板Sort
             Sort sort = new Sort(Sort.Direction.DESC, "id");
@@ -313,18 +311,19 @@ public class CetStatisticAnalysisService {
             }
             query.addCriteria(criteria);
             //mongoTemplate.count计算总数
-            total = mongoTemplate.count(query, Score.class);
+            long total = mongoTemplate.count(query, Score.class);
             // mongoTemplate.find 查询结果集
-            items = mongoTemplate.find(query.with(pageable), Score.class);
+            List<Score> items  = mongoTemplate.find(query.with(pageable), Score.class);
+
+            p.getPage().setTotalPages((int) Math.ceil(total / page.getPageSize()));
+            p.getPage().setPageNumber(page.getPageNumber());
+            p.getPage().setPageSize(page.getPageSize());
+            p.getPage().setTotalElements(total);
+            p.setData(items);
         } catch (Exception e) {
             result.put("success", false);
             result.put("message", "获取数据异常！");
         }
-        p.getPage().setTotalPages((int) Math.ceil(total / page.getPageSize()) + 1);
-        p.getPage().setPageNumber(page.getPageNumber());
-        p.getPage().setPageSize(page.getPageSize());
-        p.getPage().setTotalElements(total);
-        p.setData(items);
         result.put("success", true);
         result.put("data", p);
         return result;

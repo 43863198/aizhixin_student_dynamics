@@ -40,13 +40,15 @@ public class TeachingScoreAnalysisJob {
     @Autowired
     private SchoolYearTermService schoolYearTermService;
 
-    public Map<String, Object> teachingScoreStatistics() {
-        teachingScoreStatisticsAsync();
-        return null;
-    }
+//    public Map<String, Object> teachingScoreStatistics() {
+//        Map<String, Object> reslut = new HashMap<>();
+//        teachingScoreStatisticsAsync();
+//        reslut.put("message","教学成绩统计任务开始...");
+//        return reslut;
+//    }
 
-    @Async
-    public void teachingScoreStatisticsAsync() {
+    public Map<String, Object> teachingScoreStatistics() {
+        Map<String, Object> reslut = new HashMap<>();
         Set<SchoolYearTerm> sytList = new HashSet<>();
         try {
             Criteria ytc = Criteria.where("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
@@ -79,13 +81,15 @@ public class TeachingScoreAnalysisJob {
             schoolYearTermService.saveSchoolYearTerm(sytList);
         } catch (Exception e) {
             e.printStackTrace();
-            logger.info("定时统计教学成绩失败！");
-            return;
+            reslut.put("message","统计教学成绩启动失败！");
+            return reslut;
         }
-        logger.info("定时统计教学成绩成功！");
+        reslut.put("message", "统计教学成绩启动成功！");
+        return reslut;
     }
 
     @Transactional
+    @Async
     public void teachingScoreStatistics(Long orgId, Integer schoolYear, Integer semester) {
         List<TeachingScoreStatistics> tssList = new ArrayList<>();
         try {
@@ -218,6 +222,7 @@ public class TeachingScoreAnalysisJob {
     }
 
     @Transactional
+    @Async
     public void teachingScoreDetails(Long orgId, Integer schoolYear, Integer semester) {
         List<TeachingScoreDetails> tsdList = new ArrayList<>();
         try {
