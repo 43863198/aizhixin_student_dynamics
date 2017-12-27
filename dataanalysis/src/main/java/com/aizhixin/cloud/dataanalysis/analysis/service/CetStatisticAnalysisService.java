@@ -252,7 +252,7 @@ public class CetStatisticAnalysisService {
     }
 
 
-    public Map<String, Object> getCetDetail(Long orgId, String collegeId, Integer teacherYear, Integer semester, String grade, String type, String nj, Pageable page) {
+    public Map<String, Object> getCetDetail(Long orgId, String collegeId, Integer teacherYear, Integer semester, String grade, Integer type, String nj, Pageable page) {
         Map<String, Object> result = new HashMap<>();
         PageData<Score> p = new PageData<>();
         try {
@@ -295,17 +295,13 @@ public class CetStatisticAnalysisService {
                 criteria.and("grade").in(tds);
             }
             if (null != type) {
-                if (type.indexOf(",") != -1) {
-                    criteria.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
-                }else {
-                    if (type.equals("4")) {
+                    if (type.equals(4)) {
                         criteria.and("examType").is(ScoreConstant.EXAM_TYPE_CET4);
                     }
-                    if (type.equals("6")) {
+                    if (type.equals(6)) {
                         criteria.and("examType").is(ScoreConstant.EXAM_TYPE_CET6);
                     }
                     criteria.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
-                }
             }else {
                 criteria.and("examType").ne(ScoreConstant.EXAM_TYPE_COURSE);
             }

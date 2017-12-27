@@ -32,6 +32,8 @@ public class TeachingScoreAnalysisJob {
     private MongoTemplate mongoTemplate;
     @Autowired
     private SchoolYearTermService schoolYearTermService;
+    @Autowired
+    private TeachingScoreDetailAnalysis teachingScoreDetailAnalysis;
 
 
     @Async
@@ -62,7 +64,7 @@ public class TeachingScoreAnalysisJob {
                 for(SchoolYearTerm yt: sytList){
                     if(null!=yt.getSemester()&&null!=yt.getTeacherYear()) {
                         teachingScoreStatisticsAnalysis.teachingScoreStatistics(yt.getOrgId(), yt.getTeacherYear(), yt.getSemester());
-                        teachingScoreStatisticsAnalysis.teachingScoreDetails(yt.getOrgId(), yt.getTeacherYear(), yt.getSemester());
+                        teachingScoreDetailAnalysis.teachingScoreDetails(yt.getOrgId(), yt.getTeacherYear(), yt.getSemester());
                         yt.setDataType(DataType.t_teaching_score_statistics.getIndex() + "");
                         schoolYearTermService.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
                     }
