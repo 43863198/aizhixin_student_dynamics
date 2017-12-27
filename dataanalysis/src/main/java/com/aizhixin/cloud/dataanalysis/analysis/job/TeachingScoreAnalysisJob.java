@@ -217,7 +217,6 @@ public class TeachingScoreAnalysisJob {
         List<TeachingScoreDetails> tsdList = new ArrayList<>();
         try {
             teachingScoreService.deleteScoreDeatail(orgId, schoolYear, semester);
-            //参考人数统计
             Criteria criteria = Criteria.where("orgId").is(orgId);
             criteria.and("schoolYear").is(schoolYear);
             criteria.and("semester").is(semester);
@@ -295,6 +294,10 @@ public class TeachingScoreAnalysisJob {
                 AggregationResults<BasicDBObject> scheduleFailCount = mongoTemplate.aggregate(
                         Aggregation.newAggregation(Aggregation.match(criteriaFailSub), Aggregation.group("scheduleId")),
                         Score.class, BasicDBObject.class);
+                for(int z=0;z<scheduleFailCount.getMappedResults().size();z++){
+
+                }
+
                 for (TeachingScoreDetails ts : tsdList) {
                     if (userId.equals(ts.getUserId())) {
                         if (null != scheduleFailCount) {

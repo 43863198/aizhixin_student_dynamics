@@ -8,6 +8,7 @@ import com.aizhixin.cloud.dataanalysis.analysis.entity.CetScoreStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.CetScoreStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
+import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
@@ -302,9 +303,10 @@ public class CetStatisticAnalysisService {
                     criteria.and("examType").is("cet4");
                 } else if (type == 6) {
                     criteria.and("examType").is("cet6");
-                } else {
-                    criteria.orOperator(criteria.where("examType").is("cet4"), criteria.where("examType").is("cet6"));
                 }
+                criteria.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
+            }else {
+                criteria.orOperator(criteria.where("examType").is("cet4"), criteria.where("examType").is("cet6"));
             }
             if(null!=nj){
                 criteria.orOperator(criteria.where("jobNum").is(nj), criteria.where("userName").regex(".*?\\" + nj + ".*"));
