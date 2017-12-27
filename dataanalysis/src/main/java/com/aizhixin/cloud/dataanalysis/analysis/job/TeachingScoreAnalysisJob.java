@@ -58,7 +58,6 @@ public class TeachingScoreAnalysisJob {
             }
             if(sytList.size()>1){
                 teachingScoreStatisticsAnalysis.teachingScoreStatistics(sytList);
-                teachingScoreDetailAnalysis.teachingScoreDetails(sytList);
             }
         } catch (Exception e) {
             e.printStackTrace();
