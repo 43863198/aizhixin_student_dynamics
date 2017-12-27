@@ -39,14 +39,111 @@ public class TeachingScoreStatisticsAnalysis {
 
     @Async
     public void teachingScoreStatistics(Set<SchoolYearTerm> schoolYearTermList) {
-        List<TeachingScoreStatistics> tssList = new ArrayList<>();
         try {
             for (SchoolYearTerm schoolYearTerm : schoolYearTermList) {
                 Long orgId = schoolYearTerm.getOrgId();
                 Integer schoolYear = schoolYearTerm.getTeacherYear();
                 Integer semester = schoolYearTerm.getSemester();
                 if (null != orgId && null != schoolYear && null != semester) {
+                    List<TeachingScoreDetails> tsdList = new ArrayList<>();
+                    teachingScoreService.deleteScoreDeatail(orgId, schoolYear, semester);
+                    Criteria criteria = Criteria.where("orgId").is(orgId);
+                    criteria.and("schoolYear").is(schoolYear);
+                    criteria.and("semester").is(semester);
+                    criteria.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
+                    criteria.and("gradePoint").gte(0);
+                    AggregationResults<BasicDBObject> scheduleDetails = mongoTemplate.aggregate(
+                            Aggregation.newAggregation(
+                                    Aggregation.match(criteria),
+                                    Aggregation.group("userId").avg("gradePoint").as("GPAavg")
+                                            .first("jobNum").as("jobNum").first("userName").as("userName").first("className").as("className")
+                                            .first("grade").as("grade").first("collegeId").as("collegeId").first("collegeName").as("collegeName")
+                            ),
+                            Score.class, BasicDBObject.class);
+                    for (int i = 0; i < scheduleDetails.getMappedResults().size(); i++) {
+                        Long userId = scheduleDetails.getMappedResults().get(i).getLong("_id");
+                        TeachingScoreDetails tsd = new TeachingScoreDetails();
+                        tsd.setOrgId(orgId);
+                        tsd.setTeacherYear(schoolYear);
+                        tsd.setSemester(semester);
+                        tsd.setFailedSubjects(0);
+                        tsd.setFailingGradeCredits(0.0);
+                        Criteria criteriaSub = Criteria.where("orgId").is(orgId);
+                        criteriaSub.and("schoolYear").is(schoolYear);
+                        criteriaSub.and("semester").is(semester);
+                        criteriaSub.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
+                        criteriaSub.and("userId").is(userId);
+                        AggregationResults<BasicDBObject> scheduleCount = mongoTemplate.aggregate(
+                                Aggregation.newAggregation(Aggregation.match(criteriaSub), Aggregation.group("scheduleId")),
+                                Score.class, BasicDBObject.class);
+                        if (null != scheduleCount) {
+                            tsd.setReferenceSubjects(scheduleCount.getMappedResults().size());
+                        }
+                        tsd.setCollegeId(scheduleDetails.getMappedResults().get(i).getLong("collegeId"));
+                        tsd.setCollegeName(scheduleDetails.getMappedResults().get(i).getString("collegeName"));
+                        tsd.setUserId(userId);
+                        tsd.setUserName(scheduleDetails.getMappedResults().get(i).getString("userName"));
+                        tsd.setJobNum(scheduleDetails.getMappedResults().get(i).getString("jobNum"));
+                        tsd.setClassName(scheduleDetails.getMappedResults().get(i).getString("className"));
+                        if (null != scheduleDetails.getMappedResults().get(i).get("grade")) {
+                            tsd.setGrade(Integer.valueOf(scheduleDetails.getMappedResults().get(i).getString("grade")));
+                        } else {
+                            if (!StringUtils.isBlank(tsd.getClassName())) {
+                                if (tsd.getClassName().indexOf("-") != -1) {
+                                    int flag = tsd.getClassName().indexOf("-");
+                                    tsd.setGrade(Integer.valueOf(tsd.getClassName().substring(flag - 4, flag)));
+                                }
+                            }
+                        }
+                        if (null != scheduleDetails.getMappedResults().get(i).get("GPAavg")) {
+                            tsd.setAvgGPA(scheduleDetails.getMappedResults().get(i).getDouble("GPAavg"));
+                            if (tsd.getAvgGPA() == 0) {
+                                tsd.setFailedSubjects(tsd.getReferenceSubjects());
+                            }
+                        }
+                        tsdList.add(tsd);
+                    }
 
+                    //不及格
+                    Criteria criteriFail = Criteria.where("orgId").is(orgId);
+                    criteriFail.and("schoolYear").is(schoolYear);
+                    criteriFail.and("semester").is(semester);
+                    criteriFail.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
+                    criteriFail.and("gradePoint").is(0);
+                    AggregationResults<BasicDBObject> scheduleFail = mongoTemplate.aggregate(
+                            Aggregation.newAggregation(
+                                    Aggregation.match(criteriFail),
+                                    Aggregation.group("userId").sum("credit").as("credit")),
+                            Score.class, BasicDBObject.class);
+
+                    for (int x = 0; x < scheduleFail.getMappedResults().size(); x++) {
+                        Long userId = scheduleFail.getMappedResults().get(x).getLong("_id");
+                        Criteria criteriaFailSub = Criteria.where("orgId").is(orgId);
+                        criteriaFailSub.and("schoolYear").is(schoolYear);
+                        criteriaFailSub.and("semester").is(semester);
+                        criteriaFailSub.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
+                        criteriaFailSub.and("gradePoint").is(0);
+                        criteriaFailSub.and("userId").is(userId);
+                        AggregationResults<BasicDBObject> scheduleFailCount = mongoTemplate.aggregate(
+                                Aggregation.newAggregation(Aggregation.match(criteriaFailSub), Aggregation.group("scheduleId")
+                                        .first("scheduleId").as("scheduleId")),
+                                Score.class, BasicDBObject.class);
+                        for (TeachingScoreDetails ts : tsdList) {
+                            if (userId.equals(ts.getUserId())) {
+                                if (null != scheduleFailCount) {
+                                    ts.setFailedSubjects(scheduleFailCount.getMappedResults().size());
+                                }
+                                if (null != scheduleFail.getMappedResults().get(x).get("credit")) {
+                                    ts.setFailingGradeCredits(scheduleFail.getMappedResults().get(x).getDouble("credit"));
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+                    teachingScoreService.saveDetailsList(tsdList);
+
+                    List<TeachingScoreStatistics> tssList = new ArrayList<>();
                     teachingScoreService.deleteScoreStatistics(orgId, schoolYear, semester);
                     TeachingScoreStatistics tss = new TeachingScoreStatistics();
                     tss.setOrgId(orgId);
@@ -145,17 +242,18 @@ public class TeachingScoreStatisticsAnalysis {
                     }
 
                     //院不及格人数统计
-                    Criteria criteriFail = Criteria.where("orgId").is(orgId);
-                    criteriFail.and("schoolYear").is(schoolYear);
-                    criteriFail.and("semester").is(semester);
-                    criteriFail.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
-                    criteriFail.and("gradePoint").is(0);
+//                    Criteria criteriStatisticFail = Criteria.where("orgId").is(orgId);
+//                    criteriStatisticFail.and("schoolYear").is(schoolYear);
+//                    criteriStatisticFail.and("semester").is(semester);
+//                    criteriStatisticFail.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
+//                    criteriFail.and("gradePoint").is(0);
                     for (TeachingScoreStatistics fts : tssList) {
                         Criteria criteriFailSub = Criteria.where("orgId").is(orgId);
                         criteriFailSub.and("schoolYear").is(schoolYear);
                         criteriFailSub.and("semester").is(semester);
                         criteriFailSub.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
-                        criteriFailSub.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
+//                        criteriFailSub.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
+                        criteriFailSub.and("gradePoint").is(0);
                         criteriFailSub.and("collegeId").is(fts.getCollegeId());
                         AggregationResults<BasicDBObject> failUser = mongoTemplate.aggregate(
                                 Aggregation.newAggregation(
@@ -164,16 +262,15 @@ public class TeachingScoreStatisticsAnalysis {
                                 Score.class, BasicDBObject.class);
                         fts.setFailPassStuNum(failUser.getMappedResults().size());
                     }
+                    teachingScoreService.saveStatisticsList(tssList);
                 }
+             }
+            }catch(Exception e){
+                e.printStackTrace();
+                logger.info("统计教学成绩失败！");
+                return;
             }
-
-            teachingScoreService.saveStatisticsList(tssList);
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.info("统计教学成绩失败！");
-            return;
+            logger.info("统计教学成绩成功!");
         }
-        logger.info("统计教学成绩成功!");
-    }
 
-}
+    }
