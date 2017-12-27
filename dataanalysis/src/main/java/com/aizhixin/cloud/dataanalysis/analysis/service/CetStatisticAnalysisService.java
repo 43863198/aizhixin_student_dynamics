@@ -312,7 +312,7 @@ public class CetStatisticAnalysisService {
             // mongoTemplate.find 查询结果集
             List<Score> items  = mongoTemplate.find(new org.springframework.data.mongodb.core.query.Query().addCriteria(criteria).with(pageable), Score.class);
 
-            p.getPage().setTotalPages((int) Math.ceil(total / page.getPageSize()));
+            p.getPage().setTotalPages(((int)total + page.getPageSize() - 1) / page.getPageSize());
             p.getPage().setPageNumber(page.getPageNumber());
             p.getPage().setPageSize(page.getPageSize());
             p.getPage().setTotalElements(total);
