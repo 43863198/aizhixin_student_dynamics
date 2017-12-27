@@ -52,6 +52,8 @@ public class TeachingScoreAnalysisJob {
         Set<SchoolYearTerm> sytList = new HashSet<>();
         try {
             Criteria ytc = Criteria.where("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
+            ytc.and("schoolYear").ne(null);
+            ytc.and("semester").ne(null);
             AggregationResults<BasicDBObject> ytGroup = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(ytc),
