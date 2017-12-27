@@ -40,14 +40,14 @@ public class TeachingScoreAnalysisJob {
     @Autowired
     private SchoolYearTermService schoolYearTermService;
 
-//    public Map<String, Object> teachingScoreStatistics() {
-//        Map<String, Object> reslut = new HashMap<>();
-//        teachingScoreStatisticsAsync();
-//        reslut.put("message","教学成绩统计任务开始...");
-//        return reslut;
-//    }
-
     public Map<String, Object> teachingScoreStatistics() {
+        Map<String, Object> reslut = new HashMap<>();
+        teachingScoreStatisticsAsync();
+        reslut.put("message","教学成绩统计任务开始...");
+        return reslut;
+    }
+    @Async
+    public Map<String, Object> teachingScoreStatisticsAsync() {
         Map<String, Object> reslut = new HashMap<>();
         Set<SchoolYearTerm> sytList = new HashSet<>();
         try {
