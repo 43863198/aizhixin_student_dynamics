@@ -33,7 +33,7 @@ public class TeachingScoreDetailAnalysis {
     private MongoTemplate mongoTemplate;
     @Autowired
     private TeachingScoreService teachingScoreService;
-
+    @Transactional
     public void teachingScoreDetails(Set<SchoolYearTerm> schoolYearTermList) {
         try {
             for (SchoolYearTerm schoolYearTerm : schoolYearTermList) {
