@@ -7,8 +7,4 @@ public interface SchoolYearTermResposotory extends JpaRepository<SchoolYearTerm,
     void deleteByOrgId(Long orgId);
     void deleteByOrgIdAndDataType(Long orgId,String dataType);
 
-
-
-
-
 }

@@ -37,7 +37,7 @@ public class CetStatisticsAnalysisJob {
 
     @Transactional
     public Map<String, Object>  cetScoreStatistics() {
-        Map<String, Object> result = new HashMap<String, Object>();
+        Map<String, Object> result = new HashMap<>();
         Set<SchoolYearTerm> sytList = new HashSet<>();
         try {
         Criteria c4 = Criteria.where("examType").is(ScoreConstant.EXAM_TYPE_CET4);
@@ -64,10 +64,10 @@ public class CetStatisticsAnalysisJob {
             for(SchoolYearTerm yt: sytList){
                 this.cetScoreStatistics(yt.getOrgId(),yt.getTeacherYear(),yt.getSemester());
                 yt.setDataType(DataType.t_cet_statistics.getIndex()+"");
-                schoolYearTermService.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
+//                schoolYearTermService.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
             }
         }
-//        schoolYearTermService.saveSchoolYearTerm(sytList);
+        schoolYearTermService.saveSchoolYearTerm(sytList);
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);

@@ -32,11 +32,7 @@ public class TeachingScoreAnalysisJob {
     private MongoTemplate mongoTemplate;
     @Autowired
     private SchoolYearTermService schoolYearTermService;
-    @Autowired
-    private TeachingScoreDetailAnalysis teachingScoreDetailAnalysis;
 
-
-    @Async
     public Map<String, Object> teachingScoreStatisticsAsync() {
         Map<String, Object> reslut = new HashMap<>();
         Set<SchoolYearTerm> sytList = new HashSet<>();
@@ -62,9 +58,18 @@ public class TeachingScoreAnalysisJob {
             }
             if(sytList.size()>1){
                 teachingScoreStatisticsAnalysis.teachingScoreStatistics(sytList);
-                teachingScoreDetailAnalysis.teachingScoreDetails(sytList);
-//                schoolYearTermService.saveSchoolYearTerm(sytList);
             }
+            if(sytList.size()>1) {
+                for (SchoolYearTerm yt : sytList) {
+                    if (null != yt.getSemester() && null != yt.getTeacherYear()) {
+                        teachingScoreStatisticsAnalysis.teachingScoreStatistics(sytList);
+                        yt.setDataType(DataType.t_teaching_score_statistics.getIndex() + "");
+                        schoolYearTermService.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
+                    }
+                }
+                schoolYearTermService.saveSchoolYearTerm(sytList);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             reslut.put("message", "统计教学成绩启动失败！");

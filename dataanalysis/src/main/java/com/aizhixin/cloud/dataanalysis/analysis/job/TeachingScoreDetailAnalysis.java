@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,15 +35,15 @@ public class TeachingScoreDetailAnalysis {
     @Autowired
     private TeachingScoreService teachingScoreService;
 
-    @Transactional
+    @Async
     public void teachingScoreDetails(Set<SchoolYearTerm> schoolYearTermList) {
-        List<TeachingScoreDetails> tsdList = new ArrayList<>();
         try {
-            for(SchoolYearTerm schoolYearTerm : schoolYearTermList) {
-            Long orgId = schoolYearTerm.getOrgId();
-            Integer schoolYear = schoolYearTerm.getTeacherYear();
-            Integer semester = schoolYearTerm.getSemester();
-            if (null != orgId && null != schoolYear && null != semester) {
+            for (SchoolYearTerm schoolYearTerm : schoolYearTermList) {
+                Long orgId = schoolYearTerm.getOrgId();
+                Integer schoolYear = schoolYearTerm.getTeacherYear();
+                Integer semester = schoolYearTerm.getSemester();
+                if (null != orgId && null != schoolYear && null != semester) {
+                    List<TeachingScoreDetails> tsdList = new ArrayList<>();
                     teachingScoreService.deleteScoreDeatail(orgId, schoolYear, semester);
                     Criteria criteria = Criteria.where("orgId").is(orgId);
                     criteria.and("schoolYear").is(schoolYear);
@@ -150,9 +151,10 @@ public class TeachingScoreDetailAnalysis {
                             }
                         }
                     }
+
+                    teachingScoreService.saveDetailsList(tsdList);
+                }
             }
-        }
-            teachingScoreService.saveDetailsList(tsdList);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -161,7 +163,6 @@ public class TeachingScoreDetailAnalysis {
         }
         logger.info("统计学生成绩详情成功！");
     }
-
 
 
 }

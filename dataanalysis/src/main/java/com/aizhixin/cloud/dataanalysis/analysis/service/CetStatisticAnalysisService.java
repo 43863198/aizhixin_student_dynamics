@@ -272,7 +272,6 @@ public class CetStatisticAnalysisService {
                 } else {
                     collegeIds.add(Long.valueOf(collegeId));
                 }
-
                 criteria.and("collegeId").in(collegeIds);
             }
 
@@ -297,13 +296,14 @@ public class CetStatisticAnalysisService {
             if (null != type) {
                     if (type.equals(4)) {
                         criteria.and("examType").is(ScoreConstant.EXAM_TYPE_CET4);
+                        criteria.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
                     }
                     if (type.equals(6)) {
                         criteria.and("examType").is(ScoreConstant.EXAM_TYPE_CET6);
+                        criteria.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
                     }
-                    criteria.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
             }else {
-                criteria.and("examType").ne(ScoreConstant.EXAM_TYPE_COURSE);
+                criteria.and("examType").in(ScoreConstant.EXAM_TYPE_CET4,ScoreConstant.EXAM_TYPE_CET4);
             }
             if(null!=nj){
                 criteria.orOperator(criteria.where("jobNum").is(nj), criteria.where("userName").regex(".*?\\" + nj + ".*"));
