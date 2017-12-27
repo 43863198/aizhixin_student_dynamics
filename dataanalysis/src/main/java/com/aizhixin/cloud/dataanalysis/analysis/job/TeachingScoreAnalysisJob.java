@@ -33,8 +33,6 @@ public class TeachingScoreAnalysisJob {
     @Autowired
     private TeachingScoreDetailAnalysis teachingScoreDetailAnalysis;
 
-
-    @Async
     public Map<String, Object> teachingScoreStatisticsAsync() {
         Map<String, Object> reslut = new HashMap<>();
         Set<SchoolYearTerm> sytList = new HashSet<>();
