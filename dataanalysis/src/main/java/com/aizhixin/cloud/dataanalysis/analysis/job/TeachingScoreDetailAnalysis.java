@@ -34,7 +34,6 @@ public class TeachingScoreDetailAnalysis {
     @Autowired
     private TeachingScoreService teachingScoreService;
 
-    @Transactional
     public void teachingScoreDetails(Set<SchoolYearTerm> schoolYearTermList) {
         try {
             for (SchoolYearTerm schoolYearTerm : schoolYearTermList) {
