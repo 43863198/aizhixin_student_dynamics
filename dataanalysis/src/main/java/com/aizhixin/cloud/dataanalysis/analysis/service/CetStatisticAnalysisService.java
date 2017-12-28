@@ -317,7 +317,7 @@ public class CetStatisticAnalysisService {
             p.getPage().setTotalPages((scoreList.size() + page.getPageSize() - 1) / page.getPageSize());
             p.getPage().setPageNumber(page.getPageNumber());
             p.getPage().setPageSize(page.getPageSize());
-            p.getPage().setTotalElements(new Long(items.size()));
+            p.getPage().setTotalElements(new Long(scoreList.size()));
             p.setData(items);
         } catch (Exception e) {
             result.put("success", false);
