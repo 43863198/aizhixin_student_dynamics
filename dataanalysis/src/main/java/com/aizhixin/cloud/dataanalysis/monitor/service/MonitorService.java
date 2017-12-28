@@ -120,7 +120,7 @@ public class MonitorService {
         }catch (EmptyResultDataAccessException emptyResultDataAccessException){
             return null;
         }
-        int teacherYear = Integer.valueOf(currentGradeMap.get("TEACHING_YEAR") + "");
+        int teacherYear = Integer.valueOf(currentGradeMap.get("TEACHER_YEAR") + "");
         String sql="SELECT MAX(CASE a.alarm WHEN 'alarm' then a.count ELSE 0 END) 'alarmTotal',MAX(CASE a.alarm WHEN 'dealwithTotal' then a.count ELSE 0 END) 'dealwithTotal' FROM( ";
         String tempSql1="SELECT count(1) as count, 'alarm'  FROM t_warning_information WHERE DELETE_FLAG=0  and ORG_ID=" + orgId + "" ;
         String tempSql2="SELECT count(1) as count, 'dealwithTotal' FROM t_warning_information where WARNING_STATE=20 or WARNING_STATE=40 and DELETE_FLAG=0 and ORG_ID=" + orgId + "" ;
