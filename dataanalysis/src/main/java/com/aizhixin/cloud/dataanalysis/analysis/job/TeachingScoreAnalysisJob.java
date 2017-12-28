@@ -57,16 +57,17 @@ public class TeachingScoreAnalysisJob {
                 }
             }
             if(sytList.size()>1) {
-                for (SchoolYearTerm yt : sytList) {
-                    if (null!=yt.getOrgId()&&null != yt.getSemester() && null != yt.getTeacherYear()) {
-                        teachingScoreStatisticsAnalysis.teachingScoreStatistics(yt.getOrgId(),yt.getTeacherYear(),yt.getSemester());
-                        logger.info(yt.getOrgId()+"  "+yt.getTeacherYear()+"-"+yt.getSemester()+"教学成绩统计启动！");
-                        teachingScoreStatisticsAnalysis.teachingScoreDetails(yt.getOrgId(),yt.getTeacherYear(),yt.getSemester());
-                        logger.info(yt.getOrgId()+"  "+yt.getTeacherYear()+"-"+yt.getSemester()+"教学成绩详情统计启动！");
+                teachingScoreStatisticsAnalysis.teachingScoreStatistics(sytList);
+                logger.info("教学成绩统计启动！");
+                teachingScoreStatisticsAnalysis.teachingScoreDetails(sytList);
+                logger.info("教学成绩详情统计启动！");
+//                for (SchoolYearTerm yt : sytList) {
+//                    if (null!=yt.getOrgId()&&null != yt.getSemester() && null != yt.getTeacherYear()) {
+//
 //                        yt.setDataType(DataType.t_teaching_score_statistics.getIndex() + "");
 //                        schoolYearTermService.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
-                    }
-                }
+//                    }
+//                }
 //                schoolYearTermService.saveSchoolYearTerm(sytList);
             }
 
