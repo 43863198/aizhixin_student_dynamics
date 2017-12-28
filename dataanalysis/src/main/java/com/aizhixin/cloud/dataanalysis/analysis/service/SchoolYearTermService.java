@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Component
 @Transactional
@@ -32,6 +33,20 @@ public class SchoolYearTermService {
         }
 
     }
+    public void deleteSchoolYearTerm(Long orgId,String dataType) {
+        schoolYearTermResposotory.deleteByOrgIdAndDataType(orgId, dataType);
+    }
+
+    public void saveSchoolYearTerm(Set<SchoolYearTerm> schoolYearTerms) {
+        for(SchoolYearTerm yt: schoolYearTerms){
+            if(null!=yt.getSemester()&&null!=yt.getTeacherYear()) {
+                yt.setDataType(DataType.t_teaching_score_statistics.getIndex() + "");
+                this.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
+            }
+        }
+        schoolYearTermResposotory.save(schoolYearTerms);
+    }
+
 
     public List<TeacherlYearData> getSchoolYearTerm(Long orgId,Integer type) {
         RowMapper<TeacherlYearData> rowMapper=new RowMapper<TeacherlYearData>() {

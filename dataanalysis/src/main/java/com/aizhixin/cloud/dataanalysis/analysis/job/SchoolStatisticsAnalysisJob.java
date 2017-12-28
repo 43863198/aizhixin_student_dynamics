@@ -5,12 +5,17 @@ import java.sql.SQLException;
 import java.util.*;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
+import com.aizhixin.cloud.dataanalysis.analysis.constant.DataType;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.SchoolStatisticsDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolStatistics;
+import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolYearTerm;
 import com.aizhixin.cloud.dataanalysis.analysis.service.SchoolStatisticsService;
+import com.aizhixin.cloud.dataanalysis.analysis.service.SchoolYearTermService;
+import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.UserConstant;
 import com.aizhixin.cloud.dataanalysis.common.service.AuthUtilService;
 import com.aizhixin.cloud.dataanalysis.common.util.PageJdbcUtil;
+import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
 
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
@@ -29,6 +34,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.aizhixin.cloud.dataanalysis.setup.domain.WarningTypeDomain;
@@ -42,6 +48,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Component
+@Transactional
 public class SchoolStatisticsAnalysisJob {
 
 	public volatile static boolean flag = true;
@@ -59,6 +66,8 @@ public class SchoolStatisticsAnalysisJob {
 	private PageJdbcUtil pageJdbcUtil;
 	@Autowired
 	private AuthUtilService authUtilService;
+	@Autowired
+	private SchoolYearTermService schoolYearTermService;
 
 	RowMapper<SchoolStatisticsDTO> peopleRm = new RowMapper<SchoolStatisticsDTO>() {
 
@@ -95,6 +104,46 @@ public class SchoolStatisticsAnalysisJob {
 
 		return pageJdbcUtil.getInfo(querySql, peopleRm);
 	}
+
+	public Map<String, Object> schoolStatistics() {
+		Map<String, Object> result = new HashMap<>();
+		Set<SchoolYearTerm> sytList = new HashSet<>();
+		try {
+			AggregationResults<BasicDBObject> ytGroup = mongoTemplate.aggregate(
+					Aggregation.newAggregation(
+							Aggregation.group("orgId", "schoolYear").first("orgId").as("orgId").first("schoolYear").as("schoolYear")
+					), StudentRegister.class, BasicDBObject.class);
+
+			if (null != ytGroup) {
+				for (int x = 0; x < ytGroup.getMappedResults().size(); x++) {
+						SchoolYearTerm syt = new SchoolYearTerm();
+						syt.setOrgId(ytGroup.getMappedResults().get(x).getLong("orgId"));
+						syt.setTeacherYear(ytGroup.getMappedResults().get(x).getInt("schoolYear"));
+						sytList.add(syt);
+				}
+			}
+			if(sytList.size()>1){
+				for(SchoolYearTerm yt: sytList){
+						this.schoolStatistics(yt.getOrgId(), yt.getTeacherYear());
+//						yt.setDataType(DataType.t_school_statistics.getIndex()+"");
+//						schoolYearTermService.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
+					}
+			}
+//			schoolYearTermService.saveSchoolYearTerm(sytList);
+
+		}catch (Exception e){
+			result.put("success", false);
+			result.put("message", "定时统计学校概况失败！");
+			return result;
+		}
+		result.put("success", true);
+		result.put("message", "定时统计学校概况成功！");
+		return result;
+	}
+
+
+
+
 
 	public Map<String, Object> schoolStatistics(Long orgId, int teacherYear) {
 		Map<String, Object> result = new HashMap<>();

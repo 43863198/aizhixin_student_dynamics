@@ -34,6 +34,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -49,6 +50,7 @@ public class RollCallJob {
 
 	private Logger logger = Logger.getLogger(this.getClass());
 	@Autowired
+	@Lazy
 	private AlarmSettingsService alarmSettingsService;
 	@Autowired
 	private AlarmRuleService alarmRuleService;
@@ -78,7 +80,7 @@ public class RollCallJob {
 			int month = c.get(Calendar.MONTH);
 			//当前学期编号
 			int semester = 2;
-			if( month > 2 && month < 9){
+			if( month > 1 && month < 9){
 				semester = 1;
 			}
 			
@@ -159,7 +161,7 @@ public class RollCallJob {
 			int month = c.get(Calendar.MONTH);
 			//当前学期编号
 			int semester = 2;
-			if( month > 2 && month < 9){
+			if( month > 1 && month < 9){
 				semester = 1;
 			}
 			
@@ -267,8 +269,9 @@ public class RollCallJob {
 									alertInfor
 											.setProfessionalName(rollCallCount
 													.getProfessionalName());
-									alertInfor.setTeachingYear(String.valueOf(rollCallCount
-											.getSchoolYear()));
+									alertInfor.setTeacherYear(rollCallCount
+											.getSchoolYear());
+									alertInfor.setSemester(rollCallCount.getSemester());
 									alertInfor.setWarningLevel(alarmSettings
 											.getWarningLevel());
 									alertInfor

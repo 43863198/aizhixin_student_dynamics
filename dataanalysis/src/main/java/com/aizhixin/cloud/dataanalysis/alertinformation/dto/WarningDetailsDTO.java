@@ -2,15 +2,19 @@ package com.aizhixin.cloud.dataanalysis.alertinformation.dto;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.domain.DealDomain;
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.persistence.Column;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 import java.util.Date;
 import java.util.List;
 
@@ -41,8 +45,11 @@ public class WarningDetailsDTO {
     private String className;
 
     @ApiModelProperty(value = "学年")
-    private String teachingYear;
-
+    private Integer teacherYear;
+    
+    @ApiModelProperty(value = "学期")
+    private Integer semester;
+ 
     @ApiModelProperty(value = "手机号")
     private String phone;
 
