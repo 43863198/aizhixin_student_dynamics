@@ -35,7 +35,7 @@ public class SchoolYearTermController {
      * @return
      */
     @GetMapping(value = "/initschoolyearterm", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "课程评价", response = Void.class, notes = "根据数据库数据初始学年学期(会删除之前已生成过的数据)<br><br><b>@author wangjun</b>")
+    @ApiOperation(httpMethod = "GET", value = "初始学年学期", response = Void.class, notes = "根据数据库数据初始学年学期(会删除之前已生成过的数据)<br><br><b>@author wangjun</b>")
     public ResponseEntity<Map<String, Object>> initSchoolYearTerm(@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = true) Long orgId){
         schoolYearTermService.initSchoolYearTerm(orgId);
         Map<String, Object> result = new HashMap<String, Object>();
@@ -47,7 +47,7 @@ public class SchoolYearTermController {
      * @return
      */
     @GetMapping(value = "/schoolyearterm", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "课程评价", response = Void.class, notes = "根据类型获取学年学期")
+    @ApiOperation(httpMethod = "GET", value = " 根据类型获取学年学期", response = Void.class, notes = "根据类型获取学年学期")
     public List<TeacherlYearData> getSchoolYearTerm(@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = true) Long orgId,
                                                     @ApiParam(value = "type:英语四六级:1,迎新学情:2 ,教学成绩:3,教师评价:4,课程评价:5,实践学情:6") @RequestParam(value = "type", required = true) Integer type){
        return schoolYearTermService.getSchoolYearTerm(orgId,type);
