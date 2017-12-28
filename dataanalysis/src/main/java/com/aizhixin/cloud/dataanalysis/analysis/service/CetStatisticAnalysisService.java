@@ -303,21 +303,21 @@ public class CetStatisticAnalysisService {
                         criteria.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
                     }
             }else {
-                criteria.and("examType").in(ScoreConstant.EXAM_TYPE_CET4,ScoreConstant.EXAM_TYPE_CET4);
+                criteria.and("examType").in(ScoreConstant.EXAM_TYPE_CET4,ScoreConstant.EXAM_TYPE_CET6);
             }
             if(null!=nj){
                 criteria.orOperator(criteria.where("jobNum").is(nj), criteria.where("userName").regex(".*?\\" + nj + ".*"));
             }
             //mongoTemplate.count计算总数
-            List<Score> scoreList = mongoTemplate.find(new org.springframework.data.mongodb.core.query.Query().addCriteria(criteria), Score.class);
-//            long total = mongoTemplate.count(new org.springframework.data.mongodb.core.query.Query().addCriteria(criteria), Score.class);
+//            List<Score> scoreList = mongoTemplate.find(new org.springframework.data.mongodb.core.query.Query().addCriteria(criteria), Score.class);
+            long total = mongoTemplate.count(new org.springframework.data.mongodb.core.query.Query().addCriteria(criteria), Score.class);
             // mongoTemplate.find 查询结果集
             List<Score> items  = mongoTemplate.find(new org.springframework.data.mongodb.core.query.Query().addCriteria(criteria).with(pageable), Score.class);
 
-            p.getPage().setTotalPages((scoreList.size() + page.getPageSize() - 1) / page.getPageSize());
+            p.getPage().setTotalPages(((int)total + page.getPageSize() - 1) / page.getPageSize());
             p.getPage().setPageNumber(page.getPageNumber());
             p.getPage().setPageSize(page.getPageSize());
-            p.getPage().setTotalElements(new Long(scoreList.size()));
+            p.getPage().setTotalElements(total);
             p.setData(items);
         } catch (Exception e) {
             result.put("success", false);
