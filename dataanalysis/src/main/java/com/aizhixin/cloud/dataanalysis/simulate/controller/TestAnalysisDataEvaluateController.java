@@ -49,6 +49,7 @@ public class TestAnalysisDataEvaluateController {
             num = 1;
         }
         List<CourseEvaluate> list=new ArrayList<CourseEvaluate>();
+        for(int f=1;f<4;f++){
         for(int i=0;i<num;i++){
             for(int j=1;j<3;j++){
                 int max = 5;
@@ -74,7 +75,8 @@ public class TestAnalysisDataEvaluateController {
             courseEvaluate1.setCourseOpenID("1722");
             courseEvaluate1.setGrade(2017);
             courseEvaluate1.setSemester(j);
-            courseEvaluate1.setTeachingClassId("10384");;
+            courseEvaluate1.setTeachingClassId("10384");
+            courseEvaluate1.setCourseType(f);
             courseEvaluate1.setTeachingClassName("机械2016-1班");
 
             list.add(courseEvaluate1);
@@ -97,7 +99,7 @@ public class TestAnalysisDataEvaluateController {
             courseEvaluate2.setSemester(j);
             courseEvaluate2.setTeachingClassId("10386");;
             courseEvaluate2.setTeachingClassName("机械2016-2班");
-
+            courseEvaluate2.setCourseType(f);
             list.add(courseEvaluate2);
 
                 if (i > 0) {
@@ -121,7 +123,7 @@ public class TestAnalysisDataEvaluateController {
             courseEvaluate3.setSemester(j);
             courseEvaluate3.setTeachingClassId("616");;
             courseEvaluate3.setTeachingClassName("日语2016-1班");
-
+            courseEvaluate3.setCourseType(f);
             list.add(courseEvaluate3);
 
 
@@ -145,7 +147,7 @@ public class TestAnalysisDataEvaluateController {
             courseEvaluate4.setSemester(j);
             courseEvaluate4.setTeachingClassId("10286");;
             courseEvaluate4.setTeachingClassName("测绘类2016-5班");
-
+                courseEvaluate4.setCourseType(f);
             list.add(courseEvaluate4);
 
 
@@ -167,7 +169,7 @@ public class TestAnalysisDataEvaluateController {
             courseEvaluate5.setSemester(j);
             courseEvaluate5.setTeachingClassId("10428");;
             courseEvaluate5.setTeachingClassName("广告2016-1班");
-
+                courseEvaluate5.setCourseType(f);
             list.add(courseEvaluate5);
 
 
@@ -190,7 +192,7 @@ public class TestAnalysisDataEvaluateController {
             courseEvaluate6.setSemester(j);
             courseEvaluate6.setTeachingClassId("10360");;
             courseEvaluate6.setTeachingClassName("生物工程2016-1班");
-
+                courseEvaluate6.setCourseType(f);
             list.add(courseEvaluate6);
 
                 if (i > 0) {
@@ -215,7 +217,7 @@ public class TestAnalysisDataEvaluateController {
             courseEvaluate7.setSemester(j);
             courseEvaluate7.setTeachingClassId("10422");
             courseEvaluate7.setTeachingClassName("风景园林2016-1班");
-
+                courseEvaluate7.setCourseType(f);
             list.add(courseEvaluate7);
 
 
@@ -238,7 +240,7 @@ public class TestAnalysisDataEvaluateController {
             courseEvaluate8.setSemester(j);
             courseEvaluate8.setTeachingClassId("10530");;
             courseEvaluate8.setTeachingClassName("电信类2016-2班");
-
+                courseEvaluate8.setCourseType(f);
             list.add(courseEvaluate8);
 
             CourseEvaluate courseEvaluate9=new CourseEvaluate();
@@ -259,9 +261,9 @@ public class TestAnalysisDataEvaluateController {
             courseEvaluate9.setSemester(j);
             courseEvaluate9.setTeachingClassId("10334");;
             courseEvaluate9.setTeachingClassName("国贸2016-1班");
-
+                courseEvaluate9.setCourseType(f);
             list.add(courseEvaluate9);
-        }}
+        }}}
         courseEvaluateService.deleteAllByOrgId(orgId);
         courseEvaluateService.saveList(list);
         Map<String, Object> result = new HashMap<String, Object>();
