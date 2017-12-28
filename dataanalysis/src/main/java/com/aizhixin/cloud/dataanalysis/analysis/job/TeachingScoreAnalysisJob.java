@@ -63,11 +63,11 @@ public class TeachingScoreAnalysisJob {
                 for (SchoolYearTerm yt : sytList) {
                     if (null != yt.getSemester() && null != yt.getTeacherYear()) {
                         teachingScoreStatisticsAnalysis.teachingScoreStatistics(sytList);
-                        yt.setDataType(DataType.t_teaching_score_statistics.getIndex() + "");
-                        schoolYearTermService.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
+//                        yt.setDataType(DataType.t_teaching_score_statistics.getIndex() + "");
+//                        schoolYearTermService.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
                     }
                 }
-                schoolYearTermService.saveSchoolYearTerm(sytList);
+//                schoolYearTermService.saveSchoolYearTerm(sytList);
             }
 
         } catch (Exception e) {

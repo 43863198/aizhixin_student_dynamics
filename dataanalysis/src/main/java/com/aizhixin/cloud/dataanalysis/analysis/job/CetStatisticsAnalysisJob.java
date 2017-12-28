@@ -40,13 +40,10 @@ public class CetStatisticsAnalysisJob {
         Map<String, Object> result = new HashMap<>();
         Set<SchoolYearTerm> sytList = new HashSet<>();
         try {
-        Criteria c4 = Criteria.where("examType").is(ScoreConstant.EXAM_TYPE_CET4);
-        Criteria c6 = Criteria.where("examType").is(ScoreConstant.EXAM_TYPE_CET6);
-        Criteria ct = new Criteria();
-        ct.orOperator(c4, c6);
+        Criteria cet = Criteria.where("examType").in(ScoreConstant.EXAM_TYPE_CET4, ScoreConstant.EXAM_TYPE_CET6);
         AggregationResults<BasicDBObject> ytGroup = mongoTemplate.aggregate(
                 Aggregation.newAggregation(
-                        Aggregation.match(ct),
+                        Aggregation.match(cet),
                         Aggregation.group("orgId", "schoolYear", "semester").first("orgId").as("orgId").first("schoolYear").as("schoolYear")
                                 .first("semester").as("semester")
                 ), Score.class, BasicDBObject.class);
@@ -62,12 +59,12 @@ public class CetStatisticsAnalysisJob {
         }
         if(sytList.size()>1){
             for(SchoolYearTerm yt: sytList){
-                this.cetScoreStatistics(yt.getOrgId(),yt.getTeacherYear(),yt.getSemester());
-                yt.setDataType(DataType.t_cet_statistics.getIndex()+"");
+                this.cetScoreStatistics(yt.getOrgId(), yt.getTeacherYear(), yt.getSemester());
+//                yt.setDataType(DataType.t_cet_statistics.getIndex() + "");
 //                schoolYearTermService.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
             }
         }
-        schoolYearTermService.saveSchoolYearTerm(sytList);
+//        schoolYearTermService.saveSchoolYearTerm(sytList);
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
@@ -80,7 +77,7 @@ public class CetStatisticsAnalysisJob {
     }
 
     public Map<String, Object> cetScoreStatistics(Long orgId, int teacherYear,int semester) {
-        Map<String, Object> result = new HashMap<String, Object>();
+        Map<String, Object> result = new HashMap<>();
         List<CetScoreStatistics> cetList = new ArrayList<>();
         try {
             cetScoreStatisticsRespository.deleteByOrgIdAndTeacherYearAndSemester(orgId, teacherYear,semester);

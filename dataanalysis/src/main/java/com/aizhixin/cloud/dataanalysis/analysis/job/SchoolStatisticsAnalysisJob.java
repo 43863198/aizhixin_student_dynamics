@@ -34,6 +34,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.aizhixin.cloud.dataanalysis.setup.domain.WarningTypeDomain;
@@ -47,6 +48,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Component
+@Transactional
 public class SchoolStatisticsAnalysisJob {
 
 	public volatile static boolean flag = true;
@@ -123,11 +125,11 @@ public class SchoolStatisticsAnalysisJob {
 			if(sytList.size()>1){
 				for(SchoolYearTerm yt: sytList){
 						this.schoolStatistics(yt.getOrgId(), yt.getTeacherYear());
-						yt.setDataType(DataType.t_school_statistics.getIndex()+"");
-						schoolYearTermService.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
+//						yt.setDataType(DataType.t_school_statistics.getIndex()+"");
+//						schoolYearTermService.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
 					}
 			}
-			schoolYearTermService.saveSchoolYearTerm(sytList);
+//			schoolYearTermService.saveSchoolYearTerm(sytList);
 
 		}catch (Exception e){
 			result.put("success", false);

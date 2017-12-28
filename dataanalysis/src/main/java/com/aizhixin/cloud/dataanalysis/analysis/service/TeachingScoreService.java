@@ -44,8 +44,6 @@ public class TeachingScoreService {
     private TeachingScoreStatisticsRespository teachingScoreStatisticsRespository;
     @Autowired
     private TeachingScoreDetailsRespository teachingScoreDetailsRespository;
-    @Autowired
-    private MongoTemplate mongoTemplate;
 
     public void saveStatistics(TeachingScoreStatistics teachingScoreStatistics) {
         teachingScoreStatisticsRespository.save(teachingScoreStatistics);

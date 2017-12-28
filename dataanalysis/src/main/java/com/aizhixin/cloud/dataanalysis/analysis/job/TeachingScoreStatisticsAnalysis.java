@@ -17,6 +17,7 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import java.util.Set;
  * @Date: 2017-12-27
  */
 @Component
+@Transactional
 public class TeachingScoreStatisticsAnalysis {
     private Logger logger = Logger.getLogger(TeachingScoreStatisticsAnalysis.class);
     @Autowired
@@ -46,6 +48,7 @@ public class TeachingScoreStatisticsAnalysis {
                 if (null != orgId && null != schoolYear && null != semester) {
                     List<TeachingScoreDetails> tsdList = new ArrayList<>();
                     teachingScoreService.deleteScoreDeatail(orgId, schoolYear, semester);
+                    teachingScoreService.deleteScoreStatistics(orgId, schoolYear, semester);
                     Criteria criteria = Criteria.where("orgId").is(orgId);
                     criteria.and("schoolYear").is(schoolYear);
                     criteria.and("semester").is(semester);
@@ -59,7 +62,7 @@ public class TeachingScoreStatisticsAnalysis {
                                             .first("grade").as("grade").first("collegeId").as("collegeId").first("collegeName").as("collegeName")
                             ),
                             Score.class, BasicDBObject.class);
-                    logger.info(scheduleDetails.getMappedResults().size()+"@@@"+orgId);
+                    logger.info(orgId+":"+schoolYear+":"+semester+"共:"+scheduleDetails.getMappedResults().size()+"条数据");
                     for (int i = 0; i < scheduleDetails.getMappedResults().size(); i++) {
                         Long userId = scheduleDetails.getMappedResults().get(i).getLong("_id");
                         TeachingScoreDetails tsd = new TeachingScoreDetails();
@@ -145,7 +148,6 @@ public class TeachingScoreStatisticsAnalysis {
                     teachingScoreService.saveDetailsList(tsdList);
                    /***********************************教学成绩统计************************************************************/
                     List<TeachingScoreStatistics> tssList = new ArrayList<>();
-                    teachingScoreService.deleteScoreStatistics(orgId, schoolYear, semester);
                     TeachingScoreStatistics tss = new TeachingScoreStatistics();
                     tss.setOrgId(orgId);
                     tss.setTeacherYear(schoolYear);
