@@ -57,6 +57,7 @@ public class TeachingScoreAnalysisJob {
                 }
             }
             if(sytList.size()>1) {
+
                 teachingScoreStatisticsAnalysis.teachingScoreStatistics(sytList);
                 logger.info("教学成绩统计启动！");
                 teachingScoreStatisticsAnalysis.teachingScoreDetails(sytList);

@@ -46,7 +46,6 @@ public class TeachingScoreStatisticsAnalysis {
                 Integer semester = schoolYearTerm.getSemester();
                 if (null != orgId && null != schoolYear && null != semester) {
                     List<TeachingScoreDetails> tsdList = new ArrayList<>();
-//                    teachingScoreService.deleteScoreDeatail(orgId, schoolYear, semester);
                     Criteria criteria = Criteria.where("orgId").is(orgId);
                     criteria.and("schoolYear").is(schoolYear);
                     criteria.and("semester").is(semester);
@@ -162,7 +161,6 @@ public class TeachingScoreStatisticsAnalysis {
                 Integer schoolYear = schoolYearTerm.getTeacherYear();
                 Integer semester = schoolYearTerm.getSemester();
                 if (null != orgId && null != schoolYear && null != semester) {
-//                    teachingScoreService.deleteScoreStatistics(orgId, schoolYear, semester);
                     List<TeachingScoreStatistics> tssList = new ArrayList<>();
                     TeachingScoreStatistics tss = new TeachingScoreStatistics();
                     tss.setOrgId(orgId);
@@ -265,7 +263,6 @@ public class TeachingScoreStatisticsAnalysis {
                         criteriFailSub.and("schoolYear").is(schoolYear);
                         criteriFailSub.and("semester").is(semester);
                         criteriFailSub.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
-//                       criteriFailSub.and("totalScore").lt(ScoreConstant.PASS_SCORE_LINE);
                         criteriFailSub.and("gradePoint").is(0);
                         criteriFailSub.and("collegeId").is(fts.getCollegeId());
                         AggregationResults<BasicDBObject> failUser = mongoTemplate.aggregate(
