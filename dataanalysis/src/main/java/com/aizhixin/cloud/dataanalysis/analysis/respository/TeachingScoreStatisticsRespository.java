@@ -24,11 +24,7 @@ public interface TeachingScoreStatisticsRespository extends JpaRepository<Teachi
     @Query("select a from #{#entityName} a where a.orgId = :orgId and a.deleteFlag=:deleteFlag and a.statisticsType=:statisticsType")
     TeachingScoreStatistics findByOrgIdAndStatisticsTypeAndDeleteFlag(@Param(value = "orgId")Long orgId,@Param(value = "deleteFlag")int deleteFlag,@Param(value = "statisticsType")int statisticsType);
 
-
-    //物理删除
-    @Modifying
-    @Query("delete from #{#entityName} a where a.orgId = :orgId")
-    void deleteByOrgId(@Param(value = "orgId") Long orgId);
+    void deleteByOrgId(Long orgId);
 
     //物理删除
     @Modifying
