@@ -173,24 +173,32 @@ public class TestMonitorDataController {
 
 		}
 
-		int max = 20;
+//		int max = 20;
+//
+//		int min = 10;
+//
+//		Random random = new Random();
+//
+//		int s = random.nextInt(max) % (max - min + 1) + min;
+//
+//		abnormalAttendanceStatistics.setOrgId(orgId);
+//
+//		abnormalAttendanceStatistics.setAbsenteeismNum(47 + s);
+//
+//		abnormalAttendanceStatistics.setLeaveEarlyNum(55 + s);
+//
+//		abnormalAttendanceStatistics.setLateNum(90 + s);
+//
+//		abnormalAttendanceStatistics.setLeaveNum(35 + s);
 
-		int min = 10;
+		abnormalAttendanceStatistics.setAbsenteeismNum(1506);
 
-		Random random = new Random();
+		abnormalAttendanceStatistics.setLeaveEarlyNum(387);
 
-		int s = random.nextInt(max) % (max - min + 1) + min;
+		abnormalAttendanceStatistics.setLateNum(1583);
 
-		abnormalAttendanceStatistics.setOrgId(orgId);
-
-		abnormalAttendanceStatistics.setAbsenteeismNum(47 + s);
-
-		abnormalAttendanceStatistics.setLeaveEarlyNum(55 + s);
-
-		abnormalAttendanceStatistics.setLateNum(90 + s);
-
-		abnormalAttendanceStatistics.setLeaveNum(35 + s);
-
+		abnormalAttendanceStatistics.setLeaveNum(1752);
+		
 		abnormalAttendanceStatistics.setStatisticalTime(DateUtil
 				.getCurrentTime(DateUtil.FORMAT_SHORT));
 
@@ -272,25 +280,35 @@ public class TestMonitorDataController {
 
 		}
 
-		int max = 20;
+//		int max = 20;
+//
+//		int min = 10;
+//
+//		Random random = new Random();
+//
+//		int s = random.nextInt(max) % (max - min + 1) + min;
+//
+//		abnormalTeachingStatistics.setOrgId(orgId);
+//
+//		abnormalTeachingStatistics.setChangeLecturerNum(21 + s);
+//
+//		abnormalTeachingStatistics.setLeaveEarlyNum(17 + s);
+//
+//		abnormalTeachingStatistics.setLateNum(22 + s);
+//
+//		abnormalTeachingStatistics.setStopClassNum(33 + s);
+//
+//		abnormalTeachingStatistics.setTeachingNum(1215 + s);
+		
+		abnormalTeachingStatistics.setChangeLecturerNum(19);
 
-		int min = 10;
+		abnormalTeachingStatistics.setLeaveEarlyNum(0);
 
-		Random random = new Random();
+		abnormalTeachingStatistics.setLateNum(0);
 
-		int s = random.nextInt(max) % (max - min + 1) + min;
+		abnormalTeachingStatistics.setStopClassNum(394);
 
-		abnormalTeachingStatistics.setOrgId(orgId);
-
-		abnormalTeachingStatistics.setChangeLecturerNum(21 + s);
-
-		abnormalTeachingStatistics.setLeaveEarlyNum(17 + s);
-
-		abnormalTeachingStatistics.setLateNum(22 + s);
-
-		abnormalTeachingStatistics.setStopClassNum(33 + s);
-
-		abnormalTeachingStatistics.setTeachingNum(1215 + s);
+		abnormalTeachingStatistics.setTeachingNum(899);
 
 		abnormalTeachingStatistics.setStatisticalTime(DateUtil
 				.getCurrentTime(DateUtil.FORMAT_SHORT));
