@@ -113,7 +113,7 @@ public class MonitorService {
             }
         };
         AlarmDTO alarmDTO=null;
-        String currentGradeSql = "SELECT TEACHER_YEAR  FROM `t_warning_information`  where ORG_ID=" + orgId + " and DELETE_FLAG=0 and TEACHER_YEAR<>'null' ORDER BY TEACHING_YEAR DESC LIMIT 1";
+        String currentGradeSql = "SELECT TEACHER_YEAR  FROM `t_warning_information`  where ORG_ID=" + orgId + " and DELETE_FLAG=0 and TEACHER_YEAR<>'null' ORDER BY TEACHER_YEAR DESC LIMIT 1";
         Map currentGradeMap=new HashMap() ;
         try {
             currentGradeMap= jdbcTemplate.queryForMap(currentGradeSql);
