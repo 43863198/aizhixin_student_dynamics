@@ -51,7 +51,7 @@ public class MonitorService {
 
         int teacherYear = Integer.valueOf(currentGradeMap.get("TEACHER_YEAR") + "");
         int semester = Integer.valueOf(currentGradeMap.get("SEMESTER") + "");
-        String sql = "SELECT COLLEGE_ID,COLLEGE_NAME,AVG_GPA FROM( SELECT COLLEGE_ID ,COLLEGE_NAME,AVG_GPA  FROM `t_teaching_score_statistics` where ORG_ID=" + orgId + " ";
+        String sql = "SELECT COLLEGE_ID,COLLEGE_NAME,AVG_GPA FROM( SELECT COLLEGE_ID ,COLLEGE_NAME,AVG_GPA  FROM `t_teaching_score_statistics` where ORG_ID=" + orgId + "  and STATISTICS_TYPE=2 ";
         if (0 != teacherYear) {
             sql += " and TEACHER_YEAR=" + teacherYear + " ";
         }
