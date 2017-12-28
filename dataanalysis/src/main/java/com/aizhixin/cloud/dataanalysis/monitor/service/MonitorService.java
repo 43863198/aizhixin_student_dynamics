@@ -35,7 +35,7 @@ public class MonitorService {
                 CollegeGpaDTO collegeGpaDTO = new CollegeGpaDTO();
                 collegeGpaDTO.setCollegeId(rs.getString("COLLEGE_ID"));
                 collegeGpaDTO.setCollegeName(rs.getString("COLLEGE_NAME"));
-                collegeGpaDTO.setAvgGPA(rs.getFloat("AVG_SCORE"));
+                collegeGpaDTO.setAvgGPA(rs.getFloat("AVG_GPA"));
                 return collegeGpaDTO;
             }
         };
@@ -51,14 +51,15 @@ public class MonitorService {
 
         int teacherYear = Integer.valueOf(currentGradeMap.get("TEACHER_YEAR") + "");
         int semester = Integer.valueOf(currentGradeMap.get("SEMESTER") + "");
-        String sql = "SELECT COLLEGE_ID ,COLLEGE_NAME,AVG_SCORE  FROM `t_teaching_score_statistics` where ORG_ID=" + orgId + " ";
+        String sql = "SELECT COLLEGE_ID,COLLEGE_NAME,AVG_GPA FROM( SELECT COLLEGE_ID ,COLLEGE_NAME,AVG_GPA  FROM `t_teaching_score_statistics` where ORG_ID=" + orgId + " ";
         if (0 != teacherYear) {
             sql += " and TEACHER_YEAR=" + teacherYear + " ";
         }
         if (0 != semester) {
             sql += " and SEMESTER=" + semester;
         }
-        sql+=" ORDER BY AVG_SCORE DESC limit 10";
+        sql+="  GROUP BY COLLEGE_ID ) aa";
+        sql+=" ORDER BY AVG_GPA DESC limit 10";
         result = jdbcTemplate.query(sql, mapper);
         return result;
     }
