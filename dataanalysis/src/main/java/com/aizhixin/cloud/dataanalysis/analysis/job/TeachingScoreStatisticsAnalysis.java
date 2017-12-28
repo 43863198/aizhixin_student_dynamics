@@ -147,10 +147,10 @@ public class TeachingScoreStatisticsAnalysis {
             }
         }catch(Exception e){
             e.printStackTrace();
-            logger.info("统计教学成绩失败！");
+            logger.info("教学成绩详情统计失败 ┭┮﹏┭┮┭┮﹏┭┮┭┮﹏┭┮┭┮﹏┭┮┭┮﹏┭┮┭┮﹏┭┮┭┮﹏┭┮┭┮﹏┭┮");
             return;
         }
-        logger.info("统计教学成绩成功!");
+        logger.info("教学成绩详情统计完成 ^_^^_^^_^^_^^_^^_^^_^^_^^_^^_^^_^^_^^_^^_^^_^^_^^_^^_^^_^^_^^_^^_^^_^^_^^_^^_^");
     }
 
     @Async
@@ -277,10 +277,10 @@ public class TeachingScoreStatisticsAnalysis {
             }
             }catch(Exception e){
                 e.printStackTrace();
-                logger.info("统计教学成绩失败！");
+                logger.info("统计教学成绩失败 ┭┮﹏┭┮┭┮﹏┭┮┭┮﹏┭┮┭┮﹏┭┮┭┮﹏┭┮┭┮﹏┭┮┭┮﹏┭┮┭┮﹏┭┮┭┮﹏┭┮");
                 return;
             }
-            logger.info("统计教学成绩成功!");
+            logger.info("统计教学成绩完成 o(*￣︶￣*)oo(*￣︶￣*)oo(*￣︶￣*)oo(*￣︶￣*)oo(*￣︶￣*)oo(*￣︶￣*)oo(*￣︶￣*)");
         }
 
     }
