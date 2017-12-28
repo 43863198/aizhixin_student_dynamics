@@ -7,6 +7,7 @@ package com.aizhixin.cloud.dataanalysis.monitor.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -73,7 +74,8 @@ public class MonitorController {
 	private AbnormalTeachingStatisticsService abnormalTeachingStatisticsService;
 	@Autowired
 	private TeachingScheduleStatisticsService teachingScheduleStatisticsService;
-	
+	@Autowired
+	private AlertWarningInformationService alertWarningInforService;
 	/**
 	 * 大屏监控学院平均Gpa
 	 * @param orgId
@@ -101,8 +103,8 @@ public class MonitorController {
 	 */
 	@GetMapping(value = "/alarm", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "大屏监控预警处理情况", response = Void.class, notes = "大屏监控预警处理情况<br><br><b>@author 王俊</b>")
-	public AlarmDTO getAlarm(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
-		return monitorService.getAlarm(orgId);
+	public Map<String,Object> getAlarm(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
+		return alertWarningInforService.getStatistical(orgId);//getAlarm(orgId)
 	}
 	/**
 	 * 大屏监控人数统计

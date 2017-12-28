@@ -69,7 +69,7 @@ public class MonitorService {
                 CourseEvaluateDTO courseEvaluateDTO=new CourseEvaluateDTO();
                 courseEvaluateDTO.setMustCourseScore(rs.getFloat("mustCourseScore"));
                 courseEvaluateDTO.setSelectCourseScore(rs.getFloat("selectCourseScore"));
-                courseEvaluateDTO.setMustCourseScore(rs.getFloat("otherCourseScore"));
+                courseEvaluateDTO.setOtherCourseScore(rs.getFloat("otherCourseScore"));
                 return courseEvaluateDTO;
             }
         };
@@ -85,9 +85,9 @@ public class MonitorService {
         int teacherYear = Integer.valueOf(currentGradeMap.get("TEACHER_YEAR") + "");
         int semester = Integer.valueOf(currentGradeMap.get("SEMESTER") + "");
         String sql="SELECT MAX(CASE a.type WHEN 1 then a.score ELSE 0 END) 'mustCourseScore',MAX(CASE a.type WHEN 2 then a.score ELSE 0 END) 'selectCourseScore',MAX(CASE a.type WHEN 3 then a.score ELSE 0 END) 'otherCourseScore' FROM ( ";
-        String tempSql1="SELECT SUM(AVG_SCORE) AS score,COURSE_TYPE type FROM t_course_evaluate WHERE COURSE_TYPE = 1 and ORG_ID=" + orgId + "" ;
-        String tempSql2="SELECT SUM(AVG_SCORE) AS score,COURSE_TYPE type FROM t_course_evaluate WHERE COURSE_TYPE = 2 and ORG_ID=" + orgId + "" ;
-        String tempSql3="SELECT SUM(AVG_SCORE) AS score,COURSE_TYPE type FROM t_course_evaluate WHERE COURSE_TYPE = 3 and ORG_ID=" + orgId + "" ;
+        String tempSql1="SELECT avg(AVG_SCORE) AS score,COURSE_TYPE AS type FROM t_course_evaluate WHERE COURSE_TYPE = 1 and ORG_ID=" + orgId + "" ;
+        String tempSql2="SELECT avg(AVG_SCORE) AS score,COURSE_TYPE AS type FROM t_course_evaluate WHERE COURSE_TYPE = 2 and ORG_ID=" + orgId + "" ;
+        String tempSql3="SELECT avg(AVG_SCORE) AS score,COURSE_TYPE AS type FROM t_course_evaluate WHERE COURSE_TYPE = 3 and ORG_ID=" + orgId + "" ;
         if (0 != teacherYear) {
             tempSql1 += " and TEACHER_YEAR=" + teacherYear + " ";
             tempSql2 += " and TEACHER_YEAR=" + teacherYear + " ";
