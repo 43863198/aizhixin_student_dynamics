@@ -70,18 +70,14 @@ public class TestMonitorDataController {
 	public ResponseEntity<TeachingScheduleStatistics> todayCourseNumAdd(
 			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = true) Long orgId) {
 
-		TeachingScheduleStatistics teachingScheduleStatistics = null;
-		teachingScheduleStatistics = teachingScheduleStatisticsService
-				.findByOrgIdAndStatisticalTime(orgId,
-						DateUtil.getCurrentTime(DateUtil.FORMAT_SHORT));
-		if (null == teachingScheduleStatistics) {
-			teachingScheduleStatistics = new TeachingScheduleStatistics();
-		}
-		teachingScheduleStatistics.setOrgId(orgId);
+		teachingScheduleStatisticsService.deleteAllByOrgId(orgId);
+		
+		TeachingScheduleStatistics teachingScheduleStatistics = new TeachingScheduleStatistics();
 		int max = 20;
 		int min = 10;
 		Random random = new Random();
 		int s = random.nextInt(max) % (max - min + 1) + min;
+		teachingScheduleStatistics.setOrgId(orgId);
 		teachingScheduleStatistics.setCourseNum1(45 - s);
 		teachingScheduleStatistics.setCourseNum3(40 - s);
 		teachingScheduleStatistics.setCourseNum5(57 - s);
@@ -161,17 +157,10 @@ public class TestMonitorDataController {
 
 			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = true) Long orgId) {
 
-		AbnormalAttendanceStatistics abnormalAttendanceStatistics = null;
-
-		abnormalAttendanceStatistics = abnormalAttendanceStatisticsService
-				.findByOrgIdAndStatisticalTime(orgId,
-						DateUtil.getCurrentTime(DateUtil.FORMAT_SHORT));
-
-		if (null == abnormalAttendanceStatistics) {
-
-			abnormalAttendanceStatistics = new AbnormalAttendanceStatistics();
-
-		}
+		
+		abnormalAttendanceStatisticsService.deleteAllByOrgId(orgId);
+		
+		AbnormalAttendanceStatistics abnormalAttendanceStatistics  = new AbnormalAttendanceStatistics();
 
 //		int max = 20;
 //
@@ -180,9 +169,6 @@ public class TestMonitorDataController {
 //		Random random = new Random();
 //
 //		int s = random.nextInt(max) % (max - min + 1) + min;
-//
-//		abnormalAttendanceStatistics.setOrgId(orgId);
-//
 //		abnormalAttendanceStatistics.setAbsenteeismNum(47 + s);
 //
 //		abnormalAttendanceStatistics.setLeaveEarlyNum(55 + s);
@@ -191,6 +177,7 @@ public class TestMonitorDataController {
 //
 //		abnormalAttendanceStatistics.setLeaveNum(35 + s);
 
+		abnormalAttendanceStatistics.setOrgId(orgId);
 		abnormalAttendanceStatistics.setAbsenteeismNum(1506);
 
 		abnormalAttendanceStatistics.setLeaveEarlyNum(387);
@@ -268,17 +255,9 @@ public class TestMonitorDataController {
 
 			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = true) Long orgId) {
 
+		abnormalTeachingStatisticsService.deleteAllByOrgId(orgId);
+		
 		AbnormalTeachingStatistics abnormalTeachingStatistics = new AbnormalTeachingStatistics();
-
-		abnormalTeachingStatistics = abnormalTeachingStatisticsService
-				.findByOrgIdAndStatisticalTime(orgId,
-						DateUtil.getCurrentTime(DateUtil.FORMAT_SHORT));
-
-		if (null == abnormalTeachingStatistics) {
-
-			abnormalTeachingStatistics = new AbnormalTeachingStatistics();
-
-		}
 
 //		int max = 20;
 //
@@ -287,8 +266,6 @@ public class TestMonitorDataController {
 //		Random random = new Random();
 //
 //		int s = random.nextInt(max) % (max - min + 1) + min;
-//
-//		abnormalTeachingStatistics.setOrgId(orgId);
 //
 //		abnormalTeachingStatistics.setChangeLecturerNum(21 + s);
 //
@@ -299,6 +276,8 @@ public class TestMonitorDataController {
 //		abnormalTeachingStatistics.setStopClassNum(33 + s);
 //
 //		abnormalTeachingStatistics.setTeachingNum(1215 + s);
+		
+		abnormalTeachingStatistics.setOrgId(orgId);
 		
 		abnormalTeachingStatistics.setChangeLecturerNum(19);
 

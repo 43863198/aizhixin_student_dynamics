@@ -12,5 +12,7 @@ public interface AbnormalTeachingStatisticsRespository extends JpaRepository<Abn
 	List<AbnormalTeachingStatistics> findFirst1ByOrgIdOrderByCreatedDateDesc(Long orgId);
 	
 	AbnormalTeachingStatistics findOneByOrgIdAndStatisticalTime(Long orgId,String statisticalTime);
+	
+	 void deleteByOrgId(Long orgId);
 }
 
