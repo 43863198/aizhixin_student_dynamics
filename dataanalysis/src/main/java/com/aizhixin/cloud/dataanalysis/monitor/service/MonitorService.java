@@ -113,7 +113,7 @@ public class MonitorService {
             }
         };
         AlarmDTO alarmDTO=null;
-        String currentGradeSql = "SELECT TEACHING_YEAR  FROM `t_warning_information`  where ORG_ID=" + orgId + " and DELETE_FLAG=0 and TEACHING_YEAR<>'null' ORDER BY TEACHING_YEAR DESC LIMIT 1";
+        String currentGradeSql = "SELECT TEACHER_YEAR  FROM `t_warning_information`  where ORG_ID=" + orgId + " and DELETE_FLAG=0 and TEACHER_YEAR<>'null' ORDER BY TEACHING_YEAR DESC LIMIT 1";
         Map currentGradeMap=new HashMap() ;
         try {
             currentGradeMap= jdbcTemplate.queryForMap(currentGradeSql);
@@ -125,8 +125,8 @@ public class MonitorService {
         String tempSql1="SELECT count(1) as count, 'alarm'  FROM t_warning_information WHERE DELETE_FLAG=0  and ORG_ID=" + orgId + "" ;
         String tempSql2="SELECT count(1) as count, 'dealwithTotal' FROM t_warning_information where WARNING_STATE=20 or WARNING_STATE=40 and DELETE_FLAG=0 and ORG_ID=" + orgId + "" ;
         if (0 != teacherYear) {
-            tempSql1 += " and TEACHING_YEAR=" + teacherYear + " ";
-            tempSql2 += " and TEACHING_YEAR=" + teacherYear + " ";
+            tempSql1 += " and TEACHER_YEAR=" + teacherYear + " ";
+            tempSql2 += " and TEACHER_YEAR=" + teacherYear + " ";
         }
         sql+=tempSql1+" UNION ALL "+tempSql2+" ) a";
         alarmDTO=jdbcTemplate.queryForObject(sql,rowMapper);
