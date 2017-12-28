@@ -56,13 +56,11 @@ public class TeachingScoreAnalysisJob {
                     sytList.add(syt);
                 }
             }
-            if(sytList.size()>1){
-                teachingScoreStatisticsAnalysis.teachingScoreStatistics(sytList);
-            }
             if(sytList.size()>1) {
                 for (SchoolYearTerm yt : sytList) {
-                    if (null != yt.getSemester() && null != yt.getTeacherYear()) {
-                        teachingScoreStatisticsAnalysis.teachingScoreStatistics(sytList);
+                    if (null!=yt.getOrgId()&&null != yt.getSemester() && null != yt.getTeacherYear()) {
+                        teachingScoreStatisticsAnalysis.teachingScoreStatistics(yt.getOrgId(),yt.getTeacherYear(),yt.getSemester());
+                        logger.info(yt.getOrgId()+"  "+yt.getTeacherYear()+"-"+yt.getSemester()+"统计启动！");
 //                        yt.setDataType(DataType.t_teaching_score_statistics.getIndex() + "");
 //                        schoolYearTermService.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
                     }

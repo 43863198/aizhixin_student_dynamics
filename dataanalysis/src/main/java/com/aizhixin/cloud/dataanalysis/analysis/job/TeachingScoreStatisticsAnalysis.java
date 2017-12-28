@@ -39,16 +39,15 @@ public class TeachingScoreStatisticsAnalysis {
     private TeachingScoreService teachingScoreService;
 
     @Async
-    public void teachingScoreStatistics(Set<SchoolYearTerm> schoolYearTermList) {
+    public void teachingScoreStatistics( Long orgId, Integer schoolYear,Integer semester) {
         try {
-            for (SchoolYearTerm schoolYearTerm : schoolYearTermList) {
-                Long orgId = schoolYearTerm.getOrgId();
-                Integer schoolYear = schoolYearTerm.getTeacherYear();
-                Integer semester = schoolYearTerm.getSemester();
-                if (null != orgId && null != schoolYear && null != semester) {
+//            for (SchoolYearTerm schoolYearTerm : schoolYearTermList) {
+//                Long orgId = schoolYearTerm.getOrgId();
+//                Integer schoolYear = schoolYearTerm.getTeacherYear();
+//                Integer semester = schoolYearTerm.getSemester();
+//                if (null != orgId && null != schoolYear && null != semester) {
                     List<TeachingScoreDetails> tsdList = new ArrayList<>();
                     teachingScoreService.deleteScoreDeatail(orgId, schoolYear, semester);
-                    teachingScoreService.deleteScoreStatistics(orgId, schoolYear, semester);
                     Criteria criteria = Criteria.where("orgId").is(orgId);
                     criteria.and("schoolYear").is(schoolYear);
                     criteria.and("semester").is(semester);
@@ -147,6 +146,7 @@ public class TeachingScoreStatisticsAnalysis {
                     logger.info(orgId+":"+schoolYear+":"+semester+"保存教学成绩详情数据:"+tsdList.size());
                     teachingScoreService.saveDetailsList(tsdList);
                    /***********************************教学成绩统计************************************************************/
+                    teachingScoreService.deleteScoreStatistics(orgId, schoolYear, semester);
                     List<TeachingScoreStatistics> tssList = new ArrayList<>();
                     TeachingScoreStatistics tss = new TeachingScoreStatistics();
                     tss.setOrgId(orgId);
@@ -261,8 +261,8 @@ public class TeachingScoreStatisticsAnalysis {
                         fts.setFailPassStuNum(failUser.getMappedResults().size());
                     }
                     teachingScoreService.saveStatisticsList(tssList);
-                }
-             }
+//                }
+//             }
             }catch(Exception e){
                 e.printStackTrace();
                 logger.info("统计教学成绩失败！");
