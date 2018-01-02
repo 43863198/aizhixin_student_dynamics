@@ -57,41 +57,21 @@ public class TestAnalysisDataController {
 	@GetMapping(value = "/addschoolstatistics", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "生成学情分析学校人数统计", response = Void.class, notes = "生成学情分析学校人数统计<br><br><b>@author  jianwei.wu</b>")
 	public Map<String, Object> addSchoolStatistics(
-//			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
-//			@ApiParam(value = "teacherYear 学年)") @RequestParam(value = "teacherYear", required = true) int teacherYear
 	) {
-//		return schoolStatisticsAnalysisJob.schoolStatistics(orgId, teacherYear);
 		return schoolStatisticsAnalysisJob.schoolStatistics();
 	}
 
-//	@GetMapping(value = "/addteachingscoredetail", produces = MediaType.APPLICATION_JSON_VALUE)
-//	@ApiOperation(httpMethod = "GET", value = "手动添加教学成绩详情", response = Void.class, notes = "手动添加教学成绩详情<br><br><b>@author jianwei.wu</b>")
-//	public Map<String, Object> addTeachingScoreDetail(
-//			@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-//			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
-//			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
-//	) {
-//		return teachingScoreAnalysisJob.teachingScoreDetails(orgId, teacherYear, semester);
-//	}
 	@GetMapping(value = "/addteachingscorestatistics", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "手动添加教学成绩统计", response = Void.class, notes = "手动添加教学成绩统计<br><br><b>@author jianwei.wu</b>")
 	public Map<String, Object> addTeachingScoreStatistics(
-//			@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-//			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
-//			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
 	) {
-//		return teachingScoreAnalysisJob.teachingScoreStatistics(orgId, teacherYear, semester);
 		return teachingScoreStatisticsJob.teachingScoreStatistics();
 	}
 	@GetMapping(value = "/addcetscorestatistics", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "手动添加cet成绩统计", response = Void.class, notes = "手动添加cet成绩统计<br><br><b>@author jianwei.wu</b>")
 	public Map<String, Object> cetScoreStatistics(
-//			@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-//			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
-//			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
 	) {
-//		return cetStatisticsAnalysisJob.cetScoreStatistics(orgId, teacherYear, semester);
-		return cetStatisticsAnalysisJob.cetScoreStatistics();
+		return teachingScoreStatisticsJob.cetScoreStatistics();
 	}
 
 

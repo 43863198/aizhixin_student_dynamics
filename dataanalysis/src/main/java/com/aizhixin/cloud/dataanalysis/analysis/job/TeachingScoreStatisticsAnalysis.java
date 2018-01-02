@@ -62,7 +62,7 @@ public class TeachingScoreStatisticsAnalysis {
                     AggregationResults<BasicDBObject> scheduleDetails = mongoTemplate.aggregate(
                             Aggregation.newAggregation(
                                     Aggregation.match(criteria),
-                                    Aggregation.group("userId").avg("gradePoint").as("GPAavg")
+                                    Aggregation.group("$userId").avg("gradePoint").as("GPAavg")
                                             .first("jobNum").as("jobNum").first("userName").as("userName").first("className").as("className")
                                             .first("grade").as("grade").first("collegeId").as("collegeId").first("collegeName").as("collegeName")
                             ),
@@ -122,7 +122,7 @@ public class TeachingScoreStatisticsAnalysis {
                     AggregationResults<BasicDBObject> scheduleFail = mongoTemplate.aggregate(
                             Aggregation.newAggregation(
                                     Aggregation.match(criteriFail),
-                                    Aggregation.group("userId").sum("credit").as("credit")),
+                                    Aggregation.group("$userId").sum("credit").as("credit")),
                             Score.class, BasicDBObject.class);
 
                     for (int x = 0; x < scheduleFail.getMappedResults().size(); x++) {
@@ -175,7 +175,7 @@ public class TeachingScoreStatisticsAnalysis {
                 Integer semester = schoolYearTerm.getSemester();
                 if (null != orgId && null != schoolYear && null != semester) {
                     StringBuilder path = new StringBuilder("/teachingScoreStatistic");
-                    path.append(orgId).append("/").append(schoolYear).append("/").append(semester);
+//                    path.append(orgId).append("/").append(schoolYear).append("/").append(semester);
                     if (distributeLock.getTeachingScoreStatisticLock(path)) {
                         teachingScoreService.deleteScoreStatistics(orgId, schoolYear, semester);//去重
                         List<TeachingScoreStatistics> tssList = new ArrayList<>();
@@ -193,17 +193,17 @@ public class TeachingScoreStatisticsAnalysis {
                         AggregationResults<BasicDBObject> orgSchedule = mongoTemplate.aggregate(
                                 Aggregation.newAggregation(
                                         Aggregation.match(criterias),
-                                        Aggregation.group("scheduleId")),
+                                        Aggregation.group("$scheduleId")),
                                 Score.class, BasicDBObject.class);
                         AggregationResults<BasicDBObject> orgUser = mongoTemplate.aggregate(
                                 Aggregation.newAggregation(
                                         Aggregation.match(criterias),
-                                        Aggregation.group("userId")),
+                                        Aggregation.group("$userId")),
                                 Score.class, BasicDBObject.class);
                         AggregationResults<BasicDBObject> avg = mongoTemplate.aggregate(
                                 Aggregation.newAggregation(
                                         Aggregation.match(criterias),
-                                        Aggregation.group("orgId").avg("gradePoint").as("GPAavg").avg("totalScore").as("courseAVG")),
+                                        Aggregation.group("$orgId").avg("gradePoint").as("GPAavg").avg("totalScore").as("courseAVG")),
                                 Score.class, BasicDBObject.class);
                         if (null != avg.getMappedResults().get(0)) {
                             if (null != avg.getMappedResults().get(0).get("GPAavg")) {
@@ -223,7 +223,7 @@ public class TeachingScoreStatisticsAnalysis {
                         AggregationResults<BasicDBObject> orgUserFail = mongoTemplate.aggregate(
                                 Aggregation.newAggregation(
                                         Aggregation.match(tcriteriFail),
-                                        Aggregation.group("userId")),
+                                        Aggregation.group("$userId")),
                                 Score.class, BasicDBObject.class);
                         tss.setFailPassStuNum(orgUserFail.getMappedResults().size());
                         teachingScoreService.saveStatistics(tss);
@@ -236,7 +236,7 @@ public class TeachingScoreStatisticsAnalysis {
                         AggregationResults<BasicDBObject> countts = mongoTemplate.aggregate(
                                 Aggregation.newAggregation(
                                         Aggregation.match(ccriteria),
-                                        Aggregation.group("collegeId").first("collegeName").as("collegeName").avg("gradePoint").as("GPAavg").avg("totalScore").as("courseAVG")
+                                        Aggregation.group("$collegeId").first("collegeName").as("collegeName").avg("gradePoint").as("GPAavg").avg("totalScore").as("courseAVG")
                                 ),
                                 Score.class, BasicDBObject.class);
                         for (int j = 0; j < countts.getMappedResults().size(); j++) {
@@ -250,12 +250,12 @@ public class TeachingScoreStatisticsAnalysis {
                             AggregationResults<BasicDBObject> schedule = mongoTemplate.aggregate(
                                     Aggregation.newAggregation(
                                             Aggregation.match(ccriteriaSub),
-                                            Aggregation.group("scheduleId")),
+                                            Aggregation.group("$scheduleId")),
                                     Score.class, BasicDBObject.class);
                             AggregationResults<BasicDBObject> user = mongoTemplate.aggregate(
                                     Aggregation.newAggregation(
                                             Aggregation.match(ccriteriaSub),
-                                            Aggregation.group("userId")), Score.class, BasicDBObject.class);
+                                            Aggregation.group("$userId")), Score.class, BasicDBObject.class);
                             TeachingScoreStatistics ctss = new TeachingScoreStatistics();
                             ctss.setOrgId(orgId);
                             ctss.setTeacherYear(schoolYear);
@@ -285,12 +285,12 @@ public class TeachingScoreStatisticsAnalysis {
                             AggregationResults<BasicDBObject> failUser = mongoTemplate.aggregate(
                                     Aggregation.newAggregation(
                                             Aggregation.match(criteriFailSub),
-                                            Aggregation.group("userId")),
+                                            Aggregation.group("$userId")),
                                     Score.class, BasicDBObject.class);
                             fts.setFailPassStuNum(failUser.getMappedResults().size());
                         }
                         teachingScoreService.saveStatisticsList(tssList);
-                        distributeLock.delete(path);//删除锁
+//                        distributeLock.delete(path);//删除锁
                     }
                 }
             }
