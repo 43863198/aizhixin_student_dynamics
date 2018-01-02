@@ -29,6 +29,8 @@ public class TeachingScoreAnalysisJob {
     @Autowired
     private TeachingScoreStatisticsAnalysis teachingScoreStatisticsAnalysis;
     @Autowired
+    private CetStatisticsAnalysisJob cetStatisticsAnalysisJob;
+    @Autowired
     private MongoTemplate mongoTemplate;
 //    @Autowired
 //    private SchoolYearTermService schoolYearTermService;
@@ -80,5 +82,47 @@ public class TeachingScoreAnalysisJob {
         reslut.put("message", "统计教学成绩启动成功！");
         return reslut;
     }
+
+    public Map<String, Object> cetScoreStatisticsAsync() {
+        Map<String, Object> reslut = new HashMap<>();
+        Set<SchoolYearTerm> sytList = new HashSet<>();
+        try {
+            Criteria cet = Criteria.where("examType").in(ScoreConstant.EXAM_TYPE_CET4, ScoreConstant.EXAM_TYPE_CET6);
+            cet.and("schoolYear").ne(null);
+            cet.and("semester").ne(null);
+            AggregationResults<BasicDBObject> ytGroup = mongoTemplate.aggregate(
+                    Aggregation.newAggregation(
+                            Aggregation.match(cet),
+                            Aggregation.group("$orgId", "$schoolYear", "$semester").first("orgId").as("orgId").first("schoolYear").as("schoolYear")
+                                    .first("semester").as("semester")
+                    ), Score.class, BasicDBObject.class);
+
+            if (null != ytGroup) {
+                for (int x = 0; x < ytGroup.getMappedResults().size(); x++) {
+                    SchoolYearTerm syt = new SchoolYearTerm();
+                    syt.setOrgId(ytGroup.getMappedResults().get(x).getLong("orgId"));
+                    syt.setTeacherYear(ytGroup.getMappedResults().get(x).getInt("schoolYear"));
+                    syt.setSemester(ytGroup.getMappedResults().get(x).getInt("semester"));
+                    sytList.add(syt);
+                }
+            }
+            if(sytList.size()>1) {
+
+                cetStatisticsAnalysisJob.cetScoreStatistics(sytList);
+                logger.info("英语四六级成绩统计启动！");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            reslut.put("message", "统计英语四六级成绩启动失败！");
+            return reslut;
+        }
+        reslut.put("message", "统计英语四六级成绩启动成功！");
+        return reslut;
+    }
+
+
+
+
 
 }

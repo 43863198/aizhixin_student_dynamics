@@ -284,9 +284,9 @@ public class TeachingScoreService {
                 condition.put("grades", tds);
             }
             if (null != nj) {
-                cql.append(" and (USER_NAME = :nj OR JOB_NUM = :nj)");
-                sql.append(" and (USER_NAME = :nj OR JOB_NUM = :nj)");
-                condition.put("nj", nj);
+                cql.append(" and (USER_NAME LIKE :nj OR JOB_NUM LIKE :nj)");
+                sql.append(" and (USER_NAME LIKE :nj OR JOB_NUM LIKE :nj)");
+                condition.put("nj", "%" + nj + "%");
             }
             cql.append(" and DELETE_FLAG = 0");
             sql.append(" and DELETE_FLAG = 0");
