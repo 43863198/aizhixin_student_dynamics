@@ -500,10 +500,6 @@ public class SchoolStatisticsService {
                 criteria.and("education").in(tds);
             }
             if (null != isPay) {
-                Criteria c = new Criteria();
-                Criteria c1 = new Criteria();
-                Criteria c2 = new Criteria();
-                Criteria c3 = new Criteria();
                 List<String> pay = new ArrayList<>();
                 if (isPay.indexOf(",") != -1) {
                     String[] py = isPay.split(",");

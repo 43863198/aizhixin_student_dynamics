@@ -30,8 +30,8 @@ public class TeachingScoreAnalysisJob {
     private TeachingScoreStatisticsAnalysis teachingScoreStatisticsAnalysis;
     @Autowired
     private MongoTemplate mongoTemplate;
-    @Autowired
-    private SchoolYearTermService schoolYearTermService;
+//    @Autowired
+//    private SchoolYearTermService schoolYearTermService;
 
     public Map<String, Object> teachingScoreStatisticsAsync() {
         Map<String, Object> reslut = new HashMap<>();
@@ -43,7 +43,7 @@ public class TeachingScoreAnalysisJob {
             AggregationResults<BasicDBObject> ytGroup = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(ytc),
-                            Aggregation.group("orgId", "schoolYear", "semester").first("orgId").as("orgId").first("schoolYear").as("schoolYear")
+                            Aggregation.group("$orgId", "$schoolYear", "$semester").first("orgId").as("orgId").first("schoolYear").as("schoolYear")
                                     .first("semester").as("semester")
                     ), Score.class, BasicDBObject.class);
 

@@ -62,6 +62,7 @@ public class TeachingScoreService {
     public void deleteScoreStatistics(Long orgId) {
         teachingScoreStatisticsRespository.deleteByOrgId(orgId);
     }
+
     public void deleteScoreDeatail(Long orgId,Integer teacherYear, Integer semester) {
         teachingScoreDetailsRespository.deleteByOrgIdAndTeacherAndSemester(orgId, teacherYear, semester);
     }
