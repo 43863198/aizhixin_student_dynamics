@@ -40,11 +40,15 @@ public class TeachingScoreStatisticsAnalysis {
     @Async
     public void teachingScoreDetails(Set<SchoolYearTerm> sytList) {
         try {
+            for (SchoolYearTerm syt : sytList) {
+                logger.info(syt.getOrgId()+":第"+syt.getTeacherYear()+"学年:第"+syt.getSemester()+"学期详情");
+            }
             for (SchoolYearTerm schoolYearTerm : sytList) {
                 Long orgId = schoolYearTerm.getOrgId();
                 Integer schoolYear = schoolYearTerm.getTeacherYear();
                 Integer semester = schoolYearTerm.getSemester();
                 if (null != orgId && null != schoolYear && null != semester) {
+                    teachingScoreService.deleteScoreDeatail(orgId,schoolYear,semester);//去重
                     List<TeachingScoreDetails> tsdList = new ArrayList<>();
                     Criteria criteria = Criteria.where("orgId").is(orgId);
                     criteria.and("schoolYear").is(schoolYear);
@@ -161,6 +165,7 @@ public class TeachingScoreStatisticsAnalysis {
                 Integer schoolYear = schoolYearTerm.getTeacherYear();
                 Integer semester = schoolYearTerm.getSemester();
                 if (null != orgId && null != schoolYear && null != semester) {
+                    teachingScoreService.deleteScoreStatistics(orgId,schoolYear,semester);//去重
                     List<TeachingScoreStatistics> tssList = new ArrayList<>();
                     TeachingScoreStatistics tss = new TeachingScoreStatistics();
                     tss.setOrgId(orgId);
@@ -282,5 +287,9 @@ public class TeachingScoreStatisticsAnalysis {
             }
             logger.info("统计教学成绩完成 o(*￣︶￣*)oo(*￣︶￣*)oo(*￣︶￣*)oo(*￣︶￣*)oo(*￣︶￣*)oo(*￣︶￣*)oo(*￣︶￣*)");
         }
+
+
+
+
 
     }
