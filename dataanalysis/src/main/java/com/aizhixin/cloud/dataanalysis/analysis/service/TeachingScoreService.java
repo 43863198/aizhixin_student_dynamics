@@ -283,7 +283,7 @@ public class TeachingScoreService {
                 sql.append(" and GRADE IN :grades");
                 condition.put("grades", tds);
             }
-            if (null != nj) {
+            if (!org.apache.commons.lang.StringUtils.isBlank(nj)) {
                 cql.append(" and (USER_NAME LIKE :nj OR JOB_NUM LIKE :nj)");
                 sql.append(" and (USER_NAME LIKE :nj OR JOB_NUM LIKE :nj)");
                 condition.put("nj", "%" + nj + "%");
