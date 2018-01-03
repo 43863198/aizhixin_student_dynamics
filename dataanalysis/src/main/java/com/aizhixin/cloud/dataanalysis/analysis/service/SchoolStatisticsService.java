@@ -547,7 +547,7 @@ public class SchoolStatisticsService {
             }
 
             if(!org.apache.commons.lang.StringUtils.isBlank(nj)){
-                criteria.orOperator(criteria.where("userName").regex(nj), criteria.where("jobNum").is(nj));
+                criteria.orOperator(criteria.where("userName").regex(nj), criteria.where("jobNum").regex(nj));
             }
             query.addCriteria(criteria);
             //mongoTemplate.count计算总数
