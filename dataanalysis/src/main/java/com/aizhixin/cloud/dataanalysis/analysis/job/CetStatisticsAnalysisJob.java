@@ -123,7 +123,7 @@ public class CetStatisticsAnalysisJob {
                         Criteria cet4Pass = Criteria.where("orgId").is(orgId);
                         cet4Pass.and("schoolYear").is(schoolYear);
                         cet4Pass.and("semester").is(semester);
-                        cet4.and("examType").is(ScoreConstant.EXAM_TYPE_CET4);
+                        cet4Pass.and("examType").is(ScoreConstant.EXAM_TYPE_CET4);
                         cet4Pass.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
                         AggregationResults<BasicDBObject> collegeCet4Pass = mongoTemplate.aggregate(
                                 Aggregation.newAggregation(
