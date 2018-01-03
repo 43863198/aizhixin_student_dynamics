@@ -107,7 +107,6 @@ public class TeachingScoreAnalysisJob {
                 }
             }
             if(sytList.size()>1) {
-
                 cetStatisticsAnalysisJob.cetScoreStatistics(sytList);
                 logger.info("英语四六级成绩统计启动！");
             }

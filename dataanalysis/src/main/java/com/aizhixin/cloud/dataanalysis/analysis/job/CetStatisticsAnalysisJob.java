@@ -88,7 +88,7 @@ public class CetStatisticsAnalysisJob {
                 Integer semester = schoolYearTerm.getSemester();
                 if (null != orgId && null != schoolYear && null != semester) {
                     StringBuilder path = new StringBuilder("/cet");
-//                    path.append(orgId).append("/").append(schoolYear).append("/").append(semester);
+                    path.append(orgId).append("/").append(schoolYear).append("/").append(semester);
                     if (distributeLock.getTeachingScoreStatisticLock(path)) {
                         cetScoreStatisticsRespository.deleteByOrgIdAndTeacherYearAndSemester(orgId, schoolYear, semester);
                         List<CetScoreStatistics> cetList = new ArrayList<>();
@@ -177,7 +177,7 @@ public class CetStatisticsAnalysisJob {
                             }
                         }
                         cetScoreStatisticsRespository.save(cetList);
-//                        distributeLock.delete(path);//删除锁
+                        distributeLock.delete(path);//删除锁
                     }
                 }
             }
