@@ -302,7 +302,7 @@ public class CetStatisticAnalysisService {
             }else {
                 criteria.and("examType").in(ScoreConstant.EXAM_TYPE_CET4,ScoreConstant.EXAM_TYPE_CET6);
             }
-            if(null!=nj){
+            if(!org.apache.commons.lang.StringUtils.isBlank(nj)){
                 criteria.orOperator(criteria.where("jobNum").regex(nj), criteria.where("userName").regex(nj));
             }
             org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
