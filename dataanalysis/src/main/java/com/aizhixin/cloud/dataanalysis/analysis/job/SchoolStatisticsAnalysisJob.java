@@ -141,25 +141,21 @@ public class SchoolStatisticsAnalysisJob {
 		return result;
 	}
 
-
-
-
-
 	public Map<String, Object> schoolStatistics(Long orgId, int teacherYear) {
 		Map<String, Object> result = new HashMap<>();
 		List<SchoolStatistics> schoolStatisticsList = new ArrayList<SchoolStatistics>();
 		List<SchoolStatisticsDTO> countList = this.peopleNumCount(orgId.toString());
 		try{
 			schoolStatisticsService.deleteByOrgIdAndTeacherYear(orgId,teacherYear);
-		Criteria criteria = Criteria.where("orgId").is(orgId);
-		criteria.and("schoolYear").is(teacherYear);
-		AggregationResults<BasicDBObject> count = mongoTemplate.aggregate(
+		   Criteria criteria = Criteria.where("orgId").is(orgId);
+		   criteria.and("schoolYear").is(teacherYear);
+		   AggregationResults<BasicDBObject> count = mongoTemplate.aggregate(
 				Aggregation.newAggregation(
 						Aggregation.match(criteria),
 						Aggregation.group("collegeId").first("collegeName").as("collegeName").count().as("count")
 				),
 				StudentRegister.class, BasicDBObject.class);
-		for (int n = 0; n < count.getMappedResults().size(); n++) {
+		  for (int n = 0; n < count.getMappedResults().size(); n++) {
 			Long collegeId = count.getMappedResults().get(n).getLong("_id");
 			SchoolStatistics ss = new SchoolStatistics();
 			ss.setOrgId(orgId);

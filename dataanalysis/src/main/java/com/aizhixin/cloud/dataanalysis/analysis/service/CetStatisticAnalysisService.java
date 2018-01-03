@@ -295,8 +295,7 @@ public class CetStatisticAnalysisService {
                     if (type.equals(4)) {
                         criteria.and("examType").is(ScoreConstant.EXAM_TYPE_CET4);
                         criteria.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
-                    }
-                    if (type.equals(6)) {
+                    }else if (type.equals(6)) {
                         criteria.and("examType").is(ScoreConstant.EXAM_TYPE_CET6);
                         criteria.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
                     }
@@ -304,7 +303,7 @@ public class CetStatisticAnalysisService {
                 criteria.and("examType").in(ScoreConstant.EXAM_TYPE_CET4,ScoreConstant.EXAM_TYPE_CET6);
             }
             if(null!=nj){
-                criteria.orOperator(criteria.where("jobNum").is(nj), criteria.where("userName").regex(".*?\\" + nj + ".*"));
+                criteria.orOperator(criteria.where("jobNum").regex(nj), criteria.where("userName").regex(nj));
             }
             org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
             query.addCriteria(criteria);
@@ -314,7 +313,7 @@ public class CetStatisticAnalysisService {
             List<Score> items  = mongoTemplate.find(query.with(pageable), Score.class);
 
             p.getPage().setTotalPages(((int)total + page.getPageSize() - 1) / page.getPageSize());
-            p.getPage().setPageNumber(page.getPageNumber());
+            p.getPage().setPageNumber(page.getPageNumber()+1);
             p.getPage().setPageSize(page.getPageSize());
             p.getPage().setTotalElements(total);
             p.setData(items);
