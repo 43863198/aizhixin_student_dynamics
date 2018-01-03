@@ -128,8 +128,8 @@ public HomeData<CourseEvaluateDTO> getHomeCourseEvaluate(long orgId) {
                 return courseEvaluateDetailDTO;
             }
         };
-        String querySql = "SELECT TEACHING_CLASS_NAME,CHARGE_PERSON,AVG_SCORE  FROM `T_COURSE_EVALUATE` where DELETE_FLAG =" + DataValidity.VALID.getState() + " and ORG_ID=" + orgId + " ";
-        String countSql = "SELECT count(1) FROM `T_COURSE_EVALUATE` where DELETE_FLAG =" + DataValidity.VALID.getState() + "  and ORG_ID=" + orgId + " ";
+        String querySql = "SELECT DISTINCT TEACHING_CLASS_NAME,CHARGE_PERSON,AVG_SCORE  FROM `T_COURSE_EVALUATE` where DELETE_FLAG =" + DataValidity.VALID.getState() + " and ORG_ID=" + orgId + " ";
+        String countSql = "SELECT count(DISTINCT TEACHING_CLASS_NAME,CHARGE_PERSON,AVG_SCORE) FROM `T_COURSE_EVALUATE` where DELETE_FLAG =" + DataValidity.VALID.getState() + "  and ORG_ID=" + orgId + " ";
         if (!StringUtils.isEmpty(semesterId)) {
             querySql += " and SEMESTER=" + semesterId + " ";
             countSql += " and SEMESTER=" + semesterId + " ";
@@ -143,8 +143,8 @@ public HomeData<CourseEvaluateDTO> getHomeCourseEvaluate(long orgId) {
             countSql += " and COURSE_CODE='" + courseCode + "' ";
         }
         if (!StringUtils.isEmpty(name)) {
-            querySql += " and TEACHING_CLASS_NAME like '%" + name + "%' or CHARGE_PERSON like '%"+ name + "%' ";
-            countSql += " and TEACHING_CLASS_NAME like '%" + name + "%' or CHARGE_PERSON like '%"+ name + "%' ";
+            querySql += " and (TEACHING_CLASS_NAME like '%" + name + "%' or CHARGE_PERSON like '%"+ name + "%') ";
+            countSql += " and (TEACHING_CLASS_NAME like '%" + name + "%' or CHARGE_PERSON like '%"+ name + "%') ";
         }
 
         Map map=pageJdbcUtil
