@@ -1,10 +1,12 @@
 package com.aizhixin.cloud.dataanalysis.common.init;
 
+import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryNTimes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,6 +28,14 @@ public class InitScheduling {
     private String zkLockPath;
     @Value("${zookeeper.task}")
     private String zkTaskPath;
+
+//    @Autowired
+//    private WarningTypeService warningTypeService;
+//
+//    @PostConstruct
+//    public void addWarningType(){
+//        warningTypeService.setWarningType(218L);
+//    }
 
     @PostConstruct
     public void cleanZookeeperTaskData() {
