@@ -29,4 +29,6 @@ public interface TeachingScoreDetailsRespository extends JpaRepository<TeachingS
     void deleteByOrgIdAndTeacherAndSemester(@Param(value = "orgId")Long orgId,@Param(value = "teacherYear")int teacherYear,@Param(value = "semester")int semester);
 
 
+    void deleteByOrgId(Long orgId);
+
 }

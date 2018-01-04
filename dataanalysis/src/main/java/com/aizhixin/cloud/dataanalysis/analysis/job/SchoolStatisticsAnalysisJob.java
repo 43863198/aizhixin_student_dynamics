@@ -34,6 +34,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.aizhixin.cloud.dataanalysis.setup.domain.WarningTypeDomain;
@@ -47,6 +48,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Component
+@Transactional
 public class SchoolStatisticsAnalysisJob {
 
 	public volatile static boolean flag = true;
@@ -123,11 +125,11 @@ public class SchoolStatisticsAnalysisJob {
 			if(sytList.size()>1){
 				for(SchoolYearTerm yt: sytList){
 						this.schoolStatistics(yt.getOrgId(), yt.getTeacherYear());
-						yt.setDataType(DataType.t_school_statistics.getIndex()+"");
-						schoolYearTermService.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
+//						yt.setDataType(DataType.t_school_statistics.getIndex()+"");
+//						schoolYearTermService.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
 					}
 			}
-			schoolYearTermService.saveSchoolYearTerm(sytList);
+//			schoolYearTermService.saveSchoolYearTerm(sytList);
 
 		}catch (Exception e){
 			result.put("success", false);
@@ -139,25 +141,21 @@ public class SchoolStatisticsAnalysisJob {
 		return result;
 	}
 
-
-
-
-
 	public Map<String, Object> schoolStatistics(Long orgId, int teacherYear) {
 		Map<String, Object> result = new HashMap<>();
 		List<SchoolStatistics> schoolStatisticsList = new ArrayList<SchoolStatistics>();
 		List<SchoolStatisticsDTO> countList = this.peopleNumCount(orgId.toString());
 		try{
 			schoolStatisticsService.deleteByOrgIdAndTeacherYear(orgId,teacherYear);
-		Criteria criteria = Criteria.where("orgId").is(orgId);
-		criteria.and("schoolYear").is(teacherYear);
-		AggregationResults<BasicDBObject> count = mongoTemplate.aggregate(
+		   Criteria criteria = Criteria.where("orgId").is(orgId);
+		   criteria.and("schoolYear").is(teacherYear);
+		   AggregationResults<BasicDBObject> count = mongoTemplate.aggregate(
 				Aggregation.newAggregation(
 						Aggregation.match(criteria),
 						Aggregation.group("collegeId").first("collegeName").as("collegeName").count().as("count")
 				),
 				StudentRegister.class, BasicDBObject.class);
-		for (int n = 0; n < count.getMappedResults().size(); n++) {
+		  for (int n = 0; n < count.getMappedResults().size(); n++) {
 			Long collegeId = count.getMappedResults().get(n).getLong("_id");
 			SchoolStatistics ss = new SchoolStatistics();
 			ss.setOrgId(orgId);

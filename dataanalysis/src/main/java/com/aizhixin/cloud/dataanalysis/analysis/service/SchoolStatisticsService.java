@@ -500,10 +500,6 @@ public class SchoolStatisticsService {
                 criteria.and("education").in(tds);
             }
             if (null != isPay) {
-                Criteria c = new Criteria();
-                Criteria c1 = new Criteria();
-                Criteria c2 = new Criteria();
-                Criteria c3 = new Criteria();
                 List<String> pay = new ArrayList<>();
                 if (isPay.indexOf(",") != -1) {
                     String[] py = isPay.split(",");
@@ -551,7 +547,7 @@ public class SchoolStatisticsService {
             }
 
             if(!org.apache.commons.lang.StringUtils.isBlank(nj)){
-                criteria.orOperator(criteria.where("userName").regex(".*?\\" + nj + ".*"), criteria.where("jobNum").is(nj));
+                criteria.orOperator(criteria.where("userName").regex(nj), criteria.where("jobNum").regex(nj));
             }
             query.addCriteria(criteria);
             //mongoTemplate.count计算总数

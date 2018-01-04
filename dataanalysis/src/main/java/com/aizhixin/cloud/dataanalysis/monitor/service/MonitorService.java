@@ -35,7 +35,7 @@ public class MonitorService {
                 CollegeGpaDTO collegeGpaDTO = new CollegeGpaDTO();
                 collegeGpaDTO.setCollegeId(rs.getString("COLLEGE_ID"));
                 collegeGpaDTO.setCollegeName(rs.getString("COLLEGE_NAME"));
-                collegeGpaDTO.setAvgGPA(rs.getFloat("AVG_SCORE"));
+                collegeGpaDTO.setAvgGPA(rs.getFloat("AVG_GPA"));
                 return collegeGpaDTO;
             }
         };
@@ -51,14 +51,15 @@ public class MonitorService {
 
         int teacherYear = Integer.valueOf(currentGradeMap.get("TEACHER_YEAR") + "");
         int semester = Integer.valueOf(currentGradeMap.get("SEMESTER") + "");
-        String sql = "SELECT COLLEGE_ID ,COLLEGE_NAME,AVG_SCORE  FROM `t_teaching_score_statistics` where ORG_ID=" + orgId + " ";
+        String sql = "SELECT COLLEGE_ID,COLLEGE_NAME,AVG_GPA FROM( SELECT COLLEGE_ID ,COLLEGE_NAME,AVG_GPA  FROM `t_teaching_score_statistics` where ORG_ID=" + orgId + "  and STATISTICS_TYPE=2 ";
         if (0 != teacherYear) {
             sql += " and TEACHER_YEAR=" + teacherYear + " ";
         }
         if (0 != semester) {
             sql += " and SEMESTER=" + semester;
         }
-        sql+=" ORDER BY AVG_SCORE DESC limit 10";
+        sql+="  GROUP BY COLLEGE_ID ) aa";
+        sql+=" ORDER BY AVG_GPA DESC limit 10";
         result = jdbcTemplate.query(sql, mapper);
         return result;
     }
@@ -69,7 +70,7 @@ public class MonitorService {
                 CourseEvaluateDTO courseEvaluateDTO=new CourseEvaluateDTO();
                 courseEvaluateDTO.setMustCourseScore(rs.getFloat("mustCourseScore"));
                 courseEvaluateDTO.setSelectCourseScore(rs.getFloat("selectCourseScore"));
-                courseEvaluateDTO.setMustCourseScore(rs.getFloat("otherCourseScore"));
+                courseEvaluateDTO.setOtherCourseScore(rs.getFloat("otherCourseScore"));
                 return courseEvaluateDTO;
             }
         };
@@ -85,9 +86,9 @@ public class MonitorService {
         int teacherYear = Integer.valueOf(currentGradeMap.get("TEACHER_YEAR") + "");
         int semester = Integer.valueOf(currentGradeMap.get("SEMESTER") + "");
         String sql="SELECT MAX(CASE a.type WHEN 1 then a.score ELSE 0 END) 'mustCourseScore',MAX(CASE a.type WHEN 2 then a.score ELSE 0 END) 'selectCourseScore',MAX(CASE a.type WHEN 3 then a.score ELSE 0 END) 'otherCourseScore' FROM ( ";
-        String tempSql1="SELECT SUM(AVG_SCORE) AS score,COURSE_TYPE type FROM t_course_evaluate WHERE COURSE_TYPE = 1 and ORG_ID=" + orgId + "" ;
-        String tempSql2="SELECT SUM(AVG_SCORE) AS score,COURSE_TYPE type FROM t_course_evaluate WHERE COURSE_TYPE = 2 and ORG_ID=" + orgId + "" ;
-        String tempSql3="SELECT SUM(AVG_SCORE) AS score,COURSE_TYPE type FROM t_course_evaluate WHERE COURSE_TYPE = 3 and ORG_ID=" + orgId + "" ;
+        String tempSql1="SELECT avg(AVG_SCORE) AS score,COURSE_TYPE AS type FROM t_course_evaluate WHERE COURSE_TYPE = 1 and ORG_ID=" + orgId + "" ;
+        String tempSql2="SELECT avg(AVG_SCORE) AS score,COURSE_TYPE AS type FROM t_course_evaluate WHERE COURSE_TYPE = 2 and ORG_ID=" + orgId + "" ;
+        String tempSql3="SELECT avg(AVG_SCORE) AS score,COURSE_TYPE AS type FROM t_course_evaluate WHERE COURSE_TYPE = 3 and ORG_ID=" + orgId + "" ;
         if (0 != teacherYear) {
             tempSql1 += " and TEACHER_YEAR=" + teacherYear + " ";
             tempSql2 += " and TEACHER_YEAR=" + teacherYear + " ";
@@ -113,7 +114,7 @@ public class MonitorService {
             }
         };
         AlarmDTO alarmDTO=null;
-        String currentGradeSql = "SELECT TEACHER_YEAR  FROM `t_warning_information`  where ORG_ID=" + orgId + " and DELETE_FLAG=0 and TEACHER_YEAR<>'null' ORDER BY TEACHING_YEAR DESC LIMIT 1";
+        String currentGradeSql = "SELECT TEACHER_YEAR  FROM `t_warning_information`  where ORG_ID=" + orgId + " and DELETE_FLAG=0 and TEACHER_YEAR<>'null' ORDER BY TEACHER_YEAR DESC LIMIT 1";
         Map currentGradeMap=new HashMap() ;
         try {
             currentGradeMap= jdbcTemplate.queryForMap(currentGradeSql);

@@ -1,17 +1,14 @@
 package com.aizhixin.cloud.dataanalysis.analysis.service;
 
-import com.aizhixin.cloud.dataanalysis.alertinformation.dto.CollegeWarningInfoDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.CetStatisticDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.CollegeCetStatisticDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.TrendDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.CetScoreStatistics;
-import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.CetScoreStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
-import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -262,6 +259,7 @@ public class CetStatisticAnalysisService {
             Pageable pageable = new PageRequest(page.getPageNumber(), page.getPageSize(), sort);
             //条件
             Criteria criteria = Criteria.where("orgId").is(orgId);
+
             if (null != collegeId) {
                 Set<Long> collegeIds = new HashSet<>();
                 if (collegeId.indexOf(",") != -1) {
@@ -297,30 +295,33 @@ public class CetStatisticAnalysisService {
                     if (type.equals(4)) {
                         criteria.and("examType").is(ScoreConstant.EXAM_TYPE_CET4);
                         criteria.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
-                    }
-                    if (type.equals(6)) {
+                    }else if (type.equals(6)) {
                         criteria.and("examType").is(ScoreConstant.EXAM_TYPE_CET6);
                         criteria.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
                     }
             }else {
-                criteria.and("examType").in(ScoreConstant.EXAM_TYPE_CET4,ScoreConstant.EXAM_TYPE_CET4);
+                criteria.and("examType").in(ScoreConstant.EXAM_TYPE_CET4,ScoreConstant.EXAM_TYPE_CET6);
             }
-            if(null!=nj){
-                criteria.orOperator(criteria.where("jobNum").is(nj), criteria.where("userName").regex(".*?\\" + nj + ".*"));
+            if(!org.apache.commons.lang.StringUtils.isBlank(nj)){
+                criteria.orOperator(criteria.where("jobNum").regex(nj), criteria.where("userName").regex(nj));
             }
+            org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
+            query.addCriteria(criteria);
             //mongoTemplate.count计算总数
-            long total = mongoTemplate.count(new org.springframework.data.mongodb.core.query.Query().addCriteria(criteria), Score.class);
+            long total = mongoTemplate.count(query, Score.class);
             // mongoTemplate.find 查询结果集
-            List<Score> items  = mongoTemplate.find(new org.springframework.data.mongodb.core.query.Query().addCriteria(criteria).with(pageable), Score.class);
+            List<Score> items  = mongoTemplate.find(query.with(pageable), Score.class);
 
             p.getPage().setTotalPages(((int)total + page.getPageSize() - 1) / page.getPageSize());
-            p.getPage().setPageNumber(page.getPageNumber());
+            p.getPage().setPageNumber(page.getPageNumber()+1);
             p.getPage().setPageSize(page.getPageSize());
             p.getPage().setTotalElements(total);
             p.setData(items);
         } catch (Exception e) {
+            e.printStackTrace();
             result.put("success", false);
             result.put("message", "获取数据异常！");
+            return result;
         }
         result.put("success", true);
         result.put("data", p);

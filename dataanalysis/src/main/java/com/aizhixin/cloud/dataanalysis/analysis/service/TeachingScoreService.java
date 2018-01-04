@@ -44,8 +44,6 @@ public class TeachingScoreService {
     private TeachingScoreStatisticsRespository teachingScoreStatisticsRespository;
     @Autowired
     private TeachingScoreDetailsRespository teachingScoreDetailsRespository;
-    @Autowired
-    private MongoTemplate mongoTemplate;
 
     public void saveStatistics(TeachingScoreStatistics teachingScoreStatistics) {
         teachingScoreStatisticsRespository.save(teachingScoreStatistics);
@@ -61,8 +59,16 @@ public class TeachingScoreService {
     public void deleteScoreStatistics(Long orgId,Integer teacherYear, Integer semester) {
         teachingScoreStatisticsRespository.deleteByOrgIdAndTeacherAndSemester(orgId, teacherYear, semester);
     }
+    public void deleteScoreStatistics(Long orgId) {
+        teachingScoreStatisticsRespository.deleteByOrgId(orgId);
+    }
+
     public void deleteScoreDeatail(Long orgId,Integer teacherYear, Integer semester) {
         teachingScoreDetailsRespository.deleteByOrgIdAndTeacherAndSemester(orgId, teacherYear, semester);
+    }
+
+    public void deleteScoreDeatail(Long orgId) {
+        teachingScoreDetailsRespository.deleteByOrgId(orgId);
     }
 
 
@@ -277,10 +283,10 @@ public class TeachingScoreService {
                 sql.append(" and GRADE IN :grades");
                 condition.put("grades", tds);
             }
-            if (null != nj) {
-                cql.append(" and (USER_NAME = :nj OR JOB_NUM = :nj)");
-                sql.append(" and (USER_NAME = :nj OR JOB_NUM = :nj)");
-                condition.put("nj", nj);
+            if (!org.apache.commons.lang.StringUtils.isBlank(nj)) {
+                cql.append(" and (USER_NAME LIKE :nj OR JOB_NUM LIKE :nj)");
+                sql.append(" and (USER_NAME LIKE :nj OR JOB_NUM LIKE :nj)");
+                condition.put("nj", "%" + nj + "%");
             }
             cql.append(" and DELETE_FLAG = 0");
             sql.append(" and DELETE_FLAG = 0");

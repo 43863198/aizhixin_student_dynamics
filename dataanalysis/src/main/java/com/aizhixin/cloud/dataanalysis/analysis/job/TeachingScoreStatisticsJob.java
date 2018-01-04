@@ -23,4 +23,12 @@ public class TeachingScoreStatisticsJob {
         return reslut;
     }
 
+
+    public Map<String, Object> cetScoreStatistics() {
+        Map<String, Object> reslut = new HashMap<>();
+        teachingScoreAnalysisJob.cetScoreStatisticsAsync();
+        reslut.put("message","英语四六级成绩统计任务开始...");
+        return reslut;
+    }
+
 }
