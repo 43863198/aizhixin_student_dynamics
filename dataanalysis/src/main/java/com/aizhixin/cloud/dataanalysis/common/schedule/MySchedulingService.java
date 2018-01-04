@@ -37,7 +37,7 @@ public class MySchedulingService {
     private TeachingScheduleJob teachingScheduleJob;
 
 
-//    @Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "0 0 4 * * ?")
     public void stuRegisterJob() {
         if (distributeLock.getStuRegisterLock()) {
             LOG.info("开始启动学生注册报到预警定时任务");
