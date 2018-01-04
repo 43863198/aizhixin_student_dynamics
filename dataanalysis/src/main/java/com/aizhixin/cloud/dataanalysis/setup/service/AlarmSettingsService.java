@@ -235,6 +235,8 @@ public class AlarmSettingsService {
                     
                     if (wd.length > 0) {
                         alarmRule.setName(wd[wp.getSerialNumber()-1]);
+                        String relationship = alarmRule.getName().substring(alarmRule.getName().length()-1);
+                        alarmRule.setRightRelationship(relationship);
                     }
                     ruids = ruids + alarmRuleService.save(alarmRule) + ",";
                 }
