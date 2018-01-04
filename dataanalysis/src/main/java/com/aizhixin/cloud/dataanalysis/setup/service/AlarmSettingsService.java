@@ -52,6 +52,8 @@ public class AlarmSettingsService {
     private RollCallJob rollCallJob;
     @Autowired
     private ScoreJob scoreJob;
+    @Autowired
+    private RelationConversionService relationConversionService;
 
     public AlarmSettings getAlarmSettingsById(String id){
         return alarmSettingsRepository.findOne(id);
@@ -236,7 +238,7 @@ public class AlarmSettingsService {
                     if (wd.length > 0) {
                         alarmRule.setName(wd[wp.getSerialNumber()-1]);
                         String relationship = alarmRule.getName().substring(alarmRule.getName().length()-1);
-                        alarmRule.setRightRelationship(relationship);
+                        alarmRule.setRightRelationship(relationConversionService.getRelation(relationship));
                     }
                     ruids = ruids + alarmRuleService.save(alarmRule) + ",";
                 }
