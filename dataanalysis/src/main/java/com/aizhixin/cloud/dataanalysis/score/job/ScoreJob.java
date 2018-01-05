@@ -86,7 +86,7 @@ public class ScoreJob {
 			// 当前年份
 			int schoolYear = c.get(Calendar.YEAR);
 			// 当前月份
-			int month = c.get(Calendar.MONTH);
+			int month = c.get(Calendar.MONTH)+1;
 			// 当前学期编号
 			int semester = 2;
 			if (month > 1 && month < 9) {
@@ -329,13 +329,15 @@ public class ScoreJob {
 			// 当前年份
 			int schoolYear = c.get(Calendar.YEAR);
 			// 当前月份
-			int month = c.get(Calendar.MONTH);
+			int month = c.get(Calendar.MONTH)+1;
 			// 当前学期编号
 			int semester = 2;
 			if (month > 1 && month < 9) {
 				semester = 1;
 			}
-
+			if(month == 1 ){
+				schoolYear = schoolYear - 1;
+			}
 			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
 			Set<String> warnRuleIdList = new HashSet<String>();
 			Set<String> warnSettingsIdList = new HashSet<String>();
@@ -529,7 +531,7 @@ public class ScoreJob {
 			// 当前年份
 			int schoolYear = c.get(Calendar.YEAR);
 			// 当前月份
-			int month = c.get(Calendar.MONTH);
+			int month = c.get(Calendar.MONTH)+1;
 			// 当前学期编号
 			int semester = 2;
 			if (month > 1 && month < 9) {
@@ -659,7 +661,7 @@ public class ScoreJob {
 			// 当前年份
 			int schoolYear = c.get(Calendar.YEAR);
 			// 当前月份
-			int month = c.get(Calendar.MONTH);
+			int month = c.get(Calendar.MONTH)+1;
 			// 当前学期编号
 			int semester = 2;
 			if (month > 1 && month < 9) {
@@ -951,7 +953,7 @@ public class ScoreJob {
 			// 当前年份
 			int schoolYear = c.get(Calendar.YEAR);
 			// 当前月份
-			int month = c.get(Calendar.MONTH);
+			int month = c.get(Calendar.MONTH)+1;
 			// 当前学期编号
 			int semester = 2;
 			if (month > 1 && month < 9) {
@@ -1263,13 +1265,15 @@ public class ScoreJob {
 			// 当前年份
 			int schoolYear = c.get(Calendar.YEAR);
 			// 当前月份
-			int month = c.get(Calendar.MONTH);
+			int month = c.get(Calendar.MONTH)+1;
 			// 当前学期编号
 			int semester = 2;
 			if (month > 1 && month < 9) {
 				semester = 1;
 			}
-
+			if(month == 1 ){
+				schoolYear = schoolYear - 1;
+			}
 			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
 			Set<String> warnRuleIdList = new HashSet<String>();
 			Set<String> warnSettingsIdList = new HashSet<String>();
@@ -1412,11 +1416,14 @@ public class ScoreJob {
 			// 当前年份
 			int schoolYear = c.get(Calendar.YEAR);
 			// 当前月份
-			int month = c.get(Calendar.MONTH);
+			int month = c.get(Calendar.MONTH)+1;
 			// 当前学期编号
 			int semester = 2;
 			if (month > 1 && month < 9) {
 				semester = 1;
+			}
+			if(month == 1 ){
+				schoolYear = schoolYear - 1;
 			}
 			int nowYear = c.get(Calendar.YEAR);
 			String grade2 = String.valueOf(nowYear - 1);
@@ -1596,7 +1603,7 @@ public class ScoreJob {
 		if (null != settingsList && settingsList.size() > 0) {
 
 			Calendar c = Calendar.getInstance();
-			int month = c.get(Calendar.MONTH);
+			int month = c.get(Calendar.MONTH)+1;
 			// 当前学期编号
 			int semester = 2;
 			if (month > 1 && month < 9) {

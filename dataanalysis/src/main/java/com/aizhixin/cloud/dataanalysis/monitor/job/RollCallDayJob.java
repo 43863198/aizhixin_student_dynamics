@@ -89,10 +89,10 @@ public class RollCallDayJob {
 		// 当前年份
 		int schoolYear = c.get(Calendar.YEAR);
 		// 当前月份
-		int month = c.get(Calendar.MONTH);
+		int month = c.get(Calendar.MONTH)+1;
 		// 当前学期编号
 		int semester = 2;
-		if (month > 2 && month < 9) {
+		if (month > 1 && month < 9) {
 			semester = 1;
 		}
 		if (month <= 2) {
