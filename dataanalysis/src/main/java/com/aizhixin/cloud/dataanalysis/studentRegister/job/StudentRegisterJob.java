@@ -72,7 +72,9 @@ public class StudentRegisterJob {
 			if (month > 1 && month < 9) {
 				semester = 1;
 			}
-			
+			if(month == 1 ){
+				schoolYear = schoolYear - 1;
+			}
 			
 			Set<String> warnRuleIdList = new HashSet<String>();
 			Set<String> warnSettingsIdList = new HashSet<String>();
@@ -140,7 +142,7 @@ public class StudentRegisterJob {
 				// stuRegisterMongoRespository
 				// .findAllByOrgIdAndIsregister(key,StudentRegisterConstant.UNREGISTER);
 				List<StudentRegister> stuRegisterList = stuRegisterMongoRespository
-						.findAllByOrgIdAndActualRegisterDateIsNull(orgId);
+						.findAllBySchoolYearAndOrgIdAndActualRegisterDateIsNull(schoolYear,orgId);
 				
 				// 数据库已生成的处理中预警数据
 				List<WarningInformation> warnDbList = alertWarningInformationService
@@ -162,6 +164,8 @@ public class StudentRegisterJob {
 							AlarmRule alarmRule = alarmRuleMap
 									.get(alarmSettings.getRuleSet());
 							if (null != alarmRule) {
+								
+//								if(null != alarmRule.getRightRelationship() && AlertTypeConstant.EQUAL_OR_GREATER_THAN.equals(alarmRule.getRightRelationship()))
 								if (result >= Float.parseFloat(alarmRule.getRightParameter())) {
 									WarningInformation alertInfor = new WarningInformation();
 									String alertId = UUID.randomUUID()

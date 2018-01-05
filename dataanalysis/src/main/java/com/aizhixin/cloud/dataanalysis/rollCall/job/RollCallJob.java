@@ -164,7 +164,9 @@ public class RollCallJob {
 			if( month > 1 && month < 9){
 				semester = 1;
 			}
-			
+			if(month == 1 ){
+				schoolYear = schoolYear - 1;
+			}
 			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
 			Set<String> warnRuleIdList = new HashSet<String>();
 			Set<String> warnSettingsIdList = new HashSet<String>();
@@ -244,6 +246,8 @@ public class RollCallJob {
 							AlarmRule alarmRule = alarmRuleMap
 									.get(alarmSettings.getRuleSet());
 							if (null != alarmRule) {
+								
+//								if(null != alarmRule.getRightRelationship() && AlertTypeConstant.EQUAL_OR_GREATER_THAN.equals(alarmRule.getRightRelationship())) 
 								if (rollCallCount.getOutSchoolTimes() >= Float.parseFloat(alarmRule.getRightParameter())) {
 									WarningInformation alertInfor = new WarningInformation();
 									String alertId = UUID.randomUUID()

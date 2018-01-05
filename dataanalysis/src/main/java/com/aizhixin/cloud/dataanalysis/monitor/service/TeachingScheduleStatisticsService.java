@@ -20,6 +20,10 @@ public class TeachingScheduleStatisticsService {
     @Autowired
     private TeachingScheduleStatisticsRespository teachingScheduleStatisticsRespository;
  
+    public void deleteAllByOrgId(Long orgId){
+    	teachingScheduleStatisticsRespository.deleteByOrgId(orgId);
+    }
+    
     public void save(TeachingScheduleStatistics teachingScheduleStatistics){
     	teachingScheduleStatisticsRespository.save(teachingScheduleStatistics);
     }

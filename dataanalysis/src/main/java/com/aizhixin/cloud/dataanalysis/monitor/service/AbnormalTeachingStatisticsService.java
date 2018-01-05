@@ -21,6 +21,10 @@ public class AbnormalTeachingStatisticsService {
     @Autowired
     private AbnormalTeachingStatisticsRespository abnormalTeachingStatisticsRespository;
  
+    public void deleteAllByOrgId(Long orgId){
+    	abnormalTeachingStatisticsRespository.deleteByOrgId(orgId);
+    }
+    
     public void save(AbnormalTeachingStatistics abnormalTeachingStatistics){
     	abnormalTeachingStatisticsRespository.save(abnormalTeachingStatistics);
     }

@@ -22,6 +22,8 @@ import org.springframework.util.StringUtils;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
+import com.aizhixin.cloud.dataanalysis.analysis.entity.TeachingScoreDetails;
+import com.aizhixin.cloud.dataanalysis.analysis.service.TeachingScoreService;
 import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
@@ -66,6 +68,8 @@ public class ScoreJob {
 	private ProcessingModeService processingModeService;
 	@Autowired
 	private ScoreFluctuateCountMongoRespository scoreFluctuateCountMongoRespository;
+	@Autowired
+	private TeachingScoreService teachingScoreService;
 
 	/**
 	 * 统计mongo里的相邻学期平均绩点
@@ -87,6 +91,9 @@ public class ScoreJob {
 			int semester = 2;
 			if (month > 1 && month < 9) {
 				semester = 1;
+			}
+			if(month == 1 ){
+				schoolYear = schoolYear - 1;
 			}
 			// 上学期编号
 			int secondSchoolYear = schoolYear;
@@ -528,6 +535,9 @@ public class ScoreJob {
 			if (month > 1 && month < 9) {
 				semester = 1;
 			}
+			if(month == 1 ){
+				schoolYear = schoolYear - 1;
+			}
 			// 上学期编号
 			int lastSemester = 1;
 			if (semester == 1) {
@@ -655,7 +665,9 @@ public class ScoreJob {
 			if (month > 1 && month < 9) {
 				semester = 1;
 			}
-
+			if(month == 1 ){
+				schoolYear = schoolYear - 1;
+			}
 			// 上学期编号
 			int lastSemester = 1;
 			if (semester == 1) {
@@ -739,7 +751,7 @@ public class ScoreJob {
 
 				if (null != totalScoreCountList
 						&& totalScoreCountList.size() > 0) {
-					Date today = new Date();
+//					Date today = new Date();
 					for (TotalScoreCount totalScoreCount : totalScoreCountList) {
 						for (AlarmSettings alarmSettings : val) {
 							List<AlarmRule> alarmRuleList = alarmRuleMap
@@ -748,6 +760,10 @@ public class ScoreJob {
 									&& !alarmRuleList.isEmpty()) {
 
 								for (AlarmRule alarmRule : alarmRuleList) {
+									
+									if(alarmRule.getSerialNumber() != 1){
+										continue;
+									}
 									if (totalScoreCount.getFailCourseNum() >= Float
 											.parseFloat(alarmRule
 													.getRightParameter())) {
@@ -803,7 +819,8 @@ public class ScoreJob {
 										alertInfor.setOrgId(alarmRule
 												.getOrgId());
 										alertInforList.add(alertInfor);
-
+										warnMap.put(totalScoreCount
+												.getJobNum(), alertInfor);
 										break;
 									} else {
 										continue;
@@ -813,6 +830,105 @@ public class ScoreJob {
 						}
 					}
 				}
+				
+				//上学期每个学生的成绩数据明细
+				List<TeachingScoreDetails> scoreDetailsList = teachingScoreService.findAllByTeacherYearAndSemesterAndDeleteFlagAndOrgId(schoolYear, lastSemester, DataValidity.VALID.getState(), orgId);
+				if(null != scoreDetailsList && !scoreDetailsList.isEmpty()){
+					for(TeachingScoreDetails scoreDetails :scoreDetailsList){
+						for (AlarmSettings alarmSettings : val) {
+							List<AlarmRule> alarmRuleList = alarmRuleMap
+									.get(alarmSettings.getId());
+							if (null != alarmRuleList
+									&& !alarmRuleList.isEmpty()) {
+
+								for (AlarmRule alarmRule : alarmRuleList) {
+									
+									if(alarmRule.getSerialNumber() != 2){
+										continue;
+									}
+									if (scoreDetails.getAvgGPA() <= Float
+											.parseFloat(alarmRule
+													.getRightParameter())) {
+										WarningInformation alertInfor = new WarningInformation();
+										String alertId = UUID.randomUUID()
+												.toString();
+										alertInfor.setId(alertId);
+										alertInfor
+												.setDefendantId(scoreDetails
+														.getUserId());
+										alertInfor.setName(scoreDetails
+												.getUserName());
+										alertInfor.setJobNumber(scoreDetails
+												.getJobNum());
+										alertInfor.setCollogeId(scoreDetails
+												.getCollegeId());
+										alertInfor
+												.setCollogeName(scoreDetails
+														.getCollegeName());
+										alertInfor.setClassId(scoreDetails
+												.getClassId());
+										alertInfor.setClassName(scoreDetails
+												.getClassName());
+										alertInfor
+												.setProfessionalId(scoreDetails
+														.getProfessionalId());
+										alertInfor
+												.setProfessionalName(scoreDetails
+														.getProfessionalName());
+										alertInfor
+												.setTeacherYear(scoreDetails
+														.getTeacherYear());
+										alertInfor
+												.setWarningLevel(alarmSettings
+														.getWarningLevel());
+										alertInfor
+												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+										alertInfor
+												.setAlarmSettingsId(alarmSettings
+														.getId());
+										alertInfor
+												.setWarningType(WarningTypeConstant.TotalAchievement
+														.toString());
+										alertInfor.setWarningTime(new Date());
+										alertInfor.setSemester(semester);
+										alertInfor.setTeacherYear(schoolYear);
+										alertInfor
+												.setWarningCondition("上学期平均学分绩点:"
+														+ scoreDetails
+																.getAvgGPA());
+										alertInfor.setOrgId(alarmRule
+												.getOrgId());
+										
+										if(null != warnMap.get(scoreDetails
+												.getJobNum())){
+											WarningInformation alertInfor2 = warnMap.get(scoreDetails
+													.getJobNum());
+											if(alertInfor2.getWarningLevel() > alertInfor.getWarningLevel()){
+												continue;
+											}
+											if(alertInfor2.getWarningLevel() == alertInfor.getWarningLevel()){
+												alertInfor.setWarningCondition(alertInfor.getWarningCondition()+"; "+alertInfor2.getWarningCondition());
+												alertInforList.remove(alertInfor2);
+												alertInforList.add(alertInfor);
+											}
+											if(alertInfor2.getWarningLevel() < alertInfor.getWarningLevel()){
+												alertInforList.remove(alertInfor2);
+												alertInforList.add(alertInfor);
+											}
+										}else{
+											alertInforList.add(alertInfor);
+										}
+										
+										break;
+									} else {
+										continue;
+									}
+								}
+							}
+						}
+					}
+				}
+				
 				if (!alertInforList.isEmpty()) {
 					alertWarningInformationService.save(alertInforList);
 				}
@@ -840,6 +956,9 @@ public class ScoreJob {
 			int semester = 2;
 			if (month > 1 && month < 9) {
 				semester = 1;
+			}
+			if(month == 1 ){
+				schoolYear = schoolYear - 1;
 			}
 
 			// 上学期编号
