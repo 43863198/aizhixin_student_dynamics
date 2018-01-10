@@ -104,7 +104,7 @@ public class Score {
 	private String scheduleId;
 	
 	/**
-	 * 选课名称
+	 * 课程名称
 	 */
 	private String courseName;
 	
