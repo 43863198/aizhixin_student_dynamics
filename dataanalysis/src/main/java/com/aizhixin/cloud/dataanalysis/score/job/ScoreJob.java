@@ -15,6 +15,7 @@ import java.util.UUID;
 
 import com.aizhixin.cloud.dataanalysis.common.util.TermConversion;
 import com.mongodb.BasicDBObject;
+import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -846,7 +847,9 @@ public class ScoreJob {
 											dataSource.append("KCMC:" + courseName + ";");
 											dataSource.append("XF:" + credit + "】");
 										}
-										alertInfor.setWarningSource(dataSource.toString());
+										if(!dataSource.equals("")) {
+											alertInfor.setWarningSource(dataSource.toString());
+										}
 										alertInfor
 												.setWarningCondition(termConversion.getSemester(schoolYear, semester, 1) + "必修课不及格课程数:"
 														+ totalScoreCount
@@ -1148,7 +1151,11 @@ public class ScoreJob {
 										dataSource.append("KCMC:" + courseName + ";");
 										dataSource.append("XF:" + credit + "】");
 									}
-									alertInfor.setWarningSource(dataSource.toString());
+									if(!dataSource.equals("")) {
+										alertInfor.setWarningSource(dataSource.toString());
+									}
+
+
 
 									break;
 								} else {
@@ -1803,7 +1810,9 @@ public class ScoreJob {
 										dataSource.append("KCMC:" + courseName + ";");
 										dataSource.append("XF:" + credit + "】");
 									}
-									alertInfor.setWarningSource(dataSource.toString());
+									if(!dataSource.equals("")) {
+										alertInfor.setWarningSource(dataSource.toString());
+									}
 
 									break;
 								} else {
