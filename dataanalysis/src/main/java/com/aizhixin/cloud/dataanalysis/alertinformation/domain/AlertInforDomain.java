@@ -48,4 +48,9 @@ public class AlertInforDomain {
 	
 	@ApiModelProperty(value = "预警时间", required = false)
 	private Date warningTime;
+
+	@ApiModelProperty(value = "数据源", required = false)
+	private String warningSource;
+
+
 }
