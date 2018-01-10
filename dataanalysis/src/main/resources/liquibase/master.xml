@@ -48,6 +48,6 @@
     <include file="classpath:liquibase/20171219154445_update_entity_TeacherEvaluate.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171225154645_add_entity_SchoolYearTerm.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171219153445_update_entity_CourseEvaluate.xml" relativeToChangelogFile="false"/>
-    
+    <include file="classpath:liquibase/20180110110800_update_entity_WarningInformation.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171226110800_update_entity_WarningInformation.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
