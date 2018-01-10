@@ -290,6 +290,7 @@ public class AlertWarningInformationService {
 		}
 		
 		querySql += " and ORG_ID =" + domain.getOrgId();
+		querySql += "  ORDER BY CREATED_DATE";
 		countSql += " and ORG_ID =" + domain.getOrgId();
 		List<SortDTO> sort = new ArrayList<SortDTO>();
 		SortDTO dto = new SortDTO();
