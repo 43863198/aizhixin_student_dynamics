@@ -866,6 +866,7 @@ public class AlertWarningInformationService {
 				warningDetailsDTO.setWarningState(alertWarningInformation.getWarningState());
 				warningDetailsDTO.setDealTime(alertWarningInformation.getLastModifiedDate());
 				warningDetailsDTO.setWarningCondition(alertWarningInformation.getWarningCondition());
+				warningDetailsDTO.setWarningSource(alertWarningInformation.getWarningSource());
 				String standard = "";
 				if(null!=alertWarningInformation.getAlarmSettingsId()){
 					List<AlarmRule> alarmRuleList = alarmRuleService.getByAlarmSettingId(alertWarningInformation.getAlarmSettingsId());
