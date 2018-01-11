@@ -289,6 +289,14 @@ public class AlertWarningInformationService {
 			countSql += " and WARNING_STATE in (" + warnStates
 					+ ")";
 		}
+		if(null!=domain.getTeacherYear()){
+			querySql += " and TEACHER_YEAR = " + domain.getTeacherYear();
+			countSql += " and TEACHER_YEAR = " + domain.getTeacherYear();
+		}
+		if(null!=domain.getSemester()){
+			querySql += " and SEMESTER = " + domain.getSemester();
+			countSql += " and SEMESTER = " + domain.getSemester();
+		}
 		
 		querySql += " and ORG_ID =" + domain.getOrgId();
 		querySql += "  ORDER BY CREATED_DATE";
@@ -916,7 +924,7 @@ public class AlertWarningInformationService {
 
 
 	/****************************************************************/
-	public Map<String,Object> getStatisticsByCollege(Pageable pageable,Long orgId, String type) {
+	public Map<String,Object> getStatisticsByCollege(Pageable pageable,Long orgId, String type, Integer teacherYear, Integer semester) {
 		Map<String, Object> result = new HashMap<>();
 		//学院预警统计数量
 		List<CollegeStatisticsDTO>  collegeStatisticsDTOList = new ArrayList<>();
@@ -929,6 +937,16 @@ public class AlertWarningInformationService {
 			sql.append(" and ORG_ID = :orgId");
 			cql.append(" and ORG_ID = :orgId");
 			iql.append(" and ORG_ID = :orgId");
+		}
+		if (null != teacherYear) {
+			sql.append(" and TEACHER_YEAR = :teacherYear");
+			cql.append(" and TEACHER_YEAR = :teacherYear");
+			iql.append(" and TEACHER_YEAR = :teacherYear");
+		}
+		if (null != semester) {
+			sql.append(" and SEMESTER = :semester");
+			cql.append(" and SEMESTER = :semester");
+			iql.append(" and SEMESTER = :semester");
 		}
 		if(!StringUtils.isBlank(type)){
 			sql.append(" and WARNING_TYPE = :type");
