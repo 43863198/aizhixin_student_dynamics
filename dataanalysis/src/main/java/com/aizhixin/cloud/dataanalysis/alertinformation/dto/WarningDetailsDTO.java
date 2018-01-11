@@ -77,6 +77,9 @@ public class WarningDetailsDTO {
     @ApiModelProperty(value = "预警标准")
     private String warningStandard;
 
+    @ApiModelProperty(value = "数据源")
+    private String warningSource;
+
     @ApiModelProperty(value = "预警状态")
     private int warningState;
 
