@@ -184,10 +184,12 @@ public class AlertWarningInformationController {
     @ApiOperation(httpMethod = "GET", value = "预警统计", response = Void.class, notes = "预警统计<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object>   getStatisticsByCollege(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "type 类型") @RequestParam(value = "type", required = false) String type,
+            @ApiParam(value = "type 类型",  required = true ) @RequestParam(value = "type", required = true) String type,
+            @ApiParam(value = "teacherYear 学年" , required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
+            @ApiParam(value = "semester 学期" , required = true) @RequestParam(value = "semester", required = true) Integer semester,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return alertWarningInforService.getStatisticsByCollege(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId, type);
+        return alertWarningInforService.getStatisticsByCollege(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId, type, teacherYear, semester);
     }
 
     @RequestMapping(value = "/registercount", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -207,7 +209,10 @@ public class AlertWarningInformationController {
     @ApiOperation(httpMethod = "POST", value = "按条件分页查询预警信息", response = Void.class, notes = "按条件分页查询预警信息<br><br><b>@author 郑宁</b>")
     public ResponseEntity<Map<String, Object>> alertPage(
 //            @RequestHeader("Authorization") String token,
-            @ApiParam(value = "<b>必填:、</b><br>orgId:机构id<br><b>选填:、</b><br>collogeIds:学院id(字符串多个以,分隔);warningTypes:预警类型(字符串多个以,分隔);warningLevels:预警等级(字符串多个以,分隔);<br>collegeId:院系id、<br>")  @RequestBody AlertInforQueryDomain domain
+            @ApiParam(value = "<b>必填:、</b><br>orgId:机构id<br>" +
+                                         "<br>teacherYear:学年<br>" +
+                                         "<br>semester:学期<br>" +
+                    "<b>选填:、</b><br>collogeIds:学院id(字符串多个以,分隔);warningTypes:预警类型(字符串多个以,分隔);warningLevels:预警等级(字符串多个以,分隔);<br>collegeId:院系id、<br>")  @RequestBody AlertInforQueryDomain domain
     ) {
         Map<String, Object> result = new HashMap<String, Object>();
 
