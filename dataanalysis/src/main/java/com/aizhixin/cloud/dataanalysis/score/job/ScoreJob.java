@@ -847,9 +847,8 @@ public class ScoreJob {
 											dataSource.append("KCMC:" + courseName + ";");
 											dataSource.append("XF:" + credit + "】");
 										}
-										if(!dataSource.equals("")) {
-											alertInfor.setWarningSource(dataSource.toString());
-										}
+
+										alertInfor.setWarningSource(dataSource.toString());
 										alertInfor
 												.setWarningCondition(termConversion.getSemester(schoolYear, semester, 1) + "必修课不及格课程数:"
 														+ totalScoreCount
@@ -1151,9 +1150,8 @@ public class ScoreJob {
 										dataSource.append("KCMC:" + courseName + ";");
 										dataSource.append("XF:" + credit + "】");
 									}
-									if(!dataSource.equals("")) {
-										alertInfor.setWarningSource(dataSource.toString());
-									}
+									alertInfor.setWarningSource(dataSource.toString());
+
 
 
 
@@ -1810,9 +1808,7 @@ public class ScoreJob {
 										dataSource.append("KCMC:" + courseName + ";");
 										dataSource.append("XF:" + credit + "】");
 									}
-									if(!dataSource.equals("")) {
-										alertInfor.setWarningSource(dataSource.toString());
-									}
+									alertInfor.setWarningSource(dataSource.toString());
 
 									break;
 								} else {
