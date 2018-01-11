@@ -826,8 +826,8 @@ public class ScoreJob {
 										alertInfor.setTeacherYear(schoolYear);
 
 										Criteria criteria = Criteria.where("orgId").is(orgId);
-										criteria.and("schoolYear").is(schoolYear);
-										criteria.and("semester").is(semester);
+										criteria.and("schoolYear").is(totalScoreCount.getSchoolYear());
+										criteria.and("semester").is(totalScoreCount.getSemester());
 										criteria.and("userId").is(totalScoreCount.getUserId());
 										criteria.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
 										AggregationResults<BasicDBObject> source = mongoTemplate.aggregate(
@@ -847,7 +847,6 @@ public class ScoreJob {
 											dataSource.append("KCMC:" + courseName + ";");
 											dataSource.append("XF:" + credit + "】");
 										}
-
 										alertInfor.setWarningSource(dataSource.toString());
 										alertInfor
 												.setWarningCondition(termConversion.getSemester(schoolYear, semester, 1) + "必修课不及格课程数:"
