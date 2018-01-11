@@ -839,7 +839,6 @@ public class ScoreJob {
 												Score.class, BasicDBObject.class);
 										StringBuilder  dataSource = new StringBuilder("");
 										for (int j = 0; j < source.getMappedResults().size(); j++) {
-											Map<String, Object> data = new HashMap<>();
 											String scheduleId = source.getMappedResults().get(j).getString("scheduleId");
 											String courseName = source.getMappedResults().get(j).getString("courseName");
 											Integer credit = source.getMappedResults().get(j).getInt("credit");
@@ -1128,8 +1127,8 @@ public class ScoreJob {
 									alertInforList.add(alertInfor);
 
 									Criteria criteria = Criteria.where("orgId").is(orgId);
-									criteria.and("schoolYear").is(schoolYear);
-									criteria.and("semester").is(semester);
+									criteria.and("schoolYear").is(totalScoreCount.getSchoolYear());
+									criteria.and("semester").is(totalScoreCount.getSemester());
 									criteria.and("userId").is(totalScoreCount.getUserId());
 									criteria.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
 									AggregationResults<BasicDBObject> source = mongoTemplate.aggregate(
@@ -1141,7 +1140,6 @@ public class ScoreJob {
 											Score.class, BasicDBObject.class);
 									StringBuilder  dataSource = new StringBuilder("");
 									for (int j = 0; j < source.getMappedResults().size(); j++) {
-										Map<String, Object> data = new HashMap<>();
 										String scheduleId = source.getMappedResults().get(j).getString("scheduleId");
 										String courseName = source.getMappedResults().get(j).getString("courseName");
 										Integer credit = source.getMappedResults().get(j).getInt("credit");
