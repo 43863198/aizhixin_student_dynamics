@@ -2,18 +2,29 @@ package com.aizhixin.cloud.dataanalysis.common.util;
 
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author: Created by jianwei.wu
  * @E-mail: wujianwei@aizhixin.com
  * @Date: 2018-01-09
  */
+
 @Component
 public class TermConversion {
 
-    public  String getSemester(int schoolYear, int semester, int change) {
+    /**
+     * 学年学期转春秋季
+     * @param schoolYear
+     * @param semester
+     * @param change 往后几个学期
+     * @return
+     */
+    public Map<String,Object> getSemester(int schoolYear, int semester, int change) {
+        Map<String,Object> result = new HashMap<>();
         int resultYear = 0;
         int resultSemester = 0;
-        String result = "";
         int changes = semester - change ;
         int add = Math.abs(changes);
         if (add > 0) {
@@ -45,11 +56,8 @@ public class TermConversion {
             }
             resultYear = schoolYear-1;
         }
-        if(resultSemester==1){
-            result =  resultYear+"春季";
-        }else if(resultSemester==2){
-            result =  resultYear+"秋季";
-        }
+        result.put("schoolYear",resultYear);
+        result.put("semester",resultSemester);
         return result;
     }
 

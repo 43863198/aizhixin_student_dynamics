@@ -971,7 +971,17 @@ public class AlertWarningInformationService {
 				sq.setParameter("orgId", orgId);
 				iq.setParameter("orgId", orgId);
 			}
-			if(!StringUtils.isBlank(type)){
+			if (null != teacherYear) {
+				cq.setParameter("teacherYear", teacherYear);
+				sq.setParameter("teacherYear", teacherYear);
+				iq.setParameter("teacherYear", teacherYear);
+			}
+			if (null != semester) {
+				cq.setParameter("semester", semester);
+				sq.setParameter("semester", semester);
+				iq.setParameter("semester", semester);
+			}
+			if(!StringUtils.isBlank(type)) {
 				sq.setParameter("type", type);
 				cq.setParameter("type", type);
 				iq.setParameter("type", type);
