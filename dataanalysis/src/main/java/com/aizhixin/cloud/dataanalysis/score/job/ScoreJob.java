@@ -843,10 +843,12 @@ public class ScoreJob {
 											String scheduleId = source.getMappedResults().get(j).getString("scheduleId");
 											String courseName = source.getMappedResults().get(j).getString("courseName");
 											Integer credit = source.getMappedResults().get(j).getInt("credit");
-											dataSource.append("【KCH:" + scheduleId + ";");
-											dataSource.append("KCMC:" + courseName + ";");
-											dataSource.append("XF:" + credit + "】");
-											sourceList.add(dataSource.toString());
+											if(!org.apache.commons.lang.StringUtils.isBlank(scheduleId)) {
+												dataSource.append("【KCH:" + scheduleId + ";");
+												dataSource.append("KCMC:" + courseName + ";");
+												dataSource.append("XF:" + credit + "】");
+												sourceList.add(dataSource.toString());
+											}
 										}
 										if(null!=sourceList) {
 											alertInfor.setWarningSource(sourceList.toString());
@@ -1149,10 +1151,12 @@ public class ScoreJob {
 										String scheduleId = source.getMappedResults().get(j).getString("scheduleId");
 										String courseName = source.getMappedResults().get(j).getString("courseName");
 										Integer credit = source.getMappedResults().get(j).getInt("credit");
-										dataSource.append("【KCH:" + scheduleId + ";");
-										dataSource.append("KCMC:" + courseName + ";");
-										dataSource.append("XF:" + credit + "】");
-										sourceList.add(dataSource.toString());
+										if(!org.apache.commons.lang.StringUtils.isBlank(scheduleId)) {
+											dataSource.append("【KCH:" + scheduleId + ";");
+											dataSource.append("KCMC:" + courseName + ";");
+											dataSource.append("XF:" + credit + "】");
+											sourceList.add(dataSource.toString());
+										}
 									}
 									if(null!=sourceList) {
 										alertInfor.setWarningSource(sourceList.toString());
@@ -1265,6 +1269,8 @@ public class ScoreJob {
 									.get(score.getJobNum());
 							if (null == makeUpScoreCount) {
 								makeUpScoreCount = new MakeUpScoreCount();
+								makeUpScoreCount.setUserId(score.getUserId());
+								makeUpScoreCount.setUserName(score.getUserName());
 								makeUpScoreCount.setClassId(score.getClassId());
 								makeUpScoreCount.setClassName(score
 										.getClassName());
@@ -1457,8 +1463,8 @@ public class ScoreJob {
 
 									Map<String,Object> ys = termConversion.getSemester(schoolYear,semester,1);
 									Criteria criteria = Criteria.where("orgId").is(orgId);
-									criteria.and("schoolYear").is(ys.get("schoolYear"));
-									criteria.and("semester").is(ys.get("semester"));
+									criteria.and("schoolYear").is(new Integer(ys.get("schoolYear").toString()));
+									criteria.and("semester").is(new Integer(ys.get("semester").toString()));
 									criteria.and("userId").is(makeUpScoreCount.getUserId());
 									criteria.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
 									AggregationResults<BasicDBObject> source = mongoTemplate.aggregate(
@@ -1474,10 +1480,12 @@ public class ScoreJob {
 										String scheduleId = source.getMappedResults().get(j).getString("scheduleId");
 										String courseName = source.getMappedResults().get(j).getString("courseName");
 										Integer credit = source.getMappedResults().get(j).getInt("credit");
-										dataSource.append("【KCH:" + scheduleId + ";");
-										dataSource.append("KCMC:" + courseName + ";");
-										dataSource.append("XF:" + credit + "】");
-										sourceList.add(dataSource.toString());
+										if(!org.apache.commons.lang.StringUtils.isBlank(scheduleId)) {
+											dataSource.append("【KCH:" + scheduleId + ";");
+											dataSource.append("KCMC:" + courseName + ";");
+											dataSource.append("XF:" + credit + "】");
+											sourceList.add(dataSource.toString());
+										}
 									}
 									if(null!=sourceList) {
 										alertInfor.setWarningSource(sourceList.toString());
@@ -1837,10 +1845,12 @@ public class ScoreJob {
 										String scheduleId = source.getMappedResults().get(j).getString("scheduleId");
 										String courseName = source.getMappedResults().get(j).getString("courseName");
 										Integer credit = source.getMappedResults().get(j).getInt("credit");
-										dataSource.append("【KCH:" + scheduleId + ";");
-										dataSource.append("KCMC:" + courseName + ";");
-										dataSource.append("XF:" + credit + "】");
-										sourceList.add(dataSource.toString());
+										if(!org.apache.commons.lang.StringUtils.isBlank(scheduleId)) {
+											dataSource.append("【KCH:" + scheduleId + ";");
+											dataSource.append("KCMC:" + courseName + ";");
+											dataSource.append("XF:" + credit + "】");
+											sourceList.add(dataSource.toString());
+										}
 									}
 									if(null!=sourceList) {
 										alertInfor.setWarningSource(sourceList.toString());
