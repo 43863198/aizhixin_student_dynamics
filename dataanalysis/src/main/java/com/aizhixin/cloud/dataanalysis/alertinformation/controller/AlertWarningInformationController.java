@@ -184,8 +184,8 @@ public class AlertWarningInformationController {
     @ApiOperation(httpMethod = "GET", value = "预警统计", response = Void.class, notes = "预警统计<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object>   getStatisticsByCollege(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "teacherYear 学年" , required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
-            @ApiParam(value = "semester 学期" , required = true) @RequestParam(value = "semester", required = true) Integer semester,
+            @ApiParam(value = "teacherYear 学年" , required = false) @RequestParam(value = "teacherYear", required = false) Integer teacherYear,
+            @ApiParam(value = "semester 学期" , required = false) @RequestParam(value = "semester", required = false) Integer semester,
             @ApiParam(value = "type 类型",  required = false ) @RequestParam(value = "type", required = false) String type,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
