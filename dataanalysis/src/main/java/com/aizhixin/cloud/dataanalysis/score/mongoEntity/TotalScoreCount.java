@@ -1,6 +1,8 @@
 package com.aizhixin.cloud.dataanalysis.score.mongoEntity;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -104,6 +106,12 @@ public class TotalScoreCount {
 	 * 不及格必修课程数
 	 */
 	private int failRequiredCourseNum;
+
+	/**
+	 * 不及格必修课程id
+	 */
+	private Set<String> scheduleIdList;
+
 	
 	/**
 	 * 不及格必修课程学分总计
