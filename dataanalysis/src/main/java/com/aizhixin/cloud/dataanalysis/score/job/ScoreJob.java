@@ -595,7 +595,9 @@ public class ScoreJob {
 						dataSource.append("KCMC:" + score.getCourseName() + ";");
 						dataSource.append("XF:" + score.getCredit() + "】 ");
 						totalScoreCount.setDataSource(dataSource.toString());
-						totalScoreCount.getScheduleIdList().add(score.getScheduleId());
+						Set<String> scheduleIdSet = new HashSet<>();
+						scheduleIdSet.add(score.getScheduleId());
+						totalScoreCount.setScheduleIdList(scheduleIdSet);
 						totalScoreCount.setClassId(score.getClassId());
 						totalScoreCount.setClassName(score.getClassName());
 						totalScoreCount.setCollegeId(score.getCollegeId());
@@ -624,6 +626,7 @@ public class ScoreJob {
 								totalScoreCount);
 					} else {
 						if (!totalScoreCount.getScheduleIdList().contains(score.getScheduleId())) {
+							totalScoreCount.getScheduleIdList().add(score.getScheduleId());
 							StringBuilder dataSource = new StringBuilder("");
 							dataSource.append("【KCH:" + score.getScheduleId() + ";");
 							dataSource.append("KCMC:" + score.getCourseName() + ";");
