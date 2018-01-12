@@ -78,8 +78,6 @@ public class ScoreJob {
 	@Autowired
 	private TeachingScoreService teachingScoreService;
 	@Autowired
-	private MongoTemplate mongoTemplate;
-	@Autowired
 	private TermConversion termConversion;
 
 
@@ -160,7 +158,7 @@ public class ScoreJob {
 					if (null == scoreList) {
 						scoreList = new ArrayList<Score>();
 						scoreList.add(score);
-						secondUserScoreMap.put(score.getJobNum(), scoreList);
+							secondUserScoreMap.put(score.getJobNum(), scoreList);
 					} else {
 						scoreList.add(score);
 						secondUserScoreMap.put(score.getJobNum(), scoreList);
@@ -170,6 +168,7 @@ public class ScoreJob {
 				for (Score score : firstScoreList) {
 					List<Score> scoreList = firstUserScoreMap.get(score
 							.getJobNum());
+
 					if (null == scoreList) {
 						scoreList = new ArrayList<Score>();
 						scoreList.add(score);
@@ -259,6 +258,11 @@ public class ScoreJob {
 				scoreDomain.setUserName(score.getUserName());
 				scoreDomain.setUserPhoto(score.getUserPhoto());
 				scoreDomain.setUserPhone(score.getUserPhone());
+				StringBuilder  dataSource = new StringBuilder("");
+				dataSource.append("【KCH:" + score.getScheduleId() + ";");
+				dataSource.append("KCMC:" + score.getCourseName() + ";");
+				dataSource.append("XF:" + score.getCredit() + "】;");
+				scoreDomain.setDataSource(dataSource.toString());
 			}
 			courseMap.put(score.getScheduleId(), score.getScheduleId());
 			if (!StringUtils.isEmpty(score.getTotalScore())) {
@@ -488,10 +492,10 @@ public class ScoreJob {
 													.setWarningType(WarningTypeConstant.PerformanceFluctuation
 															.toString());
 											alertInfor
-													.setWarningCondition("上学期平均绩点为："
+													.setWarningCondition(termConversion.getSemester(schoolYear,semester,1).get("schoolYear")+"年第"+termConversion.getSemester(schoolYear,semester,1).get("semester")+"学期平均绩点为："
 															+ scoreFluctuateCount
 																	.getSecondAvgradePoint()+
-															",上上学期平均绩点为："
+															","+termConversion.getSemester(schoolYear,semester,2).get("schoolYear")+"年第"+termConversion.getSemester(schoolYear,semester,1).get("semester")+"学期平均绩点为："
 															+ scoreFluctuateCount
 																	.getFirstAvgradePoint()
 															+ ",平均绩点下降："
@@ -586,6 +590,11 @@ public class ScoreJob {
 							.get(score.getJobNum());
 					if (null == totalScoreCount) {
 						totalScoreCount = new TotalScoreCount();
+						StringBuilder  dataSource = new StringBuilder("");
+						dataSource.append("【KCH:" + score.getScheduleId() + ";");
+						dataSource.append("KCMC:" + score.getCourseName() + ";");
+						dataSource.append("XF:" + score.getCredit() + "】;");
+						totalScoreCount.setDataSource(dataSource.toString());
 						totalScoreCount.setClassId(score.getClassId());
 						totalScoreCount.setClassName(score.getClassName());
 						totalScoreCount.setCollegeId(score.getCollegeId());
@@ -613,6 +622,11 @@ public class ScoreJob {
 						totalScoreCountMap.put(score.getJobNum(),
 								totalScoreCount);
 					} else {
+						StringBuilder  dataSource = new StringBuilder(";");
+						dataSource.append("【KCH:" + score.getScheduleId() + ";");
+						dataSource.append("KCMC:" + score.getCourseName() + ";");
+						dataSource.append("XF:" + score.getCredit() + "】;");
+						totalScoreCount.setDataSource(totalScoreCount.getDataSource()+dataSource);
 						if (!StringUtils.isEmpty(score.getCourseType())
 								&& ScoreConstant.REQUIRED_COURSE.equals(score
 										.getCourseType())) {
@@ -824,38 +838,11 @@ public class ScoreJob {
 										alertInfor.setWarningTime(new Date());
 										alertInfor.setSemester(semester);
 										alertInfor.setTeacherYear(schoolYear);
-
-										Criteria criteria = Criteria.where("orgId").is(orgId);
-										criteria.and("schoolYear").is(totalScoreCount.getSchoolYear());
-										criteria.and("semester").is(totalScoreCount.getSemester());
-										criteria.and("userId").is(totalScoreCount.getUserId());
-										criteria.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
-										AggregationResults<BasicDBObject> source = mongoTemplate.aggregate(
-												Aggregation.newAggregation(
-														Aggregation.match(criteria),
-														Aggregation.group("$scheduleId").first("scheduleId").as("scheduleId").first("courseName").as("courseName")
-														.first("credit").as("credit")
-												),
-												Score.class, BasicDBObject.class);
-                                        List<String> sourceList = new ArrayList<>();
-										for (int j = 0; j < source.getMappedResults().size(); j++) {
-											StringBuilder  dataSource = new StringBuilder("");
-											String scheduleId = source.getMappedResults().get(j).getString("scheduleId");
-											String courseName = source.getMappedResults().get(j).getString("courseName");
-											Integer credit = source.getMappedResults().get(j).getInt("credit");
-											if(!org.apache.commons.lang.StringUtils.isBlank(scheduleId)) {
-												dataSource.append("【KCH:" + scheduleId + ";");
-												dataSource.append("KCMC:" + courseName + ";");
-												dataSource.append("XF:" + credit + "】");
-												sourceList.add(dataSource.toString());
-											}
+										if(null!=totalScoreCount.getDataSource()&&totalScoreCount.getDataSource().length()>0) {
+											alertInfor.setWarningSource(totalScoreCount.getDataSource().substring(0, totalScoreCount.getDataSource().length() - 1));
 										}
-										if(null!=sourceList) {
-											alertInfor.setWarningSource(sourceList.toString());
-										}
-
 										alertInfor
-												.setWarningCondition( "上学期必修课不及格课程数:"
+												.setWarningCondition(termConversion.getSemester(schoolYear,semester,1).get("schoolYear")+"年第"+termConversion.getSemester(schoolYear,semester,1).get("semester")+ "学期必修课不及格课程数:"
 														+ totalScoreCount
 														.getFailCourseNum());
 										alertInfor.setPhone(totalScoreCount
@@ -937,7 +924,7 @@ public class ScoreJob {
 										alertInfor.setSemester(semester);
 										alertInfor.setTeacherYear(schoolYear);
 										alertInfor
-												.setWarningCondition("上学期平均学分绩点:"
+												.setWarningCondition(termConversion.getSemester(schoolYear,semester,1).get("schoolYear")+"年第"+termConversion.getSemester(schoolYear,semester,1).get("semester")+"学期平均学分绩点:"
 														+ scoreDetails
 																.getAvgGPA());
 										alertInfor.setOrgId(alarmRule
@@ -1123,7 +1110,7 @@ public class ScoreJob {
 													.toString());
 									alertInfor.setWarningTime(new Date());
 									alertInfor
-											.setWarningCondition("上学期不及格必修课程学分为："
+											.setWarningCondition(termConversion.getSemester(schoolYear,semester,1).get("schoolYear")+"年第"+termConversion.getSemester(schoolYear,semester,1).get("semester")+"学期不及格必修课程学分为："
 													+ totalScoreCount
 															.getRequireCreditCount());
 									alertInfor.setPhone(totalScoreCount
@@ -1132,36 +1119,9 @@ public class ScoreJob {
 									alertInfor.setTeacherYear(schoolYear);
 									alertInfor.setOrgId(alarmRule.getOrgId());
 									alertInforList.add(alertInfor);
-
-									Criteria criteria = Criteria.where("orgId").is(orgId);
-									criteria.and("schoolYear").is(totalScoreCount.getSchoolYear());
-									criteria.and("semester").is(totalScoreCount.getSemester());
-									criteria.and("userId").is(totalScoreCount.getUserId());
-									criteria.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
-									AggregationResults<BasicDBObject> source = mongoTemplate.aggregate(
-											Aggregation.newAggregation(
-													Aggregation.match(criteria),
-													Aggregation.group("$scheduleId").first("scheduleId").as("scheduleId").first("courseName").as("courseName")
-															.first("credit").as("credit")
-											),
-											Score.class, BasicDBObject.class);
-									List<String> sourceList = new ArrayList<>();
-									for (int j = 0; j < source.getMappedResults().size(); j++) {
-										StringBuilder  dataSource = new StringBuilder("");
-										String scheduleId = source.getMappedResults().get(j).getString("scheduleId");
-										String courseName = source.getMappedResults().get(j).getString("courseName");
-										Integer credit = source.getMappedResults().get(j).getInt("credit");
-										if(!org.apache.commons.lang.StringUtils.isBlank(scheduleId)) {
-											dataSource.append("【KCH:" + scheduleId + ";");
-											dataSource.append("KCMC:" + courseName + ";");
-											dataSource.append("XF:" + credit + "】");
-											sourceList.add(dataSource.toString());
-										}
+									if(null!=totalScoreCount.getDataSource()&&totalScoreCount.getDataSource().length()>0) {
+										alertInfor.setWarningSource(totalScoreCount.getDataSource().substring(0, totalScoreCount.getDataSource().length() - 1));
 									}
-									if(null!=sourceList) {
-										alertInfor.setWarningSource(sourceList.toString());
-									}
-
 
 									break;
 								} else {
@@ -1218,6 +1178,7 @@ public class ScoreJob {
 						.findAllBySchoolYearGreaterThanEqualAndOrgIdAndExamType(
 								beginYear, orgId,
 								ScoreConstant.EXAM_TYPE_COURSE);
+				List<String> sourceList = new ArrayList<>();
 				for (Score score : scoreList) {
 					HashMap<String, ArrayList<Score>> userScoreMap = scoreMap
 							.get(score.getJobNum());
@@ -1269,6 +1230,11 @@ public class ScoreJob {
 									.get(score.getJobNum());
 							if (null == makeUpScoreCount) {
 								makeUpScoreCount = new MakeUpScoreCount();
+								StringBuilder  dataSource = new StringBuilder("");
+								dataSource.append("【KCH:" + score.getScheduleId() + ";");
+								dataSource.append("KCMC:" + score.getCourseName() + ";");
+								dataSource.append("XF:" + score.getCredit() + "】;");
+								makeUpScoreCount.setDataSource(dataSource.toString());
 								makeUpScoreCount.setUserId(score.getUserId());
 								makeUpScoreCount.setUserName(score.getUserName());
 								makeUpScoreCount.setClassId(score.getClassId());
@@ -1291,9 +1257,15 @@ public class ScoreJob {
 								makeUpScoreCount.setFailCourseNum(1);
 								makeUpScoreCount.setFailCourseCredit(score
 										.getCredit());
+								makeUpScoreCount.setDataSource(dataSource.substring(0,dataSource.length()-1));
 								makeUpScoreCountMap.put(score.getJobNum(),
 										makeUpScoreCount);
 							} else {
+								StringBuilder  dataSource = new StringBuilder(";");
+								dataSource.append("【KCH:" + score.getScheduleId() + ";");
+								dataSource.append("KCMC:" + score.getCourseName() + ";");
+								dataSource.append("XF:" + score.getCredit() + "】;");
+								makeUpScoreCount.setDataSource(makeUpScoreCount.getDataSource()+dataSource);
 								makeUpScoreCount
 										.setFailCourseNum(makeUpScoreCount
 												.getFailCourseNum() + 1);
@@ -1450,7 +1422,7 @@ public class ScoreJob {
 											.setWarningType(WarningTypeConstant.SupplementAchievement
 													.toString());
 									alertInfor
-											.setWarningCondition("补考后上学期总评成绩不及格课程数:"
+											.setWarningCondition("补考后"+termConversion.getSemester(schoolYear,semester,1).get("schoolYear")+"年第"+termConversion.getSemester(schoolYear,semester,1).get("semester")+"学期总评成绩不及格课程数:"
 													+ makeUpScoreCount
 													.getFailCourseNum());
 									alertInfor.setSemester(semester);
@@ -1460,35 +1432,8 @@ public class ScoreJob {
 											.getUserPhone());
 									alertInfor.setOrgId(alarmRule.getOrgId());
 									alertInforList.add(alertInfor);
-
-									Map<String,Object> ys = termConversion.getSemester(schoolYear,semester,1);
-									Criteria criteria = Criteria.where("orgId").is(orgId);
-									criteria.and("schoolYear").is(new Integer(ys.get("schoolYear").toString()));
-									criteria.and("semester").is(new Integer(ys.get("semester").toString()));
-									criteria.and("userId").is(makeUpScoreCount.getUserId());
-									criteria.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
-									AggregationResults<BasicDBObject> source = mongoTemplate.aggregate(
-											Aggregation.newAggregation(
-													Aggregation.match(criteria),
-													Aggregation.group("$scheduleId").first("scheduleId").as("scheduleId").first("courseName").as("courseName")
-															.first("credit").as("credit")
-											),
-											Score.class, BasicDBObject.class);
-									List<String> sourceList = new ArrayList<>();
-									for (int j = 0; j < source.getMappedResults().size(); j++) {
-										StringBuilder  dataSource = new StringBuilder("");
-										String scheduleId = source.getMappedResults().get(j).getString("scheduleId");
-										String courseName = source.getMappedResults().get(j).getString("courseName");
-										Integer credit = source.getMappedResults().get(j).getInt("credit");
-										if(!org.apache.commons.lang.StringUtils.isBlank(scheduleId)) {
-											dataSource.append("【KCH:" + scheduleId + ";");
-											dataSource.append("KCMC:" + courseName + ";");
-											dataSource.append("XF:" + credit + "】");
-											sourceList.add(dataSource.toString());
-										}
-									}
-									if(null!=sourceList) {
-										alertInfor.setWarningSource(sourceList.toString());
+									if(null!=makeUpScoreCount.getDataSource()&&makeUpScoreCount.getDataSource().length()>0) {
+										alertInfor.setWarningSource(makeUpScoreCount.getDataSource().substring(0, makeUpScoreCount.getDataSource().length() - 1));
 									}
 
 									break;
@@ -1827,33 +1772,8 @@ public class ScoreJob {
 									alertInfor.setOrgId(alarmRule.getOrgId());
 									alertInforList.add(alertInfor);
 
-									Criteria criteria = Criteria.where("orgId").is(orgId);
-									criteria.and("schoolYear").is(endYear);
-									criteria.and("semester").is(semester);
-									criteria.and("userId").is(makeUpScoreCount.getUserId());
-									criteria.and("examType").is(ScoreConstant.EXAM_TYPE_COURSE);
-									AggregationResults<BasicDBObject> source = mongoTemplate.aggregate(
-											Aggregation.newAggregation(
-													Aggregation.match(criteria),
-													Aggregation.group("$scheduleId").first("scheduleId").as("scheduleId").first("courseName").as("courseName")
-															.first("credit").as("credit")
-											),
-											Score.class, BasicDBObject.class);
-									List<String> sourceList = new ArrayList<>();
-									for (int j = 0; j < source.getMappedResults().size(); j++) {
-										StringBuilder  dataSource = new StringBuilder("");
-										String scheduleId = source.getMappedResults().get(j).getString("scheduleId");
-										String courseName = source.getMappedResults().get(j).getString("courseName");
-										Integer credit = source.getMappedResults().get(j).getInt("credit");
-										if(!org.apache.commons.lang.StringUtils.isBlank(scheduleId)) {
-											dataSource.append("【KCH:" + scheduleId + ";");
-											dataSource.append("KCMC:" + courseName + ";");
-											dataSource.append("XF:" + credit + "】");
-											sourceList.add(dataSource.toString());
-										}
-									}
-									if(null!=sourceList) {
-										alertInfor.setWarningSource(sourceList.toString());
+									if(null!=makeUpScoreCount.getDataSource()&&makeUpScoreCount.getDataSource().length()>0) {
+										alertInfor.setWarningSource(makeUpScoreCount.getDataSource().substring(0, makeUpScoreCount.getDataSource().length() - 1));
 									}
 
 									break;
