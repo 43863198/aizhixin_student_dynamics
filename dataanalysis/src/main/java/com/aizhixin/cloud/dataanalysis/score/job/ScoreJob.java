@@ -261,7 +261,7 @@ public class ScoreJob {
 				StringBuilder  dataSource = new StringBuilder("");
 				dataSource.append("【KCH:" + score.getScheduleId() + ";");
 				dataSource.append("KCMC:" + score.getCourseName() + ";");
-				dataSource.append("XF:" + score.getCredit() + "】;");
+				dataSource.append("XF:" + score.getCredit() + "】 ");
 				scoreDomain.setDataSource(dataSource.toString());
 			}
 			courseMap.put(score.getScheduleId(), score.getScheduleId());
@@ -593,7 +593,7 @@ public class ScoreJob {
 						StringBuilder  dataSource = new StringBuilder("");
 						dataSource.append("【KCH:" + score.getScheduleId() + ";");
 						dataSource.append("KCMC:" + score.getCourseName() + ";");
-						dataSource.append("XF:" + score.getCredit() + "】;");
+						dataSource.append("XF:" + score.getCredit() + "】 ");
 						totalScoreCount.setDataSource(dataSource.toString());
 						totalScoreCount.setClassId(score.getClassId());
 						totalScoreCount.setClassName(score.getClassName());
@@ -622,10 +622,10 @@ public class ScoreJob {
 						totalScoreCountMap.put(score.getJobNum(),
 								totalScoreCount);
 					} else {
-						StringBuilder  dataSource = new StringBuilder(";");
+						StringBuilder  dataSource = new StringBuilder("");
 						dataSource.append("【KCH:" + score.getScheduleId() + ";");
 						dataSource.append("KCMC:" + score.getCourseName() + ";");
-						dataSource.append("XF:" + score.getCredit() + "】;");
+						dataSource.append("XF:" + score.getCredit() + "】 ");
 						totalScoreCount.setDataSource(totalScoreCount.getDataSource()+dataSource);
 						if (!StringUtils.isEmpty(score.getCourseType())
 								&& ScoreConstant.REQUIRED_COURSE.equals(score
@@ -1233,7 +1233,7 @@ public class ScoreJob {
 								StringBuilder  dataSource = new StringBuilder("");
 								dataSource.append("【KCH:" + score.getScheduleId() + ";");
 								dataSource.append("KCMC:" + score.getCourseName() + ";");
-								dataSource.append("XF:" + score.getCredit() + "】;");
+								dataSource.append("XF:" + score.getCredit() + "】 ");
 								makeUpScoreCount.setDataSource(dataSource.toString());
 								makeUpScoreCount.setUserId(score.getUserId());
 								makeUpScoreCount.setUserName(score.getUserName());
@@ -1261,10 +1261,10 @@ public class ScoreJob {
 								makeUpScoreCountMap.put(score.getJobNum(),
 										makeUpScoreCount);
 							} else {
-								StringBuilder  dataSource = new StringBuilder(";");
+								StringBuilder  dataSource = new StringBuilder("");
 								dataSource.append("【KCH:" + score.getScheduleId() + ";");
 								dataSource.append("KCMC:" + score.getCourseName() + ";");
-								dataSource.append("XF:" + score.getCredit() + "】;");
+								dataSource.append("XF:" + score.getCredit() + "】 ");
 								makeUpScoreCount.setDataSource(makeUpScoreCount.getDataSource()+dataSource);
 								makeUpScoreCount
 										.setFailCourseNum(makeUpScoreCount
