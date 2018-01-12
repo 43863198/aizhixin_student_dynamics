@@ -175,7 +175,7 @@ public class TeachingScoreStatisticsAnalysis {
                 Integer semester = schoolYearTerm.getSemester();
                 if (null != orgId && null != schoolYear && null != semester) {
                     StringBuilder path = new StringBuilder("/teachingScoreStatistic");
-//                    path.append(orgId).append("/").append(schoolYear).append("/").append(semester);
+                    path.append(orgId).append("/").append(schoolYear).append("/").append(semester);
                     if (distributeLock.getTeachingScoreStatisticLock(path)) {
                         teachingScoreService.deleteScoreStatistics(orgId, schoolYear, semester);//去重
                         List<TeachingScoreStatistics> tssList = new ArrayList<>();
@@ -290,7 +290,7 @@ public class TeachingScoreStatisticsAnalysis {
                             fts.setFailPassStuNum(failUser.getMappedResults().size());
                         }
                         teachingScoreService.saveStatisticsList(tssList);
-//                        distributeLock.delete(path);//删除锁
+                        distributeLock.delete(path);//删除锁
                     }
                 }
             }
