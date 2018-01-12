@@ -14,7 +14,7 @@ public class MakeUpScoreCount {
 
 	@Id
 	private String id;
-	
+
 	/**
 	 * 机构id
 	 */
@@ -86,6 +86,11 @@ public class MakeUpScoreCount {
 	 * 不及格课程学分
 	 */
 	private float failCourseCredit;
+
+	/**
+	 * 数据源
+	 */
+	private String dataSource;
 	
 	
 	/**

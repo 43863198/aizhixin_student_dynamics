@@ -109,6 +109,11 @@ public class TotalScoreCount {
 	 * 不及格必修课程学分总计
 	 */
 	private float requireCreditCount;
+
+	/**
+	 * 数据源
+	 */
+	private String dataSource;
 	
 	
 	/**

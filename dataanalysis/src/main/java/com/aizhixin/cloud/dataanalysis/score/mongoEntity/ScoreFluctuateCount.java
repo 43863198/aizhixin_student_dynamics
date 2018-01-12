@@ -77,6 +77,11 @@ public class ScoreFluctuateCount {
 	 * 学院名称
 	 */
 	private String collegeName;
+
+	/**
+	 * 数据源
+	 */
+	private String dataSource;
 	
 	@ApiModelProperty(value = "相邻学期", required = false)
 	private int firstSemester;
