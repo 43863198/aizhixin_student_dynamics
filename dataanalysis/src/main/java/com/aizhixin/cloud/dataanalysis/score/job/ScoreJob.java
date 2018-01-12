@@ -595,6 +595,7 @@ public class ScoreJob {
 						dataSource.append("KCMC:" + score.getCourseName() + ";");
 						dataSource.append("XF:" + score.getCredit() + "】 ");
 						totalScoreCount.setDataSource(dataSource.toString());
+						totalScoreCount.getScheduleIdList().add(score.getScheduleId());
 						totalScoreCount.setClassId(score.getClassId());
 						totalScoreCount.setClassName(score.getClassName());
 						totalScoreCount.setCollegeId(score.getCollegeId());
@@ -622,36 +623,38 @@ public class ScoreJob {
 						totalScoreCountMap.put(score.getJobNum(),
 								totalScoreCount);
 					} else {
-						StringBuilder  dataSource = new StringBuilder("");
-						dataSource.append("【KCH:" + score.getScheduleId() + ";");
-						dataSource.append("KCMC:" + score.getCourseName() + ";");
-						dataSource.append("XF:" + score.getCredit() + "】 ");
-						totalScoreCount.setDataSource(totalScoreCount.getDataSource()+dataSource);
-						if (!StringUtils.isEmpty(score.getCourseType())
-								&& ScoreConstant.REQUIRED_COURSE.equals(score
-										.getCourseType())) {
-							totalScoreCount
-									.setFailRequiredCourseNum(totalScoreCount
-											.getFailRequiredCourseNum() + 1);
-							if (StringUtils.isEmpty(totalScoreCount
-									.getRequireCreditCount())) {
-								totalScoreCount.setRequireCreditCount(score
-										.getCredit());
-							} else {
-								BigDecimal totalCredits = new BigDecimal(
-										totalScoreCount.getRequireCreditCount());
-								totalCredits = totalCredits.add(new BigDecimal(
-										score.getCredit()));
-								totalScoreCount.setRequireCreditCount(Float
-										.valueOf(totalCredits.setScale(2,
-												RoundingMode.HALF_UP)
-												.toString()));
+						if (!totalScoreCount.getScheduleIdList().contains(score.getScheduleId())) {
+							StringBuilder dataSource = new StringBuilder("");
+							dataSource.append("【KCH:" + score.getScheduleId() + ";");
+							dataSource.append("KCMC:" + score.getCourseName() + ";");
+							dataSource.append("XF:" + score.getCredit() + "】 ");
+							totalScoreCount.setDataSource(totalScoreCount.getDataSource() + dataSource);
+							if (!StringUtils.isEmpty(score.getCourseType())
+									&& ScoreConstant.REQUIRED_COURSE.equals(score
+									.getCourseType())) {
+								totalScoreCount
+										.setFailRequiredCourseNum(totalScoreCount
+												.getFailRequiredCourseNum() + 1);
+								if (StringUtils.isEmpty(totalScoreCount
+										.getRequireCreditCount())) {
+									totalScoreCount.setRequireCreditCount(score
+											.getCredit());
+								} else {
+									BigDecimal totalCredits = new BigDecimal(
+											totalScoreCount.getRequireCreditCount());
+									totalCredits = totalCredits.add(new BigDecimal(
+											score.getCredit()));
+									totalScoreCount.setRequireCreditCount(Float
+											.valueOf(totalCredits.setScale(2,
+													RoundingMode.HALF_UP)
+													.toString()));
+								}
 							}
+							totalScoreCount.setFailCourseNum(totalScoreCount
+									.getFailCourseNum() + 1);
+							totalScoreCountMap.put(score.getJobNum(),
+									totalScoreCount);
 						}
-						totalScoreCount.setFailCourseNum(totalScoreCount
-								.getFailCourseNum() + 1);
-						totalScoreCountMap.put(score.getJobNum(),
-								totalScoreCount);
 					}
 				}
 
