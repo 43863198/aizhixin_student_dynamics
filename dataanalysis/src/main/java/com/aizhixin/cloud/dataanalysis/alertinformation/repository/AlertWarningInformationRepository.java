@@ -33,8 +33,12 @@ public interface AlertWarningInformationRepository extends JpaRepository<Warning
     
     @Modifying(clearAutomatically = true) 
    	@Query("update com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation wi set wi.warningState = :warningState where wi.deleteFlag= 0 and wi.warningLevel =:warningLevel and wi.orgId in(:orgIds) ")
-   	public void updateWarningStateByWarningLevel(@Param("warningState") int warningState,@Param("warningLevel") int warningLevel,@Param("orgIds") HashSet<Long> orgIds);
-    
-    
+    void updateWarningStateByWarningLevel(@Param("warningState") int warningState,@Param("warningLevel") int warningLevel,@Param("orgIds") HashSet<Long> orgIds);
+
 	public Long countByDeleteFlagAndWarningStateAndWarningLevel(int deleteFlag,int warningState,int warningLevel);
+
+//    @Query("select aw from #{#entityName} aw where aw.deleteFlag= 0 and aw.warningLevel =:warningLevel and aw.orgId in(:orgIds)")
+//    List<WarningInformation> findWarningInfoByWarningLevel(@Param("warningState") int warningState,@Param("warningLevel") int warningLevel,@Param("orgIds") HashSet<Long> orgIds);
+
+    List<WarningInformation> findByWarningStateAndWarningLevelAndOrgIdIn(int warningState, int warningLevel, HashSet<Long> orgIds);
 }

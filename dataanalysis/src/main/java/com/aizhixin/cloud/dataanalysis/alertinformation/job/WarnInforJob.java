@@ -14,6 +14,7 @@ import java.util.UUID;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
+import com.aizhixin.cloud.dataanalysis.alertinformation.service.PushMessageService;
 import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.constant.RollCallConstant;
@@ -52,7 +53,8 @@ public class WarnInforJob {
 	private AlertWarningInformationService alertWarningInformationService;
 	@Autowired
 	private WarningTypeService warningTypeService;
-
+    @Autowired
+	private PushMessageService pushMessageService;
 	public void updateWarnStateJob() {
 		logger.debug("黄色预警自动处理任务开始执行......");
 		List<WarningTypeDomain> orgIdList = warningTypeService.getAllOrgId();
@@ -65,11 +67,17 @@ public class WarnInforJob {
 					AlertTypeConstant.ALERT_IN_PROCESS,
 					AlertTypeConstant.WARN_STATE_YELLOW_ALERT);
 			if (result.longValue() > 0) {
-				alertWarningInformationService
-						.updateWarningStateByWarningLevel(
-								AlertTypeConstant.ALERT_PROCESSED,
-								AlertTypeConstant.WARN_STATE_YELLOW_ALERT,
-								orgIds);
+
+				List<WarningInformation>warningInformationList=alertWarningInformationService.findWarningInfoByWarningLevel(
+						AlertTypeConstant.ALERT_IN_PROCESS,
+						AlertTypeConstant.WARN_STATE_YELLOW_ALERT,
+						orgIds);
+						alertWarningInformationService
+								.updateWarningStateByWarningLevel(
+										AlertTypeConstant.ALERT_PROCESSED,
+										AlertTypeConstant.WARN_STATE_YELLOW_ALERT,
+										orgIds);
+				pushMessageService.createPushMessage(warningInformationList);
 			}
 		}
 		logger.debug("黄色预警自动处理任务执行结束......");
