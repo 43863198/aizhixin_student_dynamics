@@ -66,9 +66,12 @@ public class AlertWarningInformationService {
 	 * @param
 	 */
 	public void updateWarningStateByWarningLevel(int warningState,int warningLevel,HashSet<Long> orgIds){
-		alertWarningInformationRepository.updateWarningStateByWarningLevel(warningState, warningLevel, orgIds);
+		 alertWarningInformationRepository.updateWarningStateByWarningLevel(warningState, warningLevel, orgIds);
 	}
-	
+	public List<WarningInformation> findWarningInfoByWarningLevel(int warningState,int warningLevel,HashSet<Long> orgIds){
+		 return alertWarningInformationRepository.findByWarningStateAndWarningLevelAndOrgIdIn(warningState, warningLevel, orgIds);
+	}
+
 	public Long countyWarningLevel(int warningState,int warningLevel){
 		return alertWarningInformationRepository.countByDeleteFlagAndWarningStateAndWarningLevel(DataValidity.VALID.getState(),warningState, warningLevel);
 	}

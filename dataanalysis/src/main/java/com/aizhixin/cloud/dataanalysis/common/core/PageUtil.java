@@ -4,6 +4,7 @@
 package com.aizhixin.cloud.dataanalysis.common.core;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 /**
  * 分页相关辅助工具类
@@ -40,5 +41,14 @@ public class PageUtil {
      */
     public static int cacalatePagesize(long count, int pagesize) {
         return (int) (count / pagesize + (count % pagesize == 0 ? 0 : 1));
+    }
+    public static PageRequest createNoErrorPageRequestAndSort(final Integer offset, final Integer limit, Sort sort) {
+        if (null == offset || null == limit || 0 >= limit) {
+            return new PageRequest(0, 10, sort);
+        }
+        if (offset - 1 <= 0) {
+            return new PageRequest(0, limit, sort);
+        }
+        return new PageRequest(offset - 1, limit, sort);
     }
 }
