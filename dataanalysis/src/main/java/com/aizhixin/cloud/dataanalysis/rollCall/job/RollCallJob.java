@@ -247,58 +247,60 @@ public class RollCallJob {
 						for (AlarmSettings alarmSettings : val) {
 							AlarmRule alarmRule = alarmRuleMap
 									.get(alarmSettings.getRuleSet());
-							if (null != alarmRule) {
-								
+							if (alarmSettings.getSetupCloseFlag()==10) {
+								if (null != alarmRule) {
+
 //								if(null != alarmRule.getRightRelationship() && AlertTypeConstant.EQUAL_OR_GREATER_THAN.equals(alarmRule.getRightRelationship())) 
-								if (rollCallCount.getOutSchoolTimes() >= Float.parseFloat(alarmRule.getRightParameter())) {
-									WarningInformation alertInfor = new WarningInformation();
-									String alertId = UUID.randomUUID()
-											.toString();
-									alertInfor.setId(alertId);
-									alertInfor.setDefendantId(rollCallCount
-											.getUserId());
-									alertInfor.setName(rollCallCount
-											.getUserName());
-									alertInfor.setJobNumber(rollCallCount
-											.getJobNum());
-									alertInfor.setCollogeId(rollCallCount
-											.getCollegeId());
-									alertInfor.setCollogeName(rollCallCount
-											.getCollegeName());
-									alertInfor.setClassId(rollCallCount
-											.getClassId());
-									alertInfor.setClassName(rollCallCount
-											.getClassName());
-									alertInfor
-											.setProfessionalId(rollCallCount
-													.getProfessionalId());
-									alertInfor
-											.setProfessionalName(rollCallCount
-													.getProfessionalName());
-									alertInfor.setTeacherYear(rollCallCount
-											.getSchoolYear());
-									alertInfor.setSemester(rollCallCount.getSemester());
-									alertInfor.setWarningLevel(alarmSettings
-											.getWarningLevel());
-									alertInfor
-											.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-									alertInfor.setAlarmSettingsId(alarmSettings
-											.getId());
-									alertInfor
-											.setWarningType(WarningTypeConstant.Absenteeism
-													.toString());
-									alertInfor.setWarningTime(new Date());
-									alertInfor.setWarningCondition("本学期累计旷课次数为:"+rollCallCount.getOutSchoolTimes());
-									alertInfor.setPhone(rollCallCount.getUserPhone());
-									alertInfor.setOrgId(alarmRule.getOrgId());
-									alertInforList.add(alertInfor);
-									warnMap.put(alertInfor.getJobNumber(),
-											alertInfor);
+									if (rollCallCount.getOutSchoolTimes() >= Float.parseFloat(alarmRule.getRightParameter())) {
+										WarningInformation alertInfor = new WarningInformation();
+										String alertId = UUID.randomUUID()
+												.toString();
+										alertInfor.setId(alertId);
+										alertInfor.setDefendantId(rollCallCount
+												.getUserId());
+										alertInfor.setName(rollCallCount
+												.getUserName());
+										alertInfor.setJobNumber(rollCallCount
+												.getJobNum());
+										alertInfor.setCollogeId(rollCallCount
+												.getCollegeId());
+										alertInfor.setCollogeName(rollCallCount
+												.getCollegeName());
+										alertInfor.setClassId(rollCallCount
+												.getClassId());
+										alertInfor.setClassName(rollCallCount
+												.getClassName());
+										alertInfor
+												.setProfessionalId(rollCallCount
+														.getProfessionalId());
+										alertInfor
+												.setProfessionalName(rollCallCount
+														.getProfessionalName());
+										alertInfor.setTeacherYear(rollCallCount
+												.getSchoolYear());
+										alertInfor.setSemester(rollCallCount.getSemester());
+										alertInfor.setWarningLevel(alarmSettings
+												.getWarningLevel());
+										alertInfor
+												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+										alertInfor.setAlarmSettingsId(alarmSettings
+												.getId());
+										alertInfor
+												.setWarningType(WarningTypeConstant.Absenteeism
+														.toString());
+										alertInfor.setWarningTime(new Date());
+										alertInfor.setWarningCondition("本学期累计旷课次数为:" + rollCallCount.getOutSchoolTimes());
+										alertInfor.setPhone(rollCallCount.getUserPhone());
+										alertInfor.setOrgId(alarmRule.getOrgId());
+										alertInforList.add(alertInfor);
+										warnMap.put(alertInfor.getJobNumber(),
+												alertInfor);
 
 
-									break;
-								} else {
-									continue;
+										break;
+									} else {
+										continue;
+									}
 								}
 							}
 						}

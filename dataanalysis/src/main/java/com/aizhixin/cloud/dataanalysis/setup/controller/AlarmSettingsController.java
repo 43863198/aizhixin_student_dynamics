@@ -69,13 +69,13 @@ public class AlarmSettingsController {
                     "</b><br>setupCloseFlag:开启状态(10:启用 ;20:关闭;" +
                     "</b><br>waringParameterDomainList:包含;" +
                     "</b><br>serialNumber:序号;" +
-                    "<br><br>parameter:参数;<br><b>"
+                    "<br><br>parameter:参数;<br><b>"+
+                    "</b>选填:、<br>startTime:开始时间(新生报到截止时间);"
             )
             @RequestBody AlarmSettingDomain alarmSettingDomain
     ){
     	 Map<String, Object> result =  alarmSettingsService.warningSet(alarmSettingDomain);
-    	 
-    	
+
     	 if(null != result.get("warningType")){
     		 String warningType = (String)result.get("warningType");
     		 Long orgId = (Long)result.get("orgId");
@@ -119,6 +119,42 @@ public class AlarmSettingsController {
     ){
         return alarmSettingsService.setProcessingMode(domain);
     }
+
+
+    /**
+     * 迎新开启引擎
+     * @param alarmSettingsId
+     * @return
+     */
+    @GetMapping(value = "/openalarmsettings", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "迎新开启引擎", response = Void.class, notes = "迎新开启引擎<br><br><b>@author jianwei.wu</b>")
+    public Map<String,Object> openAlarmSettings(
+            @ApiParam(value = "alarmSettingsId 预警设置id" , required = true) @RequestParam(value = "alarmSettingsId", required = true) String alarmSettingsId
+    ){
+        return alarmSettingsService.openAlarmSettings(alarmSettingsId);
+    }
+
+    /**
+     * 手动生成数据
+     * @param orgId
+     * @param warningType
+     * @return
+     */
+    @GetMapping(value = "/eneratedata", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "手动生成数据", response = Void.class, notes = "手动生成数据<br><br><b>@author jianwei.wu</b>")
+    public Map<String,Object> generateData(
+            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "warningType 预警类型" , required = true) @RequestParam(value = "warningType", required = true) String warningType
+    ){
+        return alarmSettingsService.generateData(orgId, warningType);
+    }
+
+
+
+
+
+
+
 
 
 

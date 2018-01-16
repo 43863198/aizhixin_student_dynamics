@@ -421,102 +421,104 @@ public class ScoreJob {
 						&& scoreFluctuateCountList.size() > 0) {
 					for (ScoreFluctuateCount scoreFluctuateCount : scoreFluctuateCountList) {
 						for (AlarmSettings alarmSettings : val) {
-							List<AlarmRule> alarmRuleList = alarmRuleMap
-									.get(alarmSettings.getId());
-							if (null != alarmRuleList
-									&& !alarmRuleList.isEmpty()) {
+							if (alarmSettings.getSetupCloseFlag()==10) {
+								List<AlarmRule> alarmRuleList = alarmRuleMap
+										.get(alarmSettings.getId());
+								if (null != alarmRuleList
+										&& !alarmRuleList.isEmpty()) {
 
-								for (AlarmRule alarmRule : alarmRuleList) {
-									float result = 0L;
-									if (!StringUtils
-											.isEmpty(scoreFluctuateCount
-													.getSecondAvgradePoint())
-											&& !StringUtils
-													.isEmpty(scoreFluctuateCount
-															.getFirstAvgradePoint())) {
-										result = Float
-												.parseFloat(scoreFluctuateCount
+									for (AlarmRule alarmRule : alarmRuleList) {
+										float result = 0L;
+										if (!StringUtils
+												.isEmpty(scoreFluctuateCount
 														.getSecondAvgradePoint())
-												- Float.parseFloat(scoreFluctuateCount
-														.getFirstAvgradePoint());
-									}
-									// 上学期平均绩点小于上上学期平均绩点时
-									if (result < 0) {
-										result = Math.abs(result);
-										if (result >= Float.parseFloat(String
-												.valueOf(alarmRule
-														.getRightParameter()))) {
-											WarningInformation alertInfor = new WarningInformation();
-											String alertId = UUID.randomUUID()
-													.toString();
-											alertInfor.setId(alertId);
-											alertInfor
-													.setDefendantId(scoreFluctuateCount
-															.getUserId());
-											alertInfor
-													.setName(scoreFluctuateCount
-															.getUserName());
-											alertInfor
-													.setJobNumber(scoreFluctuateCount
-															.getJobNum());
-											alertInfor
-													.setCollogeId(scoreFluctuateCount
-															.getCollegeId());
-											alertInfor
-													.setCollogeName(scoreFluctuateCount
-															.getCollegeName());
-											alertInfor
-													.setClassId(scoreFluctuateCount
-															.getClassId());
-											alertInfor
-													.setClassName(scoreFluctuateCount
-															.getClassName());
-											alertInfor
-													.setProfessionalId(scoreFluctuateCount
-															.getProfessionalId());
-											alertInfor
-													.setProfessionalName(scoreFluctuateCount
-															.getProfessionalName());
-											alertInfor
-													.setWarningLevel(alarmSettings
-															.getWarningLevel());
-											alertInfor
-													.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-											alertInfor
-													.setAlarmSettingsId(alarmSettings
-															.getId());
-											alertInfor.setSemester(semester);
-											alertInfor
-													.setTeacherYear(schoolYear);
-											alertInfor
-													.setWarningType(WarningTypeConstant.PerformanceFluctuation
-															.toString());
-											alertInfor
-													.setWarningCondition(termConversion.getSemester(schoolYear,semester,1).get("schoolYear")+"年第"+termConversion.getSemester(schoolYear,semester,1).get("semester")+"学期平均绩点为："
-															+ scoreFluctuateCount
-																	.getSecondAvgradePoint()+
-															","+termConversion.getSemester(schoolYear,semester,2).get("schoolYear")+"年第"+termConversion.getSemester(schoolYear,semester,2).get("semester")+"学期平均绩点为："
-															+ scoreFluctuateCount
-																	.getFirstAvgradePoint()
-															+ ",平均绩点下降："
-															+ new BigDecimal(
-																	result)
-																	.setScale(
-																			2,
-																			RoundingMode.HALF_UP)
-																	.toString());
-											alertInfor
-													.setWarningTime(new Date());
-											alertInfor
-													.setPhone(scoreFluctuateCount
-															.getUserPhone());
-											alertInfor.setOrgId(alarmRule
-													.getOrgId());
-											alertInforList.add(alertInfor);
+												&& !StringUtils
+												.isEmpty(scoreFluctuateCount
+														.getFirstAvgradePoint())) {
+											result = Float
+													.parseFloat(scoreFluctuateCount
+															.getSecondAvgradePoint())
+													- Float.parseFloat(scoreFluctuateCount
+													.getFirstAvgradePoint());
+										}
+										// 上学期平均绩点小于上上学期平均绩点时
+										if (result < 0) {
+											result = Math.abs(result);
+											if (result >= Float.parseFloat(String
+													.valueOf(alarmRule
+															.getRightParameter()))) {
+												WarningInformation alertInfor = new WarningInformation();
+												String alertId = UUID.randomUUID()
+														.toString();
+												alertInfor.setId(alertId);
+												alertInfor
+														.setDefendantId(scoreFluctuateCount
+																.getUserId());
+												alertInfor
+														.setName(scoreFluctuateCount
+																.getUserName());
+												alertInfor
+														.setJobNumber(scoreFluctuateCount
+																.getJobNum());
+												alertInfor
+														.setCollogeId(scoreFluctuateCount
+																.getCollegeId());
+												alertInfor
+														.setCollogeName(scoreFluctuateCount
+																.getCollegeName());
+												alertInfor
+														.setClassId(scoreFluctuateCount
+																.getClassId());
+												alertInfor
+														.setClassName(scoreFluctuateCount
+																.getClassName());
+												alertInfor
+														.setProfessionalId(scoreFluctuateCount
+																.getProfessionalId());
+												alertInfor
+														.setProfessionalName(scoreFluctuateCount
+																.getProfessionalName());
+												alertInfor
+														.setWarningLevel(alarmSettings
+																.getWarningLevel());
+												alertInfor
+														.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+												alertInfor
+														.setAlarmSettingsId(alarmSettings
+																.getId());
+												alertInfor.setSemester(semester);
+												alertInfor
+														.setTeacherYear(schoolYear);
+												alertInfor
+														.setWarningType(WarningTypeConstant.PerformanceFluctuation
+																.toString());
+												alertInfor
+														.setWarningCondition(termConversion.getSemester(schoolYear, semester, 1).get("schoolYear") + "年第" + termConversion.getSemester(schoolYear, semester, 1).get("semester") + "学期平均绩点为："
+																+ scoreFluctuateCount
+																.getSecondAvgradePoint() +
+																"," + termConversion.getSemester(schoolYear, semester, 2).get("schoolYear") + "年第" + termConversion.getSemester(schoolYear, semester, 2).get("semester") + "学期平均绩点为："
+																+ scoreFluctuateCount
+																.getFirstAvgradePoint()
+																+ ",平均绩点下降："
+																+ new BigDecimal(
+																result)
+																.setScale(
+																		2,
+																		RoundingMode.HALF_UP)
+																.toString());
+												alertInfor
+														.setWarningTime(new Date());
+												alertInfor
+														.setPhone(scoreFluctuateCount
+																.getUserPhone());
+												alertInfor.setOrgId(alarmRule
+														.getOrgId());
+												alertInforList.add(alertInfor);
 
-											break;
-										} else {
-											continue;
+												break;
+											} else {
+												continue;
+											}
 										}
 									}
 								}
@@ -788,79 +790,81 @@ public class ScoreJob {
 //					Date today = new Date();
 					for (TotalScoreCount totalScoreCount : totalScoreCountList) {
 						for (AlarmSettings alarmSettings : val) {
-							List<AlarmRule> alarmRuleList = alarmRuleMap
-									.get(alarmSettings.getId());
-							if (null != alarmRuleList
-									&& !alarmRuleList.isEmpty()) {
+							if (alarmSettings.getSetupCloseFlag()==10) {
+								List<AlarmRule> alarmRuleList = alarmRuleMap
+										.get(alarmSettings.getId());
+								if (null != alarmRuleList
+										&& !alarmRuleList.isEmpty()) {
 
-								for (AlarmRule alarmRule : alarmRuleList) {
-									
-									if(alarmRule.getSerialNumber() != 1){
-										continue;
-									}
-									if (totalScoreCount.getFailCourseNum() >= Float
-											.parseFloat(alarmRule
-													.getRightParameter())) {
-										WarningInformation alertInfor = new WarningInformation();
-										String alertId = UUID.randomUUID()
-												.toString();
-										alertInfor.setId(alertId);
-										alertInfor
-												.setDefendantId(totalScoreCount
-														.getUserId());
-										alertInfor.setName(totalScoreCount
-												.getUserName());
-										alertInfor.setJobNumber(totalScoreCount
-												.getJobNum());
-										alertInfor.setCollogeId(totalScoreCount
-												.getCollegeId());
-										alertInfor
-												.setCollogeName(totalScoreCount
-														.getCollegeName());
-										alertInfor.setClassId(totalScoreCount
-												.getClassId());
-										alertInfor.setClassName(totalScoreCount
-												.getClassName());
-										alertInfor
-												.setProfessionalId(totalScoreCount
-														.getProfessionalId());
-										alertInfor
-												.setProfessionalName(totalScoreCount
-														.getProfessionalName());
-										alertInfor
-												.setTeacherYear(totalScoreCount
-														.getSchoolYear());
-										alertInfor
-												.setWarningLevel(alarmSettings
-														.getWarningLevel());
-										alertInfor
-												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-										alertInfor
-												.setAlarmSettingsId(alarmSettings
-														.getId());
-										alertInfor
-												.setWarningType(WarningTypeConstant.TotalAchievement
-														.toString());
-										alertInfor.setWarningTime(new Date());
-										alertInfor.setSemester(semester);
-										alertInfor.setTeacherYear(schoolYear);
-										if(null!=totalScoreCount.getDataSource()&&totalScoreCount.getDataSource().length()>0) {
-											alertInfor.setWarningSource(totalScoreCount.getDataSource().substring(0, totalScoreCount.getDataSource().length() - 1));
+									for (AlarmRule alarmRule : alarmRuleList) {
+
+										if (alarmRule.getSerialNumber() != 1) {
+											continue;
 										}
-										alertInfor
-												.setWarningCondition(termConversion.getSemester(schoolYear,semester,1).get("schoolYear")+"年第"+termConversion.getSemester(schoolYear,semester,1).get("semester")+ "学期必修课不及格课程数:"
-														+ totalScoreCount
-														.getFailCourseNum());
-										alertInfor.setPhone(totalScoreCount
-												.getUserPhone());
-										alertInfor.setOrgId(alarmRule
-												.getOrgId());
-										alertInforList.add(alertInfor);
-										warnMap.put(totalScoreCount
-												.getJobNum(), alertInfor);
-										break;
-									} else {
-										continue;
+										if (totalScoreCount.getFailCourseNum() >= Float
+												.parseFloat(alarmRule
+														.getRightParameter())) {
+											WarningInformation alertInfor = new WarningInformation();
+											String alertId = UUID.randomUUID()
+													.toString();
+											alertInfor.setId(alertId);
+											alertInfor
+													.setDefendantId(totalScoreCount
+															.getUserId());
+											alertInfor.setName(totalScoreCount
+													.getUserName());
+											alertInfor.setJobNumber(totalScoreCount
+													.getJobNum());
+											alertInfor.setCollogeId(totalScoreCount
+													.getCollegeId());
+											alertInfor
+													.setCollogeName(totalScoreCount
+															.getCollegeName());
+											alertInfor.setClassId(totalScoreCount
+													.getClassId());
+											alertInfor.setClassName(totalScoreCount
+													.getClassName());
+											alertInfor
+													.setProfessionalId(totalScoreCount
+															.getProfessionalId());
+											alertInfor
+													.setProfessionalName(totalScoreCount
+															.getProfessionalName());
+											alertInfor
+													.setTeacherYear(totalScoreCount
+															.getSchoolYear());
+											alertInfor
+													.setWarningLevel(alarmSettings
+															.getWarningLevel());
+											alertInfor
+													.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+											alertInfor
+													.setAlarmSettingsId(alarmSettings
+															.getId());
+											alertInfor
+													.setWarningType(WarningTypeConstant.TotalAchievement
+															.toString());
+											alertInfor.setWarningTime(new Date());
+											alertInfor.setSemester(semester);
+											alertInfor.setTeacherYear(schoolYear);
+											if (null != totalScoreCount.getDataSource() && totalScoreCount.getDataSource().length() > 0) {
+												alertInfor.setWarningSource(totalScoreCount.getDataSource().substring(0, totalScoreCount.getDataSource().length() - 1));
+											}
+											alertInfor
+													.setWarningCondition(termConversion.getSemester(schoolYear, semester, 1).get("schoolYear") + "年第" + termConversion.getSemester(schoolYear, semester, 1).get("semester") + "学期必修课不及格课程数:"
+															+ totalScoreCount
+															.getFailCourseNum());
+											alertInfor.setPhone(totalScoreCount
+													.getUserPhone());
+											alertInfor.setOrgId(alarmRule
+													.getOrgId());
+											alertInforList.add(alertInfor);
+											warnMap.put(totalScoreCount
+													.getJobNum(), alertInfor);
+											break;
+										} else {
+											continue;
+										}
 									}
 								}
 							}
@@ -873,92 +877,94 @@ public class ScoreJob {
 				if(null != scoreDetailsList && !scoreDetailsList.isEmpty()){
 					for(TeachingScoreDetails scoreDetails :scoreDetailsList){
 						for (AlarmSettings alarmSettings : val) {
-							List<AlarmRule> alarmRuleList = alarmRuleMap
-									.get(alarmSettings.getId());
-							if (null != alarmRuleList
-									&& !alarmRuleList.isEmpty()) {
+							if (alarmSettings.getSetupCloseFlag()==10) {
+								List<AlarmRule> alarmRuleList = alarmRuleMap
+										.get(alarmSettings.getId());
+								if (null != alarmRuleList
+										&& !alarmRuleList.isEmpty()) {
 
-								for (AlarmRule alarmRule : alarmRuleList) {
-									
-									if(alarmRule.getSerialNumber() != 2){
-										continue;
-									}
-									if (scoreDetails.getAvgGPA() <= Float
-											.parseFloat(alarmRule
-													.getRightParameter())) {
-										WarningInformation alertInfor = new WarningInformation();
-										String alertId = UUID.randomUUID()
-												.toString();
-										alertInfor.setId(alertId);
-										alertInfor
-												.setDefendantId(scoreDetails
-														.getUserId());
-										alertInfor.setName(scoreDetails
-												.getUserName());
-										alertInfor.setJobNumber(scoreDetails
-												.getJobNum());
-										alertInfor.setCollogeId(scoreDetails
-												.getCollegeId());
-										alertInfor
-												.setCollogeName(scoreDetails
-														.getCollegeName());
-										alertInfor.setClassId(scoreDetails
-												.getClassId());
-										alertInfor.setClassName(scoreDetails
-												.getClassName());
-										alertInfor
-												.setProfessionalId(scoreDetails
-														.getProfessionalId());
-										alertInfor
-												.setProfessionalName(scoreDetails
-														.getProfessionalName());
-										alertInfor
-												.setTeacherYear(scoreDetails
-														.getTeacherYear());
-										alertInfor
-												.setWarningLevel(alarmSettings
-														.getWarningLevel());
-										alertInfor
-												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-										alertInfor
-												.setAlarmSettingsId(alarmSettings
-														.getId());
-										alertInfor
-												.setWarningType(WarningTypeConstant.TotalAchievement
-														.toString());
-										alertInfor.setWarningTime(new Date());
-										alertInfor.setSemester(semester);
-										alertInfor.setTeacherYear(schoolYear);
-										alertInfor
-												.setWarningCondition(termConversion.getSemester(schoolYear,semester,1).get("schoolYear")+"年第"+termConversion.getSemester(schoolYear,semester,1).get("semester")+"学期平均学分绩点:"
-														+ scoreDetails
-																.getAvgGPA());
-										alertInfor.setOrgId(alarmRule
-												.getOrgId());
-										
-										if(null != warnMap.get(scoreDetails
-												.getJobNum())){
-											WarningInformation alertInfor2 = warnMap.get(scoreDetails
-													.getJobNum());
-											if(alertInfor2.getWarningLevel() > alertInfor.getWarningLevel()){
-												continue;
-											}
-											if(alertInfor2.getWarningLevel() == alertInfor.getWarningLevel()){
-												alertInfor.setWarningCondition(alertInfor.getWarningCondition()+"; "+alertInfor2.getWarningCondition());
-												alertInforList.remove(alertInfor2);
-												alertInforList.add(alertInfor);
-											}
-											if(alertInfor2.getWarningLevel() < alertInfor.getWarningLevel()){
-												alertInforList.remove(alertInfor2);
-												alertInforList.add(alertInfor);
-											}
-										}else{
-											alertInforList.add(alertInfor);
+									for (AlarmRule alarmRule : alarmRuleList) {
+
+										if (alarmRule.getSerialNumber() != 2) {
+											continue;
 										}
-										
-										break;
-									} else {
-										continue;
+										if (scoreDetails.getAvgGPA() <= Float
+												.parseFloat(alarmRule
+														.getRightParameter())) {
+											WarningInformation alertInfor = new WarningInformation();
+											String alertId = UUID.randomUUID()
+													.toString();
+											alertInfor.setId(alertId);
+											alertInfor
+													.setDefendantId(scoreDetails
+															.getUserId());
+											alertInfor.setName(scoreDetails
+													.getUserName());
+											alertInfor.setJobNumber(scoreDetails
+													.getJobNum());
+											alertInfor.setCollogeId(scoreDetails
+													.getCollegeId());
+											alertInfor
+													.setCollogeName(scoreDetails
+															.getCollegeName());
+											alertInfor.setClassId(scoreDetails
+													.getClassId());
+											alertInfor.setClassName(scoreDetails
+													.getClassName());
+											alertInfor
+													.setProfessionalId(scoreDetails
+															.getProfessionalId());
+											alertInfor
+													.setProfessionalName(scoreDetails
+															.getProfessionalName());
+											alertInfor
+													.setTeacherYear(scoreDetails
+															.getTeacherYear());
+											alertInfor
+													.setWarningLevel(alarmSettings
+															.getWarningLevel());
+											alertInfor
+													.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+											alertInfor
+													.setAlarmSettingsId(alarmSettings
+															.getId());
+											alertInfor
+													.setWarningType(WarningTypeConstant.TotalAchievement
+															.toString());
+											alertInfor.setWarningTime(new Date());
+											alertInfor.setSemester(semester);
+											alertInfor.setTeacherYear(schoolYear);
+											alertInfor
+													.setWarningCondition(termConversion.getSemester(schoolYear, semester, 1).get("schoolYear") + "年第" + termConversion.getSemester(schoolYear, semester, 1).get("semester") + "学期平均学分绩点:"
+															+ scoreDetails
+															.getAvgGPA());
+											alertInfor.setOrgId(alarmRule
+													.getOrgId());
+
+											if (null != warnMap.get(scoreDetails
+													.getJobNum())) {
+												WarningInformation alertInfor2 = warnMap.get(scoreDetails
+														.getJobNum());
+												if (alertInfor2.getWarningLevel() > alertInfor.getWarningLevel()) {
+													continue;
+												}
+												if (alertInfor2.getWarningLevel() == alertInfor.getWarningLevel()) {
+													alertInfor.setWarningCondition(alertInfor.getWarningCondition() + "; " + alertInfor2.getWarningCondition());
+													alertInforList.remove(alertInfor2);
+													alertInforList.add(alertInfor);
+												}
+												if (alertInfor2.getWarningLevel() < alertInfor.getWarningLevel()) {
+													alertInforList.remove(alertInfor2);
+													alertInforList.add(alertInfor);
+												}
+											} else {
+												alertInforList.add(alertInfor);
+											}
+
+											break;
+										} else {
+											continue;
+										}
 									}
 								}
 							}
@@ -1069,69 +1075,71 @@ public class ScoreJob {
 					Date today = new Date();
 					for (TotalScoreCount totalScoreCount : totalScoreCountList) {
 						for (AlarmSettings alarmSettings : val) {
-							AlarmRule alarmRule = alarmRuleMap
-									.get(alarmSettings.getRuleSet());
-							if (null != alarmRule) {
-								if (StringUtils.isEmpty(totalScoreCount
-										.getRequireCreditCount())) {
-									continue;
-								}
-								if (totalScoreCount.getRequireCreditCount() >= Float
-										.parseFloat(String.valueOf(alarmRule
-												.getRightParameter()))) {
-									WarningInformation alertInfor = new WarningInformation();
-									String alertId = UUID.randomUUID()
-											.toString();
-									alertInfor.setId(alertId);
-									alertInfor.setDefendantId(totalScoreCount
-											.getUserId());
-									alertInfor.setName(totalScoreCount
-											.getUserName());
-									alertInfor.setJobNumber(totalScoreCount
-											.getJobNum());
-									alertInfor.setCollogeId(totalScoreCount
-											.getCollegeId());
-									alertInfor.setCollogeName(totalScoreCount
-											.getCollegeName());
-									alertInfor.setClassId(totalScoreCount
-											.getClassId());
-									alertInfor.setClassName(totalScoreCount
-											.getClassName());
-									alertInfor
-											.setProfessionalId(totalScoreCount
-													.getProfessionalId());
-									alertInfor
-											.setProfessionalName(totalScoreCount
-													.getProfessionalName());
-									alertInfor.setTeacherYear(totalScoreCount
-											.getSchoolYear());
-									alertInfor.setWarningLevel(alarmSettings
-											.getWarningLevel());
-									alertInfor
-											.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-									alertInfor.setAlarmSettingsId(alarmSettings
-											.getId());
-									alertInfor
-											.setWarningType(WarningTypeConstant.AttendAbnormal
-													.toString());
-									alertInfor.setWarningTime(new Date());
-									alertInfor
-											.setWarningCondition(termConversion.getSemester(schoolYear,semester,1).get("schoolYear")+"年第"+termConversion.getSemester(schoolYear,semester,1).get("semester")+"学期不及格必修课程学分为："
-													+ totalScoreCount
-															.getRequireCreditCount());
-									alertInfor.setPhone(totalScoreCount
-											.getUserPhone());
-									alertInfor.setSemester(semester);
-									alertInfor.setTeacherYear(schoolYear);
-									alertInfor.setOrgId(alarmRule.getOrgId());
-									alertInforList.add(alertInfor);
-									if(null!=totalScoreCount.getDataSource()&&totalScoreCount.getDataSource().length()>0) {
-										alertInfor.setWarningSource(totalScoreCount.getDataSource().substring(0, totalScoreCount.getDataSource().length() - 1));
+							if (alarmSettings.getSetupCloseFlag()==10) {
+								AlarmRule alarmRule = alarmRuleMap
+										.get(alarmSettings.getRuleSet());
+								if (null != alarmRule) {
+									if (StringUtils.isEmpty(totalScoreCount
+											.getRequireCreditCount())) {
+										continue;
 									}
+									if (totalScoreCount.getRequireCreditCount() >= Float
+											.parseFloat(String.valueOf(alarmRule
+													.getRightParameter()))) {
+										WarningInformation alertInfor = new WarningInformation();
+										String alertId = UUID.randomUUID()
+												.toString();
+										alertInfor.setId(alertId);
+										alertInfor.setDefendantId(totalScoreCount
+												.getUserId());
+										alertInfor.setName(totalScoreCount
+												.getUserName());
+										alertInfor.setJobNumber(totalScoreCount
+												.getJobNum());
+										alertInfor.setCollogeId(totalScoreCount
+												.getCollegeId());
+										alertInfor.setCollogeName(totalScoreCount
+												.getCollegeName());
+										alertInfor.setClassId(totalScoreCount
+												.getClassId());
+										alertInfor.setClassName(totalScoreCount
+												.getClassName());
+										alertInfor
+												.setProfessionalId(totalScoreCount
+														.getProfessionalId());
+										alertInfor
+												.setProfessionalName(totalScoreCount
+														.getProfessionalName());
+										alertInfor.setTeacherYear(totalScoreCount
+												.getSchoolYear());
+										alertInfor.setWarningLevel(alarmSettings
+												.getWarningLevel());
+										alertInfor
+												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+										alertInfor.setAlarmSettingsId(alarmSettings
+												.getId());
+										alertInfor
+												.setWarningType(WarningTypeConstant.AttendAbnormal
+														.toString());
+										alertInfor.setWarningTime(new Date());
+										alertInfor
+												.setWarningCondition(termConversion.getSemester(schoolYear, semester, 1).get("schoolYear") + "年第" + termConversion.getSemester(schoolYear, semester, 1).get("semester") + "学期不及格必修课程学分为："
+														+ totalScoreCount
+														.getRequireCreditCount());
+										alertInfor.setPhone(totalScoreCount
+												.getUserPhone());
+										alertInfor.setSemester(semester);
+										alertInfor.setTeacherYear(schoolYear);
+										alertInfor.setOrgId(alarmRule.getOrgId());
+										alertInforList.add(alertInfor);
+										if (null != totalScoreCount.getDataSource() && totalScoreCount.getDataSource().length() > 0) {
+											alertInfor.setWarningSource(totalScoreCount.getDataSource().substring(0, totalScoreCount.getDataSource().length() - 1));
+										}
 
-									break;
-								} else {
-									continue;
+										break;
+									} else {
+										continue;
+									}
 								}
 							}
 						}
@@ -1304,7 +1312,7 @@ public class ScoreJob {
 			}
 		}
 	}
-
+    //补考成绩预警定时任务
 	public void makeUpScoreJob() {
 
 		// 获取预警配置
@@ -1388,63 +1396,65 @@ public class ScoreJob {
 						&& makeUpScoreCountList.size() > 0) {
 					for (MakeUpScoreCount makeUpScoreCount : makeUpScoreCountList) {
 						for (AlarmSettings alarmSettings : val) {
-							AlarmRule alarmRule = alarmRuleMap
-									.get(alarmSettings.getRuleSet());
-							if (null != alarmRule) {
-								if (makeUpScoreCount.getFailCourseNum() >= Float
-										.parseFloat(alarmRule
-												.getRightParameter())) {
-									WarningInformation alertInfor = new WarningInformation();
-									String alertId = UUID.randomUUID()
-											.toString();
-									alertInfor.setId(alertId);
-									alertInfor.setDefendantId(makeUpScoreCount
-											.getUserId());
-									alertInfor.setName(makeUpScoreCount
-											.getUserName());
-									alertInfor.setJobNumber(makeUpScoreCount
-											.getJobNum());
-									alertInfor.setCollogeId(makeUpScoreCount
-											.getCollegeId());
-									alertInfor.setCollogeName(makeUpScoreCount
-											.getCollegeName());
-									alertInfor.setClassId(makeUpScoreCount
-											.getClassId());
-									alertInfor.setClassName(makeUpScoreCount
-											.getClassName());
-									alertInfor
-											.setProfessionalId(makeUpScoreCount
-													.getProfessionalId());
-									alertInfor
-											.setProfessionalName(makeUpScoreCount
-													.getProfessionalName());
-									alertInfor.setWarningLevel(alarmSettings
-											.getWarningLevel());
-									alertInfor
-											.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-									alertInfor.setAlarmSettingsId(alarmSettings
-											.getId());
-									alertInfor
-											.setWarningType(WarningTypeConstant.SupplementAchievement
-													.toString());
-									alertInfor
-											.setWarningCondition("补考后"+termConversion.getSemester(schoolYear,semester,1).get("schoolYear")+"年第"+termConversion.getSemester(schoolYear,semester,1).get("semester")+"学期总评成绩不及格课程数:"
-													+ makeUpScoreCount
-													.getFailCourseNum());
-									alertInfor.setSemester(semester);
-									alertInfor.setTeacherYear(schoolYear);
-									alertInfor.setWarningTime(new Date());
-									alertInfor.setPhone(makeUpScoreCount
-											.getUserPhone());
-									alertInfor.setOrgId(alarmRule.getOrgId());
-									alertInforList.add(alertInfor);
-									if(null!=makeUpScoreCount.getDataSource()&&makeUpScoreCount.getDataSource().length()>0) {
-										alertInfor.setWarningSource(makeUpScoreCount.getDataSource().substring(0, makeUpScoreCount.getDataSource().length() - 1));
-									}
+							if (alarmSettings.getSetupCloseFlag() == 10) {
+								AlarmRule alarmRule = alarmRuleMap
+										.get(alarmSettings.getRuleSet());
+								if (null != alarmRule) {
+									if (makeUpScoreCount.getFailCourseNum() >= Float
+											.parseFloat(alarmRule
+													.getRightParameter())) {
+										WarningInformation alertInfor = new WarningInformation();
+										String alertId = UUID.randomUUID()
+												.toString();
+										alertInfor.setId(alertId);
+										alertInfor.setDefendantId(makeUpScoreCount
+												.getUserId());
+										alertInfor.setName(makeUpScoreCount
+												.getUserName());
+										alertInfor.setJobNumber(makeUpScoreCount
+												.getJobNum());
+										alertInfor.setCollogeId(makeUpScoreCount
+												.getCollegeId());
+										alertInfor.setCollogeName(makeUpScoreCount
+												.getCollegeName());
+										alertInfor.setClassId(makeUpScoreCount
+												.getClassId());
+										alertInfor.setClassName(makeUpScoreCount
+												.getClassName());
+										alertInfor
+												.setProfessionalId(makeUpScoreCount
+														.getProfessionalId());
+										alertInfor
+												.setProfessionalName(makeUpScoreCount
+														.getProfessionalName());
+										alertInfor.setWarningLevel(alarmSettings
+												.getWarningLevel());
+										alertInfor
+												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+										alertInfor.setAlarmSettingsId(alarmSettings
+												.getId());
+										alertInfor
+												.setWarningType(WarningTypeConstant.SupplementAchievement
+														.toString());
+										alertInfor
+												.setWarningCondition("补考后" + termConversion.getSemester(schoolYear, semester, 1).get("schoolYear") + "年第" + termConversion.getSemester(schoolYear, semester, 1).get("semester") + "学期总评成绩不及格课程数:"
+														+ makeUpScoreCount
+														.getFailCourseNum());
+										alertInfor.setSemester(semester);
+										alertInfor.setTeacherYear(schoolYear);
+										alertInfor.setWarningTime(new Date());
+										alertInfor.setPhone(makeUpScoreCount
+												.getUserPhone());
+										alertInfor.setOrgId(alarmRule.getOrgId());
+										alertInforList.add(alertInfor);
+										if (null != makeUpScoreCount.getDataSource() && makeUpScoreCount.getDataSource().length() > 0) {
+											alertInfor.setWarningSource(makeUpScoreCount.getDataSource().substring(0, makeUpScoreCount.getDataSource().length() - 1));
+										}
 
-									break;
-								} else {
-									continue;
+										break;
+									} else {
+										continue;
+									}
 								}
 							}
 						}
@@ -1584,56 +1594,58 @@ public class ScoreJob {
 				if (null != alarmScoreList && alarmScoreList.size() > 0) {
 					for (Score score : alarmScoreList) {
 						for (AlarmSettings alarmSettings : val) {
-							AlarmRule alarmRule = alarmRuleMap
-									.get(alarmSettings.getId());
-							if (null != alarmRule) {
-								int grade = 0;
-								if (null != gradeMap.get(score.getGrade())) {
-									grade = gradeMap.get(score.getGrade())
-											.intValue();
-								}
-								if (grade >= Float.parseFloat(alarmRule
-										.getRightParameter())) {
-									WarningInformation alertInfor = new WarningInformation();
-									String alertId = UUID.randomUUID()
-											.toString();
-									alertInfor.setId(alertId);
-									alertInfor
-											.setDefendantId(score.getUserId());
-									alertInfor.setName(score.getUserName());
-									alertInfor.setJobNumber(score.getJobNum());
-									alertInfor.setCollogeId(score
-											.getCollegeId());
-									alertInfor.setCollogeName(score
-											.getCollegeName());
-									alertInfor.setClassId(score.getClassId());
-									alertInfor.setClassName(score
-											.getClassName());
-									alertInfor.setProfessionalId(score
-											.getProfessionalId());
-									alertInfor.setProfessionalName(score
-											.getProfessionalName());
-									alertInfor.setWarningLevel(alarmSettings
-											.getWarningLevel());
-									alertInfor
-											.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-									alertInfor.setAlarmSettingsId(alarmSettings
-											.getId());
-									alertInfor
-											.setWarningType(WarningTypeConstant.Cet
-													.toString());
-									alertInfor.setWarningCondition("第" + grade
-											+ "学年仍未通过英语四级考试");
-									alertInfor.setSemester(semester);
-									alertInfor.setTeacherYear(schoolYear);
-									alertInfor.setWarningTime(new Date());
-									alertInfor.setPhone(score.getUserPhone());
-									alertInfor.setOrgId(alarmRule.getOrgId());
-									alertInforList.add(alertInfor);
+							if (alarmSettings.getSetupCloseFlag() == 10) {
+								AlarmRule alarmRule = alarmRuleMap
+										.get(alarmSettings.getId());
+								if (null != alarmRule) {
+									int grade = 0;
+									if (null != gradeMap.get(score.getGrade())) {
+										grade = gradeMap.get(score.getGrade())
+												.intValue();
+									}
+									if (grade >= Float.parseFloat(alarmRule
+											.getRightParameter())) {
+										WarningInformation alertInfor = new WarningInformation();
+										String alertId = UUID.randomUUID()
+												.toString();
+										alertInfor.setId(alertId);
+										alertInfor
+												.setDefendantId(score.getUserId());
+										alertInfor.setName(score.getUserName());
+										alertInfor.setJobNumber(score.getJobNum());
+										alertInfor.setCollogeId(score
+												.getCollegeId());
+										alertInfor.setCollogeName(score
+												.getCollegeName());
+										alertInfor.setClassId(score.getClassId());
+										alertInfor.setClassName(score
+												.getClassName());
+										alertInfor.setProfessionalId(score
+												.getProfessionalId());
+										alertInfor.setProfessionalName(score
+												.getProfessionalName());
+										alertInfor.setWarningLevel(alarmSettings
+												.getWarningLevel());
+										alertInfor
+												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+										alertInfor.setAlarmSettingsId(alarmSettings
+												.getId());
+										alertInfor
+												.setWarningType(WarningTypeConstant.Cet
+														.toString());
+										alertInfor.setWarningCondition("第" + grade
+												+ "学年仍未通过英语四级考试");
+										alertInfor.setSemester(semester);
+										alertInfor.setTeacherYear(schoolYear);
+										alertInfor.setWarningTime(new Date());
+										alertInfor.setPhone(score.getUserPhone());
+										alertInfor.setOrgId(alarmRule.getOrgId());
+										alertInforList.add(alertInfor);
 
-									break;
-								} else {
-									continue;
+										break;
+									} else {
+										continue;
+									}
 								}
 							}
 						}
@@ -1721,70 +1733,72 @@ public class ScoreJob {
 						&& makeUpScoreCountList.size() > 0) {
 					for (MakeUpScoreCount makeUpScoreCount : makeUpScoreCountList) {
 						for (AlarmSettings alarmSettings : val) {
-							AlarmRule alarmRule = alarmRuleMap
-									.get(alarmSettings.getRuleSet());
-							if (null != alarmRule) {
-								if (makeUpScoreCount.getFailCourseCredit() >= Float
-										.parseFloat(alarmRule
-												.getRightParameter())) {
-									WarningInformation alertInfor = new WarningInformation();
-									String alertId = UUID.randomUUID()
-											.toString();
-									alertInfor.setId(alertId);
-									alertInfor.setDefendantId(makeUpScoreCount
-											.getUserId());
-									alertInfor.setName(makeUpScoreCount
-											.getUserName());
-									alertInfor.setJobNumber(makeUpScoreCount
-											.getJobNum());
-									alertInfor.setCollogeId(makeUpScoreCount
-											.getCollegeId());
-									alertInfor.setCollogeName(makeUpScoreCount
-											.getCollegeName());
-									alertInfor.setClassId(makeUpScoreCount
-											.getClassId());
-									alertInfor.setClassName(makeUpScoreCount
-											.getClassName());
-									alertInfor
-											.setProfessionalId(makeUpScoreCount
-													.getProfessionalId());
-									alertInfor
-											.setProfessionalName(makeUpScoreCount
-													.getProfessionalName());
-									alertInfor.setWarningLevel(alarmSettings
-											.getWarningLevel());
-									alertInfor
-											.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-									alertInfor.setAlarmSettingsId(alarmSettings
-											.getId());
-									alertInfor
-											.setWarningType(WarningTypeConstant.LeaveSchool
-													.toString());
-									BigDecimal failCourseCredit = new BigDecimal(
-											makeUpScoreCount
-													.getFailCourseCredit());
-									alertInfor
-											.setWarningCondition("不及格必修课和选修课累计学分:"
-													+ failCourseCredit
-															.setScale(
-																	2,
-																	RoundingMode.HALF_UP)
-															.toString());
-									alertInfor.setWarningTime(new Date());
-									alertInfor.setPhone(makeUpScoreCount
-											.getUserPhone());
-									alertInfor.setSemester(semester);
-									alertInfor.setTeacherYear(endYear);
-									alertInfor.setOrgId(alarmRule.getOrgId());
-									alertInforList.add(alertInfor);
+							if (alarmSettings.getSetupCloseFlag() == 10) {
+								AlarmRule alarmRule = alarmRuleMap
+										.get(alarmSettings.getRuleSet());
+								if (null != alarmRule) {
+									if (makeUpScoreCount.getFailCourseCredit() >= Float
+											.parseFloat(alarmRule
+													.getRightParameter())) {
+										WarningInformation alertInfor = new WarningInformation();
+										String alertId = UUID.randomUUID()
+												.toString();
+										alertInfor.setId(alertId);
+										alertInfor.setDefendantId(makeUpScoreCount
+												.getUserId());
+										alertInfor.setName(makeUpScoreCount
+												.getUserName());
+										alertInfor.setJobNumber(makeUpScoreCount
+												.getJobNum());
+										alertInfor.setCollogeId(makeUpScoreCount
+												.getCollegeId());
+										alertInfor.setCollogeName(makeUpScoreCount
+												.getCollegeName());
+										alertInfor.setClassId(makeUpScoreCount
+												.getClassId());
+										alertInfor.setClassName(makeUpScoreCount
+												.getClassName());
+										alertInfor
+												.setProfessionalId(makeUpScoreCount
+														.getProfessionalId());
+										alertInfor
+												.setProfessionalName(makeUpScoreCount
+														.getProfessionalName());
+										alertInfor.setWarningLevel(alarmSettings
+												.getWarningLevel());
+										alertInfor
+												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+										alertInfor.setAlarmSettingsId(alarmSettings
+												.getId());
+										alertInfor
+												.setWarningType(WarningTypeConstant.LeaveSchool
+														.toString());
+										BigDecimal failCourseCredit = new BigDecimal(
+												makeUpScoreCount
+														.getFailCourseCredit());
+										alertInfor
+												.setWarningCondition("不及格必修课和选修课累计学分:"
+														+ failCourseCredit
+														.setScale(
+																2,
+																RoundingMode.HALF_UP)
+														.toString());
+										alertInfor.setWarningTime(new Date());
+										alertInfor.setPhone(makeUpScoreCount
+												.getUserPhone());
+										alertInfor.setSemester(semester);
+										alertInfor.setTeacherYear(endYear);
+										alertInfor.setOrgId(alarmRule.getOrgId());
+										alertInforList.add(alertInfor);
 
-									if(null!=makeUpScoreCount.getDataSource()&&makeUpScoreCount.getDataSource().length()>0) {
-										alertInfor.setWarningSource(makeUpScoreCount.getDataSource().substring(0, makeUpScoreCount.getDataSource().length() - 1));
+										if (null != makeUpScoreCount.getDataSource() && makeUpScoreCount.getDataSource().length() > 0) {
+											alertInfor.setWarningSource(makeUpScoreCount.getDataSource().substring(0, makeUpScoreCount.getDataSource().length() - 1));
+										}
+
+										break;
+									} else {
+										continue;
 									}
-
-									break;
-								} else {
-									continue;
 								}
 							}
 						}
