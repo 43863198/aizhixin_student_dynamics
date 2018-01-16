@@ -5,6 +5,7 @@ import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningGradeDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningSettingsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningTypeDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
+import com.aizhixin.cloud.dataanalysis.analysis.job.SchoolStatisticsAnalysisJob;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
 import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
@@ -54,18 +55,29 @@ public class AlarmSettingsService {
     private ScoreJob scoreJob;
     @Autowired
     private RelationConversionService relationConversionService;
+    @Autowired
+    private SchoolStatisticsAnalysisJob schoolStatisticsJob;
+
+
 
     public AlarmSettings getAlarmSettingsById(String id){
         return alarmSettingsRepository.findOne(id);
     }
 
 
-
     public List<AlarmSettings> getAlarmSettingsByType(String warningType){
         return alarmSettingsRepository.getAlarmSettingsByType(warningType, DataValidity.VALID.getState());
     }
 
-    
+    public List<AlarmSettings> getAlarmSettingsByTypeList(List<String> warningTypeList){
+        return alarmSettingsRepository.getAlarmSettingsByTypeList(warningTypeList, DataValidity.VALID.getState());
+    }
+
+    public void saveAlarmSettingsList(List<AlarmSettings> alarmSettingsList){
+         alarmSettingsRepository.save(alarmSettingsList);
+    }
+
+
     public List<AlarmSettings> getAlarmSettingsById(Long orgId, String warningType){
         return alarmSettingsRepository.getAlarmSettingsByOrgIdAndType(orgId, warningType, DataValidity.VALID.getState());
     }
@@ -85,7 +97,7 @@ public class AlarmSettingsService {
                     warningTypeDTO.setSetupCloseFlag(type.getSetupCloseFlag());
                     warningTypeDTO.setWarningName(type.getWarningName());
                     if(type.getSetupCloseFlag()==10) {
-                        List<AlarmSettings> alarmSettingsList = alarmSettingsRepository.getCountByOrgIdAndTypeAndOpen(orgId, type.getWarningType(), 10, DataValidity.VALID.getState());
+                        List<AlarmSettings> alarmSettingsList = alarmSettingsRepository.getCountByOrgIdAndTypeAndOpen(orgId, type.getWarningType(), DataValidity.VALID.getState());
                         warningTypeDTO.setInclusionNumber(alarmSettingsList.size());
                     }
                     data.add(warningTypeDTO);
@@ -212,8 +224,10 @@ public class AlarmSettingsService {
                     alarmSettings = alarmSettingsRepository.findOne(wg.getAlarmSettingsId());
                 } else {
                     alarmSettings = new AlarmSettings();
+                    alarmSettings.setSetupCloseFlag(20);//默认关闭状态
+                    alarmSettings.setStartTime(wg.getStartTime());
                 }
-                alarmSettings.setSetupCloseFlag(wg.getSetupCloseFlag());
+//                alarmSettings.setSetupCloseFlag(wg.getSetupCloseFlag());
                 alarmSettings.setWarningLevel(wg.getGrade());
                 alarmSettings.setOrgId(warningType.getOrgId());
                 alarmSettings.setWarningType(warningType.getWarningType());
@@ -324,6 +338,21 @@ public class AlarmSettingsService {
         return result;
     }
 
+
+    public Map<String, Object> openAlarmSettings(String alarmSettingsId) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            AlarmSettings alarmSettings = alarmSettingsRepository.findOne(alarmSettingsId);
+            alarmSettings.setSetupCloseFlag(10);
+            alarmSettingsRepository.save(alarmSettings);
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", true);
+        }
+        result.put("success", true);
+        return result;
+    }
+
     public Map<String, Object> setProcessingMode(ProcessingModeDomain processingModeDomain) {
         Map<String, Object> result = new HashMap<>();
         try {
@@ -376,6 +405,53 @@ public class AlarmSettingsService {
         }
         result.put("success", true);
         result.put("message", "保存预警处理设置信息成功!");
+        return result;
+    }
+
+
+
+    public  Map<String, Object> generateData(Long orgId,String warningType){
+        Map<String, Object> result = new HashMap<>();
+        try {
+            if(warningType.equals(WarningTypeConstant.Register.toString())){
+                alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Register.toString(), orgId);
+                studentRegisterJob.studenteRegisterJob();
+            }
+            if(warningType.equals(WarningTypeConstant.LeaveSchool.toString())){
+                alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.LeaveSchool.toString(), orgId);
+                scoreJob.dropOutJob();
+            }
+            if(warningType.equals(WarningTypeConstant.AttendAbnormal.toString())){
+                alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.AttendAbnormal.toString(), orgId);
+                scoreJob.attendAbnormalJob();
+            }
+            if(warningType.equals(WarningTypeConstant.Absenteeism.toString())){
+                alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Absenteeism.toString(), orgId);
+                rollCallJob.rollCallJob();
+            }
+            if(warningType.equals(WarningTypeConstant.TotalAchievement.toString())){
+                alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.TotalAchievement.toString(), orgId);
+                scoreJob.totalScoreJob();
+            }
+            if(warningType.equals(WarningTypeConstant.SupplementAchievement.toString())){
+            alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.SupplementAchievement.toString(), orgId);
+                scoreJob.makeUpScoreJob();
+            }
+            if(warningType.equals(WarningTypeConstant.PerformanceFluctuation.toString())){
+                alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.PerformanceFluctuation.toString(), orgId);
+                scoreJob.scoreFluctuateJob();
+            }
+            if(warningType.equals(WarningTypeConstant.Cet.toString())){
+                alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Cet.toString(), orgId);
+                scoreJob.cet4ScoreJob();
+            }
+
+        } catch (Exception e) {
+            result.put("success", true);
+            result.put("message", "手动生成数据异常！");
+        }
+        result.put("success", true);
+        result.put("message", "手动生成数据成功!");
         return result;
     }
 }

@@ -20,15 +20,18 @@ public interface AlarmSettingsRepository extends JpaRepository<AlarmSettings, St
 
     @Query("select ast from #{#entityName} ast where ast.deleteFlag = :deleteFlag and ast.warningType = :type order by warningLevel")
 	List<AlarmSettings> getAlarmSettingsByType(@Param("type")String type, @Param("deleteFlag")int deleteFlag);
-   
+
+    @Query("select ast from #{#entityName} ast where ast.deleteFlag = :deleteFlag and ast.warningType in :typeList order by warningLevel")
+    List<AlarmSettings> getAlarmSettingsByTypeList(@Param("typeList")List<String> typeList, @Param("deleteFlag")int deleteFlag);
+
     @Query("select ast from #{#entityName} ast where ast.orgId = :orgId and ast.warningType = :type and ast.warningLevel = :warningLevel and ast.deleteFlag = :deleteFlag")
     AlarmSettings getAlarmSettingsByLevel (@Param("orgId")Long orgId, @Param("type")String type, @Param("warningLevel")int warningLevel,  @Param("deleteFlag")int deleteFlag);
 
     @Query("select ast from #{#entityName} ast where ast.deleteFlag = :deleteFlag and ast.warningType = :type and ast.orgId = :orgId and ast.setupCloseFlag = :setupCloseFlag")
     List<AlarmSettings> getAlarmSettingsByOrgIdAndTypeAndOpen(@Param("orgId")Long orgId, @Param("type")String type, @Param("setupCloseFlag")int setupCloseFlag,  @Param("deleteFlag")int deleteFlag);
 
-    @Query("select ast from #{#entityName} ast where ast.deleteFlag = :deleteFlag and ast.warningType = :type and ast.orgId = :orgId and ast.setupCloseFlag = :setupCloseFlag group by ast.warningLevel")
-    List<AlarmSettings> getCountByOrgIdAndTypeAndOpen(@Param("orgId")Long orgId, @Param("type")String type, @Param("setupCloseFlag")int setupCloseFlag,  @Param("deleteFlag")int deleteFlag);
+    @Query("select ast from #{#entityName} ast where ast.deleteFlag = :deleteFlag and ast.warningType = :type and ast.orgId = :orgId  group by ast.warningLevel")
+    List<AlarmSettings> getCountByOrgIdAndTypeAndOpen(@Param("orgId")Long orgId, @Param("type")String type,  @Param("deleteFlag")int deleteFlag);
 
 
 

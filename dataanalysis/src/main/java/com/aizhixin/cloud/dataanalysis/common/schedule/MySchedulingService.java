@@ -1,6 +1,7 @@
 package com.aizhixin.cloud.dataanalysis.common.schedule;
 
 import com.aizhixin.cloud.dataanalysis.analysis.job.CetStatisticsAnalysisJob;
+import com.aizhixin.cloud.dataanalysis.setup.job.WarningSettingsOnAndOffJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,8 @@ public class MySchedulingService {
     private RollCallDayJob rollCallDayJob;
     @Autowired
     private TeachingScheduleJob teachingScheduleJob;
+    @Autowired
+    private WarningSettingsOnAndOffJob warningSettingsOnAndOffJob;
 
 
     @Scheduled(cron = "0 0 4 * * ?")
@@ -185,10 +188,22 @@ public class MySchedulingService {
     public void teachingScheduleJob() {
         if (distributeLock.getTeachingScheduleLock()) {
             LOG.info("开始实时监控排课统计定时任务");
-            teachingScheduleJob.getTeachingScheduleJob();;
+            teachingScheduleJob.getTeachingScheduleJob();
         } else {
             LOG.info("启动实时监控排课统计，获取锁失败");
         }
     }
+
+    @Scheduled(cron = "0 0 2 * * ?")
+    public void WarningSettingsOnAndOffJob() {
+        if (distributeLock.getWarningSettingsOnAndOffScheduleLock()) {
+            LOG.info("预警设置定时任务开启/关闭");
+            warningSettingsOnAndOffJob.updateWarningSettingsOnAndOff();
+        } else {
+            LOG.info("预警设置定时任务开启/关闭，获取锁失败");
+        }
+    }
+
+
 
 }

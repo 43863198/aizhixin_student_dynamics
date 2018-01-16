@@ -3,6 +3,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -22,6 +23,9 @@ public class WarningGradeDomain {
 
     @ApiModelProperty(value = "开启状态(10:启用 ;20:关闭；")
     private int setupCloseFlag;
+
+    @ApiModelProperty(value = "开始时间")
+    private Date startTime;
 
     @ApiModelProperty(value = "规则序号及参数")
     List<WaringParameterDomain> waringParameterDomainList;
