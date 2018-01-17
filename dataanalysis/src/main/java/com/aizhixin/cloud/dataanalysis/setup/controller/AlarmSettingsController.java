@@ -3,7 +3,8 @@ package com.aizhixin.cloud.dataanalysis.setup.controller;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningSettingsDTO;
 import com.aizhixin.cloud.dataanalysis.setup.domain.AlarmSettingDomain;
 import com.aizhixin.cloud.dataanalysis.setup.domain.ProcessingModeDomain;
-import com.aizhixin.cloud.dataanalysis.setup.job.WarningSettingsOnAndOffJob;
+import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
+import com.aizhixin.cloud.dataanalysis.setup.job.WarningTypeOnAndOffJob;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
 
 import io.swagger.annotations.Api;
@@ -31,7 +32,7 @@ public class AlarmSettingsController {
     @Autowired
     private AlarmSettingsService alarmSettingsService;
     @Autowired
-    private WarningSettingsOnAndOffJob warningSettingsOnAndOffJob;
+    private WarningTypeOnAndOffJob warningTypeOnAndOffJob;
 
     /**
      * 预警类型列表
@@ -169,8 +170,8 @@ public class AlarmSettingsController {
     public ResponseEntity<Map<String, Object>> openingOrClosing(
             @ApiParam(value = "noOfOff 10:打开;20:关闭", required = true) @RequestParam(value = "noOfOff", required = true) int noOfOff
     ) {
-        warningSettingsOnAndOffJob.updateWarningSettings(noOfOff);
-        warningSettingsOnAndOffJob.updateAbsenteeismWarningSettings(noOfOff);
+        warningTypeOnAndOffJob.updateWarningType(noOfOff);
+        warningTypeOnAndOffJob.updateAbsenteeismWarningType(noOfOff);
         Map<String, Object> result = new HashMap<String, Object>();
         return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
     }
