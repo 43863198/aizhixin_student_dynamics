@@ -69,8 +69,8 @@ public class AlarmSettingsController {
                     "</b><br>setupCloseFlag:开启状态(10:启用 ;20:关闭;" +
                     "</b><br>waringParameterDomainList:包含;" +
                     "</b><br>serialNumber:序号;" +
-                    "<br><br>parameter:参数;<br><b>"+
-                    "</b>选填:、<br>startTime:开始时间(新生报到截止时间);"
+                    "<br><br>parameter:参数;<br><b>"
+//                    "</b>选填:、<br>startTime:开始时间(新生报到截止时间);"
             )
             @RequestBody AlarmSettingDomain alarmSettingDomain
     ){
@@ -129,9 +129,10 @@ public class AlarmSettingsController {
     @GetMapping(value = "/openalarmsettings", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "迎新开启引擎", response = Void.class, notes = "迎新开启引擎<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object> openAlarmSettings(
-            @ApiParam(value = "alarmSettingsId 预警设置id" , required = true) @RequestParam(value = "alarmSettingsId", required = true) String alarmSettingsId
+            @ApiParam(value = "alarmSettingsId 预警设置id" , required = true) @RequestParam(value = "alarmSettingsId", required = true) String alarmSettingsId,
+            @ApiParam(value = "expiryDate 新生报到截止日期(yyyy-MM-dd)" , required = true) @RequestParam(value = "expiryDate", required = true) String expiryDate
     ){
-        return alarmSettingsService.openAlarmSettings(alarmSettingsId);
+        return alarmSettingsService.openAlarmSettings(alarmSettingsId,expiryDate);
     }
 
     /**

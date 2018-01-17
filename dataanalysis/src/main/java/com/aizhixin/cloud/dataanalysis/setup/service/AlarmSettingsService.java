@@ -25,6 +25,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -185,6 +186,7 @@ public class AlarmSettingsService {
                         if (waringGradeDTO.getGrade() == as.getWarningLevel()) {
                             waringGradeDTO.setSetupCloseFlag(as.getSetupCloseFlag());
                             waringGradeDTO.setAlarmSettingsId(as.getId());
+                            waringGradeDTO.setStartTime(as.getStartTime());
                             List<AlarmRule> alarmRuleList = alarmRuleService.getByAlarmSettingId(as.getId());
                             for (AlarmRule alarmRule : alarmRuleList) {
                                 for (WarningDescparameterDTO waringDescParameterDTO : waringGradeDTO.getDescribeParameter()) {
@@ -339,15 +341,18 @@ public class AlarmSettingsService {
     }
 
 
-    public Map<String, Object> openAlarmSettings(String alarmSettingsId) {
+    public Map<String, Object> openAlarmSettings(String alarmSettingsId,String expiryDate) {
         Map<String, Object> result = new HashMap<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
             AlarmSettings alarmSettings = alarmSettingsRepository.findOne(alarmSettingsId);
             alarmSettings.setSetupCloseFlag(10);
+            alarmSettings.setStartTime(sdf.parse(expiryDate));
             alarmSettingsRepository.save(alarmSettings);
         } catch (Exception e) {
             e.printStackTrace();
-            result.put("success", true);
+            result.put("success", false);
+            return result;
         }
         result.put("success", true);
         return result;
