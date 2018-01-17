@@ -19,12 +19,12 @@ import java.util.*;
  * @Date: 2018-01-15
  */
 @Component
-public class WarningSettingsOnAndOffJob {
-    final static private Logger LOG = LoggerFactory.getLogger(WarningSettingsOnAndOffJob.class);
+public class WarningTypeOnAndOffJob {
+    final static private Logger LOG = LoggerFactory.getLogger(WarningTypeOnAndOffJob.class);
     @Autowired
     private WarningTypeService warningTypeService;
 
-    public void updateWarningSettingsOnAndOff() {
+    public void updateWarningTypeOnAndOff() {
 
         Calendar c = Calendar.getInstance();
         // 当前月份
@@ -34,20 +34,20 @@ public class WarningSettingsOnAndOffJob {
         //当前星期
         int weekDay = c.get(Calendar.DAY_OF_WEEK);
         if(month == 9 || month == 3) {
-            this.updateAbsenteeismWarningSettings(10);
+            this.updateAbsenteeismWarningType(10);
             if(week >= 3 && Calendar.MONDAY ==weekDay) {
-              this.updateWarningSettings(10);
+              this.updateWarningType(10);
             }
         }else if(month == 2 || month == 8){
-            this.updateWarningSettings(20);
-            this.updateAbsenteeismWarningSettings(20);
+            this.updateWarningType(20);
+            this.updateAbsenteeismWarningType(20);
         }else if(month != 9 && month != 3 && month != 2 && month != 8){
-            this.updateWarningSettings(10);
-            this.updateAbsenteeismWarningSettings(10);
+            this.updateWarningType(10);
+            this.updateAbsenteeismWarningType(10);
         }
     }
 
-    public void updateWarningSettings(int setupCloseFlag){
+    public void updateWarningType(int setupCloseFlag){
 
         Set<String> typeList = new HashSet<>();
         typeList.add(WarningTypeConstant.PerformanceFluctuation.
@@ -70,7 +70,7 @@ public class WarningSettingsOnAndOffJob {
     }
 
 
-    public void updateAbsenteeismWarningSettings(int setupCloseFlag){
+    public void updateAbsenteeismWarningType(int setupCloseFlag){
 
         Set<String> typeList = new HashSet<>();
         typeList.add(WarningTypeConstant.Absenteeism.

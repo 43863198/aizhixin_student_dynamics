@@ -89,7 +89,8 @@ public class AlertWarningInformationController {
     @ApiOperation(httpMethod = "GET", value = "预警汇总", response = Void.class, notes = "预警汇总<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object>   getStatistical(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
-        return alertWarningInforService.getStatistical(orgId);
+        Map<String,Integer> schoolYearSemester = alertWarningInforService.getschoolYearAndSemester();
+        return alertWarningInforService.getStatistical(orgId,schoolYearSemester.get("schoolYear"),schoolYearSemester.get("semester"));
     }
 
 
@@ -103,7 +104,8 @@ public class AlertWarningInformationController {
     @ApiOperation(httpMethod = "GET", value = "院系预警汇总", response = Void.class, notes = "院系预警汇总<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object>   getStatisticalCollege(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
-        return alertWarningInforService.getStatisticalCollege(orgId);
+        Map<String,Integer> schoolYearSemester = alertWarningInforService.getschoolYearAndSemester();
+        return alertWarningInforService.getStatisticalCollege(orgId,schoolYearSemester.get("schoolYear"),schoolYearSemester.get("semester"));
     }
 
     /**
@@ -115,8 +117,10 @@ public class AlertWarningInformationController {
     @GetMapping(value = "/collegeprocessedratio", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "院系处理率top---10", response = Void.class, notes = "院系处理率top---10<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object>   getCollegeProcessedRatio(
-            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
-        return alertWarningInforService.getCollegeProcessedRatio(orgId);
+            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId
+    ){
+        Map<String,Integer> schoolYearSemester = alertWarningInforService.getschoolYearAndSemester();
+        return alertWarningInforService.getCollegeProcessedRatio(orgId,schoolYearSemester.get("schoolYear"),schoolYearSemester.get("semester"));
     }
 
 
@@ -130,7 +134,8 @@ public class AlertWarningInformationController {
     @ApiOperation(httpMethod = "GET", value = "预警分类汇总", response = Void.class, notes = "预警分类汇总<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object>   getStatisticalType(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
-        return alertWarningInforService.getStatisticalType(orgId);
+        Map<String,Integer> schoolYearSemester = alertWarningInforService.getschoolYearAndSemester();
+        return alertWarningInforService.getStatisticalType(orgId,schoolYearSemester.get("schoolYear"),schoolYearSemester.get("semester"));
     }
 
 
