@@ -32,9 +32,11 @@ public class WarningSettingsOnAndOffJob {
         int month = c.get(Calendar.MONTH)+1;
         // 当前周
         int week = c.get(Calendar.WEEK_OF_MONTH);
+        //当前星期
+        int weekDay = c.get(Calendar.DAY_OF_WEEK);
         if(month == 9 || month == 3) {
             this.updateAbsenteeismWarningSettings(10);
-            if(week >= 3) {
+            if(week >= 3 && Calendar.MONDAY ==weekDay) {
               this.updateWarningSettings(10);
             }
         }else if(month == 2 || month == 8){

@@ -62,7 +62,7 @@ public class AlarmSettings extends AbstractEntity {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
-    @Getter @Setter protected Date startTime = new Date();
+    @Getter @Setter protected Date startTime;
 
 
     /*
@@ -74,7 +74,7 @@ public class AlarmSettings extends AbstractEntity {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
-    @Getter @Setter protected Date endTime = new Date();
+    @Getter @Setter protected Date endTime;
 
     /*
     * 开启状态(10:启用 ;20:关闭；)
