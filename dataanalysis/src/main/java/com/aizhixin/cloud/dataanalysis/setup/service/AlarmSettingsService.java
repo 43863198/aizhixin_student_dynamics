@@ -98,10 +98,10 @@ public class AlarmSettingsService {
                     warningTypeDTO.setWarningType(type.getWarningType());
                     warningTypeDTO.setSetupCloseFlag(type.getSetupCloseFlag());
                     warningTypeDTO.setWarningName(type.getWarningName());
-                    if(type.getSetupCloseFlag()==10) {
+//                    if(type.getSetupCloseFlag()==10) {
                         List<AlarmSettings> alarmSettingsList = alarmSettingsRepository.getCountByOrgIdAndTypeAndOpen(orgId, type.getWarningType(), DataValidity.VALID.getState());
                         warningTypeDTO.setInclusionNumber(alarmSettingsList.size());
-                    }
+//                    }
                     data.add(warningTypeDTO);
                 }
             }
