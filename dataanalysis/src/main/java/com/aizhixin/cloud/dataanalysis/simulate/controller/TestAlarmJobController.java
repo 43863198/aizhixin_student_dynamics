@@ -52,8 +52,6 @@ public class TestAlarmJobController {
 	private SchoolStatisticsAnalysisJob schoolStatisticsJob;
 	@Autowired
 	private AlertWarningInformationService alertWarningInformationService;
-	@Autowired
-	private WarningSettingsOnAndOffJob warningSettingsOnAndOffJob;
 
 
 	@RequestMapping(value = "/rollcallcountjob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -223,17 +221,6 @@ public class TestAlarmJobController {
 			@ApiParam(value = "warningLevel 预警等级") @RequestParam(value = "warningLevel", required = true) int warningLevel
 			) {
 		alertWarningInformationService.updateWarningStateByWarningLevel(AlertTypeConstant.ALERT_PROCESSED, warningLevel, orgIds);
-		Map<String, Object> result = new HashMap<String, Object>();
-		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
-	}
-
-	@RequestMapping(value = "/openingorclosing", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(httpMethod = "GET", value = "手动一键开启或关闭预警设置", response = Void.class, notes = "手动一键开启或关闭预警设置<br><br><b>@author jianwei.wu</b>")
-	public ResponseEntity<Map<String, Object>> openingOrClosing(
-			@ApiParam(value = "noOfOff 10:打开;20:关闭",required = true) @RequestParam(value = "noOfOff", required = true) int noOfOff
-	) {
-		warningSettingsOnAndOffJob.updateWarningSettings(noOfOff);
-		warningSettingsOnAndOffJob.updateAbsenteeismWarningSettings(noOfOff);
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}

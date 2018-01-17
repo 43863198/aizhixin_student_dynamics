@@ -3,6 +3,7 @@ package com.aizhixin.cloud.dataanalysis.setup.job;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningSettingsDTO;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
+import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
 import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
 import org.slf4j.Logger;
@@ -10,9 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author: Created by jianwei.wu
@@ -23,7 +22,7 @@ import java.util.List;
 public class WarningSettingsOnAndOffJob {
     final static private Logger LOG = LoggerFactory.getLogger(WarningSettingsOnAndOffJob.class);
     @Autowired
-    private AlarmSettingsService alarmSettingsService;
+    private WarningTypeService warningTypeService;
 
     public void updateWarningSettingsOnAndOff() {
 
@@ -50,38 +49,38 @@ public class WarningSettingsOnAndOffJob {
 
     public void updateWarningSettings(int setupCloseFlag){
 
-        List<String> warningTypeList = new ArrayList<>();
-        warningTypeList.add(WarningTypeConstant.PerformanceFluctuation.
+        Set<String> typeList = new HashSet<>();
+        typeList.add(WarningTypeConstant.PerformanceFluctuation.
                 toString()); // 成绩波动预警设置
-        warningTypeList.add(WarningTypeConstant.SupplementAchievement
+        typeList.add(WarningTypeConstant.SupplementAchievement
                 .toString()); // 补考成绩预警设置
-        warningTypeList.add(WarningTypeConstant.TotalAchievement
+        typeList.add(WarningTypeConstant.TotalAchievement
                 .toString()); // 总评成绩预警设置
-        warningTypeList.add(WarningTypeConstant.AttendAbnormal
+        typeList.add(WarningTypeConstant.AttendAbnormal
                 .toString()); // 修读异常预警设置
-        warningTypeList.add(WarningTypeConstant.LeaveSchool
+        typeList.add(WarningTypeConstant.LeaveSchool
                 .toString()); // 退学预警设置
 
-        List<AlarmSettings> alarmSettingsList = alarmSettingsService.getAlarmSettingsByTypeList(warningTypeList);
+        List<WarningType> warningTypeList = warningTypeService.getWarningTypeByTypeList(typeList);
 
-        for (AlarmSettings as : alarmSettingsList) {
-            as.setSetupCloseFlag(setupCloseFlag);
+        for (WarningType tpl : warningTypeList) {
+            tpl.setSetupCloseFlag(setupCloseFlag);
         }
-        alarmSettingsService.saveAlarmSettingsList(alarmSettingsList);
+        warningTypeService.save(warningTypeList);
     }
 
 
     public void updateAbsenteeismWarningSettings(int setupCloseFlag){
 
-        List<String> warningTypeList = new ArrayList<>();
-        warningTypeList.add(WarningTypeConstant.Absenteeism.
+        Set<String> typeList = new HashSet<>();
+        typeList.add(WarningTypeConstant.Absenteeism.
                 toString()); // 旷课预警
-        List<AlarmSettings> alarmSettingsList = alarmSettingsService.getAlarmSettingsByTypeList(warningTypeList);
+        List<WarningType> warningTypeList = warningTypeService.getWarningTypeByTypeList(typeList);
 
-        for (AlarmSettings as : alarmSettingsList) {
-            as.setSetupCloseFlag(setupCloseFlag);
+        for (WarningType tpl : warningTypeList) {
+            tpl.setSetupCloseFlag(setupCloseFlag);
         }
-        alarmSettingsService.saveAlarmSettingsList(alarmSettingsList);
+        warningTypeService.save(warningTypeList);
     }
 
 

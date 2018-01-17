@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,6 +22,8 @@ public class WarningSettingsDTO {
     private String warningName;
     @ApiModelProperty(value = "开启或关闭")
     private int setupCloseFlag;
+    @ApiModelProperty(value = "规则预警起始时间")
+    private Date startTime;
     @ApiModelProperty(value = "包含的等级")
     private List<WarningGradeDTO> gradeDTOList;
 
