@@ -1,7 +1,8 @@
 package com.aizhixin.cloud.dataanalysis.common.schedule;
 
 import com.aizhixin.cloud.dataanalysis.analysis.job.CetStatisticsAnalysisJob;
-import com.aizhixin.cloud.dataanalysis.setup.job.WarningSettingsOnAndOffJob;
+import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
+import com.aizhixin.cloud.dataanalysis.setup.job.WarningTypeOnAndOffJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class MySchedulingService {
     @Autowired
     private TeachingScheduleJob teachingScheduleJob;
     @Autowired
-    private WarningSettingsOnAndOffJob warningSettingsOnAndOffJob;
+    private WarningTypeOnAndOffJob warningTypeOnAndOffJob;
 
 
     @Scheduled(cron = "0 0 4 * * ?")
@@ -198,7 +199,7 @@ public class MySchedulingService {
     public void WarningSettingsOnAndOffJob() {
         if (distributeLock.getWarningSettingsOnAndOffScheduleLock()) {
             LOG.info("预警设置定时任务开启/关闭");
-            warningSettingsOnAndOffJob.updateWarningSettingsOnAndOff();
+            warningTypeOnAndOffJob.updateWarningTypeOnAndOff();
         } else {
             LOG.info("预警设置定时任务开启/关闭，获取锁失败");
         }

@@ -104,7 +104,8 @@ public class MonitorController {
 	@GetMapping(value = "/alarm", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "大屏监控预警处理情况", response = Void.class, notes = "大屏监控预警处理情况<br><br><b>@author 王俊</b>")
 	public Map<String,Object> getAlarm(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
-		return alertWarningInforService.getStatistical(orgId);//getAlarm(orgId)
+		Map<String,Integer> schoolYearSemester = alertWarningInforService.getschoolYearAndSemester();
+		return alertWarningInforService.getStatistical(orgId,schoolYearSemester.get("schoolYear"),schoolYearSemester.get("semester"));//getAlarm(orgId)
 	}
 	/**
 	 * 大屏监控人数统计
