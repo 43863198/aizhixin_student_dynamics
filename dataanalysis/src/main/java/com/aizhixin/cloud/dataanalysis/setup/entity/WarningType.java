@@ -1,14 +1,17 @@
 package com.aizhixin.cloud.dataanalysis.setup.entity;
 
 import com.aizhixin.cloud.dataanalysis.common.entity.AbstractEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 /**
  * @author: Created by jianwei.wu
@@ -54,5 +57,29 @@ public class WarningType extends AbstractEntity {
     @NotNull
     @Column(name = "SETUP_CLOSE_FLAG")
     @Getter @Setter private int setupCloseFlag;
+
+
+
+    /*
+     * 告警开始时间
+     */
+    @ApiModelProperty(value = "预警起始时间")
+    @CreatedDate
+    @Column(name = "START_TIME")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Getter @Setter protected Date startTime;
+
+    /*
+     * 告警结束时间
+     */
+    @ApiModelProperty(value = "预警结束时间")
+    @CreatedDate
+    @Column(name = "END_TIME")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Getter @Setter protected Date endTime;
 
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author: Created by jianwei.wu
@@ -30,8 +31,16 @@ public class WarningTypeService {
         return warningTypeRespository.findOne(id);
     }
 
+    public List<WarningType> getAllWarningTypeList(){
+        return warningTypeRespository.getAllWarningType(DataValidity.VALID.getState());
+    }
+
     public List<WarningType> getWarningTypeList(Long orgId){
         return warningTypeRespository.getWarningTypeByOrgId(orgId, DataValidity.VALID.getState());
+    }
+
+    public List<WarningType> getWarningTypeByTypeList(Set<String> typeList){
+        return warningTypeRespository.getWarningTypeByTypeList(typeList, DataValidity.VALID.getState());
     }
 
     public void save(WarningType warningType){

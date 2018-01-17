@@ -23,8 +23,6 @@ public class WarningGradeDTO {
     private String name;
     @ApiModelProperty(value = "开启状态(10:启用 ;20:关闭；")
     private int setupCloseFlag;
-    @ApiModelProperty(value = "规则预警起始时间")
-    private Date startTime;
     @ApiModelProperty(value = "规则描述及参数")
     List<WarningDescparameterDTO> describeParameter;
 

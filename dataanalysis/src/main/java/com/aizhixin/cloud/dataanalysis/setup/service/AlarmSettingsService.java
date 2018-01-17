@@ -122,6 +122,7 @@ public class AlarmSettingsService {
             warningSettingsDTO.setWarningName(warningType.getWarningName());
             warningSettingsDTO.setSetupCloseFlag(warningType.getSetupCloseFlag());
             warningSettingsDTO.setWarningTypeId(warningTypeId);
+            warningSettingsDTO.setStartTime(warningType.getStartTime());
             List<WarningGradeDTO> warningGradeDTOList = new ArrayList<>();
 
             List<WarningDescparameterDTO> waringDescParameterDTOArrayList1 = new ArrayList<>();
@@ -186,7 +187,6 @@ public class AlarmSettingsService {
                         if (waringGradeDTO.getGrade() == as.getWarningLevel()) {
                             waringGradeDTO.setSetupCloseFlag(as.getSetupCloseFlag());
                             waringGradeDTO.setAlarmSettingsId(as.getId());
-                            waringGradeDTO.setStartTime(as.getStartTime());
                             List<AlarmRule> alarmRuleList = alarmRuleService.getByAlarmSettingId(as.getId());
                             for (AlarmRule alarmRule : alarmRuleList) {
                                 for (WarningDescparameterDTO waringDescParameterDTO : waringGradeDTO.getDescribeParameter()) {
@@ -226,10 +226,8 @@ public class AlarmSettingsService {
                     alarmSettings = alarmSettingsRepository.findOne(wg.getAlarmSettingsId());
                 } else {
                     alarmSettings = new AlarmSettings();
-                    alarmSettings.setSetupCloseFlag(20);//默认关闭状态
-                    alarmSettings.setStartTime(wg.getStartTime());
                 }
-//                alarmSettings.setSetupCloseFlag(wg.getSetupCloseFlag());
+                alarmSettings.setSetupCloseFlag(wg.getSetupCloseFlag());
                 alarmSettings.setWarningLevel(wg.getGrade());
                 alarmSettings.setOrgId(warningType.getOrgId());
                 alarmSettings.setWarningType(warningType.getWarningType());
@@ -341,14 +339,14 @@ public class AlarmSettingsService {
     }
 
 
-    public Map<String, Object> openAlarmSettings(String alarmSettingsId,String expiryDate) {
+    public Map<String, Object> openAlarmSettings(String warningTypeId,String expiryDate) {
         Map<String, Object> result = new HashMap<>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
-            AlarmSettings alarmSettings = alarmSettingsRepository.findOne(alarmSettingsId);
-            alarmSettings.setSetupCloseFlag(10);
-            alarmSettings.setStartTime(sdf.parse(expiryDate));
-            alarmSettingsRepository.save(alarmSettings);
+            WarningType warningType = warningTypeService.getWarningTypeById(warningTypeId);
+            warningType.setSetupCloseFlag(10);
+            warningType.setStartTime(sdf.parse(expiryDate));
+            warningTypeService.save(warningType);
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
