@@ -10,8 +10,9 @@
     <!-- 预警类型表结构-->
     <changeSet id="20180117154645" author="jianwei.wu">
         <addColumn tableName="T_WARNING_TYPE">
-           <column name="START_TIME" type="DATETIME"  remarks="预警起始时间"></column>
-           <column name="END_TIME" type="DATETIME"  remarks="预警结束时间"></column>
+            <column name="START_TIME" type="DATETIME"  remarks="预警起始时间"></column>
+            <column name="END_TIME" type="DATETIME"  remarks="预警结束时间"></column>
+            <column name="TYPE_DESCRIBE" type="VARCHAR(50)"  remarks="类型描述"></column>
        </addColumn>
     </changeSet>
 </databaseChangeLog>

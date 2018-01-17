@@ -49,6 +49,7 @@ public class AddDataController {
       WarningType warningType1 = new WarningType();
       warningType1.setOrgId(orgId);
       warningType1.setWarningType("Register");
+      warningType1.setWarningTypeDescribe("短期过程性预警");
       warningType1.setWarningName("迎新报到预警");
       warningType1.setSetupCloseFlag(20);
       warningType1.setWarningDescribe("未报到注册天数≥");
@@ -56,6 +57,7 @@ public class AddDataController {
       WarningType warningType2 = new WarningType();
       warningType2.setOrgId(orgId);
       warningType2.setWarningType("LeaveSchool");
+      warningType2.setWarningTypeDescribe("结果性预警");
       warningType2.setWarningName("退学预警");
       warningType2.setSetupCloseFlag(20);
       warningType2.setWarningDescribe("必修课和专业选修课不及格课程累计学分≥");
@@ -63,6 +65,7 @@ public class AddDataController {
       WarningType warningType3 = new WarningType();
       warningType3.setOrgId(orgId);
       warningType3.setWarningType("AttendAbnormal");
+      warningType3.setWarningTypeDescribe("结果性预警");
       warningType3.setWarningName("修读异常预警");
       warningType3.setSetupCloseFlag(20);
       warningType3.setWarningDescribe("不合格的必修课程（含集中性实践教学环节）学分≥");
@@ -70,6 +73,7 @@ public class AddDataController {
       WarningType warningType4 = new WarningType();
       warningType4.setOrgId(orgId);
       warningType4.setWarningType("Absenteeism");
+      warningType4.setWarningTypeDescribe("全学期过程性预警");
       warningType4.setWarningName("旷课预警");
       warningType4.setSetupCloseFlag(20);
       warningType4.setWarningDescribe("本学期内旷课次数≥");
@@ -77,6 +81,7 @@ public class AddDataController {
       WarningType warningType5 = new WarningType();
       warningType5.setOrgId(orgId);
       warningType5.setWarningType("TotalAchievement");
+      warningType5.setWarningTypeDescribe("结果性预警");
       warningType5.setWarningName("总评成绩预警");
       warningType5.setSetupCloseFlag(20);
       warningType5.setWarningDescribe("上学期总评不及格课程门数≥,上学期平均学分绩点≤");
@@ -84,6 +89,7 @@ public class AddDataController {
       WarningType warningType6 = new WarningType();
       warningType6.setOrgId(orgId);
       warningType6.setWarningType("SupplementAchievement");
+      warningType6.setWarningTypeDescribe("结果性预警");
       warningType6.setWarningName("补考成绩预警");
       warningType6.setSetupCloseFlag(20);
       warningType6.setWarningDescribe("补考后上学期总评不及格课程门数≥");
@@ -91,6 +97,7 @@ public class AddDataController {
       WarningType warningType7 = new WarningType();
       warningType7.setOrgId(orgId);
       warningType7.setWarningType("PerformanceFluctuation");
+      warningType7.setWarningTypeDescribe("结果性预警");
       warningType7.setWarningName("成绩波动预警");
       warningType7.setSetupCloseFlag(20);
       warningType7.setWarningDescribe("相邻两个学期平均绩点相比下降数值≥,班级成绩排名下降名次≥");
@@ -98,6 +105,7 @@ public class AddDataController {
       WarningType warningType8 = new WarningType();
       warningType8.setOrgId(orgId);
       warningType8.setWarningType("Cet");
+      warningType8.setWarningTypeDescribe("结果性预警");
       warningType8.setWarningName("CET-4成绩预警");
       warningType8.setSetupCloseFlag(20);
       warningType8.setWarningDescribe("英语四级分数小于425分并且在校学年数已≥");
