@@ -24,10 +24,12 @@ import com.aizhixin.cloud.dataanalysis.rollCall.mongoEntity.RollCall;
 import com.aizhixin.cloud.dataanalysis.rollCall.mongoEntity.RollCallCount;
 import com.aizhixin.cloud.dataanalysis.rollCall.mongoRespository.RollCallCountMongoRespository;
 import com.aizhixin.cloud.dataanalysis.rollCall.mongoRespository.RollCallMongoRespository;
+import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmRuleService;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
 import com.aizhixin.cloud.dataanalysis.setup.service.ProcessingModeService;
 
+import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
 import org.apache.log4j.Logger;
 
 import net.sf.json.JSONArray;
@@ -62,6 +64,8 @@ public class RollCallJob {
 	private AlertWarningInformationService alertWarningInformationService;
 	@Autowired
 	private ProcessingModeService processingModeService;
+	@Autowired
+	private WarningTypeService warningTypeService;
 	
 	/**
 	 * 统计mongo里的本学期考勤数据将汇总的数据存入rollCallCount里
@@ -151,6 +155,17 @@ public class RollCallJob {
 
 	public void rollCallJob() {
 
+		// 获取的预警类型
+		List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
+
+		//已经开启次预警类型的组织
+		Set<Long> orgIdSet = new HashSet<>();
+		for (WarningType wt : warningTypeList) {
+			if (wt.getSetupCloseFlag() == 10) {
+				orgIdSet.add(wt.getOrgId());
+			}
+		}
+
 		// 获取预警配置
 		List<AlarmSettings> settingsList = alarmSettingsService
 				.getAlarmSettingsByType(WarningTypeConstant.Absenteeism.toString());
@@ -174,26 +189,27 @@ public class RollCallJob {
 			Set<String> warnSettingsIdList = new HashSet<String>();
 			// 按orgId归类告警等级阀值
 			for (AlarmSettings settings : settingsList) {
+				if (orgIdSet.contains(settings.getOrgId())) {
+					warnSettingsIdList.add(settings.getId());
+					Long orgId = settings.getOrgId();
 
-				warnSettingsIdList.add(settings.getId());
-				Long orgId = settings.getOrgId();
-				
-				if(StringUtils.isEmpty(settings.getRuleSet())){
-					continue;
-				}
-				String[] warmRuleIds = settings.getRuleSet().split(",");
-				for (String warmRuleId : warmRuleIds) {
-					if (!StringUtils.isEmpty(warmRuleId)) {
-						warnRuleIdList.add(warmRuleId);
+					if (StringUtils.isEmpty(settings.getRuleSet())) {
+						continue;
 					}
-				}
-				if (null != alarmMap.get(orgId)) {
-					ArrayList<AlarmSettings> alarmList = alarmMap.get(orgId);
-					alarmList.add(settings);
-				} else {
-					ArrayList<AlarmSettings> alarmList = new ArrayList<AlarmSettings>();
-					alarmList.add(settings);
-					alarmMap.put(orgId, alarmList);
+					String[] warmRuleIds = settings.getRuleSet().split(",");
+					for (String warmRuleId : warmRuleIds) {
+						if (!StringUtils.isEmpty(warmRuleId)) {
+							warnRuleIdList.add(warmRuleId);
+						}
+					}
+					if (null != alarmMap.get(orgId)) {
+						ArrayList<AlarmSettings> alarmList = alarmMap.get(orgId);
+						alarmList.add(settings);
+					} else {
+						ArrayList<AlarmSettings> alarmList = new ArrayList<AlarmSettings>();
+						alarmList.add(settings);
+						alarmMap.put(orgId, alarmList);
+					}
 				}
 			}
 			// 预警规则获取
