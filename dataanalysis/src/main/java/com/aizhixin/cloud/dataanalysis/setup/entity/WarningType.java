@@ -38,6 +38,13 @@ public class WarningType extends AbstractEntity {
     @Getter @Setter private String warningType;
 
     /*
+    * 预警类型描述
+    */
+    @NotNull
+    @Column(name = "TYPE_DESCRIBE")
+    @Getter @Setter private String warningTypeDescribe;
+
+    /*
    * 预警名称
    */
     @NotNull

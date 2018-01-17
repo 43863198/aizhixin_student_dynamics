@@ -18,6 +18,8 @@ public class WarningTypeDTO {
     private Long orgId;
     @ApiModelProperty(value = "告警类型")
     private String warningType;
+    @ApiModelProperty(value = "告警类型描述")
+    private String warningTypeDescribe;
     @ApiModelProperty(value = "告警名称")
     private String warningName;
     @ApiModelProperty(value = "开启或关闭")

@@ -94,6 +94,7 @@ public class AlarmSettingsService {
                     WarningTypeDTO warningTypeDTO = new WarningTypeDTO();
                     warningTypeDTO.setOrgId(orgId);
                     warningTypeDTO.setId(type.getId());
+                    warningTypeDTO.setWarningTypeDescribe(type.getWarningTypeDescribe());
                     warningTypeDTO.setWarningType(type.getWarningType());
                     warningTypeDTO.setSetupCloseFlag(type.getSetupCloseFlag());
                     warningTypeDTO.setWarningName(type.getWarningName());
