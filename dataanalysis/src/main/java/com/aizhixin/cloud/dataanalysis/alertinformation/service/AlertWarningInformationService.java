@@ -78,6 +78,11 @@ public class AlertWarningInformationService {
         return alertWarningInformationRepository.countByDeleteFlagAndWarningStateAndWarningLevel(DataValidity.VALID.getState(), warningState, warningLevel);
     }
 
+
+    public void deleteWarningInformation(Long orgId, String warningType, Integer schoolYear, Integer semester){
+          alertWarningInformationRepository.deletePageDataByOrgIdAndTeacherYearAndSemester(orgId,warningType,schoolYear,semester);
+    }
+
     /**
      * 按预警类型逻辑删除预警信息
      *
