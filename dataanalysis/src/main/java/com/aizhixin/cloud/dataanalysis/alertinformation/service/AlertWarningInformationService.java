@@ -1141,7 +1141,7 @@ public class AlertWarningInformationService {
             schoolYear = schoolYear - 1;
         }
         result.put("schoolYear", schoolYear);
-        result.put("semester", schoolYear);
+        result.put("semester", semester);
         return result;
     }
 }
