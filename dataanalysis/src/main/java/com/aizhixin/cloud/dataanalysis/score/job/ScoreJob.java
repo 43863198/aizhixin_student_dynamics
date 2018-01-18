@@ -84,7 +84,6 @@ public class ScoreJob {
 	@Autowired
 	private WarningTypeService warningTypeService;
 
-
 	/**
 	 * 统计mongo里的相邻学期平均绩点
 	 */
@@ -229,7 +228,6 @@ public class ScoreJob {
 							.getValue();
 					scoreFluctuateCountList.add(scoreFluctuateCount);
 				}
-
 				scoreFluctuateCountMongoRespository
 						.save(scoreFluctuateCountList);
 			}
@@ -1104,7 +1102,6 @@ public class ScoreJob {
 
 				//删除已生成的预警信息
 				alertWarningInformationService.deleteWarningInformation(orgId,WarningTypeConstant.AttendAbnormal.toString(),schoolYear,semester);
-
 
 				// 预警处理配置获取
 				// HashMap<String, ProcessingMode> processingModeMap = new
