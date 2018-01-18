@@ -60,6 +60,9 @@ public class WarningTypeOnAndOffJob {
                 .toString()); // 修读异常预警设置
         typeList.add(WarningTypeConstant.LeaveSchool
                 .toString()); // 退学预警设置
+        typeList.add(WarningTypeConstant.Cet
+                .toString()); // 英语四六级预警设置
+
 
         List<WarningType> warningTypeList = warningTypeService.getWarningTypeByTypeList(typeList);
 
