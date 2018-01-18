@@ -1,7 +1,9 @@
 package com.aizhixin.cloud.dataanalysis.alertinformation.repository;
 
+import com.aizhixin.cloud.dataanalysis.alertinformation.domain.AttachmentDomain;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -41,4 +43,10 @@ public interface AlertWarningInformationRepository extends JpaRepository<Warning
 //    List<WarningInformation> findWarningInfoByWarningLevel(@Param("warningState") int warningState,@Param("warningLevel") int warningLevel,@Param("orgIds") HashSet<Long> orgIds);
 
     List<WarningInformation> findByWarningStateAndWarningLevelAndOrgIdIn(int warningState, int warningLevel, HashSet<Long> orgIds);
+
+
+    @Modifying
+    @Query("delete from #{#entityName} a where a.orgId = :orgId and a.warningType = :warningType and a.teacherYear = :teacherYear and a.semester = :semester")
+    void deletePageDataByOrgIdAndTeacherYearAndSemester(@Param(value = "orgId") Long orgId, @Param(value = "warningType") String warningType, @Param(value = "teacherYear") Integer teacherYear, @Param(value = "semester") Integer semester);
+
 }

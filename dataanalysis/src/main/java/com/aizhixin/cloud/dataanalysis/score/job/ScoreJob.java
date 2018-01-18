@@ -84,7 +84,6 @@ public class ScoreJob {
 	@Autowired
 	private WarningTypeService warningTypeService;
 
-
 	/**
 	 * 统计mongo里的相邻学期平均绩点
 	 */
@@ -229,7 +228,6 @@ public class ScoreJob {
 							.getValue();
 					scoreFluctuateCountList.add(scoreFluctuateCount);
 				}
-
 				scoreFluctuateCountMongoRespository
 						.save(scoreFluctuateCountList);
 			}
@@ -428,6 +426,9 @@ public class ScoreJob {
 				Long orgId = (Long) entry.getKey();
 				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
 						.getValue();
+
+				//删除已生成的预警信息
+				alertWarningInformationService.deleteWarningInformation(orgId,WarningTypeConstant.PerformanceFluctuation.toString(),schoolYear,semester);
 
 				ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 				// 获取成绩波动数据
@@ -800,6 +801,10 @@ public class ScoreJob {
 				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
 						.getValue();
 
+				//删除已生成的预警信息
+				alertWarningInformationService.deleteWarningInformation(orgId,WarningTypeConstant.TotalAchievement.toString(),schoolYear,semester);
+
+
 				// 预警处理配置获取
 				// HashMap<String, ProcessingMode> processingModeMap = new
 				// HashMap<String, ProcessingMode>();
@@ -1094,6 +1099,9 @@ public class ScoreJob {
 				Long orgId = (Long) entry.getKey();
 				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
 						.getValue();
+
+				//删除已生成的预警信息
+				alertWarningInformationService.deleteWarningInformation(orgId,WarningTypeConstant.AttendAbnormal.toString(),schoolYear,semester);
 
 				// 预警处理配置获取
 				// HashMap<String, ProcessingMode> processingModeMap = new
@@ -1429,6 +1437,10 @@ public class ScoreJob {
 				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
 						.getValue();
 
+				//删除已生成的预警信息
+				alertWarningInformationService.deleteWarningInformation(orgId,WarningTypeConstant.SupplementAchievement.toString(),schoolYear,semester);
+
+
 				// 预警处理配置获取
 				// HashMap<String, ProcessingMode> processingModeMap = new
 				// HashMap<String, ProcessingMode>();
@@ -1605,6 +1617,10 @@ public class ScoreJob {
 				Long orgId = (Long) entry.getKey();
 				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
 						.getValue();
+
+				//删除已生成的预警信息
+				alertWarningInformationService.deleteWarningInformation(orgId,WarningTypeConstant.Cet.toString(),schoolYear,semester);
+
 
 				// 预警处理配置获取
 				// HashMap<String, ProcessingMode> processingModeMap = new
@@ -1809,6 +1825,9 @@ public class ScoreJob {
 				Long orgId = (Long) entry.getKey();
 				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
 						.getValue();
+
+				//删除已生成的预警信息
+				alertWarningInformationService.deleteWarningInformation(orgId,WarningTypeConstant.LeaveSchool.toString(),schoolYear,semester);
 
 				List<MakeUpScoreCount> makeUpScoreCountList = makeUpScoreCountMongoRespository
 						.findAllByOrgId(orgId);
