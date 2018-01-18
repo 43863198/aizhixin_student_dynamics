@@ -86,6 +86,20 @@ public class WarningTypeOnAndOffJob {
         warningTypeService.save(warningTypeList);
     }
 
+    public void updateRegisterWarningType(int setupCloseFlag){
+
+        Set<String> typeList = new HashSet<>();
+        typeList.add(WarningTypeConstant.Register.
+                toString()); // 迎新报到
+        List<WarningType> warningTypeList = warningTypeService.getWarningTypeByTypeList(typeList);
+
+        for (WarningType tpl : warningTypeList) {
+            tpl.setSetupCloseFlag(setupCloseFlag);
+        }
+        warningTypeService.save(warningTypeList);
+    }
+
+
 
 
 

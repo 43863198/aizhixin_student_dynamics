@@ -172,6 +172,7 @@ public class AlarmSettingsController {
     ) {
         warningTypeOnAndOffJob.updateWarningType(noOfOff);
         warningTypeOnAndOffJob.updateAbsenteeismWarningType(noOfOff);
+        warningTypeOnAndOffJob.updateRegisterWarningType(noOfOff);
         Map<String, Object> result = new HashMap<String, Object>();
         return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
     }
