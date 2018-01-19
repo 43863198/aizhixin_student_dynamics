@@ -80,7 +80,6 @@ public class AlarmSettingsController {
                     "</b><br>waringParameterDomainList:包含;" +
                     "</b><br>serialNumber:序号;" +
                     "<br><br>parameter:参数;<br><b>"
-//                    "</b>选填:、<br>startTime:开始时间(新生报到截止时间);"
             )
             @RequestBody AlarmSettingDomain alarmSettingDomain
     ) {

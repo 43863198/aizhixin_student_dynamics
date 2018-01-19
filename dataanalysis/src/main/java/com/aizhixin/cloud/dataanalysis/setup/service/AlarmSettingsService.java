@@ -98,10 +98,10 @@ public class AlarmSettingsService {
                     warningTypeDTO.setWarningType(type.getWarningType());
                     warningTypeDTO.setSetupCloseFlag(type.getSetupCloseFlag());
                     warningTypeDTO.setWarningName(type.getWarningName());
-//                    if(type.getSetupCloseFlag()==10) {
+                    if(type.getSetupCloseFlag()==10) {
                         List<AlarmSettings> alarmSettingsList = alarmSettingsRepository.getCountByOrgIdAndTypeAndOpen(orgId, type.getWarningType(), DataValidity.VALID.getState());
                         warningTypeDTO.setInclusionNumber(alarmSettingsList.size());
-//                    }
+                    }
                     data.add(warningTypeDTO);
                 }
             }
@@ -218,9 +218,9 @@ public class AlarmSettingsService {
         Map<String, Object> result = new HashMap<>();
         try {
             WarningType warningType = warningTypeService.getWarningTypeById(alarmSettingDomain.getWarningTypeId());
-            warningType.setSetupCloseFlag(alarmSettingDomain.getSetupCloseFlag());
+//            warningType.setSetupCloseFlag(alarmSettingDomain.getSetupCloseFlag());
             String[] wd = warningType.getWarningDescribe().split(",");
-            warningTypeService.save(warningType);
+//            warningTypeService.save(warningType);
             for (WarningGradeDomain wg : alarmSettingDomain.getWarningGradeDomainList()) {
                 AlarmSettings alarmSettings = null;
                 if (!StringUtils.isBlank(wg.getAlarmSettingsId())) {
