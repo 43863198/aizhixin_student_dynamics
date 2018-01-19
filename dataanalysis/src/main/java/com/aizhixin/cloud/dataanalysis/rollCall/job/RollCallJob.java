@@ -189,7 +189,7 @@ public class RollCallJob {
 			Set<String> warnSettingsIdList = new HashSet<String>();
 			// 按orgId归类告警等级阀值
 			for (AlarmSettings settings : settingsList) {
-				if (orgIdSet.contains(settings.getOrgId())) {
+				if (orgIdSet.contains(settings.getOrgId())&&settings.getSetupCloseFlag()==10) {
 					warnSettingsIdList.add(settings.getId());
 					Long orgId = settings.getOrgId();
 
