@@ -8,6 +8,7 @@ import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInfo
 import com.aizhixin.cloud.dataanalysis.analysis.job.SchoolStatisticsAnalysisJob;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
+import com.aizhixin.cloud.dataanalysis.common.service.DistributeLock;
 import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
 import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
 import com.aizhixin.cloud.dataanalysis.setup.domain.*;
@@ -58,6 +59,8 @@ public class AlarmSettingsService {
     private RelationConversionService relationConversionService;
     @Autowired
     private SchoolStatisticsAnalysisJob schoolStatisticsJob;
+    @Autowired
+    private DistributeLock distributeLock;
 
 
 
@@ -412,49 +415,88 @@ public class AlarmSettingsService {
     }
 
 
+    @Async
+    public  void generateData(Long orgId,String warningType){
 
-    public  Map<String, Object> generateData(Long orgId,String warningType){
-        Map<String, Object> result = new HashMap<>();
         try {
-            if(warningType.equals(WarningTypeConstant.Register.toString())){
-                alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Register.toString(), orgId);
-                studentRegisterJob.studenteRegisterJob();
-            }
-            if(warningType.equals(WarningTypeConstant.LeaveSchool.toString())){
-                alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.LeaveSchool.toString(), orgId);
-                scoreJob.dropOutJob();
-            }
-            if(warningType.equals(WarningTypeConstant.AttendAbnormal.toString())){
-                alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.AttendAbnormal.toString(), orgId);
-                scoreJob.attendAbnormalJob();
-            }
-            if(warningType.equals(WarningTypeConstant.Absenteeism.toString())){
-                alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Absenteeism.toString(), orgId);
-                rollCallJob.rollCallJob();
-            }
-            if(warningType.equals(WarningTypeConstant.TotalAchievement.toString())){
-                alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.TotalAchievement.toString(), orgId);
-                scoreJob.totalScoreJob();
-            }
-            if(warningType.equals(WarningTypeConstant.SupplementAchievement.toString())){
-            alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.SupplementAchievement.toString(), orgId);
-                scoreJob.makeUpScoreJob();
-            }
-            if(warningType.equals(WarningTypeConstant.PerformanceFluctuation.toString())){
-                alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.PerformanceFluctuation.toString(), orgId);
-                scoreJob.scoreFluctuateJob();
-            }
-            if(warningType.equals(WarningTypeConstant.Cet.toString())){
-                alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Cet.toString(), orgId);
-                scoreJob.cet4ScoreJob();
-            }
-
+                if (warningType.equals(WarningTypeConstant.Register.toString())) {
+                    StringBuilder path = new StringBuilder("/GenerateData");
+                    path.append("/Register");
+                    if (distributeLock.getLock(path)) {
+                        alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Register.toString(), orgId);
+                        studentRegisterJob.studenteRegisterJob();
+                        distributeLock.delete(path);//删除锁
+                    }
+                }
+                if (warningType.equals(WarningTypeConstant.LeaveSchool.toString())) {
+                    StringBuilder path = new StringBuilder("/GenerateData");
+                    path.append("/LeaveSchool");
+                    if (distributeLock.getLock(path)) {
+                        alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.LeaveSchool.toString(), orgId);
+                        scoreJob.dropOutJob();
+                        distributeLock.delete(path);//删除锁
+                    }
+                }
+                if (warningType.equals(WarningTypeConstant.AttendAbnormal.toString())) {
+                    StringBuilder path = new StringBuilder("/GenerateData");
+                    path.append("/AttendAbnormal");
+                    if (distributeLock.getLock(path)) {
+                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.AttendAbnormal.toString(), orgId);
+                    scoreJob.attendAbnormalJob();
+                        distributeLock.delete(path);//删除锁
+                    }
+                }
+                if (warningType.equals(WarningTypeConstant.Absenteeism.toString())) {
+                    StringBuilder path = new StringBuilder("/GenerateData");
+                    path.append("/Absenteeism");
+                    if (distributeLock.getLock(path)) {
+                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Absenteeism.toString(), orgId);
+                    rollCallJob.rollCallJob();
+                        distributeLock.delete(path);//删除锁
+                    }
+                }
+                if (warningType.equals(WarningTypeConstant.TotalAchievement.toString())) {
+                    StringBuilder path = new StringBuilder("/GenerateData");
+                    path.append("/TotalAchievement");
+                    if (distributeLock.getLock(path)) {
+                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.TotalAchievement.toString(), orgId);
+                    scoreJob.totalScoreJob();
+                        distributeLock.delete(path);//删除锁
+                    }
+                }
+                if (warningType.equals(WarningTypeConstant.SupplementAchievement.toString())) {
+                    StringBuilder path = new StringBuilder("/GenerateData");
+                    path.append("/SupplementAchievement");
+                    if (distributeLock.getLock(path)) {
+                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.SupplementAchievement.toString(), orgId);
+                    scoreJob.makeUpScoreJob();
+                        distributeLock.delete(path);//删除锁
+                    }
+                }
+                if (warningType.equals(WarningTypeConstant.PerformanceFluctuation.toString())) {
+                    StringBuilder path = new StringBuilder("/GenerateData");
+                    path.append("/PerformanceFluctuation");
+                    if (distributeLock.getLock(path)) {
+                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.PerformanceFluctuation.toString(), orgId);
+                    scoreJob.scoreFluctuateJob();
+                        distributeLock.delete(path);//删除锁
+                    }
+                }
+                if (warningType.equals(WarningTypeConstant.Cet.toString())) {
+                    StringBuilder path = new StringBuilder("/GenerateData");
+                    path.append("/PerformanceFluctuation");
+                    if (distributeLock.getLock(path)) {
+                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Cet.toString(), orgId);
+                    scoreJob.cet4ScoreJob();
+                        distributeLock.delete(path);//删除锁
+                    }
+                }
         } catch (Exception e) {
-            result.put("success", true);
-            result.put("message", "手动生成数据异常！");
+            logger.info( "手动生成数据异常！");
+        }finally {
+            StringBuilder path = new StringBuilder("/GenerateData");
+            distributeLock.delete(path);//删除锁
         }
-        result.put("success", true);
-        result.put("message", "手动生成数据成功!");
-        return result;
+        logger.info( "手动生成数据成功！");
     }
 }

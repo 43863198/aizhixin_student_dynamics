@@ -51,7 +51,7 @@ public class TeachingScoreStatisticsAnalysis {
                 if (null != orgId && null != schoolYear && null != semester) {
                     StringBuilder path = new StringBuilder("/teachingScoreDetail");
                     path.append(orgId).append("/").append(schoolYear).append("/").append(semester);
-                    if(distributeLock.getTeachingScoreStatisticLock(path)){
+                    if(distributeLock.getLock(path)){
                     teachingScoreService.deleteScoreDeatail(orgId, schoolYear, semester);//去重
                     List<TeachingScoreDetails> tsdList = new ArrayList<>();
                     Criteria criteria = Criteria.where("orgId").is(orgId);
@@ -176,7 +176,7 @@ public class TeachingScoreStatisticsAnalysis {
                 if (null != orgId && null != schoolYear && null != semester) {
                     StringBuilder path = new StringBuilder("/teachingScoreStatistic");
                     path.append(orgId).append("/").append(schoolYear).append("/").append(semester);
-                    if (distributeLock.getTeachingScoreStatisticLock(path)) {
+                    if (distributeLock.getLock(path)) {
                         teachingScoreService.deleteScoreStatistics(orgId, schoolYear, semester);//去重
                         List<TeachingScoreStatistics> tssList = new ArrayList<>();
                         TeachingScoreStatistics tss = new TeachingScoreStatistics();

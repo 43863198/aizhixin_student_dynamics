@@ -412,6 +412,13 @@ public class AlertWarningInformationService {
                     + ")";
         }
 
+        if (null != domain.getTeacherYear()) {
+            querySql += " and TEACHER_YEAR = " + domain.getTeacherYear();
+        }
+        if (null != domain.getSemester()) {
+            querySql += " and SEMESTER = " + domain.getSemester();
+        }
+
         querySql += " and ORG_ID =" + domain.getOrgId() + " GROUP BY COLLOGE_ID,WARNING_LEVEL ORDER BY COLLOGE_ID,WARNING_LEVEL ;";
 
         return pageJdbcUtil.getInfo(querySql, AlertInforCountRm);

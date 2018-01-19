@@ -342,7 +342,7 @@ public class DistributeLock {
      * 获取/添加  资源锁
      * @return
      */
-    public boolean getTeachingScoreStatisticLock(StringBuilder path) {
+    public boolean getLock(StringBuilder path) {
         StringBuilder lockPath = new StringBuilder(zkLockPath);
         StringBuilder taskPath = new StringBuilder(zkTaskPath);
         lockPath.append(path);
