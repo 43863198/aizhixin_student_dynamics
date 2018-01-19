@@ -89,7 +89,7 @@ public class CetStatisticsAnalysisJob {
                 if (null != orgId && null != schoolYear && null != semester) {
                     StringBuilder path = new StringBuilder("/cet");
                     path.append(orgId).append("/").append(schoolYear).append("/").append(semester);
-                    if (distributeLock.getTeachingScoreStatisticLock(path)) {
+                    if (distributeLock.getLock(path)) {
                         cetScoreStatisticsRespository.deleteByOrgIdAndTeacherYearAndSemester(orgId, schoolYear, semester);
                         List<CetScoreStatistics> cetList = new ArrayList<>();
                         //英语四级参加人数统计

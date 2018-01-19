@@ -160,7 +160,11 @@ public class AlarmSettingsController {
             @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "warningType 预警类型", required = true) @RequestParam(value = "warningType", required = true) String warningType
     ) {
-        return alarmSettingsService.generateData(orgId, warningType);
+        Map<String, Object> result = new HashMap<>();
+        alarmSettingsService.generateData(orgId, warningType);
+        result.put("success", true);
+        result.put("message", "手动生成数据成功!");
+        return result;
     }
 
 
