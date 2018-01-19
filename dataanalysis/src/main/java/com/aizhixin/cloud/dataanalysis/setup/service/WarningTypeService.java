@@ -31,6 +31,10 @@ public class WarningTypeService {
         return warningTypeRespository.findOne(id);
     }
 
+    public WarningType getWarningTypeByOrgIdAndType(Long orgId, String warningType){
+        return warningTypeRespository.findOneByOrgIdAndWarningType(orgId,warningType);
+    }
+
     public List<WarningType> getAllWarningTypeList(){
         return warningTypeRespository.getAllWarningType(DataValidity.VALID.getState());
     }
