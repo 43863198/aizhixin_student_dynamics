@@ -35,4 +35,6 @@ public interface WarningTypeRespository extends JpaRepository<WarningType, Strin
     @Query("delete from #{#entityName} tp where tp.orgId = :orgId ")
     int deleteByOrgId(@Param("orgId")Long orgId);
 
+    WarningType findOneByOrgIdAndWarningType(Long orgId, String warningType);
+
 }

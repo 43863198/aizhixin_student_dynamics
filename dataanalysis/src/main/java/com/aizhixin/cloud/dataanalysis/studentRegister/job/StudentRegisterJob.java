@@ -130,6 +130,7 @@ public class StudentRegisterJob {
             Iterator iter = alarmMap.entrySet().iterator();
             while (iter.hasNext()) {
 
+
                 //更新预警集合
                 ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
                 //撤销预警集合
@@ -144,6 +145,9 @@ public class StudentRegisterJob {
                 Long orgId = (Long) entry.getKey();
                 ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
                         .getValue();
+
+                WarningType warningType = warningTypeService.getWarningTypeByOrgIdAndType(orgId, WarningTypeConstant.Register
+                        .toString());
 
                 // 预警处理配置获取 暂不初始化预警处理信息 2017.11.28
 //				HashMap<Integer, ProcessingMode> processingModeMap = new HashMap<Integer, ProcessingMode>();
@@ -176,10 +180,10 @@ public class StudentRegisterJob {
                     Date today = new Date();
                     for (StudentRegister studentRegister : stuRegisterList) {
                         for (AlarmSettings alarmSettings : val) {
-                            if (alarmSettings.getSetupCloseFlag()==10&&null!=alarmSettings.getStartTime()) {
-                                if(alarmSettings.getStartTime().getTime()<=new Date().getTime()) {
+                            if (alarmSettings.getSetupCloseFlag()==10&&null!=warningType&&null!=warningType.getStartTime()) {
+                                if(warningType.getStartTime().getTime()<=new Date().getTime()) {
                                     int result = DateUtil.getDaysBetweenDate(
-                                            alarmSettings.getStartTime(), today);
+                                            warningType.getStartTime(), today);
                                     AlarmRule alarmRule = alarmRuleMap
                                             .get(alarmSettings.getRuleSet());
                                     if (null != alarmRule) {
@@ -271,7 +275,6 @@ public class StudentRegisterJob {
                     }
 
                     alertWarningInformationService.save(alertInforList);
-                    //
 
                     alertWarningInformationService.save(removeAlertInforList);
                 } else {
@@ -284,134 +287,5 @@ public class StudentRegisterJob {
         }
     }
 
-//	 @Scheduled(cron = "0 0/3 * * * ?")
-//	public void studenteRegister() {
-//		this.setAlertWarningInformation(218L);
-//	}
-//
-//	public void setAlertWarningInformation(Long orgId) {
-//		String url = "http://gateway.aizhixintest.com/org-manager";
-//		url = url + "/v1/students/list?pageSize=1000&orgId=" + orgId;
-//		List<WarningInformation> awinfoList = new ArrayList<>();
-//		try {
-//			String respone = new RestUtil().getData(url, null);
-//			if (null != respone) {
-//				JSONObject json = JSONObject.fromObject(respone);
-//				Object data = json.get("data");
-//				if (null != data) {
-//					JSONArray jsonArray = JSONArray.fromObject(data);
-//					for (int i = 0; i < jsonArray.length(); i++) {
-//						JSONObject jsonObject = jsonArray.getJSONObject(i);
-//						Long defendantId = jsonObject.getLong("id");
-//						String name = jsonObject.getString("name");
-//						String jobNumber = jsonObject.getString("jobNumber");
-//						String collegeName = jsonObject
-//								.getString("collegeName");
-//						Long collegeId = jsonObject.getLong("collegeId");
-//						String professionalName = jsonObject
-//								.getString("professionalName");
-//						Long professionalId = jsonObject
-//								.getLong("professionalId");
-//						String classesName = jsonObject
-//								.getString("classesName");
-//						Long classesId = jsonObject.getLong("classesId");
-//						String phone = jsonObject.getString("phone");
-//						String teachingYear = jsonObject
-//								.getString("teachingYear");
-//						String warningType = "";
-//						if (i % 2 == 0) {
-//							warningType = "Register";
-//						} else if (i % 3 == 0) {
-//							warningType = "LeaveSchool";
-//						} else if (i % 5 == 0) {
-//							warningType = "AttendAbnormal";
-//						} else if (i % 7 == 0) {
-//							warningType = "Absenteeism";
-//						} else if (i % 9 == 0) {
-//							warningType = "TotalAchievement";
-//						} else if (i % 11 == 0) {
-//							warningType = "SupplementAchievement";
-//						} else if (i % 13 == 0) {
-//							warningType = "PerformanceFluctuation";
-//						} else {
-//							warningType = "Cet";
-//						}
-//						WarningInformation awinfo = null;
-//						List<WarningInformation> awinfos = alertWarningInformationService
-//								.getawinfoByDefendantId(orgId, warningType,
-//										defendantId);
-//						if (null != awinfos) {
-//							if (awinfos.size() == 1) {
-//								awinfo = awinfos.get(0);
-//							} else if (awinfos.size() > 1) {
-//								logger.info("学号为"
-//										+ defendantId
-//										+ "学生的"
-//										+ WarningTypeConstant.valueOf(warningType)
-//												.getValue() + "数据重复异常！");
-//								continue;
-//							} else {
-//								awinfo = new WarningInformation();
-//							}
-//						} else {
-//							awinfo = new WarningInformation();
-//						}
-//						awinfo.setOrgId(orgId);
-//						if (null != defendantId) {
-//							awinfo.setDefendantId(defendantId);
-//						}
-//						if (null != name) {
-//							awinfo.setName(name);
-//						}
-//						if (null != jobNumber) {
-//							awinfo.setJobNumber(jobNumber);
-//						}
-//						if (null != collegeName) {
-//							awinfo.setCollogeName(collegeName);
-//						}
-//						if (null != collegeId) {
-//							awinfo.setCollogeId(collegeId);
-//						}
-//						if (null != professionalName) {
-//							awinfo.setProfessionalName(professionalName);
-//						}
-//						if (null != professionalId) {
-//							awinfo.setProfessionalId(professionalId);
-//						}
-//						if (null != classesName) {
-//							awinfo.setClassName(classesName);
-//						}
-//						if (null != classesId) {
-//							awinfo.setClassId(classesId);
-//						}
-//						if (null != phone) {
-//							awinfo.setPhone(phone);
-//						}
-//						if (null != teachingYear) {
-//							awinfo.setTeacherYear(Integer.parseInt(teachingYear));
-//						}
-//						if (i % 77 == 0) {
-//							awinfo.setWarningLevel(1);
-//						} else if (i % 55 == 0) {
-//							awinfo.setWarningLevel(2);
-//						} else {
-//							awinfo.setWarningLevel(3);
-//						}
-//						if (i % 9 == 0) {
-//							awinfo.setWarningState(20);
-//						} else {
-//							awinfo.setWarningState(10);
-//						}
-//						awinfo.setWarningType(warningType);
-//						awinfo.setCreatedDate(new Date());
-//						awinfoList.add(awinfo);
-//					}
-//					alertWarningInformationService.save(awinfoList);
-//				}
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
 
 }
