@@ -29,7 +29,7 @@ public class PushMessageQuery {
 				+ " count(IF(pm.have_read = 0,1,null)) not_read, "
 				+ " module,`function` "
 				+ " FROM "
-				+ " dd_push_message pm "
+				+ " T_PUSH_MESSAGE pm "
 				+ " WHERE "
 				+ " #where_space# group by pm.module,pm.function ) t where t.module is not null  ";
 
