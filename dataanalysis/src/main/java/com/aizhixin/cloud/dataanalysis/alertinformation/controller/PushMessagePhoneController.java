@@ -50,9 +50,8 @@ public class PushMessagePhoneController {
     @RequestMapping(value = "/get", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "用户获取推送的消息,并将其置为已读", httpMethod = "GET", response = Void.class, notes = "用户获取推送的消息<br><br> task 实践任务<br> student_remind 学生提醒(rollcall) teacher_notice 上课老师请假通知(leave)  teacher_approval 请假审批通知 (leave) student_notice 请假审批通知(leave) 预警（warning）<br><b>@author 王俊</b>")
     public ResponseEntity<?> get(
-
-            @ApiParam(value = "模块 必填") @RequestParam(value = "module", required = true) String module,
-            @ApiParam(value = "方法 必填") @RequestParam(value = "function", required = true) String function,
+            @ApiParam(value = "模块 必填",required = true) @RequestParam(value = "module", required = true) String module,
+            @ApiParam(value = "方法 必填",required = true) @RequestParam(value = "function", required = true) String function,
             @ApiParam(value = "offset 起始页") @RequestParam(value = "offset", required = false) Integer offset,
             @ApiParam(value = "limit 每页的限制数目") @RequestParam(value = "limit", required = false) Integer limit,
             @RequestHeader("Authorization") String accessToken) {
