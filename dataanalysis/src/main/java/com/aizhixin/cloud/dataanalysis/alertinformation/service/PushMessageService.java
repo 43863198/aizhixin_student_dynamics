@@ -8,6 +8,7 @@ import com.aizhixin.cloud.dataanalysis.alertinformation.repository.PushMessageQu
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.PushMessageRepository;
 import com.aizhixin.cloud.dataanalysis.common.PageDomain;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningLevelConstant;
+import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeChangeConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
 import com.aizhixin.cloud.dataanalysis.common.core.DataValidity;
@@ -109,16 +110,17 @@ public class PushMessageService {
             PushMessage message = new PushMessage();
             message.setBusinessContent(warningInformation.getId());
             message.setContent(warningInformation.getWarningCondition());
-            message.setFunction(PushMessageConstants.MESSAGE_TITLE);
+            message.setFunction(PushMessageConstants.FUNCTION_WARNING_NOTICE);
             message.setHaveRead(Boolean.FALSE);
             message.setModule(PushMessageConstants.MODULE_TASK);
             message.setPushTime(new Date());
             message.setDeleteFlag(DataValidity.VALID.getIntValue());
-            message.setTitle(PushMessageConstants.FUNCTION_WARNING_NOTICE);
+            message.setTitle(PushMessageConstants.MESSAGE_TITLE);
             message.setUserId(warningInformation.getDefendantId());
             message.setStudentName(warningInformation.getName());
             message.setWarningLevel(WarningLevelConstant.getName(warningInformation.getWarningLevel()));
-            message.setWarningType(WarningTypeConstant.valueOf(warningInformation.getWarningType()).name());
+            message.setWarningType(WarningTypeChangeConstant.valueOf(warningInformation.getWarningType()).getName());
+           // message.setWarningType(WarningTypeConstant.);
             result.add(message);
         }
 
