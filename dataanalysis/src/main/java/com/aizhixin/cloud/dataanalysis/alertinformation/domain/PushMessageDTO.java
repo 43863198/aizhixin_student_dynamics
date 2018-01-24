@@ -25,4 +25,9 @@ public class PushMessageDTO {
 
 	private Boolean haveRead;
 
+	private String studentName;
+
+	private String warningType;
+
+	private String warningLevel;
 }

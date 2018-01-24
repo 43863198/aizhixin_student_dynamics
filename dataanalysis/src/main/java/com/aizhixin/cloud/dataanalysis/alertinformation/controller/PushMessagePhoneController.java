@@ -52,26 +52,27 @@ public class PushMessagePhoneController {
     public ResponseEntity<?> get(
             @ApiParam(value = "模块 必填",required = true) @RequestParam(value = "module", required = true) String module,
             @ApiParam(value = "方法 必填",required = true) @RequestParam(value = "function", required = true) String function,
+            @ApiParam(value = "用户Id",required = true) @RequestParam(value = "id" ,required = true) Long id,
             @ApiParam(value = "offset 起始页") @RequestParam(value = "offset", required = false) Integer offset,
             @ApiParam(value = "limit 每页的限制数目") @RequestParam(value = "limit", required = false) Integer limit,
             @RequestHeader("Authorization") String accessToken) {
 
     	Map<String, Object> result = new HashMap<String, Object>();
-		AccountDTO dto = authUtilService.getSsoUserInfo(accessToken);
-		if (null == dto || null == dto.getId()) {
-			result.put(ApiReturnConstants.RESULT, Boolean.FALSE);
-			result.put(ApiReturnConstants.CODE,
-					PublicErrorCode.AUTH_EXCEPTION.getIntValue());
-			result.put(ApiReturnConstants.CAUSE, "未授权");
-			return new ResponseEntity<Map<String, Object>>(result,
-					HttpStatus.UNAUTHORIZED);
-		}
+//		AccountDTO dto = authUtilService.getSsoUserInfo(accessToken);
+//		if (null == dto || null == dto.getId()) {
+//			result.put(ApiReturnConstants.RESULT, Boolean.FALSE);
+//			result.put(ApiReturnConstants.CODE,
+//					PublicErrorCode.AUTH_EXCEPTION.getIntValue());
+//			result.put(ApiReturnConstants.CAUSE, "未授权");
+//			return new ResponseEntity<Map<String, Object>>(result,
+//					HttpStatus.UNAUTHORIZED);
+//		}
 
         Sort sort = new Sort(Sort.Direction.DESC, "lastModifiedDate");
         result = pushMessageService
                 .getMessageByModuleAndFunctionAndUserId(
                         PageUtil.createNoErrorPageRequestAndSort(offset, limit, sort),
-                        module, function, dto.getId());
+                        module, function, id);
         return new ResponseEntity<Object>(result, HttpStatus.OK);
     }
 
@@ -86,28 +87,29 @@ public class PushMessagePhoneController {
     @RequestMapping(value = "/getstatus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "用户获取推送的消息", httpMethod = "GET", response = Void.class, notes = "用户获取推送的消息<br><br><b>@author 杨立强</b>")
     public ResponseEntity<?> getstatus(
-            @ApiParam(value = "模块 选填") @RequestParam(value = "module", required = false) String module,
-            @ApiParam(value = "方法 选填") @RequestParam(value = "function", required = false) String function,
+            @ApiParam(value = "模块 选填" ,required = true) @RequestParam(value = "module" ,required = true) String module,
+            @ApiParam(value = "方法 选填" ,required = true) @RequestParam(value = "function" ,required = true) String function,
+            @ApiParam(value = "用户Id",required = true) @RequestParam(value = "function" ,required = true) Long id,
             @RequestHeader("Authorization") String accessToken) {
 
     	Map<String, Object> result = new HashMap<String, Object>();
-		AccountDTO dto = authUtilService.getSsoUserInfo(accessToken);
-		if (null == dto || null == dto.getId()) {
-			result.put(ApiReturnConstants.RESULT, Boolean.FALSE);
-			result.put(ApiReturnConstants.CODE,
-					PublicErrorCode.AUTH_EXCEPTION.getIntValue());
-			result.put(ApiReturnConstants.CAUSE, "未授权");
-			return new ResponseEntity<Map<String, Object>>(result,
-					HttpStatus.UNAUTHORIZED);
-		}
+//		AccountDTO dto = authUtilService.getSsoUserInfo(accessToken);
+//		if (null == dto || null == dto.getId()) {
+//			result.put(ApiReturnConstants.RESULT, Boolean.FALSE);
+//			result.put(ApiReturnConstants.CODE,
+//					PublicErrorCode.AUTH_EXCEPTION.getIntValue());
+//			result.put(ApiReturnConstants.CAUSE, "未授权");
+//			return new ResponseEntity<Map<String, Object>>(result,
+//					HttpStatus.UNAUTHORIZED);
+//		}
 
 		 List<PushMessageStatusDTO> list = new ArrayList<PushMessageStatusDTO>();
          list = pushMessageService
-                .getMessageStatus(module, function, dto.getId());
+                .getMessageStatus(module, function, id);
 
-        if (list.size() == 0) {
-        	list.add(getDefaultData(dto.getRoleNames()));
-        }
+//        if (list.size() == 0) {
+//        	list.add(getDefaultData(dto.getRoleNames()));
+//        }
         result.put(ApiReturnConstants.DATA, list);
         return new ResponseEntity<Object>(result, HttpStatus.OK);
     }
