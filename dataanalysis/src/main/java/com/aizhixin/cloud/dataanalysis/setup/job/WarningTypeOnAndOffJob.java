@@ -38,12 +38,14 @@ public class WarningTypeOnAndOffJob {
             if(week >= 3 && Calendar.MONDAY ==weekDay) {
               this.updateWarningType(10);
             }
-        }else if(month == 2 || month == 8){
-            this.updateWarningType(20);
-            this.updateAbsenteeismWarningType(20);
-        }else if(month != 9 && month != 3 && month != 2 && month != 8){
-            this.updateWarningType(10);
-            this.updateAbsenteeismWarningType(10);
+        }else {
+            if(month == 2 || month == 8){
+                this.updateWarningType(20);
+                this.updateAbsenteeismWarningType(20);
+            }else{
+                this.updateWarningType(10);
+                this.updateAbsenteeismWarningType(10);
+            }
         }
     }
 
