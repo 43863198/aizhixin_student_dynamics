@@ -153,7 +153,7 @@ public class RollCallJob {
 		}
 	}
 
-	public void rollCallJob() {
+	public void rollCallJob(int schoolYear,int semester) {
 
 		// 获取的预警类型
 		List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
@@ -171,19 +171,19 @@ public class RollCallJob {
 				.getAlarmSettingsByType(WarningTypeConstant.Absenteeism.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 			
-			Calendar c = Calendar.getInstance();
-			//当前年份
-			int schoolYear = c.get(Calendar.YEAR);
-			//当前月份
-			int month = c.get(Calendar.MONTH)+1;
-			//当前学期编号
-			int semester = 2;
-			if( month > 1 && month < 9){
-				semester = 1;
-			}
-			if(month == 1 ){
-				schoolYear = schoolYear - 1;
-			}
+//			Calendar c = Calendar.getInstance();
+//			//当前年份
+//			int schoolYear = c.get(Calendar.YEAR);
+//			//当前月份
+//			int month = c.get(Calendar.MONTH)+1;
+//			//当前学期编号
+//			int semester = 2;
+//			if( month > 1 && month < 9){
+//				semester = 1;
+//			}
+//			if(month == 1 ){
+//				schoolYear = schoolYear - 1;
+//			}
 			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
 			Set<String> warnRuleIdList = new HashSet<String>();
 			Set<String> warnSettingsIdList = new HashSet<String>();

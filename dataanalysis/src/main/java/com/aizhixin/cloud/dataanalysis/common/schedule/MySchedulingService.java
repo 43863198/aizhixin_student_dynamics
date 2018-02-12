@@ -17,6 +17,8 @@ import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
 import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
 import com.aizhixin.cloud.dataanalysis.studentRegister.job.StudentRegisterJob;
 
+import java.util.Calendar;
+
 /**
  * 定时任务入口
  */
@@ -45,7 +47,20 @@ public class MySchedulingService {
     public void stuRegisterJob() {
         if (distributeLock.getStuRegisterLock()) {
             LOG.info("开始启动学生注册报到预警定时任务");
-            studentRegisterJob.studenteRegisterJob();
+            Calendar c = Calendar.getInstance();
+			// 当前年份
+			int schoolYear = c.get(Calendar.YEAR);
+			// 当前月份
+			int month = c.get(Calendar.MONTH)+1;
+			// 当前学期编号
+			int semester = 2;
+			if (month > 1 && month < 9) {
+				semester = 1;
+			}
+			if(month == 1 ){
+				schoolYear = schoolYear - 1;
+			}
+            studentRegisterJob.studenteRegisterJob(schoolYear,semester);
         } else {
             LOG.info("启动学生注册报到预警，获取锁失败");
         }
@@ -56,7 +71,20 @@ public class MySchedulingService {
     public void rollCallJob() {
         if (distributeLock.getRollCallLock()) {
             LOG.info("开始启动旷课预警定时任务");
-            rollCallJob.rollCallJob();;
+            Calendar c = Calendar.getInstance();
+            // 当前年份
+            int schoolYear = c.get(Calendar.YEAR);
+            // 当前月份
+            int month = c.get(Calendar.MONTH)+1;
+            // 当前学期编号
+            int semester = 2;
+            if (month > 1 && month < 9) {
+                semester = 1;
+            }
+            if(month == 1 ){
+                schoolYear = schoolYear - 1;
+            }
+            rollCallJob.rollCallJob(schoolYear,semester);
         } else {
             LOG.info("启动旷课预警，获取锁失败");
         }
@@ -78,7 +106,20 @@ public class MySchedulingService {
     public void totalScoreCountJob() {
         if (distributeLock.getTotalScoreCountLock()) {
             LOG.info("开始启动总评不及格成绩信息统计定时任务");
-            scoreJob.totalScoreCountJob();;
+            Calendar c = Calendar.getInstance();
+            // 当前年份
+            int schoolYear = c.get(Calendar.YEAR);
+            // 当前月份
+            int month = c.get(Calendar.MONTH)+1;
+            // 当前学期编号
+            int semester = 2;
+            if (month > 1 && month < 9) {
+                semester = 1;
+            }
+            if(month == 1 ){
+                schoolYear = schoolYear - 1;
+            }
+            scoreJob.totalScoreCountJob(schoolYear,semester);;
         } else {
             LOG.info("启动总评不及格成绩统计任务，获取锁失败");
         }
@@ -89,7 +130,20 @@ public class MySchedulingService {
     public void totalScoreJob() {
         if (distributeLock.getTotalScoreLock()) {
             LOG.info("开始启动总评成绩预警定时任务");
-            scoreJob.totalScoreJob();
+            Calendar c = Calendar.getInstance();
+            // 当前年份
+            int schoolYear = c.get(Calendar.YEAR);
+            // 当前月份
+            int month = c.get(Calendar.MONTH)+1;
+            // 当前学期编号
+            int semester = 2;
+            if (month > 1 && month < 9) {
+                semester = 1;
+            }
+            if(month == 1 ){
+                schoolYear = schoolYear - 1;
+            }
+            scoreJob.totalScoreJob(schoolYear,semester);
         } else {
             LOG.info("启动总评成绩预警任务，获取锁失败");
         }
@@ -111,7 +165,20 @@ public class MySchedulingService {
     public void makeUpScoreJob() {
         if (distributeLock.getMakeUpScoreLock()) {
             LOG.info("开始启动总评成绩预警定时任务");
-            scoreJob.makeUpScoreJob();
+            Calendar c = Calendar.getInstance();
+            // 当前年份
+            int schoolYear = c.get(Calendar.YEAR);
+            // 当前月份
+            int month = c.get(Calendar.MONTH)+1;
+            // 当前学期编号
+            int semester = 2;
+            if (month > 1 && month < 9) {
+                semester = 1;
+            }
+            if(month == 1 ){
+                schoolYear = schoolYear - 1;
+            }
+            scoreJob.makeUpScoreJob(schoolYear,semester);
         } else {
             LOG.info("启动补考成绩预警任务，获取锁失败");
         }
@@ -121,7 +188,20 @@ public class MySchedulingService {
     public void scoreFluctuateCountJob() {
         if (distributeLock.getScoreFluctuateCountLock()) {
             LOG.info("开始启动获取之前两学期成绩信息统计定时任务");
-            scoreJob.scoreFluctuateCountJob();
+            Calendar c = Calendar.getInstance();
+            // 当前年份
+            int schoolYear = c.get(Calendar.YEAR);
+            // 当前月份
+            int month = c.get(Calendar.MONTH)+1;
+            // 当前学期编号
+            int semester = 2;
+            if (month > 1 && month < 9) {
+                semester = 1;
+            }
+            if(month == 1 ){
+                schoolYear = schoolYear - 1;
+            }
+            scoreJob.scoreFluctuateCountJob(schoolYear,semester);
         } else {
             LOG.info("启动之前两学期成绩统计任务，获取锁失败");
         }
@@ -132,7 +212,20 @@ public class MySchedulingService {
     public void scoreFluctuateJob() {
         if (distributeLock.getScoreFluctuateLock()) {
             LOG.info("开始启动成绩波动预警定时任务");
-            scoreJob.scoreFluctuateJob();
+            Calendar c = Calendar.getInstance();
+            // 当前年份
+            int schoolYear = c.get(Calendar.YEAR);
+            // 当前月份
+            int month = c.get(Calendar.MONTH)+1;
+            // 当前学期编号
+            int semester = 2;
+            if (month > 1 && month < 9) {
+                semester = 1;
+            }
+            if(month == 1 ){
+                schoolYear = schoolYear - 1;
+            }
+            scoreJob.scoreFluctuateJob(schoolYear,semester);
         } else {
             LOG.info("启动成绩波动预警任务，获取锁失败");
         }
@@ -142,7 +235,20 @@ public class MySchedulingService {
     public void attendAbnormalJob() {
         if (distributeLock.getAttendAbnormalLock()) {
             LOG.info("开始启动修读异常预警定时任务");
-            scoreJob.attendAbnormalJob();;
+            Calendar c = Calendar.getInstance();
+            // 当前年份
+            int schoolYear = c.get(Calendar.YEAR);
+            // 当前月份
+            int month = c.get(Calendar.MONTH)+1;
+            // 当前学期编号
+            int semester = 2;
+            if (month > 1 && month < 9) {
+                semester = 1;
+            }
+            if(month == 1 ){
+                schoolYear = schoolYear - 1;
+            }
+            scoreJob.attendAbnormalJob(schoolYear,semester);;
         } else {
             LOG.info("启动修读异常预警任务，获取锁失败");
         }
@@ -152,7 +258,20 @@ public class MySchedulingService {
     public void cet4ScoreJob() {
         if (distributeLock.getCet4ScoreJobLock()) {
             LOG.info("开始启动英语四级成绩预警定时任务");
-            scoreJob.cet4ScoreJob();
+            Calendar c = Calendar.getInstance();
+            // 当前年份
+            int schoolYear = c.get(Calendar.YEAR);
+            // 当前月份
+            int month = c.get(Calendar.MONTH)+1;
+            // 当前学期编号
+            int semester = 2;
+            if (month > 1 && month < 9) {
+                semester = 1;
+            }
+            if(month == 1 ){
+                schoolYear = schoolYear - 1;
+            }
+            scoreJob.cet4ScoreJob(schoolYear,semester);
         } else {
             LOG.info("启动英语四级成绩预警任务，获取锁失败");
         }
@@ -162,7 +281,20 @@ public class MySchedulingService {
     public void dropOutJob() {
         if (distributeLock.getDropOutJobLock()) {
             LOG.info("开始启动退学预警定时任务");
-            scoreJob.dropOutJob();
+            Calendar c = Calendar.getInstance();
+            // 当前年份
+            int schoolYear = c.get(Calendar.YEAR);
+            // 当前月份
+            int month = c.get(Calendar.MONTH)+1;
+            // 当前学期编号
+            int semester = 2;
+            if (month > 1 && month < 9) {
+                semester = 1;
+            }
+            if(month == 1 ){
+                schoolYear = schoolYear - 1;
+            }
+            scoreJob.dropOutJob(schoolYear,semester);
         } else {
             LOG.info("启动退学预警任务，获取锁失败");
         }
