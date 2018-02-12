@@ -87,7 +87,7 @@ public class ScoreJob {
 	/**
 	 * 统计mongo里的相邻学期平均绩点
 	 */
-	public void scoreFluctuateCountJob() {
+	public void scoreFluctuateCountJob(int schoolYear,int semester) {
 
 		// 获取预警配置
 		List<AlarmSettings> settingsList = alarmSettingsService
@@ -95,19 +95,19 @@ public class ScoreJob {
 						.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 
-			Calendar c = Calendar.getInstance();
-			// 当前年份
-			int schoolYear = c.get(Calendar.YEAR);
-			// 当前月份
-			int month = c.get(Calendar.MONTH)+1;
-			// 当前学期编号
-			int semester = 2;
-			if (month > 1 && month < 9) {
-				semester = 1;
-			}
-			if(month == 1 ){
-				schoolYear = schoolYear - 1;
-			}
+//			Calendar c = Calendar.getInstance();
+//			// 当前年份
+//			int schoolYear = c.get(Calendar.YEAR);
+//			// 当前月份
+//			int month = c.get(Calendar.MONTH)+1;
+//			// 当前学期编号
+//			int semester = 2;
+//			if (month > 1 && month < 9) {
+//				semester = 1;
+//			}
+//			if(month == 1 ){
+//				schoolYear = schoolYear - 1;
+//			}
 			// 上学期编号
 			int secondSchoolYear = schoolYear;
 			int secondSemester = 1;
@@ -335,7 +335,7 @@ public class ScoreJob {
 	/**
 	 * 成绩波动预警定时任务
 	 */
-	public void scoreFluctuateJob() {
+	public void scoreFluctuateJob(int schoolYear,int semester) {
 
 		// 获取的预警类型
 		List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
@@ -354,19 +354,19 @@ public class ScoreJob {
 						.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 
-			Calendar c = Calendar.getInstance();
-			// 当前年份
-			int schoolYear = c.get(Calendar.YEAR);
-			// 当前月份
-			int month = c.get(Calendar.MONTH) + 1;
-			// 当前学期编号
-			int semester = 2;
-			if (month > 1 && month < 9) {
-				semester = 1;
-			}
-			if (month == 1) {
-				schoolYear = schoolYear - 1;
-			}
+//			Calendar c = Calendar.getInstance();
+//			// 当前年份
+//			int schoolYear = c.get(Calendar.YEAR);
+//			// 当前月份
+//			int month = c.get(Calendar.MONTH) + 1;
+//			// 当前学期编号
+//			int semester = 2;
+//			if (month > 1 && month < 9) {
+//				semester = 1;
+//			}
+//			if (month == 1) {
+//				schoolYear = schoolYear - 1;
+//			}
 			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
 			Set<String> warnRuleIdList = new HashSet<String>();
 			Set<String> warnSettingsIdList = new HashSet<String>();
@@ -552,7 +552,7 @@ public class ScoreJob {
 	/**
 	 * 统计mongo里的上学期不及格成绩汇总到
 	 */
-	public void totalScoreCountJob() {
+	public void totalScoreCountJob(int schoolYear,int semester) {
 
 
 		// 获取预警配置
@@ -561,19 +561,19 @@ public class ScoreJob {
 						.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 
-			Calendar c = Calendar.getInstance();
-			// 当前年份
-			int schoolYear = c.get(Calendar.YEAR);
-			// 当前月份
-			int month = c.get(Calendar.MONTH)+1;
-			// 当前学期编号
-			int semester = 2;
-			if (month > 1 && month < 9) {
-				semester = 1;
-			}
-			if(month == 1 ){
-				schoolYear = schoolYear - 1;
-			}
+//			Calendar c = Calendar.getInstance();
+//			// 当前年份
+//			int schoolYear = c.get(Calendar.YEAR);
+//			// 当前月份
+//			int month = c.get(Calendar.MONTH)+1;
+//			// 当前学期编号
+//			int semester = 2;
+//			if (month > 1 && month < 9) {
+//				semester = 1;
+//			}
+//			if(month == 1 ){
+//				schoolYear = schoolYear - 1;
+//			}
 			// 上学期编号
 			int lastSemester = 1;
 			if (semester == 1) {
@@ -699,7 +699,7 @@ public class ScoreJob {
 	/**
 	 * 总评成绩预警
 	 */
-	public void totalScoreJob() {
+	public void totalScoreJob(int schoolYear,int semester) {
 
 		// 获取的预警类型
 		List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
@@ -718,19 +718,19 @@ public class ScoreJob {
 						.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 
-			Calendar c = Calendar.getInstance();
-			// 当前年份
-			int schoolYear = c.get(Calendar.YEAR);
-			// 当前月份
-			int month = c.get(Calendar.MONTH)+1;
-			// 当前学期编号
-			int semester = 2;
-			if (month > 1 && month < 9) {
-				semester = 1;
-			}
-			if(month == 1 ){
-				schoolYear = schoolYear - 1;
-			}
+//			Calendar c = Calendar.getInstance();
+//			// 当前年份
+//			int schoolYear = c.get(Calendar.YEAR);
+//			// 当前月份
+//			int month = c.get(Calendar.MONTH)+1;
+//			// 当前学期编号
+//			int semester = 2;
+//			if (month > 1 && month < 9) {
+//				semester = 1;
+//			}
+//			if(month == 1 ){
+//				schoolYear = schoolYear - 1;
+//			}
 			// 上学期编号
 			int lastSemester = 1;
 			if (semester == 1) {
@@ -1012,7 +1012,7 @@ public class ScoreJob {
 	/**
 	 * 修读异常预警
 	 */
-	public void attendAbnormalJob() {
+	public void attendAbnormalJob(int schoolYear,int semester) {
 
 		// 获取的预警类型
 		List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
@@ -1031,19 +1031,19 @@ public class ScoreJob {
 						.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 
-			Calendar c = Calendar.getInstance();
-			// 当前年份
-			int schoolYear = c.get(Calendar.YEAR);
-			// 当前月份
-			int month = c.get(Calendar.MONTH)+1;
-			// 当前学期编号
-			int semester = 2;
-			if (month > 1 && month < 9) {
-				semester = 1;
-			}
-			if(month == 1 ){
-				schoolYear = schoolYear - 1;
-			}
+//			Calendar c = Calendar.getInstance();
+//			// 当前年份
+//			int schoolYear = c.get(Calendar.YEAR);
+//			// 当前月份
+//			int month = c.get(Calendar.MONTH)+1;
+//			// 当前学期编号
+//			int semester = 2;
+//			if (month > 1 && month < 9) {
+//				semester = 1;
+//			}
+//			if(month == 1 ){
+//				schoolYear = schoolYear - 1;
+//			}
 
 			// 上学期编号
 			int lastSemester = 1;
@@ -1357,7 +1357,7 @@ public class ScoreJob {
 		}
 	}
     //补考成绩预警定时任务
-	public void makeUpScoreJob() {
+	public void makeUpScoreJob(int schoolYear,int semester) {
 
 		// 获取的预警类型
 		List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
@@ -1376,19 +1376,19 @@ public class ScoreJob {
 						.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 
-			Calendar c = Calendar.getInstance();
-			// 当前年份
-			int schoolYear = c.get(Calendar.YEAR);
-			// 当前月份
-			int month = c.get(Calendar.MONTH)+1;
-			// 当前学期编号
-			int semester = 2;
-			if (month > 1 && month < 9) {
-				semester = 1;
-			}
-			if(month == 1 ){
-				schoolYear = schoolYear - 1;
-			}
+//			Calendar c = Calendar.getInstance();
+//			// 当前年份
+//			int schoolYear = c.get(Calendar.YEAR);
+//			// 当前月份
+//			int month = c.get(Calendar.MONTH)+1;
+//			// 当前学期编号
+//			int semester = 2;
+//			if (month > 1 && month < 9) {
+//				semester = 1;
+//			}
+//			if(month == 1 ){
+//				schoolYear = schoolYear - 1;
+//			}
 			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
 			Set<String> warnRuleIdList = new HashSet<String>();
 			Set<String> warnSettingsIdList = new HashSet<String>();
@@ -1528,7 +1528,7 @@ public class ScoreJob {
 	/**
 	 * 英语四级考试成绩未通过预警
 	 */
-	public void cet4ScoreJob() {
+	public void cet4ScoreJob(int schoolYear,int semester) {
 
 		// 获取的预警类型
 		List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
@@ -1547,18 +1547,18 @@ public class ScoreJob {
 		if (null != settingsList && settingsList.size() > 0) {
 
 			Calendar c = Calendar.getInstance();
-			// 当前年份
-			int schoolYear = c.get(Calendar.YEAR);
-			// 当前月份
-			int month = c.get(Calendar.MONTH)+1;
-			// 当前学期编号
-			int semester = 2;
-			if (month > 1 && month < 9) {
-				semester = 1;
-			}
-			if(month == 1 ){
-				schoolYear = schoolYear - 1;
-			}
+//			// 当前年份
+//			int schoolYear = c.get(Calendar.YEAR);
+//			// 当前月份
+//			int month = c.get(Calendar.MONTH)+1;
+//			// 当前学期编号
+//			int semester = 2;
+//			if (month > 1 && month < 9) {
+//				semester = 1;
+//			}
+//			if(month == 1 ){
+//				schoolYear = schoolYear - 1;
+//			}
 			int nowYear = c.get(Calendar.YEAR);
 			String grade2 = String.valueOf(nowYear - 1);
 			String grade3 = String.valueOf(nowYear - 2);
@@ -1733,7 +1733,7 @@ public class ScoreJob {
 	/**
 	 * 退学预警
 	 */
-	public void dropOutJob() {
+	public void dropOutJob(int schoolYear,int semester) {
 
 		// 获取的预警类型
 		List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
@@ -1765,19 +1765,19 @@ public class ScoreJob {
 //			int beginYear = endYear - 3;
 
 
-			Calendar c = Calendar.getInstance();
-			// 当前年份
-			int schoolYear = c.get(Calendar.YEAR);
-			// 当前月份
-			int month = c.get(Calendar.MONTH)+1;
-			// 当前学期编号
-			int semester = 2;
-			if (month > 1 && month < 9) {
-				semester = 1;
-			}
-			if(month == 1 ){
-				schoolYear = schoolYear - 1;
-			}
+//			Calendar c = Calendar.getInstance();
+//			// 当前年份
+//			int schoolYear = c.get(Calendar.YEAR);
+//			// 当前月份
+//			int month = c.get(Calendar.MONTH)+1;
+//			// 当前学期编号
+//			int semester = 2;
+//			if (month > 1 && month < 9) {
+//				semester = 1;
+//			}
+//			if(month == 1 ){
+//				schoolYear = schoolYear - 1;
+//			}
 
 
 			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();

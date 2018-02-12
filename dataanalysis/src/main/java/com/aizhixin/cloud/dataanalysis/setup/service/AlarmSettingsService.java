@@ -276,51 +276,63 @@ public class AlarmSettingsService {
     
     @Async
     public void rebuildAlertInfor(String warningType,Long orgId){
-    	
+        Calendar c = Calendar.getInstance();
+        // 当前年份
+        int schoolYear = c.get(Calendar.YEAR);
+        // 当前月份
+        int month = c.get(Calendar.MONTH)+1;
+        // 当前学期编号
+        int semester = 2;
+        if (month > 1 && month < 9) {
+            semester = 1;
+        }
+        if(month == 1 ){
+            schoolYear = schoolYear - 1;
+        }
     	logger.debug("开始删除warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
-    	
-    	alertWarningInformationService.logicDeleteByOrgIdAndWarnType(warningType, orgId);
-    	
+
+    	alertWarningInformationService.logicDeleteByOrgIdAndWarnType(warningType, orgId,schoolYear,semester);
+
     	logger.debug("删除warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
-    	
+
     	if(WarningTypeConstant.Register.toString().equals(warningType)){
     		logger.debug("开始重新生成warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
-    		studentRegisterJob.studenteRegisterJob();
+    		studentRegisterJob.studenteRegisterJob(schoolYear,semester);
     		logger.debug("重新生成warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
     	}
     	if(WarningTypeConstant.Absenteeism.toString().equals(warningType)){
     		logger.debug("开始重新生成warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
-    		rollCallJob.rollCallJob();
+    		rollCallJob.rollCallJob(schoolYear,semester);
     		logger.debug("重新生成warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
     	}
     	if(WarningTypeConstant.AttendAbnormal.toString().equals(warningType)){
     		logger.debug("开始重新生成warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
-    		scoreJob.attendAbnormalJob();
+    		scoreJob.attendAbnormalJob(schoolYear,semester);
     		logger.debug("重新生成warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
     	}
     	if(WarningTypeConstant.Cet.toString().equals(warningType)){
     		logger.debug("开始重新生成warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
-    		scoreJob.cet4ScoreJob();
+    		scoreJob.cet4ScoreJob(schoolYear,semester);
     		logger.debug("重新生成warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
     	}
     	if(WarningTypeConstant.PerformanceFluctuation.toString().equals(warningType)){
     		logger.debug("开始重新生成warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
-    		scoreJob.scoreFluctuateJob();
+    		scoreJob.scoreFluctuateJob(schoolYear,semester);
     		logger.debug("重新生成warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
     	}
     	if(WarningTypeConstant.TotalAchievement.toString().equals(warningType)){
     		logger.debug("开始重新生成warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
-    		scoreJob.totalScoreJob();
+    		scoreJob.totalScoreJob(schoolYear,semester);
     		logger.debug("重新生成warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
     	}
     	if(WarningTypeConstant.SupplementAchievement.toString().equals(warningType)){
     		logger.debug("开始重新生成warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
-    		scoreJob.makeUpScoreJob();
+    		scoreJob.makeUpScoreJob(schoolYear,semester);
     		logger.debug("重新生成warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
     	}
     	if(WarningTypeConstant.LeaveSchool.toString().equals(warningType)){
     		logger.debug("开始重新生成warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
-    		scoreJob.dropOutJob();
+    		scoreJob.dropOutJob(schoolYear,semester);
     		logger.debug("重新生成warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
     	}
     }
@@ -417,14 +429,27 @@ public class AlarmSettingsService {
 
     @Async
     public  void generateData(Long orgId,String warningType){
+        Calendar c = Calendar.getInstance();
+        // 当前年份
+        int schoolYear = c.get(Calendar.YEAR);
+        // 当前月份
+        int month = c.get(Calendar.MONTH)+1;
+        // 当前学期编号
+        int semester = 2;
+        if (month > 1 && month < 9) {
+            semester = 1;
+        }
+        if(month == 1 ){
+            schoolYear = schoolYear - 1;
+        }
 
         try {
                 if (warningType.equals(WarningTypeConstant.Register.toString())) {
                     StringBuilder path = new StringBuilder("/GenerateData");
                     path.append("/Register");
                     if (distributeLock.getLock(path)) {
-                        alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Register.toString(), orgId);
-                        studentRegisterJob.studenteRegisterJob();
+                        alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Register.toString(), orgId,schoolYear,semester);
+                        studentRegisterJob.studenteRegisterJob(schoolYear,semester);
                         distributeLock.delete(path);//删除锁
                     }
                 }
@@ -432,8 +457,8 @@ public class AlarmSettingsService {
                     StringBuilder path = new StringBuilder("/GenerateData");
                     path.append("/LeaveSchool");
                     if (distributeLock.getLock(path)) {
-                        alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.LeaveSchool.toString(), orgId);
-                        scoreJob.dropOutJob();
+                        alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.LeaveSchool.toString(), orgId,schoolYear,semester);
+                        scoreJob.dropOutJob(schoolYear,semester);
                         distributeLock.delete(path);//删除锁
                     }
                 }
@@ -441,8 +466,8 @@ public class AlarmSettingsService {
                     StringBuilder path = new StringBuilder("/GenerateData");
                     path.append("/AttendAbnormal");
                     if (distributeLock.getLock(path)) {
-                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.AttendAbnormal.toString(), orgId);
-                    scoreJob.attendAbnormalJob();
+                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.AttendAbnormal.toString(), orgId,schoolYear,semester);
+                    scoreJob.attendAbnormalJob(schoolYear,semester);
                         distributeLock.delete(path);//删除锁
                     }
                 }
@@ -450,8 +475,8 @@ public class AlarmSettingsService {
                     StringBuilder path = new StringBuilder("/GenerateData");
                     path.append("/Absenteeism");
                     if (distributeLock.getLock(path)) {
-                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Absenteeism.toString(), orgId);
-                    rollCallJob.rollCallJob();
+                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Absenteeism.toString(), orgId,schoolYear,semester);
+                    rollCallJob.rollCallJob(schoolYear,semester);
                         distributeLock.delete(path);//删除锁
                     }
                 }
@@ -459,8 +484,8 @@ public class AlarmSettingsService {
                     StringBuilder path = new StringBuilder("/GenerateData");
                     path.append("/TotalAchievement");
                     if (distributeLock.getLock(path)) {
-                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.TotalAchievement.toString(), orgId);
-                    scoreJob.totalScoreJob();
+                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.TotalAchievement.toString(), orgId,schoolYear,semester);
+                    scoreJob.totalScoreJob(schoolYear,semester);
                         distributeLock.delete(path);//删除锁
                     }
                 }
@@ -468,8 +493,8 @@ public class AlarmSettingsService {
                     StringBuilder path = new StringBuilder("/GenerateData");
                     path.append("/SupplementAchievement");
                     if (distributeLock.getLock(path)) {
-                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.SupplementAchievement.toString(), orgId);
-                    scoreJob.makeUpScoreJob();
+                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.SupplementAchievement.toString(), orgId,schoolYear,semester);
+                    scoreJob.makeUpScoreJob(schoolYear,semester);
                         distributeLock.delete(path);//删除锁
                     }
                 }
@@ -477,8 +502,8 @@ public class AlarmSettingsService {
                     StringBuilder path = new StringBuilder("/GenerateData");
                     path.append("/PerformanceFluctuation");
                     if (distributeLock.getLock(path)) {
-                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.PerformanceFluctuation.toString(), orgId);
-                    scoreJob.scoreFluctuateJob();
+                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.PerformanceFluctuation.toString(), orgId,schoolYear,semester);
+                    scoreJob.scoreFluctuateJob(schoolYear,semester);
                         distributeLock.delete(path);//删除锁
                     }
                 }
@@ -486,8 +511,8 @@ public class AlarmSettingsService {
                     StringBuilder path = new StringBuilder("/GenerateData");
                     path.append("/PerformanceFluctuation");
                     if (distributeLock.getLock(path)) {
-                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Cet.toString(), orgId);
-                    scoreJob.cet4ScoreJob();
+                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Cet.toString(), orgId,schoolYear,semester);
+                    scoreJob.cet4ScoreJob(schoolYear,semester);
                         distributeLock.delete(path);//删除锁
                     }
                 }

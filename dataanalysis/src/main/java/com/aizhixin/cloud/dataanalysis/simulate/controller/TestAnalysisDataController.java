@@ -85,13 +85,13 @@ public class TestAnalysisDataController {
 		 teachingScoreService.deleteScoreStatistics(orgId, teacherYear,semester);
 	}
 
-	@GetMapping(value = "/deleteallteachingstatistics", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(httpMethod = "GET", value = "手动清空教学成绩统计数据", response = Void.class, notes = "手动清空教学成绩统计数据<br><br><b>@author jianwei.wu</b>")
-	public void deleteAllTeachingStatistics(
-			@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId
-	) {
-		teachingScoreService.deleteScoreStatistics(orgId);
-	}
+//	@GetMapping(value = "/deleteallteachingstatistics", produces = MediaType.APPLICATION_JSON_VALUE)
+//	@ApiOperation(httpMethod = "GET", value = "手动清空教学成绩统计数据", response = Void.class, notes = "手动清空教学成绩统计数据<br><br><b>@author jianwei.wu</b>")
+//	public void deleteAllTeachingStatistics(
+//			@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId
+//	) {
+//		teachingScoreService.deleteScoreStatistics(orgId);
+//	}
 
 	@GetMapping(value = "/deleteteachingdetail", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "手动删除教学成绩详情数据", response = Void.class, notes = "手动删除教学成绩详情数据<br><br><b>@author jianwei.wu</b>")
@@ -103,13 +103,13 @@ public class TestAnalysisDataController {
 		teachingScoreService.deleteScoreDeatail(orgId, teacherYear, semester);
 	}
 
-	@GetMapping(value = "/deleteallteachingdetail", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(httpMethod = "GET", value = "手动清空教学成绩详情数据", response = Void.class, notes = "手动清空教学成绩详情数据<br><br><b>@author jianwei.wu</b>")
-	public void deleteAllTeachingDetail(
-			@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId
-	) {
-		teachingScoreService.deleteScoreDeatail(orgId);
-	}
+//	@GetMapping(value = "/deleteallteachingdetail", produces = MediaType.APPLICATION_JSON_VALUE)
+//	@ApiOperation(httpMethod = "GET", value = "手动清空教学成绩详情数据", response = Void.class, notes = "手动清空教学成绩详情数据<br><br><b>@author jianwei.wu</b>")
+//	public void deleteAllTeachingDetail(
+//			@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId
+//	) {
+//		teachingScoreService.deleteScoreDeatail(orgId);
+//	}
 
 	@GetMapping(value = "/modifynewstudentinfo", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "手动修改新生报到注册状态", response = Void.class, notes = "手动修改新生报到注册状态<br><br><b>@author jianwei.wu</b>")

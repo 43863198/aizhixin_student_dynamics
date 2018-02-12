@@ -67,13 +67,15 @@ public class TestAlarmJobController {
 	@ApiOperation(httpMethod = "GET", value = "签到预警定时任务", response = Void.class, notes = "签到预警定时任务<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> rollCallJob(
 			
-			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
+			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
+			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
 			) {
         if(null == orgId){
         	orgId = 218L;
         }
-		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Absenteeism.toString(), orgId);
-		rollCallJob.rollCallJob();
+		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Absenteeism.toString(), orgId,teacherYear,semester);
+		rollCallJob.rollCallJob(teacherYear,semester);
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
@@ -82,13 +84,15 @@ public class TestAlarmJobController {
 	@RequestMapping(value = "/sturegisterjob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "新生报到预警定时任务", response = Void.class, notes = "新生报到预警定时任务<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> stuRegisterJob(
-			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
+			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
+			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
 			) {
         if(null == orgId){
         	orgId = 218L;
         }
-		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Register.toString(), orgId);
-		studentRegisterJob.studenteRegisterJob();
+		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Register.toString(), orgId,teacherYear,semester);
+		studentRegisterJob.studenteRegisterJob(teacherYear,semester);
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
@@ -96,8 +100,11 @@ public class TestAlarmJobController {
 
 	@RequestMapping(value = "/totalscorecountjob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "总评成绩统计定时任务", response = Void.class, notes = "新生报到预警定时任务<br><br><b>@author zhengning</b>")
-	public ResponseEntity<Map<String, Object>> totalScoreCountJob() {
-		scoreJob.totalScoreCountJob();
+	public ResponseEntity<Map<String, Object>> totalScoreCountJob(
+			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
+			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
+	) {
+		scoreJob.totalScoreCountJob(teacherYear,semester);
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
@@ -106,13 +113,15 @@ public class TestAlarmJobController {
 	@RequestMapping(value = "/totalscorejob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "总评成绩预警定时任务", response = Void.class, notes = "总评成绩预警定时任务<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> totalScoreJob(
-			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
+			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
+			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
 			) {
         if(null == orgId){
         	orgId = 218L;
         }
-		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.TotalAchievement.toString(), orgId);
-		scoreJob.totalScoreJob();
+		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.TotalAchievement.toString(), orgId,teacherYear,semester);
+		scoreJob.totalScoreJob(teacherYear,semester);
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
@@ -129,21 +138,26 @@ public class TestAlarmJobController {
 	@RequestMapping(value = "/makeupscorejob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "补考成绩预警定时任务", response = Void.class, notes = "补考成绩预警定时任务<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> makeUpScoreJob(
-			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
+			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
+			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
 			) {
         if(null == orgId){
         	orgId = 218L;
         }
-		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.SupplementAchievement.toString(), orgId);
-		scoreJob.makeUpScoreJob();
+		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.SupplementAchievement.toString(), orgId,teacherYear,semester);
+		scoreJob.makeUpScoreJob(teacherYear,semester);
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/scorefluctuatecountJob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "成绩波动数据统计定时任务", response = Void.class, notes = "成绩波动数据统计定时任务<br><br><b>@author zhengning</b>")
-	public ResponseEntity<Map<String, Object>> scoreFluctuateCountJob() {
-		scoreJob.scoreFluctuateCountJob();
+	public ResponseEntity<Map<String, Object>> scoreFluctuateCountJob(
+			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
+			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
+	) {
+		scoreJob.scoreFluctuateCountJob(teacherYear,semester);
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
@@ -151,13 +165,15 @@ public class TestAlarmJobController {
 	@RequestMapping(value = "/scorefluctuatejob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "成绩波动预警定时任务", response = Void.class, notes = "成绩波动预警定时任务<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> scoreFluctuateJob(
-			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
+			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
+			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
 			) {
         if(null == orgId){
         	orgId = 218L;
         }
-		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.PerformanceFluctuation.toString(), orgId);
-		scoreJob.scoreFluctuateJob();
+		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.PerformanceFluctuation.toString(), orgId,teacherYear,semester);
+		scoreJob.scoreFluctuateJob(teacherYear,semester);
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
@@ -165,13 +181,15 @@ public class TestAlarmJobController {
 	@RequestMapping(value = "/attendabnormaljob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "修学异常预警定时任务", response = Void.class, notes = "总评成绩统计定时任务执行后,执行修学异常预警定时任务<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> attendAbnormalJob(
-			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
+			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
+			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
 			) {
         if(null == orgId){
         	orgId = 218L;
         }
-		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.AttendAbnormal.toString(), orgId);
-		scoreJob.attendAbnormalJob();
+		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.AttendAbnormal.toString(), orgId,teacherYear,semester);
+		scoreJob.attendAbnormalJob(teacherYear,semester);
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
@@ -180,13 +198,15 @@ public class TestAlarmJobController {
 	@RequestMapping(value = "/cet4job", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "英语4级预警定时任务", response = Void.class, notes = "总评成绩统计定时任务执行后,执行英语4级预警定时任务<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> cet4Job(
-			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
+			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
+			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
 			) {
         if(null == orgId){
         	orgId = 218L;
         }
-		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Cet.toString(), orgId);
-		scoreJob.cet4ScoreJob();
+		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Cet.toString(), orgId,teacherYear,semester);
+		scoreJob.cet4ScoreJob(teacherYear,semester);
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
@@ -194,13 +214,15 @@ public class TestAlarmJobController {
 	@RequestMapping(value = "/dropoutjob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "退学预警定时任务", response = Void.class, notes = "补考成绩统计定时任务执行后,执行退学预警定时任务<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> dropOutJob(
-			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId
+			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
+			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
+			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
 			) {
         if(null == orgId){
         	orgId = 218L;
         }
-		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.LeaveSchool.toString(), orgId);
-		scoreJob.dropOutJob();
+		alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.LeaveSchool.toString(), orgId,teacherYear,semester);
+		scoreJob.dropOutJob(teacherYear,semester);
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}

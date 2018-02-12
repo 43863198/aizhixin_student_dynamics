@@ -89,8 +89,8 @@ public class AlertWarningInformationService {
      * @param warningType
      * @param orgId
      */
-    public void logicDeleteByOrgIdAndWarnType(String warningType, Long orgId) {
-        alertWarningInformationRepository.logicDeleteByOrgIdAndWarnType(warningType, orgId);
+    public void logicDeleteByOrgIdAndWarnType(String warningType, Long orgId,int schoolYear,int semester) {
+        alertWarningInformationRepository.logicDeleteByOrgIdAndWarnType(warningType, orgId,schoolYear,semester);
     }
 
     RowMapper<RegisterAlertCountDomain> registerCountRm = new RowMapper<RegisterAlertCountDomain>() {

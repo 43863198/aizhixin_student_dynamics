@@ -30,8 +30,8 @@ public interface AlertWarningInformationRepository extends JpaRepository<Warning
     List<WarningInformation> getawinfoByOrgIdAndWarningTypeAndState(@Param("orgId")Long orgId, @Param("warningType")String warningType, @Param("deleteFlag")int deleteFlag,@Param("warningState") int warningState);
 
     @Modifying(clearAutomatically = true) 
-	@Query("update com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation wi set wi.deleteFlag = 1 where wi.deleteFlag= 0 and wi.warningType =:warningType and wi.orgId=:orgId ")
-	public void logicDeleteByOrgIdAndWarnType(@Param("warningType") String warningType,@Param("orgId") Long orgId);
+	@Query("update com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation wi set wi.deleteFlag = 1 where wi.deleteFlag= 0 and wi.warningType =:warningType and wi.orgId=:orgId and wi.teacherYear =:teacherYear and wi.semester =:semester")
+	public void logicDeleteByOrgIdAndWarnType(@Param("warningType") String warningType,@Param("orgId") Long orgId,@Param("teacherYear") Integer teacherYear,@Param("semester") Integer semester);
     
     @Modifying(clearAutomatically = true) 
    	@Query("update com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation wi set wi.warningState = :warningState where wi.deleteFlag= 0 and wi.warningLevel =:warningLevel and wi.orgId in(:orgIds) ")
