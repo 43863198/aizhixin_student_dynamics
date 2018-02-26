@@ -295,7 +295,7 @@ public class AlarmSettingsService {
 
     	logger.debug("删除warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
 
-    	if(WarningTypeConstant.Register.toString().equals(warningType)){
+    	if(WarningTypeConstant.Register.toString().equals(warningType)&&semester!=2){
     		logger.debug("开始重新生成warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
     		studentRegisterJob.studenteRegisterJob(schoolYear,semester);
     		logger.debug("重新生成warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");

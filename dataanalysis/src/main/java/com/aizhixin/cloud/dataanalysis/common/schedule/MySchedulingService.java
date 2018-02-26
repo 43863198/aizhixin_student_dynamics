@@ -60,7 +60,10 @@ public class MySchedulingService {
 			if(month == 1 ){
 				schoolYear = schoolYear - 1;
 			}
-            studentRegisterJob.studenteRegisterJob(schoolYear,semester);
+            //只在第一学期生成预警信息
+            if(semester != 2) {
+                studentRegisterJob.studenteRegisterJob(schoolYear, semester);
+            }
         } else {
             LOG.info("启动学生注册报到预警，获取锁失败");
         }
