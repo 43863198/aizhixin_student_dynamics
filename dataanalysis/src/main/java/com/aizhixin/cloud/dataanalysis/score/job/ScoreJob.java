@@ -432,10 +432,8 @@ public class ScoreJob {
 				HashMap<String, WarningInformation> warnMap = new HashMap<String, WarningInformation>();
 				ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 				// 获取成绩波动数据
-//				List<ScoreFluctuateCount> scoreFluctuateCountList = scoreFluctuateCountMongoRespository
-//						.findAllByOrgId(orgId);
 				List<ScoreFluctuateCount> scoreFluctuateCountList = scoreFluctuateCountMongoRespository
-						.findAllByOrgIdAndJobNum(orgId,"3162052051711");
+						.findAllByOrgId(orgId);
 				if (null != scoreFluctuateCountList
 						&& scoreFluctuateCountList.size() > 0) {
 					for (ScoreFluctuateCount scoreFluctuateCount : scoreFluctuateCountList) {
