@@ -731,11 +731,13 @@ public class ScoreJob {
 //			if(month == 1 ){
 //				schoolYear = schoolYear - 1;
 //			}
+			
+			int lastSchoolYear = schoolYear;
 			// 上学期编号
 			int lastSemester = 1;
 			if (semester == 1) {
 				lastSemester = 2;
-				schoolYear = schoolYear - 1;
+				lastSchoolYear = schoolYear - 1;
 			}
 
 			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
@@ -814,7 +816,7 @@ public class ScoreJob {
 				// WarningType.TotalAchievement.toString());
 				// 按orgId查询未报到的学生信息
 				List<TotalScoreCount> totalScoreCountList = totalScoreCountMongoRespository
-						.findAllBySchoolYearAndSemesterAndOrgId(schoolYear,
+						.findAllBySchoolYearAndSemesterAndOrgId(lastSchoolYear,
 								lastSemester, orgId);
 
 				if (null != totalScoreCountList
@@ -1045,11 +1047,12 @@ public class ScoreJob {
 //				schoolYear = schoolYear - 1;
 //			}
 
+			int lastSchoolYear = schoolYear;
 			// 上学期编号
 			int lastSemester = 1;
 			if (semester == 1) {
 				lastSemester = 2;
-				schoolYear = schoolYear - 1;
+				lastSchoolYear = schoolYear - 1;
 			}
 
 			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
@@ -1112,7 +1115,7 @@ public class ScoreJob {
 				// WarningType.TotalAchievement.toString());
 				// 按orgId查询未报到的学生信息
 				List<TotalScoreCount> totalScoreCountList = totalScoreCountMongoRespository
-						.findAllBySchoolYearAndSemesterAndOrgId(schoolYear,
+						.findAllBySchoolYearAndSemesterAndOrgId(lastSchoolYear,
 								lastSemester, orgId);
 
 				if (null != totalScoreCountList
