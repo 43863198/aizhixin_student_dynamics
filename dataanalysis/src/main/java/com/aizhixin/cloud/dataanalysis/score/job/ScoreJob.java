@@ -843,72 +843,141 @@ public class ScoreJob {
 												.getJobNum())){
 											break;
 										}
-										if (totalScoreCount.getFailCourseNum() >= Float
-												.parseFloat(alarmRule
-														.getRightParameter())) {
-											WarningInformation alertInfor = new WarningInformation();
-											String alertId = UUID.randomUUID()
-													.toString();
-											alertInfor.setId(alertId);
-											alertInfor
-													.setDefendantId(totalScoreCount
-															.getUserId());
-											alertInfor.setName(totalScoreCount
-													.getUserName());
-											alertInfor.setJobNumber(totalScoreCount
-													.getJobNum());
-											alertInfor.setCollogeId(totalScoreCount
-													.getCollegeId());
-											alertInfor
-													.setCollogeName(totalScoreCount
-															.getCollegeName());
-											alertInfor.setClassId(totalScoreCount
-													.getClassId());
-											alertInfor.setClassName(totalScoreCount
-													.getClassName());
-											alertInfor
-													.setProfessionalId(totalScoreCount
-															.getProfessionalId());
-											alertInfor
-													.setProfessionalName(totalScoreCount
-															.getProfessionalName());
-											alertInfor
-													.setTeacherYear(totalScoreCount
-															.getSchoolYear());
-											alertInfor
-													.setWarningLevel(alarmSettings
-															.getWarningLevel());
-											alertInfor
-													.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-											alertInfor
-													.setAlarmSettingsId(alarmSettings
-															.getId());
-											alertInfor
-													.setWarningType(WarningTypeConstant.TotalAchievement
-															.toString());
-											alertInfor.setWarningTime(new Date());
-											alertInfor.setSemester(semester);
-											alertInfor.setTeacherYear(schoolYear);
-											if (null != totalScoreCount.getDataSource() && totalScoreCount.getDataSource().length() > 0) {
-												alertInfor.setWarningSource(totalScoreCount.getDataSource().substring(0, totalScoreCount.getDataSource().length() - 1));
+										
+										if(">=".equals(alarmRule.getRightRelationship())){
+											if (totalScoreCount.getFailCourseNum() >= Float
+													.parseFloat(alarmRule
+															.getRightParameter())) {
+												WarningInformation alertInfor = new WarningInformation();
+												String alertId = UUID.randomUUID()
+														.toString();
+												alertInfor.setId(alertId);
+												alertInfor
+														.setDefendantId(totalScoreCount
+																.getUserId());
+												alertInfor.setName(totalScoreCount
+														.getUserName());
+												alertInfor.setJobNumber(totalScoreCount
+														.getJobNum());
+												alertInfor.setCollogeId(totalScoreCount
+														.getCollegeId());
+												alertInfor
+														.setCollogeName(totalScoreCount
+																.getCollegeName());
+												alertInfor.setClassId(totalScoreCount
+														.getClassId());
+												alertInfor.setClassName(totalScoreCount
+														.getClassName());
+												alertInfor
+														.setProfessionalId(totalScoreCount
+																.getProfessionalId());
+												alertInfor
+														.setProfessionalName(totalScoreCount
+																.getProfessionalName());
+												alertInfor
+														.setTeacherYear(totalScoreCount
+																.getSchoolYear());
+												alertInfor
+														.setWarningLevel(alarmSettings
+																.getWarningLevel());
+												alertInfor
+														.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+												alertInfor
+														.setAlarmSettingsId(alarmSettings
+																.getId());
+												alertInfor
+														.setWarningType(WarningTypeConstant.TotalAchievement
+																.toString());
+												alertInfor.setWarningTime(new Date());
+												alertInfor.setSemester(semester);
+												alertInfor.setTeacherYear(schoolYear);
+												if (null != totalScoreCount.getDataSource() && totalScoreCount.getDataSource().length() > 0) {
+													alertInfor.setWarningSource(totalScoreCount.getDataSource().substring(0, totalScoreCount.getDataSource().length() - 1));
+												}
+												alertInfor
+														.setWarningCondition(termConversion.getSemester(schoolYear, semester, 1).get("schoolYear") + "年第" + termConversion.getSemester(schoolYear, semester, 1).get("semester") + "学期必修课不及格课程数:"
+																+ totalScoreCount
+																.getFailCourseNum());
+												alertInfor.setPhone(totalScoreCount
+														.getUserPhone());
+												alertInfor.setOrgId(alarmRule
+														.getOrgId());
+												alertInforList.add(alertInfor);
+												warnMap.put(totalScoreCount
+														.getJobNum(), alertInfor);
+												break;
+											} else {
+												continue;
 											}
-											alertInfor
-													.setWarningCondition(termConversion.getSemester(schoolYear, semester, 1).get("schoolYear") + "年第" + termConversion.getSemester(schoolYear, semester, 1).get("semester") + "学期必修课不及格课程数:"
-															+ totalScoreCount
-															.getFailCourseNum());
-											alertInfor.setPhone(totalScoreCount
-													.getUserPhone());
-											alertInfor.setOrgId(alarmRule
-													.getOrgId());
-											alertInforList.add(alertInfor);
-											warnMap.put(totalScoreCount
-													.getJobNum(), alertInfor);
-											break;
-										} else {
-											continue;
+										}
+										
+										if("<=".equals(alarmRule.getRightRelationship())){
+											if (totalScoreCount.getFailCourseNum() <= Float
+													.parseFloat(alarmRule
+															.getRightParameter())) {
+												WarningInformation alertInfor = new WarningInformation();
+												String alertId = UUID.randomUUID()
+														.toString();
+												alertInfor.setId(alertId);
+												alertInfor
+														.setDefendantId(totalScoreCount
+																.getUserId());
+												alertInfor.setName(totalScoreCount
+														.getUserName());
+												alertInfor.setJobNumber(totalScoreCount
+														.getJobNum());
+												alertInfor.setCollogeId(totalScoreCount
+														.getCollegeId());
+												alertInfor
+														.setCollogeName(totalScoreCount
+																.getCollegeName());
+												alertInfor.setClassId(totalScoreCount
+														.getClassId());
+												alertInfor.setClassName(totalScoreCount
+														.getClassName());
+												alertInfor
+														.setProfessionalId(totalScoreCount
+																.getProfessionalId());
+												alertInfor
+														.setProfessionalName(totalScoreCount
+																.getProfessionalName());
+												alertInfor
+														.setTeacherYear(totalScoreCount
+																.getSchoolYear());
+												alertInfor
+														.setWarningLevel(alarmSettings
+																.getWarningLevel());
+												alertInfor
+														.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+												alertInfor
+														.setAlarmSettingsId(alarmSettings
+																.getId());
+												alertInfor
+														.setWarningType(WarningTypeConstant.TotalAchievement
+																.toString());
+												alertInfor.setWarningTime(new Date());
+												alertInfor.setSemester(semester);
+												alertInfor.setTeacherYear(schoolYear);
+												if (null != totalScoreCount.getDataSource() && totalScoreCount.getDataSource().length() > 0) {
+													alertInfor.setWarningSource(totalScoreCount.getDataSource().substring(0, totalScoreCount.getDataSource().length() - 1));
+												}
+												alertInfor
+														.setWarningCondition(termConversion.getSemester(schoolYear, semester, 1).get("schoolYear") + "年第" + termConversion.getSemester(schoolYear, semester, 1).get("semester") + "学期平均学分绩点:"
+																+ totalScoreCount
+																.getFailCourseNum());
+												alertInfor.setPhone(totalScoreCount
+														.getUserPhone());
+												alertInfor.setOrgId(alarmRule
+														.getOrgId());
+												alertInforList.add(alertInfor);
+												warnMap.put(totalScoreCount
+														.getJobNum(), alertInfor);
+												break;
+											} else {
+												continue;
+											}
 										}
 									}
-
 							}
 						}
 					}
