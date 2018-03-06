@@ -12,4 +12,6 @@ import com.aizhixin.cloud.dataanalysis.score.mongoEntity.TotalScoreCount;
 public interface TotalScoreCountMongoRespository extends MongoRepository<TotalScoreCount, String>{
  
 	List<TotalScoreCount> findAllBySchoolYearAndSemesterAndOrgId(int schoolYear,int semester,Long orgId);
+	
+	List<TotalScoreCount> findAllBySchoolYearAndSemesterAndOrgIdAndJobNum(int schoolYear,int semester,Long orgId,String jobNum);
 }

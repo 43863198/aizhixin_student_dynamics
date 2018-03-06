@@ -401,7 +401,7 @@ public class ScoreJob {
 					.getAlarmRuleByIds(warnRuleIdList);
 			for (AlarmRule alarmRule : alarmList) {
 				// 成绩波动只取第一条规则
-				if (alarmRule.getSerialNumber() == 1) {
+//				if (alarmRule.getSerialNumber() == 1) {
 
 					if (null != alarmRuleMap
 							.get(alarmRule.getAlarmSettingsId())) {
@@ -417,7 +417,7 @@ public class ScoreJob {
 								ruleList);
 					}
 
-				}
+//				}
 			}
 
 			Iterator iter = alarmMap.entrySet().iterator();
@@ -429,7 +429,7 @@ public class ScoreJob {
 
 				//删除已生成的预警信息
 				alertWarningInformationService.deleteWarningInformation(orgId,WarningTypeConstant.PerformanceFluctuation.toString(),schoolYear,semester);
-
+				HashMap<String, WarningInformation> warnMap = new HashMap<String, WarningInformation>();
 				ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 				// 获取成绩波动数据
 				List<ScoreFluctuateCount> scoreFluctuateCountList = scoreFluctuateCountMongoRespository
@@ -437,6 +437,11 @@ public class ScoreJob {
 				if (null != scoreFluctuateCountList
 						&& scoreFluctuateCountList.size() > 0) {
 					for (ScoreFluctuateCount scoreFluctuateCount : scoreFluctuateCountList) {
+						
+						if(null != warnMap.get(scoreFluctuateCount
+								.getJobNum())){
+							break;
+						}
 						for (AlarmSettings alarmSettings : val) {
 							List<AlarmRule> alarmRuleList = alarmRuleMap
 									.get(alarmSettings.getId());
@@ -444,6 +449,12 @@ public class ScoreJob {
 									&& !alarmRuleList.isEmpty()) {
 
 								for (AlarmRule alarmRule : alarmRuleList) {
+									
+									if(null != warnMap.get(scoreFluctuateCount
+											.getJobNum())){
+										break;
+									}
+									
 									float result = 0L;
 									if (!StringUtils
 											.isEmpty(scoreFluctuateCount
@@ -530,7 +541,8 @@ public class ScoreJob {
 											alertInfor.setOrgId(alarmRule
 													.getOrgId());
 											alertInforList.add(alertInfor);
-
+											 warnMap.put(scoreFluctuateCount
+														.getJobNum(),alertInfor);
 											break;
 										} else {
 											continue;
@@ -774,7 +786,7 @@ public class ScoreJob {
 					.getAlarmRuleByIds(warnRuleIdList);
 			for (AlarmRule alarmRule : alarmList) {
 				// 总评成绩只取第一条规则
-				if (alarmRule.getSerialNumber() == 1) {
+//				if (alarmRule.getSerialNumber() == 1) {
 					if (null != alarmRuleMap
 							.get(alarmRule.getAlarmSettingsId())) {
 						List<AlarmRule> ruleList = alarmRuleMap.get(alarmRule
@@ -788,7 +800,7 @@ public class ScoreJob {
 						alarmRuleMap.put(alarmRule.getAlarmSettingsId(),
 								ruleList);
 					}
-				}
+//				}
 			}
 
 			Iterator iter = alarmMap.entrySet().iterator();
@@ -796,7 +808,6 @@ public class ScoreJob {
 
 				// 更新预警集合
 				ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
-				// 定时任务产生的新的预警数据
 				HashMap<String, WarningInformation> warnMap = new HashMap<String, WarningInformation>();
 				Map.Entry entry = (Map.Entry) iter.next();
 				Long orgId = (Long) entry.getKey();
@@ -806,14 +817,6 @@ public class ScoreJob {
 				//删除已生成的预警信息
 				alertWarningInformationService.deleteWarningInformation(orgId,WarningTypeConstant.TotalAchievement.toString(),schoolYear,semester);
 
-
-				// 预警处理配置获取
-				// HashMap<String, ProcessingMode> processingModeMap = new
-				// HashMap<String, ProcessingMode>();
-				// List<ProcessingMode> processingModeList =
-				// processingModeService
-				// .getProcessingModeBywarningTypeId(orgId,
-				// WarningType.TotalAchievement.toString());
 				// 按orgId查询未报到的学生信息
 				List<TotalScoreCount> totalScoreCountList = totalScoreCountMongoRespository
 						.findAllBySchoolYearAndSemesterAndOrgId(lastSchoolYear,
@@ -825,6 +828,10 @@ public class ScoreJob {
 					for (TotalScoreCount totalScoreCount : totalScoreCountList) {
 						for (AlarmSettings alarmSettings : val) {
 
+								if(null != warnMap.get(totalScoreCount
+										.getJobNum())){
+									break;
+								}
 								List<AlarmRule> alarmRuleList = alarmRuleMap
 										.get(alarmSettings.getId());
 								if (null != alarmRuleList
@@ -832,8 +839,9 @@ public class ScoreJob {
 
 									for (AlarmRule alarmRule : alarmRuleList) {
 
-										if (alarmRule.getSerialNumber() != 1) {
-											continue;
+										if(null != warnMap.get(totalScoreCount
+												.getJobNum())){
+											break;
 										}
 										if (totalScoreCount.getFailCourseNum() >= Float
 												.parseFloat(alarmRule
@@ -1106,13 +1114,6 @@ public class ScoreJob {
 				//删除已生成的预警信息
 				alertWarningInformationService.deleteWarningInformation(orgId,WarningTypeConstant.AttendAbnormal.toString(),schoolYear,semester);
 
-				// 预警处理配置获取
-				// HashMap<String, ProcessingMode> processingModeMap = new
-				// HashMap<String, ProcessingMode>();
-				// List<ProcessingMode> processingModeList =
-				// processingModeService
-				// .getProcessingModeBywarningTypeId(orgId,
-				// WarningType.TotalAchievement.toString());
 				// 按orgId查询未报到的学生信息
 				List<TotalScoreCount> totalScoreCountList = totalScoreCountMongoRespository
 						.findAllBySchoolYearAndSemesterAndOrgId(lastSchoolYear,
@@ -1123,6 +1124,11 @@ public class ScoreJob {
 					Date today = new Date();
 					for (TotalScoreCount totalScoreCount : totalScoreCountList) {
 						for (AlarmSettings alarmSettings : val) {
+							
+								if(null != warnMap.get(totalScoreCount
+										.getJobNum())){
+									break;
+								}
 								AlarmRule alarmRule = alarmRuleMap
 										.get(alarmSettings.getRuleSet());
 								if (null != alarmRule) {
@@ -1182,7 +1188,9 @@ public class ScoreJob {
 										if (null != totalScoreCount.getDataSource() && totalScoreCount.getDataSource().length() > 0) {
 											alertInfor.setWarningSource(totalScoreCount.getDataSource().substring(0, totalScoreCount.getDataSource().length() - 1));
 										}
-
+										
+										warnMap.put(totalScoreCount
+												.getJobNum(),alertInfor);
 										break;
 									} else {
 										continue;

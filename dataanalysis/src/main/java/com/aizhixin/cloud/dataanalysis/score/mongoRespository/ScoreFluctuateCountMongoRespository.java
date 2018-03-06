@@ -13,4 +13,5 @@ public interface ScoreFluctuateCountMongoRespository extends MongoRepository<Sco
  
 	List<ScoreFluctuateCount> findAllByOrgId(Long orgId);
 	
+	List<ScoreFluctuateCount> findAllByOrgIdAndJobNum(Long orgId,String jobNum);
 }
