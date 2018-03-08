@@ -53,5 +53,6 @@
     <include file="classpath:liquibase/20180111160500_add_entity_PushMessage.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20180117154645_update_entity_WarningType.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20180117174645_update_entity_WarningType.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20180308104300_add_entity_OpenUpInfo.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>
