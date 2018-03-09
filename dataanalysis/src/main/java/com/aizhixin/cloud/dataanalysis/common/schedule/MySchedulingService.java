@@ -98,7 +98,20 @@ public class MySchedulingService {
     public void rollCallCountJob() {
         if (distributeLock.getRollCallCountLock()) {
             LOG.info("开始启动旷课信息统计定时任务");
-            rollCallJob.rollCallCountJob();
+            Calendar c = Calendar.getInstance();
+			//当前年份
+			int schoolYear = c.get(Calendar.YEAR);
+			//当前月份
+			int month = c.get(Calendar.MONTH)+1;
+			//当前学期编号
+			int semester = 2;
+			if( month > 1 && month < 9){
+				semester = 1;
+			}
+			if(month == 1 ){
+				schoolYear = schoolYear - 1;
+			}
+            rollCallJob.rollCallCountJob(schoolYear,semester);
         } else {
             LOG.info("启动旷课信息统计任务，获取锁失败");
         }

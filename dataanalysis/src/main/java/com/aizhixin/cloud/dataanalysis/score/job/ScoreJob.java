@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.aizhixin.cloud.dataanalysis.common.util.TermConversion;
+import com.aizhixin.cloud.dataanalysis.rollCall.mongoEntity.RollCallCount;
 import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
 import com.mongodb.BasicDBObject;
@@ -25,6 +26,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -83,6 +85,9 @@ public class ScoreJob {
 	private TermConversion termConversion;
 	@Autowired
 	private WarningTypeService warningTypeService;
+	@Autowired
+	private MongoTemplate mongoTemplate;
+
 
 	/**
 	 * 统计mongo里的相邻学期平均绩点

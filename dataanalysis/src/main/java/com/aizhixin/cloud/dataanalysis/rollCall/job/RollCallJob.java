@@ -37,6 +37,9 @@ import net.sf.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -66,30 +69,32 @@ public class RollCallJob {
 	private ProcessingModeService processingModeService;
 	@Autowired
 	private WarningTypeService warningTypeService;
+	@Autowired
+	private MongoTemplate mongoTemplate;
 	
 	/**
 	 * 统计mongo里的本学期考勤数据将汇总的数据存入rollCallCount里
 	 */
-	public void rollCallCountJob() {
+	public void rollCallCountJob(int schoolYear,int semester) {
 
 		// 获取预警配置
 		List<AlarmSettings> settingsList = alarmSettingsService
 				.getAlarmSettingsByType(WarningTypeConstant.Absenteeism.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 			
-			Calendar c = Calendar.getInstance();
-			//当前年份
-			int schoolYear = c.get(Calendar.YEAR);
-			//当前月份
-			int month = c.get(Calendar.MONTH)+1;
-			//当前学期编号
-			int semester = 2;
-			if( month > 1 && month < 9){
-				semester = 1;
-			}
-			if(month == 1 ){
-				schoolYear = schoolYear - 1;
-			}
+//			Calendar c = Calendar.getInstance();
+//			//当前年份
+//			int schoolYear = c.get(Calendar.YEAR);
+//			//当前月份
+//			int month = c.get(Calendar.MONTH)+1;
+//			//当前学期编号
+//			int semester = 2;
+//			if( month > 1 && month < 9){
+//				semester = 1;
+//			}
+//			if(month == 1 ){
+//				schoolYear = schoolYear - 1;
+//			}
 			HashMap<Long, Long> alarmMap = new HashMap<Long,Long>();
 			// 按orgId归类告警等级阀值
 			for (AlarmSettings settings : settingsList) {
@@ -99,7 +104,9 @@ public class RollCallJob {
 			}
 
 			//清除之前考勤统计数据
-			rollCallCountMongoRespository.deleteAll();
+			Query query = Query.query(Criteria.where("schoolYear").is(schoolYear).and("semester").is(semester));
+			mongoTemplate.remove(query, RollCallCount.class);
+//			rollCallCountMongoRespository.deleteAll();
 			Iterator iter = alarmMap.entrySet().iterator();
 			while (iter.hasNext()) {
 
