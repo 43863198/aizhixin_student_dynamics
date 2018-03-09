@@ -1213,7 +1213,7 @@ public class ScoreJob {
 	/**
 	 * 统计mongo里的补考不及格成绩汇总到
 	 */
-	public void makeUpScoreCountJob() {
+	public void makeUpScoreCountJob(int schoolYear) {
 
 		// 获取预警配置
 		List<AlarmSettings> settingsList = alarmSettingsService
@@ -1221,12 +1221,12 @@ public class ScoreJob {
 						.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 
-			Calendar c = Calendar.getInstance();
-			// 当前年份
-			int endYear = c.get(Calendar.YEAR);
+//			Calendar c = Calendar.getInstance();
+//			// 当前年份
+//			int endYear = c.get(Calendar.YEAR);
 			// 前三年
-			int beginYear = endYear - 3;
-
+//			int beginYear = endYear - 3;
+			int beginYear = schoolYear - 3;
 			HashMap<Long, Long> alarmMap = new HashMap<Long, Long>();
 			// 按orgId归类告警等级阀值
 			for (AlarmSettings settings : settingsList) {
