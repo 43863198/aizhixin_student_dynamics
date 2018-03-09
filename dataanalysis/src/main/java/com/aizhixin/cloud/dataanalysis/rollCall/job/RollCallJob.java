@@ -69,8 +69,7 @@ public class RollCallJob {
 	private ProcessingModeService processingModeService;
 	@Autowired
 	private WarningTypeService warningTypeService;
-	@Autowired
-	private MongoTemplate mongoTemplate;
+
 	
 	/**
 	 * 统计mongo里的本学期考勤数据将汇总的数据存入rollCallCount里
@@ -104,9 +103,7 @@ public class RollCallJob {
 			}
 
 			//清除之前考勤统计数据
-			Query query = Query.query(Criteria.where("schoolYear").is(schoolYear).and("semester").is(semester));
-			mongoTemplate.remove(query, RollCallCount.class);
-//			rollCallCountMongoRespository.deleteAll();
+			rollCallCountMongoRespository.deleteAll();
 			Iterator iter = alarmMap.entrySet().iterator();
 			while (iter.hasNext()) {
 

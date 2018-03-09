@@ -85,8 +85,6 @@ public class ScoreJob {
 	private TermConversion termConversion;
 	@Autowired
 	private WarningTypeService warningTypeService;
-	@Autowired
-	private MongoTemplate mongoTemplate;
 
 
 	/**
