@@ -270,11 +270,11 @@ public class SchoolStatisticsAnalysisJob {
 	}
 
 //	 @Scheduled(cron = "0 0/15 * * * ?")
-	public void schoolStatisticsJob() {
+	public void schoolStatisticsJob(int schoolYear) {
 
-		Calendar c = Calendar.getInstance();
-		// 当前年份
-		int schoolYear = c.get(Calendar.YEAR);
+//		Calendar c = Calendar.getInstance();
+//		// 当前年份
+//		int schoolYear = c.get(Calendar.YEAR);
 
 		List<WarningTypeDomain> orgIdList = warningTypeService.getAllOrgId();
 		if (null != orgIdList && orgIdList.size() > 0) {

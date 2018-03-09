@@ -55,9 +55,11 @@ public class TestAlarmJobController {
 
 	@RequestMapping(value = "/rollcallcountjob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "签到定统计数据时任务", response = Void.class, notes = "签到定统计数据时任务<br><br><b>@author zhengning</b>")
-	public ResponseEntity<Map<String, Object>> rollCallCountJob() {
-
-		rollCallJob.rollCallCountJob();
+	public ResponseEntity<Map<String, Object>> rollCallCountJob(
+			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
+			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
+	) {
+		rollCallJob.rollCallCountJob(teacherYear,semester);
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
@@ -66,7 +68,6 @@ public class TestAlarmJobController {
 	@RequestMapping(value = "/rollcalljob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "签到预警定时任务", response = Void.class, notes = "签到预警定时任务<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> rollCallJob(
-			
 			@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
 			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
 			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
@@ -231,8 +232,10 @@ public class TestAlarmJobController {
 	
 	@RequestMapping(value = "/schoolcountjob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "学校信息统计定时任务", response = Void.class, notes = "学校信息统计定时任务<br><br><b>@author zhengning</b>")
-	public ResponseEntity<Map<String, Object>> schoolCountJob() {
-		schoolStatisticsJob.schoolStatisticsJob();
+	public ResponseEntity<Map<String, Object>> schoolCountJob(
+			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear
+	) {
+		schoolStatisticsJob.schoolStatisticsJob(teacherYear);
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
