@@ -128,8 +128,10 @@ public class TestAlarmJobController {
 
 	@RequestMapping(value = "/makeupscorecountjob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "补考成绩统计定时任务", response = Void.class, notes = "补考成绩统计定时任务<br><br><b>@author zhengning</b>")
-	public ResponseEntity<Map<String, Object>> makeUpScoreCountJob() {
-		scoreJob.makeUpScoreCountJob();
+	public ResponseEntity<Map<String, Object>> makeUpScoreCountJob(
+			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear
+	) {
+		scoreJob.makeUpScoreCountJob(teacherYear);
 		;
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);

@@ -157,7 +157,10 @@ public class MySchedulingService {
     public void makeUpScoreCountJob() {
         if (distributeLock.getMakeUpScoreCountLock()) {
             LOG.info("开始启动补考不及格成绩信息统计定时任务");
-            scoreJob.makeUpScoreCountJob();;
+            Calendar c = Calendar.getInstance();
+            // 当前年份
+            int schoolYear = c.get(Calendar.YEAR);
+            scoreJob.makeUpScoreCountJob(schoolYear);;
         } else {
             LOG.info("启动总评不及格成绩统计任务，获取锁失败");
         }
