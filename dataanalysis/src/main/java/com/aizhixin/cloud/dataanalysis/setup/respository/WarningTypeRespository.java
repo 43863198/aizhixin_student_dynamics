@@ -37,4 +37,6 @@ public interface WarningTypeRespository extends JpaRepository<WarningType, Strin
 
     WarningType findOneByOrgIdAndWarningType(Long orgId, String warningType);
 
+    List<WarningType> findByOrgIdAndDeleteFlag(Long orgId,Integer deleteFlag);
+
 }

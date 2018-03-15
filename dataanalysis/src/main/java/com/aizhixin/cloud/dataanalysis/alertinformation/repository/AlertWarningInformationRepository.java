@@ -49,4 +49,8 @@ public interface AlertWarningInformationRepository extends JpaRepository<Warning
     @Query("delete from #{#entityName} a where a.orgId = :orgId and a.warningType = :warningType and a.teacherYear = :teacherYear and a.semester = :semester")
     void deletePageDataByOrgIdAndTeacherYearAndSemester(@Param(value = "orgId") Long orgId, @Param(value = "warningType") String warningType, @Param(value = "teacherYear") Integer teacherYear, @Param(value = "semester") Integer semester);
 
+    void deleteByOrgId(Long orgId);
+
+    List<WarningInformation> findByOrgIdAndDeleteFlag(Long orgId,Integer deleteFlag);
+
 }

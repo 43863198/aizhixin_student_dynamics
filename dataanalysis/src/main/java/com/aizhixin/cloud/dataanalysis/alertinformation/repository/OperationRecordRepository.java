@@ -17,6 +17,5 @@ public interface OperationRecordRepository extends JpaRepository<OperationRecord
 
     @Query("select ori from #{#entityName} ori where ori.warningInformationId = :warningInformationId and ori.deleteFlag = :deleteFlag")
     List<OperationRecord> getOperationRecordByWInfoId(@Param("warningInformationId")String warningInformationId, @Param("deleteFlag")int deleteFlag);
-
-
+    void deleteByOrgId(Long orgId);
 }

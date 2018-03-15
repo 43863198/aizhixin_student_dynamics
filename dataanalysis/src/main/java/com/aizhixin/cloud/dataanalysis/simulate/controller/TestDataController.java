@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
+import com.aizhixin.cloud.dataanalysis.common.service.InitService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,8 @@ public class TestDataController {
 	private RollCallService rollCallService;
 	@Autowired
 	private PracticeService practiceService;
+	@Autowired
+	private InitService initService;
 
 
 	@RequestMapping(value = "/addRegisterdata", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -468,6 +471,21 @@ public class TestDataController {
 //			@ApiParam(value = "newStudentInfoFile 基础数据文件", required = true) @RequestParam(value = "newStudentInfoFile") MultipartFile newStudentInfoFile,
 			@ApiParam(value = "orgId 学校ID", required = true) @RequestParam(value = "orgId") Long orgId) {
 		practiceService.importData("实践2016第二学期数据.xlsx", "开发环境桂林理工17级新学生信息.xlsx", orgId);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+
+
+
+	@RequestMapping(value = "/dataInit", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "GET", value = "学校数据转换", response = Void.class, notes = "学校数据转换<br><br><b>@author xg</b>")
+	public ResponseEntity<Void> dataInit() {
+		new Thread(){
+			@Override
+			public void run() {
+				initService.start();
+			}
+		}.start();
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

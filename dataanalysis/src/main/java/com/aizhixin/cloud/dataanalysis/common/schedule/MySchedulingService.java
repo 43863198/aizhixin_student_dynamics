@@ -17,6 +17,7 @@ import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
 import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
 import com.aizhixin.cloud.dataanalysis.studentRegister.job.StudentRegisterJob;
 
+import javax.annotation.PostConstruct;
 import java.util.Calendar;
 
 /**
@@ -355,7 +356,5 @@ public class MySchedulingService {
             LOG.info("预警设置定时任务开启/关闭，获取锁失败");
         }
     }
-
-
 
 }

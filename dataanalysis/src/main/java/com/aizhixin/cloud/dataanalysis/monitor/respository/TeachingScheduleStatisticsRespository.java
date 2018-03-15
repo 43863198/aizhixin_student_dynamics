@@ -14,5 +14,7 @@ public interface TeachingScheduleStatisticsRespository extends JpaRepository<Tea
 	TeachingScheduleStatistics findOneByOrgIdAndStatisticalTime(Long orgId,String statisticalTime);
 	
 	 void deleteByOrgId(Long orgId);
+
+	 List<TeachingScheduleStatistics> findByOrgIdAndDeleteFlag(Long orgId,Integer deleteFlag);
 }
 
