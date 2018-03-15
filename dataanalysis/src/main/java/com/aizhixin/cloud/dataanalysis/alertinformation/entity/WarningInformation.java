@@ -147,7 +147,6 @@ public class WarningInformation extends AbstractStringIdEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Getter @Setter protected Date warningTime = new Date();
 
-
     /*
      * 预警引擎设置id
      */
@@ -166,7 +165,6 @@ public class WarningInformation extends AbstractStringIdEntity {
     @Column(name = "WARNING_SOURCE")
     @Getter @Setter private String warningSource;
 
-    
     /*
     * 学期
     */

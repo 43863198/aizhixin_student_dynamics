@@ -14,5 +14,7 @@ public interface AbnormalTeachingStatisticsRespository extends JpaRepository<Abn
 	AbnormalTeachingStatistics findOneByOrgIdAndStatisticalTime(Long orgId,String statisticalTime);
 	
 	 void deleteByOrgId(Long orgId);
+
+	List<AbnormalTeachingStatistics> findByOrgIdAndDeleteFlag(Long orgId,Integer deleteFlag);
 }
 

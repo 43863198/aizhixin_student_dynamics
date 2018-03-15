@@ -20,4 +20,7 @@ public interface ProcessingModeRespository extends PagingAndSortingRepository<Pr
     ProcessingMode getBywarningTypeIdAndTypeSet(@Param("orgId")Long orgId, @Param("warningTypeId")String warningTypeId, @Param("operationTypeSet")int operationTypeSet,@Param("warningLevel")int warningLevel,@Param("deleteFlag")int deleteFlag);
 
 
+    void deleteByOrgId(Long orgId);
+
+    List<ProcessingMode> findByOrgIdAndDeleteFlag(Long orgId,Integer deleteFlag);
 }

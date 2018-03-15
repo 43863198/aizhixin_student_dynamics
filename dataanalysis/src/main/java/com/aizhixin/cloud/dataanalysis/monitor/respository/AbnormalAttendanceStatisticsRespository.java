@@ -12,7 +12,9 @@ public interface AbnormalAttendanceStatisticsRespository extends JpaRepository<A
 	List<AbnormalAttendanceStatistics> findFirst1ByOrgIdOrderByCreatedDateDesc(Long orgId);
 	
 	AbnormalAttendanceStatistics findOneByOrgIdAndStatisticalTime(Long orgId,String statisticalTime);
-	
+
 	 void deleteByOrgId(Long orgId);
+
+	List<AbnormalAttendanceStatistics> findByOrgIdAndDeleteFlag(Long orgId,Integer deleteFlag);
 }
 

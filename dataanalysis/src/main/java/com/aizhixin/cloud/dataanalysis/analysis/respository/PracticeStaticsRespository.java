@@ -26,4 +26,6 @@ public interface PracticeStaticsRespository extends JpaRepository<PracticeStatis
     Page<PracticeStatistics>  findPageDataByOrgIdAndTeacherYear(Pageable pageable, @Param(value = "orgId") Long orgId, @Param(value = "teacherYear") Integer teacherYear, @Param(value = "deleteFlag") int deleteFlag);
 
     void deleteByOrgId(Long orgId);
+
+    List<PracticeStatistics> findByOrgIdAndDeleteFlag(Long orgId,Integer deleteFlag);
 }
