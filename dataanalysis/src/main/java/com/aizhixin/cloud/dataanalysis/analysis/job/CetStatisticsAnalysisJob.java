@@ -97,6 +97,7 @@ public class CetStatisticsAnalysisJob {
                         cet4.and("schoolYear").is(schoolYear);
                         cet4.and("semester").is(semester);
                         cet4.and("examType").is(ScoreConstant.EXAM_TYPE_CET4);
+                        cet4.and("totalScore").gte(0);//四级成绩大于0分的人计算为参加人
                         AggregationResults<BasicDBObject> collegeCet4 = mongoTemplate.aggregate(
                                 Aggregation.newAggregation(
                                         Aggregation.match(cet4),
@@ -143,6 +144,7 @@ public class CetStatisticsAnalysisJob {
                         cet6.and("schoolYear").is(schoolYear);
                         cet6.and("semester").is(semester);
                         cet6.and("examType").is(ScoreConstant.EXAM_TYPE_CET6);
+                        cet6.and("totalScore").gte(0);//六级成绩大于0分的人计算为参加人
                         AggregationResults<BasicDBObject> collegeCet6 = mongoTemplate.aggregate(
                                 Aggregation.newAggregation(
                                         Aggregation.match(cet6),
