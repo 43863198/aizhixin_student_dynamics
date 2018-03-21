@@ -29,19 +29,22 @@
 //    @Value("${zookeeper.task}")
 //    private String zkTaskPath;
 //
-////    @Autowired
-////    private WarningTypeService warningTypeService;
-////
-////    @PostConstruct
-////    public void addWarningType(){
-////        warningTypeService.setWarningType(218L);
-////    }
+//    @Autowired
+//    private WarningTypeService warningTypeService;
+//
+//    @PostConstruct
+//    public void addWarningType(){
+//        warningTypeService.setWarningType(218L);
+//    }
 //
 //    @PostConstruct
 //    public void cleanZookeeperTaskData() {
 //        CuratorFramework client = CuratorFrameworkFactory.newClient(zkConnectString, new RetryNTimes(ZOOKEEPER_RETRY_TIMES, ZOOKEEPER_RETRY_SLEEP_TIMES));
 //        try {
 //            client.start();
+//            StringBuilder lockPath = new StringBuilder(zkLockPath);
+//            StringBuilder taskPath = new StringBuilder(zkTaskPath);
+//
 //            client.delete().deletingChildrenIfNeeded().forPath(zkLockPath);
 //            client.delete().deletingChildrenIfNeeded().forPath(zkTaskPath);
 //        } catch (Exception e) {
