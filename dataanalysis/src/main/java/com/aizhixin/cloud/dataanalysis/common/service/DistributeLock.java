@@ -38,7 +38,7 @@ public class DistributeLock {
      * @param taskPath      任务路径
      * @return              获取锁是否成功
      */
-    private boolean getLock(String lockPath, String taskPath) {
+    public boolean getLock(String lockPath, String taskPath) {
         boolean locked = false;
         CuratorFramework client = CuratorFrameworkFactory.newClient(zkConnectString, new RetryNTimes(ZOOKEEPER_RETRY_TIMES, ZOOKEEPER_RETRY_SLEEP_TIMES));
         InterProcessMutex lock = null;
