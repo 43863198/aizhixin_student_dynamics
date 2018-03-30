@@ -57,13 +57,18 @@ public class TermConversion {
             resultYear = schoolYear-1;
         }
         result.put("schoolYear",resultYear);
-        result.put("semester",resultSemester);
+        result.put("semester",getSemester(resultSemester));
         return result;
     }
 
-//    public static void main(String args[]) {
-//        System.out.println(new TermConversion().getSemester(2018, 2, 2)+"@@@@@@@@@@@@@@");
-//    }
-
+    public String getSemester(int semester){
+        if(semester==1){
+            return "春季";
+        }else if(semester==2){
+            return "秋季";
+        }else {
+            return "";
+        }
+    }
 
 }

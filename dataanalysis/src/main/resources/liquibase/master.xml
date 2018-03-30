@@ -26,8 +26,8 @@
     <include file="classpath:liquibase/20171213105545_update_entity_CetScoreStatistics.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171213105945_update_entity_PracticeStatistics.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/201712013112400_update_entity_TeachingScoreStatistics.xml" relativeToChangelogFile="false"/>
-   <include file="classpath:liquibase/20171208151500_update_entity_TeachingScoreStatistics.xml" relativeToChangelogFile="false"/>
-   <include file="classpath:liquibase/20171212151500_update_entity_AlarmSettings.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20171208151500_update_entity_TeachingScoreStatistics.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20171212151500_update_entity_AlarmSettings.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171213152845_update_entity_CourseEvaluate.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171213151345_update_entity_CetScoreStatistics.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171213154245_update_entity_PracticeStatistics.xml" relativeToChangelogFile="false"/>
@@ -54,5 +54,6 @@
     <include file="classpath:liquibase/20180117154645_update_entity_WarningType.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20180117174645_update_entity_WarningType.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20180308104300_add_entity_OpenUpInfo.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20180329104300_add_entity_OperationPermissions.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

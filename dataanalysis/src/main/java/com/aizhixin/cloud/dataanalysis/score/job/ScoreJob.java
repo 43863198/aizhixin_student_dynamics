@@ -523,10 +523,10 @@ public class ScoreJob {
 													.setWarningType(WarningTypeConstant.PerformanceFluctuation
 															.toString());
 											alertInfor
-													.setWarningCondition(termConversion.getSemester(schoolYear, semester, 1).get("schoolYear") + "年第" + termConversion.getSemester(schoolYear, semester, 1).get("semester") + "学期平均绩点为："
+													.setWarningCondition(termConversion.getSemester(schoolYear, semester, 1).get("schoolYear") + "年" + termConversion.getSemester(schoolYear, semester, 1).get("semester") + "学期平均绩点为："
 															+ scoreFluctuateCount
 															.getSecondAvgradePoint() +
-															"," + termConversion.getSemester(schoolYear, semester, 2).get("schoolYear") + "年第" + termConversion.getSemester(schoolYear, semester, 2).get("semester") + "学期平均绩点为："
+															"," + termConversion.getSemester(schoolYear, semester, 2).get("schoolYear") + "年" + termConversion.getSemester(schoolYear, semester, 2).get("semester") + "学期平均绩点为："
 															+ scoreFluctuateCount
 															.getFirstAvgradePoint()
 															+ ",平均绩点下降："
