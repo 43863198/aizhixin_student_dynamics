@@ -18,4 +18,7 @@ public class TrendDTO {
     private String semester;
     @ApiModelProperty(value = "值", required = false)
     private String value;
+    @ApiModelProperty(value = "变化率", required = false)
+    private String change;
+
 }

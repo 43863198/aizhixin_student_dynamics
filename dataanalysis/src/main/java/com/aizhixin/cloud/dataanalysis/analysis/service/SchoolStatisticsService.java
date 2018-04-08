@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -239,7 +240,9 @@ public class SchoolStatisticsService {
                             if (null != d[1]) {
                                 trendDTO.setValue(String.valueOf(d[1]));
                             }
-                            trendDTOList.add(trendDTO);
+                            if(null!=trendDTO.getYear()&&null!=trendDTO.getValue()) {
+                                trendDTOList.add(trendDTO);
+                            }
                         }
                     }
                 } else if (trend.equals("UNREPORT")) {
@@ -268,7 +271,9 @@ public class SchoolStatisticsService {
                             if (null != d[1] && null != d[2]) {
                                 trendDTO.setValue((Integer.valueOf(String.valueOf(d[1])) - Integer.valueOf(String.valueOf(d[2]))) + "");
                             }
-                            trendDTOList.add(trendDTO);
+                            if(null!=trendDTO.getYear()&&null!=trendDTO.getValue()) {
+                                trendDTOList.add(trendDTO);
+                            }
                         }
                     }
                 } else if (trend.equals("PAY_PROPORTION")) {
@@ -297,7 +302,9 @@ public class SchoolStatisticsService {
                             if (null != d[1] && null != d[2]) {
                                 trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2));
                             }
-                            trendDTOList.add(trendDTO);
+                            if(null!=trendDTO.getYear()&&null!=trendDTO.getValue()) {
+                                trendDTOList.add(trendDTO);
+                            }
                         }
                     }
                 } else if (trend.equals("REPORT_PROPORTION")) {
@@ -326,7 +333,9 @@ public class SchoolStatisticsService {
                             if (null != d[1] && null != d[2]) {
                                 trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2));
                             }
-                            trendDTOList.add(trendDTO);
+                            if(null!=trendDTO.getYear()&&null!=trendDTO.getValue()) {
+                                trendDTOList.add(trendDTO);
+                            }
                         }
                     }
                 } else if (trend.equals("CHANNEL_PROPORTION")) {
@@ -355,11 +364,21 @@ public class SchoolStatisticsService {
                             if (null != d[1] && null != d[2]) {
                                 trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2));
                             }
-                            trendDTOList.add(trendDTO);
+                            if(null!=trendDTO.getYear()&&null!=trendDTO.getValue()) {
+                                trendDTOList.add(trendDTO);
+                            }
                         }
                     }
                 }
             }
+        if(trendDTOList.size()>1) {
+            for (int i=1;i<trendDTOList.size();i++) {
+                Double change = (Double.valueOf(trendDTOList.get(i).getValue())-Double.valueOf(trendDTOList.get(i-1).getValue())
+                )/Double.valueOf(trendDTOList.get(i-1).getValue());
+               trendDTOList.get(i).setChange(new DecimalFormat("0.00").format(change).toString());
+            }
+        }
+
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
@@ -412,7 +431,7 @@ public class SchoolStatisticsService {
             return null;
         }
         int teacherYear=Integer.valueOf(currentGradeMap.get("TEACHER_YEAR")+"");
-        int semester= Integer.valueOf(currentGradeMap.get("SEMESTER")+"");
+        int semester= Integer.valueOf(currentGradeMap.get("SEMESTER") + "");
         CetScoreStatisticsDTO cetScoreStatisticsDTO=cetScoreStatisticsRespository.getEctStatics(orgId, teacherYear, semester);
         HomeData<CetScoreStatisticsDTO> h=new HomeData();
         TeacherlYearData teacherlYearData=new TeacherlYearData();
