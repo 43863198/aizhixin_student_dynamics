@@ -670,16 +670,12 @@ public class AlertWarningInformationService {
                 for (Object obj : res) {
                     Object[] d = (Object[]) obj;
                     CollegeStatisticsDTO collegeStatisticsDTO = new CollegeStatisticsDTO();
-                    if (null != d[0]) {
+                    if(null != d[0]&&null != d[1]&&null != d[2]) {
                         collegeStatisticsDTO.setCollegeName(String.valueOf(d[0]));
-                    }
-                    if (null != d[1]) {
                         collegeStatisticsDTO.setTotal(Integer.valueOf(String.valueOf(d[1])));
-                    }
-                    if (null != d[2]) {
                         collegeStatisticsDTO.setAlreadyProcessed(Integer.valueOf(String.valueOf(d[2])));
+                        collegeStatisticsDTOList.add(collegeStatisticsDTO);
                     }
-                    collegeStatisticsDTOList.add(collegeStatisticsDTO);
                 }
             }
         } catch (Exception e) {
