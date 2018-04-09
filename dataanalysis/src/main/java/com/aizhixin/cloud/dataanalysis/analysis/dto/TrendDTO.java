@@ -19,6 +19,6 @@ public class TrendDTO {
     @ApiModelProperty(value = "值", required = false)
     private String value;
     @ApiModelProperty(value = "变化率", required = false)
-    private String change;
+    private double change;
 
 }

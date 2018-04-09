@@ -375,7 +375,7 @@ public class SchoolStatisticsService {
             for (int i=1;i<trendDTOList.size();i++) {
                 Double change = (Double.valueOf(trendDTOList.get(i).getValue())-Double.valueOf(trendDTOList.get(i-1).getValue())
                 )/Double.valueOf(trendDTOList.get(i-1).getValue());
-               trendDTOList.get(i).setChange(new DecimalFormat("0.00").format(change).toString());
+               trendDTOList.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
             }
         }
 
