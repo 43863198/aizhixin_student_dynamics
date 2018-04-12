@@ -369,8 +369,10 @@ public class SchoolStatisticsService {
                     for(TrendDTO td: trendDTOList) {
                         if (null != d[0]) {
                             if (td.getYear().equals(String.valueOf(d[0]))) {
-                                if (null != d[1]) {
-                                    td.setValue3(String.valueOf(d[1]));
+                                if (null != d[1]&& null !=d[2]) {
+                                    int x = Integer.valueOf(String.valueOf(d[1]));
+                                    int b = Integer.valueOf(String.valueOf(d[2]));
+                                    td.setValue3(new DecimalFormat("0.00").format((double)b/x*100));
                                 }
                             }
                         }
