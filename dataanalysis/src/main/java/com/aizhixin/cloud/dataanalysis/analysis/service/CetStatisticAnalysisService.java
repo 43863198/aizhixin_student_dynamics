@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -40,23 +41,23 @@ public class CetStatisticAnalysisService {
     private MongoTemplate mongoTemplate;
     @Autowired
     private CetScoreStatisticsRespository cetScoreStatisticsRespository;
-    
-    public void deleteAllByOrgId(Long orgId){
-    	cetScoreStatisticsRespository.deleteByOrgId(orgId);
+
+    public void deleteAllByOrgId(Long orgId) {
+        cetScoreStatisticsRespository.deleteByOrgId(orgId);
     }
-    
-    public void saveList(List<CetScoreStatistics> cetScoreStatisticsList){
-    	cetScoreStatisticsRespository.save(cetScoreStatisticsList);
+
+    public void saveList(List<CetScoreStatistics> cetScoreStatisticsList) {
+        cetScoreStatisticsRespository.save(cetScoreStatisticsList);
     }
-    
-    public void save(CetScoreStatistics cetScoreStatistics){
-    	cetScoreStatisticsRespository.save(cetScoreStatistics);
+
+    public void save(CetScoreStatistics cetScoreStatistics) {
+        cetScoreStatisticsRespository.save(cetScoreStatistics);
     }
-    
-    public CetScoreStatistics findById(String id){
-    	return cetScoreStatisticsRespository.findOne(id);
+
+    public CetScoreStatistics findById(String id) {
+        return cetScoreStatisticsRespository.findOne(id);
     }
-    
+
 
     public Map<String, Object> getStatistic(Long orgId, Integer teacherYear, Integer semester) {
         Map<String, Object> result = new HashMap<>();
@@ -120,41 +121,41 @@ public class CetStatisticAnalysisService {
                 cetStatisticDTO.setCetSixPassRate(ProportionUtil.accuracy(pass6 * 1.0, count6 * 1.0, 2));
                 cetStatisticDTO.setStatisticalTime(time);
                 List<Object> rd = sq.getResultList();
-                    if (null != rd && rd.size() > 0) {
-                        for (Object obj : rd) {
-                            Object[] d = (Object[]) obj;
-                            int ccount4 = 0;
-                            int ccount6 = 0;
-                            int cpass4 = 0;
-                            int cpass6 = 0;
-                            CollegeCetStatisticDTO collegeCetStatisticDTO = new CollegeCetStatisticDTO();
-                            if (null != d[0]) {
-                                ccount4 = Integer.valueOf(String.valueOf(d[0]));
-                            }
-                            if (null != d[1]) {
-                                cpass4  = Integer.valueOf(String.valueOf(d[1]));
-                            }
-                            if (null != d[2]) {
-                                ccount6 = Integer.valueOf(String.valueOf(d[2]));
-                            }
-                            if (null != d[3]) {
-                                cpass6 = Integer.valueOf(String.valueOf(d[3]));
-                            }
-                            if (null != d[4]) {
-                                collegeCetStatisticDTO.setCollegeName(String.valueOf(d[4]));
-                            }
-                            if (null != d[5]) {
-                                collegeCetStatisticDTO.setCollegeId(Long.valueOf(String.valueOf(d[5])));
-                            }
-                            collegeCetStatisticDTO.setCetForeJoinNum(ccount4);
-                            collegeCetStatisticDTO.setCetForePassNum(cpass4);
-                            collegeCetStatisticDTO.setCetForePassRate(ProportionUtil.accuracy(cpass4 * 1.0, ccount4 * 1.0, 2));
-                            collegeCetStatisticDTO.setCetSixJoinNum(ccount6);
-                            collegeCetStatisticDTO.setCetSixPassNum(cpass6);
-                            collegeCetStatisticDTO.setCetSixPassRate(ProportionUtil.accuracy(cpass6 * 1.0, ccount6 * 1.0, 2));
-                            collegeCetStatisticDTOList.add(collegeCetStatisticDTO);
+                if (null != rd && rd.size() > 0) {
+                    for (Object obj : rd) {
+                        Object[] d = (Object[]) obj;
+                        int ccount4 = 0;
+                        int ccount6 = 0;
+                        int cpass4 = 0;
+                        int cpass6 = 0;
+                        CollegeCetStatisticDTO collegeCetStatisticDTO = new CollegeCetStatisticDTO();
+                        if (null != d[0]) {
+                            ccount4 = Integer.valueOf(String.valueOf(d[0]));
                         }
+                        if (null != d[1]) {
+                            cpass4 = Integer.valueOf(String.valueOf(d[1]));
+                        }
+                        if (null != d[2]) {
+                            ccount6 = Integer.valueOf(String.valueOf(d[2]));
+                        }
+                        if (null != d[3]) {
+                            cpass6 = Integer.valueOf(String.valueOf(d[3]));
+                        }
+                        if (null != d[4]) {
+                            collegeCetStatisticDTO.setCollegeName(String.valueOf(d[4]));
+                        }
+                        if (null != d[5]) {
+                            collegeCetStatisticDTO.setCollegeId(Long.valueOf(String.valueOf(d[5])));
+                        }
+                        collegeCetStatisticDTO.setCetForeJoinNum(ccount4);
+                        collegeCetStatisticDTO.setCetForePassNum(cpass4);
+                        collegeCetStatisticDTO.setCetForePassRate(ProportionUtil.accuracy(cpass4 * 1.0, ccount4 * 1.0, 2));
+                        collegeCetStatisticDTO.setCetSixJoinNum(ccount6);
+                        collegeCetStatisticDTO.setCetSixPassNum(cpass6);
+                        collegeCetStatisticDTO.setCetSixPassRate(ProportionUtil.accuracy(cpass6 * 1.0, ccount6 * 1.0, 2));
+                        collegeCetStatisticDTOList.add(collegeCetStatisticDTO);
                     }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -169,11 +170,13 @@ public class CetStatisticAnalysisService {
     }
 
 
-    public Map<String, Object> getCetTrendAnalysis(Long orgId, Long collegeId, Integer type) {
+    public Map<String, Object> getCetTrendAnalysis(Long orgId, Long collegeId) {
         Map<String, Object> result = new HashMap<>();
-        List<TrendDTO> trendDTOList = new ArrayList<>();
-        Map<String, Object> condition = new HashMap<>();
+        Map<String, Object> cet4 = new HashMap<>();
+        Map<String, Object> cet6 = new HashMap<>();
+        List<Map<String, Object>> dataList = new ArrayList<>();
         try {
+            Map<String, Object> condition = new HashMap<>();
             StringBuilder sql = new StringBuilder("SELECT SUM(cet.CET_FORE_JOIN_NUM) as sumc4, SUM(cet.CET_FORE_PASS_NUM) as sump4, SUM(cet.CET_SIX_JOIN_NUM) as sumc6, SUM(cet.CET_SIX_PASS_NUM) as sump6, cet.TEACHER_YEAR, cet.SEMESTER FROM T_CET_STATISTICS cet WHERE 1 = 1");
             if (null != orgId) {
                 sql.append(" and cet.ORG_ID = :orgId");
@@ -194,58 +197,75 @@ public class CetStatisticAnalysisService {
             int count6 = 0;
             int pass4 = 0;
             int pass6 = 0;
-            if (type == 4) {
-                if (null != res) {
-                    for (Object obj : res) {
-                        Object[] d = (Object[]) obj;
-                            TrendDTO trendDTO = new TrendDTO();
-                            if (null != d[0]) {
-                                count4 = Integer.valueOf(String.valueOf(d[0]));
-                            }
-                            if (null != d[1]) {
-                                pass4 = Integer.valueOf(String.valueOf(d[1]));
-                            }
-                            if (null != d[4]) {
-                                trendDTO.setYear(String.valueOf(d[4]));
-                            }
-                            if (null != d[5]) {
-                                trendDTO.setSemester(String.valueOf(d[5]));
-                            }
-                            trendDTO.setValue(ProportionUtil.accuracy(pass4 * 1.0, count4 * 1.0, 2));
-                            trendDTOList.add(trendDTO);
-                        }
+            List<TrendDTO> trendDTOList4 = new ArrayList<>();
+            List<TrendDTO> trendDTOList6 = new ArrayList<>();
+            if (null != res) {
+                for (Object obj : res) {
+                    Object[] d = (Object[]) obj;
+                    TrendDTO trendDTO4 = new TrendDTO();
+                    TrendDTO trendDTO6 = new TrendDTO();
+                    if (null != d[0]) {
+                        count4 = Integer.valueOf(String.valueOf(d[0]));
+                    }
+                    if (null != d[1]) {
+                        pass4 = Integer.valueOf(String.valueOf(d[1]));
+                    }
+                    if (null != d[2]) {
+                        count6 = Integer.valueOf(String.valueOf(d[2]));
+                    }
+                    if (null != d[3]) {
+                        pass6 = Integer.valueOf(String.valueOf(d[3]));
+                    }
+                    if (null != d[4]) {
+                        trendDTO4.setYear(String.valueOf(d[4]));
+                        trendDTO6.setYear(String.valueOf(d[4]));
+                    }
+                    if (null != d[5]) {
+                        trendDTO4.setSemester(String.valueOf(d[5]));
+                        trendDTO6.setSemester(String.valueOf(d[5]));
+                    }
+                    trendDTO4.setValue(ProportionUtil.accuracy(pass4 * 1.0, count4 * 1.0, 2));
+                    trendDTOList4.add(trendDTO4);
+
+                    trendDTO6.setValue(ProportionUtil.accuracy(pass6 * 1.0, count6 * 1.0, 2));
+                    trendDTOList6.add(trendDTO6);
                 }
-            }
-            if (type == 6) {
-                if (null != res) {
-                    for (Object obj : res) {
-                        Object[] d = (Object[]) obj;
-                            TrendDTO trendDTO = new TrendDTO();
-                            if (null != d[2]) {
-                                count6 = Integer.valueOf(String.valueOf(d[2]));
-                            }
-                            if (null != d[3]) {
-                                pass6 = Integer.valueOf(String.valueOf(d[3]));
-                            }
-                            if (null != d[4]) {
-                                trendDTO.setYear(String.valueOf(d[4]));
-                            }
-                            if (null != d[5]) {
-                               trendDTO.setSemester(String.valueOf(d[5]));
-                            }
-                            trendDTO.setValue(ProportionUtil.accuracy(pass6 * 1.0, count6 * 1.0, 2));
-                            trendDTOList.add(trendDTO);
+
+                if(trendDTOList4.size()>1) {
+                    for (int i=1;i<trendDTOList4.size();i++) {
+                        if(Integer.valueOf(trendDTOList4.get(i-1).getValue()).intValue()!=0) {
+                            Double change = (Double.valueOf(trendDTOList4.get(i).getValue()) - Double.valueOf(trendDTOList4.get(i - 1).getValue())
+                            ) / Double.valueOf(trendDTOList4.get(i - 1).getValue());
+                            trendDTOList4.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
                         }
                     }
+                }
+                if(trendDTOList6.size()>1) {
+                    for (int i=1;i<trendDTOList6.size();i++) {
+                        if(Integer.valueOf(trendDTOList6.get(i-1).getValue()).intValue()!=0) {
+                            Double change = (Double.valueOf(trendDTOList6.get(i).getValue()) - Double.valueOf(trendDTOList6.get(i - 1).getValue())
+                            ) / Double.valueOf(trendDTOList6.get(i-1).getValue());
+                                trendDTOList6.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
+                        }
+                    }
+                }
+
             }
+            cet4.put("data",trendDTOList4);
+            cet4.put("name","四级通过率");
+            cet6.put("data",trendDTOList6);
+            cet6.put("name", "六级通过率");
+            dataList.add(cet4);
+            dataList.add(cet6);
+            result.put("dataList",dataList);
+            result.put("success", true);
+            return result;
+
         } catch (Exception e) {
             result.put("success", false);
             result.put("message", "获取统计分析数据失败！");
             return result;
         }
-        result.put("success", true);
-        result.put("data", trendDTOList);
-        return result;
     }
 
 
@@ -273,10 +293,10 @@ public class CetStatisticAnalysisService {
                 criteria.and("collegeId").in(collegeIds);
             }
 
-            if(null!=teacherYear){
+            if (null != teacherYear) {
                 criteria.and("schoolYear").is(teacherYear);
             }
-            if(null!=semester){
+            if (null != semester) {
                 criteria.and("semester").is(semester);
             }
             if (null != grade) {
@@ -286,23 +306,23 @@ public class CetStatisticAnalysisService {
                     for (String d : td) {
                         tds.add(d);
                     }
-                }else {
+                } else {
                     tds.add(grade);
                 }
                 criteria.and("grade").in(tds);
             }
             if (null != type) {
-                    if (type.equals(4)) {
-                        criteria.and("examType").is(ScoreConstant.EXAM_TYPE_CET4);
-                        criteria.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
-                    }else if (type.equals(6)) {
-                        criteria.and("examType").is(ScoreConstant.EXAM_TYPE_CET6);
-                        criteria.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
-                    }
-            }else {
-                criteria.and("examType").in(ScoreConstant.EXAM_TYPE_CET4,ScoreConstant.EXAM_TYPE_CET6);
+                if (type.equals(4)) {
+                    criteria.and("examType").is(ScoreConstant.EXAM_TYPE_CET4);
+                    criteria.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
+                } else if (type.equals(6)) {
+                    criteria.and("examType").is(ScoreConstant.EXAM_TYPE_CET6);
+                    criteria.and("totalScore").gte(ScoreConstant.CET_PASS_SCORE_LINE);
+                }
+            } else {
+                criteria.and("examType").in(ScoreConstant.EXAM_TYPE_CET4, ScoreConstant.EXAM_TYPE_CET6);
             }
-            if(!org.apache.commons.lang.StringUtils.isBlank(nj)){
+            if (!org.apache.commons.lang.StringUtils.isBlank(nj)) {
                 criteria.orOperator(criteria.where("jobNum").regex(nj), criteria.where("userName").regex(nj));
             }
             org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
@@ -310,10 +330,10 @@ public class CetStatisticAnalysisService {
             //mongoTemplate.count计算总数
             long total = mongoTemplate.count(query, Score.class);
             // mongoTemplate.find 查询结果集
-            List<Score> items  = mongoTemplate.find(query.with(pageable), Score.class);
+            List<Score> items = mongoTemplate.find(query.with(pageable), Score.class);
 
-            p.getPage().setTotalPages(((int)total + page.getPageSize() - 1) / page.getPageSize());
-            p.getPage().setPageNumber(page.getPageNumber()+1);
+            p.getPage().setTotalPages(((int) total + page.getPageSize() - 1) / page.getPageSize());
+            p.getPage().setPageNumber(page.getPageNumber() + 1);
             p.getPage().setPageSize(page.getPageSize());
             p.getPage().setTotalElements(total);
             p.setData(items);
@@ -328,7 +348,7 @@ public class CetStatisticAnalysisService {
         return result;
     }
 
-    public void  deleteCetStatistics(Long orgId,Integer teacherYear,Integer semester){
+    public void deleteCetStatistics(Long orgId, Integer teacherYear, Integer semester) {
         cetScoreStatisticsRespository.deleteByOrgIdAndTeacherYearAndSemester(orgId, teacherYear, semester);
     }
 

@@ -179,62 +179,97 @@ public class TeachingScoreService {
     }
 
 
-    public Map<String, Object> getTeachingScoreTrendAnalysis(Long orgId, Long collegeId, Integer type) {
+    public Map<String, Object> getTeachingScoreTrendAnalysis(Long orgId, Long collegeId) {
         Map<String, Object> result = new HashMap<>();
-        List<TrendDTO> trendDTOList = new ArrayList<>();
-        Map<String, Object> condition = new HashMap<>();
         try {
-            String trend = "";
-            if(null!=type) {
-                if (type == 1 || type == 3) {
-                    trend = " SUM(" + TeachingScoreTrendType.getType(type) + ")";
-                } else {
-                    trend = " AVG(" + TeachingScoreTrendType.getType(type) + ")";
-                }
-            }
-            StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR," + trend + ",SEMESTER  FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
-            if (null != orgId) {
-                sql.append(" and ORG_ID =:orgId ");
-                condition.put("orgId", orgId);
-            }
-            if(null!=collegeId){
-                sql.append(" and COLLEGE_ID =:collegeId ");
-                condition.put("collegeId",collegeId);
-            }else {
-                sql.append(" and STATISTICS_TYPE = 1");
-            }
-            sql.append(" and DELETE_FLAG = 0 GROUP BY TEACHER_YEAR,SEMESTER");
-            Query sq = em.createNativeQuery(sql.toString());
-            for (Map.Entry<String, Object> e : condition.entrySet()) {
-                sq.setParameter(e.getKey(), e.getValue());
-            }
-            List<Object> res = sq.getResultList();
-            if (null != res && res.size() > 0) {
-                for (Object obj : res) {
-                    Object[] d = (Object[]) obj;
-                    TrendDTO trendDTO = new TrendDTO();
-                    if (null != d[0]) {
-                        trendDTO.setYear(String.valueOf(d[0]));
-                    }
-                    if (null != d[1]) {
-                        trendDTO.setValue(String.valueOf(d[1]));
-                    }
-                    if (null != d[2]) {
-                        trendDTO.setSemester(String.valueOf(d[2]));
-                    }
-
-                    trendDTOList.add(trendDTO);
-                }
-            }
+            List<Map<String, Object>> dataList = new ArrayList<>();
+            Map<String, Object> ckrs = new HashMap<>();
+            Map<String, Object> gpa = new HashMap<>();
+            Map<String, Object> bjgrs = new HashMap<>();
+            Map<String, Object> kcpjf = new HashMap<>();
+            ckrs.put("data",getTrendAnalysis(orgId,collegeId,1));
+            ckrs.put("name","参考人数");
+            gpa.put("data",getTrendAnalysis(orgId,collegeId,2));
+            gpa.put("name","平均GPA");
+            bjgrs.put("data",getTrendAnalysis(orgId,collegeId,3));
+            bjgrs.put("name","不及格人数");
+            kcpjf.put("data", getTrendAnalysis(orgId, collegeId, 4));
+            kcpjf.put("name", "课程平均分");
+            dataList.add(ckrs);
+            dataList.add(gpa);
+            dataList.add(bjgrs);
+            dataList.add(kcpjf);
+            result.put("dataList", dataList);
+            result.put("success", true);
+            return result;
         } catch (Exception e) {
             result.put("success", false);
             result.put("message", "获取统计分析数据失败！");
             return result;
         }
-        result.put("success", true);
-        result.put("data", trendDTOList);
-        return result;
     }
+
+
+    public List<TrendDTO> getTrendAnalysis (Long orgId, Long collegeId, Integer type){
+        List<TrendDTO> trendDTOList = new ArrayList<>();
+        Map<String, Object> condition = new HashMap<>();
+        String trend = "";
+        if (null != type) {
+            if (type == 1 || type == 3) {
+                trend = " SUM(" + TeachingScoreTrendType.getType(type) + ")";
+            } else {
+                trend = " AVG(" + TeachingScoreTrendType.getType(type) + ")";
+            }
+        }
+        StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR," + trend + ",SEMESTER  FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
+        if (null != orgId) {
+            sql.append(" and ORG_ID =:orgId ");
+            condition.put("orgId", orgId);
+        }
+        if (null != collegeId) {
+            sql.append(" and COLLEGE_ID =:collegeId ");
+            condition.put("collegeId", collegeId);
+        } else {
+            sql.append(" and STATISTICS_TYPE = 1");
+        }
+        sql.append(" and DELETE_FLAG = 0 GROUP BY TEACHER_YEAR,SEMESTER");
+        Query sq = em.createNativeQuery(sql.toString());
+        for (Map.Entry<String, Object> e : condition.entrySet()) {
+            sq.setParameter(e.getKey(), e.getValue());
+        }
+        List<Object> res = sq.getResultList();
+        if (null != res && res.size() > 0) {
+            for (Object obj : res) {
+                Object[] d = (Object[]) obj;
+                TrendDTO trendDTO = new TrendDTO();
+                if (null != d[0]) {
+                    trendDTO.setYear(String.valueOf(d[0]));
+                }
+                if (null != d[1]) {
+                    trendDTO.setValue(String.valueOf(d[1]));
+                }
+                if (null != d[2]) {
+                    trendDTO.setSemester(String.valueOf(d[2]));
+                }
+
+                trendDTOList.add(trendDTO);
+            }
+        }
+
+        if(trendDTOList.size()>1) {
+            for (int i=1;i<trendDTOList.size();i++) {
+                if (Integer.valueOf(trendDTOList.get(i - 1).getValue()).intValue() != 0) {
+                    Double change = (Double.valueOf(trendDTOList.get(i).getValue()) - Double.valueOf(trendDTOList.get(i - 1).getValue())
+                    ) / Double.valueOf(trendDTOList.get(i - 1).getValue());
+                    trendDTOList.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
+                }
+            }
+        }
+        return trendDTOList;
+    }
+
+
+
 
 
     public Map<String, Object> getTeachingScoreDetail(Integer teacherYear, Integer semester, Long orgId, String collegeIds, String grade, String nj, Pageable pageable) {

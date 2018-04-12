@@ -12,7 +12,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -101,11 +103,12 @@ public class SchoolConditionStatisticsController {
      */
     @GetMapping(value = "/trend", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "迎新学情———趋势分析", response = Void.class, notes = "迎新学情———趋势分析<br><br><b>@author jianwei.wu</b>")
-    public Map<String,Object>   getTrend(
+    public ResponseEntity<Map<String, Object>> getTrend(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "collegeId 学院id") @RequestParam(value = "collegeId", required = false) Long collegeId,
-            @ApiParam(value = "typeIndex 指标", required = true) @RequestParam(value = "typeIndex", required = true) int typeIndex) {
-        return schoolStatisticsService.getTrend(orgId, collegeId, typeIndex);
+            @ApiParam(value = "collegeId 学院id") @RequestParam(value = "collegeId", required = false) Long collegeId
+//            @ApiParam(value = "typeIndex 指标", required = true) @RequestParam(value = "typeIndex", required = true) int typeIndex
+    ) {
+        return new ResponseEntity<Map<String, Object>>(schoolStatisticsService.getTrend(orgId, collegeId), HttpStatus.OK);
     }
 
     /**
