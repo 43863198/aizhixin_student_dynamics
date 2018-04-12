@@ -11,7 +11,7 @@ public enum TrendType {
         ALREADY_REPORT("报到数",2),
 //        ALREADY_PAY("缴费人数",3),
 //        CONVENIENCE_CHANNEL("绿色通道人数",4),
-        UNREPORT("未报到数",5),
+//        UNREPORT("未报到数",5),
 //        PAY_PROPORTION("缴费人占比",6),
         REPORT_PROPORTION("报到率",7);
 //        CHANNEL_PROPORTION("绿色通道人数占比",8);

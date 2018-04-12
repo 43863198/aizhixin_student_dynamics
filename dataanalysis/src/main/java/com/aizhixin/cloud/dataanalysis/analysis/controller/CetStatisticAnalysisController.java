@@ -6,7 +6,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -50,12 +52,13 @@ public class CetStatisticAnalysisController {
      */
     @GetMapping(value = "/analysis", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "cet———趋势分析", response = Void.class, notes = "cet———趋势分析<br><br><b>@author jianwei.wu</b>")
-    public Map<String,Object> getCetTrendAnalysis(
+    public ResponseEntity<Map<String, Object>> getCetTrendAnalysis(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "collegeId 机构id", required = false) @RequestParam(value = "collegeId", required = false) Long collegeId,
-            @ApiParam(value = "type 分析指标：4:四级通过率，6:六级通过率" , required = true)
-            @RequestParam(value = "type", required = true) Integer type) {
-        return cetStatisticAnalysisService.getCetTrendAnalysis(orgId, collegeId, type);
+            @ApiParam(value = "collegeId 机构id", required = false) @RequestParam(value = "collegeId", required = false) Long collegeId
+//            @ApiParam(value = "type 分析指标：4:四级通过率，6:六级通过率" , required = true
+//            @RequestParam(value = "type", required = true) Integer type
+    ) {
+        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.getCetTrendAnalysis(orgId, collegeId), HttpStatus.OK);
     }
 
     /**

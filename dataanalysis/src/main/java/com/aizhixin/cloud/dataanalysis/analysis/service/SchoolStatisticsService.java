@@ -182,8 +182,8 @@ public class SchoolStatisticsService {
             return null;
         }
         int teacherYear=Integer.valueOf(currentGradeMap.get("TEACHER_YEAR")+"");
-        int semester= Integer.valueOf(currentGradeMap.get("SEMESTER")+"");
-        PracticeStaticsDTO practiceStaticsDTO = practiceStaticsRespository.getPracticeStatics(orgId,teacherYear,semester);
+        int semester= Integer.valueOf(currentGradeMap.get("SEMESTER") + "");
+        PracticeStaticsDTO practiceStaticsDTO = practiceStaticsRespository.getPracticeStatics(orgId, teacherYear, semester);
 
         SchoolProfileDTO schoolProfileDTO = schoolStatisticsRespository.getSchoolPersonStatistics(orgId,teacherYear);
         schoolProfileDTO.setOutSchoolStudent(Long.valueOf(practiceStaticsDTO.getPracticeStudentNum()));
@@ -207,187 +207,265 @@ public class SchoolStatisticsService {
         return schoolStatisticsRespository.getNewStudentStatistics(orgId);
     }
 
-    public Map<String, Object> getTrend(Long orgId, Long collegeId, int typeIndex) {
+    public Map<String, Object> getTrend(Long orgId, Long collegeId) {
         Map<String, Object> result = new HashMap<>();
-        List<TrendDTO> trendDTOList = new ArrayList<>();
-        Map<String, Object> condition = new HashMap<>();
+        List<Map<String, Object>> dataList = new ArrayList<>();
         try {
-            String trend = TrendType.getType(typeIndex);
-            if (null != trend) {
-                if (trend.equals("NEW_STUDENTS_COUNT") || trend.equals("ALREADY_REPORT") || trend.equals("ALREADY_PAY") || trend.equals("CONVENIENCE_CHANNEL")) {
-                        StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR, SUM(" + trend + ") FROM T_SCHOOL_STATISTICS  WHERE 1 = 1");
-                    if (null != orgId) {
-                        sql.append(" and ORG_ID = :orgId");
-                        condition.put("orgId", orgId);
+//            String trend = TrendType.getType(typeIndex);
+//            if (null != trend) {
+//                if (trend.equals("NEW_STUDENTS_COUNT") || trend.equals("ALREADY_REPORT") || trend.equals("ALREADY_PAY") || trend.equals("CONVENIENCE_CHANNEL")) {
+
+            List<TrendDTO> nscList = new ArrayList<>();
+            Map<String, Object> nscmap = new HashMap<>();
+            Map<String, Object> nsccondition = new HashMap<>();
+            StringBuilder nscsql = new StringBuilder("SELECT TEACHER_YEAR, SUM(NEW_STUDENTS_COUNT) FROM T_SCHOOL_STATISTICS  WHERE 1 = 1");
+            if (null != orgId) {
+                nscsql.append(" and ORG_ID = :orgId");
+                nsccondition.put("orgId", orgId);
+            }
+            if (null != collegeId) {
+                nscsql.append(" and COLLEGE_ID = :collegeId");
+                nsccondition.put("collegeId", collegeId);
+            }
+            nscsql.append(" GROUP BY TEACHER_YEAR");
+            Query nscsq = em.createNativeQuery(nscsql.toString());
+            for (Map.Entry<String, Object> e : nsccondition.entrySet()) {
+                nscsq.setParameter(e.getKey(), e.getValue());
+            }
+            List<Object> nsc = nscsq.getResultList();
+            if (null != nsc && nsc.size() > 0) {
+                for (Object obj : nsc) {
+                    Object[] d = (Object[]) obj;
+                    TrendDTO trendDTO = new TrendDTO();
+                    if (null != d[0]) {
+                        trendDTO.setYear(String.valueOf(d[0]));
                     }
-                    if (null != collegeId) {
-                        sql.append(" and COLLEGE_ID = :collegeId");
-                        condition.put("collegeId", collegeId);
+                    if (null != d[1]) {
+                        trendDTO.setValue(String.valueOf(d[1]));
                     }
-                    sql.append(" GROUP BY TEACHER_YEAR");
-                    Query sq = em.createNativeQuery(sql.toString());
-                    for (Map.Entry<String, Object> e : condition.entrySet()) {
-                        sq.setParameter(e.getKey(), e.getValue());
-                    }
-                    List<Object> res = sq.getResultList();
-                    if (null != res && res.size() > 0) {
-                        for (Object obj : res) {
-                            Object[] d = (Object[]) obj;
-                            TrendDTO trendDTO = new TrendDTO();
-                            if (null != d[0]) {
-                                trendDTO.setYear(String.valueOf(d[0]));
-                            }
-                            if (null != d[1]) {
-                                trendDTO.setValue(String.valueOf(d[1]));
-                            }
-                            if(null!=trendDTO.getYear()&&null!=trendDTO.getValue()) {
-                                trendDTOList.add(trendDTO);
-                            }
-                        }
-                    }
-                } else if (trend.equals("UNREPORT")) {
-                    StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR, SUM(NEW_STUDENTS_COUNT), SUM(ALREADY_REPORT) FROM T_SCHOOL_STATISTICS WHERE 1 = 1");
-                    if (null != orgId) {
-                        sql.append(" and ORG_ID = :orgId");
-                        condition.put("orgId", orgId);
-                    }
-                    if (null != collegeId) {
-                        sql.append(" and COLLEGE_ID = :collegeId");
-                        condition.put("collegeId", collegeId);
-                    }
-                    sql.append(" GROUP BY TEACHER_YEAR");
-                    Query sq = em.createNativeQuery(sql.toString());
-                    for (Map.Entry<String, Object> e : condition.entrySet()) {
-                        sq.setParameter(e.getKey(), e.getValue());
-                    }
-                    List<Object> res = sq.getResultList();
-                    if (null != res && res.size() > 0) {
-                        for (Object obj : res) {
-                            Object[] d = (Object[]) obj;
-                            TrendDTO trendDTO = new TrendDTO();
-                            if (null != d[0]) {
-                                trendDTO.setYear(String.valueOf(d[0]));
-                            }
-                            if (null != d[1] && null != d[2]) {
-                                trendDTO.setValue((Integer.valueOf(String.valueOf(d[1])) - Integer.valueOf(String.valueOf(d[2]))) + "");
-                            }
-                            if(null!=trendDTO.getYear()&&null!=trendDTO.getValue()) {
-                                trendDTOList.add(trendDTO);
-                            }
-                        }
-                    }
-                } else if (trend.equals("PAY_PROPORTION")) {
-                    StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR, SUM(NEW_STUDENTS_COUNT), SUM(ALREADY_PAY) FROM T_SCHOOL_STATISTICS WHERE 1 = 1");
-                    if (null != orgId) {
-                        sql.append(" and ORG_ID = :orgId");
-                        condition.put("orgId", orgId);
-                    }
-                    if (null != collegeId) {
-                        sql.append(" and COLLEGE_ID = :collegeId");
-                        condition.put("collegeId", collegeId);
-                    }
-                    sql.append(" GROUP BY TEACHER_YEAR");
-                    Query sq = em.createNativeQuery(sql.toString());
-                    for (Map.Entry<String, Object> e : condition.entrySet()) {
-                        sq.setParameter(e.getKey(), e.getValue());
-                    }
-                    List<Object> res = sq.getResultList();
-                    if (null != res && res.size() > 0) {
-                        for (Object obj : res) {
-                            Object[] d = (Object[]) obj;
-                            TrendDTO trendDTO = new TrendDTO();
-                            if (null != d[0]) {
-                                trendDTO.setYear(String.valueOf(d[0]));
-                            }
-                            if (null != d[1] && null != d[2]) {
-                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2));
-                            }
-                            if(null!=trendDTO.getYear()&&null!=trendDTO.getValue()) {
-                                trendDTOList.add(trendDTO);
-                            }
-                        }
-                    }
-                } else if (trend.equals("REPORT_PROPORTION")) {
-                    StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR, SUM(NEW_STUDENTS_COUNT), SUM(ALREADY_REPORT) FROM T_SCHOOL_STATISTICS WHERE 1 = 1");
-                    if (null != orgId) {
-                        sql.append(" and ORG_ID = :orgId");
-                        condition.put("orgId", orgId);
-                    }
-                    if (null != collegeId) {
-                        sql.append(" and COLLEGE_ID = :collegeId");
-                        condition.put("collegeId", collegeId);
-                    }
-                    sql.append(" GROUP BY TEACHER_YEAR");
-                    Query sq = em.createNativeQuery(sql.toString());
-                    for (Map.Entry<String, Object> e : condition.entrySet()) {
-                        sq.setParameter(e.getKey(), e.getValue());
-                    }
-                    List<Object> res = sq.getResultList();
-                    if (null != res && res.size() > 0) {
-                        for (Object obj : res) {
-                            Object[] d = (Object[]) obj;
-                            TrendDTO trendDTO = new TrendDTO();
-                            if (null != d[0]) {
-                                trendDTO.setYear(String.valueOf(d[0]));
-                            }
-                            if (null != d[1] && null != d[2]) {
-                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2));
-                            }
-                            if(null!=trendDTO.getYear()&&null!=trendDTO.getValue()) {
-                                trendDTOList.add(trendDTO);
-                            }
-                        }
-                    }
-                } else if (trend.equals("CHANNEL_PROPORTION")) {
-                    StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR, SUM(NEW_STUDENTS_COUNT), SUM(CONVENIENCE_CHANNEL) FROM T_SCHOOL_STATISTICS WHERE 1 = 1");
-                    if (null != orgId) {
-                        sql.append(" and ORG_ID = :orgId");
-                        condition.put("orgId", orgId);
-                    }
-                    if (null != collegeId) {
-                        sql.append(" and COLLEGE_ID = :collegeId");
-                        condition.put("collegeId", collegeId);
-                    }
-                    sql.append(" GROUP BY TEACHER_YEAR");
-                    Query sq = em.createNativeQuery(sql.toString());
-                    for (Map.Entry<String, Object> e : condition.entrySet()) {
-                        sq.setParameter(e.getKey(), e.getValue());
-                    }
-                    List<Object> res = sq.getResultList();
-                    if (null != res && res.size() > 0) {
-                        for (Object obj : res) {
-                            Object[] d = (Object[]) obj;
-                            TrendDTO trendDTO = new TrendDTO();
-                            if (null != d[0]) {
-                                trendDTO.setYear(String.valueOf(d[0]));
-                            }
-                            if (null != d[1] && null != d[2]) {
-                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2));
-                            }
-                            if(null!=trendDTO.getYear()&&null!=trendDTO.getValue()) {
-                                trendDTOList.add(trendDTO);
-                            }
-                        }
+                    if(null!=trendDTO.getYear()&&null!=trendDTO.getValue()) {
+                        nscList.add(trendDTO);
                     }
                 }
             }
-        if(trendDTOList.size()>1) {
-            for (int i=1;i<trendDTOList.size();i++) {
-                Double change = (Double.valueOf(trendDTOList.get(i).getValue())-Double.valueOf(trendDTOList.get(i-1).getValue())
-                )/Double.valueOf(trendDTOList.get(i-1).getValue());
-               trendDTOList.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
-            }
-        }
 
+            if(nscList.size()>1) {
+                for (int i=1;i<nscList.size();i++) {
+                    if (Integer.valueOf(nscList.get(i - 1).getValue()).intValue() != 0) {
+                        Double change = (Double.valueOf(nscList.get(i).getValue()) - Double.valueOf(nscList.get(i - 1).getValue())
+                        ) / Double.valueOf(nscList.get(i - 1).getValue());
+                        nscList.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
+                    }
+                }
+            }
+            nscmap.put("data",nscList);
+            nscmap.put("name", "录取数");
+            dataList.add(nscmap);
+            List<TrendDTO> arList = new ArrayList<>();
+            Map<String, Object> armap = new HashMap<>();
+            Map<String, Object> arcondition = new HashMap<>();
+            StringBuilder arsql = new StringBuilder("SELECT TEACHER_YEAR, SUM(ALREADY_REPORT) FROM T_SCHOOL_STATISTICS  WHERE 1 = 1");
+            if (null != orgId) {
+                arsql.append(" and ORG_ID = :orgId");
+                arcondition.put("orgId", orgId);
+            }
+            if (null != collegeId) {
+                arsql.append(" and COLLEGE_ID = :collegeId");
+                arcondition.put("collegeId", collegeId);
+            }
+            arsql.append(" GROUP BY TEACHER_YEAR");
+            Query arsq = em.createNativeQuery(arsql.toString());
+            for (Map.Entry<String, Object> e : arcondition.entrySet()) {
+                arsq.setParameter(e.getKey(), e.getValue());
+            }
+            List<Object> ar = arsq.getResultList();
+            if (null != ar && ar.size() > 0) {
+                for (Object obj : ar) {
+                    Object[] d = (Object[]) obj;
+                    TrendDTO trendDTO = new TrendDTO();
+                    if (null != d[0]) {
+                        trendDTO.setYear(String.valueOf(d[0]));
+                    }
+                    if (null != d[1]) {
+                        trendDTO.setValue(String.valueOf(d[1]));
+                    }
+                    if(null!=trendDTO.getYear()&&null!=trendDTO.getValue()) {
+                        arList.add(trendDTO);
+                    }
+                }
+            }
+
+            if(arList.size()>1) {
+                for (int i=1;i<arList.size();i++) {
+                    if (Integer.valueOf(arList.get(i - 1).getValue()).intValue() != 0) {
+                        Double change = (Double.valueOf(arList.get(i).getValue()) - Double.valueOf(arList.get(i - 1).getValue())
+                        ) / Double.valueOf(arList.get(i - 1).getValue());
+                        arList.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
+                    }
+                }
+            }
+            armap.put("data",arList);
+            armap.put("name","报到数");
+            dataList.add(armap);
+//                } else if (trend.equals("UNREPORT")) {
+//                    StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR, SUM(NEW_STUDENTS_COUNT), SUM(ALREADY_REPORT) FROM T_SCHOOL_STATISTICS WHERE 1 = 1");
+//                    if (null != orgId) {
+//                        sql.append(" and ORG_ID = :orgId");
+//                        condition.put("orgId", orgId);
+//                    }
+//                    if (null != collegeId) {
+//                        sql.append(" and COLLEGE_ID = :collegeId");
+//                        condition.put("collegeId", collegeId);
+//                    }
+//                    sql.append(" GROUP BY TEACHER_YEAR");
+//                    Query sq = em.createNativeQuery(sql.toString());
+//                    for (Map.Entry<String, Object> e : condition.entrySet()) {
+//                        sq.setParameter(e.getKey(), e.getValue());
+//                    }
+//                    List<Object> res = sq.getResultList();
+//                    if (null != res && res.size() > 0) {
+//                        for (Object obj : res) {
+//                            Object[] d = (Object[]) obj;
+//                            TrendDTO trendDTO = new TrendDTO();
+//                            if (null != d[0]) {
+//                                trendDTO.setYear(String.valueOf(d[0]));
+//                            }
+//                            if (null != d[1] && null != d[2]) {
+//                                trendDTO.setValue((Integer.valueOf(String.valueOf(d[1])) - Integer.valueOf(String.valueOf(d[2]))) + "");
+//                            }
+//                            if(null!=trendDTO.getYear()&&null!=trendDTO.getValue()) {
+//                                trendDTOList.add(trendDTO);
+//                            }
+//                        }
+//                    }
+//                } else if (trend.equals("PAY_PROPORTION")) {
+//                    StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR, SUM(NEW_STUDENTS_COUNT), SUM(ALREADY_PAY) FROM T_SCHOOL_STATISTICS WHERE 1 = 1");
+//                    if (null != orgId) {
+//                        sql.append(" and ORG_ID = :orgId");
+//                        condition.put("orgId", orgId);
+//                    }
+//                    if (null != collegeId) {
+//                        sql.append(" and COLLEGE_ID = :collegeId");
+//                        condition.put("collegeId", collegeId);
+//                    }
+//                    sql.append(" GROUP BY TEACHER_YEAR");
+//                    Query sq = em.createNativeQuery(sql.toString());
+//                    for (Map.Entry<String, Object> e : condition.entrySet()) {
+//                        sq.setParameter(e.getKey(), e.getValue());
+//                    }
+//                    List<Object> res = sq.getResultList();
+//                    if (null != res && res.size() > 0) {
+//                        for (Object obj : res) {
+//                            Object[] d = (Object[]) obj;
+//                            TrendDTO trendDTO = new TrendDTO();
+//                            if (null != d[0]) {
+//                                trendDTO.setYear(String.valueOf(d[0]));
+//                            }
+//                            if (null != d[1] && null != d[2]) {
+//                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2));
+//                            }
+//                            if(null!=trendDTO.getYear()&&null!=trendDTO.getValue()) {
+//                                trendDTOList.add(trendDTO);
+//                            }
+//                        }
+//                    }
+//                } else if (trend.equals("REPORT_PROPORTION")) {
+
+            List<TrendDTO> rpList = new ArrayList<>();
+            Map<String, Object> rpmap = new HashMap<>();
+            Map<String, Object> rpcondition = new HashMap<>();
+            StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR, SUM(NEW_STUDENTS_COUNT), SUM(ALREADY_REPORT) FROM T_SCHOOL_STATISTICS WHERE 1 = 1");
+            if (null != orgId) {
+                sql.append(" and ORG_ID = :orgId");
+                rpcondition.put("orgId", orgId);
+            }
+            if (null != collegeId) {
+                sql.append(" and COLLEGE_ID = :collegeId");
+                rpcondition.put("collegeId", collegeId);
+            }
+            sql.append(" GROUP BY TEACHER_YEAR");
+            Query rpsq = em.createNativeQuery(sql.toString());
+            for (Map.Entry<String, Object> e : rpcondition.entrySet()) {
+                rpsq.setParameter(e.getKey(), e.getValue());
+            }
+            List<Object> rp = rpsq.getResultList();
+            if (null != rp && rp.size() > 0) {
+                for (Object obj : rp) {
+                    Object[] d = (Object[]) obj;
+                    TrendDTO trendDTO = new TrendDTO();
+                    if (null != d[0]) {
+                        trendDTO.setYear(String.valueOf(d[0]));
+                    }
+                    if (null != d[1] && null != d[2]) {
+                        trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2));
+                    }
+                    if(null!=trendDTO.getYear()&&null!=trendDTO.getValue()) {
+                        rpList.add(trendDTO);
+                    }
+                }
+            }
+
+            if(rpList.size()>1) {
+                for (int i=1;i<rpList.size();i++) {
+                    if (Integer.valueOf(rpList.get(i - 1).getValue()).intValue() != 0) {
+                        Double change = (Double.valueOf(rpList.get(i).getValue()) - Double.valueOf(rpList.get(i - 1).getValue())
+                        ) / Double.valueOf(rpList.get(i - 1).getValue());
+                        rpList.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
+                    }
+                }
+            }
+            rpmap.put("data",rpList);
+            rpmap.put("name","报到率");
+            dataList.add(rpmap);
+//                } else if (trend.equals("CHANNEL_PROPORTION")) {
+//                    StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR, SUM(NEW_STUDENTS_COUNT), SUM(CONVENIENCE_CHANNEL) FROM T_SCHOOL_STATISTICS WHERE 1 = 1");
+//                    if (null != orgId) {
+//                        sql.append(" and ORG_ID = :orgId");
+//                        condition.put("orgId", orgId);
+//                    }
+//                    if (null != collegeId) {
+//                        sql.append(" and COLLEGE_ID = :collegeId");
+//                        condition.put("collegeId", collegeId);
+//                    }
+//                    sql.append(" GROUP BY TEACHER_YEAR");
+//                    Query sq = em.createNativeQuery(sql.toString());
+//                    for (Map.Entry<String, Object> e : condition.entrySet()) {
+//                        sq.setParameter(e.getKey(), e.getValue());
+//                    }
+//                    List<Object> res = sq.getResultList();
+//                    if (null != res && res.size() > 0) {
+//                        for (Object obj : res) {
+//                            Object[] d = (Object[]) obj;
+//                            TrendDTO trendDTO = new TrendDTO();
+//                            if (null != d[0]) {
+//                                trendDTO.setYear(String.valueOf(d[0]));
+//                            }
+//                            if (null != d[1] && null != d[2]) {
+//                                trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2));
+//                            }
+//                            if(null!=trendDTO.getYear()&&null!=trendDTO.getValue()) {
+//                                trendDTOList.add(trendDTO);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        if(trendDTOList.size()>1) {
+//            for (int i=1;i<trendDTOList.size();i++) {
+//                Double change = (Double.valueOf(trendDTOList.get(i).getValue())-Double.valueOf(trendDTOList.get(i-1).getValue())
+//                )/Double.valueOf(trendDTOList.get(i-1).getValue());
+//               trendDTOList.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
+//            }
+//        }
+            result.put("success", true);
+            result.put("dataList", dataList);
+            return result;
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
             result.put("message", "获取分析数据异常！");
             return result;
         }
-        result.put("success", true);
-        result.put("data", trendDTOList);
-        return result;
     }
 
     /**
