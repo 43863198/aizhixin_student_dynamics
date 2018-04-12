@@ -251,9 +251,10 @@ public class SchoolStatisticsService {
 
             if(nscList.size()>1) {
                 for (int i=1;i<nscList.size();i++) {
-                    if (Integer.valueOf(nscList.get(i - 1).getValue()).intValue() != 0) {
+
                         Double change = (Double.valueOf(nscList.get(i).getValue()) - Double.valueOf(nscList.get(i - 1).getValue())
                         ) / Double.valueOf(nscList.get(i - 1).getValue());
+                    if(null!=change&&!change.isNaN()&&!change.isInfinite()) {
                         nscList.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
                     }
                 }
@@ -297,9 +298,9 @@ public class SchoolStatisticsService {
 
             if(arList.size()>1) {
                 for (int i=1;i<arList.size();i++) {
-                    if (Integer.valueOf(arList.get(i - 1).getValue()).intValue() != 0) {
                         Double change = (Double.valueOf(arList.get(i).getValue()) - Double.valueOf(arList.get(i - 1).getValue())
                         ) / Double.valueOf(arList.get(i - 1).getValue());
+                    if(null!=change&&!change.isNaN()&&!change.isInfinite()) {
                         arList.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
                     }
                 }
@@ -407,9 +408,10 @@ public class SchoolStatisticsService {
 
             if(rpList.size()>1) {
                 for (int i=1;i<rpList.size();i++) {
-                    if (Integer.valueOf(rpList.get(i - 1).getValue()).intValue() != 0) {
+
                         Double change = (Double.valueOf(rpList.get(i).getValue()) - Double.valueOf(rpList.get(i - 1).getValue())
                         ) / Double.valueOf(rpList.get(i - 1).getValue());
+                    if(null!=change&&!change.isNaN()&&!change.isInfinite()) {
                         rpList.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
                     }
                 }
