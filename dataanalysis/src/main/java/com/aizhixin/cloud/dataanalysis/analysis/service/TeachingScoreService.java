@@ -258,9 +258,10 @@ public class TeachingScoreService {
 
         if(trendDTOList.size()>1) {
             for (int i=1;i<trendDTOList.size();i++) {
-                if (Integer.valueOf(trendDTOList.get(i - 1).getValue()).intValue() != 0) {
+
                     Double change = (Double.valueOf(trendDTOList.get(i).getValue()) - Double.valueOf(trendDTOList.get(i - 1).getValue())
                     ) / Double.valueOf(trendDTOList.get(i - 1).getValue());
+                if(null!=change&&!change.isNaN()&&!change.isInfinite()) {
                     trendDTOList.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
                 }
             }

@@ -233,20 +233,21 @@ public class CetStatisticAnalysisService {
 
                 if(trendDTOList4.size()>1) {
                     for (int i=1;i<trendDTOList4.size();i++) {
-                        if(Integer.valueOf(trendDTOList4.get(i-1).getValue()).intValue()!=0) {
                             Double change = (Double.valueOf(trendDTOList4.get(i).getValue()) - Double.valueOf(trendDTOList4.get(i - 1).getValue())
-                            ) / Double.valueOf(trendDTOList4.get(i - 1).getValue());
+                            ) / Double.valueOf(trendDTOList4.get(i-1).getValue());
+                        if(null!=change&&!change.isNaN()&&!change.isInfinite()) {
                             trendDTOList4.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
                         }
                     }
                 }
                 if(trendDTOList6.size()>1) {
                     for (int i=1;i<trendDTOList6.size();i++) {
-                        if(Integer.valueOf(trendDTOList6.get(i-1).getValue()).intValue()!=0) {
                             Double change = (Double.valueOf(trendDTOList6.get(i).getValue()) - Double.valueOf(trendDTOList6.get(i - 1).getValue())
                             ) / Double.valueOf(trendDTOList6.get(i-1).getValue());
+                            if(null!=change&&!change.isNaN()&&!change.isInfinite()) {
                                 trendDTOList6.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
-                        }
+                            }
+
                     }
                 }
 
