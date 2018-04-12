@@ -209,14 +209,12 @@ public class SchoolStatisticsService {
 
     public Map<String, Object> getTrend(Long orgId, Long collegeId) {
         Map<String, Object> result = new HashMap<>();
+        List<TrendDTO> trendDTOList = new ArrayList<>();
         List<Map<String, Object>> dataList = new ArrayList<>();
         try {
 //            String trend = TrendType.getType(typeIndex);
 //            if (null != trend) {
 //                if (trend.equals("NEW_STUDENTS_COUNT") || trend.equals("ALREADY_REPORT") || trend.equals("ALREADY_PAY") || trend.equals("CONVENIENCE_CHANNEL")) {
-
-            List<TrendDTO> nscList = new ArrayList<>();
-            Map<String, Object> nscmap = new HashMap<>();
             Map<String, Object> nsccondition = new HashMap<>();
             StringBuilder nscsql = new StringBuilder("SELECT TEACHER_YEAR, SUM(NEW_STUDENTS_COUNT) FROM T_SCHOOL_STATISTICS  WHERE 1 = 1");
             if (null != orgId) {
@@ -241,29 +239,16 @@ public class SchoolStatisticsService {
                         trendDTO.setYear(String.valueOf(d[0]));
                     }
                     if (null != d[1]) {
-                        trendDTO.setValue(String.valueOf(d[1]));
+                        trendDTO.setValue1(String.valueOf(d[1]));
                     }
-                    if(null!=trendDTO.getYear()&&null!=trendDTO.getValue()) {
-                        nscList.add(trendDTO);
+                    if(null!=trendDTO.getYear()&&null!=trendDTO.getValue1()) {
+                        trendDTOList.add(trendDTO);
                     }
                 }
             }
 
-            if(nscList.size()>1) {
-                for (int i=1;i<nscList.size();i++) {
 
-                        Double change = (Double.valueOf(nscList.get(i).getValue()) - Double.valueOf(nscList.get(i - 1).getValue())
-                        ) / Double.valueOf(nscList.get(i - 1).getValue());
-                    if(null!=change&&!change.isNaN()&&!change.isInfinite()) {
-                        nscList.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
-                    }
-                }
-            }
-            nscmap.put("data",nscList);
-            nscmap.put("name", "录取数");
-            dataList.add(nscmap);
-            List<TrendDTO> arList = new ArrayList<>();
-            Map<String, Object> armap = new HashMap<>();
+
             Map<String, Object> arcondition = new HashMap<>();
             StringBuilder arsql = new StringBuilder("SELECT TEACHER_YEAR, SUM(ALREADY_REPORT) FROM T_SCHOOL_STATISTICS  WHERE 1 = 1");
             if (null != orgId) {
@@ -283,31 +268,20 @@ public class SchoolStatisticsService {
             if (null != ar && ar.size() > 0) {
                 for (Object obj : ar) {
                     Object[] d = (Object[]) obj;
-                    TrendDTO trendDTO = new TrendDTO();
-                    if (null != d[0]) {
-                        trendDTO.setYear(String.valueOf(d[0]));
-                    }
-                    if (null != d[1]) {
-                        trendDTO.setValue(String.valueOf(d[1]));
-                    }
-                    if(null!=trendDTO.getYear()&&null!=trendDTO.getValue()) {
-                        arList.add(trendDTO);
+                    for(TrendDTO td: trendDTOList) {
+                        if (null != d[0]) {
+                            if (td.getYear().equals(String.valueOf(d[0]))) {
+                                if (null != d[1]) {
+                                    td.setValue2(String.valueOf(d[1]));
+                                }
+                            }
+                        }
                     }
                 }
             }
 
-            if(arList.size()>1) {
-                for (int i=1;i<arList.size();i++) {
-                        Double change = (Double.valueOf(arList.get(i).getValue()) - Double.valueOf(arList.get(i - 1).getValue())
-                        ) / Double.valueOf(arList.get(i - 1).getValue());
-                    if(null!=change&&!change.isNaN()&&!change.isInfinite()) {
-                        arList.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
-                    }
-                }
-            }
-            armap.put("data",arList);
-            armap.put("name","报到数");
-            dataList.add(armap);
+
+
 //                } else if (trend.equals("UNREPORT")) {
 //                    StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR, SUM(NEW_STUDENTS_COUNT), SUM(ALREADY_REPORT) FROM T_SCHOOL_STATISTICS WHERE 1 = 1");
 //                    if (null != orgId) {
@@ -372,8 +346,7 @@ public class SchoolStatisticsService {
 //                    }
 //                } else if (trend.equals("REPORT_PROPORTION")) {
 
-            List<TrendDTO> rpList = new ArrayList<>();
-            Map<String, Object> rpmap = new HashMap<>();
+
             Map<String, Object> rpcondition = new HashMap<>();
             StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR, SUM(NEW_STUDENTS_COUNT), SUM(ALREADY_REPORT) FROM T_SCHOOL_STATISTICS WHERE 1 = 1");
             if (null != orgId) {
@@ -393,32 +366,41 @@ public class SchoolStatisticsService {
             if (null != rp && rp.size() > 0) {
                 for (Object obj : rp) {
                     Object[] d = (Object[]) obj;
-                    TrendDTO trendDTO = new TrendDTO();
-                    if (null != d[0]) {
-                        trendDTO.setYear(String.valueOf(d[0]));
-                    }
-                    if (null != d[1] && null != d[2]) {
-                        trendDTO.setValue(ProportionUtil.accuracy(Double.valueOf(String.valueOf(d[2])), Double.valueOf(String.valueOf(d[1])), 2));
-                    }
-                    if(null!=trendDTO.getYear()&&null!=trendDTO.getValue()) {
-                        rpList.add(trendDTO);
+                    for(TrendDTO td: trendDTOList) {
+                        if (null != d[0]) {
+                            if (td.getYear().equals(String.valueOf(d[0]))) {
+                                if (null != d[1]) {
+                                    td.setValue3(String.valueOf(d[1]));
+                                }
+                            }
+                        }
                     }
                 }
             }
 
-            if(rpList.size()>1) {
-                for (int i=1;i<rpList.size();i++) {
 
-                        Double change = (Double.valueOf(rpList.get(i).getValue()) - Double.valueOf(rpList.get(i - 1).getValue())
-                        ) / Double.valueOf(rpList.get(i - 1).getValue());
-                    if(null!=change&&!change.isNaN()&&!change.isInfinite()) {
-                        rpList.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
+            if(trendDTOList.size()>1) {
+                for (int i=1;i<trendDTOList.size();i++) {
+                    Double change1 = (Double.valueOf(trendDTOList.get(i).getValue1()) - Double.valueOf(trendDTOList.get(i - 1).getValue1())
+                        ) / Double.valueOf(trendDTOList.get(i - 1).getValue1());
+                    if(null!=change1&&!change1.isNaN()&&!change1.isInfinite()) {
+                        trendDTOList.get(i).setChange1(Double.valueOf(new DecimalFormat("0.00").format(change1)));
+                    }
+
+                    Double change2 = (Double.valueOf(trendDTOList.get(i).getValue2()) - Double.valueOf(trendDTOList.get(i - 1).getValue2())
+                    ) / Double.valueOf(trendDTOList.get(i - 1).getValue2());
+                    if(null!=change2&&!change2.isNaN()&&!change2.isInfinite()) {
+                        trendDTOList.get(i).setChange1(Double.valueOf(new DecimalFormat("0.00").format(change2)));
+                    }
+
+                    Double change3 = (Double.valueOf(trendDTOList.get(i).getValue3()) - Double.valueOf(trendDTOList.get(i - 1).getValue3())
+                    ) / Double.valueOf(trendDTOList.get(i - 1).getValue1());
+                    if(null!=change3&&!change3.isNaN()&&!change3.isInfinite()) {
+                        trendDTOList.get(i).setChange1(Double.valueOf(new DecimalFormat("0.00").format(change3)));
                     }
                 }
             }
-            rpmap.put("data",rpList);
-            rpmap.put("name","报到率");
-            dataList.add(rpmap);
+
 //                } else if (trend.equals("CHANNEL_PROPORTION")) {
 //                    StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR, SUM(NEW_STUDENTS_COUNT), SUM(CONVENIENCE_CHANNEL) FROM T_SCHOOL_STATISTICS WHERE 1 = 1");
 //                    if (null != orgId) {
@@ -460,7 +442,7 @@ public class SchoolStatisticsService {
 //            }
 //        }
             result.put("success", true);
-            result.put("dataList", dataList);
+            result.put("dataList", trendDTOList);
             return result;
         } catch (Exception e) {
             e.printStackTrace();
