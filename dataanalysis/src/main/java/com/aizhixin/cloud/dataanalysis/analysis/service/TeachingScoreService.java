@@ -182,24 +182,62 @@ public class TeachingScoreService {
     public Map<String, Object> getTeachingScoreTrendAnalysis(Long orgId, Long collegeId) {
         Map<String, Object> result = new HashMap<>();
         try {
-            List<Map<String, Object>> dataList = new ArrayList<>();
-            Map<String, Object> ckrs = new HashMap<>();
-            Map<String, Object> gpa = new HashMap<>();
-            Map<String, Object> bjgrs = new HashMap<>();
-            Map<String, Object> kcpjf = new HashMap<>();
-            ckrs.put("data",getTrendAnalysis(orgId,collegeId,1));
-            ckrs.put("name","参考人数");
-            gpa.put("data",getTrendAnalysis(orgId,collegeId,2));
-            gpa.put("name","平均GPA");
-            bjgrs.put("data",getTrendAnalysis(orgId,collegeId,3));
-            bjgrs.put("name","不及格人数");
-            kcpjf.put("data", getTrendAnalysis(orgId, collegeId, 4));
-            kcpjf.put("name", "课程平均分");
-            dataList.add(ckrs);
-            dataList.add(gpa);
-            dataList.add(bjgrs);
-            dataList.add(kcpjf);
-            result.put("dataList", dataList);
+
+            List<TrendDTO> trendDTOList = getTrendAnalysis(orgId,collegeId,1);
+            for(TrendDTO td: trendDTOList){
+                for(TrendDTO rs :getTrendAnalysis(orgId,collegeId,2)){
+                    if(td.getYear().equals(rs.getYear())&&td.getSemester().equals(rs.getSemester())){
+                        td.setValue2(rs.getValue1());
+                        break;
+                    }
+
+                }
+                for(TrendDTO rs :getTrendAnalysis(orgId,collegeId,3)){
+                    if(td.getYear().equals(rs.getYear())&&td.getSemester().equals(rs.getSemester())){
+                        td.setValue3(rs.getValue1());
+                        break;
+                    }
+
+                }
+                for(TrendDTO rs :getTrendAnalysis(orgId,collegeId,4)){
+                    if(td.getYear().equals(rs.getYear())&&td.getSemester().equals(rs.getSemester())){
+                        td.setValue4(rs.getValue1());
+                        break;
+                    }
+                }
+            }
+
+
+            if(trendDTOList.size()>1) {
+                for (int i=1;i<trendDTOList.size();i++) {
+
+                    Double change1 = (Double.valueOf(trendDTOList.get(i).getValue1()) - Double.valueOf(trendDTOList.get(i - 1).getValue1())
+                    ) / Double.valueOf(trendDTOList.get(i - 1).getValue1());
+                    if(null!=change1&&!change1.isNaN()&&!change1.isInfinite()) {
+                        trendDTOList.get(i).setChange1(Double.valueOf(new DecimalFormat("0.00").format(change1)));
+                    }
+
+                    Double change2 = (Double.valueOf(trendDTOList.get(i).getValue2()) - Double.valueOf(trendDTOList.get(i - 1).getValue2())
+                    ) / Double.valueOf(trendDTOList.get(i - 1).getValue2());
+                    if(null!=change2&&!change2.isNaN()&&!change2.isInfinite()) {
+                        trendDTOList.get(i).setChange2(Double.valueOf(new DecimalFormat("0.00").format(change2)));
+                    }
+
+                    Double change3 = (Double.valueOf(trendDTOList.get(i).getValue3()) - Double.valueOf(trendDTOList.get(i - 1).getValue3())
+                    ) / Double.valueOf(trendDTOList.get(i-1).getValue3());
+                    if(null!=change3&&!change3.isNaN()&&!change3.isInfinite()) {
+                        trendDTOList.get(i).setChange3(Double.valueOf(new DecimalFormat("0.00").format(change3)));
+                    }
+
+                    Double change4 = (Double.valueOf(trendDTOList.get(i).getValue4()) - Double.valueOf(trendDTOList.get(i - 1).getValue4())
+                    ) / Double.valueOf(trendDTOList.get(i - 1).getValue4());
+                    if(null!=change4&&!change4.isNaN()&&!change4.isInfinite()) {
+                        trendDTOList.get(i).setChange4(Double.valueOf(new DecimalFormat("0.00").format(change4)));
+                    }
+                }
+            }
+
+            result.put("data", trendDTOList);
             result.put("success", true);
             return result;
         } catch (Exception e) {
@@ -246,24 +284,12 @@ public class TeachingScoreService {
                     trendDTO.setYear(String.valueOf(d[0]));
                 }
                 if (null != d[1]) {
-                    trendDTO.setValue(String.valueOf(d[1]));
+                    trendDTO.setValue1(String.valueOf(d[1]));
                 }
                 if (null != d[2]) {
                     trendDTO.setSemester(String.valueOf(d[2]));
                 }
-
                 trendDTOList.add(trendDTO);
-            }
-        }
-
-        if(trendDTOList.size()>1) {
-            for (int i=1;i<trendDTOList.size();i++) {
-
-                    Double change = (Double.valueOf(trendDTOList.get(i).getValue()) - Double.valueOf(trendDTOList.get(i - 1).getValue())
-                    ) / Double.valueOf(trendDTOList.get(i - 1).getValue());
-                if(null!=change&&!change.isNaN()&&!change.isInfinite()) {
-                    trendDTOList.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
-                }
             }
         }
         return trendDTOList;
