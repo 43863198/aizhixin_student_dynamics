@@ -53,11 +53,11 @@ public class TeachingScoreController {
     @ApiOperation(httpMethod = "GET", value = "教学成绩———趋势分析", response = Void.class, notes = "教学成绩———趋势分析<br><br><b>@author jianwei.wu</b>")
     public ResponseEntity<Map<String, Object>> getTeachingScoreTrendAnalysis(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "collegeId 学院id", required = false) @RequestParam(value = "collegeId", required = false) Long collegeId
-//            @ApiParam(value = "type 分析指标：1:学生人数，2:平均GPA，3:不及格人数，4:课程平均分" , required = true)
-//            @RequestParam(value = "type", required = true) Integer type
+            @ApiParam(value = "collegeId 学院id", required = false) @RequestParam(value = "collegeId", required = false) Long collegeId,
+            @ApiParam(value = "type 分析指标：1:学生人数，2:平均GPA，3:不及格人数，4:课程平均分" , required = true)
+            @RequestParam(value = "type", required = true) Integer type
     ) {
-        return new ResponseEntity<Map<String, Object>>(teachingScoreService.getTeachingScoreTrendAnalysis(orgId, collegeId), HttpStatus.OK);
+        return new ResponseEntity<Map<String, Object>>(teachingScoreService.getTeachingScoreTrendAnalysis(orgId, collegeId,type), HttpStatus.OK);
     }
 
     /**

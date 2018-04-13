@@ -46,9 +46,9 @@ public class TeachingScoreService {
     private TeachingScoreStatisticsRespository teachingScoreStatisticsRespository;
     @Autowired
     private TeachingScoreDetailsRespository teachingScoreDetailsRespository;
-    
+
     public List<TeachingScoreDetails> findAllByTeacherYearAndSemesterAndDeleteFlagAndOrgId(int teacherYear,int semester,int deleteFlag,Long orgId){
-    	return  teachingScoreDetailsRespository.findAllByTeacherYearAndSemesterAndDeleteFlagAndOrgId( teacherYear, semester, deleteFlag, orgId);
+        return  teachingScoreDetailsRespository.findAllByTeacherYearAndSemesterAndDeleteFlagAndOrgId( teacherYear, semester, deleteFlag, orgId);
     }
 
     public void saveStatistics(TeachingScoreStatistics teachingScoreStatistics) {
@@ -179,124 +179,62 @@ public class TeachingScoreService {
     }
 
 
-    public Map<String, Object> getTeachingScoreTrendAnalysis(Long orgId, Long collegeId) {
+    public Map<String, Object> getTeachingScoreTrendAnalysis(Long orgId, Long collegeId, Integer type) {
         Map<String, Object> result = new HashMap<>();
+        List<TrendDTO> trendDTOList = new ArrayList<>();
+        Map<String, Object> condition = new HashMap<>();
         try {
-
-            List<TrendDTO> trendDTOList = getTrendAnalysis(orgId,collegeId,1);
-            for(TrendDTO td: trendDTOList){
-                for(TrendDTO rs :getTrendAnalysis(orgId,collegeId,2)){
-                    if(td.getYear().equals(rs.getYear())&&td.getSemester().equals(rs.getSemester())){
-                        td.setValue2(rs.getValue1());
-                        break;
-                    }
-
-                }
-                for(TrendDTO rs :getTrendAnalysis(orgId,collegeId,3)){
-                    if(td.getYear().equals(rs.getYear())&&td.getSemester().equals(rs.getSemester())){
-                        td.setValue3(rs.getValue1());
-                        break;
-                    }
-
-                }
-                for(TrendDTO rs :getTrendAnalysis(orgId,collegeId,4)){
-                    if(td.getYear().equals(rs.getYear())&&td.getSemester().equals(rs.getSemester())){
-                        td.setValue4(rs.getValue1());
-                        break;
-                    }
+            String trend = "";
+            if(null!=type) {
+                if (type == 1 || type == 3) {
+                    trend = " SUM(" + TeachingScoreTrendType.getType(type) + ")";
+                } else {
+                    trend = " AVG(" + TeachingScoreTrendType.getType(type) + ")";
                 }
             }
-
-
-            if(trendDTOList.size()>1) {
-                for (int i=1;i<trendDTOList.size();i++) {
-
-                    Double change1 = (Double.valueOf(trendDTOList.get(i).getValue1()) - Double.valueOf(trendDTOList.get(i - 1).getValue1())
-                    ) / Double.valueOf(trendDTOList.get(i - 1).getValue1());
-                    if(null!=change1&&!change1.isNaN()&&!change1.isInfinite()) {
-                        trendDTOList.get(i).setChange1(Double.valueOf(new DecimalFormat("0.00").format(change1)));
+            StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR," + trend + ",SEMESTER  FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
+            if (null != orgId) {
+                sql.append(" and ORG_ID =:orgId ");
+                condition.put("orgId", orgId);
+            }
+            if(null!=collegeId){
+                sql.append(" and COLLEGE_ID =:collegeId ");
+                condition.put("collegeId",collegeId);
+            }else {
+                sql.append(" and STATISTICS_TYPE = 1");
+            }
+            sql.append(" and DELETE_FLAG = 0 GROUP BY TEACHER_YEAR,SEMESTER");
+            Query sq = em.createNativeQuery(sql.toString());
+            for (Map.Entry<String, Object> e : condition.entrySet()) {
+                sq.setParameter(e.getKey(), e.getValue());
+            }
+            List<Object> res = sq.getResultList();
+            if (null != res && res.size() > 0) {
+                for (Object obj : res) {
+                    Object[] d = (Object[]) obj;
+                    TrendDTO trendDTO = new TrendDTO();
+                    if (null != d[0]) {
+                        trendDTO.setYear(String.valueOf(d[0]));
+                    }
+                    if (null != d[1]) {
+                        trendDTO.setValue(String.valueOf(d[1]));
+                    }
+                    if (null != d[2]) {
+                        trendDTO.setSemester(String.valueOf(d[2]));
                     }
 
-                    Double change2 = (Double.valueOf(trendDTOList.get(i).getValue2()) - Double.valueOf(trendDTOList.get(i - 1).getValue2())
-                    ) / Double.valueOf(trendDTOList.get(i - 1).getValue2());
-                    if(null!=change2&&!change2.isNaN()&&!change2.isInfinite()) {
-                        trendDTOList.get(i).setChange2(Double.valueOf(new DecimalFormat("0.00").format(change2)));
-                    }
-
-                    Double change3 = (Double.valueOf(trendDTOList.get(i).getValue3()) - Double.valueOf(trendDTOList.get(i - 1).getValue3())
-                    ) / Double.valueOf(trendDTOList.get(i-1).getValue3());
-                    if(null!=change3&&!change3.isNaN()&&!change3.isInfinite()) {
-                        trendDTOList.get(i).setChange3(Double.valueOf(new DecimalFormat("0.00").format(change3)));
-                    }
-
-                    Double change4 = (Double.valueOf(trendDTOList.get(i).getValue4()) - Double.valueOf(trendDTOList.get(i - 1).getValue4())
-                    ) / Double.valueOf(trendDTOList.get(i - 1).getValue4());
-                    if(null!=change4&&!change4.isNaN()&&!change4.isInfinite()) {
-                        trendDTOList.get(i).setChange4(Double.valueOf(new DecimalFormat("0.00").format(change4)));
-                    }
+                    trendDTOList.add(trendDTO);
                 }
             }
-
-            result.put("data", trendDTOList);
-            result.put("success", true);
-            return result;
         } catch (Exception e) {
             result.put("success", false);
             result.put("message", "获取统计分析数据失败！");
             return result;
         }
+        result.put("success", true);
+        result.put("data", trendDTOList);
+        return result;
     }
-
-
-    public List<TrendDTO> getTrendAnalysis (Long orgId, Long collegeId, Integer type){
-        List<TrendDTO> trendDTOList = new ArrayList<>();
-        Map<String, Object> condition = new HashMap<>();
-        String trend = "";
-        if (null != type) {
-            if (type == 1 || type == 3) {
-                trend = " SUM(" + TeachingScoreTrendType.getType(type) + ")";
-            } else {
-                trend = " AVG(" + TeachingScoreTrendType.getType(type) + ")";
-            }
-        }
-        StringBuilder sql = new StringBuilder("SELECT TEACHER_YEAR," + trend + ",SEMESTER  FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
-        if (null != orgId) {
-            sql.append(" and ORG_ID =:orgId ");
-            condition.put("orgId", orgId);
-        }
-        if (null != collegeId) {
-            sql.append(" and COLLEGE_ID =:collegeId ");
-            condition.put("collegeId", collegeId);
-        } else {
-            sql.append(" and STATISTICS_TYPE = 1");
-        }
-        sql.append(" and DELETE_FLAG = 0 GROUP BY TEACHER_YEAR,SEMESTER");
-        Query sq = em.createNativeQuery(sql.toString());
-        for (Map.Entry<String, Object> e : condition.entrySet()) {
-            sq.setParameter(e.getKey(), e.getValue());
-        }
-        List<Object> res = sq.getResultList();
-        if (null != res && res.size() > 0) {
-            for (Object obj : res) {
-                Object[] d = (Object[]) obj;
-                TrendDTO trendDTO = new TrendDTO();
-                if (null != d[0]) {
-                    trendDTO.setYear(String.valueOf(d[0]));
-                }
-                if (null != d[1]) {
-                    trendDTO.setValue1(String.valueOf(d[1]));
-                }
-                if (null != d[2]) {
-                    trendDTO.setSemester(String.valueOf(d[2]));
-                }
-                trendDTOList.add(trendDTO);
-            }
-        }
-        return trendDTOList;
-    }
-
-
-
 
 
     public Map<String, Object> getTeachingScoreDetail(Integer teacherYear, Integer semester, Long orgId, String collegeIds, String grade, String nj, Pageable pageable) {
