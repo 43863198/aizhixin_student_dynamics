@@ -7,7 +7,7 @@ import lombok.Data;
 /**
  * @author: Created by jianwei.wu
  * @E-mail: wujianwei@aizhixin.com
- * @Date: 2017-11-30
+ * @Date: 2018-04-13
  */
 @ApiModel(description="趋势")
 @Data
