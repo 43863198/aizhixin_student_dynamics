@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+    <!-- 教学班学生表结构-->
+    <changeSet id="20184143154645" author="jianwei.wu">
+		<preConditions onFail="MARK_RAN">
+	        <not>
+	            <tableExists tableName="T_TEACHINGCLASS_STUDENTS"/>
+	        </not>
+	    </preConditions>
+        <createTable tableName="T_TEACHINGCLASS_STUDENTS" remarks="教学班学生表结构">
+            <column name="ID" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ORG_ID" type="BIGINT" remarks="机构id"/>
+            <column name="TEACHING_CLASS_NUMBER" type="VARCHAR(50)" remarks="教学班编号"/>
+            <column name="COURSE_NAME" type="VARCHAR(50)"  remarks="课程名称"/>
+            <column name="STRUDENT_JOB_NUMBER" type="VARCHAR(50)"  remarks="学生学号"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

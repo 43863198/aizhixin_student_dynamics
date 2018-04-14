@@ -55,5 +55,8 @@
     <include file="classpath:liquibase/20180117174645_update_entity_WarningType.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20180308104300_add_entity_OpenUpInfo.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20180329104300_add_entity_OperationPermissions.xml" relativeToChangelogFile="false"/>
-
+    <include file="classpath:liquibase/20184143154645_add_entity_ExaminationArrangement.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20184143154645_add_entity_CurriculumSchedule.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20184143154645_add_entity_TeachingClass.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20184143154645_add_entity_TeachingClassStudents.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

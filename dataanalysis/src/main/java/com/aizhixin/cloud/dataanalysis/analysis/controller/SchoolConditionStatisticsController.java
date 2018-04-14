@@ -92,7 +92,7 @@ public class SchoolConditionStatisticsController {
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "teacherYear 学年" , required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear
  ) {
-        return schoolStatisticsService.getStatisticNewstudents(orgId,teacherYear);
+        return schoolStatisticsService.getStatisticNewstudents(orgId, teacherYear);
     }
 
     /**
@@ -140,7 +140,7 @@ public class SchoolConditionStatisticsController {
             @ApiParam(value = "缴费情况 isPay(1:已缴费；2:绿色通道；3:其他)" ) @RequestParam(value = "isPay", required = false) String isPay,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return schoolStatisticsService.getCollegeDetails(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), teacherYear,orgId, collegeId, nj, type, isReport, isPay);
+        return schoolStatisticsService.getCollegeDetails(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), teacherYear, orgId, collegeId, nj, type, isReport, isPay);
     }
 
     /**
@@ -164,6 +164,17 @@ public class SchoolConditionStatisticsController {
     @ApiOperation(httpMethod = "GET", value = "首页课程评价", response = Void.class, notes = "首页课程评价<br><br><b>@author wangjun</b>")
     public HomeData<CourseEvaluateDTO> getHomeCourseEvaluate(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
         return courseEvaluateService.getHomeCourseEvaluate(orgId);
+    }
+
+    /**
+     * 历年报到人数情况
+     * @param orgId
+     * @return
+     */
+    @GetMapping(value = "/enrollment", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "历年报到人数情况", response = Void.class, notes = "历年报到人数情况<br><br><b>@author wangjun</b>")
+    public ResponseEntity<Map<String, Object>>  getEnrollment(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
+        return new ResponseEntity<Map<String, Object>>(schoolStatisticsService.getEnrollment(orgId),HttpStatus.OK);
     }
 
 
