@@ -82,6 +82,21 @@ public class CetStatisticAnalysisController {
         return cetStatisticAnalysisService.getCetDetail(orgId, collegeId,teacherYear,semester, grade, type, nj, PageUtil.createNoErrorPageRequest(pageNumber, pageSize));
     }
 
+    /**
+     * 历年四六级均值
+     * @param orgId
+     * @return
+     */
+    @GetMapping(value = "/yearavg", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "历年四六级均值", response = Void.class, notes = "历年四六级均值<br><br><b>@author jianwei.wu</b>")
+    public ResponseEntity<Map<String, Object>> getYearAvg(
+            @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId
+          ) {
+        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.getYearAvg(orgId),HttpStatus.OK);
+    }
+
+
+
 
 
 

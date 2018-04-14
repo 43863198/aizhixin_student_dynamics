@@ -4,17 +4,22 @@ import com.aizhixin.cloud.dataanalysis.analysis.dto.CetStatisticDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.CetTrendDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.CollegeCetStatisticDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.CetScoreStatistics;
+import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolYearTerm;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.CetScoreStatisticsRespository;
+import com.aizhixin.cloud.dataanalysis.analysis.vo.CetAvgVO;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 
+import com.mongodb.BasicDBObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -333,5 +338,56 @@ public class CetStatisticAnalysisService {
     public void deleteCetStatistics(Long orgId, Integer teacherYear, Integer semester) {
         cetScoreStatisticsRespository.deleteByOrgIdAndTeacherYearAndSemester(orgId, teacherYear, semester);
     }
+
+
+    public Map<String,Object> getYearAvg(Long orgId){
+        Map<String,Object> result = new HashMap<>();
+        List<CetAvgVO> cetAvgVOList = new ArrayList<>();
+        try {
+            //四级分数均值
+            Criteria cet4 = Criteria.where("orgId").is(orgId);
+            cet4.and("examType").is(ScoreConstant.EXAM_TYPE_CET4);
+            AggregationResults<BasicDBObject> cet4avg = mongoTemplate.aggregate(
+                    Aggregation.newAggregation(
+                            Aggregation.match(cet4),
+                            Aggregation.group("$schoolYear").avg("totalScore").as("avg").first("schoolYear").as("schoolYear")
+                    ), Score.class, BasicDBObject.class);
+            //英语六级分数均值
+            Criteria cet6 = Criteria.where("orgId").is(orgId);
+            cet6.and("examType").is(ScoreConstant.EXAM_TYPE_CET6);
+            AggregationResults<BasicDBObject> cet6avg = mongoTemplate.aggregate(
+                    Aggregation.newAggregation(
+                            Aggregation.match(cet6),
+                            Aggregation.group("$schoolYear").avg("totalScore").as("avg").first("schoolYear").as("schoolYear")
+                    ), Score.class, BasicDBObject.class);
+            if (null != cet4avg) {
+                for (int x = 0; x < cet4avg.getMappedResults().size(); x++) {
+                    CetAvgVO cet = new CetAvgVO();
+                    cet.setYear(cet4avg.getMappedResults().get(x).getString("schoolYear"));
+                    cet.setCet4Avg(Double.valueOf(new DecimalFormat("0.00").format(cet4avg.getMappedResults().get(x).getDouble("avg"))));
+                    cetAvgVOList.add(cet);
+                }
+            }
+            if (null != cet6avg) {
+                for (int y = 0; y < cet6avg.getMappedResults().size(); y++) {
+                    for (CetAvgVO ca : cetAvgVOList) {
+                        if (ca.getYear().equals(cet6avg.getMappedResults().get(y).getString("schoolYear"))) {
+                            ca.setCet6Avg(Double.valueOf(new DecimalFormat("0.00").format(cet6avg.getMappedResults().get(y).getDouble("avg"))));
+                            break;
+                        }
+                    }
+                }
+            }
+            result.put("success",true);
+            result.put("data",cetAvgVOList);
+            return result;
+        }catch (Exception e){
+            result.put("success",false);
+            result.put("message","历年四六级均值失败！");
+            return result;
+        }
+    }
+
+
 
 }

@@ -8,11 +8,14 @@ import com.aizhixin.cloud.dataanalysis.analysis.respository.CetScoreStatisticsRe
 import com.aizhixin.cloud.dataanalysis.analysis.respository.PracticeStaticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.SchoolStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.TeachingScoreStatisticsRespository;
+import com.aizhixin.cloud.dataanalysis.analysis.vo.ReportRateVO;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
 
+import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
+import com.mongodb.BasicDBObject;
 import liquibase.util.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -507,6 +512,46 @@ public class SchoolStatisticsService {
 
     public void  deleteSchollStatistics(Long orgId,Integer teacherYear){
         schoolStatisticsRespository.deleteByOrgIdAndTeacherYear(orgId,teacherYear);
+    }
+
+
+    public Map<String,Object> getEnrollment(Long orgId){
+        Map<String,Object> result = new HashMap<>();
+        List<ReportRateVO> reportRateVOList = new ArrayList<>();
+        try {
+            //条件
+            Criteria criteria = Criteria.where("orgId").is(orgId);
+            criteria.and("isRegister").is(1);
+            AggregationResults<BasicDBObject> register = mongoTemplate.aggregate(
+                    Aggregation.newAggregation(
+                            Aggregation.match(criteria),
+                            Aggregation.group("schoolYear").count().as("count").first("schoolYear").as("schoolYear")
+                    ), StudentRegister.class, BasicDBObject.class);
+
+            for (int i = 0; i < register.getMappedResults().size(); i++) {
+                ReportRateVO rr = new ReportRateVO();
+                rr.setYear(register.getMappedResults().get(i).getString("schoolYear"));
+                rr.setReportNumber(register.getMappedResults().get(i).getInt("count"));
+                reportRateVOList.add(rr);
+            }
+            if (reportRateVOList.size() > 1) {
+                for (int j = 1; j < reportRateVOList.size(); j++) {
+                    Double change = (Double.valueOf(reportRateVOList.get(j).getReportNumber() - Double.valueOf(reportRateVOList.get(j - 1).getReportNumber())
+                    ) / Double.valueOf(reportRateVOList.get(j - 1).getReportNumber()));
+                    if (null != change && !change.isNaN() && !change.isInfinite()) {
+                        reportRateVOList.get(j).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
+                    }
+                }
+            }
+            result.put("success",true);
+            result.put("data",reportRateVOList);
+            return result;
+        }catch (Exception e){
+            result.put("success",false);
+            result.put("message","获取历年报到人数情况失败！");
+            return result;
+        }
+
     }
 
 
