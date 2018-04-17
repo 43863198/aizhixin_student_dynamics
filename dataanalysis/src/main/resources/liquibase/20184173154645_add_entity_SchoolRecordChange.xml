@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+    <!-- 学籍异动信息表结构-->
+    <changeSet id="20184173154645" author="jianwei.wu">
+		<preConditions onFail="MARK_RAN">
+	        <not>
+	            <tableExists tableName="T_SCHOOL_RECORD_CHANGE"/>
+	        </not>
+	    </preConditions>
+        <createTable tableName="T_SCHOOL_RECORD_CHANGE" remarks="学籍异动信息表">
+            <column name="ID" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ORG_ID" type="BIGINT" remarks="机构id"/>
+            <column name="STRUDENT_JOB_NUMBER" type="VARCHAR(50)" remarks="学生学号"/>
+            <column name="DATE_OF_CHANGE" type="DATE"  remarks="异动日期"/>
+            <column name="CAUSE_OF_CHANGE_NUMBER" type="VARCHAR(50)" remarks="异动原因码"/>
+            <column name="DATE_OF_APPROVAL" type="DATE"  remarks="审批日期"/>
+            <column name="APPROVAL_NUMBER" type="VARCHAR(50)" remarks="审批文号"/>
+            <column name="CHANGE_DESCRIPTION" type="VARCHAR(50)"  remarks="异动说明"/>
+            <column name="TYPE_OF_CHANGE_NUMBER" type="VARCHAR(50)"  remarks="异动类别码"/>
+            <column name="OLD_COLLEGE_NUMBER" type="VARCHAR(50)"  remarks="原院系所号"/>
+            <column name="OLD_MAJOR_NUMBER" type="VARCHAR(50)"  remarks="原专业码"/>
+            <column name="OLD_CLASS_NUMBER" type="VARCHAR(50)"  remarks="原班号"/>
+            <column name="OLD_GRADE" type="VARCHAR(50)"  remarks="原年级"/>
+            <column name="OLD_LENGTH_OF_SCHOOLING" type="INT(4)"  remarks="原学制"/>
+            <column name="NEW_COLLEGE_NUMBER" type="VARCHAR(50)"  remarks="现院系所号"/>
+            <column name="NEW_MAJOR_NUMBER" type="VARCHAR(50)"  remarks="现专业码"/>
+            <column name="NEW_CLASS_NUMBER" type="VARCHAR(50)"  remarks="现班号"/>
+            <column name="NEW_GRADE" type="VARCHAR(50)"  remarks="现年级"/>
+            <column name="NEW_LENGTH_OF_SCHOOLING" type="INT(4)"  remarks="现学制"/>
+            <column name="TRANSACTION_ID" type="VARCHAR(50)"  remarks="异动ID"/>
+            <column name="DELETE_FLAG" type="INT(4)" defaultValueNumeric="0" remarks="删除标记(0正常,1删除)"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

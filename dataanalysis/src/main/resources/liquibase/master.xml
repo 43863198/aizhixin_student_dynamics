@@ -59,4 +59,11 @@
     <include file="classpath:liquibase/20184143154645_add_entity_CurriculumSchedule.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20184143154645_add_entity_TeachingClass.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20184143154645_add_entity_TeachingClassStudents.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20184163154645_add_entity_ClassRoom.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20184163163200_update_entity_ClassRoom.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20184173154645_add_entity_AcademicDegree.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20180417151500_update_entity_AcademicDegree.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20184173154645_add_entity_SchoolRecordChange.xml" relativeToChangelogFile="false"/>
+
+
 </databaseChangeLog>

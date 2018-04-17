@@ -8,7 +8,7 @@ import com.aizhixin.cloud.dataanalysis.analysis.respository.CetScoreStatisticsRe
 import com.aizhixin.cloud.dataanalysis.analysis.respository.PracticeStaticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.SchoolStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.TeachingScoreStatisticsRespository;
-import com.aizhixin.cloud.dataanalysis.analysis.vo.ReportRateVO;
+import com.aizhixin.cloud.dataanalysis.analysis.vo.*;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
@@ -18,6 +18,8 @@ import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegist
 import com.mongodb.BasicDBObject;
 import liquibase.util.StringUtils;
 
+import org.hibernate.SQLQuery;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -554,5 +556,100 @@ public class SchoolStatisticsService {
 
     }
 
+
+    public Map<String,Object> graduateSituation(Long orgId) {
+        Map<String, Object> result = new HashMap<>();
+        List<GraduateRateVO> graduateRateVOList = new ArrayList<>();
+        Map<String, Object> condition = new HashMap<>();
+        try {
+            StringBuilder sql = new StringBuilder("SELECT SUBSTRING(DATE_OF_COMPLETION,1,4) AS year, count(1) as count FROM t_academic_degree WHERE 1 = 1");
+            if(null!=orgId){
+                sql.append(" AND ORG_ID = :orgId");
+                condition.put("orgId", orgId);
+            }
+            sql.append(" GROUP BY year");
+            Query sq = em.createNativeQuery(sql.toString());
+            for (Map.Entry<String, Object> e : condition.entrySet()) {
+                sq.setParameter(e.getKey(), e.getValue());
+            }
+            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            List<Object> res = sq.getResultList();
+            for (Object obj : res) {
+                Map row = (Map) obj;
+                GraduateRateVO gr = new GraduateRateVO();
+                if(null!=row.get("year")){
+                    gr.setYear(row.get("year").toString());
+                }
+                if(null!=row.get("count")){
+                    gr.setNumber(Integer.valueOf(row.get("count").toString()));
+                }
+                graduateRateVOList.add(gr);
+            }
+            if (null != graduateRateVOList&&graduateRateVOList.size()>1) {
+                for (int i=1;i<graduateRateVOList.size();i++) {
+                    Double change = (double)(graduateRateVOList.get(i).getNumber() - graduateRateVOList.get(i - 1).getNumber()
+                    ) / graduateRateVOList.get(i - 1).getNumber();
+                    if (null != change && !change.isNaN() && !change.isInfinite()) {
+                        graduateRateVOList.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
+                    }
+                }
+            }
+            result.put("success",true);
+            result.put("data",graduateRateVOList);
+            return result;
+        }catch (Exception e){
+            result.put("success",false);
+            result.put("message","获取毕业生人数情况失败！");
+            return result;
+        }
+    }
+
+
+    public Map<String,Object> studentStatistics(Long orgId) {
+        Map<String, Object> result = new HashMap<>();
+        StudentStatisticsVO studentStatisticsVO = new StudentStatisticsVO();
+        Map<String, Object> condition = new HashMap<>();
+        try {
+            StringBuilder sql = new StringBuilder("SELECT count(rsrc.STRUDENT_JOB_NUMBER) as count FROM (SELECT distinct STRUDENT_JOB_NUMBER FROM t_teachingclass_students WHERE 1 = 1");
+            StringBuilder cql = new StringBuilder("SELECT count(1) as count FROM t_school_record_change src INNER JOIN t_teachingclass_students ts " +
+                    "ON src.STRUDENT_JOB_NUMBER = ts.STRUDENT_JOB_NUMBER WHERE 1 = 1");
+            if(null!=orgId){
+                sql.append(" AND ORG_ID = :orgId");
+                cql.append(" AND src.ORG_ID = :orgId");
+                condition.put("orgId", orgId);
+            }
+            sql.append(" ) rsrc");
+            Query sq = em.createNativeQuery(sql.toString());
+            Query cq = em.createNativeQuery(cql.toString());
+            for (Map.Entry<String, Object> e : condition.entrySet()) {
+                sq.setParameter(e.getKey(), e.getValue());
+                cq.setParameter(e.getKey(), e.getValue());
+            }
+            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            cq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            Object count =  sq.getSingleResult();
+            Object ccount = cq.getSingleResult();
+            if(null!=count) {
+                Map row = (Map) count;
+                if (null != row.get("count")) {
+                    studentStatisticsVO.setTotal(Integer.valueOf(row.get("count").toString()));
+                }
+            }
+            if(null!=ccount) {
+                Map crow = (Map) ccount;
+                if (null != crow.get("count")) {
+                    studentStatisticsVO.setStopNumber(Integer.valueOf(crow.get("count").toString()));
+                }
+            }
+            studentStatisticsVO.setNumberOfSchools(studentStatisticsVO.getTotal()-studentStatisticsVO.getStopNumber());
+            result.put("success",true);
+            result.put("data",studentStatisticsVO);
+            return result;
+        }catch (Exception e){
+            result.put("success",false);
+            result.put("message","获取毕业生人数情况失败！");
+            return result;
+        }
+    }
 
 }
