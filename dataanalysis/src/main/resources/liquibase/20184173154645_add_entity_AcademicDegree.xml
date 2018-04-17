@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+    <!-- 学位学历表结构-->
+    <changeSet id="20184173154645" author="jianwei.wu">
+		<preConditions onFail="MARK_RAN">
+	        <not>
+	            <tableExists tableName="T_ACADEMIC_DEGREE"/>
+	        </not>
+	    </preConditions>
+        <createTable tableName="T_ACADEMIC_DEGREE" remarks="学位学历表结构">
+            <column name="ID" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ORG_ID" type="BIGINT" remarks="机构id"/>
+            <column name="JOB_NUMBER" type="VARCHAR(50)" remarks="学号"/>
+            <column name="LENGTH_OF_SCHOOLING" type="INT(4)"  remarks="学制"/>
+            <column name="DATE_OF_ADMISSION" type="DATE"  remarks="入学日期"/>
+            <column name="LEARNING_STYLE" type="VARCHAR(50)"  remarks="学习方式码"/>
+            <column name="MAJOR" type="VARCHAR(50)"  remarks="专业"/>
+            <column name="DATE_OF_COMPLETION" type="DATE"  remarks="结业日期"/>
+            <column name="GET_A_DEGREE_CODE" type="VARCHAR(50)"  remarks="获得学位码"/>
+            <column name="GET_A_DEGREE_DATE" type="DATE"  remarks="获得学位日期"/>
+            <column name="DEGREE_CERTIFICATE_NUMBER" type="VARCHAR(50)"  remarks="学位证号"/>
+            <column name="DIPLOMA_NUMBER" type="VARCHAR(50)"  remarks="毕业证号"/>
+            <column name="DELETE_FLAG" type="INT(4)" defaultValueNumeric="0" remarks="删除标记(0正常,1删除)"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

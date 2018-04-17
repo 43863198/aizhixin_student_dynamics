@@ -177,6 +177,28 @@ public class SchoolConditionStatisticsController {
         return new ResponseEntity<Map<String, Object>>(schoolStatisticsService.getEnrollment(orgId),HttpStatus.OK);
     }
 
+    /**
+     * 学生毕业情况
+     * @param orgId
+     * @returng
+     */
+    @GetMapping(value = "/graduate", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "学生毕业情况", response = Void.class, notes = "学生毕业情况<br><br><b>@author wangjun</b>")
+    public ResponseEntity<Map<String, Object>>  graduateSituation(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
+        return new ResponseEntity<Map<String, Object>>(schoolStatisticsService.graduateSituation(orgId),HttpStatus.OK);
+    }
+
+    /**
+     * 学生情况
+     * @param orgId
+     * @returng
+     */
+    @GetMapping(value = "/studentstatistics", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "学生情况", response = Void.class, notes = "学生情况<br><br><b>@author wangjun</b>")
+    public ResponseEntity<Map<String, Object>>  studentStatistics(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
+        return new ResponseEntity<Map<String, Object>>(schoolStatisticsService.studentStatistics(orgId),HttpStatus.OK);
+    }
+
 
 
 }

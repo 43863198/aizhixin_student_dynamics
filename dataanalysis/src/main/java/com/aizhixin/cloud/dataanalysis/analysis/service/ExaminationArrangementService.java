@@ -33,8 +33,9 @@ public class ExaminationArrangementService {
         List<ExamArrangeVO> data = new ArrayList<>();
         Map<String, Object> condition = new HashMap<>();
         try {
-            StringBuilder sql = new StringBuilder("SELECT ea.START_TIME as start, ea.END_TIME as end, tc.COURSE_NAME as cname  FROM t_examination_arrangement ea " +
-                    "LEFT JOIN t_teaching_class tc ON tc.JOB_NUMBER = ea.JOB_NUMBER WHERE 1 = 1");
+            StringBuilder sql = new StringBuilder("SELECT ea.START_TIME as start, ea.END_TIME as end, tc.COURSE_NAME as cname, cr.TEACHING_BUILDING_NUMBER as jxl, cr.CLASSROOM_NAME as jsm  " +
+                    "FROM t_examination_arrangement ea " +
+                    "LEFT JOIN t_class_room cr ON ea.CLASSROOM_NUMBER = cr.CLASSROOM_NUMBER LEFT JOIN t_teaching_class tc ON tc.JOB_NUMBER = ea.JOB_NUMBER WHERE 1 = 1");
             if (null != orgId) {
                 sql.append(" and ea.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
@@ -59,7 +60,14 @@ public class ExaminationArrangementService {
                 if (null != row.get("cname")) {
                     ea.setSubject(row.get("cname").toString());
                 }
-
+                String str = "";
+                if (null != row.get("jxl")) {
+                    str = str+ row.get("jxl").toString();
+                }
+                if (null != row.get("jsm")) {
+                    str = str+ row.get("jsm").toString();
+                }
+                ea.setRoom(str);
                 data.add(ea);
             }
 
