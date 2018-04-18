@@ -611,14 +611,17 @@ public class SchoolStatisticsService {
         Map<String, Object> condition = new HashMap<>();
         try {
             StringBuilder sql = new StringBuilder("SELECT count(rsrc.STRUDENT_JOB_NUMBER) as count FROM (SELECT distinct STRUDENT_JOB_NUMBER FROM t_teachingclass_students WHERE 1 = 1");
-            StringBuilder cql = new StringBuilder("SELECT count(1) as count FROM t_school_record_change src INNER JOIN t_teachingclass_students ts " +
-                    "ON src.STRUDENT_JOB_NUMBER = ts.STRUDENT_JOB_NUMBER WHERE 1 = 1");
+            StringBuilder cql = new StringBuilder("SELECT count(ts.STRUDENT_JOB_NUMBER) AS count FROM (SELECT DISTINCT STRUDENT_JOB_NUMBER FROM " +
+                    "t_teachingclass_students WHERE 1=1");
             if(null!=orgId){
                 sql.append(" AND ORG_ID = :orgId");
-                cql.append(" AND src.ORG_ID = :orgId");
+                cql.append(" AND ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
             sql.append(" ) rsrc");
+            cql.append(" ) ts INNER JOIN t_school_record_change src ON src.STRUDENT_JOB_NUMBER = ts.STRUDENT_JOB_NUMBER " +
+                    "WHERE src.CHANGE_DESCRIPTION LIKE '%离校%' OR src.CHANGE_DESCRIPTION LIKE '%退学%'");
+
             Query sq = em.createNativeQuery(sql.toString());
             Query cq = em.createNativeQuery(cql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
