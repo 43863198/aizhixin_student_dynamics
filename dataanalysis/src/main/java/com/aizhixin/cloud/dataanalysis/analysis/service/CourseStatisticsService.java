@@ -5,6 +5,7 @@ import com.aizhixin.cloud.dataanalysis.analysis.vo.ExamArrangeVO;
 import com.aizhixin.cloud.dataanalysis.feign.FeignService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,13 +37,24 @@ public class CourseStatisticsService {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         int day = 0;
         long weeks = 0;
+        String startDate = "";
         try {
-            String semester = feignService.getSemester(138L);
-            if(null!=semester) {
-                JSONObject json = JSONObject.parseObject(semester);
-                Date startDate = json.getDate("startDate");
+            if(null!=orgId) {
+                StringBuilder sql = new StringBuilder("SELECT max(START_TIME) as start FROM t_school_calendar WHERE ORG_ID ="+orgId);
+                Query sq = em.createNativeQuery(sql.toString());
+                Object time = sq.getSingleResult();
+                if(null!=time){
+                    startDate = time.toString();
+                }
+            }
+
+//            String semester = feignService.getSemester(138L);
+//            if(null!=semester) {
+//                JSONObject json = JSONObject.parseObject(semester);
+//                Date startDate = json.getDate("startDate");
+            if(!StringUtils.isBlank(startDate)){
                 Date date = df.parse(df.format(new Date()));
-                Date date1 = df.parse(df.format(startDate));
+                Date date1 = df.parse(startDate);
                 weeks = (date.getTime() - date1.getTime()) / (7 * 24 * 60 * 60 * 1000);
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(date);
