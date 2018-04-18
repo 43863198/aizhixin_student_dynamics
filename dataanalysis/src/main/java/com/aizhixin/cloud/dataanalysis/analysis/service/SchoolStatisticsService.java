@@ -610,6 +610,9 @@ public class SchoolStatisticsService {
         StudentStatisticsVO studentStatisticsVO = new StudentStatisticsVO();
         Map<String, Object> condition = new HashMap<>();
         try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+            Date date = new Date();
+            String year = sdf.format(date);
             StringBuilder sql = new StringBuilder("SELECT count(rsrc.STRUDENT_JOB_NUMBER) as count FROM (SELECT distinct STRUDENT_JOB_NUMBER FROM t_teachingclass_students WHERE 1 = 1");
             StringBuilder cql = new StringBuilder("SELECT count(ts.STRUDENT_JOB_NUMBER) AS count FROM (SELECT DISTINCT STRUDENT_JOB_NUMBER FROM " +
                     "t_teachingclass_students WHERE 1=1");
@@ -620,7 +623,8 @@ public class SchoolStatisticsService {
             }
             sql.append(" ) rsrc");
             cql.append(" ) ts INNER JOIN t_school_record_change src ON src.STRUDENT_JOB_NUMBER = ts.STRUDENT_JOB_NUMBER " +
-                    "WHERE src.CHANGE_DESCRIPTION LIKE '%离校%' OR src.CHANGE_DESCRIPTION LIKE '%退学%'");
+                    "WHERE src.DATE_OF_CHANGE > '" +year+" 00-00'"+
+                    " AND src.CHANGE_DESCRIPTION LIKE '%离校%' OR src.CHANGE_DESCRIPTION LIKE '%退学%'");
 
             Query sq = em.createNativeQuery(sql.toString());
             Query cq = em.createNativeQuery(cql.toString());
