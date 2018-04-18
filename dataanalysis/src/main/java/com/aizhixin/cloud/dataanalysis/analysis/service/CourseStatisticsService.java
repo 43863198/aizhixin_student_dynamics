@@ -68,7 +68,7 @@ public class CourseStatisticsService {
             sql.append(" AND cs.DAY_OF_THE_WEEK = :day");
             condition.put("day", day);
         }
-        sql.append(" GROUP BY cs.START_PERIOD");
+        sql.append(" AND cs.PERIOD_NUM > 0 GROUP BY cs.START_PERIOD");
         Query sq = em.createNativeQuery(sql.toString());
         for (Map.Entry<String, Object> e : condition.entrySet()) {
             sq.setParameter(e.getKey(), e.getValue());
@@ -82,8 +82,9 @@ public class CourseStatisticsService {
                 ct.setPeriod(Integer.valueOf(row.get("period").toString()));
             }
             if(null!=row.get("count")){
-                ct.setPeriod(Integer.valueOf(row.get("count").toString()));
+                ct.setCourseCount(Integer.valueOf(row.get("count").toString()));
             }
+            classTodayVOList.add(ct);
         }
             result.put("success",true);
             result.put("data",classTodayVOList);
