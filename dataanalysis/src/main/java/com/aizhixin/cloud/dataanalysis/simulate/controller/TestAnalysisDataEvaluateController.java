@@ -126,9 +126,6 @@ public class TestAnalysisDataEvaluateController {
             courseEvaluate3.setCourseType(f);
             list.add(courseEvaluate3);
 
-
-
-
             CourseEvaluate courseEvaluate4=new CourseEvaluate();
 
             courseEvaluate4.setId(UUID.randomUUID().toString());
