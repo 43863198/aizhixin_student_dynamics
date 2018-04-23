@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
  * @Date: 2018-04-16
  */
 @Component
-public class FeignFallback implements FeignService{
+public class OrgManagerFeignFallback implements OrgManagerFeignService{
     @Override
     public String getSemester(Long id) {
         return null;

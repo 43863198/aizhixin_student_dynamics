@@ -100,9 +100,9 @@ public class CourseEvaluate extends AbstractEntity {
     @Getter
     @Setter
     private String teachingClassName;
-    /*
-   * 学期
-   */
+    /**
+     * 学期
+     */
     @Column(name = "SEMESTER")
     @Getter @Setter private Integer semester;
 
@@ -122,8 +122,8 @@ public class CourseEvaluate extends AbstractEntity {
     @Column(name = "COURSE_TYPE")
     @Getter @Setter private Integer courseType;
     /*
-* 统计时间
-*/
+     * 统计时间
+     */
     @ApiModelProperty(value = "统计时间")
     @CreatedDate
     @Column(name = "STATISTICAL_TIME")

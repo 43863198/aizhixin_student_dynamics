@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+    <!-- 选课信息表结构-->
+    <changeSet id="20184203154645" author="jianwei.wu">
+		<preConditions onFail="MARK_RAN">
+	        <not>
+	            <tableExists tableName="T_CHOICE_COURSE"/>
+	        </not>
+	    </preConditions>
+        <createTable tableName="T_CHOICE_COURSE" remarks="选课信息">
+            <column name="ID" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ORG_ID" type="BIGINT" remarks="机构id"/>
+            <column name="COURSE_NUMBER" type="VARCHAR(50)"  remarks="课程号"/>
+            <column name="SERIAL_NUMBER" type="VARCHAR(50)"  remarks="课序号"/>
+            <column name="CHOICE_DATE" type="DATE"  remarks="选课日期"/>
+            <column name="CHOICE_TIME" type="VARCHAR(50)"  remarks="选课时间"/>
+            <column name="TEACHING_CLASS_NUMBER" type="VARCHAR(50)"  remarks="教学班号"/>
+            <column name="JOB_NUMBER" type="VARCHAR(50)"  remarks="学号"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
