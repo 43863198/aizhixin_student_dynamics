@@ -15,7 +15,7 @@
 	        </not>
 	    </preConditions>
         <createTable tableName="T_Examination_Arrangement" remarks="考试安排表结构">
-            <column name="ID" type="VARCHAR(50)">
+            <column name="ID" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="TEACHER_NAME" type="VARCHAR(50)" remarks="教课人姓名"/>

@@ -15,7 +15,7 @@
 	        </not>
 	    </preConditions>
         <createTable tableName="T_CHOICE_COURSE" remarks="选课信息">
-            <column name="ID" type="VARCHAR(50)">
+            <column name="ID" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="ORG_ID" type="BIGINT" remarks="机构id"/>
