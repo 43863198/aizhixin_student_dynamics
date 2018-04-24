@@ -8,14 +8,14 @@
     <property name="now" value="current_timestamp" dbms="postgresql"/>
     <property name="now" value="sysdate" dbms="oracle"/>
     <!-- 教室信息表结构-->
-    <changeSet id="20184163154645" author="jianwei.wu">
+    <changeSet id="20184243154645" author="jianwei.wu">
 		<preConditions onFail="MARK_RAN">
 	        <not>
 	            <tableExists tableName="T_CLASS_ROOM"/>
 	        </not>
 	    </preConditions>
         <createTable tableName="T_CLASS_ROOM" remarks="教室信息表结构">
-            <column name="ID" type="VARCHAR(50)">
+            <column name="ID" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="ORG_ID" type="BIGINT" remarks="机构id"/>
@@ -27,6 +27,8 @@
             <column name="NUMBER_OF_SEATS" type="INT(4)"  remarks="座位数"/>
             <column name="CLASSROOM_MANAGEMENT_DEPARTMENT" type="VARCHAR(50)"  remarks="教室管理部门"/>
             <column name="CLASSROOM_NAME" type="VARCHAR(50)"  remarks="教室名称"/>
+            <column name="CLASSROOM_NUMBER" type="VARCHAR(50)"  remarks="教室号"></column>
+            <column name="NORMAL" type="VARCHAR(50)"  remarks="是否可用"></column>
             <column name="DELETE_FLAG" type="INT(4)" defaultValueNumeric="0" remarks="删除标记(0正常,1删除)"/>
         </createTable>
     </changeSet>

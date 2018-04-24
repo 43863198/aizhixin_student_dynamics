@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
  * @E-mail: wujianwei@aizhixin.com
  * @Date: 2018-04-16
  */
-@FeignClient(name = "org-manager",fallback=FeignFallback.class)
+@FeignClient(name = "org-manager",fallback=OrgManagerFeignFallback.class)
 public interface  OrgManagerFeignService {
     @RequestMapping(value = "/v1/semester/get/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getSemester(@PathVariable(value = "id") Long id);

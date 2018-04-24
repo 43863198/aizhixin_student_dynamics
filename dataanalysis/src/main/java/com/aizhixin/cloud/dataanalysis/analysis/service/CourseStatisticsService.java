@@ -2,7 +2,7 @@ package com.aizhixin.cloud.dataanalysis.analysis.service;
 
 import com.aizhixin.cloud.dataanalysis.analysis.vo.ClassTodayVO;
 import com.aizhixin.cloud.dataanalysis.analysis.vo.ExamArrangeVO;
-import com.aizhixin.cloud.dataanalysis.feign.FeignService;
+import com.aizhixin.cloud.dataanalysis.feign.OrgManagerFeignService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
@@ -26,8 +26,6 @@ import java.util.*;
 public class CourseStatisticsService {
     @Autowired
     private EntityManager em;
-    @Autowired
-    private FeignService feignService;
 
     public Map<String,Object> getClassToday(Long orgId) {
 
@@ -48,10 +46,6 @@ public class CourseStatisticsService {
                 }
             }
 
-//            String semester = feignService.getSemester(138L);
-//            if(null!=semester) {
-//                JSONObject json = JSONObject.parseObject(semester);
-//                Date startDate = json.getDate("startDate");
             if(!StringUtils.isBlank(startDate)){
                 Date date = df.parse(df.format(new Date()));
                 Date date1 = df.parse(startDate);

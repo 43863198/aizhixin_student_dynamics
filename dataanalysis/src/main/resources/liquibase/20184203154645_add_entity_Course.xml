@@ -15,13 +15,13 @@
 	        </not>
 	    </preConditions>
         <createTable tableName="T_COURSE" remarks="课程信息">
-            <column name="ID" type="VARCHAR(50)">
+            <column name="ID" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="ORG_ID" type="BIGINT" remarks="机构id"/>
             <column name="COURSE_NUMBER" type="VARCHAR(50)"  remarks="课程号"/>
             <column name="COURSE_NAME" type="VARCHAR(50)"  remarks="课程名称"/>
-            <column name="CREDIT" type="FLOAT(4,4)"  remarks="学分"/>
+            <column name="CREDIT" type="FLOAT"  remarks="学分"/>
             <column name="TOTAL_HOURS" type="INT(4)"  remarks="总学时"/>
             <column name="SUBORDINATE_UNIT" type="VARCHAR(50)"  remarks="课程开设单位号"/>
             <column name="COURSE_TYPE" type="VARCHAR(50)"  remarks="课程类型"/>
