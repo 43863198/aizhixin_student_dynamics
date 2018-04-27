@@ -316,9 +316,7 @@ public class CourseStatisticsService {
                     "cr.TEACHING_BUILDING_NUMBER AS tbn,cr.CLASSROOM_NAME AS crn,d.COMPANY_NAME AS cn ");
             sql.append("FROM(SELECT cs.START_PERIOD,cs.PERIOD_NUM,ct.TEACHER_NAME,ct.TEACHING_CLASS_NAME, ct.PLACE,ct.SET_UP_UNIT FROM(SELECT " +
                     "START_PERIOD,PERIOD_NUM,TEACHING_CLASS_NAME FROM t_curriculum_schedule WHERE 1 = 1");
-            StringBuilder cql = new StringBuilder("SELECT count(1) as count FROM (SELECT m.TEACHING_CLASS_NAME ");
-            cql.append("FROM(SELECT cs.START_PERIOD,cs.PERIOD_NUM,ct.TEACHER_NAME,ct.TEACHING_CLASS_NAME, ct.PLACE,ct.SET_UP_UNIT FROM(SELECT " +
-                    "START_PERIOD,PERIOD_NUM,TEACHING_CLASS_NAME FROM t_curriculum_schedule WHERE 1 = 1");
+            StringBuilder cql = new StringBuilder("SELECT  count(cs.TEACHING_CLASS_NAME) as count FROM (SELECT DISTINCT TEACHING_CLASS_NAME FROM t_curriculum_schedule WHERE 1 = 1 ");
             if(null!=orgId){
                 sql.append(" AND ORG_ID = :orgId");
                 cql.append(" AND ORG_ID = :orgId");
@@ -337,14 +335,10 @@ public class CourseStatisticsService {
                 cql.append(" AND DAY_OF_THE_WEEK = :day");
                 condition.put("day", day);
             }
-            sql.append(" ) cs LEFT JOIN t_course_timetable ct ON cs.TEACHING_CLASS_NAME = ct.TEACHING_CLASS_NAME) m");
+            sql.append("  GROUP BY TEACHING_CLASS_NAME) cs LEFT JOIN t_course_timetable ct ON cs.TEACHING_CLASS_NAME = ct.TEACHING_CLASS_NAME  GROUP BY cs.TEACHING_CLASS_NAME) m");
             sql.append(" LEFT JOIN t_class_room cr ON cr.CLASSROOM_NAME = m.PLACE LEFT " +
                     "JOIN t_department d ON m.SET_UP_UNIT = d.COMPANY_NUMBER");
-            sql.append(" GROUP BY m.TEACHING_CLASS_NAME ");
-            cql.append(" ) cs LEFT JOIN t_course_timetable ct ON cs.TEACHING_CLASS_NAME = ct.TEACHING_CLASS_NAME) m");
-            cql.append(" LEFT JOIN t_class_room cr ON cr.CLASSROOM_NAME = m.PLACE LEFT " +
-                    "JOIN t_department d ON m.SET_UP_UNIT = d.COMPANY_NUMBER");
-            cql.append(" GROUP BY m.TEACHING_CLASS_NAME ) n");
+            cql.append(" ) cs");
             Query sq = em.createNativeQuery(sql.toString());
             Query cq = em.createNativeQuery(cql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
@@ -359,7 +353,7 @@ public class CourseStatisticsService {
             if(null==pageSize){
                 pageSize = 20;
             }
-            sq.setFirstResult(pageNumber * pageSize);
+            sq.setFirstResult((pageNumber-1) * pageSize);
             sq.setMaxResults(pageSize);
             List<Object> res = sq.getResultList();
             for (Object obj : res) {
