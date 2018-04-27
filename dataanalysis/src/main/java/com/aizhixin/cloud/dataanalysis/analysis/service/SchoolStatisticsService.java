@@ -39,6 +39,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -65,31 +66,32 @@ public class SchoolStatisticsService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    public void deleteAllByOrgId(Long orgId){
-    	schoolStatisticsRespository.deleteByOrgId(orgId);
+    public void deleteAllByOrgId(Long orgId) {
+        schoolStatisticsRespository.deleteByOrgId(orgId);
     }
 
-    public void deleteByOrgIdAndTeacherYear(Long orgId, Integer teacherYear){
+    public void deleteByOrgIdAndTeacherYear(Long orgId, Integer teacherYear) {
         schoolStatisticsRespository.deleteByOrgIdAndTeacherYear(orgId, teacherYear);
     }
-    
+
     /**
      * 批量保存学校统计数据
+     *
      * @param statisticsList
      */
-    public void saveList(List<SchoolStatistics> statisticsList){
-    	schoolStatisticsRespository.save(statisticsList);
+    public void saveList(List<SchoolStatistics> statisticsList) {
+        schoolStatisticsRespository.save(statisticsList);
     }
-    
-    public void save(SchoolStatistics statistics){
-    	schoolStatisticsRespository.save(statistics);
+
+    public void save(SchoolStatistics statistics) {
+        schoolStatisticsRespository.save(statistics);
     }
-    
-    public SchoolStatistics findById(String id){
-    	return schoolStatisticsRespository.findOne(id);
+
+    public SchoolStatistics findById(String id) {
+        return schoolStatisticsRespository.findOne(id);
     }
-    
-    
+
+
     public Map<String, Object> getStatisticNewstudents(Long orgId, Integer teacherYear) {
         Map<String, Object> result = new HashMap<>();
         NewStudentProfileDTO newStudentProfileDTO = new NewStudentProfileDTO();
@@ -105,7 +107,7 @@ public class SchoolStatisticsService {
                 sql.append(" and ss.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
-            if (null!=teacherYear) {
+            if (null != teacherYear) {
                 sql.append(" and ss.TEACHER_YEAR = :teacherYear");
                 condition.put("teacherYear", teacherYear);
             }
@@ -141,7 +143,7 @@ public class SchoolStatisticsService {
             newStudentProfileDTO.setConvenienceChannel(convenienceChannel);
             newStudentProfileDTO.setStatisticalTime(time);//后续要改为统计时间
             List<SchoolStatistics> schoolStatisticsList = schoolStatisticsRespository.findDataByOrgIdAndTeacherYear(orgId, teacherYear, DataValidity.VALID.getState());
-              newStudentProfileDTO.setSchoolStatisticsListData(schoolStatisticsList);
+            newStudentProfileDTO.setSchoolStatisticsListData(schoolStatisticsList);
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
@@ -181,22 +183,22 @@ public class SchoolStatisticsService {
      * @return
      */
     public HomeData<SchoolProfileDTO> getSchoolPersonStatistics(Long orgId) {
-        String sql="SELECT SEMESTER ,TEACHER_YEAR  FROM `t_practice_statistics` where ORG_ID="+orgId+"  ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
-        Map currentGradeMap=new HashMap() ;
+        String sql = "SELECT SEMESTER ,TEACHER_YEAR  FROM `t_practice_statistics` where ORG_ID=" + orgId + "  ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
+        Map currentGradeMap = new HashMap();
         try {
-            currentGradeMap= jdbcTemplate.queryForMap(sql);
-        }catch (EmptyResultDataAccessException emptyResultDataAccessException){
+            currentGradeMap = jdbcTemplate.queryForMap(sql);
+        } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
             return null;
         }
-        int teacherYear=Integer.valueOf(currentGradeMap.get("TEACHER_YEAR")+"");
-        int semester= Integer.valueOf(currentGradeMap.get("SEMESTER") + "");
+        int teacherYear = Integer.valueOf(currentGradeMap.get("TEACHER_YEAR") + "");
+        int semester = Integer.valueOf(currentGradeMap.get("SEMESTER") + "");
         PracticeStaticsDTO practiceStaticsDTO = practiceStaticsRespository.getPracticeStatics(orgId, teacherYear, semester);
 
-        SchoolProfileDTO schoolProfileDTO = schoolStatisticsRespository.getSchoolPersonStatistics(orgId,teacherYear);
+        SchoolProfileDTO schoolProfileDTO = schoolStatisticsRespository.getSchoolPersonStatistics(orgId, teacherYear);
         schoolProfileDTO.setOutSchoolStudent(Long.valueOf(practiceStaticsDTO.getPracticeStudentNum()));
         schoolProfileDTO.setInSchoolStudent(Long.valueOf(schoolProfileDTO.getAllStudent()) - Long.valueOf(schoolProfileDTO.getOutSchoolStudent()));
-        HomeData<SchoolProfileDTO> h=new HomeData();
-        TeacherlYearData teacherlYearData=new TeacherlYearData();
+        HomeData<SchoolProfileDTO> h = new HomeData();
+        TeacherlYearData teacherlYearData = new TeacherlYearData();
         teacherlYearData.setSemester(semester);
         teacherlYearData.setTeacherYear(teacherYear);
         h.setTeacherlYearData(teacherlYearData);
@@ -265,7 +267,7 @@ public class SchoolStatisticsService {
             }
             List<Object> ar = arsq.getResultList();
             if (null != ar && ar.size() > 0) {
-                for(NewTrendDTO td: trendDTOList) {
+                for (NewTrendDTO td : trendDTOList) {
                     for (Object obj : ar) {
                         Object[] d = (Object[]) obj;
                         if (null != d[0]) {
@@ -280,23 +282,23 @@ public class SchoolStatisticsService {
                     }
                 }
             }
-            if(trendDTOList.size()>1) {
-                for (int i=1;i<trendDTOList.size();i++) {
+            if (trendDTOList.size() > 1) {
+                for (int i = 1; i < trendDTOList.size(); i++) {
                     Double change1 = (Double.valueOf(trendDTOList.get(i).getNewStudentsCount()) - Double.valueOf(trendDTOList.get(i - 1).getNewStudentsCount())
-                        ) / Double.valueOf(trendDTOList.get(i - 1).getNewStudentsCount());
-                    if(null!=change1&&!change1.isNaN()&&!change1.isInfinite()) {
+                    ) / Double.valueOf(trendDTOList.get(i - 1).getNewStudentsCount());
+                    if (null != change1 && !change1.isNaN() && !change1.isInfinite()) {
                         trendDTOList.get(i).setNscChange(Double.valueOf(new DecimalFormat("0.00").format(change1)));
                     }
 
                     Double change2 = (Double.valueOf(trendDTOList.get(i).getAlreadyReport()) - Double.valueOf(trendDTOList.get(i - 1).getAlreadyReport())
                     ) / Double.valueOf(trendDTOList.get(i - 1).getAlreadyReport());
-                    if(null!=change2&&!change2.isNaN()&&!change2.isInfinite()) {
+                    if (null != change2 && !change2.isNaN() && !change2.isInfinite()) {
                         trendDTOList.get(i).setArChange(Double.valueOf(new DecimalFormat("0.00").format(change2)));
                     }
 
                     Double change3 = (Double.valueOf(trendDTOList.get(i).getReportRate()) - Double.valueOf(trendDTOList.get(i - 1).getReportRate())
                     ) / Double.valueOf(trendDTOList.get(i - 1).getReportRate());
-                    if(null!=change3&&!change3.isNaN()&&!change3.isInfinite()) {
+                    if (null != change3 && !change3.isNaN() && !change3.isInfinite()) {
                         trendDTOList.get(i).setRrChange(Double.valueOf(new DecimalFormat("0.00").format(change3)));
                     }
                 }
@@ -319,18 +321,18 @@ public class SchoolStatisticsService {
      * @return
      */
     public HomeData<PracticeStaticsDTO> getPracticeStatics(Long orgId) {
-        String sql="SELECT SEMESTER ,TEACHER_YEAR  FROM `t_practice_statistics`  where ORG_ID="+orgId+"  ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
-        Map currentGradeMap=new HashMap() ;
+        String sql = "SELECT SEMESTER ,TEACHER_YEAR  FROM `t_practice_statistics`  where ORG_ID=" + orgId + "  ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
+        Map currentGradeMap = new HashMap();
         try {
-            currentGradeMap= jdbcTemplate.queryForMap(sql);
-        }catch (EmptyResultDataAccessException emptyResultDataAccessException){
+            currentGradeMap = jdbcTemplate.queryForMap(sql);
+        } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
             return null;
         }
-        int teacherYear=Integer.valueOf(currentGradeMap.get("TEACHER_YEAR")+"");
-        int semester= Integer.valueOf(currentGradeMap.get("SEMESTER")+"");
-        PracticeStaticsDTO practiceStaticsDTO=practiceStaticsRespository.getPracticeStatics(orgId,teacherYear,semester);
-        HomeData<PracticeStaticsDTO> h=new HomeData();
-        TeacherlYearData teacherlYearData=new TeacherlYearData();
+        int teacherYear = Integer.valueOf(currentGradeMap.get("TEACHER_YEAR") + "");
+        int semester = Integer.valueOf(currentGradeMap.get("SEMESTER") + "");
+        PracticeStaticsDTO practiceStaticsDTO = practiceStaticsRespository.getPracticeStatics(orgId, teacherYear, semester);
+        HomeData<PracticeStaticsDTO> h = new HomeData();
+        TeacherlYearData teacherlYearData = new TeacherlYearData();
         teacherlYearData.setSemester(semester);
         teacherlYearData.setTeacherYear(teacherYear);
         h.setTeacherlYearData(teacherlYearData);
@@ -345,50 +347,51 @@ public class SchoolStatisticsService {
      * @return
      */
     public HomeData<CetScoreStatisticsDTO> getEctStatics(Long orgId) {
-        String sql="SELECT SEMESTER ,TEACHER_YEAR  FROM `t_cet_statistics`  where ORG_ID="+orgId+" ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
-        Map currentGradeMap=new HashMap() ;
+        String sql = "SELECT SEMESTER ,TEACHER_YEAR  FROM `t_cet_statistics`  where ORG_ID=" + orgId + " ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
+        Map currentGradeMap = new HashMap();
         try {
-            currentGradeMap= jdbcTemplate.queryForMap(sql);
-        }catch (EmptyResultDataAccessException emptyResultDataAccessException){
+            currentGradeMap = jdbcTemplate.queryForMap(sql);
+        } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
             return null;
         }
-        int teacherYear=Integer.valueOf(currentGradeMap.get("TEACHER_YEAR")+"");
-        int semester= Integer.valueOf(currentGradeMap.get("SEMESTER") + "");
-        CetScoreStatisticsDTO cetScoreStatisticsDTO=cetScoreStatisticsRespository.getEctStatics(orgId, teacherYear, semester);
-        HomeData<CetScoreStatisticsDTO> h=new HomeData();
-        TeacherlYearData teacherlYearData=new TeacherlYearData();
+        int teacherYear = Integer.valueOf(currentGradeMap.get("TEACHER_YEAR") + "");
+        int semester = Integer.valueOf(currentGradeMap.get("SEMESTER") + "");
+        CetScoreStatisticsDTO cetScoreStatisticsDTO = cetScoreStatisticsRespository.getEctStatics(orgId, teacherYear, semester);
+        HomeData<CetScoreStatisticsDTO> h = new HomeData();
+        TeacherlYearData teacherlYearData = new TeacherlYearData();
         teacherlYearData.setSemester(semester);
         teacherlYearData.setTeacherYear(teacherYear);
         h.setTeacherlYearData(teacherlYearData);
         h.setObjData(cetScoreStatisticsDTO);
         return h;
     }
+
     /**
      * 教学成绩首页统计查询
      *
      * @param orgId
      * @return
      */
-    public HomeData<TeachingScoreStatisticsDTO> getTeachingSoreStatics(Long orgId){
-        Map<String,Object> map=new HashMap<String, Object>();
+    public HomeData<TeachingScoreStatisticsDTO> getTeachingSoreStatics(Long orgId) {
+        Map<String, Object> map = new HashMap<String, Object>();
 
-        String sql="SELECT SEMESTER ,TEACHER_YEAR  FROM `t_teaching_score_statistics`  where ORG_ID="+orgId+" ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
-        Map currentGradeMap=new HashMap() ;
+        String sql = "SELECT SEMESTER ,TEACHER_YEAR  FROM `t_teaching_score_statistics`  where ORG_ID=" + orgId + " ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
+        Map currentGradeMap = new HashMap();
         try {
-            currentGradeMap= jdbcTemplate.queryForMap(sql);
-        }catch (EmptyResultDataAccessException emptyResultDataAccessException){
+            currentGradeMap = jdbcTemplate.queryForMap(sql);
+        } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
             return null;
         }
-       int teacherYear=Integer.valueOf(currentGradeMap.get("TEACHER_YEAR")+"");
-       int semester= Integer.valueOf(currentGradeMap.get("SEMESTER")+"");
-        List<TeachingScoreStatisticsDTO> list=teachingScoreStatisticsRespository.getTeachingScoreStatisticsByOrgId(orgId, teacherYear, semester);
-        List<TeachingScoreStatisticsDTO> list0=teachingScoreStatisticsRespository.getAvgTeachingScore(orgId, teacherYear, semester);
-        TeachingScoreStatisticsDTO obj=null;
-        if (null!=list0&&list0.size()>0){
-            obj=list0.get(0);
+        int teacherYear = Integer.valueOf(currentGradeMap.get("TEACHER_YEAR") + "");
+        int semester = Integer.valueOf(currentGradeMap.get("SEMESTER") + "");
+        List<TeachingScoreStatisticsDTO> list = teachingScoreStatisticsRespository.getTeachingScoreStatisticsByOrgId(orgId, teacherYear, semester);
+        List<TeachingScoreStatisticsDTO> list0 = teachingScoreStatisticsRespository.getAvgTeachingScore(orgId, teacherYear, semester);
+        TeachingScoreStatisticsDTO obj = null;
+        if (null != list0 && list0.size() > 0) {
+            obj = list0.get(0);
         }
-        HomeData<TeachingScoreStatisticsDTO> h=new HomeData();
-        TeacherlYearData teacherlYearData=new TeacherlYearData();
+        HomeData<TeachingScoreStatisticsDTO> h = new HomeData();
+        TeacherlYearData teacherlYearData = new TeacherlYearData();
         teacherlYearData.setSemester(semester);
         teacherlYearData.setTeacherYear(teacherYear);
         h.setTeacherlYearData(teacherlYearData);
@@ -399,7 +402,7 @@ public class SchoolStatisticsService {
     }
 
 
-    public Map<String, Object> getCollegeDetails(Pageable page,Integer teacherYear,Long orgId, String collegeId, String nj, String type,String isReport,String isPay) {
+    public Map<String, Object> getCollegeDetails(Pageable page, Integer teacherYear, Long orgId, String collegeId, String nj, String type, String isReport, String isPay) {
         Map<String, Object> result = new HashMap<>();
         PageData<StudentRegister> p = new PageData<>();
         List<StudentRegister> items = new ArrayList<>();
@@ -413,7 +416,7 @@ public class SchoolStatisticsService {
             org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
             //条件
             Criteria criteria = Criteria.where("orgId").is(orgId);
-            if(null!=teacherYear){
+            if (null != teacherYear) {
                 criteria.and("schoolYear").is(teacherYear);
             }
             if (null != collegeId) {
@@ -421,21 +424,21 @@ public class SchoolStatisticsService {
                 if (collegeId.indexOf(",") != -1) {
                     String[] cid = collegeId.split(",");
                     for (String d : cid) {
-                       collegeIds.add(Long.valueOf(d));
-                     }
-                }else {
+                        collegeIds.add(Long.valueOf(d));
+                    }
+                } else {
                     collegeIds.add(Long.valueOf(collegeId));
                 }
                 criteria.and("collegeId").in(collegeIds);
             }
             if (null != type) {
                 List tds = new ArrayList<>();
-                if(type.indexOf(",") != -1) {
+                if (type.indexOf(",") != -1) {
                     String[] td = type.split(",");
                     for (String d : td) {
                         tds.add(Integer.valueOf(d));
                     }
-                }else {
+                } else {
                     tds.add(Integer.valueOf(type));
                 }
                 criteria.and("education").in(tds);
@@ -447,47 +450,47 @@ public class SchoolStatisticsService {
                     for (String s : py) {
                         pay.add(s);
                     }
-                }else {
+                } else {
                     pay.add(isPay);
                 }
                 int flag = 0;
-                if(pay.contains("3")){
+                if (pay.contains("3")) {
                     flag = 5;
                 }
-                if(pay.contains("1")&&!pay.contains("2")&&flag!=5){
+                if (pay.contains("1") && !pay.contains("2") && flag != 5) {
                     flag = 1;
                 }
-                if(!pay.contains("1")&&pay.contains("2")&&flag!=5){
+                if (!pay.contains("1") && pay.contains("2") && flag != 5) {
                     flag = 2;
                 }
-                if(pay.contains("1")&&pay.contains("2")&&flag!=5){
+                if (pay.contains("1") && pay.contains("2") && flag != 5) {
                     flag = 3;
                 }
-                if(flag==1){
+                if (flag == 1) {
                     criteria.and("isPay").is(1);
                 }
-                if(flag==2){
+                if (flag == 2) {
                     criteria.and("isGreenChannel").is(1);
                 }
-                if(flag==3){
+                if (flag == 3) {
                     criteria.orOperator(criteria.where("isPay").is(1), criteria.where("isGreenChannel").is(1));
                 }
-                if (flag==5) {
+                if (flag == 5) {
                     criteria.and("isPay").ne(1);
                     criteria.and("isGreenChannel").ne(1);
                 }
             }
 
             if (null != isReport) {
-                if(isReport.equals("0")){
+                if (isReport.equals("0")) {
                     criteria.and("isRegister").is(0);
                 }
-                if(isReport.equals("1")){
+                if (isReport.equals("1")) {
                     criteria.and("isRegister").is(1);
                 }
             }
 
-            if(!org.apache.commons.lang.StringUtils.isBlank(nj)){
+            if (!org.apache.commons.lang.StringUtils.isBlank(nj)) {
                 criteria.orOperator(criteria.where("userName").regex(nj), criteria.where("jobNum").regex(nj));
             }
             query.addCriteria(criteria);
@@ -495,14 +498,14 @@ public class SchoolStatisticsService {
             total = mongoTemplate.count(query, StudentRegister.class);
             // mongoTemplate.find 查询结果集
             items = mongoTemplate.find(query.with(pageable), StudentRegister.class);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
-            result.put("message","获取数据异常！");
+            result.put("message", "获取数据异常！");
             return result;
         }
 
-        p.getPage().setTotalPages((int)Math.ceil(total/page.getPageSize())+1);
+        p.getPage().setTotalPages((int) Math.ceil(total / page.getPageSize()) + 1);
         p.getPage().setPageNumber(page.getPageNumber());
         p.getPage().setPageSize(page.getPageSize());
         p.getPage().setTotalElements(total);
@@ -512,13 +515,13 @@ public class SchoolStatisticsService {
         return result;
     }
 
-    public void  deleteSchollStatistics(Long orgId,Integer teacherYear){
-        schoolStatisticsRespository.deleteByOrgIdAndTeacherYear(orgId,teacherYear);
+    public void deleteSchollStatistics(Long orgId, Integer teacherYear) {
+        schoolStatisticsRespository.deleteByOrgIdAndTeacherYear(orgId, teacherYear);
     }
 
 
-    public Map<String,Object> getEnrollment(Long orgId){
-        Map<String,Object> result = new HashMap<>();
+    public Map<String, Object> getEnrollment(Long orgId) {
+        Map<String, Object> result = new HashMap<>();
         List<ReportRateVO> reportRateVOList = new ArrayList<>();
         try {
             //条件
@@ -545,25 +548,25 @@ public class SchoolStatisticsService {
                     }
                 }
             }
-            result.put("success",true);
-            result.put("data",reportRateVOList);
+            result.put("success", true);
+            result.put("data", reportRateVOList);
             return result;
-        }catch (Exception e){
-            result.put("success",false);
-            result.put("message","获取历年报到人数情况失败！");
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", "获取历年报到人数情况失败！");
             return result;
         }
 
     }
 
 
-    public Map<String,Object> graduateSituation(Long orgId) {
+    public Map<String, Object> graduateSituation(Long orgId) {
         Map<String, Object> result = new HashMap<>();
         List<GraduateRateVO> graduateRateVOList = new ArrayList<>();
         Map<String, Object> condition = new HashMap<>();
         try {
             StringBuilder sql = new StringBuilder("SELECT SUBSTRING(DATE_OF_COMPLETION,1,4) AS year, count(1) as count FROM t_academic_degree WHERE 1 = 1");
-            if(null!=orgId){
+            if (null != orgId) {
                 sql.append(" AND ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
@@ -577,35 +580,35 @@ public class SchoolStatisticsService {
             for (Object obj : res) {
                 Map row = (Map) obj;
                 GraduateRateVO gr = new GraduateRateVO();
-                if(null!=row.get("year")){
+                if (null != row.get("year")) {
                     gr.setYear(row.get("year").toString());
                 }
-                if(null!=row.get("count")){
+                if (null != row.get("count")) {
                     gr.setNumber(Integer.valueOf(row.get("count").toString()));
                 }
                 graduateRateVOList.add(gr);
             }
-            if (null != graduateRateVOList&&graduateRateVOList.size()>1) {
-                for (int i=1;i<graduateRateVOList.size();i++) {
-                    Double change = (double)(graduateRateVOList.get(i).getNumber() - graduateRateVOList.get(i - 1).getNumber()
+            if (null != graduateRateVOList && graduateRateVOList.size() > 1) {
+                for (int i = 1; i < graduateRateVOList.size(); i++) {
+                    Double change = (double) (graduateRateVOList.get(i).getNumber() - graduateRateVOList.get(i - 1).getNumber()
                     ) / graduateRateVOList.get(i - 1).getNumber();
                     if (null != change && !change.isNaN() && !change.isInfinite()) {
                         graduateRateVOList.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
                     }
                 }
             }
-            result.put("success",true);
-            result.put("data",graduateRateVOList);
+            result.put("success", true);
+            result.put("data", graduateRateVOList);
             return result;
-        }catch (Exception e){
-            result.put("success",false);
-            result.put("message","获取毕业生人数情况失败！");
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", "获取毕业生人数情况失败！");
             return result;
         }
     }
 
 
-    public Map<String,Object> studentStatistics(Long orgId) {
+    public Map<String, Object> studentStatistics(Long orgId) {
         Map<String, Object> result = new HashMap<>();
         StudentStatisticsVO studentStatisticsVO = new StudentStatisticsVO();
         Map<String, Object> condition = new HashMap<>();
@@ -616,14 +619,14 @@ public class SchoolStatisticsService {
             StringBuilder sql = new StringBuilder("SELECT count(rsrc.STRUDENT_JOB_NUMBER) as count FROM (SELECT distinct STRUDENT_JOB_NUMBER FROM t_teachingclass_students WHERE 1 = 1");
             StringBuilder cql = new StringBuilder("SELECT count(ts.STRUDENT_JOB_NUMBER) AS count FROM (SELECT DISTINCT STRUDENT_JOB_NUMBER FROM " +
                     "t_teachingclass_students WHERE 1=1");
-            if(null!=orgId){
+            if (null != orgId) {
                 sql.append(" AND ORG_ID = :orgId");
                 cql.append(" AND ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
             sql.append(" ) rsrc");
             cql.append(" ) ts INNER JOIN t_school_record_change src ON src.STRUDENT_JOB_NUMBER = ts.STRUDENT_JOB_NUMBER " +
-                    "WHERE src.DATE_OF_CHANGE > '" +year+" 00-00'"+
+                    "WHERE src.DATE_OF_CHANGE > '" + year + "-00-00'" +
                     " AND src.CHANGE_DESCRIPTION LIKE '%离校%' OR src.CHANGE_DESCRIPTION LIKE '%退学%'");
 
             Query sq = em.createNativeQuery(sql.toString());
@@ -634,29 +637,150 @@ public class SchoolStatisticsService {
             }
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             cq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-            Object count =  sq.getSingleResult();
+            Object count = sq.getSingleResult();
             Object ccount = cq.getSingleResult();
-            if(null!=count) {
+            if (null != count) {
                 Map row = (Map) count;
                 if (null != row.get("count")) {
                     studentStatisticsVO.setTotal(Integer.valueOf(row.get("count").toString()));
                 }
             }
-            if(null!=ccount) {
+            if (null != ccount) {
                 Map crow = (Map) ccount;
                 if (null != crow.get("count")) {
                     studentStatisticsVO.setStopNumber(Integer.valueOf(crow.get("count").toString()));
                 }
             }
-            studentStatisticsVO.setNumberOfSchools(studentStatisticsVO.getTotal()-studentStatisticsVO.getStopNumber());
-            result.put("success",true);
-            result.put("data",studentStatisticsVO);
+            studentStatisticsVO.setNumberOfSchools(studentStatisticsVO.getTotal() - studentStatisticsVO.getStopNumber());
+            result.put("success", true);
+            result.put("data", studentStatisticsVO);
             return result;
-        }catch (Exception e){
-            result.put("success",false);
-            result.put("message","获取毕业生人数情况失败！");
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", "获取毕业生人数情况失败！");
             return result;
         }
     }
+
+    public Map<String, Object> teachingBuildingUsage(Long orgId) {
+        List<TeachingBuildingsUsegeVO> dataList = new ArrayList<>();
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> condition = new HashMap<>();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        int day = 0;
+        long weeks = 0;
+        String start = "";
+        try {
+            if (null != orgId) {
+                StringBuilder sql = new StringBuilder("SELECT START_TIME as start FROM t_school_calendar WHERE ORG_ID =" + orgId + " order by START_TIME desc limit 1");
+                Query sq = em.createNativeQuery(sql.toString());
+                Object time = sq.getSingleResult();
+                if (null != time) {
+                    start = time.toString();
+                }
+            }
+            if (!org.apache.commons.lang.StringUtils.isBlank(start)) {
+                Date endDate = df.parse(df.format(new Date()));
+                Date startDate = df.parse(start);
+                //实例化起始和结束Calendar对象
+                Calendar startCalendar = Calendar.getInstance();
+                Calendar endCalendar = Calendar.getInstance();
+                //分别设置Calendar对象的时间
+                startCalendar.setTime(startDate);
+                endCalendar.setTime(endDate);
+
+                //定义起始日期和结束日期分别属于第几周
+                int startWeek = startCalendar.get(Calendar.WEEK_OF_YEAR);
+                int endWeek = endCalendar.get(Calendar.WEEK_OF_YEAR);
+
+                //拿到起始日期是星期几
+                int startDayOfWeek = startCalendar.get(Calendar.DAY_OF_WEEK);
+                if (startDayOfWeek == 1) {
+                    startDayOfWeek = 7;
+                    startWeek--;
+                } else startDayOfWeek--;
+
+                //拿到结束日期是星期几
+                int endDayOfWeek = endCalendar.get(Calendar.DAY_OF_WEEK);
+                if (endDayOfWeek == 1) {
+                    endDayOfWeek = 7;
+                    endWeek--;
+                } else endDayOfWeek--;
+
+                //计算相差的周数
+                weeks = endWeek - startWeek;
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(new Date());
+                day = calendar.get(Calendar.DAY_OF_WEEK);
+                day = day - 1;
+                if (day <= 0) {
+                    day = 7;
+                }
+            }
+            StringBuilder cql = new StringBuilder("SELECT TEACHING_BUILDING_NUMBER as tbn, count(1) as count FROM t_class_room WHERE NORMAL = 0 GROUP BY TEACHING_BUILDING_NUMBER");
+            StringBuilder sql = new StringBuilder("SELECT cr.TEACHING_BUILDING_NUMBER as tbn, count(1) as count ");
+            sql.append("FROM (SELECT START_PERIOD,PERIOD_NUM,TEACHING_CLASS_NAME FROM t_curriculum_schedule WHERE 1 = 1");
+            if (null != orgId) {
+                sql.append(" AND cs.ORG_ID = :orgId");
+                condition.put("orgId", orgId);
+            }
+            if (weeks != 0) {
+                sql.append(" AND cs.START_WEEK <= :startweeks");
+                sql.append(" AND cs.END_WEEK >= :endweeks");
+                condition.put("startweeks", weeks);
+                condition.put("endweeks", weeks);
+            }
+            if (day != 0) {
+                sql.append(" AND cs.DAY_OF_THE_WEEK = :day");
+                condition.put("day", day);
+            }
+            sql.append(" ) cs LEFT JOIN t_course_timetable ct ON cs.TEACHING_CLASS_NAME = ct.TEACHING_CLASS_NAME");
+            sql.append(" LEFT JOIN (SELECT TEACHING_BUILDING_NUMBER,CLASSROOM_NAME FROM t_class_room WHERE TEACHING_BUILDING_NUMBER is not null) cr ON cr.CLASSROOM_NAME = ct.PLACE");
+            sql.append(" GROUP BY cr.TEACHING_BUILDING_NUMBER");
+            Query cq = em.createNativeQuery(sql.toString());
+            Query sq = em.createNativeQuery(sql.toString());
+            for (Map.Entry<String, Object> e : condition.entrySet()) {
+                sq.setParameter(e.getKey(), e.getValue());
+            }
+            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            cq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            List<Object> cres = sq.getResultList();
+            List<Object> res = sq.getResultList();
+            for (Object obj : cres) {
+                Map r = (Map) obj;
+                TeachingBuildingsUsegeVO tb = new TeachingBuildingsUsegeVO();
+                if (null != r.get("tbn")) {
+                    tb.setTeachingBuilding(r.get("tbn").toString());
+                }
+                if (null != r.get("count")) {
+                    tb.setToal(Integer.valueOf(r.get("count").toString()));
+                }
+                dataList.add(tb);
+            }
+            for (TeachingBuildingsUsegeVO tbList : dataList) {
+                for (Object obj : res) {
+                    Map row = (Map) obj;
+                    if (null != row.get("tbn")) {
+                        if (tbList.getTeachingBuilding().equals(row.get("tbn").toString())) {
+                            if (null != row.get("count")) {
+                                tbList.setUsingNumber(Integer.valueOf(row.get("count").toString()));
+                            }
+                            break;
+                        }
+
+                    }
+                }
+            }
+            result.put("success", true);
+            result.put("data", dataList);
+            return result;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message", "今日课程详情获取失败！");
+            return result;
+        }
+    }
+
 
 }

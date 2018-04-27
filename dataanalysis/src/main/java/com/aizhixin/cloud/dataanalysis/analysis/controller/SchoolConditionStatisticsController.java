@@ -199,6 +199,17 @@ public class SchoolConditionStatisticsController {
         return new ResponseEntity<Map<String, Object>>(schoolStatisticsService.studentStatistics(orgId),HttpStatus.OK);
     }
 
+    /**
+     * 今日教学楼使用情况
+     * @param orgId
+     * @returng
+     */
+    @GetMapping(value = "/teachingbuildingusage", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "今日教学楼使用情况", response = Void.class, notes = "今日教学楼使用情况<br><br><b>@author wangjun</b>")
+    public ResponseEntity<Map<String, Object>>  teachingBuildingUsage(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
+        return new ResponseEntity<Map<String, Object>>(schoolStatisticsService.teachingBuildingUsage(orgId),HttpStatus.OK);
+    }
+
 
 
 }

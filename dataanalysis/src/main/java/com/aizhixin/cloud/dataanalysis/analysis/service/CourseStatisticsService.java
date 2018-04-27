@@ -1,6 +1,7 @@
 package com.aizhixin.cloud.dataanalysis.analysis.service;
 
 import com.aizhixin.cloud.dataanalysis.analysis.vo.ClassTodayVO;
+import com.aizhixin.cloud.dataanalysis.analysis.vo.CurriculumTableDetailsVO;
 import com.aizhixin.cloud.dataanalysis.analysis.vo.ExamArrangeVO;
 import com.aizhixin.cloud.dataanalysis.feign.OrgManagerFeignService;
 import com.alibaba.fastjson.JSON;
@@ -35,41 +36,68 @@ public class CourseStatisticsService {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         int day = 0;
         long weeks = 0;
-        String startDate = "";
+        String start = "";
         try {
             if(null!=orgId) {
-                StringBuilder sql = new StringBuilder("SELECT max(START_TIME) as start FROM t_school_calendar WHERE ORG_ID ="+orgId);
+                StringBuilder sql = new StringBuilder("SELECT START_TIME as start FROM t_school_calendar WHERE ORG_ID ="+orgId+" order by START_TIME desc limit 1");
                 Query sq = em.createNativeQuery(sql.toString());
                 Object time = sq.getSingleResult();
                 if(null!=time){
-                    startDate = time.toString();
+                    start = time.toString();
                 }
             }
 
-            if(!StringUtils.isBlank(startDate)){
-                Date date = df.parse(df.format(new Date()));
-                Date date1 = df.parse(startDate);
-                weeks = (date.getTime() - date1.getTime()) / (7 * 24 * 60 * 60 * 1000);
+            if(!StringUtils.isBlank(start)){
+                Date endDate = df.parse(df.format(new Date()));
+                Date startDate = df.parse(start);
+                //实例化起始和结束Calendar对象
+                Calendar startCalendar = Calendar.getInstance();
+                Calendar endCalendar = Calendar.getInstance();
+                //分别设置Calendar对象的时间
+                startCalendar.setTime(startDate);
+                endCalendar.setTime(endDate);
+
+                //定义起始日期和结束日期分别属于第几周
+                int startWeek = startCalendar.get(Calendar.WEEK_OF_YEAR);
+                int endWeek = endCalendar.get(Calendar.WEEK_OF_YEAR);
+
+                //拿到起始日期是星期几
+                int startDayOfWeek = startCalendar.get(Calendar.DAY_OF_WEEK);
+                if(startDayOfWeek == 1)    {
+                    startDayOfWeek = 7;
+                    startWeek--;
+                }else startDayOfWeek--;
+
+                //拿到结束日期是星期几
+                int endDayOfWeek = endCalendar.get(Calendar.DAY_OF_WEEK);
+                if(endDayOfWeek == 1) {
+                    endDayOfWeek = 7;
+                    endWeek--;
+                }else endDayOfWeek--;
+
+                //计算相差的周数
+                weeks = endWeek - startWeek;
+//              weeks = (date.getTime() - date1.getTime()) / (7 * 24 * 60 * 60 * 1000);
                 Calendar calendar = Calendar.getInstance();
-                calendar.setTime(date);
+                calendar.setTime(new Date());
                 day = calendar.get(Calendar.DAY_OF_WEEK);
-//                day=day+1;
-//                if(day>7){
-//                    day=day-7;
-//                }
+                day=day-1;
+                if(day<=0){
+                    day=7;
+                }
             }
-            StringBuilder sql1 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 1 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)) AND cs.START_PERIOD <= 1");
-            StringBuilder sql2 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 2 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)) AND cs.START_PERIOD <= 2");
-            StringBuilder sql3 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 3 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)) AND cs.START_PERIOD <= 3");
-            StringBuilder sql4 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 4 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)) AND cs.START_PERIOD <= 4");
-            StringBuilder sql5 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 5 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)) AND cs.START_PERIOD <= 5");
-            StringBuilder sql6 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 6 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)) AND cs.START_PERIOD <= 6");
-            StringBuilder sql7 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 7 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)) AND cs.START_PERIOD <= 7");
-            StringBuilder sql8 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 8 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)) AND cs.START_PERIOD <= 8");
-            StringBuilder sql9 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 9 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)) AND cs.START_PERIOD <= 9");
-            StringBuilder sql10 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 10 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)) AND cs.START_PERIOD <= 10");
-            StringBuilder sql11 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 11 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)) AND cs.START_PERIOD <= 11");
-            StringBuilder sql12 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 12 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)) AND cs.START_PERIOD <= 12");
+            StringBuilder sql1 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 1 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1)");
+            StringBuilder sql2 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 2 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1)");
+            StringBuilder sql3 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 3 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1)");
+            StringBuilder sql4 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 4 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1)");
+            StringBuilder sql5 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 5 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1)");
+            StringBuilder sql6 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 6 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1)");
+            StringBuilder sql7 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 7 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1)");
+            StringBuilder sql8 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 8 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1)");
+            StringBuilder sql9 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 9 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1)");
+            StringBuilder sql10 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 10 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1)");
+            StringBuilder sql11 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 11 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1)");
+            StringBuilder sql12 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 12 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1)");
             if(null!=orgId){
                 sql1.append(" AND cs.ORG_ID = :orgId");
                 sql2.append(" AND cs.ORG_ID = :orgId");
@@ -221,6 +249,123 @@ public class CourseStatisticsService {
             e.printStackTrace();
             result.put("success", false);
             result.put("message","今日课程统计失败！");
+            return result;
+        }
+    }
+
+    public Map<String,Object> getTodayDetail(Long orgId) {
+        List<CurriculumTableDetailsVO> dataList = new ArrayList<>();
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> condition = new HashMap<>();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        int day = 0;
+        long weeks = 0;
+        String start = "";
+        try {
+            if(null!=orgId) {
+                StringBuilder sql = new StringBuilder("SELECT START_TIME as start FROM t_school_calendar WHERE ORG_ID ="+orgId+" order by START_TIME desc limit 1");
+                Query sq = em.createNativeQuery(sql.toString());
+                Object time = sq.getSingleResult();
+                if(null!=time){
+                    start = time.toString();
+                }
+            }
+            if(!StringUtils.isBlank(start)){
+                Date endDate = df.parse(df.format(new Date()));
+                Date startDate = df.parse(start);
+                //实例化起始和结束Calendar对象
+                Calendar startCalendar = Calendar.getInstance();
+                Calendar endCalendar = Calendar.getInstance();
+                //分别设置Calendar对象的时间
+                startCalendar.setTime(startDate);
+                endCalendar.setTime(endDate);
+
+                //定义起始日期和结束日期分别属于第几周
+                int startWeek = startCalendar.get(Calendar.WEEK_OF_YEAR);
+                int endWeek = endCalendar.get(Calendar.WEEK_OF_YEAR);
+
+                //拿到起始日期是星期几
+                int startDayOfWeek = startCalendar.get(Calendar.DAY_OF_WEEK);
+                if(startDayOfWeek == 1)    {
+                    startDayOfWeek = 7;
+                    startWeek--;
+                }else startDayOfWeek--;
+
+                //拿到结束日期是星期几
+                int endDayOfWeek = endCalendar.get(Calendar.DAY_OF_WEEK);
+                if(endDayOfWeek == 1) {
+                    endDayOfWeek = 7;
+                    endWeek--;
+                }else endDayOfWeek--;
+
+                //计算相差的周数
+                weeks = endWeek - startWeek;
+//              weeks = (date.getTime() - date1.getTime()) / (7 * 24 * 60 * 60 * 1000);
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(new Date());
+                day = calendar.get(Calendar.DAY_OF_WEEK);
+                day=day-1;
+                if(day<=0){
+                    day=7;
+                }
+            }
+            StringBuilder sql = new StringBuilder("SELECT ct.TEACHING_CLASS_NAME as tcn,d.COMPANY_NAME as cn,ct.TEACHER_NAME as tn,cs.START_PERIOD as sp,cs.PERIOD_NUM as pn,cr.TEACHING_BUILDING_NUMBER as tbn,cr.CLASSROOM_NAME as crn ");
+            sql.append("FROM (SELECT START_PERIOD,PERIOD_NUM,TEACHING_CLASS_NAME FROM t_curriculum_schedule WHERE 1 = 1");
+            if(null!=orgId){
+                sql.append(" AND cs.ORG_ID = :orgId");
+                condition.put("orgId", orgId);
+            }
+            if(weeks!=0) {
+                sql.append(" AND cs.START_WEEK <= :startweeks");
+                sql.append(" AND cs.END_WEEK >= :endweeks");
+                condition.put("startweeks", weeks);
+                condition.put("endweeks", weeks);
+            }
+            if(day!=0) {
+                sql.append(" AND cs.DAY_OF_THE_WEEK = :day");
+                condition.put("day", day);
+            }
+            sql.append(" ) cs LEFT JOIN t_course_timetable ct ON cs.TEACHING_CLASS_NAME = ct.TEACHING_CLASS_NAME");
+            sql.append(" LEFT JOIN t_class_room cr ON cr.CLASSROOM_NAME = ct.PLACE LEFT JOIN t_department d ON ct.SET_UP_UNIT = d.COMPANY_NUMBER");
+            Query sq = em.createNativeQuery(sql.toString());
+            for (Map.Entry<String, Object> e : condition.entrySet()) {
+                sq.setParameter(e.getKey(), e.getValue());
+            }
+            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            List<Object> res = sq.getResultList();
+            for (Object obj : res) {
+                Map row = (Map) obj;
+                CurriculumTableDetailsVO cd = new CurriculumTableDetailsVO();
+                if(null!=row.get("tcn")){
+                    cd.setTeachingClassName(row.get("tcn").toString());
+                }
+                if(null!=row.get("cn")){
+                    cd.setCourseUnit(row.get("cn").toString());
+                }
+                if(null!=row.get("tn")){
+                    cd.setTeacherName(row.get("tn").toString());
+                }
+                if(null!=row.get("sp")){
+                    cd.setStartSection(Integer.valueOf(row.get("sp").toString()));
+                }
+                if(null!=row.get("pn")){
+                    cd.setEndSection(Integer.valueOf(row.get("pn").toString()) + cd.getStartSection());
+                }
+                if(null!=row.get("tbn")){
+                    cd.setTeachingBuilding(row.get("tbn").toString());
+                }
+                if(null!=row.get("crn")){
+                    cd.setClassRoom(row.get("tn").toString());
+                }
+                dataList.add(cd);
+            }
+            result.put("success",true);
+            result.put("data",dataList);
+            return result;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message","今日课程详情获取失败！");
             return result;
         }
     }
