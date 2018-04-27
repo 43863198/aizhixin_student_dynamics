@@ -256,7 +256,7 @@ public class CourseStatisticsService {
         }
     }
 
-    public PageData<CurriculumTableDetailsVO> getTodayDetail(Long orgId,Integer pageNumber, Integer pageSize) {
+    public PageData<CurriculumTableDetailsVO> getTodayDetail(Long orgId, Integer period,Integer pageNumber, Integer pageSize) {
         PageData<CurriculumTableDetailsVO> p = new PageData<>();
         List<CurriculumTableDetailsVO> dataList = new ArrayList<>();
         Map<String, Object> condition = new HashMap<>();
@@ -334,6 +334,11 @@ public class CourseStatisticsService {
                 sql.append(" AND DAY_OF_THE_WEEK = :day");
                 cql.append(" AND DAY_OF_THE_WEEK = :day");
                 condition.put("day", day);
+            }
+            if(null!=period){
+                sql.append(" AND (IFNULL(START_PERIOD,0) + IFNULL(PERIOD_NUM,0)-1) >= :period");
+                cql.append(" AND (IFNULL(START_PERIOD,0) + IFNULL(PERIOD_NUM,0)-1) >= :period");
+                condition.put("period", period);
             }
             sql.append("  GROUP BY TEACHING_CLASS_NAME) cs LEFT JOIN t_course_timetable ct ON cs.TEACHING_CLASS_NAME = ct.TEACHING_CLASS_NAME  GROUP BY cs.TEACHING_CLASS_NAME) m");
             sql.append(" LEFT JOIN t_class_room cr ON cr.CLASSROOM_NAME = m.PLACE LEFT " +
