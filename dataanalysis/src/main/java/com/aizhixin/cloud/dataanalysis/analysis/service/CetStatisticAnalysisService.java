@@ -347,6 +347,7 @@ public class CetStatisticAnalysisService {
             //四级分数均值
             Criteria cet4 = Criteria.where("orgId").is(orgId);
             cet4.and("examType").is(ScoreConstant.EXAM_TYPE_CET4);
+            cet4.and("totalScore").gt(0);
             AggregationResults<BasicDBObject> cet4avg = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(cet4),
@@ -355,6 +356,7 @@ public class CetStatisticAnalysisService {
             //英语六级分数均值
             Criteria cet6 = Criteria.where("orgId").is(orgId);
             cet6.and("examType").is(ScoreConstant.EXAM_TYPE_CET6);
+            cet6.and("totalScore").gt(0);
             AggregationResults<BasicDBObject> cet6avg = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(cet6),
