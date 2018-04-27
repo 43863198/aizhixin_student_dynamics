@@ -25,7 +25,7 @@ public class NewTrendDTO {
     @ApiModelProperty(value = "报到变化", required = false)
     private double arChange;
     @ApiModelProperty(value = "报到率", required = false)
-    private double reportRate;
+    private String reportRate;
     @ApiModelProperty(value = "报到率变化", required = false)
     private double rrChange;
 

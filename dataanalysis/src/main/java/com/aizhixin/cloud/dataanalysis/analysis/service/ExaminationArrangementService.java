@@ -41,7 +41,7 @@ public class ExaminationArrangementService {
                 condition.put("orgId", orgId);
             }
             sql.append(" and ea.TEST_DATE = current_date()");
-            sql.append(" and tc.COURSE_NAME IS NOT NULL");
+            sql.append(" and c.COURSE_NAME IS NOT NULL");
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());

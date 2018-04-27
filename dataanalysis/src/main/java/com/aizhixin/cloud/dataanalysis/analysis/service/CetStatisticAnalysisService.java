@@ -234,12 +234,12 @@ public class CetStatisticAnalysisService {
                             Double change1 = (Double.valueOf(trendDTOList.get(i).getCet4PassRate()) - Double.valueOf(trendDTOList.get(i - 1).getCet4PassRate())
                             ) / Double.valueOf(trendDTOList.get(i-1).getCet4PassRate());
                         if(null!=change1&&!change1.isNaN()&&!change1.isInfinite()) {
-                            trendDTOList.get(i).setCet4Change(Double.valueOf(new DecimalFormat("0.00").format(change1)));
+                            trendDTOList.get(i).setCet4Change(new DecimalFormat("0.00").format(change1));
                         }
                         Double change2 = (Double.valueOf(trendDTOList.get(i).getCet6PassRate()) - Double.valueOf(trendDTOList.get(i - 1).getCet6PassRate())
                         ) / Double.valueOf(trendDTOList.get(i-1).getCet6PassRate());
                         if(null!=change2&&!change2.isNaN()&&!change2.isInfinite()) {
-                            trendDTOList.get(i).setCet6Change(Double.valueOf(new DecimalFormat("0.00").format(change2)));
+                            trendDTOList.get(i).setCet6Change(new DecimalFormat("0.00").format(change2));
                         }
                     }
                 }
@@ -351,7 +351,7 @@ public class CetStatisticAnalysisService {
             AggregationResults<BasicDBObject> cet4avg = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(cet4),
-                            Aggregation.group("$schoolYear").avg("totalScore").as("avg").first("schoolYear").as("schoolYear")
+                            Aggregation.group("schoolYear").avg("totalScore").as("avg").first("schoolYear").as("schoolYear")
                     ), Score.class, BasicDBObject.class);
             //英语六级分数均值
             Criteria cet6 = Criteria.where("orgId").is(orgId);
@@ -360,7 +360,7 @@ public class CetStatisticAnalysisService {
             AggregationResults<BasicDBObject> cet6avg = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(cet6),
-                            Aggregation.group("$schoolYear").avg("totalScore").as("avg").first("schoolYear").as("schoolYear")
+                            Aggregation.group("schoolYear").avg("totalScore").as("avg").first("schoolYear").as("schoolYear")
                     ), Score.class, BasicDBObject.class);
             if (null != cet4avg) {
                 for (int x = 0; x < cet4avg.getMappedResults().size(); x++) {

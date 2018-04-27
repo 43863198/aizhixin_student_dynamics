@@ -274,7 +274,7 @@ public class SchoolStatisticsService {
                             if (td.getYear().equals(String.valueOf(d[0]))) {
                                 if (null != d[1]) {
                                     td.setAlreadyReport(Integer.valueOf(String.valueOf(d[1])));
-                                    td.setReportRate(Double.valueOf(new DecimalFormat("0.00").format((double) (td.getAlreadyReport() * 100 / td.getNewStudentsCount()))));
+                                    td.setReportRate(new DecimalFormat("0.00").format((double) (td.getAlreadyReport() * 100 / td.getNewStudentsCount())));
                                     break;
                                 }
                             }

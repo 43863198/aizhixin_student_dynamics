@@ -19,9 +19,9 @@ public class CetTrendDTO {
     @ApiModelProperty(value = "四级通过率", required = false)
     private double cet4PassRate;
     @ApiModelProperty(value = "四级通过率变化", required = false)
-    private double cet4Change;
+    private String cet4Change;
     @ApiModelProperty(value = "六级通过率", required = false)
     private double cet6PassRate;
     @ApiModelProperty(value = "六级通过率变化", required = false)
-    private double cet6Change;
+    private String cet6Change;
 }
