@@ -353,7 +353,7 @@ public class CourseStatisticsService {
             if(null==pageSize){
                 pageSize = 20;
             }
-            sq.setFirstResult(pageNumber * pageSize);
+            sq.setFirstResult((pageNumber-1) * pageSize);
             sq.setMaxResults(pageSize);
             List<Object> res = sq.getResultList();
             for (Object obj : res) {
