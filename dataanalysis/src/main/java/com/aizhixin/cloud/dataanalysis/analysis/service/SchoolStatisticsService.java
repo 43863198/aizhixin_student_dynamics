@@ -708,7 +708,7 @@ public class SchoolStatisticsService {
                 } else endDayOfWeek--;
 
                 //计算相差的周数
-                weeks = endWeek - startWeek;
+                weeks = endWeek - startWeek+1;
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(new Date());
                 day = calendar.get(Calendar.DAY_OF_WEEK);
@@ -717,34 +717,36 @@ public class SchoolStatisticsService {
                     day = 7;
                 }
             }
-            StringBuilder cql = new StringBuilder("SELECT TEACHING_BUILDING_NUMBER as tbn, count(1) as count FROM t_class_room WHERE NORMAL = 0 GROUP BY TEACHING_BUILDING_NUMBER");
+            StringBuilder cql = new StringBuilder("SELECT TEACHING_BUILDING_NUMBER as tbn, count(1) as count FROM t_class_room WHERE NORMAL = 0 ");
             StringBuilder sql = new StringBuilder("SELECT cr.TEACHING_BUILDING_NUMBER as tbn, count(1) as count ");
             sql.append("FROM (SELECT START_PERIOD,PERIOD_NUM,TEACHING_CLASS_NAME FROM t_curriculum_schedule WHERE 1 = 1");
             if (null != orgId) {
-                sql.append(" AND cs.ORG_ID = :orgId");
+                cql.append(" AND ORG_ID = "+orgId);
+                sql.append(" AND ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
             if (weeks != 0) {
-                sql.append(" AND cs.START_WEEK <= :startweeks");
-                sql.append(" AND cs.END_WEEK >= :endweeks");
+                sql.append(" AND START_WEEK <= :startweeks");
+                sql.append(" AND END_WEEK >= :endweeks");
                 condition.put("startweeks", weeks);
                 condition.put("endweeks", weeks);
             }
             if (day != 0) {
-                sql.append(" AND cs.DAY_OF_THE_WEEK = :day");
+                sql.append(" AND DAY_OF_THE_WEEK = :day");
                 condition.put("day", day);
             }
+            cql.append(" AND TEACHING_BUILDING_NUMBER is not null GROUP BY TEACHING_BUILDING_NUMBER");
             sql.append(" ) cs LEFT JOIN t_course_timetable ct ON cs.TEACHING_CLASS_NAME = ct.TEACHING_CLASS_NAME");
-            sql.append(" LEFT JOIN (SELECT TEACHING_BUILDING_NUMBER,CLASSROOM_NAME FROM t_class_room WHERE TEACHING_BUILDING_NUMBER is not null) cr ON cr.CLASSROOM_NAME = ct.PLACE");
-            sql.append(" GROUP BY cr.TEACHING_BUILDING_NUMBER");
-            Query cq = em.createNativeQuery(sql.toString());
+            sql.append(" LEFT JOIN t_class_room cr ON cr.CLASSROOM_NAME = ct.PLACE");
+            sql.append(" WHERE cr.TEACHING_BUILDING_NUMBER IS NOT NULL GROUP BY cr.TEACHING_BUILDING_NUMBER");
+            Query cq = em.createNativeQuery(cql.toString());
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
             }
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             cq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-            List<Object> cres = sq.getResultList();
+            List<Object> cres = cq.getResultList();
             List<Object> res = sq.getResultList();
             for (Object obj : cres) {
                 Map r = (Map) obj;
@@ -777,7 +779,7 @@ public class SchoolStatisticsService {
         } catch (ParseException e) {
             e.printStackTrace();
             result.put("success", false);
-            result.put("message", "今日课程详情获取失败！");
+            result.put("message", "获取今日教学楼使用情况失败！");
             return result;
         }
     }

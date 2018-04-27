@@ -44,7 +44,7 @@ public class CourseStatisticsController {
      * @return
      */
     @GetMapping(value = "/todaydetail", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "获取今日排课的统计信息", response = Void.class, notes = "获取今日排课的统计信息<br><br><b>@author jianwei.wu</b>")
+    @ApiOperation(httpMethod = "GET", value = "获取今日排课详情", response = Void.class, notes = "获取今日排课详情<br><br><b>@author jianwei.wu</b>")
     public ResponseEntity<Map<String,Object>> getTodayDetail(
             @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
         return new ResponseEntity<Map<String, Object>>(courseStatisticsService.getTodayDetail(orgId), HttpStatus.OK);

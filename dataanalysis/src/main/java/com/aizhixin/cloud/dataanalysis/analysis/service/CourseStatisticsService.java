@@ -76,7 +76,7 @@ public class CourseStatisticsService {
                 }else endDayOfWeek--;
 
                 //计算相差的周数
-                weeks = endWeek - startWeek;
+                weeks = endWeek - startWeek+1;
 //              weeks = (date.getTime() - date1.getTime()) / (7 * 24 * 60 * 60 * 1000);
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(new Date());
@@ -299,7 +299,7 @@ public class CourseStatisticsService {
                 }else endDayOfWeek--;
 
                 //计算相差的周数
-                weeks = endWeek - startWeek;
+                weeks = endWeek - startWeek+1;
 //              weeks = (date.getTime() - date1.getTime()) / (7 * 24 * 60 * 60 * 1000);
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(new Date());
@@ -312,21 +312,22 @@ public class CourseStatisticsService {
             StringBuilder sql = new StringBuilder("SELECT ct.TEACHING_CLASS_NAME as tcn,d.COMPANY_NAME as cn,ct.TEACHER_NAME as tn,cs.START_PERIOD as sp,cs.PERIOD_NUM as pn,cr.TEACHING_BUILDING_NUMBER as tbn,cr.CLASSROOM_NAME as crn ");
             sql.append("FROM (SELECT START_PERIOD,PERIOD_NUM,TEACHING_CLASS_NAME FROM t_curriculum_schedule WHERE 1 = 1");
             if(null!=orgId){
-                sql.append(" AND cs.ORG_ID = :orgId");
+                sql.append(" AND ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
             if(weeks!=0) {
-                sql.append(" AND cs.START_WEEK <= :startweeks");
-                sql.append(" AND cs.END_WEEK >= :endweeks");
+                sql.append(" AND START_WEEK <= :startweeks");
+                sql.append(" AND END_WEEK >= :endweeks");
                 condition.put("startweeks", weeks);
                 condition.put("endweeks", weeks);
             }
             if(day!=0) {
-                sql.append(" AND cs.DAY_OF_THE_WEEK = :day");
+                sql.append(" AND DAY_OF_THE_WEEK = :day");
                 condition.put("day", day);
             }
             sql.append(" ) cs LEFT JOIN t_course_timetable ct ON cs.TEACHING_CLASS_NAME = ct.TEACHING_CLASS_NAME");
             sql.append(" LEFT JOIN t_class_room cr ON cr.CLASSROOM_NAME = ct.PLACE LEFT JOIN t_department d ON ct.SET_UP_UNIT = d.COMPANY_NUMBER");
+            sql.append(" GROUP BY ct.TEACHING_CLASS_NAME ");
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
