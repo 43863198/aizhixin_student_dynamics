@@ -1,8 +1,11 @@
 package com.aizhixin.cloud.dataanalysis.analysis.service;
 
+import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningDetailsDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.vo.ClassTodayVO;
 import com.aizhixin.cloud.dataanalysis.analysis.vo.CurriculumTableDetailsVO;
 import com.aizhixin.cloud.dataanalysis.analysis.vo.ExamArrangeVO;
+import com.aizhixin.cloud.dataanalysis.common.PageData;
+import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.feign.OrgManagerFeignService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -253,9 +256,9 @@ public class CourseStatisticsService {
         }
     }
 
-    public Map<String,Object> getTodayDetail(Long orgId) {
+    public PageData<CurriculumTableDetailsVO> getTodayDetail(Long orgId,Integer pageNumber, Integer pageSize) {
+        PageData<CurriculumTableDetailsVO> p = new PageData<>();
         List<CurriculumTableDetailsVO> dataList = new ArrayList<>();
-        Map<String, Object> result = new HashMap<>();
         Map<String, Object> condition = new HashMap<>();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         int day = 0;
@@ -309,30 +312,55 @@ public class CourseStatisticsService {
                     day=7;
                 }
             }
-            StringBuilder sql = new StringBuilder("SELECT ct.TEACHING_CLASS_NAME as tcn,d.COMPANY_NAME as cn,ct.TEACHER_NAME as tn,cs.START_PERIOD as sp,cs.PERIOD_NUM as pn,cr.TEACHING_BUILDING_NUMBER as tbn,cr.CLASSROOM_NAME as crn ");
-            sql.append("FROM (SELECT START_PERIOD,PERIOD_NUM,TEACHING_CLASS_NAME FROM t_curriculum_schedule WHERE 1 = 1");
+            StringBuilder sql = new StringBuilder("SELECT m.START_PERIOD AS sp,m.PERIOD_NUM AS pn, m.TEACHER_NAME AS tn,m.TEACHING_CLASS_NAME AS tcn," +
+                    "cr.TEACHING_BUILDING_NUMBER AS tbn,cr.CLASSROOM_NAME AS crn,d.COMPANY_NAME AS cn ");
+            sql.append("FROM(SELECT cs.START_PERIOD,cs.PERIOD_NUM,ct.TEACHER_NAME,ct.TEACHING_CLASS_NAME, ct.PLACE,ct.SET_UP_UNIT FROM(SELECT " +
+                    "START_PERIOD,PERIOD_NUM,TEACHING_CLASS_NAME FROM t_curriculum_schedule WHERE 1 = 1");
+            StringBuilder cql = new StringBuilder("SELECT count(1) as count FROM (SELECT m.TEACHING_CLASS_NAME ");
+            cql.append("FROM(SELECT cs.START_PERIOD,cs.PERIOD_NUM,ct.TEACHER_NAME,ct.TEACHING_CLASS_NAME, ct.PLACE,ct.SET_UP_UNIT FROM(SELECT " +
+                    "START_PERIOD,PERIOD_NUM,TEACHING_CLASS_NAME FROM t_curriculum_schedule WHERE 1 = 1");
             if(null!=orgId){
                 sql.append(" AND ORG_ID = :orgId");
+                cql.append(" AND ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
             if(weeks!=0) {
                 sql.append(" AND START_WEEK <= :startweeks");
                 sql.append(" AND END_WEEK >= :endweeks");
+                cql.append(" AND START_WEEK <= :startweeks");
+                cql.append(" AND END_WEEK >= :endweeks");
                 condition.put("startweeks", weeks);
                 condition.put("endweeks", weeks);
             }
             if(day!=0) {
                 sql.append(" AND DAY_OF_THE_WEEK = :day");
+                cql.append(" AND DAY_OF_THE_WEEK = :day");
                 condition.put("day", day);
             }
-            sql.append(" ) cs LEFT JOIN t_course_timetable ct ON cs.TEACHING_CLASS_NAME = ct.TEACHING_CLASS_NAME");
-            sql.append(" LEFT JOIN t_class_room cr ON cr.CLASSROOM_NAME = ct.PLACE LEFT JOIN t_department d ON ct.SET_UP_UNIT = d.COMPANY_NUMBER");
-            sql.append(" GROUP BY ct.TEACHING_CLASS_NAME ");
+            sql.append(" ) cs LEFT JOIN t_course_timetable ct ON cs.TEACHING_CLASS_NAME = ct.TEACHING_CLASS_NAME) m");
+            sql.append(" LEFT JOIN t_class_room cr ON cr.CLASSROOM_NAME = m.PLACE LEFT " +
+                    "JOIN t_department d ON m.SET_UP_UNIT = d.COMPANY_NUMBER");
+            sql.append(" GROUP BY m.TEACHING_CLASS_NAME ");
+            cql.append(" ) cs LEFT JOIN t_course_timetable ct ON cs.TEACHING_CLASS_NAME = ct.TEACHING_CLASS_NAME) m");
+            cql.append(" LEFT JOIN t_class_room cr ON cr.CLASSROOM_NAME = m.PLACE LEFT " +
+                    "JOIN t_department d ON m.SET_UP_UNIT = d.COMPANY_NUMBER");
+            cql.append(" GROUP BY m.TEACHING_CLASS_NAME ) n");
             Query sq = em.createNativeQuery(sql.toString());
+            Query cq = em.createNativeQuery(cql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
+                cq.setParameter(e.getKey(), e.getValue());
             }
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            Long count = Long.valueOf(String.valueOf(cq.getSingleResult()));
+            if(pageNumber<1){
+                pageNumber =1;
+            }
+            if(null==pageSize){
+                pageSize = 20;
+            }
+            sq.setFirstResult(pageNumber * pageSize);
+            sq.setMaxResults(pageSize);
             List<Object> res = sq.getResultList();
             for (Object obj : res) {
                 Map row = (Map) obj;
@@ -360,15 +388,15 @@ public class CourseStatisticsService {
                 }
                 dataList.add(cd);
             }
-            result.put("success",true);
-            result.put("data",dataList);
-            return result;
+            p.setData(dataList);
+            p.getPage().setPageNumber(pageNumber);
+            p.getPage().setPageSize(pageSize);
+            p.getPage().setTotalElements(count);
+            p.getPage().setTotalPages(PageUtil.cacalatePagesize(count, p.getPage().getPageSize()));
         } catch (ParseException e) {
             e.printStackTrace();
-            result.put("success", false);
-            result.put("message","今日课程详情获取失败！");
-            return result;
         }
+        return p;
     }
 
 }
