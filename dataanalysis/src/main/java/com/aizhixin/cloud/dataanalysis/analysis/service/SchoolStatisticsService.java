@@ -544,7 +544,7 @@ public class SchoolStatisticsService {
                     Double change = (Double.valueOf(reportRateVOList.get(j).getReportNumber() - Double.valueOf(reportRateVOList.get(j - 1).getReportNumber())
                     ) / Double.valueOf(reportRateVOList.get(j - 1).getReportNumber()));
                     if (null != change && !change.isNaN() && !change.isInfinite()) {
-                        reportRateVOList.get(j).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
+                        reportRateVOList.get(j).setChange(Double.valueOf(new DecimalFormat("0.00").format(change*100)));
                     }
                 }
             }
@@ -593,7 +593,7 @@ public class SchoolStatisticsService {
                     Double change = (double) (graduateRateVOList.get(i).getNumber() - graduateRateVOList.get(i - 1).getNumber()
                     ) / graduateRateVOList.get(i - 1).getNumber();
                     if (null != change && !change.isNaN() && !change.isInfinite()) {
-                        graduateRateVOList.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change)));
+                        graduateRateVOList.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change*100)));
                     }
                 }
             }
