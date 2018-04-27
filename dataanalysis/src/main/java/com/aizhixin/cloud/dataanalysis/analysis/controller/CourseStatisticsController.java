@@ -47,9 +47,10 @@ public class CourseStatisticsController {
     @ApiOperation(httpMethod = "GET", value = "获取今日排课详情", response = Void.class, notes = "获取今日排课详情<br><br><b>@author jianwei.wu</b>")
     public ResponseEntity<Map<String,Object>> getTodayDetail(
             @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "period 第几节" , required = true) @RequestParam(value = "period", required = true) Integer period,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize){
-        return new ResponseEntity(courseStatisticsService.getTodayDetail(orgId,pageNumber,pageSize), HttpStatus.OK);
+        return new ResponseEntity(courseStatisticsService.getTodayDetail(orgId,period,pageNumber,pageSize), HttpStatus.OK);
     }
 
 
