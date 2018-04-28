@@ -275,8 +275,10 @@ public class SchoolStatisticsService {
                                 if (null != d[1]) {
                                     td.setAlreadyReport(Integer.valueOf(String.valueOf(d[1])));
                                     td.setReportRate(new DecimalFormat("0.00").format((double) (td.getAlreadyReport() * 100 / td.getNewStudentsCount())));
-                                    break;
+                                }else{
+                                    td.setReportRate(0+"");
                                 }
+                                break;
                             }
                         }
                     }
@@ -287,19 +289,25 @@ public class SchoolStatisticsService {
                     Double change1 = (Double.valueOf(trendDTOList.get(i).getNewStudentsCount()) - Double.valueOf(trendDTOList.get(i - 1).getNewStudentsCount())
                     ) / Double.valueOf(trendDTOList.get(i - 1).getNewStudentsCount());
                     if (null != change1 && !change1.isNaN() && !change1.isInfinite()) {
-                        trendDTOList.get(i).setNscChange(Double.valueOf(new DecimalFormat("0.00").format(change1)));
+                        trendDTOList.get(i).setNscChange(new DecimalFormat("0.00").format(change1*100));
+                    }else {
+                        trendDTOList.get(i).setNscChange(0 + "");
                     }
 
                     Double change2 = (Double.valueOf(trendDTOList.get(i).getAlreadyReport()) - Double.valueOf(trendDTOList.get(i - 1).getAlreadyReport())
                     ) / Double.valueOf(trendDTOList.get(i - 1).getAlreadyReport());
                     if (null != change2 && !change2.isNaN() && !change2.isInfinite()) {
-                        trendDTOList.get(i).setArChange(Double.valueOf(new DecimalFormat("0.00").format(change2)));
+                        trendDTOList.get(i).setArChange(new DecimalFormat("0.00").format(change2*100));
+                    }else {
+                        trendDTOList.get(i).setArChange(0 + "");
                     }
 
                     Double change3 = (Double.valueOf(trendDTOList.get(i).getReportRate()) - Double.valueOf(trendDTOList.get(i - 1).getReportRate())
                     ) / Double.valueOf(trendDTOList.get(i - 1).getReportRate());
                     if (null != change3 && !change3.isNaN() && !change3.isInfinite()) {
-                        trendDTOList.get(i).setRrChange(Double.valueOf(new DecimalFormat("0.00").format(change3)));
+                        trendDTOList.get(i).setRrChange(new DecimalFormat("0.00").format(change3*100));
+                    }else {
+                        trendDTOList.get(i).setRrChange(0 + "");
                     }
                 }
             }
@@ -593,7 +601,9 @@ public class SchoolStatisticsService {
                     Double change = (double) (graduateRateVOList.get(i).getNumber() - graduateRateVOList.get(i - 1).getNumber()
                     ) / graduateRateVOList.get(i - 1).getNumber();
                     if (null != change && !change.isNaN() && !change.isInfinite()) {
-                        graduateRateVOList.get(i).setChange(Double.valueOf(new DecimalFormat("0.00").format(change*100)));
+                        graduateRateVOList.get(i).setChange(new DecimalFormat("0.00").format(change*100));
+                    }else {
+                        graduateRateVOList.get(i).setChange(0+"");
                     }
                 }
             }

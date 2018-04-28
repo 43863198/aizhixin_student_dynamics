@@ -224,8 +224,8 @@ public class CetStatisticAnalysisService {
                         trendDTO.setSemester(String.valueOf(d[5]));
                         trendDTO.setSemester(String.valueOf(d[5]));
                     }
-                    trendDTO.setCet4PassRate(Double.valueOf(ProportionUtil.accuracy(pass4 * 1.0, count4 * 1.0, 2)));
-                    trendDTO.setCet6PassRate(Double.valueOf(ProportionUtil.accuracy(pass6 * 1.0, count6 * 1.0, 2)));
+                    trendDTO.setCet4PassRate(ProportionUtil.accuracy(pass4 * 1.0, count4 * 1.0, 2));
+                    trendDTO.setCet6PassRate(ProportionUtil.accuracy(pass6 * 1.0, count6 * 1.0, 2));
                     trendDTOList.add(trendDTO);
                 }
 
@@ -235,11 +235,15 @@ public class CetStatisticAnalysisService {
                             ) / Double.valueOf(trendDTOList.get(i-1).getCet4PassRate());
                         if(null!=change1&&!change1.isNaN()&&!change1.isInfinite()) {
                             trendDTOList.get(i).setCet4Change(new DecimalFormat("0.00").format(change1));
+                        }else {
+                            trendDTOList.get(i).setCet4Change(0+"");
                         }
                         Double change2 = (Double.valueOf(trendDTOList.get(i).getCet6PassRate()) - Double.valueOf(trendDTOList.get(i - 1).getCet6PassRate())
                         ) / Double.valueOf(trendDTOList.get(i-1).getCet6PassRate());
                         if(null!=change2&&!change2.isNaN()&&!change2.isInfinite()) {
                             trendDTOList.get(i).setCet6Change(new DecimalFormat("0.00").format(change2));
+                        }else {
+                            trendDTOList.get(i).setCet6Change(0+"");
                         }
                     }
                 }

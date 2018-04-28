@@ -17,11 +17,11 @@ public class CetTrendDTO {
     @ApiModelProperty(value = "学期", required = false)
     private String semester;
     @ApiModelProperty(value = "四级通过率", required = false)
-    private double cet4PassRate;
+    private String cet4PassRate;
     @ApiModelProperty(value = "四级通过率变化", required = false)
     private String cet4Change;
     @ApiModelProperty(value = "六级通过率", required = false)
-    private double cet6PassRate;
+    private String cet6PassRate;
     @ApiModelProperty(value = "六级通过率变化", required = false)
     private String cet6Change;
 }

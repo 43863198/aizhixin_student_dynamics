@@ -19,14 +19,14 @@ public class NewTrendDTO {
     @ApiModelProperty(value = "新生人数值", required = false)
     private int newStudentsCount;
     @ApiModelProperty(value = "新生人数变化", required = false)
-    private double nscChange;
+    private String nscChange;
     @ApiModelProperty(value = "报到人数", required = false)
     private int alreadyReport;
     @ApiModelProperty(value = "报到变化", required = false)
-    private double arChange;
+    private String arChange;
     @ApiModelProperty(value = "报到率", required = false)
     private String reportRate;
     @ApiModelProperty(value = "报到率变化", required = false)
-    private double rrChange;
+    private String rrChange;
 
 }
