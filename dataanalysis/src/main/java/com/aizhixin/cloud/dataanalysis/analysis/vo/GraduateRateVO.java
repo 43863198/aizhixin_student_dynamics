@@ -19,6 +19,6 @@ public class GraduateRateVO {
     @ApiModelProperty(value = "毕业人数")
     private int number;
     @ApiModelProperty(value = "变化率")
-    private double change;
+    private String change;
 
 }

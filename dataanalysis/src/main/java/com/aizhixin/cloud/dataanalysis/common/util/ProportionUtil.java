@@ -17,7 +17,7 @@ public abstract class ProportionUtil {
         if (num > 0) {
             DecimalFormat df;
             df = (DecimalFormat) NumberFormat.getInstance();
-//        df   = new DecimalFormat("######0.00");
+//            df   = new DecimalFormat("0.00");
             //可以设置精确几位小数
             df.setMaximumFractionDigits(scale);
             //四舍五入
