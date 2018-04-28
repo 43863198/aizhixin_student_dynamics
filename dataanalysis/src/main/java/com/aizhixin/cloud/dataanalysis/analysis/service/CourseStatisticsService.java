@@ -89,18 +89,18 @@ public class CourseStatisticsService {
                     day=7;
                 }
             }
-            StringBuilder sql1 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 1 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 1");
-            StringBuilder sql2 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 2 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 2");
-            StringBuilder sql3 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 3 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 3");
-            StringBuilder sql4 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 4 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 4");
-            StringBuilder sql5 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 5 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 5");
-            StringBuilder sql6 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 6 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 6");
-            StringBuilder sql7 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 7 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 7");
-            StringBuilder sql8 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 8 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 8");
-            StringBuilder sql9 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 9 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 9");
-            StringBuilder sql10 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 10 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 10");
-            StringBuilder sql11 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 11 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 11");
-            StringBuilder sql12 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 12 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 12");
+            StringBuilder sql1 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 1 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 1 AND cs.TEACHING_CLASS_NAME IS NOT NULL");
+            StringBuilder sql2 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 2 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 2 AND cs.TEACHING_CLASS_NAME IS NOT NULL");
+            StringBuilder sql3 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 3 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 3 AND cs.TEACHING_CLASS_NAME IS NOT NULL");
+            StringBuilder sql4 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 4 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 4 AND cs.TEACHING_CLASS_NAME IS NOT NULL");
+            StringBuilder sql5 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 5 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 5 AND cs.TEACHING_CLASS_NAME IS NOT NULL");
+            StringBuilder sql6 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 6 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 6 AND cs.TEACHING_CLASS_NAME IS NOT NULL");
+            StringBuilder sql7 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 7 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 7 AND cs.TEACHING_CLASS_NAME IS NOT NULL");
+            StringBuilder sql8 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 8 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 8 AND cs.TEACHING_CLASS_NAME IS NOT NULL");
+            StringBuilder sql9 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 9 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 9 AND cs.TEACHING_CLASS_NAME IS NOT NULL");
+            StringBuilder sql10 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 10 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 10 AND cs.TEACHING_CLASS_NAME IS NOT NULL");
+            StringBuilder sql11 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 11 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 11 AND cs.TEACHING_CLASS_NAME IS NOT NULL");
+            StringBuilder sql12 = new StringBuilder("SELECT count(tc.COURSE_NAME) as count FROM t_curriculum_schedule cs  LEFT JOIN t_teaching_class tc ON cs.TEACHING_CLASS_NUMBER = tc.TEACHING_CLASS_NUMBER where 12 <= (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) AND cs.START_PERIOD <= 12 AND cs.TEACHING_CLASS_NAME IS NOT NULL");
             if(null!=orgId){
                 sql1.append(" AND cs.ORG_ID = :orgId");
                 sql2.append(" AND cs.ORG_ID = :orgId");
@@ -256,7 +256,7 @@ public class CourseStatisticsService {
         }
     }
 
-    public PageData<CurriculumTableDetailsVO> getTodayDetail(Long orgId, Integer period,Integer pageNumber, Integer pageSize) {
+    public PageData<CurriculumTableDetailsVO> getTodayDetail(Long orgId, Integer period, Integer pageNumber, Integer pageSize) {
         PageData<CurriculumTableDetailsVO> p = new PageData<>();
         List<CurriculumTableDetailsVO> dataList = new ArrayList<>();
         Map<String, Object> condition = new HashMap<>();
@@ -314,37 +314,37 @@ public class CourseStatisticsService {
             }
             StringBuilder sql = new StringBuilder("SELECT m.START_PERIOD AS sp,m.PERIOD_NUM AS pn, m.TEACHER_NAME AS tn,m.TEACHING_CLASS_NAME AS tcn," +
                     "cr.TEACHING_BUILDING_NUMBER AS tbn,cr.CLASSROOM_NAME AS crn,d.COMPANY_NAME AS cn ");
-            sql.append("FROM(SELECT cs.START_PERIOD,cs.PERIOD_NUM,ct.TEACHER_NAME,ct.TEACHING_CLASS_NAME, ct.PLACE,ct.SET_UP_UNIT FROM(SELECT " +
-                    "START_PERIOD,PERIOD_NUM,TEACHING_CLASS_NAME FROM t_curriculum_schedule WHERE 1 = 1");
-            StringBuilder cql = new StringBuilder("SELECT  count(cs.TEACHING_CLASS_NAME) as count FROM (SELECT DISTINCT TEACHING_CLASS_NAME FROM t_curriculum_schedule WHERE 1 = 1 ");
+            sql.append("FROM(SELECT cs.START_PERIOD,cs.PERIOD_NUM,ct.TEACHER_NAME,ct.TEACHING_CLASS_NAME, ct.PLACE,ct.SET_UP_UNIT FROM " +
+                    "t_curriculum_schedule cs LEFT JOIN t_course_timetable ct ON cs.TEACHING_CLASS_NAME = ct.TEACHING_CLASS_NAME WHERE 1 = 1");
+            StringBuilder cql = new StringBuilder("SELECT  count(cs.TEACHING_CLASS_NAME) as count FROM (SELECT TEACHING_CLASS_NAME FROM t_curriculum_schedule cs WHERE 1 = 1 ");
             if(null!=orgId){
-                sql.append(" AND ORG_ID = :orgId");
-                cql.append(" AND ORG_ID = :orgId");
+                sql.append(" AND cs.ORG_ID = :orgId");
+                cql.append(" AND cs.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
             if(weeks!=0) {
-                sql.append(" AND START_WEEK <= :startweeks");
-                sql.append(" AND END_WEEK >= :endweeks");
-                cql.append(" AND START_WEEK <= :startweeks");
-                cql.append(" AND END_WEEK >= :endweeks");
+                sql.append(" AND cs.START_WEEK <= :startweeks");
+                sql.append(" AND cs.END_WEEK >= :endweeks");
+                cql.append(" AND cs.START_WEEK <= :startweeks");
+                cql.append(" AND cs.END_WEEK >= :endweeks");
                 condition.put("startweeks", weeks);
                 condition.put("endweeks", weeks);
             }
             if(day!=0) {
-                sql.append(" AND DAY_OF_THE_WEEK = :day");
-                cql.append(" AND DAY_OF_THE_WEEK = :day");
+                sql.append(" AND cs.DAY_OF_THE_WEEK = :day");
+                cql.append(" AND cs.DAY_OF_THE_WEEK = :day");
                 condition.put("day", day);
             }
             if(null!=period){
-                sql.append(" AND (IFNULL(START_PERIOD,0) + IFNULL(PERIOD_NUM,0)-1) >= :period AND START_PERIOD <= :startPeriod");
-                cql.append(" AND (IFNULL(START_PERIOD,0) + IFNULL(PERIOD_NUM,0)-1) >= :period AND START_PERIOD <= :startPeriod");
+                sql.append(" AND (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) >= :period AND cs.START_PERIOD <= :startPeriod");
+                cql.append(" AND (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) >= :period AND cs.START_PERIOD <= :startPeriod");
                 condition.put("period", period);
                 condition.put("startPeriod", period);
             }
-            sql.append("  GROUP BY TEACHING_CLASS_NAME) cs LEFT JOIN t_course_timetable ct ON cs.TEACHING_CLASS_NAME = ct.TEACHING_CLASS_NAME  GROUP BY cs.TEACHING_CLASS_NAME) m");
+            sql.append("  AND cs.TEACHING_CLASS_NAME IS NOT NULL GROUP BY cs.TEACHING_CLASS_NAME) m");
             sql.append(" LEFT JOIN t_class_room cr ON cr.CLASSROOM_NAME = m.PLACE LEFT " +
                     "JOIN t_department d ON m.SET_UP_UNIT = d.COMPANY_NUMBER");
-            cql.append(" ) cs");
+            cql.append(" AND cs.TEACHING_CLASS_NAME IS NOT NULL) cs");
             Query sq = em.createNativeQuery(sql.toString());
             Query cq = em.createNativeQuery(cql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
@@ -353,7 +353,7 @@ public class CourseStatisticsService {
             }
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             Long count = Long.valueOf(String.valueOf(cq.getSingleResult()));
-            if(pageNumber<1){
+            if(null==pageNumber||pageNumber<1){
                 pageNumber =1;
             }
             if(null==pageSize){
