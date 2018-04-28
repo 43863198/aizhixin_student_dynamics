@@ -274,7 +274,7 @@ public class SchoolStatisticsService {
                             if (td.getYear().equals(String.valueOf(d[0]))) {
                                 if (null != d[1]) {
                                     td.setAlreadyReport(Integer.valueOf(String.valueOf(d[1])));
-                                    td.setReportRate(new DecimalFormat("0.00").format((double) (td.getAlreadyReport() * 100 / td.getNewStudentsCount())));
+                                    td.setReportRate(new DecimalFormat("0.00").format((double)td.getAlreadyReport() * 100 / td.getNewStudentsCount()));
                                 }else{
                                     td.setReportRate(0+"");
                                 }
@@ -573,12 +573,15 @@ public class SchoolStatisticsService {
         List<GraduateRateVO> graduateRateVOList = new ArrayList<>();
         Map<String, Object> condition = new HashMap<>();
         try {
+            Calendar date = Calendar.getInstance();
+            String year = String.valueOf(date.get(Calendar.YEAR));
+            year = year+"00";
             StringBuilder sql = new StringBuilder("SELECT SUBSTRING(DATE_OF_COMPLETION,1,4) AS year, count(1) as count FROM t_academic_degree WHERE 1 = 1");
             if (null != orgId) {
                 sql.append(" AND ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
-            sql.append(" GROUP BY year");
+            sql.append(" AND GET_A_DEGREE_DATE < '"+ year+"' GROUP BY year");
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());

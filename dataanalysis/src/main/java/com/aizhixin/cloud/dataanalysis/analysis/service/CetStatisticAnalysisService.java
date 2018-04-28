@@ -226,12 +226,12 @@ public class CetStatisticAnalysisService {
                         trendDTO.setSemester(String.valueOf(d[5]));
                     }
                     if(count4!=0) {
-                        trendDTO.setCet4PassRate(new DecimalFormat("0.00").format(pass4*100 / count4));
+                        trendDTO.setCet4PassRate(new DecimalFormat("0.00").format((double)pass4*100 / count4));
                     }else {
                         trendDTO.setCet4PassRate(0+"");
                     }
                     if(count6!=0) {
-                        trendDTO.setCet6PassRate(new DecimalFormat("0.00").format(pass6*100 / count6));
+                        trendDTO.setCet6PassRate(new DecimalFormat("0.00").format((double)pass6*100 / count6));
                     }else {
                         trendDTO.setCet6PassRate(0+"");
                     }
@@ -364,7 +364,8 @@ public class CetStatisticAnalysisService {
             AggregationResults<BasicDBObject> cet4avg = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(cet4),
-                            Aggregation.group("schoolYear").avg("totalScore").as("avg").first("schoolYear").as("schoolYear")
+                            Aggregation.group("schoolYear").avg("totalScore").as("avg").first("schoolYear").as("schoolYear"),
+                            Aggregation.sort(Sort.Direction.ASC, "schoolYear")
                     ), Score.class, BasicDBObject.class);
             //英语六级分数均值
             Criteria cet6 = Criteria.where("orgId").is(orgId);
@@ -373,7 +374,8 @@ public class CetStatisticAnalysisService {
             AggregationResults<BasicDBObject> cet6avg = mongoTemplate.aggregate(
                     Aggregation.newAggregation(
                             Aggregation.match(cet6),
-                            Aggregation.group("schoolYear").avg("totalScore").as("avg").first("schoolYear").as("schoolYear")
+                            Aggregation.group("schoolYear").avg("totalScore").as("avg").first("schoolYear").as("schoolYear"),
+                            Aggregation.sort(Sort.Direction.ASC, "schoolYear")
                     ), Score.class, BasicDBObject.class);
             if (null != cet4avg) {
                 for (int x = 0; x < cet4avg.getMappedResults().size(); x++) {
