@@ -66,6 +66,8 @@ public class SchoolStatisticsService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+
+
     public void deleteAllByOrgId(Long orgId) {
         schoolStatisticsRespository.deleteByOrgId(orgId);
     }
@@ -575,13 +577,13 @@ public class SchoolStatisticsService {
         try {
             Calendar date = Calendar.getInstance();
             String year = String.valueOf(date.get(Calendar.YEAR));
-            year = year+"00";
+//            year = year+"00";
             StringBuilder sql = new StringBuilder("SELECT SUBSTRING(DATE_OF_COMPLETION,1,4) AS year, count(1) as count FROM t_academic_degree WHERE 1 = 1");
             if (null != orgId) {
                 sql.append(" AND ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
-            sql.append(" AND GET_A_DEGREE_DATE < '"+ year+"' GROUP BY year");
+            sql.append(" AND year < '"+ year+"' GROUP BY year");
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
@@ -732,7 +734,7 @@ public class SchoolStatisticsService {
             }
             StringBuilder cql = new StringBuilder("SELECT TEACHING_BUILDING_NUMBER as tbn, count(1) as count FROM t_class_room WHERE NORMAL = 0 ");
             StringBuilder sql = new StringBuilder("SELECT cr.TEACHING_BUILDING_NUMBER as tbn, count(1) as count ");
-            sql.append("FROM (SELECT DISTINCT ct.PLACE FROM (SELECT START_PERIOD, PERIOD_NUM,TEACHING_CLASS_NAME FROM t_curriculum_schedule WHERE 1 = 1");
+            sql.append("FROM (SELECT DISTINCT ct.PLACE FROM (SELECT DISTINCT TEACHING_CLASS_NAME FROM t_curriculum_schedule WHERE 1 = 1");
             if (null != orgId) {
                 cql.append(" AND ORG_ID = "+orgId);
                 sql.append(" AND ORG_ID = :orgId");
