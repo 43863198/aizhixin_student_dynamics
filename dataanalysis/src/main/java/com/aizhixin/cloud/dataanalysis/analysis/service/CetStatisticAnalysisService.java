@@ -195,15 +195,16 @@ public class CetStatisticAnalysisService {
                 sq.setParameter(e.getKey(), e.getValue());
             }
             List<Object> res = sq.getResultList();
-            int count4 = 0;
-            int count6 = 0;
-            int pass4 = 0;
-            int pass6 = 0;
+
             List<CetTrendDTO> trendDTOList = new ArrayList<>();
             if (null != res) {
                 for (Object obj : res) {
                     Object[] d = (Object[]) obj;
                     CetTrendDTO trendDTO = new CetTrendDTO();
+                    int count4 = 0;
+                    int count6 = 0;
+                    int pass4 = 0;
+                    int pass6 = 0;
                     if (null != d[0]) {
                         count4 = Integer.valueOf(String.valueOf(d[0]));
                     }
@@ -224,8 +225,16 @@ public class CetStatisticAnalysisService {
                         trendDTO.setSemester(String.valueOf(d[5]));
                         trendDTO.setSemester(String.valueOf(d[5]));
                     }
-                    trendDTO.setCet4PassRate(ProportionUtil.accuracy(pass4 * 1.0, count4 * 1.0, 2));
-                    trendDTO.setCet6PassRate(ProportionUtil.accuracy(pass6 * 1.0, count6 * 1.0, 2));
+                    if(count4!=0) {
+                        trendDTO.setCet4PassRate(new DecimalFormat("0.00").format(pass4*100 / count4));
+                    }else {
+                        trendDTO.setCet4PassRate(0+"");
+                    }
+                    if(count6!=0) {
+                        trendDTO.setCet6PassRate(new DecimalFormat("0.00").format(pass6*100 / count6));
+                    }else {
+                        trendDTO.setCet6PassRate(0+"");
+                    }
                     trendDTOList.add(trendDTO);
                 }
 
@@ -234,14 +243,14 @@ public class CetStatisticAnalysisService {
                             Double change1 = (Double.valueOf(trendDTOList.get(i).getCet4PassRate()) - Double.valueOf(trendDTOList.get(i - 1).getCet4PassRate())
                             ) / Double.valueOf(trendDTOList.get(i-1).getCet4PassRate());
                         if(null!=change1&&!change1.isNaN()&&!change1.isInfinite()) {
-                            trendDTOList.get(i).setCet4Change(new DecimalFormat("0.00").format(change1));
+                            trendDTOList.get(i).setCet4Change(new DecimalFormat("0.00").format(change1*100));
                         }else {
                             trendDTOList.get(i).setCet4Change(0+"");
                         }
                         Double change2 = (Double.valueOf(trendDTOList.get(i).getCet6PassRate()) - Double.valueOf(trendDTOList.get(i - 1).getCet6PassRate())
                         ) / Double.valueOf(trendDTOList.get(i-1).getCet6PassRate());
                         if(null!=change2&&!change2.isNaN()&&!change2.isInfinite()) {
-                            trendDTOList.get(i).setCet6Change(new DecimalFormat("0.00").format(change2));
+                            trendDTOList.get(i).setCet6Change(new DecimalFormat("0.00").format(change2*100));
                         }else {
                             trendDTOList.get(i).setCet6Change(0+"");
                         }
