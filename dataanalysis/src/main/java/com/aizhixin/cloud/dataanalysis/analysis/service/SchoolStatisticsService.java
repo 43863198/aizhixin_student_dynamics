@@ -244,11 +244,13 @@ public class SchoolStatisticsService {
                     NewTrendDTO trendDTO = new NewTrendDTO();
                     if (null != d[0]) {
                         trendDTO.setYear(String.valueOf(d[0]));
+                        if (null != d[1]) {
+                            trendDTO.setNewStudentsCount(Integer.valueOf(String.valueOf(d[1])));
+                        }
+                        trendDTOList.add(trendDTO);
+
                     }
-                    if (null != d[1]) {
-                        trendDTO.setNewStudentsCount(Integer.valueOf(String.valueOf(d[1])));
-                    }
-                    trendDTOList.add(trendDTO);
+
                 }
             }
 
