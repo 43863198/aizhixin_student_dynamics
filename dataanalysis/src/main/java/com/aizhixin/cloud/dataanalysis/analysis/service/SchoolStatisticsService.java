@@ -585,7 +585,7 @@ public class SchoolStatisticsService {
                 sql.append(" AND ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
-            sql.append(" AND year < '"+ year+"' GROUP BY year");
+            sql.append(" AND SUBSTRING(DATE_OF_COMPLETION, 1, 4) < '"+ year+"' GROUP BY year");
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
@@ -597,11 +597,12 @@ public class SchoolStatisticsService {
                 GraduateRateVO gr = new GraduateRateVO();
                 if (null != row.get("year")) {
                     gr.setYear(row.get("year").toString());
+                    if (null != row.get("count")) {
+                        gr.setNumber(Integer.valueOf(row.get("count").toString()));
+                    }
+                    graduateRateVOList.add(gr);
                 }
-                if (null != row.get("count")) {
-                    gr.setNumber(Integer.valueOf(row.get("count").toString()));
-                }
-                graduateRateVOList.add(gr);
+
             }
             if (null != graduateRateVOList && graduateRateVOList.size() > 1) {
                 for (int i = 1; i < graduateRateVOList.size(); i++) {
@@ -671,9 +672,9 @@ public class SchoolStatisticsService {
 //            studentStatisticsVO.setNumberOfSchools(studentStatisticsVO.getTotal() - studentStatisticsVO.getStopNumber());
             HomeData<SchoolProfileDTO> data= this.getSchoolPersonStatistics(orgId);
 
-            studentStatisticsVO.setNumberOfSchools(data.getObjData().getAllStudent().intValue());
+            studentStatisticsVO.setNumberOfSchools(data.getObjData().getInSchoolStudent().intValue());
             studentStatisticsVO.setStopNumber(0);
-            studentStatisticsVO.setTotal(data.getObjData().getInSchoolStudent().intValue());
+            studentStatisticsVO.setTotal(data.getObjData().getAllStudent().intValue());
             result.put("success", true);
             result.put("data", studentStatisticsVO);
             return result;
