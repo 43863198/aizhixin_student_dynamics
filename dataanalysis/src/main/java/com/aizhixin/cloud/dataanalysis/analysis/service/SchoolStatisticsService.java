@@ -630,45 +630,50 @@ public class SchoolStatisticsService {
         StudentStatisticsVO studentStatisticsVO = new StudentStatisticsVO();
         Map<String, Object> condition = new HashMap<>();
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-            Date date = new Date();
-            String year = sdf.format(date);
-            StringBuilder sql = new StringBuilder("SELECT count(rsrc.STRUDENT_JOB_NUMBER) as count FROM (SELECT distinct STRUDENT_JOB_NUMBER FROM t_teachingclass_students WHERE 1 = 1");
-            StringBuilder cql = new StringBuilder("SELECT count(ts.STRUDENT_JOB_NUMBER) AS count FROM (SELECT DISTINCT STRUDENT_JOB_NUMBER FROM " +
-                    "t_teachingclass_students WHERE 1=1");
-            if (null != orgId) {
-                sql.append(" AND ORG_ID = :orgId");
-                cql.append(" AND ORG_ID = :orgId");
-                condition.put("orgId", orgId);
-            }
-            sql.append(" ) rsrc");
-            cql.append(" ) ts INNER JOIN t_school_record_change src ON src.STRUDENT_JOB_NUMBER = ts.STRUDENT_JOB_NUMBER " +
-                    "WHERE src.DATE_OF_CHANGE > '" + year + "-00-00'" +
-                    " AND src.CHANGE_DESCRIPTION LIKE '%离校%' OR src.CHANGE_DESCRIPTION LIKE '%退学%'");
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+//            Date date = new Date();
+//            String year = sdf.format(date);
+//            StringBuilder sql = new StringBuilder("SELECT count(rsrc.STRUDENT_JOB_NUMBER) as count FROM (SELECT distinct STRUDENT_JOB_NUMBER FROM t_teachingclass_students WHERE 1 = 1");
+//            StringBuilder cql = new StringBuilder("SELECT count(ts.STRUDENT_JOB_NUMBER) AS count FROM (SELECT DISTINCT STRUDENT_JOB_NUMBER FROM " +
+//                    "t_teachingclass_students WHERE 1=1");
+//            if (null != orgId) {
+//                sql.append(" AND ORG_ID = :orgId");
+//                cql.append(" AND ORG_ID = :orgId");
+//                condition.put("orgId", orgId);
+//            }
+//            sql.append(" ) rsrc");
+//            cql.append(" ) ts INNER JOIN t_school_record_change src ON src.STRUDENT_JOB_NUMBER = ts.STRUDENT_JOB_NUMBER " +
+//                    "WHERE src.DATE_OF_CHANGE > '" + year + "-00-00'" +
+//                    " AND src.CHANGE_DESCRIPTION LIKE '%离校%' OR src.CHANGE_DESCRIPTION LIKE '%退学%'");
+//
+//            Query sq = em.createNativeQuery(sql.toString());
+//            Query cq = em.createNativeQuery(cql.toString());
+//            for (Map.Entry<String, Object> e : condition.entrySet()) {
+//                sq.setParameter(e.getKey(), e.getValue());
+//                cq.setParameter(e.getKey(), e.getValue());
+//            }
+//            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+//            cq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+//            Object count = sq.getSingleResult();
+//            Object ccount = cq.getSingleResult();
+//            if (null != count) {
+//                Map row = (Map) count;
+//                if (null != row.get("count")) {
+//                    studentStatisticsVO.setTotal(Integer.valueOf(row.get("count").toString()));
+//                }
+//            }
+//            if (null != ccount) {
+//                Map crow = (Map) ccount;
+//                if (null != crow.get("count")) {
+//                    studentStatisticsVO.setStopNumber(Integer.valueOf(crow.get("count").toString()));
+//                }
+//            }
+//            studentStatisticsVO.setNumberOfSchools(studentStatisticsVO.getTotal() - studentStatisticsVO.getStopNumber());
+            HomeData<SchoolProfileDTO> data= this.getSchoolPersonStatistics(orgId);
 
-            Query sq = em.createNativeQuery(sql.toString());
-            Query cq = em.createNativeQuery(cql.toString());
-            for (Map.Entry<String, Object> e : condition.entrySet()) {
-                sq.setParameter(e.getKey(), e.getValue());
-                cq.setParameter(e.getKey(), e.getValue());
-            }
-            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-            cq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-            Object count = sq.getSingleResult();
-            Object ccount = cq.getSingleResult();
-            if (null != count) {
-                Map row = (Map) count;
-                if (null != row.get("count")) {
-                    studentStatisticsVO.setTotal(Integer.valueOf(row.get("count").toString()));
-                }
-            }
-            if (null != ccount) {
-                Map crow = (Map) ccount;
-                if (null != crow.get("count")) {
-                    studentStatisticsVO.setStopNumber(Integer.valueOf(crow.get("count").toString()));
-                }
-            }
-            studentStatisticsVO.setNumberOfSchools(studentStatisticsVO.getTotal() - studentStatisticsVO.getStopNumber());
+            studentStatisticsVO.setNumberOfSchools(data.getObjData().getAllStudent().intValue());
+            studentStatisticsVO.setStopNumber(0);
+            studentStatisticsVO.setTotal(data.getObjData().getInSchoolStudent().intValue());
             result.put("success", true);
             result.put("data", studentStatisticsVO);
             return result;
