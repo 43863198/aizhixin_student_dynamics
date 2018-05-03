@@ -238,7 +238,7 @@ public class CourseStatisticsService {
             ClassTodayVO ct11 = new ClassTodayVO();
             int count11 = Integer.valueOf(sq11.getSingleResult().toString());
             ct11.setPeriod(11);
-            ct11.setCourseCount(count1);
+            ct11.setCourseCount(count11);
             classTodayVOList.add(ct11);
             ClassTodayVO ct12 = new ClassTodayVO();
             int count12 = Integer.valueOf(sq12.getSingleResult().toString());
