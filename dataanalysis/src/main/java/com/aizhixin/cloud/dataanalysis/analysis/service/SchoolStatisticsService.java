@@ -585,7 +585,7 @@ public class SchoolStatisticsService {
                 sql.append(" AND ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
-            sql.append(" AND SUBSTRING(DATE_OF_COMPLETION, 1, 4) < '"+ year+"' GROUP BY year");
+            sql.append(" AND SUBSTRING(DATE_OF_COMPLETION, 1, 4) BETWEEN '2013' AND '"+ year+"' GROUP BY year");
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
