@@ -21,6 +21,6 @@ public class ReportRateVO {
     @ApiModelProperty(value = "报到数")
     private int reportNumber;
     @ApiModelProperty(value = "变化率")
-    private double change;
+    private String change;
 
 }
