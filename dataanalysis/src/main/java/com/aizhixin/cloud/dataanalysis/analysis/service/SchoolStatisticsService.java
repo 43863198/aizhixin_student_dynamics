@@ -247,7 +247,9 @@ public class SchoolStatisticsService {
                         if (null != d[1]) {
                             trendDTO.setNewStudentsCount(Integer.valueOf(String.valueOf(d[1])));
                         }
-                        trendDTOList.add(trendDTO);
+                        if(trendDTO.getNewStudentsCount()>0) {
+                            trendDTOList.add(trendDTO);
+                        }
 
                     }
 
