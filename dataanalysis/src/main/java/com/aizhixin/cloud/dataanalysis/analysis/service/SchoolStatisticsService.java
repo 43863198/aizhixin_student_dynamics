@@ -558,7 +558,7 @@ public class SchoolStatisticsService {
                     Double change = (Double.valueOf(reportRateVOList.get(j).getReportNumber() - Double.valueOf(reportRateVOList.get(j - 1).getReportNumber())
                     ) / Double.valueOf(reportRateVOList.get(j - 1).getReportNumber()));
                     if (null != change && !change.isNaN() && !change.isInfinite()) {
-                        reportRateVOList.get(j).setChange(Double.valueOf(new DecimalFormat("0.00").format(change*100)));
+                        reportRateVOList.get(j).setChange(new DecimalFormat("0.00").format(change*100));
                     }
                 }
             }
