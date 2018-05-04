@@ -280,7 +280,12 @@ public class SchoolStatisticsService {
                             if (td.getYear().equals(String.valueOf(d[0]))) {
                                 if (null != d[1]) {
                                     td.setAlreadyReport(Integer.valueOf(String.valueOf(d[1])));
-                                    td.setReportRate(new DecimalFormat("0.00").format((double)td.getAlreadyReport() * 100 / td.getNewStudentsCount()));
+                                    if(td.getNewStudentsCount()>0) {
+                                        td.setReportRate(new DecimalFormat("0.00").format((double) td.getAlreadyReport() * 100 / td.getNewStudentsCount()));
+
+                                    } else {
+                                        td.setReportRate(0+"");
+                                    }
                                 }else{
                                     td.setReportRate(0+"");
                                 }
@@ -558,7 +563,7 @@ public class SchoolStatisticsService {
                     Double change = (Double.valueOf(reportRateVOList.get(j).getReportNumber() - Double.valueOf(reportRateVOList.get(j - 1).getReportNumber())
                     ) / Double.valueOf(reportRateVOList.get(j - 1).getReportNumber()));
                     if (null != change && !change.isNaN() && !change.isInfinite()) {
-                        reportRateVOList.get(j).setChange(new DecimalFormat("0.00").format(change*100));
+                        reportRateVOList.get(j).setChange(new DecimalFormat("0.00").format(change * 100));
                     }
                 }
             }
