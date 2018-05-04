@@ -580,14 +580,14 @@ public class SchoolStatisticsService {
         Map<String, Object> condition = new HashMap<>();
         try {
             Calendar date = Calendar.getInstance();
-            String year = String.valueOf(date.get(Calendar.YEAR));
+            String year = String.valueOf(date.get(Calendar.YEAR)-1);
 //            year = year+"00";
             StringBuilder sql = new StringBuilder("SELECT SUBSTRING(DATE_OF_COMPLETION,1,4) AS year, count(1) as count FROM t_academic_degree WHERE 1 = 1");
             if (null != orgId) {
                 sql.append(" AND ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
-            sql.append(" AND SUBSTRING(DATE_OF_COMPLETION, 1, 4) BETWEEN '2013' AND '"+ year+"' GROUP BY year");
+            sql.append(" AND SUBSTRING(DATE_OF_COMPLETION, 1, 4) BETWEEN '2015' AND '"+ year+"' GROUP BY year");
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
