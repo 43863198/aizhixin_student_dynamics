@@ -53,4 +53,19 @@ public class SchoolYearTermController {
        return schoolYearTermService.getSchoolYearTerm(orgId,type);
 
     }
+
+    /**
+     * 获取学年学期列表
+     * @param orgId
+     * @return
+     */
+    @GetMapping(value = "/getteacheryearsemester", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = " 获取学年学期列表", response = Void.class, notes = "获取学年学期列表")
+    public ResponseEntity<Map<String,Object>> getTeacherYearSemester(@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = true) Long orgId){
+        return new ResponseEntity<Map<String, Object>>(schoolYearTermService.getTeacherYearSemester(orgId),HttpStatus.OK);
+
+    }
+
+
+
 }

@@ -3,16 +3,22 @@ package com.aizhixin.cloud.dataanalysis.analysis.service;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.CetStatisticDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.CetTrendDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.CollegeCetStatisticDTO;
+import com.aizhixin.cloud.dataanalysis.analysis.dto.TeacherYearSemesterDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.CetScoreStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolYearTerm;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.CetScoreStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.vo.CetAvgVO;
+import com.aizhixin.cloud.dataanalysis.analysis.vo.CetScoreAnalysisVO;
+import com.aizhixin.cloud.dataanalysis.analysis.vo.CetSingleDataStatisticsVO;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 
 import com.mongodb.BasicDBObject;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.SQLQuery;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.xml.crypto.Data;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -46,6 +53,10 @@ public class CetStatisticAnalysisService {
     private MongoTemplate mongoTemplate;
     @Autowired
     private CetScoreStatisticsRespository cetScoreStatisticsRespository;
+    @Autowired
+    private SchoolYearTermService schoolYearTermService;
+
+    SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd");
 
     public void deleteAllByOrgId(Long orgId) {
         cetScoreStatisticsRespository.deleteByOrgId(orgId);
@@ -401,6 +412,367 @@ public class CetStatisticAnalysisService {
         }catch (Exception e){
             result.put("success",false);
             result.put("message","历年四六级均值失败！");
+            return result;
+        }
+    }
+
+//    public Map<String, Object> cet4SingleDataStatistics(Long orgId,Integer teacherYear,Integer semester,Long collegeId,Long professionId,Long classId) {
+//        Map<String, Object> result = new HashMap<>();
+//        CetSingleDataStatisticsVO csdsVO = new CetSingleDataStatisticsVO();
+//        try{
+//            //四级单次统计
+//            Criteria cet4 = Criteria.where("orgId").is(orgId);
+//            cet4.and("examType").is(ScoreConstant.EXAM_TYPE_CET4);
+//            if(null!=teacherYear&&teacherYear.intValue()>0){
+//                cet4.and("schoolYear").is(teacherYear);
+//            }
+//            if(null!=semester&&semester.intValue()>0){
+//                cet4.and("semester").is(semester);
+//            }
+//            if(null!=collegeId){
+//                cet4.and("collegeId").is(collegeId);
+//            }
+//            if(null!=professionId){
+//                cet4.and("professionalId").is(professionId);
+//            }
+//            if(null!=classId){
+//                cet4.and("classId").is(classId);
+//            }
+//
+//            AggregationResults<BasicDBObject> cet = mongoTemplate.aggregate(
+//                    Aggregation.newAggregation(
+//                            Aggregation.match(cet4),
+//                            Aggregation.group("orgId").count().as("count").avg("totalScore").as("avg").max("totalScore").as("max")
+//                    ), Score.class, BasicDBObject.class);
+//
+//            cet4.and("totalScore").gt(ScoreConstant.CET_PASS_SCORE_LINE);
+//            AggregationResults<BasicDBObject> cetPass = mongoTemplate.aggregate(
+//                    Aggregation.newAggregation(
+//                            Aggregation.match(cet4),
+//                            Aggregation.group("orgId").count().as("pass")),
+//                    Score.class, BasicDBObject.class);
+//            if (null != cet&&cet.getMappedResults().size()>0) {
+//                Map d = (Map)cet.getUniqueMappedResult().get(0);
+//                if(null !=d.get("count")) {
+//                    csdsVO.setJoinNumber(Integer.valueOf(d.get("count").toString()));
+//                }
+//                if(null!=d.get("avg")){
+//                    csdsVO.setAverage(Float.valueOf(d.get("avg").toString()));
+//                }
+//                if(null!=d.get("max")){
+//                    csdsVO.setHighestScore(Float.valueOf(d.get("max").toString()));
+//                }
+//            }
+//            if (null != cetPass&&cetPass.getMappedResults().size()>0) {
+//                Map p = (Map)cetPass.getUniqueMappedResult().get(0);
+//                if(null!=p.get("pass")){
+//                    csdsVO.setPassNumber(Integer.valueOf(p.get("pass").toString()));
+//                }
+//            }
+//            if(csdsVO.getJoinNumber()>0){
+//               String rate = new DecimalFormat("0.00").format(csdsVO.getPassNumber()*100 / csdsVO.getJoinNumber());
+//                csdsVO.setPassRate(rate);
+//            }
+//
+//            result.put("success",true);
+//            result.put("data",csdsVO);
+//            return result;
+//        }catch (Exception e){
+//            result.put("success",false);
+//            result.put("message","英语四级考试单次数据分析---数据统计失败！");
+//            return result;
+//        }
+//    }
+
+    public Map<String, Object> cetSingleDataStatistics(Long orgId,String teacherYear,String semester,String collegeCode,String professionCode,String classCode,String grade,String cetType) {
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> condition = new HashMap<>();
+        CetSingleDataStatisticsVO csdsVO = new CetSingleDataStatisticsVO();
+        try{
+            Date start = null;
+            Date end = null;
+            Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId,teacherYear,semester);
+            if(null!=schoolCalendar){
+                if(null!=schoolCalendar.get("success")&&Boolean.parseBoolean(schoolCalendar.get("success").toString())){
+                    List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>)schoolCalendar.get("data");
+                    if(tysList.size()>0){
+                        Date date = sdf.parse(tysList.get(0).getStartTime());
+                        int week = tysList.get(0).getWeek();
+                        start = date;
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.add(Calendar.WEEK_OF_YEAR, week);
+                        end = calendar.getTime();
+                    }
+                }
+            }
+
+            StringBuilder sql = new StringBuilder("SELECT sum(ss.JOIN_NUMBER) as count,sum(ss.PASS_NUMBER) as pass, AVG(ss.AVG_SCORE) as avg, MAX(ss.MAX_SCORE) as max FROM t_cet_score_statistics ss WHERE 1=1");
+            if (null != orgId) {
+                sql.append(" and ss.ORG_ID = :orgId");
+                condition.put("orgId", orgId);
+            }
+            if(null!=start&&null!=end){
+                sql.append(" and ss.EXAMINATION_DATE BETWEEN :start AND :end");
+                condition.put("start", start);
+                condition.put("end",end);
+            }
+            if (!StringUtils.isBlank(collegeCode)) {
+                sql.append(" and ss.COLLEGE_CODE = :collegeCode");
+                condition.put("collegeCode", collegeCode);
+            }
+            if (!StringUtils.isBlank(professionCode)) {
+                sql.append(" and ss.PROFESSION_CODE = :professionCode");
+                condition.put("professionCode", professionCode);
+            }
+            if (!StringUtils.isBlank(classCode)) {
+                sql.append(" and ss.CLASS_CODE = :classCode");
+                condition.put("classCode", classCode);
+            }
+            if (!StringUtils.isBlank(grade)) {
+                sql.append(" and ss.GRADE LIKE :grade");
+                condition.put("grade", "%" + grade + "%");
+            }
+            if (!StringUtils.isBlank(cetType)) {
+                sql.append(" and ss.SCORE_TYPE LIKE :cetType");
+                condition.put("cetType","%" + cetType + "%");
+            }
+            Query sq = em.createNativeQuery(sql.toString());
+            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            for (Map.Entry<String, Object> e : condition.entrySet()) {
+                sq.setParameter(e.getKey(), e.getValue());
+            }
+            Object res = sq.getSingleResult();
+            if(null!=res){
+                Map d = (Map)res;
+                if(null!=d.get("count")){
+                    csdsVO.setJoinNumber(Integer.valueOf(d.get("count").toString()));
+                }
+                if(null!=d.get("avg")){
+                    csdsVO.setAverage(new DecimalFormat("##.##").format(Double.valueOf(d.get("avg").toString())));
+                }
+                if(null!=d.get("max")){
+                    csdsVO.setHighestScore(new DecimalFormat("##.##").format(Double.valueOf(d.get("max").toString())));
+                }
+                if(null!=d.get("pass")){
+                    csdsVO.setPassNumber(Integer.valueOf(d.get("pass").toString()));
+                }
+
+            }
+            if(csdsVO.getJoinNumber()>0){
+                String rate = new DecimalFormat("0.00").format((double)csdsVO.getPassNumber()*100 / csdsVO.getJoinNumber());
+                csdsVO.setPassRate(rate);
+            }
+            result.put("success",true);
+            result.put("data",csdsVO);
+            return result;
+        }catch (Exception e){
+            result.put("success",false);
+            result.put("message","英语考试单次数据分析---数据统计失败！");
+            return result;
+        }
+    }
+
+
+    public Map<String, Object> cetSingleDataAvgScoure(Long orgId,String teacherYear,String semester,String collegeCode,String professionCode,String classCode,String grade,String cetType) {
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> condition = new HashMap<>();
+        List<CetScoreAnalysisVO> csaList = new ArrayList<>();
+        try{
+            Date start = null;
+            Date end = null;
+            Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId,teacherYear,semester);
+            if(null!=schoolCalendar){
+                if(null!=schoolCalendar.get("success")&&Boolean.parseBoolean(schoolCalendar.get("success").toString())){
+                    List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>)schoolCalendar.get("data");
+                    if(tysList.size()>0){
+                        Date date = sdf.parse(tysList.get(0).getStartTime());
+                        int week = tysList.get(0).getWeek();
+                        start = date;
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.add(Calendar.WEEK_OF_YEAR, week);
+                        end = calendar.getTime();
+                    }
+                }
+            }
+            StringBuilder ql = new StringBuilder("");
+            if (null != orgId) {
+                ql.append(" and ss.ORG_ID = :orgId");
+                condition.put("orgId", orgId);
+            }
+            if(null!=start&&null!=end){
+                ql.append(" and ss.EXAMINATION_DATE BETWEEN :start AND :end");
+                condition.put("start", start);
+                condition.put("end",end);
+            }
+            if (!StringUtils.isBlank(cetType)) {
+                ql.append(" and ss.SCORE_TYPE LIKE :cetType");
+                condition.put("cetType","%" + cetType + "%");
+            }
+            if (!StringUtils.isBlank(grade)) {
+                ql.append(" and ss.GRADE LIKE :grade");
+                condition.put("grade", "%" + grade + "%");
+            }
+            StringBuilder sql = new StringBuilder("");
+            StringBuilder wql = new StringBuilder("");
+            if (!StringUtils.isBlank(collegeCode)) {
+                wql.append(" and ss.COLLEGE_CODE = :collegeCode");
+                condition.put("collegeCode", collegeCode);
+                if (!StringUtils.isBlank(professionCode)) {
+                    wql.append(" and ss.PROFESSION_CODE = :professionCode");
+                    condition.put("professionCode", professionCode);
+                    if (!StringUtils.isBlank(classCode)) {
+                        wql.append(" and ss.CLASS_CODE = :classCode");
+                        condition.put("classCode", classCode);
+                        sql.append("SELECT c.NAME as name, AVG(ss.AVG_SCORE) as avg FROM t_cet_score_statistics ss LEFT JOIN t_class c ON ss.CLASS_CODE = c.CLASS_NUMBER WHERE 1=1 AND c.NAME IS NOT NULL");
+                        sql.append(wql);
+                        sql.append(ql);
+                    }else {
+                        sql.append("SELECT c.NAME as name, AVG(ss.AVG_SCORE) as avg FROM t_cet_score_statistics ss LEFT JOIN t_class c ON ss.CLASS_CODE = c.CLASS_NUMBER WHERE 1=1");
+                        sql.append(wql);
+                        sql.append(ql);
+                        sql.append(" AND c.NAME IS NOT NULL GROUP BY c.NAME");
+                    }
+                }else {
+                    sql.append("SELECT p.NAME as name, AVG(ss.AVG_SCORE) as avg FROM t_cet_score_statistics ss LEFT JOIN t_profession p ON ss.PROFESSION_CODE = p.CODE WHERE 1=1");
+                    sql.append(wql);
+                    sql.append(ql);
+                    sql.append(" AND p.NAME IS NOT NULL GROUP BY p.NAME");
+                }
+            }else {
+                sql.append("SELECT d.COMPANY_NAME as name, AVG(ss.AVG_SCORE) as avg FROM t_cet_score_statistics ss LEFT JOIN t_department d ON ss.COLLEGE_CODE = COMPANY_NUMBER WHERE 1=1");
+                sql.append(ql);
+                sql.append(" AND d.COMPANY_NAME IS NOT NULL GROUP BY d.COMPANY_NAME");
+            }
+            Query sq = em.createNativeQuery(sql.toString());
+            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            for (Map.Entry<String, Object> e : condition.entrySet()) {
+                sq.setParameter(e.getKey(), e.getValue());
+            }
+            List<Object> res = sq.getResultList();
+            if(null!=res){
+                for(Object row : res) {
+                    Map d = (Map) row;
+                    CetScoreAnalysisVO csa = new CetScoreAnalysisVO();
+                    if (null != d.get("name")) {
+                        csa.setName(d.get("name").toString());
+                    }
+                    if (null != d.get("avg")) {
+                        csa.setValue(new DecimalFormat("##.##").format(Double.valueOf(d.get("avg").toString())));
+                    }
+                    csaList.add(csa);
+                }
+            }
+            result.put("success",true);
+            result.put("data",csaList);
+            return result;
+        }catch (Exception e){
+            result.put("success",false);
+            result.put("message","英语考试单次数据分析---均值分布---平均成绩统计失败！");
+            return result;
+        }
+    }
+
+
+    public Map<String, Object> cetSingleDataSexAvgScoure(Long orgId,String teacherYear,String semester,String collegeCode,String professionCode,String classCode,String grade,String cetType) {
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> condition = new HashMap<>();
+        List<CetScoreAnalysisVO> csaList = new ArrayList<>();
+        try {
+            Date start = null;
+            Date end = null;
+            Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, teacherYear, semester);
+            if (null != schoolCalendar) {
+                if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
+                    List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
+                    if (tysList.size() > 0) {
+                        Date date = sdf.parse(tysList.get(0).getStartTime());
+                        int week = tysList.get(0).getWeek();
+                        start = date;
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.add(Calendar.WEEK_OF_YEAR, week);
+                        end = calendar.getTime();
+                    }
+                }
+            }
+            StringBuilder ql = new StringBuilder("");
+            if (null != orgId) {
+                ql.append(" and ss.ORG_ID = :orgId");
+                condition.put("orgId", orgId);
+            }
+            if (null != start && null != end) {
+                ql.append(" and ss.EXAMINATION_DATE BETWEEN :start AND :end");
+                condition.put("start", start);
+                condition.put("end", end);
+            }
+            if (!StringUtils.isBlank(cetType)) {
+                ql.append(" and ss.SCORE_TYPE LIKE :cetType");
+                condition.put("cetType", "%" + cetType + "%");
+            }
+            if (!StringUtils.isBlank(grade)) {
+                ql.append(" and ss.GRADE LIKE :grade");
+                condition.put("grade", "%" + grade + "%");
+            }
+            StringBuilder sql = new StringBuilder("");
+            StringBuilder wql = new StringBuilder("");
+            if (!StringUtils.isBlank(collegeCode)) {
+                wql.append(" and ss.COLLEGE_CODE = :collegeCode");
+                condition.put("collegeCode", collegeCode);
+                if (!StringUtils.isBlank(professionCode)) {
+                    wql.append(" and ss.PROFESSION_CODE = :professionCode");
+                    condition.put("professionCode", professionCode);
+                    if (!StringUtils.isBlank(classCode)) {
+                        wql.append(" and ss.CLASS_CODE = :classCode");
+                        condition.put("classCode", classCode);
+                        sql.append("SELECT c.NAME as name, ss.SEX as sex, AVG(ss.AVG_SCORE) as avg FROM t_cet_score_statistics ss LEFT JOIN t_class c ON ss.CLASS_CODE = c.CLASS_NUMBER WHERE 1=1");
+                        sql.append(wql);
+                        sql.append(ql);
+                        sql.append(" AND c.NAME IS NOT NULL GROUP BY ss.SEX");
+                    }else {
+                        sql.append("SELECT c.NAME as name, ss.SEX as sex, AVG(ss.AVG_SCORE) as avg FROM t_cet_score_statistics ss LEFT JOIN t_class c ON ss.CLASS_CODE = c.CLASS_NUMBER WHERE 1=1");
+                        sql.append(wql);
+                        sql.append(ql);
+                        sql.append(" AND c.NAME IS NOT NULL GROUP BY c.NAME,ss.SEX");
+                    }
+                }else {
+                    sql.append("SELECT p.NAME as name, ss.SEX as sex, AVG(ss.AVG_SCORE) as avg FROM t_cet_score_statistics ss LEFT JOIN t_profession p ON ss.PROFESSION_CODE = p.CODE WHERE 1=1");
+                    sql.append(wql);
+                    sql.append(ql);
+                    sql.append(" AND p.NAME IS NOT NULL GROUP BY p.NAME,ss.SEX");
+                }
+            }else {
+                sql.append("SELECT d.COMPANY_NAME as name, ss.SEX as sex, AVG(ss.AVG_SCORE) as avg FROM t_cet_score_statistics ss LEFT JOIN t_department d ON ss.COLLEGE_CODE = COMPANY_NUMBER WHERE 1=1");
+                sql.append(ql);
+                sql.append(" AND d.COMPANY_NAME IS NOT NULL GROUP BY d.COMPANY_NAME,ss.SEX");
+            }
+
+            Query sq = em.createNativeQuery(sql.toString());
+            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            for (Map.Entry<String, Object> e : condition.entrySet()) {
+                sq.setParameter(e.getKey(), e.getValue());
+            }
+            List<Object> res = sq.getResultList();
+            if (null != res) {
+                for (Object row : res) {
+                    Map d = (Map) row;
+                    CetScoreAnalysisVO csa = new CetScoreAnalysisVO();
+                    if (null != d.get("name")) {
+                        csa.setName(d.get("name").toString());
+                    }
+                    if(null!=d.get("sex")){
+                        csa.setClassify(d.get("sex").toString());
+                    }
+                    if (null != d.get("avg")) {
+                        csa.setValue(new DecimalFormat("##.##").format(Double.valueOf(d.get("avg").toString())));
+                    }
+                    csaList.add(csa);
+                }
+            }
+            result.put("success", true);
+            result.put("data", csaList);
+            return result;
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", "英语考试单次数据分析---均值分布---男女平均成绩统计失败！");
             return result;
         }
     }
