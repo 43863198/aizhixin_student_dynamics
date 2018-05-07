@@ -1,9 +1,14 @@
 package com.aizhixin.cloud.dataanalysis.analysis.service;
 
 import com.aizhixin.cloud.dataanalysis.analysis.constant.DataType;
+import com.aizhixin.cloud.dataanalysis.analysis.dto.TeacherYearSemesterDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.TeacherlYearData;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolYearTerm;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.SchoolYearTermResposotory;
+import com.aizhixin.cloud.dataanalysis.analysis.vo.ExamArrangeVO;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.SQLQuery;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,11 +16,11 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Component
 @Transactional
@@ -24,6 +29,8 @@ public class SchoolYearTermService {
     private SchoolYearTermResposotory schoolYearTermResposotory;
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private EntityManager em;
 
     public void initSchoolYearTerm(Long orgId) {
         schoolYearTermResposotory.deleteByOrgId(orgId);
@@ -89,4 +96,91 @@ public class SchoolYearTermService {
 
         return list;
     }
+
+
+    public Map<String, Object> getTeacherYearSemester(Long orgId) {
+        Map<String, Object> result = new HashMap<>();
+        List<TeacherYearSemesterDTO> tysList = new ArrayList<>();
+        try {
+            StringBuilder sql = new StringBuilder("SELECT  TEACHER_YEAR as teacherYear, SEMESTER as semester FROM t_school_calendar WHERE 1=1");
+            if (null != orgId) {
+                sql.append(" AND ORG_ID = " + orgId + "");
+            }
+            sql.append(" ORDER BY TEACHER_YEAR DESC");
+            Query sq = em.createNativeQuery(sql.toString());
+            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            List<Object> res = sq.getResultList();
+            for (Object obj : res) {
+                Map row = (Map) obj;
+                TeacherYearSemesterDTO tys = new TeacherYearSemesterDTO();
+                if (null != row.get("teacherYear")) {
+                    tys.setTeacherYear(row.get("teacherYear").toString());
+                    if (null != row.get("semester")) {
+                        tys.setSemester(row.get("semester").toString());
+                    }
+                    tysList.add(tys);
+                }
+            }
+            result.put("success", true);
+            result.put("data", tysList);
+            return result;
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", "获取学年学期失败！");
+            return result;
+        }
+    }
+
+
+    public Map<String, Object> getSchoolCalendar(Long orgId, String teacherYear, String semester) {
+        Map<String, Object> result = new HashMap<>();
+        List<TeacherYearSemesterDTO> tysList = new ArrayList<>();
+        Map<String, Object> condition = new HashMap<>();
+        try {
+            StringBuilder sql = new StringBuilder("SELECT  TEACHER_YEAR as teacherYear, SEMESTER as semester, START_TIME as startTime, WEEK as week FROM t_school_calendar WHERE 1=1");
+            if (null != orgId) {
+                sql.append(" and ORG_ID = :orgId");
+                condition.put("orgId", orgId);
+            }
+            if (!StringUtils.isBlank(teacherYear)) {
+                sql.append(" and TEACHER_YEAR = :teacherYear");
+                condition.put("teacherYear", teacherYear);
+            }
+            if (!StringUtils.isBlank(semester)) {
+                sql.append(" and SEMESTER = :semester");
+                condition.put("semester", semester);
+            }
+            Query sq = em.createNativeQuery(sql.toString());
+            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            for (Map.Entry<String, Object> e : condition.entrySet()) {
+                sq.setParameter(e.getKey(), e.getValue());
+            }
+            List<Object> res = sq.getResultList();
+            for (Object obj : res) {
+                Map row = (Map) obj;
+                TeacherYearSemesterDTO tys = new TeacherYearSemesterDTO();
+                if (null != row.get("teacherYear")) {
+                    tys.setTeacherYear(row.get("teacherYear").toString());
+                    if (null != row.get("semester")) {
+                        tys.setSemester(row.get("semester").toString());
+                        if(null!=row.get("startTime")){
+                            tys.setStartTime(row.get("startTime").toString());
+                            if(null!=row.get("week")){
+                                tys.setWeek(Integer.valueOf(row.get("week").toString()));
+                            }
+                        }
+                    }
+                    tysList.add(tys);
+                }
+            }
+            result.put("success", true);
+            result.put("data", tysList);
+            return result;
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", "获取学年学期失败！");
+            return result;
+        }
+    }
+
 }

@@ -1,15 +1,20 @@
 package com.aizhixin.cloud.dataanalysis.analysis.job;
 
 import com.aizhixin.cloud.dataanalysis.analysis.constant.DataType;
+import com.aizhixin.cloud.dataanalysis.analysis.dto.CetScoreAnalysisDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.CetScoreStatistics;
+import com.aizhixin.cloud.dataanalysis.analysis.entity.CetStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolYearTerm;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.CetScoreStatisticsRespository;
+import com.aizhixin.cloud.dataanalysis.analysis.service.CetStatisticsService;
 import com.aizhixin.cloud.dataanalysis.analysis.service.SchoolYearTermService;
 import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
 import com.aizhixin.cloud.dataanalysis.common.service.DistributeLock;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 import com.mongodb.BasicDBObject;
 import org.apache.log4j.Logger;
+import org.hibernate.SQLQuery;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -19,6 +24,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -36,6 +44,10 @@ public class CetStatisticsAnalysisJob {
     private CetScoreStatisticsRespository cetScoreStatisticsRespository;
     @Autowired
     private DistributeLock distributeLock;
+    @Autowired
+    private EntityManager em;
+    @Autowired
+    private CetStatisticsService cetStatisticsService;
 //    @Autowired
 //    private SchoolYearTermService schoolYearTermService;
 
@@ -192,4 +204,77 @@ public class CetStatisticsAnalysisJob {
         }
         logger.info("定时统计英语cet成绩成功!");
     }
+
+    @Async
+    public void cetScoreStatistics() {
+        List<CetStatistics> caList = new ArrayList<>();
+        try {
+            StringBuilder sql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,cs.EXAMINATION_DATE as date,ss.COLLEGE_CODE as collegeCode, " +
+                    "ss.PROFESSION_CODE as professionCode,ss.CLASS_CODE as classCode,ss.GRADE as grade, sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE > 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,s.SEX as sex " +
+                    "FROM t_cet_score cs " +
+                    "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
+                    "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
+                    "WHERE cs.SCORE > 0 " +
+                    "GROUP BY s.SEX,cs.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE,ss.COLLEGE_CODE, ss.PROFESSION_CODE, ss.CLASS_CODE, ss.GRADE");
+            Query sq = em.createNativeQuery(sql.toString());
+            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            List<Object> res =  sq.getResultList();
+            if(null!=res&&res.size()>0){
+                for(Object obj : res){
+                    Map row = (Map)obj;
+                    CetStatistics cs = new CetStatistics();
+                    if(null!=row.get("type")){
+                        cs.setScoreType(row.get("type").toString());
+                    }
+                    if(null!=row.get("orgId")){
+                        cs.setOrgId(Long.valueOf(row.get("orgId").toString()));
+                    }
+                    if(null!=row.get("date")){
+                        cs.setExamDate(new SimpleDateFormat("yyyy-MM-dd").parse(row.get("date").toString()));
+                    }
+                    if(null!=row.get("collegeCode")){
+                        cs.setCollegeCode(row.get("collegeCode").toString());
+                    }
+                    if(null!=row.get("professionCode")){
+                        cs.setProfessionCode(row.get("professionCode").toString());
+                    }
+                    if(null!=row.get("classCode")){
+                        cs.setClassCode(row.get("classCode").toString());
+                    }
+                    if(null!=row.get("grade")){
+                        cs.setGrade(row.get("grade").toString());
+                    }
+                    if(null!=row.get("count")){
+                        cs.setJoinNumber(Integer.valueOf(row.get("count").toString()));
+                    }
+                    if(null!=row.get("avg")){
+                        cs.setAvgScoure(Double.valueOf(row.get("avg").toString()));
+                    }
+                    if(null!=row.get("max")){
+                        cs.setMaxScore(Double.valueOf(row.get("max").toString()));
+                    }
+                    if(null!=row.get("sex")){
+                        cs.setSex(row.get("sex").toString());
+                    }
+                    if(null!=row.get("pass")){
+                        cs.setPassNumber(Integer.valueOf(row.get("pass").toString()));
+                    }
+                    caList.add(cs);
+                }
+            }
+            if(caList.size()>0){
+                cetStatisticsService.save(caList);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("统计英语cet成绩失败！");
+        }
+        logger.info("统计英语cet成绩成功!");
+    }
+
+
+
+
+
 }
