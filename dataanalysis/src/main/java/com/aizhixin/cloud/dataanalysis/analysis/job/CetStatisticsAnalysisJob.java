@@ -214,7 +214,7 @@ public class CetStatisticsAnalysisJob {
                     "FROM t_cet_score cs " +
                     "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
-                    "WHERE cs.SCORE > 0 " +
+                    "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
                     "GROUP BY s.SEX,cs.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE,ss.COLLEGE_CODE, ss.PROFESSION_CODE, ss.CLASS_CODE, ss.GRADE");
             Query sq = em.createNativeQuery(sql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
