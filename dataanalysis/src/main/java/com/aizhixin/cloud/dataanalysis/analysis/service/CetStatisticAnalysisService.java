@@ -1198,80 +1198,82 @@ public class CetStatisticAnalysisService {
         }
     }
 
-
-    public Map<String, Object> getTop(Long orgId,String teacherYear,String semester,String collegeCode,String professionCode,String classCode,String grade,String cetType) {
-        Map<String, Object> result = new HashMap<>();
-        Map<String, Object> condition = new HashMap<>();
-        List<CetScoreAnalysisVO> csaList = new ArrayList<>();
-        try {
-            Date start = null;
-            Date end = null;
-            Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, teacherYear, semester);
-            if (null != schoolCalendar) {
-                if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
-                    List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
-                    if (tysList.size() > 0) {
-                        Date date = sdf.parse(tysList.get(0).getStartTime());
-                        int week = tysList.get(0).getWeek();
-                        start = date;
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.add(Calendar.WEEK_OF_YEAR, week);
-                        end = calendar.getTime();
-                    }
-                }
-            }
-            StringBuilder ql = new StringBuilder("");
-            if (null != orgId) {
-                ql.append(" and ss.ORG_ID = :orgId");
-                condition.put("orgId", orgId);
-            }
-            if (null != start && null != end) {
-                ql.append(" and ss.EXAMINATION_DATE BETWEEN :start AND :end");
-                condition.put("start", start);
-                condition.put("end", end);
-            }
-            if (!StringUtils.isBlank(cetType)) {
-                ql.append(" and ss.SCORE_TYPE LIKE :cetType");
-                condition.put("cetType", "%" + cetType + "%");
-            }
-            if (!StringUtils.isBlank(grade)) {
-                ql.append(" and ss.GRADE LIKE :grade");
-                condition.put("grade", "%" + grade + "%");
-            }
-            StringBuilder sql = new StringBuilder("");
-            StringBuilder wql = new StringBuilder("");
-
-            Query sq = em.createNativeQuery(sql.toString());
-            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-            for (Map.Entry<String, Object> e : condition.entrySet()) {
-                sq.setParameter(e.getKey(), e.getValue());
-            }
-            List<Object> res = sq.getResultList();
-            if (null != res) {
-                for (Object row : res) {
-                    Map d = (Map) row;
-                    CetScoreAnalysisVO csa = new CetScoreAnalysisVO();
-                    if (null != d.get("name")) {
-                        csa.setName(d.get("name").toString());
-                    }
-                    if(null!=d.get("grade")){
-                        csa.setClassify(d.get("grade").toString());
-                    }
-                    if (null != d.get("avg")) {
-                        csa.setValue(new DecimalFormat("##.##").format(Double.valueOf(d.get("avg").toString())));
-                    }
-                    csaList.add(csa);
-                }
-            }
-            result.put("success", true);
-            result.put("data", csaList);
-            return result;
-        } catch (Exception e) {
-            result.put("success", false);
-            result.put("message", "英语考试单次数据分析---人数分布---按年级统计失败！");
-            return result;
-        }
-    }
+//
+//    public Map<String, Object> getTop(Long orgId,String teacherYear,String semester,String collegeCode,String professionCode,String classCode,String grade,String cetType) {
+//        Map<String, Object> result = new HashMap<>();
+//        Map<String, Object> condition = new HashMap<>();
+//        List<CetScoreAnalysisVO> csaList = new ArrayList<>();
+//        try {
+//            Date start = null;
+//            Date end = null;
+//            Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, teacherYear, semester);
+//            if (null != schoolCalendar) {
+//                if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
+//                    List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
+//                    if (tysList.size() > 0) {
+//                        Date date = sdf.parse(tysList.get(0).getStartTime());
+//                        int week = tysList.get(0).getWeek();
+//                        start = date;
+//                        Calendar calendar = Calendar.getInstance();
+//                        calendar.add(Calendar.WEEK_OF_YEAR, week);
+//                        end = calendar.getTime();
+//                    }
+//                }
+//            }
+//            StringBuilder sql = new StringBuilder("");
+//
+//
+//            if (null != orgId) {
+//                sql.append(" and ss.ORG_ID = :orgId");
+//                condition.put("orgId", orgId);
+//            }
+//            if (null != start && null != end) {
+//                sql.append(" and ss.EXAMINATION_DATE BETWEEN :start AND :end");
+//                condition.put("start", start);
+//                condition.put("end", end);
+//            }
+//            if (!StringUtils.isBlank(cetType)) {
+//                sql.append(" and ss.SCORE_TYPE LIKE :cetType");
+//                condition.put("cetType", "%" + cetType + "%");
+//            }
+//            if (!StringUtils.isBlank(grade)) {
+//                sql.append(" and ss.GRADE LIKE :grade");
+//                condition.put("grade", "%" + grade + "%");
+//            }
+//
+//
+//
+//            Query sq = em.createNativeQuery(sql.toString());
+//            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+//            for (Map.Entry<String, Object> e : condition.entrySet()) {
+//                sq.setParameter(e.getKey(), e.getValue());
+//            }
+//            List<Object> res = sq.getResultList();
+//            if (null != res) {
+//                for (Object row : res) {
+//                    Map d = (Map) row;
+//                    CetScoreAnalysisVO csa = new CetScoreAnalysisVO();
+//                    if (null != d.get("name")) {
+//                        csa.setName(d.get("name").toString());
+//                    }
+//                    if(null!=d.get("grade")){
+//                        csa.setClassify(d.get("grade").toString());
+//                    }
+//                    if (null != d.get("avg")) {
+//                        csa.setValue(new DecimalFormat("##.##").format(Double.valueOf(d.get("avg").toString())));
+//                    }
+//                    csaList.add(csa);
+//                }
+//            }
+//            result.put("success", true);
+//            result.put("data", csaList);
+//            return result;
+//        } catch (Exception e) {
+//            result.put("success", false);
+//            result.put("message", "英语考试单次数据分析---人数分布---按年级统计失败！");
+//            return result;
+//        }
+//    }
 
 
 
