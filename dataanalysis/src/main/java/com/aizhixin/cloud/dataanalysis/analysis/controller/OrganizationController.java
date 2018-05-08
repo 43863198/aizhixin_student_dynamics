@@ -65,7 +65,22 @@ public class OrganizationController{
             @ApiParam(value = "ccode 所属学院码", required = false) @RequestParam(value = "ccode", required = false) String ccode,
             @ApiParam(value = "pcode 所属专业码", required = false) @RequestParam(value = "pcode", required = false) String pcode
     ){
-        return new ResponseEntity<Map<String, Object>>(organizationService.getClass(orgId,ccode,pcode), HttpStatus.OK);
+        return new ResponseEntity<Map<String, Object>>(organizationService.getClass(orgId, ccode, pcode), HttpStatus.OK);
+
+    }
+
+
+    /**
+     * 获取年级列表
+     * @param orgId
+     * @return
+     */
+    @GetMapping(value = "/getgrade", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = " 获取年级列表", response = Void.class, notes = "获取年级列表")
+    public ResponseEntity<Map<String,Object>> getGrade(
+            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId
+    ){
+        return new ResponseEntity<Map<String, Object>>(organizationService.getGrade(orgId), HttpStatus.OK);
 
     }
 

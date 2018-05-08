@@ -7,13 +7,14 @@ import lombok.ToString;
 /**
  * @author: Created by jianwei.wu
  * @E-mail: wujianwei@aizhixin.com
- * @Date: 2018-05-07
+ * @Date: 2018-05-08
  */
-@ApiModel(description="英语成绩均值分布")
+@ApiModel(description="英语成绩人数分布")
 @Data
 @ToString
-public class CetScoreAnalysisVO {
+public class CetScoreNumberOfPeopleVO {
     private String name;
-    private String value;
+    private int joinNumber;
+    private int passNumber;
     private String classify;
 }

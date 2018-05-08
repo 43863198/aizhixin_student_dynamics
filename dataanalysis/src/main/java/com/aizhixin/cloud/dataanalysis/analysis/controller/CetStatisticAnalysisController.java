@@ -136,7 +136,7 @@ public class CetStatisticAnalysisController {
     }
 
     /**
-     * 英语考试单次数据分析---均值分布---平均成绩
+     * 英语考试单次数据分析---均值分布---按行政单位
      * @param orgId
      * @param cetType
      * @param teacherYear
@@ -148,7 +148,7 @@ public class CetStatisticAnalysisController {
      * @return
      */
     @GetMapping(value = "/avg", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "英语考试单次数据分析---均值分布---平均成绩", response = Void.class, notes = "英语考试单次数据分析---均值分布---平均成绩<br><br><b>@author jianwei.wu</b>")
+    @ApiOperation(httpMethod = "GET", value = "英语考试单次数据分析---均值分布---按行政单位", response = Void.class, notes = "英语考试单次数据分析---均值分布---按行政单位<br><br><b>@author jianwei.wu</b>")
     public ResponseEntity<Map<String, Object>> cetSingleDataAvgScoure(
             @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "cetType 成绩类型： (四级;六级;)" , required = true ) @RequestParam(value = "cetType" , required = true) String cetType,
@@ -159,11 +159,11 @@ public class CetStatisticAnalysisController {
             @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber,
             @ApiParam(value = "grade 年级", required = false) @RequestParam(value = "grade", required = false) String grade
     ) {
-        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataAvgScoure(orgId,teacherYear, semester, collegeNumber, professionNumber, classNumber, grade, cetType), HttpStatus.OK);
+        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataAvgScoure(orgId, teacherYear, semester, collegeNumber, professionNumber, classNumber, grade, cetType), HttpStatus.OK);
     }
 
     /**
-     * 英语考试单次数据分析---均值分布--男女
+     * 英语考试单次数据分析---均值分布--按男女
      * @param orgId
      * @param cetType
      * @param teacherYear
@@ -175,7 +175,7 @@ public class CetStatisticAnalysisController {
      * @return
      */
     @GetMapping(value = "/sexavg", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "英语考试单次数据分析---均值分布---男女平均成绩", response = Void.class, notes = "英语考试单次数据分析---均值分布---平均成绩<br><br><b>@author jianwei.wu</b>")
+    @ApiOperation(httpMethod = "GET", value = "英语考试单次数据分析---均值分布---按男女", response = Void.class, notes = "英语考试单次数据分析---均值分布---按男女<br><br><b>@author jianwei.wu</b>")
     public ResponseEntity<Map<String, Object>> cetSingleDataSexAvgScoure(
             @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "cetType 成绩类型： (四级;六级;)" , required = true ) @RequestParam(value = "cetType" , required = true) String cetType,
@@ -188,6 +188,155 @@ public class CetStatisticAnalysisController {
     ) {
         return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataSexAvgScoure(orgId, teacherYear, semester, collegeNumber, professionNumber, classNumber, grade, cetType), HttpStatus.OK);
     }
+
+
+    /**
+     * 英语考试单次数据分析---均值分布--按年级
+     * @param orgId
+     * @param cetType
+     * @param teacherYear
+     * @param semester
+     * @param collegeNumber
+     * @param professionNumber
+     * @param classNumber
+     * @param grade
+     * @return
+     */
+    @GetMapping(value = "/gradeavg", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "英语考试单次数据分析---均值分布---按年级", response = Void.class, notes = "英语考试单次数据分析---均值分布---按年级<br><br><b>@author jianwei.wu</b>")
+    public ResponseEntity<Map<String, Object>> cetSingleDataGradeAvgScoure(
+            @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "cetType 成绩类型： (四级;六级;)" , required = true ) @RequestParam(value = "cetType" , required = true) String cetType,
+            @ApiParam(value = "teacherYear 学年" , required = true ) @RequestParam(value = "teacherYear" , required = true) String teacherYear,
+            @ApiParam(value = "semester 学期 (春;秋;)" , required = true) @RequestParam(value = "semester" , required = true) String semester,
+            @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
+            @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
+            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber,
+            @ApiParam(value = "grade 年级", required = false) @RequestParam(value = "grade", required = false) String grade
+    ) {
+        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataGradeAvgScoure(orgId, teacherYear, semester, collegeNumber, professionNumber, classNumber, grade, cetType), HttpStatus.OK);
+    }
+
+
+    /**
+     * 英语考试单次数据分析---人数分布--按行政单位
+     * @param orgId
+     * @param cetType
+     * @param teacherYear
+     * @param semester
+     * @param collegeNumber
+     * @param professionNumber
+     * @param classNumber
+     * @param grade
+     * @return
+     */
+    @GetMapping(value = "/numberofpeople", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "英语考试单次数据分析---人数分布---按行政单位", response = Void.class, notes = "英语考试单次数据分析---人数分布---按行政单位<br><br><b>@author jianwei.wu</b>")
+    public ResponseEntity<Map<String, Object>> cetSingleDataNumberOfPeople(
+            @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "cetType 成绩类型： (四级;六级;)" , required = true ) @RequestParam(value = "cetType" , required = true) String cetType,
+            @ApiParam(value = "teacherYear 学年" , required = true ) @RequestParam(value = "teacherYear" , required = true) String teacherYear,
+            @ApiParam(value = "semester 学期 (春;秋;)" , required = true) @RequestParam(value = "semester" , required = true) String semester,
+            @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
+            @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
+            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber,
+            @ApiParam(value = "grade 年级", required = false) @RequestParam(value = "grade", required = false) String grade
+    ) {
+        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataNumberOfPeople(orgId, teacherYear, semester, collegeNumber, professionNumber, classNumber, grade, cetType), HttpStatus.OK);
+    }
+
+
+    /**
+     * 英语考试单次数据分析---人数分布--按性别
+     * @param orgId
+     * @param cetType
+     * @param teacherYear
+     * @param semester
+     * @param collegeNumber
+     * @param professionNumber
+     * @param classNumber
+     * @param grade
+     * @return
+     */
+    @GetMapping(value = "/sexnumberofpeople", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "英语考试单次数据分析---人数分布---按性别", response = Void.class, notes = "英语考试单次数据分析---人数分布---按性别<br><br><b>@author jianwei.wu</b>")
+    public ResponseEntity<Map<String, Object>> cetSingleDataSexNumberOfPeople(
+            @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "cetType 成绩类型： (四级;六级;)" , required = true ) @RequestParam(value = "cetType" , required = true) String cetType,
+            @ApiParam(value = "teacherYear 学年" , required = true ) @RequestParam(value = "teacherYear" , required = true) String teacherYear,
+            @ApiParam(value = "semester 学期 (春;秋;)" , required = true) @RequestParam(value = "semester" , required = true) String semester,
+            @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
+            @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
+            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber,
+            @ApiParam(value = "grade 年级", required = false) @RequestParam(value = "grade", required = false) String grade
+    ) {
+        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataSexNumberOfPeople(orgId, teacherYear, semester, collegeNumber, professionNumber, classNumber, grade, cetType), HttpStatus.OK);
+    }
+
+    /**
+     * 英语考试单次数据分析---人数分布--按年级
+     * @param orgId
+     * @param cetType
+     * @param teacherYear
+     * @param semester
+     * @param collegeNumber
+     * @param professionNumber
+     * @param classNumber
+     * @param grade
+     * @return
+     */
+    @GetMapping(value = "/gradenumberofpeople", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "英语考试单次数据分析---人数分布---按年级", response = Void.class, notes = "英语考试单次数据分析---人数分布---按年级<br><br><b>@author jianwei.wu</b>")
+    public ResponseEntity<Map<String, Object>> cetSingleDataGradeNumberOfPeople(
+            @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "cetType 成绩类型： (四级;六级;)" , required = true ) @RequestParam(value = "cetType" , required = true) String cetType,
+            @ApiParam(value = "teacherYear 学年" , required = true ) @RequestParam(value = "teacherYear" , required = true) String teacherYear,
+            @ApiParam(value = "semester 学期 (春;秋;)" , required = true) @RequestParam(value = "semester" , required = true) String semester,
+            @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
+            @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
+            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber,
+            @ApiParam(value = "grade 年级", required = false) @RequestParam(value = "grade", required = false) String grade
+    ) {
+        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataGradeNumberOfPeople(orgId, teacherYear, semester, collegeNumber, professionNumber, classNumber, grade, cetType), HttpStatus.OK);
+    }
+
+
+    /**
+     * 英语考试单次数据分析---top10
+     * @param orgId
+     * @param cetType
+     * @param teacherYear
+     * @param semester
+     * @param collegeNumber
+     * @param professionNumber
+     * @param classNumber
+     * @param grade
+     * @return
+     */
+    @GetMapping(value = "/top", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "英语考试单次数据分析---top10", response = Void.class, notes = "英语考试单次数据分析---top10<br><br><b>@author jianwei.wu</b>")
+    public ResponseEntity<Map<String, Object>> getTop(
+            @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "cetType 成绩类型： (四级;六级;)" , required = true ) @RequestParam(value = "cetType" , required = true) String cetType,
+            @ApiParam(value = "teacherYear 学年" , required = true ) @RequestParam(value = "teacherYear" , required = true) String teacherYear,
+            @ApiParam(value = "semester 学期 (春;秋;)" , required = true) @RequestParam(value = "semester" , required = true) String semester,
+            @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
+            @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
+            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber,
+            @ApiParam(value = "grade 年级", required = false) @RequestParam(value = "grade", required = false) String grade
+    ) {
+        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.getTop(orgId, teacherYear, semester, collegeNumber, professionNumber, classNumber, grade, cetType), HttpStatus.OK);
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 
