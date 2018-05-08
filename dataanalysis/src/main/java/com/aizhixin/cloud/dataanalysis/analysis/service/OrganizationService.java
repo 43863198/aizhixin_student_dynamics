@@ -145,6 +145,44 @@ public class OrganizationService {
     }
 
 
+    public Map<String,Object> getGrade(Long orgId){
+        Map<String,Object> result = new HashMap<>();
+        Map<String, Object> condition = new HashMap<>();
+        List<OrganizationDTO> orgList = new ArrayList<>();
+        try {
+            StringBuilder sql = new StringBuilder("SELECT GRADE as name FROM t_student_status WHERE 1=1");
+            if (null != orgId) {
+                sql.append(" and ORG_ID = :orgId");
+                condition.put("orgId", orgId);
+            }
+            sql.append(" GROUP BY GRADE");
+            Query sq = em.createNativeQuery(sql.toString());
+            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            for (Map.Entry<String, Object> e : condition.entrySet()) {
+                sq.setParameter(e.getKey(), e.getValue());
+            }
+            List<Object> res = sq.getResultList();
+            for (Object obj : res) {
+                Map row = (Map) obj;
+                OrganizationDTO org = new OrganizationDTO();
+                if (null != row.get("name")) {
+                    org.setCode(row.get("name").toString());
+                    orgList.add(org);
+                }
+            }
+            result.put("success", true);
+            result.put("data", orgList);
+            return result;
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", "获取年级列表失败！");
+            return result;
+        }
+    }
+
+
+
+
 
 
 
