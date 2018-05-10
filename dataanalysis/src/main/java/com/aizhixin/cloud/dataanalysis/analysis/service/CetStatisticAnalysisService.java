@@ -500,7 +500,8 @@ public class CetStatisticAnalysisService {
                         int week = tysList.get(0).getWeek();
                         start = date;
                         Calendar calendar = Calendar.getInstance();
-                        calendar.add(Calendar.WEEK_OF_YEAR, week);
+                        calendar.setTime(start);
+                        calendar.add(Calendar.WEEK_OF_YEAR, week+1);
                         end = calendar.getTime();
                     }
                 }
@@ -550,20 +551,22 @@ public class CetStatisticAnalysisService {
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
             }
-            Object res = sq.getSingleResult();
+            List<Object> res = sq.getResultList();
             if (null != res) {
-                Map d = (Map) res;
-                if (null != d.get("count")) {
-                    csdsVO.setJoinNumber(Integer.valueOf(d.get("count").toString()));
-                }
-                if (null != d.get("avg")) {
-                    csdsVO.setAverage(Math.round(Float.valueOf(d.get("avg").toString())) + "");
-                }
-                if (null != d.get("max")) {
-                    csdsVO.setHighestScore(Math.round(Float.valueOf(d.get("max").toString())) + "");
-                }
-                if (null != d.get("pass")) {
-                    csdsVO.setPassNumber(Integer.valueOf(d.get("pass").toString()));
+                for(Object obj: res) {
+                    Map d = (Map) obj;
+                    if (null != d.get("count")) {
+                        csdsVO.setJoinNumber(Integer.valueOf(d.get("count").toString()));
+                    }
+                    if (null != d.get("avg")) {
+                        csdsVO.setAverage(Math.round(Float.valueOf(d.get("avg").toString())) + "");
+                    }
+                    if (null != d.get("max")) {
+                        csdsVO.setHighestScore(Math.round(Float.valueOf(d.get("max").toString())) + "");
+                    }
+                    if (null != d.get("pass")) {
+                        csdsVO.setPassNumber(Integer.valueOf(d.get("pass").toString()));
+                    }
                 }
 
             }
@@ -598,7 +601,8 @@ public class CetStatisticAnalysisService {
                         int week = tysList.get(0).getWeek();
                         start = date;
                         Calendar calendar = Calendar.getInstance();
-                        calendar.add(Calendar.WEEK_OF_YEAR, week);
+                        calendar.setTime(start);
+                        calendar.add(Calendar.WEEK_OF_YEAR, week+1);
                         end = calendar.getTime();
                     }
                 }
@@ -693,7 +697,8 @@ public class CetStatisticAnalysisService {
                         int week = tysList.get(0).getWeek();
                         start = date;
                         Calendar calendar = Calendar.getInstance();
-                        calendar.add(Calendar.WEEK_OF_YEAR, week);
+                        calendar.setTime(start);
+                        calendar.add(Calendar.WEEK_OF_YEAR, week+1);
                         end = calendar.getTime();
                     }
                 }
@@ -791,7 +796,8 @@ public class CetStatisticAnalysisService {
                         int week = tysList.get(0).getWeek();
                         start = date;
                         Calendar calendar = Calendar.getInstance();
-                        calendar.add(Calendar.WEEK_OF_YEAR, week);
+                        calendar.setTime(start);
+                        calendar.add(Calendar.WEEK_OF_YEAR, week+1);
                         end = calendar.getTime();
                     }
                 }
@@ -823,7 +829,7 @@ public class CetStatisticAnalysisService {
                         sql.append(" AND ss.STATISTICS_TYPE = '023'");
                         sql.append(" and ss.CODE = :classCode");
                         condition.put("classCode", classCode);
-                        sql.append(" and ss.PARENT_CODE = :pCode");
+                        sql.append(" and ss.PARENT_CODE = :pCode order by grade");
                         condition.put("pCode", professionCode);
                     } else {
                         sql.append("SELECT ss.NAME_CODE as grade, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = COMPANY_NUMBER WHERE 1=1");
@@ -831,7 +837,7 @@ public class CetStatisticAnalysisService {
                         sql.append(" AND ss.STATISTICS_TYPE = '022'");
                         sql.append(" AND ss.STATISTICS_TYPE = '012'");
                         condition.put("collegeCode", professionCode);
-                        sql.append(" and ss.PARENT_CODE = :pCode");
+                        sql.append(" and ss.PARENT_CODE = :pCode order by grade");
                         condition.put("pCode", collegeCode);
                     }
                 } else {
@@ -840,13 +846,13 @@ public class CetStatisticAnalysisService {
                     sql.append(" AND ss.STATISTICS_TYPE = '021'");
                     sql.append(" and ss.CODE = :collegeCode");
                     condition.put("collegeCode", collegeCode);
-                    sql.append(" and ss.PARENT_CODE = :pCode");
+                    sql.append(" and ss.PARENT_CODE = :pCode order by grade");
                     condition.put("pCode", orgId);
                 }
             } else {
                 sql.append("SELECT ss.NAME_CODE as grade, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = COMPANY_NUMBER WHERE 1=1");
                 sql.append(ql);
-                sql.append(" AND ss.STATISTICS_TYPE = '020'");
+                sql.append(" AND ss.STATISTICS_TYPE = '020' order by grade");
             }
             Query sq = em.createNativeQuery(sql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
@@ -897,7 +903,8 @@ public class CetStatisticAnalysisService {
                         int week = tysList.get(0).getWeek();
                         start = date;
                         Calendar calendar = Calendar.getInstance();
-                        calendar.add(Calendar.WEEK_OF_YEAR, week);
+                        calendar.setTime(start);
+                        calendar.add(Calendar.WEEK_OF_YEAR, week+1);
                         end = calendar.getTime();
                     }
                 }
@@ -995,7 +1002,8 @@ public class CetStatisticAnalysisService {
                         int week = tysList.get(0).getWeek();
                         start = date;
                         Calendar calendar = Calendar.getInstance();
-                        calendar.add(Calendar.WEEK_OF_YEAR, week);
+                        calendar.setTime(start);
+                        calendar.add(Calendar.WEEK_OF_YEAR, week+1);
                         end = calendar.getTime();
                     }
                 }
@@ -1100,7 +1108,8 @@ public class CetStatisticAnalysisService {
                         int week = tysList.get(0).getWeek();
                         start = date;
                         Calendar calendar = Calendar.getInstance();
-                        calendar.add(Calendar.WEEK_OF_YEAR, week);
+                        calendar.setTime(start);
+                        calendar.add(Calendar.WEEK_OF_YEAR, week+1);
                         end = calendar.getTime();
                     }
                 }
@@ -1128,14 +1137,14 @@ public class CetStatisticAnalysisService {
                         sql.append(" AND ss.STATISTICS_TYPE = '023'");
                         sql.append(" and ss.CODE = :classCode");
                         condition.put("classCode", classCode);
-                        sql.append(" and ss.PARENT_CODE = :pCode");
+                        sql.append(" and ss.PARENT_CODE = :pCode order by grade");
                         condition.put("pCode", professionCode);
                     } else {
                         sql.append("SELECT ss.NAME_CODE as grade, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = COMPANY_NUMBER WHERE 1=1");
                         sql.append(ql);
                         sql.append(" AND ss.STATISTICS_TYPE = '022'");
                         condition.put("collegeCode", professionCode);
-                        sql.append(" and ss.PARENT_CODE = :pCode");
+                        sql.append(" and ss.PARENT_CODE = :pCode order by grade");
                         condition.put("pCode", collegeCode);
                     }
                 } else {
@@ -1144,13 +1153,13 @@ public class CetStatisticAnalysisService {
                     sql.append(" AND ss.STATISTICS_TYPE = '021'");
                     sql.append(" and ss.CODE = :collegeCode");
                     condition.put("collegeCode", collegeCode);
-                    sql.append(" and ss.PARENT_CODE = :pCode");
+                    sql.append(" and ss.PARENT_CODE = :pCode order by grade");
                     condition.put("pCode", orgId);
                 }
             } else {
                 sql.append("SELECT ss.NAME_CODE as grade, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = COMPANY_NUMBER WHERE 1=1");
                 sql.append(ql);
-                sql.append(" AND ss.STATISTICS_TYPE = '020'");
+                sql.append(" AND ss.STATISTICS_TYPE = '020' order by grade");
             }
             Query sq = em.createNativeQuery(sql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
@@ -1198,7 +1207,8 @@ public class CetStatisticAnalysisService {
                         int week = tysList.get(0).getWeek();
                         start = date;
                         Calendar calendar = Calendar.getInstance();
-                        calendar.add(Calendar.WEEK_OF_YEAR, week);
+                        calendar.setTime(start);
+                        calendar.add(Calendar.WEEK_OF_YEAR, week+1);
                         end = calendar.getTime();
                     }
                 }
