@@ -1203,7 +1203,7 @@ public class CetStatisticAnalysisService {
                     }
                 }
             }
-            StringBuilder sql = new StringBuilder("SELECT cs.JOB_NUMBER AS xh,s.NAME AS NAME,d.COMPANY_NAME AS dName,p.NAME AS pName,ss.CLASS_NAME AS cName,ss.GRADE AS grade,cs.SCORE AS score " +
+            StringBuilder sql = new StringBuilder("SELECT cs.JOB_NUMBER AS xh,s.NAME AS name,d.COMPANY_NAME AS dName,p.NAME AS pName,ss.CLASS_NAME AS cName,ss.GRADE AS grade,cs.SCORE AS score " +
                     "FROM t_cet_score cs LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER  "+
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER LEFT JOIN t_department d ON d.COMPANY_NUMBER = ss.COLLEGE_CODE LEFT JOIN t_profession p ON p. CODE = ss.PROFESSION_CODE "+
                     "WHERE 1=1");

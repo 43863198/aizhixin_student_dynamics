@@ -657,6 +657,9 @@ public class CetStatisticsAnalysisJob {
                     if (null != row.get("name")) {
                         ss.setCode(row.get("name").toString());
                     }
+                    if (null != row.get("grade")) {
+                        ss.setName(row.get("grade").toString());
+                    }
                     if (null != row.get("count")) {
                         ss.setJoinNumber(Integer.valueOf(row.get("count").toString()));
                     }
