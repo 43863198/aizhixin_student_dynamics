@@ -2,12 +2,12 @@ package com.aizhixin.cloud.dataanalysis.analysis.job;
 
 import com.aizhixin.cloud.dataanalysis.analysis.constant.DataType;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.CetScoreAnalysisDTO;
-import com.aizhixin.cloud.dataanalysis.analysis.entity.CetScoreStatistics;
-import com.aizhixin.cloud.dataanalysis.analysis.entity.CetStatistics;
-import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolYearTerm;
+import com.aizhixin.cloud.dataanalysis.analysis.entity.*;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.CetScoreStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.service.CetStatisticsService;
 import com.aizhixin.cloud.dataanalysis.analysis.service.SchoolYearTermService;
+import com.aizhixin.cloud.dataanalysis.analysis.service.ScoreStatisticsService;
+import com.aizhixin.cloud.dataanalysis.analysis.service.ScoreTopService;
 import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
 import com.aizhixin.cloud.dataanalysis.common.service.DistributeLock;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
@@ -48,10 +48,14 @@ public class CetStatisticsAnalysisJob {
     private EntityManager em;
     @Autowired
     private CetStatisticsService cetStatisticsService;
+    @Autowired
+    private ScoreTopService scoreTopService;
+    @Autowired
+    private ScoreStatisticsService scoreStatisticsService;
 //    @Autowired
 //    private SchoolYearTermService schoolYearTermService;
 
-//    @Transactional
+    //    @Transactional
 //    public Map<String, Object>  cetScoreStatistics() {
 //        Map<String, Object> result = new HashMap<>();
 //        Set<SchoolYearTerm> sytList = new HashSet<>();
@@ -198,7 +202,7 @@ public class CetStatisticsAnalysisJob {
         } catch (Exception e) {
             e.printStackTrace();
             logger.info("定时统计英语cet成绩失败！");
-        }finally {
+        } finally {
             StringBuilder path = new StringBuilder("/cet");
             distributeLock.delete(path);
         }
@@ -206,64 +210,737 @@ public class CetStatisticsAnalysisJob {
     }
 
     @Async
-    public void cetScoreStatistics() {
-        List<CetStatistics> caList = new ArrayList<>();
+    public void cetScoreStatisticsTop() {
+        List<ScoreTop> stList = new ArrayList<>();
         try {
-            StringBuilder sql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,cs.EXAMINATION_DATE as date,ss.COLLEGE_CODE as collegeCode, " +
-                    "ss.PROFESSION_CODE as professionCode,ss.CLASS_CODE as classCode,ss.GRADE as grade, sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE > 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,s.SEX as sex " +
+//            StringBuilder sql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,cs.EXAMINATION_DATE as date,ss.COLLEGE_CODE as collegeCode, " +
+//                    "ss.PROFESSION_CODE as professionCode,ss.CLASS_CODE as classCode,ss.GRADE as grade, sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,s.SEX as sex " +
+//                    "FROM t_cet_score cs " +
+//                    "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
+//                    "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
+//                    "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
+//                    "GROUP BY s.SEX,cs.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE,ss.COLLEGE_CODE, ss.PROFESSION_CODE, ss.CLASS_CODE, ss.GRADE");
+//            Query sq = em.createNativeQuery(sql.toString());
+//            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+//            List<Object> res =  sq.getResultList();
+//            if(null!=res&&res.size()>0){
+//                for(Object obj : res){
+//                    Map row = (Map)obj;
+//                    CetStatistics cs = new CetStatistics();
+//                    if(null!=row.get("type")){
+//                        cs.setScoreType(row.get("type").toString());
+//                    }
+//                    if(null!=row.get("orgId")){
+//                        cs.setOrgId(Long.valueOf(row.get("orgId").toString()));
+//                    }
+//                    if(null!=row.get("date")){
+//                        cs.setExamDate(new SimpleDateFormat("yyyy-MM-dd").parse(row.get("date").toString()));
+//                    }
+//                    if(null!=row.get("collegeCode")){
+//                        cs.setCollegeCode(row.get("collegeCode").toString());
+//                    }
+//                    if(null!=row.get("professionCode")){
+//                        cs.setProfessionCode(row.get("professionCode").toString());
+//                    }
+//                    if(null!=row.get("classCode")){
+//                        cs.setClassCode(row.get("classCode").toString());
+//                    }
+//                    if(null!=row.get("grade")){
+//                        cs.setGrade(row.get("grade").toString());
+//                    }
+//                    if(null!=row.get("count")){
+//                        cs.setJoinNumber(Integer.valueOf(row.get("count").toString()));
+//                    }
+//                    if(null!=row.get("avg")){
+//                        cs.setAvgScoure(Double.valueOf(row.get("avg").toString()));
+//                    }
+//                    if(null!=row.get("max")){
+//                        cs.setMaxScore(Double.valueOf(row.get("max").toString()));
+//                    }
+//                    if(null!=row.get("sex")){
+//                        cs.setSex(row.get("sex").toString());
+//                    }
+//                    if(null!=row.get("pass")){
+//                        cs.setPassNumber(Integer.valueOf(row.get("pass").toString()));
+//                    }
+//                    caList.add(cs);
+//                }
+//            }
+
+            StringBuilder topql = new StringBuilder("SELECT cs.JOB_NUMBER as xh, s.NAME as name, cs.TYPE as type,cs.ORG_ID as orgId,cs.EXAMINATION_DATE as date,d.COMPANY_NAME AS dName,ss.COLLEGE_CODE AS collegeCode, " +
+                    "p.NAME AS pName, ss.PROFESSION_CODE as professionCode ,ss.CLASS_CODE as classCode, ss.CLASS_NAME AS cName,ss.GRADE as grade, MAX(cs.SCORE) as max " +
+                    "FROM t_cet_score cs " +
+                    "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
+                    "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
+                    "LEFT JOIN t_department d ON d.COMPANY_NUMBER = ss.COLLEGE_CODE "+
+                    "LEFT JOIN t_profession p ON p. CODE = ss.PROFESSION_CODE "+
+                    "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
+                    "GROUP BY cs.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE ORDER BY cs.SCORE DESC LIMIT 10");
+            Query tq = em.createNativeQuery(topql.toString());
+            tq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            List<Object> tres = tq.getResultList();
+            if (null != tres && tres.size() > 0) {
+                for (Object obj : tres) {
+                    Map row = (Map) obj;
+                    ScoreTop st = new ScoreTop();
+                    if (null != row.get("type")) {
+                        st.setScoreType(row.get("type").toString());
+                    }
+                    if (null != row.get("orgId")) {
+                        st.setOrgId(Long.valueOf(row.get("orgId").toString()));
+                    }
+                    if (null != row.get("date")) {
+                        st.setExamDate(new SimpleDateFormat("yyyy-MM-dd").parse(row.get("date").toString()));
+                    }
+                    if (null != row.get("collegeCode")) {
+                        st.setCollegeCode(row.get("collegeCode").toString());
+                    }
+                    if (null != row.get("dName")) {
+                        st.setCollegeName(row.get("dName").toString());
+                    }
+                    if (null != row.get("professionCode")) {
+                        st.setProfessionCode(row.get("professionCode").toString());
+                    }
+                    if (null != row.get("pName")) {
+                        st.setProfessionName(row.get("pName").toString());
+                    }
+                    if (null != row.get("classCode")) {
+                        st.setClassCode(row.get("classCode").toString());
+                    }
+                    if (null != row.get("cName")) {
+                        st.setClassName(row.get("cName").toString());
+                    }
+                    if (null != row.get("grade")) {
+                        st.setGrade(row.get("grade").toString());
+                    }
+                    if (null != row.get("max")) {
+                        st.setMaxScore(row.get("max").toString());
+                    }
+                    if (null != row.get("xh")) {
+                        st.setJobNumber(row.get("xh").toString());
+                    }
+                    if (null != row.get("name")) {
+                        st.setName(row.get("name").toString());
+                    }
+                    stList.add(st);
+                }
+            }
+            if (stList.size() > 0) {
+                scoreTopService.save(stList);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("统计英语cet成绩top失败！");
+        }
+        logger.info("统计英语cet成绩top成功!");
+    }
+
+
+    @Async
+    public void cetScoreStatistics() {
+        List<ScoreStatistics> ssList = new ArrayList<>();
+        try {
+            StringBuilder sql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId, cs.EXAMINATION_DATE as date, " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass, AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max " +
                     "FROM t_cet_score cs " +
                     "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
                     "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
-                    "GROUP BY s.SEX,cs.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE,ss.COLLEGE_CODE, ss.PROFESSION_CODE, ss.CLASS_CODE, ss.GRADE");
+                    "GROUP BY ss.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE");
+            StringBuilder oql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,cs.ORG_ID as persion,cs.EXAMINATION_DATE as date, " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max " +
+                    "FROM t_cet_score cs " +
+                    "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
+                    "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
+                    "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
+                    "GROUP BY ss.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE");
+            StringBuilder cql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,cs.ORG_ID as persion,cs.EXAMINATION_DATE as date,ss.COLLEGE_CODE as name, " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max " +
+                    "FROM t_cet_score cs " +
+                    "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
+                    "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
+                    "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
+                    "GROUP BY ss.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE,ss.COLLEGE_CODE");
+            StringBuilder pql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,ss.COLLEGE_CODE as persion,cs.EXAMINATION_DATE as date,ss.PROFESSION_CODE as name, " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max " +
+                    "FROM t_cet_score cs " +
+                    "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
+                    "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
+                    "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
+                    "GROUP BY ss.ORG_ID,ss.COLLEGE_CODE,cs.EXAMINATION_DATE,cs.TYPE,ss.PROFESSION_CODE");
+            StringBuilder clql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,ss.PROFESSION_CODE as persion,cs.EXAMINATION_DATE as date,ss.CLASS_CODE as name, " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max " +
+                    "FROM t_cet_score cs " +
+                    "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
+                    "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
+                    "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
+                    "GROUP BY ss.ORG_ID,ss.PROFESSION_CODE,cs.EXAMINATION_DATE,cs.TYPE,ss.CLASS_CODE");
+            StringBuilder goql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,cs.ORG_ID as persion,cs.EXAMINATION_DATE as date,cs.ORG_ID as name, " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,ss.GRADE as grade " +
+                    "FROM t_cet_score cs " +
+                    "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
+                    "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
+                    "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
+                    "GROUP BY ss.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE,ss.GRADE");
+            StringBuilder gdql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,cs.ORG_ID as persion,cs.EXAMINATION_DATE as date,ss.COLLEGE_CODE as name, " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,ss.GRADE as grade " +
+                    "FROM t_cet_score cs " +
+                    "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
+                    "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
+                    "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
+                    "GROUP BY ss.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE,ss.COLLEGE_CODE,ss.GRADE");
+            StringBuilder gpql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,ss.COLLEGE_CODE as persion,cs.EXAMINATION_DATE as date,ss.PROFESSION_CODE as name, " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,ss.GRADE as grade " +
+                    "FROM t_cet_score cs " +
+                    "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
+                    "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
+                    "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
+                    "GROUP BY ss.ORG_ID,ss.COLLEGE_CODE,cs.EXAMINATION_DATE,cs.TYPE,ss.PROFESSION_CODE,ss.GRADE");
+            StringBuilder gcql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,ss.PROFESSION_CODE as persion,cs.EXAMINATION_DATE as date,ss.CLASS_CODE as name, " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,ss.GRADE as grade " +
+                    "FROM t_cet_score cs " +
+                    "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
+                    "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
+                    "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
+                    "GROUP BY ss.ORG_ID,ss.PROFESSION_CODE,cs.EXAMINATION_DATE,cs.TYPE,ss.CLASS_CODE,ss.GRADE");
+            StringBuilder sexoql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,cs.ORG_ID as persion,cs.EXAMINATION_DATE as date,cs.ORG_ID as name, " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,s.SEX as sex " +
+                    "FROM t_cet_score cs " +
+                    "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
+                    "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
+                    "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
+                    "GROUP BY ss.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE,s.SEX");
+            StringBuilder sexdql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,cs.ORG_ID as persion,cs.EXAMINATION_DATE as date,ss.COLLEGE_CODE as name, " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,s.SEX as sex " +
+                    "FROM t_cet_score cs " +
+                    "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
+                    "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
+                    "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
+                    "GROUP BY ss.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE,ss.COLLEGE_CODE,s.SEX");
+            StringBuilder sexpql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,ss.COLLEGE_CODE as persion,cs.EXAMINATION_DATE as date,ss.PROFESSION_CODE as name, " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,s.SEX as sex " +
+                    "FROM t_cet_score cs " +
+                    "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
+                    "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
+                    "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
+                    "GROUP BY ss.ORG_ID,ss.COLLEGE_CODE,cs.EXAMINATION_DATE,cs.TYPE,ss.PROFESSION_CODE,s.SEX");
+            StringBuilder sexclql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,ss.PROFESSION_CODE as persion,cs.EXAMINATION_DATE as date,ss.CLASS_CODE as name, " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,s.SEX as sex " +
+                    "FROM t_cet_score cs " +
+                    "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
+                    "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
+                    "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
+                    "GROUP BY ss.ORG_ID,ss.PROFESSION_CODE,cs.EXAMINATION_DATE,cs.TYPE,ss.CLASS_CODE,s.SEX");
             Query sq = em.createNativeQuery(sql.toString());
+            Query oq = em.createNativeQuery(oql.toString());
+            Query cq = em.createNativeQuery(cql.toString());
+            Query pq = em.createNativeQuery(pql.toString());
+            Query clq = em.createNativeQuery(clql.toString());
+            Query goq = em.createNativeQuery(goql.toString());
+            Query gdq = em.createNativeQuery(gdql.toString());
+            Query gpq = em.createNativeQuery(gpql.toString());
+            Query gcq = em.createNativeQuery(gcql.toString());
+            Query sexoq = em.createNativeQuery(sexoql.toString());
+            Query sexdq = em.createNativeQuery(sexdql.toString());
+            Query sexpq = em.createNativeQuery(sexpql.toString());
+            Query sexclq = em.createNativeQuery(sexclql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-            List<Object> res =  sq.getResultList();
-            if(null!=res&&res.size()>0){
-                for(Object obj : res){
-                    Map row = (Map)obj;
-                    CetStatistics cs = new CetStatistics();
-                    if(null!=row.get("type")){
-                        cs.setScoreType(row.get("type").toString());
+            oq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            cq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            pq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            clq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            goq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            gdq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            gpq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            gcq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            sexoq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            sexdq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            sexpq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            sexclq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            List<Object> res = sq.getResultList();
+            List<Object> ores = oq.getResultList();
+            List<Object> cres = cq.getResultList();
+            List<Object> pres = pq.getResultList();
+            List<Object> clres = clq.getResultList();
+            List<Object> gores = goq.getResultList();
+            List<Object> gdres = gdq.getResultList();
+            List<Object> gpres = gpq.getResultList();
+            List<Object> gcres = gcq.getResultList();
+            List<Object> sexores = sexoq.getResultList();
+            List<Object> sexdres = sexdq.getResultList();
+            List<Object> sexpres = sexpq.getResultList();
+            List<Object> sexclres = sexclq.getResultList();
+            if (null != res && res.size() > 0) {
+                for (Object obj : res) {
+                    Map row = (Map) obj;
+                    ScoreStatistics ss = new ScoreStatistics();
+                    ss.setStatisticsType("0");
+                    if (null != row.get("type")) {
+                        ss.setScoreType(row.get("type").toString());
                     }
-                    if(null!=row.get("orgId")){
-                        cs.setOrgId(Long.valueOf(row.get("orgId").toString()));
+                    if (null != row.get("orgId")) {
+                        ss.setOrgId(Long.valueOf(row.get("orgId").toString()));
                     }
-                    if(null!=row.get("date")){
-                        cs.setExamDate(new SimpleDateFormat("yyyy-MM-dd").parse(row.get("date").toString()));
+                    if (null != row.get("date")) {
+                        ss.setExamDate(new SimpleDateFormat("yyyy-MM-dd").parse(row.get("date").toString()));
                     }
-                    if(null!=row.get("collegeCode")){
-                        cs.setCollegeCode(row.get("collegeCode").toString());
+                    if (null != row.get("count")) {
+                        ss.setJoinNumber(Integer.valueOf(row.get("count").toString()));
                     }
-                    if(null!=row.get("professionCode")){
-                        cs.setProfessionCode(row.get("professionCode").toString());
+                    if (null != row.get("pass")) {
+                        ss.setPassNumber(Integer.valueOf(row.get("pass").toString()));
                     }
-                    if(null!=row.get("classCode")){
-                        cs.setClassCode(row.get("classCode").toString());
+                    if (null != row.get("avg")) {
+                        ss.setAvgScoure(Double.valueOf(row.get("avg").toString()));
                     }
-                    if(null!=row.get("grade")){
-                        cs.setGrade(row.get("grade").toString());
+                    if (null != row.get("max")) {
+                        ss.setMaxScore(Double.valueOf(row.get("max").toString()));
                     }
-                    if(null!=row.get("count")){
-                        cs.setJoinNumber(Integer.valueOf(row.get("count").toString()));
-                    }
-                    if(null!=row.get("avg")){
-                        cs.setAvgScoure(Double.valueOf(row.get("avg").toString()));
-                    }
-                    if(null!=row.get("max")){
-                        cs.setMaxScore(Double.valueOf(row.get("max").toString()));
-                    }
-                    if(null!=row.get("sex")){
-                        cs.setSex(row.get("sex").toString());
-                    }
-                    if(null!=row.get("pass")){
-                        cs.setPassNumber(Integer.valueOf(row.get("pass").toString()));
-                    }
-                    caList.add(cs);
+                    ssList.add(ss);
                 }
             }
-            if(caList.size()>0){
-                cetStatisticsService.save(caList);
+            if (null != ores && ores.size() > 0) {
+                for (Object obj : ores) {
+                    Map row = (Map) obj;
+                    ScoreStatistics ss = new ScoreStatistics();
+                    ss.setStatisticsType("000");
+                    if (null != row.get("type")) {
+                        ss.setScoreType(row.get("type").toString());
+                    }
+                    if (null != row.get("persion")) {
+                        ss.setParentCode(row.get("persion").toString());
+                    }
+                    if (null != row.get("orgId")) {
+                        ss.setOrgId(Long.valueOf(row.get("orgId").toString()));
+                    }
+                    if (null != row.get("date")) {
+                        ss.setExamDate(new SimpleDateFormat("yyyy-MM-dd").parse(row.get("date").toString()));
+                    }
+                    if (null != row.get("count")) {
+                        ss.setJoinNumber(Integer.valueOf(row.get("count").toString()));
+                    }
+                    if (null != row.get("pass")) {
+                        ss.setPassNumber(Integer.valueOf(row.get("pass").toString()));
+                    }
+                    if (null != row.get("avg")) {
+                        ss.setAvgScoure(Double.valueOf(row.get("avg").toString()));
+                    }
+                    if (null != row.get("max")) {
+                        ss.setMaxScore(Double.valueOf(row.get("max").toString()));
+                    }
+                    ssList.add(ss);
+                }
+            }
+            if (null != cres && cres.size() > 0) {
+                for (Object obj : cres) {
+                    Map row = (Map) obj;
+                    ScoreStatistics ss = new ScoreStatistics();
+                    ss.setStatisticsType("001");
+                    if (null != row.get("type")) {
+                        ss.setScoreType(row.get("type").toString());
+                    }
+                    if (null != row.get("persion")) {
+                        ss.setParentCode(row.get("persion").toString());
+                    }
+                    if (null != row.get("orgId")) {
+                        ss.setOrgId(Long.valueOf(row.get("orgId").toString()));
+                    }
+                    if (null != row.get("date")) {
+                        ss.setExamDate(new SimpleDateFormat("yyyy-MM-dd").parse(row.get("date").toString()));
+                    }
+                    if (null != row.get("name")) {
+                        ss.setCode(row.get("name").toString());
+                    }
+                    if (null != row.get("count")) {
+                        ss.setJoinNumber(Integer.valueOf(row.get("count").toString()));
+                    }
+                    if (null != row.get("pass")) {
+                        ss.setPassNumber(Integer.valueOf(row.get("pass").toString()));
+                    }
+                    if (null != row.get("avg")) {
+                        ss.setAvgScoure(Double.valueOf(row.get("avg").toString()));
+                    }
+                    if (null != row.get("max")) {
+                        ss.setMaxScore(Double.valueOf(row.get("max").toString()));
+                    }
+                    ssList.add(ss);
+                }
+            }
+            if (null != pres && pres.size() > 0) {
+                for (Object obj : pres) {
+                    Map row = (Map) obj;
+                    ScoreStatistics ss = new ScoreStatistics();
+                    ss.setStatisticsType("002");
+                    if (null != row.get("type")) {
+                        ss.setScoreType(row.get("type").toString());
+                    }
+                    if (null != row.get("persion")) {
+                        ss.setParentCode(row.get("persion").toString());
+                    }
+                    if (null != row.get("orgId")) {
+                        ss.setOrgId(Long.valueOf(row.get("orgId").toString()));
+                    }
+                    if (null != row.get("date")) {
+                        ss.setExamDate(new SimpleDateFormat("yyyy-MM-dd").parse(row.get("date").toString()));
+                    }
+                    if (null != row.get("name")) {
+                        ss.setCode(row.get("name").toString());
+                    }
+                    if (null != row.get("count")) {
+                        ss.setJoinNumber(Integer.valueOf(row.get("count").toString()));
+                    }
+                    if (null != row.get("pass")) {
+                        ss.setPassNumber(Integer.valueOf(row.get("pass").toString()));
+                    }
+                    if (null != row.get("avg")) {
+                        ss.setAvgScoure(Double.valueOf(row.get("avg").toString()));
+                    }
+                    if (null != row.get("max")) {
+                        ss.setMaxScore(Double.valueOf(row.get("max").toString()));
+                    }
+                    ssList.add(ss);
+                }
+            }
+            if (null != clres && clres.size() > 0) {
+                for (Object obj : clres) {
+                    Map row = (Map) obj;
+                    ScoreStatistics ss = new ScoreStatistics();
+                    ss.setStatisticsType("003");
+                    if (null != row.get("type")) {
+                        ss.setScoreType(row.get("type").toString());
+                    }
+                    if (null != row.get("persion")) {
+                        ss.setParentCode(row.get("persion").toString());
+                    }
+                    if (null != row.get("orgId")) {
+                        ss.setOrgId(Long.valueOf(row.get("orgId").toString()));
+                    }
+                    if (null != row.get("date")) {
+                        ss.setExamDate(new SimpleDateFormat("yyyy-MM-dd").parse(row.get("date").toString()));
+                    }
+                    if (null != row.get("name")) {
+                        ss.setCode(row.get("name").toString());
+                    }
+                    if (null != row.get("count")) {
+                        ss.setJoinNumber(Integer.valueOf(row.get("count").toString()));
+                    }
+                    if (null != row.get("pass")) {
+                        ss.setPassNumber(Integer.valueOf(row.get("pass").toString()));
+                    }
+                    if (null != row.get("avg")) {
+                        ss.setAvgScoure(Double.valueOf(row.get("avg").toString()));
+                    }
+                    if (null != row.get("max")) {
+                        ss.setMaxScore(Double.valueOf(row.get("max").toString()));
+                    }
+                    ssList.add(ss);
+                }
+            }
+            if (null != gores && gores.size() > 0) {
+                for (Object obj : gores) {
+                    Map row = (Map) obj;
+                    ScoreStatistics ss = new ScoreStatistics();
+                    ss.setStatisticsType("020");
+                    if (null != row.get("type")) {
+                        ss.setScoreType(row.get("type").toString());
+                    }
+                    if (null != row.get("persion")) {
+                        ss.setParentCode(row.get("persion").toString());
+                    }
+                    if (null != row.get("orgId")) {
+                        ss.setOrgId(Long.valueOf(row.get("orgId").toString()));
+                    }
+                    if (null != row.get("date")) {
+                        ss.setExamDate(new SimpleDateFormat("yyyy-MM-dd").parse(row.get("date").toString()));
+                    }
+                    if (null != row.get("name")) {
+                        ss.setCode(row.get("name").toString());
+                    }
+                    if (null != row.get("count")) {
+                        ss.setJoinNumber(Integer.valueOf(row.get("count").toString()));
+                    }
+                    if (null != row.get("pass")) {
+                        ss.setPassNumber(Integer.valueOf(row.get("pass").toString()));
+                    }
+                    if (null != row.get("avg")) {
+                        ss.setAvgScoure(Double.valueOf(row.get("avg").toString()));
+                    }
+                    if (null != row.get("max")) {
+                        ss.setMaxScore(Double.valueOf(row.get("max").toString()));
+                    }
+                    ssList.add(ss);
+                }
+            }
+            if (null != gdres && gdres.size() > 0) {
+                for (Object obj : gdres) {
+                    Map row = (Map) obj;
+                    ScoreStatistics ss = new ScoreStatistics();
+                    ss.setStatisticsType("021");
+                    if (null != row.get("type")) {
+                        ss.setScoreType(row.get("type").toString());
+                    }
+                    if (null != row.get("persion")) {
+                        ss.setParentCode(row.get("persion").toString());
+                    }
+                    if (null != row.get("orgId")) {
+                        ss.setOrgId(Long.valueOf(row.get("orgId").toString()));
+                    }
+                    if (null != row.get("date")) {
+                        ss.setExamDate(new SimpleDateFormat("yyyy-MM-dd").parse(row.get("date").toString()));
+                    }
+                    if (null != row.get("name")) {
+                        ss.setCode(row.get("name").toString());
+                    }
+                    if (null != row.get("grade")) {
+                        ss.setName(row.get("grade").toString());
+                    }
+                    if (null != row.get("count")) {
+                        ss.setJoinNumber(Integer.valueOf(row.get("count").toString()));
+                    }
+                    if (null != row.get("pass")) {
+                        ss.setPassNumber(Integer.valueOf(row.get("pass").toString()));
+                    }
+                    if (null != row.get("avg")) {
+                        ss.setAvgScoure(Double.valueOf(row.get("avg").toString()));
+                    }
+                    if (null != row.get("max")) {
+                        ss.setMaxScore(Double.valueOf(row.get("max").toString()));
+                    }
+                    ssList.add(ss);
+                }
+            }
+            if (null != gpres && gpres.size() > 0) {
+                for (Object obj : gpres) {
+                    Map row = (Map) obj;
+                    ScoreStatistics ss = new ScoreStatistics();
+                    ss.setStatisticsType("022");
+                    if (null != row.get("type")) {
+                        ss.setScoreType(row.get("type").toString());
+                    }
+                    if (null != row.get("persion")) {
+                        ss.setParentCode(row.get("persion").toString());
+                    }
+                    if (null != row.get("orgId")) {
+                        ss.setOrgId(Long.valueOf(row.get("orgId").toString()));
+                    }
+                    if (null != row.get("date")) {
+                        ss.setExamDate(new SimpleDateFormat("yyyy-MM-dd").parse(row.get("date").toString()));
+                    }
+                    if (null != row.get("name")) {
+                        ss.setCode(row.get("name").toString());
+                    }
+                    if (null != row.get("grade")) {
+                        ss.setName(row.get("grade").toString());
+                    }
+                    if (null != row.get("count")) {
+                        ss.setJoinNumber(Integer.valueOf(row.get("count").toString()));
+                    }
+                    if (null != row.get("pass")) {
+                        ss.setPassNumber(Integer.valueOf(row.get("pass").toString()));
+                    }
+                    if (null != row.get("avg")) {
+                        ss.setAvgScoure(Double.valueOf(row.get("avg").toString()));
+                    }
+                    if (null != row.get("max")) {
+                        ss.setMaxScore(Double.valueOf(row.get("max").toString()));
+                    }
+                    ssList.add(ss);
+                }
+            }
+            if (null != gcres && gcres.size() > 0) {
+                for (Object obj : gcres) {
+                    Map row = (Map) obj;
+                    ScoreStatistics ss = new ScoreStatistics();
+                    ss.setStatisticsType("023");
+                    if (null != row.get("type")) {
+                        ss.setScoreType(row.get("type").toString());
+                    }
+                    if (null != row.get("persion")) {
+                        ss.setParentCode(row.get("persion").toString());
+                    }
+                    if (null != row.get("orgId")) {
+                        ss.setOrgId(Long.valueOf(row.get("orgId").toString()));
+                    }
+                    if (null != row.get("date")) {
+                        ss.setExamDate(new SimpleDateFormat("yyyy-MM-dd").parse(row.get("date").toString()));
+                    }
+                    if (null != row.get("name")) {
+                        ss.setCode(row.get("name").toString());
+                    }
+                    if (null != row.get("grade")) {
+                        ss.setName(row.get("grade").toString());
+                    }
+                    if (null != row.get("count")) {
+                        ss.setJoinNumber(Integer.valueOf(row.get("count").toString()));
+                    }
+                    if (null != row.get("pass")) {
+                        ss.setPassNumber(Integer.valueOf(row.get("pass").toString()));
+                    }
+                    if (null != row.get("avg")) {
+                        ss.setAvgScoure(Double.valueOf(row.get("avg").toString()));
+                    }
+                    if (null != row.get("max")) {
+                        ss.setMaxScore(Double.valueOf(row.get("max").toString()));
+                    }
+                    ssList.add(ss);
+                }
+            }
+            if (null != sexores && sexores.size() > 0) {
+                for (Object obj : sexores) {
+                    Map row = (Map) obj;
+                    ScoreStatistics ss = new ScoreStatistics();
+                    ss.setStatisticsType("010");
+                    if (null != row.get("sex")) {
+                        ss.setName(row.get("sex").toString());
+                    }
+                    if (null != row.get("name")) {
+                        ss.setCode(row.get("name").toString());
+                    }
+                    if (null != row.get("type")) {
+                        ss.setScoreType(row.get("type").toString());
+                    }
+                    if (null != row.get("persion")) {
+                        ss.setParentCode(row.get("persion").toString());
+                    }
+                    if (null != row.get("orgId")) {
+                        ss.setOrgId(Long.valueOf(row.get("orgId").toString()));
+                    }
+                    if (null != row.get("date")) {
+                        ss.setExamDate(new SimpleDateFormat("yyyy-MM-dd").parse(row.get("date").toString()));
+                    }
+                    if (null != row.get("count")) {
+                        ss.setJoinNumber(Integer.valueOf(row.get("count").toString()));
+                    }
+                    if (null != row.get("pass")) {
+                        ss.setPassNumber(Integer.valueOf(row.get("pass").toString()));
+                    }
+                    if (null != row.get("avg")) {
+                        ss.setAvgScoure(Double.valueOf(row.get("avg").toString()));
+                    }
+                    if (null != row.get("max")) {
+                        ss.setMaxScore(Double.valueOf(row.get("max").toString()));
+                    }
+                    ssList.add(ss);
+                }
+            }
+            if (null != sexdres && sexdres.size() > 0) {
+                for (Object obj : sexdres) {
+                    Map row = (Map) obj;
+                    ScoreStatistics ss = new ScoreStatistics();
+                    ss.setStatisticsType("011");
+                    if (null != row.get("sex")) {
+                        ss.setName(row.get("sex").toString());
+                    }
+                    if (null != row.get("type")) {
+                        ss.setScoreType(row.get("type").toString());
+                    }
+                    if (null != row.get("persion")) {
+                        ss.setParentCode(row.get("persion").toString());
+                    }
+                    if (null != row.get("orgId")) {
+                        ss.setOrgId(Long.valueOf(row.get("orgId").toString()));
+                    }
+                    if (null != row.get("date")) {
+                        ss.setExamDate(new SimpleDateFormat("yyyy-MM-dd").parse(row.get("date").toString()));
+                    }
+                    if (null != row.get("name")) {
+                        ss.setCode(row.get("name").toString());
+                    }
+                    if (null != row.get("count")) {
+                        ss.setJoinNumber(Integer.valueOf(row.get("count").toString()));
+                    }
+                    if (null != row.get("pass")) {
+                        ss.setPassNumber(Integer.valueOf(row.get("pass").toString()));
+                    }
+                    if (null != row.get("avg")) {
+                        ss.setAvgScoure(Double.valueOf(row.get("avg").toString()));
+                    }
+                    if (null != row.get("max")) {
+                        ss.setMaxScore(Double.valueOf(row.get("max").toString()));
+                    }
+                    ssList.add(ss);
+                }
+            }
+            if (null != sexpres && sexpres.size() > 0) {
+                for (Object obj : sexpres) {
+                    Map row = (Map) obj;
+                    ScoreStatistics ss = new ScoreStatistics();
+                    ss.setStatisticsType("012");
+                    if (null != row.get("sex")) {
+                        ss.setName(row.get("sex").toString());
+                    }
+                    if (null != row.get("type")) {
+                        ss.setScoreType(row.get("type").toString());
+                    }
+                    if (null != row.get("persion")) {
+                        ss.setParentCode(row.get("persion").toString());
+                    }
+                    if (null != row.get("orgId")) {
+                        ss.setOrgId(Long.valueOf(row.get("orgId").toString()));
+                    }
+                    if (null != row.get("date")) {
+                        ss.setExamDate(new SimpleDateFormat("yyyy-MM-dd").parse(row.get("date").toString()));
+                    }
+                    if (null != row.get("name")) {
+                        ss.setCode(row.get("name").toString());
+                    }
+                    if (null != row.get("count")) {
+                        ss.setJoinNumber(Integer.valueOf(row.get("count").toString()));
+                    }
+                    if (null != row.get("pass")) {
+                        ss.setPassNumber(Integer.valueOf(row.get("pass").toString()));
+                    }
+                    if (null != row.get("avg")) {
+                        ss.setAvgScoure(Double.valueOf(row.get("avg").toString()));
+                    }
+                    if (null != row.get("max")) {
+                        ss.setMaxScore(Double.valueOf(row.get("max").toString()));
+                    }
+                    ssList.add(ss);
+                }
+            }
+            if (null != sexclres && sexclres.size() > 0) {
+                for (Object obj : sexclres) {
+                    Map row = (Map) obj;
+                    ScoreStatistics ss = new ScoreStatistics();
+                    ss.setStatisticsType("013");
+                    if (null != row.get("sex")) {
+                        ss.setName(row.get("sex").toString());
+                    }
+                    if (null != row.get("type")) {
+                        ss.setScoreType(row.get("type").toString());
+                    }
+                    if (null != row.get("persion")) {
+                        ss.setParentCode(row.get("persion").toString());
+                    }
+                    if (null != row.get("orgId")) {
+                        ss.setOrgId(Long.valueOf(row.get("orgId").toString()));
+                    }
+                    if (null != row.get("date")) {
+                        ss.setExamDate(new SimpleDateFormat("yyyy-MM-dd").parse(row.get("date").toString()));
+                    }
+                    if (null != row.get("name")) {
+                        ss.setCode(row.get("name").toString());
+                    }
+                    if (null != row.get("count")) {
+                        ss.setJoinNumber(Integer.valueOf(row.get("count").toString()));
+                    }
+                    if (null != row.get("pass")) {
+                        ss.setPassNumber(Integer.valueOf(row.get("pass").toString()));
+                    }
+                    if (null != row.get("avg")) {
+                        ss.setAvgScoure(Double.valueOf(row.get("avg").toString()));
+                    }
+                    if (null != row.get("max")) {
+                        ss.setMaxScore(Double.valueOf(row.get("max").toString()));
+                    }
+                    ssList.add(ss);
+                }
+            }
+            if (ssList.size() > 0) {
+                scoreStatisticsService.save(ssList);
+                logger.info(ssList.size()+"数据长度@@@@@@@@@@@@@@@@@");
             }
 
         } catch (Exception e) {
@@ -272,9 +949,6 @@ public class CetStatisticsAnalysisJob {
         }
         logger.info("统计英语cet成绩成功!");
     }
-
-
-
 
 
 }
