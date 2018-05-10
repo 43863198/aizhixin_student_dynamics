@@ -311,6 +311,52 @@ public class CetStatisticAnalysisController {
         return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.getTop(orgId, teacherYear, semester, cetType), HttpStatus.OK);
     }
 
+    /**
+     * 英语考试当前状况---数据统计
+     * @param orgId
+     * @param cetType
+     * @param collegeNumber
+     * @param professionNumber
+     * @param classNumber
+     * @return
+     */
+
+    @GetMapping(value = "/currentstatistics", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "英语考试当前状况---数据统计", response = Void.class, notes = "英语考试当前状况---数据统计<br><br><b>@author jianwei.wu</b>")
+    public ResponseEntity<Map<String, Object>> currentStatistics(
+            @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "cetType 成绩类型： (四级;六级;)" , required = true ) @RequestParam(value = "cetType" , required = true) String cetType,
+            @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
+            @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
+            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber
+    ) {
+        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.currentStatistics(orgId, collegeNumber, professionNumber, classNumber, cetType), HttpStatus.OK);
+    }
+    /**
+     * 英语考试当前状况---人数分布---按行政班
+     * @param orgId
+     * @param cetType
+     * @param collegeNumber
+     * @param professionNumber
+     * @param classNumber
+     * @return
+     */
+
+    @GetMapping(value = "/organizationstatistics", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "英语考试当前状况---人数分布---按行政班", response = Void.class, notes = "英语考试当前状况---人数分布---按行政班<br><br><b>@author jianwei.wu</b>")
+    public ResponseEntity<Map<String, Object>> organizationStatistics(
+            @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "cetType 成绩类型： (四级;六级;)" , required = true ) @RequestParam(value = "cetType" , required = true) String cetType,
+            @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
+            @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
+            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber
+    ) {
+        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.organizationStatistics(orgId, collegeNumber, professionNumber, classNumber, cetType), HttpStatus.OK);
+    }
+
+
+
+
 
 
 
