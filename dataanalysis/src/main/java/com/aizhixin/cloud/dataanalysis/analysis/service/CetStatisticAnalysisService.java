@@ -518,7 +518,7 @@ public class CetStatisticAnalysisService {
             }
             if (!StringUtils.isBlank(cetType)) {
                 sql.append(" and ss.SCORE_TYPE LIKE :cetType");
-                condition.put("cetType", "%大学英" + cetType + "%");
+                condition.put("cetType", "%大学英语" + cetType + "%");
             }
             if (!StringUtils.isBlank(collegeCode)) {
                 if (!StringUtils.isBlank(professionCode)) {
@@ -615,7 +615,7 @@ public class CetStatisticAnalysisService {
             }
             if (!StringUtils.isBlank(cetType)) {
                 ql.append(" and ss.SCORE_TYPE LIKE :cetType");
-                condition.put("cetType", "%大学英" + cetType + "%");
+                condition.put("cetType", "%大学英语" + cetType + "%");
             }
             StringBuilder sql = new StringBuilder("");
             if (!StringUtils.isBlank(collegeCode)) {
@@ -710,7 +710,7 @@ public class CetStatisticAnalysisService {
             }
             if (!StringUtils.isBlank(cetType)) {
                 ql.append(" and ss.SCORE_TYPE LIKE :cetType");
-                condition.put("cetType", "%大学英" + cetType + "%");
+                condition.put("cetType", "%大学英语" + cetType + "%");
             }
             StringBuilder sql = new StringBuilder("");
             if (!StringUtils.isBlank(collegeCode)) {
@@ -808,7 +808,7 @@ public class CetStatisticAnalysisService {
             }
             if (!StringUtils.isBlank(cetType)) {
                 ql.append(" and ss.SCORE_TYPE LIKE :cetType");
-                condition.put("cetType", "%大学英" + cetType + "%");
+                condition.put("cetType", "%大学英语" + cetType + "%");
             }
             if (!StringUtils.isBlank(grade)) {
                 ql.append(" and ss.GRADE LIKE :grade");
@@ -914,7 +914,7 @@ public class CetStatisticAnalysisService {
             }
             if (!StringUtils.isBlank(cetType)) {
                 ql.append(" and ss.SCORE_TYPE LIKE :cetType");
-                condition.put("cetType", "%大学英" + cetType + "%");
+                condition.put("cetType", "%大学英语" + cetType + "%");
             }
 
             StringBuilder sql = new StringBuilder("");
@@ -1012,7 +1012,7 @@ public class CetStatisticAnalysisService {
             }
             if (!StringUtils.isBlank(cetType)) {
                 ql.append(" and ss.SCORE_TYPE LIKE :cetType");
-                condition.put("cetType", "%大学英" + cetType + "%");
+                condition.put("cetType", "%大学英语" + cetType + "%");
             }
             if (!StringUtils.isBlank(grade)) {
                 ql.append(" and ss.GRADE LIKE :grade");
@@ -1117,7 +1117,7 @@ public class CetStatisticAnalysisService {
             }
             if (!StringUtils.isBlank(cetType)) {
                 ql.append(" and ss.SCORE_TYPE LIKE :cetType");
-                condition.put("cetType", "%大学英" + cetType + "%");
+                condition.put("cetType", "%大学英语" + cetType + "%");
             }
             StringBuilder sql = new StringBuilder("");
             if (!StringUtils.isBlank(collegeCode)) {
