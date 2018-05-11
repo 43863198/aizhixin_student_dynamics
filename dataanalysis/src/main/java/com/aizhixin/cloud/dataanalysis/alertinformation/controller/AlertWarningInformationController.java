@@ -231,7 +231,7 @@ public class AlertWarningInformationController {
     @ApiOperation(httpMethod = "POST", value = "辅导员按条件分页查询预警信息", response = Void.class, notes = "辅导员按条件分页查询预警信息<br><br><b>@author hsh</b>")
     public ResponseEntity<Map<String, Object>> getTeacherAlertPage(
             @ApiParam(value = "<b>必填:、</b><br>orgId:机构id<br>" +
-                    "<br>userId:用户id<br>" +
+                    "<br>userId:用户id11<br>" +
                     "<br>teacherYear:学年<br>" +
                     "<br>semester:学期<br>" +
                     "<b>选填:、</b><br>collogeIds:学院id(字符串多个以,分隔);warningTypes:预警类型(字符串多个以,分隔);warningLevels:预警等级(字符串多个以,分隔);") @RequestBody AlertInforQueryTeacherDomain domain) {
@@ -243,12 +243,13 @@ public class AlertWarningInformationController {
     @RequestMapping(value = "/student/alertpage", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "学生按条件分页查询预警信息", response = Void.class, notes = "学生按条件分页查询预警信息<br><br><b>@author hsh</b>")
     public ResponseEntity<Map<String, Object>> getStudentAlertPage(
-            @ApiParam(value = "机构id") @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "学号") @RequestParam(value = "jobNum", required = true) String jobNum,
+            @ApiParam(value = "机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "userId") @RequestParam(value = "userId", required = false) Long userId,
+            @ApiParam(value = "学号") @RequestParam(value = "jobNum", required = false) String jobNum,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         Map<String, Object> result = new HashMap<String, Object>();
-        result.put(ApiReturnConstants.DATA, alertWarningInforService.getStuAlertInforPage(orgId, jobNum, pageNumber, pageSize));
+        result.put(ApiReturnConstants.DATA, alertWarningInforService.getStuAlertInforPage(orgId, userId, jobNum, pageNumber, pageSize));
         return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
     }
 
