@@ -37,13 +37,13 @@ public class FigurePortraitController {
      */
     @GetMapping(value = "/avg", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "学生画像---学生列表", response = Void.class, notes = "学生画像---学生列表<br><br><b>@author jianwei.wu</b>")
-    public ResponseEntity<Map<String, Object>> getStudentList(
+    public ResponseEntity<Map<String, Object>> getStudentFigurePortrait(
             @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
             @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
             @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber
     ) {
-        return new ResponseEntity<Map<String, Object>>(figurePortraitService.getStudentList(orgId, collegeNumber, professionNumber, classNumber), HttpStatus.OK);
+        return new ResponseEntity<Map<String, Object>>(figurePortraitService.getStudentFigurePortrait(orgId, collegeNumber, professionNumber, classNumber), HttpStatus.OK);
     }
 
 

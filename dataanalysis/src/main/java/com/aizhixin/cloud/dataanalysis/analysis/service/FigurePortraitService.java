@@ -1,5 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.analysis.service;
 
+import com.aizhixin.cloud.dataanalysis.analysis.vo.StudentFigurePortraitVO;
 import com.aizhixin.cloud.dataanalysis.analysis.vo.StudentInfoVO;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +17,10 @@ import java.util.Map;
 @Service
 public class FigurePortraitService {
 
-    public Map<String, Object> getStudentList(Long orgId,String collegeNumber,String professionNumber,String classNumber){
+    public Map<String, Object> getStudentFigurePortrait(Long orgId,String collegeNumber,String professionNumber,String classNumber){
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> condition = new HashMap<>();
-        List<StudentInfoVO> sList = new ArrayList<>();
+        StudentFigurePortraitVO studentFigurePortrait = new StudentFigurePortraitVO();
         try {
 
 
@@ -27,7 +28,7 @@ public class FigurePortraitService {
 
 
             result.put("success", true);
-            result.put("data", sList);
+            result.put("data", studentFigurePortrait);
             return result;
         } catch (Exception e) {
             result.put("success", false);

@@ -34,6 +34,11 @@ public class StudentInfoVO {
     private String Nation;
     @ApiModelProperty(value = "籍贯")
     private String politicalOutlook;
+    @ApiModelProperty(value = "入学日期")
+    private String enrollmentDate;
+    @ApiModelProperty(value = "毕业日期")
+    private String graduationDate;
+
 
 
 
