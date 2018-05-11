@@ -16,6 +16,7 @@ import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
+import com.aizhixin.cloud.dataanalysis.feign.OrgManagerFeignService;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmRule;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmRuleService;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
@@ -58,6 +59,8 @@ public class AlertWarningInformationService {
     private AttachmentInfomationService attachmentInfomationService;
     @Autowired
     private WarningTypeService warningTypeService;
+    @Autowired
+    private OrgManagerFeignService orgManagerFeignService;
 
     /**
      * 修改预警状态按预警等级和机构id
@@ -656,15 +659,32 @@ public class AlertWarningInformationService {
 
     /**
      * 学生预警 组装按条件查询的预警信息和按预警等级统计的数量
-     *
      * @param orgId
+     * @param userId
      * @param jobNum
      * @param pageNumber
      * @param pageSize
      * @return
      */
-    public Map<String, Object> getStuAlertInforPage(Long orgId, String jobNum, Integer pageNumber, Integer pageSize) {
-
+    public Map<String, Object> getStuAlertInforPage(Long orgId, Long userId, String jobNum, Integer pageNumber, Integer pageSize) {
+        if (StringUtils.isEmpty(jobNum)) {
+            if (userId == null || userId < 1) {
+                Map<String, Object> result = new HashMap<>();
+                result.put("success", false);
+                result.put("message", "userId不能为空!");
+                return result;
+            } else {
+                Map user = orgManagerFeignService.getUser(userId);
+                if (user != null && user.get("jobNumber") != null) {
+                    jobNum = user.get("jobNumber").toString();
+                } else {
+                    Map<String, Object> result = new HashMap<>();
+                    result.put("success", false);
+                    result.put("message", "userId不能为空!");
+                    return result;
+                }
+            }
+        }
         Map<String, Object> pageInfor = this.queryStuAlertInforPage(orgId, jobNum, pageNumber, pageSize);
         List<RegisterAlertCountDomain> countList = this.alertStuCountInfor(orgId, jobNum);
         LevelAlertCountDomain countDomain = new LevelAlertCountDomain();
