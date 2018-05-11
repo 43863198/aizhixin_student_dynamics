@@ -38,6 +38,7 @@ public class CetScoreJdbc {
         SortDTO dto = new SortDTO();
         dto.setKey("EXAMINATION_DATE");
         dto.setAsc(false);
+        sort.add(dto);
         return pageJdbcUtil.getPageInfor2(pageSize, pageNumber, rowMapper, sort, querySql, countSql);
     }
 }
