@@ -73,8 +73,7 @@ public class PageJdbcUtil {
         if (offset == null || offset <= 0) {
             offset = PaginationCore.DEFAULT_OFFSET;
         }
-        Long totalCount = jdbcTemplate.queryForObject(
-                countSql, Long.class);
+        Long totalCount = jdbcTemplate.queryForObject(countSql, Long.class);
         String orderBy = "";
         // sort不为空时按页面输入排序操作
         if (sort != null) {
@@ -82,13 +81,12 @@ public class PageJdbcUtil {
         }
         querySql = querySql + orderBy;
         int start = (offset - 1) * pageSize;
-        querySql += " limit " + start + " , " + pageSize;
+        querySql += " limit " + start + ", " + pageSize;
         log.debug("find page = {} " + querySql);
         List<T> data = jdbcTemplate.query(querySql, rowMapper);
         log.debug("data size : {} ", data.size());
 
-        int pageCount = totalCount == 0 ? 1 : (int) Math
-                .ceil((double) totalCount / (double) pageSize);
+        int pageCount = totalCount == 0 ? 1 : (int) Math.ceil((double) totalCount / (double) pageSize);
         PageDomain p = new PageDomain();
         p.setPageNumber(offset);
         p.setPageSize(pageSize);
@@ -101,23 +99,25 @@ public class PageJdbcUtil {
     }
 
     private String getOrderByStatement(List<SortDTO> sorts) {
-        if (sorts == null)
+        if (sorts == null) {
             return "";
-
-        else {
+        } else {
             String s = "";
             log.debug("sorts size : {} ", sorts.size());
             for (int i = 0; i < sorts.size(); i++) {
                 SortDTO sdto = sorts.get(i);
-                if (sdto.getAsc())
+                if (sdto.getAsc()) {
                     s += sdto.getKey() + " ASC";
-                else
+                } else {
                     s += sdto.getKey() + " DESC";
-                if (i < sorts.size() - 1)
+                }
+                if (i < sorts.size() - 1) {
                     s += " , ";
+                }
             }
-            if (!StringUtils.isEmpty(s))
+            if (!StringUtils.isEmpty(s)) {
                 s = " ORDER BY " + s;
+            }
             return s;
         }
     }
