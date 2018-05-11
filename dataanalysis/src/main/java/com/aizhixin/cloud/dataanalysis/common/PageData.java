@@ -20,4 +20,8 @@ public class PageData<T> {
     @Getter @Setter private PageDomain page = new PageDomain();
     @ApiModelProperty(value = "数据内容")
     @Getter @Setter private List<T> data = new ArrayList<>();
+    @ApiModelProperty(value = "success")
+    @Getter @Setter private Boolean success = Boolean.TRUE;
+    @ApiModelProperty(value = "错误信息")
+    @Getter @Setter private String message;
 }
