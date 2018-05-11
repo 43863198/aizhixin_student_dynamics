@@ -680,7 +680,7 @@ public class AlertWarningInformationService {
                 } else {
                     Map<String, Object> result = new HashMap<>();
                     result.put("success", false);
-                    result.put("message", "userId不能为空!");
+                    result.put("message", "无用户信息!");
                     return result;
                 }
             }
