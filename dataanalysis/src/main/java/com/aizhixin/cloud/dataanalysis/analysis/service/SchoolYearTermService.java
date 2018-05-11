@@ -106,7 +106,7 @@ public class SchoolYearTermService {
             if (null != orgId) {
                 sql.append(" AND ORG_ID = " + orgId + "");
             }
-            sql.append(" ORDER BY TEACHER_YEAR DESC");
+            sql.append(" ORDER BY TEACHER_YEAR DESC, SEMESTER DESC");
             Query sq = em.createNativeQuery(sql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             List<Object> res = sq.getResultList();
