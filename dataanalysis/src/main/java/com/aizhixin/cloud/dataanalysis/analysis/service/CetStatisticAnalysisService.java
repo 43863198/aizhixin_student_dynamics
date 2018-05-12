@@ -1473,8 +1473,6 @@ public class CetStatisticAnalysisService {
         }
     }
 
-
-<<<<<<< HEAD
     public PageData<CetDetailVO> getDetailList(Long orgId,String collegeCode,String professionCode,String classCode,String cetType,String nj,String teacherYear,String semester,String isPass,Integer pageNumber, Integer pageSize) {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> condition = new HashMap<>();
@@ -1606,7 +1604,6 @@ public class CetStatisticAnalysisService {
 
 
 
-=======
     public  Map<String,Object>  avg(Long orgId,String collegeCode,String professionCode,String classCode, String cetType){
         Map<String,Object> result=new HashMap<>();
         AvgInfoDomain avgInfoDomain=new AvgInfoDomain();
@@ -1618,7 +1615,7 @@ public class CetStatisticAnalysisService {
         result.put("success", true);
         return result;
     }
->>>>>>> 46ff27af3818b011c10d74a09b95ffe4ba848c7b
+
 
 
     public  Map<String,CetSexStatisticalInfoDomain>  sexTotal(Long orgId,String collegeCode,String professionCode,String classCode, String cetType){
