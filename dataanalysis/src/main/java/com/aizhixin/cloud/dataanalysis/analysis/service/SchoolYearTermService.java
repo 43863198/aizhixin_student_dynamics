@@ -137,7 +137,7 @@ public class SchoolYearTermService {
         List<TeacherYearSemesterDTO> tysList = new ArrayList<>();
         Map<String, Object> condition = new HashMap<>();
         try {
-            StringBuilder sql = new StringBuilder("SELECT  TEACHER_YEAR as teacherYear, SEMESTER as semester, START_TIME as startTime, WEEK as week FROM t_school_calendar WHERE 1=1");
+            StringBuilder sql = new StringBuilder("SELECT  TEACHER_YEAR as teacherYear, SEMESTER as semester, START_TIME as startTime, WEEK as week, END_TIME as endTime FROM t_school_calendar WHERE 1=1");
             if (null != orgId) {
                 sql.append(" and ORG_ID = :orgId");
                 condition.put("orgId", orgId);
@@ -165,9 +165,12 @@ public class SchoolYearTermService {
                         tys.setSemester(row.get("semester").toString());
                         if(null!=row.get("startTime")){
                             tys.setStartTime(row.get("startTime").toString());
-                            if(null!=row.get("week")){
-                                tys.setWeek(Integer.valueOf(row.get("week").toString()));
-                            }
+                        }
+                        if(null!=row.get("week")){
+                            tys.setWeek(Integer.valueOf(row.get("week").toString()));
+                        }
+                        if(null!=row.get("endTime")){
+                            tys.setEndTime(row.get("endTime").toString());
                         }
                     }
                     tysList.add(tys);

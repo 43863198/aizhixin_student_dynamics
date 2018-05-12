@@ -13,4 +13,5 @@ public class TeacherYearSemesterDTO {
     private String semester;
     private String startTime;
     private int week;
+    private String endTime;
 }

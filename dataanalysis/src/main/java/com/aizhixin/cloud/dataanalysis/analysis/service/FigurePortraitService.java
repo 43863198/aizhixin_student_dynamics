@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.awt.print.Pageable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -191,6 +190,7 @@ public class FigurePortraitService {
             }
             sfp.setScoreDetail(scoreList);
             //成绩统计
+            CourseScoreVO csVO = new CourseScoreVO();
             StringBuilder scoreStaticql = new StringBuilder("SELECT sum(If(FSLKSCJ >= 60,1,0)) as pass, count(1) as total " +
                     "FROM t_xscjxx WHERE 1 = 1 AND XH = :jobNumber");
             Query scoreStaticq = em.createNativeQuery(scoreStaticql.toString());
@@ -199,7 +199,6 @@ public class FigurePortraitService {
             Object ssData = scoreStaticq.getSingleResult();
             if(null!=ssData) {
                 Map ssrow = (Map) ssData;
-                CourseScoreVO csVO = new CourseScoreVO();
                 if (null != ssrow.get("total")) {
                     csVO.setCourseTotalNumber(Integer.valueOf(ssrow.get("total").toString()));
                 }
@@ -217,6 +216,7 @@ public class FigurePortraitService {
                     csVO.setGAP(new DecimalFormat("0.00").format((double) xj / xf));
                 }
             }
+            sfp.setCourseScore(csVO);
             //等级考试
             StringBuilder cetql = new StringBuilder("SELECT TYPE as type, max(SCORE) as max, EXAMINATION_DATE as date " +
                     "FROM t_cet_score WHERE 1 = 1 AND JOB_NUMBER = :jobNumber GROUP BY TYPE");

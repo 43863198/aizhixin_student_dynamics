@@ -10,6 +10,7 @@ import com.aizhixin.cloud.dataanalysis.analysis.respository.CetScoreStatisticsRe
 import com.aizhixin.cloud.dataanalysis.analysis.vo.*;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
+import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 
@@ -1450,6 +1451,137 @@ public class CetStatisticAnalysisService {
             return result;
         }
     }
+
+
+    public PageData<CetDetailVO> getDetailList(Long orgId,String collegeCode,String professionCode,String classCode,String cetType,String nj,String teacherYear,String semester,String isPass,Integer pageNumber, Integer pageSize) {
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> condition = new HashMap<>();
+        PageData<CetDetailVO> p = new PageData<>();
+        List<CetDetailVO> sList = new ArrayList<>();
+        try {
+            Date start = null;
+            Date end = null;
+            StringBuilder sql = new StringBuilder("SELECT cs.JOB_NUMBER as xh,x.XM as xm,x.BJMC as bj,x.ZYMC as zy,x.YXSMC xy,x.NJ nj,cs.EXAMINATION_DATE as date,cs.SCORE as score " +
+                    "FROM t_xsjbxx x LEFT JOIN t_cet_score cs ON x.XH = cs.JOB_NUMBER WHERE 1=1 AND cs.JOB_NUMBER IS NOT NULL ");
+            StringBuilder cql = new StringBuilder("SELECT count(1) " +
+                    "FROM t_xsjbxx x LEFT JOIN t_cet_score cs ON x.XH = cs.JOB_NUMBER WHERE 1=1 AND cs.JOB_NUMBER IS NOT NULL ");
+            if (null != orgId) {
+                sql.append(" and cs.ORG_ID = :orgId");
+                cql.append(" and cs.ORG_ID = :orgId");
+                condition.put("orgId", orgId);
+            }
+            if (!StringUtils.isBlank(cetType)) {
+                sql.append(" and cs.TYPE LIKE :cetType");
+                cql.append(" and cs.TYPE LIKE :cetType");
+                condition.put("cetType", "%大学英语" + cetType + "%");
+            }
+            if (!StringUtils.isBlank(collegeCode)) {
+                sql.append(" and YXSH = :collegeCode");
+                cql.append(" and YXSH = :collegeCode");
+                condition.put("collegeCode", collegeCode);
+            }
+            if (!StringUtils.isBlank(professionCode)) {
+                sql.append(" and ZYH = :professionCode");
+                cql.append(" and ZYH = :professionCode");
+                condition.put("professionCode", professionCode);
+            }
+            if (!StringUtils.isBlank(classCode)) {
+                sql.append(" and BH = :classCode");
+                cql.append(" and BH = :classCode");
+                condition.put("classCode", classCode);
+            }
+            if (!StringUtils.isBlank(teacherYear)&&!StringUtils.isBlank(semester)) {
+                Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, teacherYear, semester);
+                if (null != schoolCalendar) {
+                    if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
+                        List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
+                        if (tysList.size() > 0) {
+                            start = sdf.parse(tysList.get(0).getStartTime());
+                            end = sdf.parse(tysList.get(0).getEndTime());
+                        }
+                    }
+                }
+            }
+            if(null!=start&&null!=end){
+                sql.append(" and cs.EXAMINATION_DATE BETWEEN :start AND :end");
+                cql.append(" and cs.EXAMINATION_DATE BETWEEN :start AND :end");
+                condition.put("start", start);
+                condition.put("end", end);
+            }
+
+            if(null!=isPass&&isPass.equals("1")){
+                sql.append(" and cs.SCORE >= 425");
+                cql.append(" and cs.SCORE >= 425");
+            }else {
+                if (null!=isPass&&isPass.equals("0")) {
+                    sql.append(" and cs.SCORE <= 425");
+                    cql.append(" and cs.SCORE <= 425");
+                } else {
+                    sql.append(" and cs.SCORE >= 0");
+                    cql.append(" and cs.SCORE >= 0");
+                }
+            }
+            Query sq = em.createNativeQuery(sql.toString());
+            Query cq = em.createNativeQuery(cql.toString());
+            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            for (Map.Entry<String, Object> e : condition.entrySet()) {
+                sq.setParameter(e.getKey(), e.getValue());
+                cq.setParameter(e.getKey(), e.getValue());
+            }
+            Long count = Long.parseLong(cq.getSingleResult() + "");
+            if (null == pageNumber || pageNumber < 1) {
+                pageNumber = 1;
+            }
+            if (null == pageSize) {
+                pageSize = 20;
+            }
+            sq.setFirstResult((pageNumber - 1) * pageSize);
+            sq.setMaxResults(pageSize);
+            List<Object> res = sq.getResultList();
+            for (Object obj : res) {
+                Map row = (Map) obj;
+                CetDetailVO s = new CetDetailVO();
+                if (null != row.get("xh")) {
+                    s.setJobNumber(row.get("xh").toString());
+                }
+                if (null != row.get("xm")) {
+                    s.setName(row.get("xm").toString());
+                }
+                if (null != row.get("xy")) {
+                    s.setCollegeName(row.get("xy").toString());
+                }
+                if (null != row.get("zy")) {
+                    s.setProfessionName(row.get("zy").toString());
+                }
+                if (null != row.get("bj")) {
+                    s.setClassName(row.get("bj").toString());
+                }
+                if (null != row.get("nj")) {
+                    s.setGrade(row.get("nj").toString());
+                }
+                if (null != row.get("score")) {
+                    s.setScore(Math.round(Float.valueOf(row.get("score").toString())) + "");
+                }
+                if (null != row.get("date")) {
+                    s.setDate(row.get("date").toString());
+                }
+
+                sList.add(s);
+            }
+            p.setData(sList);
+            p.getPage().setPageNumber(pageNumber);
+            p.getPage().setPageSize(pageSize);
+            p.getPage().setTotalElements(count);
+            p.getPage().setTotalPages(PageUtil.cacalatePagesize(count, p.getPage().getPageSize()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return p;
+        }
+        return p;
+    }
+
+
+
 
 
 
