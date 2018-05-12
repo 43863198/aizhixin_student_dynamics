@@ -1,11 +1,14 @@
 package com.aizhixin.cloud.dataanalysis.analysis.service;
 
+import com.aizhixin.cloud.dataanalysis.analysis.domain.*;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.CetStatisticDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.CetTrendDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.CollegeCetStatisticDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.TeacherYearSemesterDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.CetScoreStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.ScoreTop;
+import com.aizhixin.cloud.dataanalysis.analysis.jdbcTemp.CetAvgStatisticalJdbc;
+import com.aizhixin.cloud.dataanalysis.analysis.jdbcTemp.CetSexStatisticalJdbc;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.CetScoreStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.vo.*;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
@@ -52,6 +55,10 @@ public class CetStatisticAnalysisService {
     private CetScoreStatisticsRespository cetScoreStatisticsRespository;
     @Autowired
     private SchoolYearTermService schoolYearTermService;
+    @Autowired
+    private CetSexStatisticalJdbc cetSexStatisticalJdbc;
+    @Autowired
+    private CetAvgStatisticalJdbc cetAvgStatisticalJdbc;
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -1428,21 +1435,35 @@ public class CetStatisticAnalysisService {
             if (null != res) {
                 for (Object row : res) {
                     Map d = (Map) row;
-                    CetScoreNumberOfPeopleVO csnp = new CetScoreNumberOfPeopleVO();
                     if (null != d.get("name")) {
+                        CetScoreNumberOfPeopleVO csnp = new CetScoreNumberOfPeopleVO();
                         csnp.setName(d.get("name").toString());
+                        if (null != d.get("total")) {
+                            csnp.setJoinNumber(Integer.valueOf(d.get("total").toString()));
+                        }
+                        if (null != d.get("pass")) {
+                            csnp.setPassNumber(Integer.valueOf(d.get("pass").toString()));
+                        }
+                        csnpList.add(csnp);
                     }
-                    if (null != d.get("total")) {
-                        csnp.setJoinNumber(Integer.valueOf(d.get("total").toString()));
-                    }
-                    if (null != d.get("pass")) {
-                        csnp.setPassNumber(Integer.valueOf(d.get("pass").toString()));
-                    }
-                    csnpList.add(csnp);
                 }
             }
             result.put("success", true);
-            result.put("data", csnpList);
+//            StatisticalDomain sd=new StatisticalDomain();
+            TotalInfoDomain totalInfoDomain=new TotalInfoDomain();
+            totalInfoDomain.setCsnpList(csnpList);
+            totalInfoDomain.setMapSex(sexTotal(orgId,collegeCode,professionCode,classCode,cetType));
+            totalInfoDomain.setAgeSexStatisticalInfoDomains(ageTotal(orgId,collegeCode,professionCode,classCode,cetType));
+            totalInfoDomain.setNjStatisticalInfoDomains(njTotal(orgId,collegeCode,professionCode,classCode,cetType));
+            totalInfoDomain.setScoreScaleDomains(scoreScaleTotal(orgId,collegeCode,professionCode,classCode,cetType));
+//            sd.setTotalInfoDomain(totalInfoDomain);
+//            AvgInfoDomain avgInfoDomain=new AvgInfoDomain();
+//            avgInfoDomain.setAvgDomains(avgInfo(orgId,collegeCode,professionCode,classCode,cetType));
+//            avgInfoDomain.setAvgAgeDomains(avgAvgInfo(orgId,collegeCode,professionCode,classCode,cetType));
+//            avgInfoDomain.setAvgSexDomains(avgSexInfo(orgId,collegeCode,professionCode,classCode,cetType));
+//            avgInfoDomain.setAvgNjDomains(avgNjInfo(orgId,collegeCode,professionCode,classCode,cetType));
+//            sd.setAvgInfoDomain(avgInfoDomain);
+            result.put("data", totalInfoDomain);
             return result;
         } catch (Exception e) {
             result.put("success", false);
@@ -1452,10 +1473,138 @@ public class CetStatisticAnalysisService {
     }
 
 
+    public  Map<String,Object>  avg(Long orgId,String collegeCode,String professionCode,String classCode, String cetType){
+        Map<String,Object> result=new HashMap<>();
+        AvgInfoDomain avgInfoDomain=new AvgInfoDomain();
+        avgInfoDomain.setAvgDomains(avgInfo(orgId,collegeCode,professionCode,classCode,cetType));
+        avgInfoDomain.setAvgAgeDomains(avgAvgInfo(orgId,collegeCode,professionCode,classCode,cetType));
+        avgInfoDomain.setAvgSexDomains(avgSexInfo(orgId,collegeCode,professionCode,classCode,cetType));
+        avgInfoDomain.setAvgNjDomains(avgNjInfo(orgId,collegeCode,professionCode,classCode,cetType));
+        result.put("data", avgInfoDomain);
+        result.put("success", true);
+        return result;
+    }
 
 
+    public  Map<String,CetSexStatisticalInfoDomain>  sexTotal(Long orgId,String collegeCode,String professionCode,String classCode, String cetType){
+         List<CetSexStatisticalInfoDomain> cetSexStatisticalInfoDomainListAll=cetSexStatisticalJdbc.sexStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,true);
+         List<CetSexStatisticalInfoDomain> cetSexStatisticalInfoDomainList=cetSexStatisticalJdbc.sexStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,false);
+         Map<String,CetSexStatisticalInfoDomain> m=new HashMap<>();
+         if (null!=cetSexStatisticalInfoDomainListAll&&0<cetSexStatisticalInfoDomainListAll.size()&&null!=cetSexStatisticalInfoDomainList&&0<cetSexStatisticalInfoDomainList.size()){
+             for (CetSexStatisticalInfoDomain cetSexStatisticalInfoDomain:cetSexStatisticalInfoDomainListAll) {
+                 for (CetSexStatisticalInfoDomain statisticalInfoDomain:cetSexStatisticalInfoDomainList) {
+                      if (cetSexStatisticalInfoDomain.getSex().equals(statisticalInfoDomain.getSex())){
+                          CetSexStatisticalInfoDomain c=new CetSexStatisticalInfoDomain();
+                          c.setSex(cetSexStatisticalInfoDomain.getSex());
+                          c.setAllTotal(cetSexStatisticalInfoDomain.getAllTotal());
+                          c.setPassTotal(statisticalInfoDomain.getPassTotal());
+                          if (cetSexStatisticalInfoDomain.getSex().equals("男")){
+                              m.put("man",c);
+                          }else{
+                              m.put("woman",c);
+                          }
+                      }
+                 }
+             }
+         }
+         return m;
+    }
 
 
+    public List<AgeSexStatisticalInfoDomain>  ageTotal(Long orgId, String collegeCode, String professionCode, String classCode, String cetType) {
+        List<AgeSexStatisticalInfoDomain> ageSexStatisticalInfoDomains = new ArrayList<>();
+        List<AgeSexStatisticalInfoDomain> ageSexStatisticalInfoDomainListAll = cetSexStatisticalJdbc.ageStatisticalInfo(orgId, collegeCode, professionCode, classCode, cetType, true);
+        List<AgeSexStatisticalInfoDomain> ageSexStatisticalInfoDomainList = cetSexStatisticalJdbc.ageStatisticalInfo(orgId, collegeCode, professionCode, classCode, cetType, false);
+        if (null != ageSexStatisticalInfoDomainListAll && 0 < ageSexStatisticalInfoDomainListAll.size() && null != ageSexStatisticalInfoDomainList && 0 < ageSexStatisticalInfoDomainList.size()) {
+            for (AgeSexStatisticalInfoDomain ageSexStatisticalInfoDomain : ageSexStatisticalInfoDomainListAll) {
+                for (AgeSexStatisticalInfoDomain statisticalInfoDomain : ageSexStatisticalInfoDomainList) {
+                    if (ageSexStatisticalInfoDomain.getAge() == statisticalInfoDomain.getAge()) {
+                        AgeSexStatisticalInfoDomain c = new AgeSexStatisticalInfoDomain();
+                        c.setAge(ageSexStatisticalInfoDomain.getAge());
+                        c.setAllTotal(ageSexStatisticalInfoDomain.getAllTotal());
+                        c.setPassTotal(statisticalInfoDomain.getPassTotal());
+                        ageSexStatisticalInfoDomains.add(c);
+                        break;
+                    }
+                }
+            }
+        }
+        return ageSexStatisticalInfoDomains;
+    }
 
+
+    public List<NjStatisticalInfoDomain>  njTotal(Long orgId, String collegeCode, String professionCode, String classCode, String cetType) {
+        List<NjStatisticalInfoDomain> njStatisticalInfoDomains = new ArrayList<>();
+        List<NjStatisticalInfoDomain> njStatisticalInfoDomainListAll = cetSexStatisticalJdbc.njStatisticalInfo(orgId, collegeCode, professionCode, classCode, cetType, true);
+        List<NjStatisticalInfoDomain> njStatisticalInfoDomainList = cetSexStatisticalJdbc.njStatisticalInfo(orgId, collegeCode, professionCode, classCode, cetType, false);
+        if (null != njStatisticalInfoDomainListAll && 0 < njStatisticalInfoDomainListAll.size() && null != njStatisticalInfoDomainList && 0 < njStatisticalInfoDomainList.size()) {
+            for (NjStatisticalInfoDomain njStatisticalInfoDomain : njStatisticalInfoDomainListAll) {
+                for (NjStatisticalInfoDomain statisticalInfoDomain : njStatisticalInfoDomainList) {
+                    if (njStatisticalInfoDomain.getNj().equals(statisticalInfoDomain.getNj())) {
+                        NjStatisticalInfoDomain c = new NjStatisticalInfoDomain();
+                        c.setNj(njStatisticalInfoDomain.getNj());
+                        c.setAllTotal(njStatisticalInfoDomain.getAllTotal());
+                        c.setPassTotal(statisticalInfoDomain.getPassTotal());
+                        njStatisticalInfoDomains.add(c);
+                        break;
+                    }
+                }
+            }
+        }
+        return njStatisticalInfoDomains;
+    }
+
+
+  public List<ScoreScaleDomain> scoreScaleTotal(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
+      List<ScoreScaleDomain> scoreScaleDomainList=new ArrayList<>();
+//      ScoreScaleDomain scoreScaleDomain= cetSexStatisticalJdbc.scoreStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType);
+//      scoreScaleDomainList.add(scoreScaleDomain);
+      scoreScaleDomainList.add(cetSexStatisticalJdbc.scoreScaleStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,0,390));
+      scoreScaleDomainList.add(cetSexStatisticalJdbc.scoreScaleStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,391,424));
+      scoreScaleDomainList.add(cetSexStatisticalJdbc.scoreScaleStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,425,480));
+      scoreScaleDomainList.add(cetSexStatisticalJdbc.scoreScaleStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,481,550));
+      scoreScaleDomainList.add(cetSexStatisticalJdbc.scoreScaleStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,551,600));
+      scoreScaleDomainList.add(cetSexStatisticalJdbc.scoreScaleStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,601,710));
+      return scoreScaleDomainList;
+  }
+
+/**------------------------------------------------均值---------------------------------------**/
+
+public List<AvgDomain> avgInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
+    List<AvgDomain> avgDomainList=new ArrayList<>();
+    List<AvgDomain> avgDomains=cetAvgStatisticalJdbc.avgInfo(orgId,collegeCode,professionCode,classCode,cetType);
+    if (null!=avgDomains&&0<avgDomains.size()){
+        avgDomainList.addAll(avgDomains);
+    }
+    return avgDomainList;
+}
+
+//性别
+    public List<AvgSexDomain> avgSexInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
+        List<AvgSexDomain> avgDomainList=new ArrayList<>();
+        List<AvgSexDomain> avgDomains=cetAvgStatisticalJdbc.avgXbInfo(orgId,collegeCode,professionCode,classCode,cetType);
+        if (null!=avgDomains&&0<avgDomains.size()){
+            avgDomainList.addAll(avgDomains);
+        }
+        return avgDomainList;
+    }
+//年龄
+    public List<AvgAgeDomain> avgAvgInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
+        List<AvgAgeDomain> avgDomainList=new ArrayList<>();
+        List<AvgAgeDomain> avgDomains=cetAvgStatisticalJdbc.avgAgeInfo(orgId,collegeCode,professionCode,classCode,cetType);
+        if (null!=avgDomains&&0<avgDomains.size()){
+            avgDomainList.addAll(avgDomains);
+        }
+        return avgDomainList;
+    }
+//年级
+public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
+    List<AvgNjDomain> avgDomainList=new ArrayList<>();
+    List<AvgNjDomain> avgDomains=cetAvgStatisticalJdbc.avgNjInfo(orgId,collegeCode,professionCode,classCode,cetType);
+    if (null!=avgDomains&&0<avgDomains.size()){
+        avgDomainList.addAll(avgDomains);
+    }
+    return avgDomainList;
+}
 
 }
