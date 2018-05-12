@@ -100,9 +100,9 @@ public class OverYearsTestStatisticsService {
         for (int i=end-5;i<end;i++){
            Map<String,Object> map=overYearTestStatisticsJdbc.find(orgId,i+"","春");
            if (null!=map){
-               String t =map.get("end_time").toString();
-              Integer a= overYearTestStatisticsJdbc.countTotal(orgId,t,collegeCode,professionCode,classCode);
-              Integer b=overYearTestStatisticsJdbc.countPassTotal(orgId,cetType,collegeCode,professionCode,classCode);
+               String s =map.get("start_time").toString();
+              Integer a= overYearTestStatisticsJdbc.countTotal(orgId,s,collegeCode,professionCode,classCode);
+              Integer b=overYearTestStatisticsJdbc.countPassTotal(orgId,cetType,collegeCode,professionCode,classCode,s);
                SemesterLeiJiRateDomain  semesterLeiJiRateDomain=new SemesterLeiJiRateDomain();
                semesterLeiJiRateDomain.setSemesterInfo(i+"春");
                if (a!=0&&b!=0){
@@ -116,9 +116,9 @@ public class OverYearsTestStatisticsService {
 
             Map<String,Object> map2=overYearTestStatisticsJdbc.find(orgId,i+"","秋");
             if (null!=map){
-                String t =map2.get("end_time").toString();
-                Integer a= overYearTestStatisticsJdbc.countTotal(orgId,t,collegeCode,professionCode,classCode);
-                Integer b=overYearTestStatisticsJdbc.countPassTotal(orgId,cetType,collegeCode,professionCode,classCode);
+                String s =map2.get("start_time").toString();
+                Integer a= overYearTestStatisticsJdbc.countTotal(orgId,s,collegeCode,professionCode,classCode);
+                Integer b=overYearTestStatisticsJdbc.countPassTotal(orgId,cetType,collegeCode,professionCode,classCode,s);
                 SemesterLeiJiRateDomain  semesterLeiJiRateDomain=new SemesterLeiJiRateDomain();
                 semesterLeiJiRateDomain.setSemesterInfo(i+"秋");
                 if (a!=0&&b!=0){
