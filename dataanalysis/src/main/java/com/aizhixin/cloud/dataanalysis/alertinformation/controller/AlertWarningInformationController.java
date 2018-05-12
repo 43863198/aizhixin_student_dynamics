@@ -1,5 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.alertinformation.controller;
 
+import com.aizhixin.cloud.dataanalysis.alertinformation.domain.AlertInforQueryTeacherDomain;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningDetailsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
@@ -57,13 +58,13 @@ public class AlertWarningInformationController {
     @GetMapping(value = "/getlist", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "预警信息列表", response = Void.class, notes = "预警信息列表<br><br><b>@author jianwei.wu</b>")
     public PageData<WarningDetailsDTO> getWarningInforList(
-            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "collegeId 学院id") @RequestParam(value = "collegeId", required = false) Long collegeId,
-            @ApiParam(value = "type 预警类型") @RequestParam(value = "type", required = false) String  type,
+            @ApiParam(value = "type 预警类型") @RequestParam(value = "type", required = false) String type,
             @ApiParam(value = "warningLevel 预警等级") @RequestParam(value = "warningLevel", required = false) String warningLevel,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return alertWarningInforService.findPageWarningInfor(PageUtil.createNoErrorPageRequest(pageNumber, pageSize),orgId,collegeId,type,warningLevel);
+        return alertWarningInforService.findPageWarningInfor(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId, collegeId, type, warningLevel);
     }
 
     /**
@@ -74,8 +75,8 @@ public class AlertWarningInformationController {
      */
     @GetMapping(value = "/statisticalgrade", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "预警级别汇总", response = Void.class, notes = "预警级别汇总<br><br><b>@author jianwei.wu</b>")
-    public Map<String,Object>   getStatisticalGrade(
-            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
+    public Map<String, Object> getStatisticalGrade(
+            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
         return alertWarningInforService.getStatisticalGrade(orgId);
     }
 
@@ -87,10 +88,10 @@ public class AlertWarningInformationController {
      */
     @GetMapping(value = "/statistical", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "预警汇总", response = Void.class, notes = "预警汇总<br><br><b>@author jianwei.wu</b>")
-    public Map<String,Object>   getStatistical(
-            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
-        Map<String,Integer> schoolYearSemester = alertWarningInforService.getschoolYearAndSemester();
-        return alertWarningInforService.getStatistical(orgId,schoolYearSemester.get("schoolYear"),schoolYearSemester.get("semester"));
+    public Map<String, Object> getStatistical(
+            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
+        Map<String, Integer> schoolYearSemester = alertWarningInforService.getschoolYearAndSemester();
+        return alertWarningInforService.getStatistical(orgId, schoolYearSemester.get("schoolYear"), schoolYearSemester.get("semester"));
     }
 
 
@@ -102,10 +103,10 @@ public class AlertWarningInformationController {
      */
     @GetMapping(value = "/statisticalcollege", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "院系预警汇总", response = Void.class, notes = "院系预警汇总<br><br><b>@author jianwei.wu</b>")
-    public Map<String,Object>   getStatisticalCollege(
-            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
-        Map<String,Integer> schoolYearSemester = alertWarningInforService.getschoolYearAndSemester();
-        return alertWarningInforService.getStatisticalCollege(orgId,schoolYearSemester.get("schoolYear"),schoolYearSemester.get("semester"));
+    public Map<String, Object> getStatisticalCollege(
+            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
+        Map<String, Integer> schoolYearSemester = alertWarningInforService.getschoolYearAndSemester();
+        return alertWarningInforService.getStatisticalCollege(orgId, schoolYearSemester.get("schoolYear"), schoolYearSemester.get("semester"));
     }
 
     /**
@@ -116,11 +117,11 @@ public class AlertWarningInformationController {
      */
     @GetMapping(value = "/collegeprocessedratio", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "院系处理率top---10", response = Void.class, notes = "院系处理率top---10<br><br><b>@author jianwei.wu</b>")
-    public Map<String,Object>   getCollegeProcessedRatio(
-            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId
-    ){
-        Map<String,Integer> schoolYearSemester = alertWarningInforService.getschoolYearAndSemester();
-        return alertWarningInforService.getCollegeProcessedRatio(orgId,schoolYearSemester.get("schoolYear"),schoolYearSemester.get("semester"));
+    public Map<String, Object> getCollegeProcessedRatio(
+            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId
+    ) {
+        Map<String, Integer> schoolYearSemester = alertWarningInforService.getschoolYearAndSemester();
+        return alertWarningInforService.getCollegeProcessedRatio(orgId, schoolYearSemester.get("schoolYear"), schoolYearSemester.get("semester"));
     }
 
 
@@ -132,24 +133,24 @@ public class AlertWarningInformationController {
      */
     @GetMapping(value = "/statisticaltype", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "预警分类汇总", response = Void.class, notes = "预警分类汇总<br><br><b>@author jianwei.wu</b>")
-    public Map<String,Object>   getStatisticalType(
-            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
-        Map<String,Integer> schoolYearSemester = alertWarningInforService.getschoolYearAndSemester();
-        return alertWarningInforService.getStatisticalType(orgId,schoolYearSemester.get("schoolYear"),schoolYearSemester.get("semester"));
+    public Map<String, Object> getStatisticalType(
+            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
+        Map<String, Integer> schoolYearSemester = alertWarningInforService.getschoolYearAndSemester();
+        return alertWarningInforService.getStatisticalType(orgId, schoolYearSemester.get("schoolYear"), schoolYearSemester.get("semester"));
     }
 
 
     /**
-     按照学院统计每个预警级别的数量
+     * 按照学院统计每个预警级别的数量
      *
      * @param orgId
      * @return
      */
     @GetMapping(value = "/statisticalcollegetype", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "按照学院统计每个预警级别的数量", response = Void.class, notes = "按照学院统计每个预警级别的数量<br><br><b>@author jianwei.wu</b>")
-    public Map<String,Object>   getStatisticalCollegeType(
-            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "type 预警类型" , required = true) @RequestParam(value = "type", required = true) String type){
+    public Map<String, Object> getStatisticalCollegeType(
+            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "type 预警类型", required = true) @RequestParam(value = "type", required = true) String type) {
         return alertWarningInforService.getStatisticalCollegeType(orgId, type);
     }
 
@@ -161,8 +162,8 @@ public class AlertWarningInformationController {
      */
     @GetMapping(value = "/latestinformation", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "最新預警的20位學生信息", response = Void.class, notes = "最新預警的20位學生信息<br><br><b>@author jianwei.wu</b>")
-    public Map<String,Object>  getLatestinformation(
-            @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
+    public Map<String, Object> getLatestinformation(
+            @ApiParam(value = "orgId 学校id", required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
         return alertWarningInforService.getLatestinformation(orgId);
     }
 
@@ -174,24 +175,25 @@ public class AlertWarningInformationController {
      */
     @GetMapping(value = "/details", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "预警详情", response = Void.class, notes = "预警详情<br><br><b>@author jianwei.wu</b>")
-    public Map<String,Object>   getWarningDetails(
-            @ApiParam(value = "id 预警id" , required = true) @RequestParam(value = "id", required = true) String id){
+    public Map<String, Object> getWarningDetails(
+            @ApiParam(value = "id 预警id", required = true) @RequestParam(value = "id", required = true) String id) {
         return alertWarningInforService.getWarningDetails(id);
     }
 
 
     /**
      * 预警统计
+     *
      * @param orgId
      * @return
      */
     @GetMapping(value = "/statistics", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "预警统计", response = Void.class, notes = "预警统计<br><br><b>@author jianwei.wu</b>")
-    public Map<String,Object>   getStatisticsByCollege(
-            @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "teacherYear 学年" , required = false) @RequestParam(value = "teacherYear", required = false) Integer teacherYear,
-            @ApiParam(value = "semester 学期" , required = false) @RequestParam(value = "semester", required = false) Integer semester,
-            @ApiParam(value = "type 类型",  required = false ) @RequestParam(value = "type", required = false) String type,
+    public Map<String, Object> getStatisticsByCollege(
+            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "teacherYear 学年", required = false) @RequestParam(value = "teacherYear", required = false) Integer teacherYear,
+            @ApiParam(value = "semester 学期", required = false) @RequestParam(value = "semester", required = false) Integer semester,
+            @ApiParam(value = "type 类型", required = false) @RequestParam(value = "type", required = false) String type,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         return alertWarningInforService.getStatisticsByCollege(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId, type, teacherYear, semester);
@@ -206,7 +208,7 @@ public class AlertWarningInformationController {
         Map<String, Object> result = new HashMap<String, Object>();
 
         result.put(ApiReturnConstants.DATA, alertWarningInforService.findRegisterCountInfor(orgId));
-        return  new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+        return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
     }
 
 
@@ -215,14 +217,40 @@ public class AlertWarningInformationController {
     public ResponseEntity<Map<String, Object>> alertPage(
 //            @RequestHeader("Authorization") String token,
             @ApiParam(value = "<b>必填:、</b><br>orgId:机构id<br>" +
-                                         "<br>teacherYear:学年<br>" +
-                                         "<br>semester:学期<br>" +
-                    "<b>选填:、</b><br>collogeIds:学院id(字符串多个以,分隔);warningTypes:预警类型(字符串多个以,分隔);warningLevels:预警等级(字符串多个以,分隔);<br>collegeId:院系id、<br>")  @RequestBody AlertInforQueryDomain domain
+                    "<br>teacherYear:学年<br>" +
+                    "<br>semester:学期<br>" +
+                    "<b>选填:、</b><br>collogeIds:学院id(字符串多个以,分隔);warningTypes:预警类型(字符串多个以,分隔);warningLevels:预警等级(字符串多个以,分隔);<br>collegeId:院系id、<br>") @RequestBody AlertInforQueryDomain domain
     ) {
         Map<String, Object> result = new HashMap<String, Object>();
 
         result.put(ApiReturnConstants.DATA, alertWarningInforService.getAlertInforPage(domain));
-        return  new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+        return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/teacher/alertpage", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "POST", value = "辅导员按条件分页查询预警信息", response = Void.class, notes = "辅导员按条件分页查询预警信息<br><br><b>@author hsh</b>")
+    public ResponseEntity<Map<String, Object>> getTeacherAlertPage(
+            @ApiParam(value = "<b>必填:、</b><br>orgId:机构id<br>" +
+                    "<br>userId:用户id11<br>" +
+                    "<br>teacherYear:学年<br>" +
+                    "<br>semester:学期<br>" +
+                    "<b>选填:、</b><br>collogeIds:学院id(字符串多个以,分隔);warningTypes:预警类型(字符串多个以,分隔);warningLevels:预警等级(字符串多个以,分隔);") @RequestBody AlertInforQueryTeacherDomain domain) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put(ApiReturnConstants.DATA, alertWarningInforService.getTeacherAlertInforPage(domain));
+        return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/student/alertpage", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "学生按条件分页查询预警信息", response = Void.class, notes = "学生按条件分页查询预警信息<br><br><b>@author hsh</b>")
+    public ResponseEntity<Map<String, Object>> getStudentAlertPage(
+            @ApiParam(value = "机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "userId") @RequestParam(value = "userId", required = false) Long userId,
+            @ApiParam(value = "学号") @RequestParam(value = "jobNum", required = false) String jobNum,
+            @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
+            @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put(ApiReturnConstants.DATA, alertWarningInforService.getStuAlertInforPage(orgId, userId, jobNum, pageNumber, pageSize));
+        return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
     }
 
 }

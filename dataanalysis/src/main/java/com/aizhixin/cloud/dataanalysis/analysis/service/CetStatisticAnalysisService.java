@@ -629,31 +629,35 @@ public class CetStatisticAnalysisService {
             if (!StringUtils.isBlank(collegeCode)) {
                 if (!StringUtils.isBlank(professionCode)) {
                     if (!StringUtils.isBlank(classCode)) {
-                        sql.append("SELECT c.NAME as name, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_class c ON ss.CODE = c.CLASS_NUMBER  WHERE 1=1 AND ss.CODE IS NOT NULL AND c.NAME IS NOT NULL AND ss.STATISTICS_TYPE = '003'");
+                        sql.append("SELECT c.NAME as name, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_class c ON ss.CODE = c.CLASS_NUMBER AND ss.PARENT_CODE = c.PROFESSION_CODE WHERE 1=1 AND ss.STATISTICS_TYPE = '003'");
                         sql.append(ql);
                         sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", professionCode);
                         sql.append(" and ss.CODE = :classCode");
                         condition.put("classCode", classCode);
+                        sql.append(" AND c.NAME IS NOT NULL");
                     }else {
-                        sql.append("SELECT c.NAME as name, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_class c ON ss.CODE = c.CLASS_NUMBER  WHERE 1=1 AND ss.CODE IS NOT NULL AND c.NAME IS NOT NULL AND ss.STATISTICS_TYPE = '003'");
+                        sql.append("SELECT c.NAME as name, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_class c ON ss.CODE = c.CLASS_NUMBER AND ss.PARENT_CODE = c.PROFESSION_CODE WHERE 1=1 AND ss.STATISTICS_TYPE = '003'");
                         sql.append(ql);
                         sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", professionCode);
+                        sql.append(" AND c.NAME IS NOT NULL");
                     }
                 } else {
-                    sql.append("SELECT p.NAME as name, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_profession p ON ss.CODE = p.CODE WHERE 1=1 AND ss.CODE IS NOT NULL");
+                    sql.append("SELECT p.NAME as name, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_profession p ON ss.CODE = p.CODE WHERE 1=1");
                     sql.append(ql);
                     sql.append(" AND ss.STATISTICS_TYPE = '002'");
                     sql.append(" and ss.PARENT_CODE = :pCode");
                     condition.put("pCode", collegeCode);
+                    sql.append(" AND p.NAME IS NOT NULL");
                 }
             } else {
-                sql.append("SELECT d.COMPANY_NAME as name, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1 AND ss.CODE IS NOT NULL");
+                sql.append("SELECT d.COMPANY_NAME as name, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1");
                 sql.append(ql);
                 sql.append(" AND ss.STATISTICS_TYPE = '001'");
                 sql.append(" and ss.PARENT_CODE = :pCode");
                 condition.put("pCode", orgId);
+                sql.append(" AND d.COMPANY_NAME IS NOT NULL");
             }
             Query sq = em.createNativeQuery(sql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
@@ -725,34 +729,38 @@ public class CetStatisticAnalysisService {
             if (!StringUtils.isBlank(collegeCode)) {
                 if (!StringUtils.isBlank(professionCode)) {
                     if (!StringUtils.isBlank(classCode)) {
-                            sql.append("SELECT ss.NAME_CODE as sex, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER  WHERE 1=1 AND ss.CODE IS NOT NULL");
+                            sql.append("SELECT ss.NAME_CODE as sex, ss.AVG_SCORE as avg FROM t_score_statistics ss  WHERE 1=1");
                             sql.append(ql);
                             sql.append(" AND ss.STATISTICS_TYPE = '013'");
                             sql.append(" and ss.CODE = :classCode");
                             condition.put("classCode", classCode);
                             sql.append(" and ss.PARENT_CODE = :pCode");
                             condition.put("pCode", professionCode);
+                            sql.append(" AND ss.NAME_CODE IS NOT NULL");
                     } else {
-                        sql.append("SELECT ss.NAME_CODE as sex, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1 AND ss.CODE IS NOT NULL");
+                        sql.append("SELECT ss.NAME_CODE as sex, ss.AVG_SCORE as avg FROM t_score_statistics ss WHERE 1=1");
                         sql.append(ql);
                         sql.append(" AND ss.STATISTICS_TYPE = '012'");
                         condition.put("collegeCode", professionCode);
                         sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", collegeCode);
+                        sql.append(" AND ss.NAME_CODE IS NOT NULL");
                     }
                 } else {
-                    sql.append("SELECT ss.NAME_CODE as sex, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER  WHERE 1=1 AND ss.CODE IS NOT NULL");
+                    sql.append("SELECT ss.NAME_CODE as sex, ss.AVG_SCORE as avg FROM t_score_statistics ss WHERE 1=1");
                     sql.append(ql);
                     sql.append(" AND ss.STATISTICS_TYPE = '011'");
                     sql.append(" and ss.CODE = :collegeCode");
                     condition.put("collegeCode", collegeCode);
                     sql.append(" and ss.PARENT_CODE = :pCode");
                     condition.put("pCode", orgId);
+                    sql.append(" AND ss.NAME_CODE IS NOT NULL");
                 }
             } else {
-                sql.append("SELECT ss.NAME_CODE as sex, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER  WHERE 1=1 AND ss.CODE IS NOT NULL");
+                sql.append("SELECT ss.NAME_CODE as sex, ss.AVG_SCORE as avg FROM t_score_statistics ss WHERE 1=1");
                 sql.append(ql);
                 sql.append(" AND ss.STATISTICS_TYPE = '010'");
+                sql.append(" AND ss.NAME_CODE IS NOT NULL");
             }
             Query sq = em.createNativeQuery(sql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
@@ -828,35 +836,43 @@ public class CetStatisticAnalysisService {
             if (!StringUtils.isBlank(collegeCode)) {
                 if (!StringUtils.isBlank(professionCode)) {
                     if (!StringUtils.isBlank(classCode)) {
-                        sql.append("SELECT ss.NAME_CODE as grade, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = COMPANY_NUMBER WHERE 1=1 AND ss.CODE IS NOT NULL");
+                        sql.append("SELECT ss.NAME_CODE as grade, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss WHERE 1=1");
                         sql.append(ql);
                         sql.append(" AND ss.STATISTICS_TYPE = '023'");
                         sql.append(" and ss.CODE = :classCode");
                         condition.put("classCode", classCode);
                         sql.append(" and ss.PARENT_CODE = :pCode order by grade");
                         condition.put("pCode", professionCode);
+                        sql.append(" AND ss.NAME_CODE IS NOT NULL");
+                        sql.append(" order by grade ASC");
                     } else {
-                        sql.append("SELECT ss.NAME_CODE as grade, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = COMPANY_NUMBER WHERE 1=1 AND ss.CODE IS NOT NULL");
+                        sql.append("SELECT ss.NAME_CODE as grade, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss WHERE 1=1");
                         sql.append(ql);
                         sql.append(" AND ss.STATISTICS_TYPE = '022'");
                         sql.append(" AND ss.STATISTICS_TYPE = '012'");
                         condition.put("collegeCode", professionCode);
                         sql.append(" and ss.PARENT_CODE = :pCode order by grade");
                         condition.put("pCode", collegeCode);
+                        sql.append(" AND ss.NAME_CODE IS NOT NULL");
+                        sql.append(" order by grade ASC");
                     }
                 } else {
-                    sql.append("SELECT ss.NAME_CODE as grade, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = COMPANY_NUMBER WHERE 1=1 AND ss.CODE IS NOT NULL");
+                    sql.append("SELECT ss.NAME_CODE as grade, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss WHERE 1=1");
                     sql.append(ql);
                     sql.append(" AND ss.STATISTICS_TYPE = '021'");
                     sql.append(" and ss.CODE = :collegeCode");
                     condition.put("collegeCode", collegeCode);
                     sql.append(" and ss.PARENT_CODE = :pCode order by grade");
                     condition.put("pCode", orgId);
+                    sql.append(" AND ss.NAME_CODE IS NOT NULL");
+                    sql.append(" order by grade ASC");
                 }
             } else {
-                sql.append("SELECT ss.NAME_CODE as grade, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = COMPANY_NUMBER WHERE 1=1 AND ss.CODE IS NOT NULL");
+                sql.append("SELECT ss.NAME_CODE as grade, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss WHERE 1=1");
                 sql.append(ql);
-                sql.append(" AND ss.STATISTICS_TYPE = '020' order by grade");
+                sql.append(" AND ss.NAME_CODE IS NOT NULL");
+                sql.append(" AND ss.STATISTICS_TYPE = '020'");
+                sql.append(" order by grade ASC");
             }
             Query sq = em.createNativeQuery(sql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
@@ -932,31 +948,35 @@ public class CetStatisticAnalysisService {
             if (!StringUtils.isBlank(collegeCode)) {
                 if (!StringUtils.isBlank(professionCode)) {
                     if (!StringUtils.isBlank(classCode)) {
-                        sql.append("SELECT c.NAME as name, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_class c ON ss.CODE = c.CLASS_NUMBER  WHERE 1=1 AND ss.CODE IS NOT NULL AND c.NAME IS NOT NULL AND ss.STATISTICS_TYPE = '003'");
+                        sql.append("SELECT c.NAME as name, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_class c ON ss.CODE = c.CLASS_NUMBER AND ss.PARENT_CODE = c.PROFESSION_CODE WHERE 1=1 AND ss.STATISTICS_TYPE = '003'");
                         sql.append(ql);
                         sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", professionCode);
                         sql.append(" and ss.CODE = :classCode");
                         condition.put("classCode", classCode);
+                        sql.append(" AND c.NAME IS NOT NULL");
                     }else {
-                        sql.append("SELECT c.NAME as name, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_class c ON ss.CODE = c.CLASS_NUMBER  WHERE 1=1 AND ss.CODE IS NOT NULL AND c.NAME IS NOT NULL AND ss.STATISTICS_TYPE = '003'");
+                        sql.append("SELECT c.NAME as name, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_class c ON ss.CODE = c.CLASS_NUMBER AND ss.PARENT_CODE = c.PROFESSION_CODE  WHERE 1=1 AND ss.STATISTICS_TYPE = '003'");
                         sql.append(ql);
                         sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", professionCode);
-                    }
+                        sql.append(" AND c.NAME IS NOT NULL");
+                }
                 } else {
-                    sql.append("SELECT p.NAME as name, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_profession p ON ss.CODE = p.CODE WHERE 1=1 AND ss.CODE IS NOT NULL");
+                    sql.append("SELECT p.NAME as name, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_profession p ON ss.CODE = p.CODE WHERE 1=1");
                     sql.append(ql);
                     sql.append(" AND ss.STATISTICS_TYPE = '002'");
                     sql.append(" and ss.PARENT_CODE = :pCode");
                     condition.put("pCode", collegeCode);
+                    sql.append(" AND P.NAME IS NOT NULL");
                 }
             } else {
-                sql.append("SELECT d.COMPANY_NAME as name, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1 AND ss.CODE IS NOT NULL");
+                sql.append("SELECT d.COMPANY_NAME as name, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1");
                 sql.append(ql);
                 sql.append(" AND ss.STATISTICS_TYPE = '001'");
                 sql.append(" and ss.PARENT_CODE = :pCode");
                 condition.put("pCode", orgId);
+                sql.append(" AND d.COMPANY_NAME IS NOT NULL");
             }
              Query sq = em.createNativeQuery(sql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
@@ -1034,33 +1054,37 @@ public class CetStatisticAnalysisService {
             if (!StringUtils.isBlank(collegeCode)) {
                 if (!StringUtils.isBlank(professionCode)) {
                     if (!StringUtils.isBlank(classCode)) {
-                        sql.append("SELECT ss.NAME_CODE as sex, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = COMPANY_NUMBER WHERE 1=1 AND ss.CODE IS NOT NULL");
+                        sql.append("SELECT ss.NAME_CODE as sex, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss WHERE 1=1");
                         sql.append(ql);
                         sql.append("  AND ss.STATISTICS_TYPE = '013'");
                         sql.append(" and ss.CODE = :classCode");
                         condition.put("classCode", classCode);
                         sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", professionCode);
+                        sql.append(" AND ss.NAME_CODE IS NOT NULL");
                     } else {
-                        sql.append("SELECT ss.NAME_CODE as sex, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = COMPANY_NUMBER WHERE 1=1 AND ss.CODE IS NOT NULL");
+                        sql.append("SELECT ss.NAME_CODE as sex, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss  WHERE 1=1");
                         sql.append(ql);
                         sql.append("  AND ss.STATISTICS_TYPE = '012'");
                         condition.put("collegeCode", professionCode);
                         sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", collegeCode);
+                        sql.append(" AND ss.NAME_CODE IS NOT NULL");
                     }
                 } else {
-                    sql.append("SELECT ss.NAME_CODE as sex, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = COMPANY_NUMBER WHERE 1=1 AND ss.CODE IS NOT NULL");
+                    sql.append("SELECT ss.NAME_CODE as sex, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss WHERE 1=1");
                     sql.append(ql);
                     sql.append(" AND ss.STATISTICS_TYPE = '011'");
                     sql.append(" and ss.CODE = :collegeCode");
                     condition.put("collegeCode", collegeCode);
                     sql.append(" and ss.PARENT_CODE = :pCode");
                     condition.put("pCode", orgId);
+                    sql.append(" AND ss.NAME_CODE IS NOT NULL");
                 }
             } else {
-                sql.append("SELECT ss.NAME_CODE as sex, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = COMPANY_NUMBER WHERE 1=1 AND ss.CODE IS NOT NULL");
+                sql.append("SELECT ss.NAME_CODE as sex, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss WHERE 1=1");
                 sql.append(ql);
+                sql.append(" AND ss.NAME_CODE IS NOT NULL");
                 sql.append(" AND ss.STATISTICS_TYPE = '010'");
             }
             Query sq = em.createNativeQuery(sql.toString());
@@ -1136,34 +1160,42 @@ public class CetStatisticAnalysisService {
             if (!StringUtils.isBlank(collegeCode)) {
                 if (!StringUtils.isBlank(professionCode)) {
                     if (!StringUtils.isBlank(classCode)) {
-                        sql.append("SELECT ss.NAME_CODE as grade, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = COMPANY_NUMBER WHERE 1=1 AND ss.CODE IS NOT NULL");
+                        sql.append("SELECT ss.NAME_CODE as grade, ss.AVG_SCORE as avg FROM t_score_statistics ss WHERE 1=1");
                         sql.append(ql);
                         sql.append(" AND ss.STATISTICS_TYPE = '023'");
                         sql.append(" and ss.CODE = :classCode");
                         condition.put("classCode", classCode);
                         sql.append(" and ss.PARENT_CODE = :pCode order by grade");
                         condition.put("pCode", professionCode);
+                        sql.append(" AND ss.NAME_CODE IS NOT NULL");
+                        sql.append(" order by grade ASC");
                     } else {
-                        sql.append("SELECT ss.NAME_CODE as grade, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = COMPANY_NUMBER WHERE 1=1 AND ss.CODE IS NOT NULL");
+                        sql.append("SELECT ss.NAME_CODE as grade, ss.AVG_SCORE as avg FROM t_score_statistics ss WHERE 1=1");
                         sql.append(ql);
                         sql.append(" AND ss.STATISTICS_TYPE = '022'");
                         condition.put("collegeCode", professionCode);
                         sql.append(" and ss.PARENT_CODE = :pCode order by grade");
                         condition.put("pCode", collegeCode);
+                        sql.append(" AND ss.NAME_CODE IS NOT NULL");
+                        sql.append(" order by grade ASC");
                     }
                 } else {
-                    sql.append("SELECT ss.NAME_CODE as grade, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = COMPANY_NUMBER WHERE 1=1 AND ss.CODE IS NOT NULL");
+                    sql.append("SELECT ss.NAME_CODE as grade, ss.AVG_SCORE as avg FROM t_score_statistics ss WHERE 1=1");
                     sql.append(ql);
                     sql.append(" AND ss.STATISTICS_TYPE = '021'");
                     sql.append(" and ss.CODE = :collegeCode");
                     condition.put("collegeCode", collegeCode);
                     sql.append(" and ss.PARENT_CODE = :pCode order by grade");
                     condition.put("pCode", orgId);
+                    sql.append(" AND ss.NAME_CODE IS NOT NULL");
+                    sql.append(" order by grade ASC");
                 }
             } else {
-                sql.append("SELECT ss.NAME_CODE as grade, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = COMPANY_NUMBER WHERE 1=1 AND ss.CODE IS NOT NULL");
+                sql.append("SELECT ss.NAME_CODE as grade, ss.AVG_SCORE as avg FROM t_score_statistics ss WHERE 1=1");
                 sql.append(ql);
-                sql.append(" AND ss.STATISTICS_TYPE = '020' order by grade");
+                sql.append(" AND ss.NAME_CODE IS NOT NULL");
+                sql.append(" AND ss.STATISTICS_TYPE = '020'");
+                sql.append(" order by grade ASC");
             }
             Query sq = em.createNativeQuery(sql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
@@ -1221,10 +1253,6 @@ public class CetStatisticAnalysisService {
                     "FROM t_cet_score cs LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER  "+
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER LEFT JOIN t_department d ON d.COMPANY_NUMBER = ss.COLLEGE_CODE LEFT JOIN t_profession p ON p. CODE = ss.PROFESSION_CODE "+
                     "WHERE 1=1");
-
-//            StringBuilder sql = new StringBuilder("SELECT JOB_NUMBER ax xh,NAME as name,COLLEGE_NAME as dName,PROFESSION_NAME as pName,CLASS_NAME as cName, " +
-//                    "GRADE as grade,MAX_SCORE as max FROM t_score_top ");
-
             if (null != orgId) {
                 sql.append(" and cs.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
@@ -1238,7 +1266,7 @@ public class CetStatisticAnalysisService {
                 sql.append(" and cs.TYPE LIKE :cetType");
                 condition.put("cetType", "%大学英语" + cetType + "%");
             }
-            sql.append("  AND cs.SCORE > 0 ORDER BY cs.SCORE DESC LIMIT 10");
+            sql.append("  AND cs.SCORE > 0 AND d.COMPANY_NAME IS NOT NULL AND p.NAME IS NOT NULL AND ss.CLASS_NAME IS NOT NULL ORDER BY cs.SCORE DESC LIMIT 10");
             Query sq = em.createNativeQuery(sql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             for (Map.Entry<String, Object> e : condition.entrySet()) {
@@ -1337,7 +1365,7 @@ public class CetStatisticAnalysisService {
                 data.setPass(Integer.valueOf(res.get("pass").toString()));
             }
             if(null!=ares.get("avg")){
-                data.setAvg(ares.get("avg").toString());
+                data.setAvg(Math.round(Float.valueOf(ares.get("avg").toString())) + "");
             }
             if(data.getTotal()>0){
                 data.setRate(new DecimalFormat("0.00").format((double) data.getPass() * 100 / data.getTotal()));
@@ -1371,7 +1399,7 @@ public class CetStatisticAnalysisService {
             if (!StringUtils.isBlank(collegeCode)) {
                 if (!StringUtils.isBlank(professionCode)) {
                     if (!StringUtils.isBlank(classCode)) {
-                        sql.append("SELECT ss.CLASS_NAME as name, count(1) as total, SUM(IF(cs.SCORE >= 425, 1, 0)) AS pass FROM t_cet_score cs LEFT JOIN t_student_status ss ON ss.JOB_NUMBER = cs.JOB_NUMBER WHERE 1=1 ");
+                        sql.append("SELECT ss.CLASS_NAME as name, count(1) as total, SUM(IF(cs.SCORE >= 425, 1, 0)) AS pass FROM t_cet_score cs LEFT JOIN t_student_status ss ON ss.JOB_NUMBER = cs.JOB_NUMBER WHERE 1=1 AND ss.CLASS_NAME IS NOT NULL ");
                         sql.append(ql);
                         sql.append(" and ss.CLASS_CODE = :classCode");
                         sql.append(" and ss.PROFESSION_CODE = :professionCode");
@@ -1382,21 +1410,21 @@ public class CetStatisticAnalysisService {
                         sql.append(ql);
                         sql.append(" and ss.PROFESSION_CODE = :professionCode");
                         condition.put("professionCode", professionCode);
-                        sql.append(" group by ss.CLASS_CODE");
+                        sql.append(" AND ss.CLASS_NAME IS NOT NULL group by ss.CLASS_CODE");
                     }
                 } else {
                     sql.append("SELECT p.NAME as name, count(1) as total, SUM(IF(cs.SCORE >= 425, 1, 0)) AS pass FROM t_cet_score cs LEFT JOIN t_student_status ss ON ss.JOB_NUMBER = cs.JOB_NUMBER " +
-                            "LEFT JOIN t_profession p ON p.CODE = ss.PROFESSION_CODE ");
+                            "LEFT JOIN t_profession p ON p.CODE = ss.PROFESSION_CODE WHERE 1=1");
                     sql.append(ql);
                     sql.append(" and ss.COLLEGE_CODE = :collegeCode");
                     condition.put("collegeCode", collegeCode);
-                    sql.append(" group by ss.PROFESSION_CODE");
+                    sql.append(" AND p.NAME IS NOT NULL group by ss.PROFESSION_CODE");
                 }
             } else {
                 sql.append("SELECT d.COMPANY_NAME as name, count(1) as total, SUM(IF(cs.SCORE >= 425, 1, 0)) AS pass FROM t_cet_score cs LEFT JOIN t_student_status ss ON ss.JOB_NUMBER = cs.JOB_NUMBER " +
-                        "LEFT JOIN t_department d ON ss.COLLEGE_CODE = d.COMPANY_NUMBER WHERE 1=1");
+                        "LEFT JOIN t_department d ON ss.COLLEGE_CODE = d.COMPANY_NUMBER AND d.COMPANY_NUMBER IS NOT NULL WHERE 1=1");
                 sql.append(ql);
-                sql.append(" group by ss.COLLEGE_CODE");
+                sql.append(" AND d.COMPANY_NAME IS NOT NULL group by ss.COLLEGE_CODE");
             }
             Query sq = em.createNativeQuery(sql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
