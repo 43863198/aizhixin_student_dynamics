@@ -15,20 +15,22 @@ import lombok.ToString;
 @ToString
 public class ScoreVO {
     @ApiModelProperty(value = "课程号")
-    private String jobNumber;
+    private String courseNumber;
     @ApiModelProperty(value = "课程名")
-    private String name;
+    private String courseName;
     @ApiModelProperty(value = "授课教师")
     private String teacherName;
     @ApiModelProperty(value = "学分")
-    private String credit;
+    private float credit;
     @ApiModelProperty(value = "课程性质")
     private String corseType;
     @ApiModelProperty(value = "等级类考试成绩")
     private String gradeExamScore;
+    @ApiModelProperty(value = "平时成绩")
+    private String academicGPA;
     @ApiModelProperty(value = "分数类考试成绩")
     private String fractionalExamScore;;
     @ApiModelProperty(value = "绩点")
-    private String gpaPoint;
+    private float gpaPoint;
 
 }

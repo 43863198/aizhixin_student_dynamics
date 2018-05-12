@@ -18,7 +18,7 @@ import java.util.List;
 public class StudentFigurePortraitVO {
     @ApiModelProperty(value = "学生信息")
     private StudentInfoVO studentIn;
-    @ApiModelProperty(value = "课程成绩")
+    @ApiModelProperty(value = "课程成绩统计")
     private CourseScoreVO courseScore;
     @ApiModelProperty(value = "成绩详情")
     private List<ScoreVO> scoreDetail;
