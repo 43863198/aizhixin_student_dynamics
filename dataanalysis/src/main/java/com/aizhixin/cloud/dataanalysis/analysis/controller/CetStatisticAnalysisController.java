@@ -356,6 +356,33 @@ public class CetStatisticAnalysisController {
     ) {
         return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.organizationStatistics(orgId, collegeNumber, professionNumber, classNumber, cetType), HttpStatus.OK);
     }
+    /**
+     * 查看数据详情---数据列表
+     * @param orgId
+     * @param cetType
+     * @param collegeNumber
+     * @param professionNumber
+     * @param classNumber
+     * @return
+     */
+
+    @GetMapping(value = "/detaillist", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "查看数据详情---数据列表", response = Void.class, notes = "查看数据详情---数据列表<br><br><b>@author jianwei.wu</b>")
+    public ResponseEntity<Object> getDetailList(
+            @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "cetType 成绩类型： (四级;六级;)" , required = true ) @RequestParam(value = "cetType" , required = true) String cetType,
+            @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
+            @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
+            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber,
+            @ApiParam(value = "nj 姓名或学号", required = false) @RequestParam(value = "nj", required = false) String nj,
+            @ApiParam(value = "teacherYear 学年" , required = false ) @RequestParam(value = "teacherYear" , required = false) String teacherYear,
+            @ApiParam(value = "semester 学期 (春;秋;)" , required = false) @RequestParam(value = "semester" , required = false) String semester,
+            @ApiParam(value = "isPass 是否通过（1:通过;0:未通过）", required = false) @RequestParam(value = "isPass", required = false) String isPass,
+            @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
+            @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize){
+        return new ResponseEntity<Object>(cetStatisticAnalysisService.getDetailList(orgId,collegeNumber, professionNumber, classNumber, cetType, nj, teacherYear, semester, isPass,pageNumber,pageSize), HttpStatus.OK);
+    }
+
 
 
     @GetMapping(value = "/organizationstatistics/avg", produces = MediaType.APPLICATION_JSON_VALUE)
