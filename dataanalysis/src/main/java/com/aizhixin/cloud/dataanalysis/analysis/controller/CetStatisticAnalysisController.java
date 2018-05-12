@@ -2,6 +2,7 @@ package com.aizhixin.cloud.dataanalysis.analysis.controller;
 
 import com.aizhixin.cloud.dataanalysis.analysis.job.CetStatisticsAnalysisJob;
 import com.aizhixin.cloud.dataanalysis.analysis.service.CetStatisticAnalysisService;
+import com.aizhixin.cloud.dataanalysis.analysis.service.OverYearsTestStatisticsService;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,6 +31,8 @@ public class CetStatisticAnalysisController {
     private CetStatisticAnalysisService cetStatisticAnalysisService;
     @Autowired
     private CetStatisticsAnalysisJob cetStatisticsAnalysisJob;
+    @Autowired
+    private OverYearsTestStatisticsService overYearsTestStatisticsService;
 
     /**
      * cet———统计
@@ -343,7 +346,7 @@ public class CetStatisticAnalysisController {
      */
 
     @GetMapping(value = "/organizationstatistics", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "英语考试当前状况---人数分布---按行政班", response = Void.class, notes = "英语考试当前状况---人数分布---按行政班<br><br><b>@author jianwei.wu</b>")
+    @ApiOperation(httpMethod = "GET", value = "英语考试当前状况---人数分布", response = Void.class, notes = "英语考试当前状况---人数分布<br><br><b>@author jianwei.wu</b>")
     public ResponseEntity<Map<String, Object>> organizationStatistics(
             @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "cetType 成绩类型： (四级;六级;)" , required = true ) @RequestParam(value = "cetType" , required = true) String cetType,
@@ -355,10 +358,44 @@ public class CetStatisticAnalysisController {
     }
 
 
+    @GetMapping(value = "/organizationstatistics/avg", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "英语考试当前状况---均值分布", response = Void.class, notes = "英语考试当前状况---人数分布---按行政班<br><br><b>@author jianwei.wu</b>")
+    public ResponseEntity<Map<String, Object>> organizationStatisticsAvg(
+            @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "cetType 成绩类型： (四级;六级;)" , required = true ) @RequestParam(value = "cetType" , required = true) String cetType,
+            @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
+            @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
+            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber
+    ) {
+        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.avg(orgId, collegeNumber, professionNumber, classNumber, cetType), HttpStatus.OK);
+    }
 
 
 
+    @GetMapping(value = "/organizationstatistics/over/year", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "历年数据分析---通过率趋势分析", response = Void.class, notes = "历年数据分析---通过率趋势分析<br><br><b>@author jianwei.wu</b>")
+    public ResponseEntity<Map<String, Object>> organizationStatisticsOverYear(
+            @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "cetType 成绩类型： (四级;六级;)" , required = true ) @RequestParam(value = "cetType" , required = true) String cetType,
+            @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
+            @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
+            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber
+    ) {
+        return new ResponseEntity<Map<String, Object>>(overYearsTestStatisticsService.OverYearsPassRate(orgId, collegeNumber, professionNumber, classNumber, cetType), HttpStatus.OK);
+    }
 
+
+    @GetMapping(value = "/organizationstatistics/over/year/avg", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "历年数据分析---成绩均值趋势分析", response = Void.class, notes = "历年数据分析---成绩均值趋势分析<br><br><b>@author jianwei.wu</b>")
+    public ResponseEntity<Map<String, Object>> organizationStatisticsOverYearAvg(
+            @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "cetType 成绩类型： (四级;六级;)" , required = true ) @RequestParam(value = "cetType" , required = true) String cetType,
+            @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
+            @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
+            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber
+    ) {
+        return new ResponseEntity<Map<String, Object>>(overYearsTestStatisticsService.OverYearsAvgScore(orgId, collegeNumber, professionNumber, classNumber, cetType), HttpStatus.OK);
+    }
 
 
 
