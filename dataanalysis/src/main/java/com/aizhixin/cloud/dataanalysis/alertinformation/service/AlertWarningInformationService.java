@@ -1226,6 +1226,11 @@ public class AlertWarningInformationService {
     }
 
 
+    public List<WarningInformation> getawinfoByOrgIdAndJobNumber(Long orgId, String jobNumber) {
+        return alertWarningInformationRepository.getawinfoByOrgIdAndJobNumber(orgId, jobNumber, DataValidity.VALID.getState());
+    }
+
+
     /**
      * ************************************************************
      */

@@ -60,6 +60,21 @@ public class FigurePortraitController {
         return new ResponseEntity<Map<String, Object>>(figurePortraitService.getPersonalFigurePortrait(orgId, jobNumber), HttpStatus.OK);
     }
 
+    /**
+     * 人物画像---学生个人画像
+     * @param orgId
+     * @param jobNumber
+     * @return
+     */
+    @GetMapping(value = "/earlywarning", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "人物画像---学生个人画像---预警信息", response = Void.class, notes = "人物画像---学生个人画像---预警信息<br><br><b>@author jianwei.wu</b>")
+    public ResponseEntity<Map<String, Object>> getEarlyWarning(
+            @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "jobNumber 学号", required = true ) @RequestParam(value = "jobNumber", required = true) String jobNumber){
+        return new ResponseEntity<Map<String, Object>>(figurePortraitService.getEarlyWarning(orgId, jobNumber), HttpStatus.OK);
+    }
+
+
 
     /**
      * 人物画像---群体画像

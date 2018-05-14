@@ -24,8 +24,12 @@ public interface AlertWarningInformationRepository extends JpaRepository<Warning
 
     @Query("select aw from #{#entityName} aw where aw.deleteFlag = :deleteFlag and aw.warningType = :warningType and aw.orgId = :orgId")
     List<WarningInformation> getawinfoByOrgIdAndWarningType(@Param("orgId")Long orgId, @Param("warningType")String warningType, @Param("deleteFlag")int deleteFlag);
-    
-    
+
+
+    @Query("select aw from #{#entityName} aw where aw.deleteFlag = :deleteFlag and aw.jobNumber = :jobNumber and aw.orgId = :orgId")
+    List<WarningInformation> getawinfoByOrgIdAndJobNumber(@Param("orgId")Long orgId, @Param("jobNumber")String jobNumber, @Param("deleteFlag")int deleteFlag);
+
+
     @Query("select aw from #{#entityName} aw where aw.deleteFlag = :deleteFlag and aw.warningType = :warningType and aw.orgId = :orgId and aw.warningState =:warningState ")
     List<WarningInformation> getawinfoByOrgIdAndWarningTypeAndState(@Param("orgId")Long orgId, @Param("warningType")String warningType, @Param("deleteFlag")int deleteFlag,@Param("warningState") int warningState);
 
