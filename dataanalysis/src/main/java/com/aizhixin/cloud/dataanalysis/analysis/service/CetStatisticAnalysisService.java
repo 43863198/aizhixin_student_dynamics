@@ -536,8 +536,8 @@ public class CetStatisticAnalysisService {
                         sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", professionCode);
                     }else {
-                        sql.append(" and ss.CODE = :collegeCode");
-                        condition.put("collegeCode", professionCode);
+                        sql.append(" and ss.CODE = :professionCode");
+                        condition.put("professionCode", professionCode);
                         sql.append(" and ss.STATISTICS_TYPE = '002'");
                         sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", collegeCode);
@@ -550,7 +550,11 @@ public class CetStatisticAnalysisService {
                     condition.put("pCode", orgId);
                 }
             }else {
+                sql.append(" and ss.CODE = :orgCode");
+                condition.put("orgCode", orgId);
                 sql.append(" and ss.STATISTICS_TYPE = '000'");
+                sql.append(" and ss.PARENT_CODE = :pCode");
+                condition.put("pCode", orgId);
             }
             Query sq = em.createNativeQuery(sql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
