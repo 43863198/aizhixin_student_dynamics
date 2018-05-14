@@ -1475,13 +1475,11 @@ public class CetStatisticAnalysisService {
     }
 
     public PageData<CetDetailVO> getDetailList(Long orgId,String collegeCode,String professionCode,String classCode,String cetType,String nj,String teacherYear,String semester,String isPass,Integer pageNumber, Integer pageSize) {
-        Map<String, Object> result = new HashMap<>();
-        Map<String, Object> condition = new HashMap<>();
         PageData<CetDetailVO> p = new PageData<>();
-        List<CetDetailVO> sList = new ArrayList<>();
         try {
             Date start = null;
             Date end = null;
+            Map<String, Object> condition = new HashMap<>();
             StringBuilder sql = new StringBuilder("SELECT cs.JOB_NUMBER as xh,x.XM as xm,x.BJMC as bj,x.ZYMC as zy,x.YXSMC xy,x.NJ nj,cs.EXAMINATION_DATE as date,cs.SCORE as score " +
                     "FROM t_xsjbxx x LEFT JOIN t_cet_score cs ON x.XH = cs.JOB_NUMBER WHERE 1=1 AND cs.JOB_NUMBER IS NOT NULL ");
             StringBuilder cql = new StringBuilder("SELECT count(1) " +
@@ -1535,8 +1533,8 @@ public class CetStatisticAnalysisService {
                 cql.append(" and cs.SCORE >= 425");
             }else {
                 if (null!=isPass&&isPass.equals("0")) {
-                    sql.append(" and cs.SCORE <= 425");
-                    cql.append(" and cs.SCORE <= 425");
+                    sql.append(" and cs.SCORE < 425");
+                    cql.append(" and cs.SCORE < 425");
                 } else {
                     sql.append(" and cs.SCORE >= 0");
                     cql.append(" and cs.SCORE >= 0");
@@ -1559,6 +1557,7 @@ public class CetStatisticAnalysisService {
             sq.setFirstResult((pageNumber - 1) * pageSize);
             sq.setMaxResults(pageSize);
             List<Object> res = sq.getResultList();
+            List<CetDetailVO> sList = new ArrayList<>();
             for (Object obj : res) {
                 Map row = (Map) obj;
                 CetDetailVO s = new CetDetailVO();
@@ -1580,13 +1579,16 @@ public class CetStatisticAnalysisService {
                 if (null != row.get("nj")) {
                     s.setGrade(row.get("nj").toString());
                 }
-                if (null != row.get("score")) {
-                    s.setScore(Math.round(Float.valueOf(row.get("score").toString())) + "");
+                if (null != row.get("score")&& !row.get("score").equals("")) {
+                    if(Float.valueOf(row.get("score").toString())>0) {
+                        s.setScore(Math.round(Float.valueOf(row.get("score").toString())) + "");
+                    }else {
+                        s.setScore(0 + "");
+                    }
                 }
                 if (null != row.get("date")) {
                     s.setDate(row.get("date").toString());
                 }
-
                 sList.add(s);
             }
             p.setData(sList);
@@ -1596,7 +1598,6 @@ public class CetStatisticAnalysisService {
             p.getPage().setTotalPages(PageUtil.cacalatePagesize(count, p.getPage().getPageSize()));
         } catch (Exception e) {
             e.printStackTrace();
-            return p;
         }
         return p;
     }

@@ -113,7 +113,7 @@ public class OrganizationService {
                 sql.append(" and COLLEGE_CODE = :ccode");
                 condition.put("ccode", ccode);
             }
-            if(!StringUtils.isBlank(ccode)){
+            if(!StringUtils.isBlank(pcode)){
                 sql.append(" and PROFESSION_CODE = :pcode");
                 condition.put("pcode", pcode);
             }
