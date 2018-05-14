@@ -310,7 +310,7 @@ public class FigurePortraitService {
                 condition.put("classCode", classCode);
             }
             sexql.append(sql);
-            sexql.append(" GROUP BY XB");
+            sexql.append(" AND XB IS NOT NULL GROUP BY XB");
             Query sq = em.createNativeQuery(sexql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             for (Map.Entry<String, Object> e : condition.entrySet()) {
@@ -334,7 +334,7 @@ public class FigurePortraitService {
             }
             grVO.setSexList(sexList);
 
-            //性别分布
+            //年龄分布
             StringBuilder ageql = new StringBuilder("SELECT ROUND(DATEDIFF(CURDATE(), CSRQ) / 365.2422)  as age, count(1) as count FROM t_xsjbxx WHERE 1 = 1 ");
             ageql.append(sql);
             ageql.append(" AND CURDATE() BETWEEN RXNY AND YBYNY GROUP BY  age");
