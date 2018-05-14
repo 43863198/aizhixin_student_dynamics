@@ -40,13 +40,13 @@ public class CetAvgStatisticalJdbc {
         }
         sql+= "FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND tcs.`SCORE`<> ''";
         if (!StringUtils.isEmpty(collegeCode)){
-            sql+=" AND ts.`YXSH='"+collegeCode+"'";
+            sql+=" AND ts.`YXSH`='"+collegeCode+"'";
         }
         if (!StringUtils.isEmpty(professionCode)){
-            sql+=" AND ts.`ZYH='"+professionCode+"'";
+            sql+=" AND ts.`ZYH`='"+professionCode+"'";
         }
         if (!StringUtils.isEmpty(classCode)){
-            sql+=" AND ts.`BH='"+classCode+"'";
+            sql+=" AND ts.`BH`='"+classCode+"'";
         }
         sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
         if (StringUtils.isEmpty(collegeCode)){
@@ -77,13 +77,13 @@ public class CetAvgStatisticalJdbc {
         String sql=" SELECT ROUND(AVG(tcs.`SCORE`),2) as sc,ts.`XB` ";
         sql+= "FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND tcs.`SCORE`<> ''";
         if (!StringUtils.isEmpty(collegeCode)){
-            sql+=" AND ts.`YXSH='"+collegeCode+"'";
+            sql+=" AND ts.`YXSH`='"+collegeCode+"'";
         }
         if (!StringUtils.isEmpty(professionCode)){
-            sql+=" AND ts.`ZYH='"+professionCode+"'";
+            sql+=" AND ts.`ZYH`='"+professionCode+"'";
         }
         if (!StringUtils.isEmpty(classCode)){
-            sql+=" AND ts.`BH='"+classCode+"'";
+            sql+=" AND ts.`BH`='"+classCode+"'";
         }
         sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%' GROUP BY ts.`XB`";
         logger.info("sql 语句>>>>>> "+sql);
@@ -101,13 +101,13 @@ public class CetAvgStatisticalJdbc {
         String sql=" SELECT ROUND(AVG(tcs.`SCORE`),2) as sc,ts.`nl` ";
         sql+= "FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND tcs.`SCORE`<> '' and ts.nl is not null";
         if (!StringUtils.isEmpty(collegeCode)){
-            sql+=" AND ts.`YXSH='"+collegeCode+"'";
+            sql+=" AND ts.`YXSH`='"+collegeCode+"'";
         }
         if (!StringUtils.isEmpty(professionCode)){
-            sql+=" AND ts.`ZYH='"+professionCode+"'";
+            sql+=" AND ts.`ZYH`='"+professionCode+"'";
         }
         if (!StringUtils.isEmpty(classCode)){
-            sql+=" AND ts.`BH='"+classCode+"'";
+            sql+=" AND ts.`BH`='"+classCode+"'";
         }
         sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%' GROUP BY ts.`nl`";
         logger.info("sql 语句>>>>>> "+sql);
@@ -125,13 +125,13 @@ public class CetAvgStatisticalJdbc {
         String sql=" SELECT ROUND(AVG(tcs.`SCORE`),2) as sc,ts.`NJ` ";
         sql+= "FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND tcs.`SCORE`<> ''";
         if (!StringUtils.isEmpty(collegeCode)){
-            sql+=" AND ts.`YXSH='"+collegeCode+"'";
+            sql+=" AND ts.`YXSH`='"+collegeCode+"'";
         }
         if (!StringUtils.isEmpty(professionCode)){
-            sql+=" AND ts.`ZYH='"+professionCode+"'";
+            sql+=" AND ts.`ZYH`='"+professionCode+"'";
         }
         if (!StringUtils.isEmpty(classCode)){
-            sql+=" AND ts.`BH='"+classCode+"'";
+            sql+=" AND ts.`BH`='"+classCode+"'";
         }
         sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%' GROUP BY ts.`NJ`";
         logger.info("sql 语句>>>>>> "+sql);
