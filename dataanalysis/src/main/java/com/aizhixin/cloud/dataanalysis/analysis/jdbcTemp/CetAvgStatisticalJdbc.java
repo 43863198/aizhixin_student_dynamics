@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Component
@@ -18,6 +19,10 @@ public class CetAvgStatisticalJdbc {
 
     private final Logger logger= LoggerFactory.getLogger(CetAvgStatisticalJdbc.class);
 
+    public Integer getInt(double number){
+        BigDecimal bd=new BigDecimal(number).setScale(0, BigDecimal.ROUND_HALF_UP);
+        return Integer.parseInt(bd.toString());
+    }
     public List<AvgDomain> avgInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
         String sql=" SELECT ROUND(AVG(tcs.`SCORE`),2) as sc";
         if (StringUtils.isEmpty(collegeCode)){
@@ -61,7 +66,7 @@ public class CetAvgStatisticalJdbc {
         RowMapper<AvgDomain> rowMapper= (rs, rowNum) -> {
             AvgDomain avgDomain=new AvgDomain();
             avgDomain.setName(rs.getString("name"));
-            avgDomain.setScore(rs.getDouble("sc"));
+            avgDomain.setScore(getInt(rs.getDouble("sc")));
             return avgDomain;
         };
         return jdbcTemplate.query(sql,rowMapper);
@@ -85,7 +90,7 @@ public class CetAvgStatisticalJdbc {
         RowMapper<AvgSexDomain> rowMapper= (rs, rowNum) -> {
             AvgSexDomain avgSexDomain=new AvgSexDomain();
             avgSexDomain.setSex(rs.getString("xb"));
-            avgSexDomain.setScore(rs.getDouble("sc"));
+            avgSexDomain.setScore(getInt(rs.getDouble("sc")));
             return avgSexDomain;
         };
         return jdbcTemplate.query(sql,rowMapper);
@@ -109,7 +114,7 @@ public class CetAvgStatisticalJdbc {
         RowMapper<AvgAgeDomain> rowMapper= (rs, rowNum) -> {
             AvgAgeDomain avgAgeDomain=new AvgAgeDomain();
             avgAgeDomain.setAge(rs.getInt("nl"));
-            avgAgeDomain.setScore(rs.getDouble("sc"));
+            avgAgeDomain.setScore(getInt(rs.getDouble("sc")));
             return avgAgeDomain;
         };
         return jdbcTemplate.query(sql,rowMapper);
@@ -133,7 +138,7 @@ public class CetAvgStatisticalJdbc {
         RowMapper<AvgNjDomain> rowMapper= (rs, rowNum) -> {
             AvgNjDomain avgNjDomain=new AvgNjDomain();
             avgNjDomain.setNj(rs.getString("nj"));
-            avgNjDomain.setScore(rs.getDouble("sc"));
+            avgNjDomain.setScore(getInt(rs.getDouble("sc")));
             return avgNjDomain;
         };
         return jdbcTemplate.query(sql,rowMapper);

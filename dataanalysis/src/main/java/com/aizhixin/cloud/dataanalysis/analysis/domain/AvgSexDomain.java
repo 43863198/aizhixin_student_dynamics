@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class AvgSexDomain {
     String sex;
-    Double score;
+    Integer score;
 }

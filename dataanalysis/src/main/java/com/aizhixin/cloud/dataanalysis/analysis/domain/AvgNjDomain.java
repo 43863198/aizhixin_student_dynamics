@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class AvgNjDomain {
     String nj;
-    Double score;
+    Integer score;
 }

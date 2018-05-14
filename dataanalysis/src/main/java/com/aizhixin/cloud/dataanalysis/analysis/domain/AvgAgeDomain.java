@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class AvgAgeDomain {
     Integer age;
-    Double score;
+    Integer score;
 }

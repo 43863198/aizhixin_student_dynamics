@@ -35,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -1702,7 +1703,9 @@ public class CetStatisticAnalysisService {
 
 /**------------------------------------------------均值---------------------------------------**/
 
-public List<AvgDomain> avgInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
+
+
+    public List<AvgDomain> avgInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
     List<AvgDomain> avgDomainList=new ArrayList<>();
     List<AvgDomain> avgDomains=cetAvgStatisticalJdbc.avgInfo(orgId,collegeCode,professionCode,classCode,cetType);
     if (null!=avgDomains&&0<avgDomains.size()){
