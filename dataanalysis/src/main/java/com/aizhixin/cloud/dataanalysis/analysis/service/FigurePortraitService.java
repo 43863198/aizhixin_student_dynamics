@@ -1,7 +1,10 @@
 package com.aizhixin.cloud.dataanalysis.analysis.service;
 
+import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
+import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
 import com.aizhixin.cloud.dataanalysis.analysis.vo.*;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
+import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
@@ -26,6 +29,8 @@ import java.util.Map;
 public class FigurePortraitService {
     @Autowired
     private EntityManager em;
+    @Autowired
+    private AlertWarningInformationService alertWarningInformationService;
 
     public PageData<StudentInfoVO> getStudentList(Long orgId, String collegeNumber, String professionNumber, String classNumber, Integer pageNumber, Integer pageSize) {
         PageData<StudentInfoVO> p = new PageData<>();
@@ -248,6 +253,33 @@ public class FigurePortraitService {
         } catch (Exception e) {
             result.put("success", false);
             result.put("message", "人物画像---学生个人画像获取计失败！");
+            return result;
+        }
+    }
+
+    public Map<String, Object> getEarlyWarning(Long orgId, String jobNumber) {
+        Map<String, Object> result = new HashMap<>();
+        List<EarlyWarningVO> ewVOList = new ArrayList<>();
+        try {
+            List<WarningInformation> warningInformationList = alertWarningInformationService.getawinfoByOrgIdAndJobNumber(orgId,jobNumber);
+            if(null!=warningInformationList&&warningInformationList.size()>0){
+                for(WarningInformation w : warningInformationList){
+                    EarlyWarningVO  ew = new EarlyWarningVO();
+                    ew.setWarningTime(w.getWarningTime().toString());
+                    ew.setWarningCondition(w.getWarningCondition());
+                    ew.setWarningLevel(w.getWarningLevel());
+                    ew.setWarningName(WarningTypeConstant.valueOf(w.getWarningType()).getValue());
+                    ew.setWarningState(w.getWarningState());
+                    ew.setWarningSource(w.getWarningSource());
+                    ewVOList.add(ew);
+                }
+            }
+            result.put("success", true);
+            result.put("data", ewVOList);
+            return result;
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", "人物画像---学生个人画像---预警信息获取失败！");
             return result;
         }
     }
