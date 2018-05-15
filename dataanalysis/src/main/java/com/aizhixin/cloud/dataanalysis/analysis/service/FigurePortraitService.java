@@ -335,7 +335,7 @@ public class FigurePortraitService {
             grVO.setSexList(sexList);
 
             //年龄分布
-            StringBuilder ageql = new StringBuilder("SELECT ROUND(DATEDIFF(CURDATE(), CSRQ) / 365.2422)  as age, count(DISTINCT XH) FROM t_xsjbxx WHERE 1 = 1 ");
+            StringBuilder ageql = new StringBuilder("SELECT ROUND(DATEDIFF(CURDATE(), CSRQ) / 365.2422)  as age, count(DISTINCT XH) as count FROM t_xsjbxx WHERE 1 = 1 ");
             ageql.append(sql);
             ageql.append(" AND CURDATE() BETWEEN RXNY AND YBYNY GROUP BY  age");
             Query aq = em.createNativeQuery(ageql.toString());
