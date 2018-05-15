@@ -646,14 +646,14 @@ public class CetStatisticAnalysisService {
                         condition.put("classCode", classCode);
                         sql.append(" and ss.CLASS_NAME = :className");
                         condition.put("className", className);
-                        sql.append(" AND c.NAME IS NOT NULL");
+                        sql.append(" AND ss.CLASS_NAME IS NOT NULL");
                     }else {
                         sql.append("SELECT ss.CLASS_NAME as name, ss.AVG_SCORE as avg FROM t_score_statistics ss WHERE 1=1 AND ss.STATISTICS_TYPE = '003'");
                         sql.append(ql);
                         sql.append(" AND ss.STATISTICS_TYPE = '003'");
                         sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", professionCode);
-                        sql.append(" AND c.NAME IS NOT NULL");
+                        sql.append(" AND ss.CLASS_NAME IS NOT NULL");
                     }
                 } else {
                     sql.append("SELECT p.NAME as name, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_profession p ON ss.CODE = p.CODE WHERE 1=1");
@@ -1413,7 +1413,7 @@ public class CetStatisticAnalysisService {
             String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
             StringBuilder ql = new StringBuilder("");
             if (null != orgId) {
-                ql.append(" and cs.ORG_ID = :orgId");
+                ql.append(" and ss.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
             StringBuilder sql = new StringBuilder("");
@@ -1429,29 +1429,29 @@ public class CetStatisticAnalysisService {
                         condition.put("classCode", classCode);
                         condition.put("professionCode", professionCode);
                     }else {
-                        sql.append("SELECT SUM(IF(cs.SCORE > 0, 1, 0)) AS total,SUM(IF(cs.SCORE >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
-                                "WHERE 1=1 cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" +
+                        sql.append("SELECT SUM(IF(c.max > 0, 1, 0)) AS total,SUM(IF(c.max >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
+                                "WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" +
                                 " GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
                         sql.append(ql);
                         sql.append(" and ss.PROFESSION_CODE = :professionCode");
                         condition.put("professionCode", professionCode);
-                        sql.append(" AND ss.CLASS_NAME IS NOT NULL group by ss.CLASS_CODE");
+                        sql.append(" group by ss.CLASS_CODE");
                     }
                 } else {
-                    sql.append("SELECT SUM(IF(cs.SCORE > 0, 1, 0)) AS total,SUM(IF(cs.SCORE >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
-                            "WHERE 1=1 cs.TYPE LIKE "+"%大学英语" + cetType + "%" +
+                    sql.append("SELECT SUM(IF(c.max > 0, 1, 0)) AS total,SUM(IF(c.max >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
+                            "WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" +
                             " GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
                     sql.append(ql);
                     sql.append(" and ss.COLLEGE_CODE = :collegeCode");
                     condition.put("collegeCode", collegeCode);
-                    sql.append(" AND p.NAME IS NOT NULL group by ss.PROFESSION_CODE");
+                    sql.append(" group by ss.PROFESSION_CODE");
                 }
             } else {
-                sql.append("SELECT SUM(IF(cs.SCORE > 0, 1, 0)) AS total,SUM(IF(cs.SCORE >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
-                        "WHERE 1=1 cs.TYPE LIKE "+"%大学英语" + cetType + "%" +
+                sql.append("SELECT SUM(IF(c.max > 0, 1, 0)) AS total,SUM(IF(c.max >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
+                        "WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" +
                         " GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
                 sql.append(ql);
-                sql.append(" AND d.COMPANY_NAME IS NOT NULL group by ss.COLLEGE_CODE");
+                sql.append(" group by ss.COLLEGE_CODE");
             }
             Query sq = em.createNativeQuery(sql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
