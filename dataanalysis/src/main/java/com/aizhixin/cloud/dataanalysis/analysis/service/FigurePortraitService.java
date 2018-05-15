@@ -15,10 +15,8 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @author: Created by jianwei.wu
@@ -289,9 +287,10 @@ public class FigurePortraitService {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> condition = new HashMap<>();
         GroupPortraitVO grVO = new GroupPortraitVO();
+//        String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         try {
             //性别分布
-            StringBuilder sexql = new StringBuilder("SELECT XB as xb,count(1) as count FROM t_xsjbxx WHERE 1 = 1 ");
+            StringBuilder sexql = new StringBuilder("SELECT XB as xb,count(DISTINCT XH) as count FROM t_xsjbxx WHERE 1 = 1 ");
             StringBuilder sql = new StringBuilder("");
             if (null != orgId) {
                 sql.append(" and XXID = :orgId");
@@ -310,7 +309,8 @@ public class FigurePortraitService {
                 condition.put("classCode", classCode);
             }
             sexql.append(sql);
-            sexql.append(" AND XB IS NOT NULL GROUP BY XB");
+            sexql.append(" AND XB IS NOT NULL AND CURDATE() BETWEEN RXNY AND YBYNY");
+            sexql.append(" GROUP BY XB");
             Query sq = em.createNativeQuery(sexql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             for (Map.Entry<String, Object> e : condition.entrySet()) {
@@ -335,7 +335,7 @@ public class FigurePortraitService {
             grVO.setSexList(sexList);
 
             //年龄分布
-            StringBuilder ageql = new StringBuilder("SELECT ROUND(DATEDIFF(CURDATE(), CSRQ) / 365.2422)  as age, count(1) as count FROM t_xsjbxx WHERE 1 = 1 ");
+            StringBuilder ageql = new StringBuilder("SELECT ROUND(DATEDIFF(CURDATE(), CSRQ) / 365.2422)  as age, count(DISTINCT XH) FROM t_xsjbxx WHERE 1 = 1 ");
             ageql.append(sql);
             ageql.append(" AND CURDATE() BETWEEN RXNY AND YBYNY GROUP BY  age");
             Query aq = em.createNativeQuery(ageql.toString());
