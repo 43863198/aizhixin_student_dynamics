@@ -1070,6 +1070,7 @@ public class CetStatisticsAnalysisJob {
                     ssList.add(ss);
                 }
             }
+            scoreStatisticsService.deleteAll();
             if (ssList.size() > 0) {
                 scoreStatisticsService.save(ssList);
                 logger.info(ssList.size()+"数据长度@@@@@@@@@@@@@@@@@");
