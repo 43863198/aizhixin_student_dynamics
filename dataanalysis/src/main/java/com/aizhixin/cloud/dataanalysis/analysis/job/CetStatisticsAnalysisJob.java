@@ -396,7 +396,7 @@ public class CetStatisticsAnalysisJob {
                     "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
                     "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
-                    "GROUP BY ss.ORG_ID,ss.COLLEGE_CODE,ss.PROFESSION_CODE,cs.EXAMINATION_DATE,cs.TYPE,ss.CLASS_CODE");
+                    "GROUP BY ss.ORG_ID,ss.COLLEGE_CODE,ss.PROFESSION_CODE,cs.EXAMINATION_DATE,cs.TYPE,ss.CLASS_NAME");
             StringBuilder gradeoql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,cs.ORG_ID as persion,cs.EXAMINATION_DATE as date,cs.ORG_ID as code, " +
                     "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,ss.GRADE as grade " +
                     "FROM t_cet_score cs " +
@@ -424,7 +424,7 @@ public class CetStatisticsAnalysisJob {
                     "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
                     "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
-                    "GROUP BY ss.ORG_ID,ss.COLLEGE_CODE,ss.PROFESSION_CODE,cs.EXAMINATION_DATE,cs.TYPE,ss.CLASS_CODE,ss.GRADE");
+                    "GROUP BY ss.ORG_ID,ss.COLLEGE_CODE,ss.PROFESSION_CODE,cs.EXAMINATION_DATE,cs.TYPE,ss.CLASS_NAME,ss.GRADE");
             StringBuilder sexoql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,cs.ORG_ID as persion,cs.EXAMINATION_DATE as date,cs.ORG_ID as code, " +
                     "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,s.SEX as sex " +
                     "FROM t_cet_score cs " +
@@ -452,7 +452,7 @@ public class CetStatisticsAnalysisJob {
                     "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
                     "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
-                    "GROUP BY ss.ORG_ID,ss.COLLEGE_CODE,ss.PROFESSION_CODE,cs.EXAMINATION_DATE,cs.TYPE,ss.CLASS_CODE,s.SEX");
+                    "GROUP BY ss.ORG_ID,ss.COLLEGE_CODE,ss.PROFESSION_CODE,cs.EXAMINATION_DATE,cs.TYPE,ss.CLASS_NAME,s.SEX");
 //            Query soq = em.createNativeQuery(soql.toString());
 //            Query sdq = em.createNativeQuery(sdql.toString());
 //            Query spq = em.createNativeQuery(spql.toString());
