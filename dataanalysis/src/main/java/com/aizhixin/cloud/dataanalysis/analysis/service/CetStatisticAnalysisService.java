@@ -1353,6 +1353,8 @@ public class CetStatisticAnalysisService {
                 avgsql.append(" and ss.CLASS_CODE = :classCode");
                 condition.put("classCode", classCode);
             }
+            sql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
+            avgsql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
             Query sq = em.createNativeQuery(sql.toString());
             Query aq = em.createNativeQuery(avgsql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
