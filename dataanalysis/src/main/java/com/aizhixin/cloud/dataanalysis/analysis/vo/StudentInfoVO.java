@@ -40,5 +40,11 @@ public class StudentInfoVO {
     private String graduationDate;
     @ApiModelProperty(value = "照片")
     private String pic;
+    @ApiModelProperty(value = "出生地")
+    private String adr;
+    @ApiModelProperty(value = "入学日期")
+    private String rxq;
+    @ApiModelProperty(value = "毕业日期")
+    private String byrq;
 
 }
