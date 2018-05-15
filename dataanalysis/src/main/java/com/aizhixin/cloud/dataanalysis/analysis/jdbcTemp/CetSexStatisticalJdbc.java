@@ -35,7 +35,7 @@ public class CetSexStatisticalJdbc {
         if (!isAll){
             sql+=" AND tcs.`SCORE`>=425 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
         }else{
-            sql+=" AND tcs.`SCORE`>=0 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
+            sql+=" AND tcs.`SCORE`>0 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
         }
         sql+="  GROUP BY ts.`xb`";
 
@@ -68,7 +68,7 @@ public class CetSexStatisticalJdbc {
         if (!isAll){
             sql+=" AND tcs.`SCORE`>=425 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
         }else{
-            sql+=" AND tcs.`SCORE`>=0 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
+            sql+=" AND tcs.`SCORE`>0 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
         }
         sql+="  GROUP BY ts.`nl`";
 
@@ -100,7 +100,7 @@ public class CetSexStatisticalJdbc {
         if (!isAll){
             sql+=" AND tcs.`SCORE`>=425 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
         }else{
-            sql+=" AND tcs.`SCORE`>=0 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
+            sql+=" AND tcs.`SCORE`>0 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
         }
         sql+="  GROUP BY ts.`nj`";
 
@@ -150,7 +150,7 @@ public class CetSexStatisticalJdbc {
     }
 
     public ScoreScaleDomain scoreScaleStatisticalInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType,Integer startScore,Integer endScore){
-        String sql="SELECT MAX(tcs.`SCORE`) AS total FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND ts.`RXNY`<CURRENT_TIMESTAMP AND tcs.`SCORE`<> ''";
+        String sql="SELECT MAX(tcs.`SCORE`) AS total FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND ts.`RXNY`<CURRENT_TIMESTAMP AND tcs.`SCORE`>0";
         if (!StringUtils.isEmpty(collegeCode)){
             sql+=" AND ts.`YXSH`='"+collegeCode+"'";
         }
