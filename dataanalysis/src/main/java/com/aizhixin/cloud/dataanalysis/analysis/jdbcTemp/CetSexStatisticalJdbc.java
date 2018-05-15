@@ -22,7 +22,7 @@ public class CetSexStatisticalJdbc {
     private final Logger logger= LoggerFactory.getLogger(CetSexStatisticalJdbc.class);
 
     public List<CetSexStatisticalInfoDomain> sexStatisticalInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType, final boolean isAll){
-        String sql="SELECT ts.`xb`,COUNT(DISTINCT ts.`xh`) as total FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`=218 AND  ts.`YBYNY`>CURRENT_TIMESTAMP";
+        String sql="SELECT ts.`xb`,COUNT(DISTINCT ts.`xh`) as total FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND ts.`RXNY`<CURRENT_TIMESTAMP";
         if (!StringUtils.isEmpty(collegeCode)){
             sql+=" AND ts.`YXSH`='"+collegeCode+"'";
         }
@@ -33,9 +33,9 @@ public class CetSexStatisticalJdbc {
             sql+=" AND ts.`BH`='"+classCode+"'";
         }
         if (!isAll){
-            sql+=" AND tcs.`SCORE`>=425";
+            sql+=" AND tcs.`SCORE`>=425 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
         }
-        sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%' GROUP BY ts.`xb`";
+        sql+="  GROUP BY ts.`xb`";
 
         logger.info("sql 语句>>>>>> "+sql);
         RowMapper<CetSexStatisticalInfoDomain>  rowMapper= (rs, rowNum) -> {
@@ -53,7 +53,7 @@ public class CetSexStatisticalJdbc {
 
 
     public List<AgeSexStatisticalInfoDomain> ageStatisticalInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType, final boolean isAll){
-        String sql="SELECT ts.`nl`,COUNT(DISTINCT ts.`xh`) as total FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP and ts.nl is not null";
+        String sql="SELECT ts.`nl`,COUNT(DISTINCT ts.`xh`) as total FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND ts.`RXNY`<CURRENT_TIMESTAMP and ts.nl is not null";
         if (!StringUtils.isEmpty(collegeCode)){
             sql+=" AND ts.`YXSH`='"+collegeCode+"'";
         }
@@ -64,9 +64,9 @@ public class CetSexStatisticalJdbc {
             sql+=" AND ts.`BH`='"+classCode+"'";
         }
         if (!isAll){
-            sql+=" AND tcs.`SCORE`>=425";
+            sql+=" AND tcs.`SCORE`>=425 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
         }
-        sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%' GROUP BY ts.`nl`";
+        sql+="  GROUP BY ts.`nl`";
 
         logger.info("sql 语句>>>>>> "+sql);
         RowMapper<AgeSexStatisticalInfoDomain>  rowMapper= (rs, rowNum) -> {
@@ -83,7 +83,7 @@ public class CetSexStatisticalJdbc {
     }
 
     public List<NjStatisticalInfoDomain> njStatisticalInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType, final boolean isAll){
-        String sql="SELECT ts.`nj`,COUNT(DISTINCT ts.`xh`) as total FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP";
+        String sql="SELECT ts.`nj`,COUNT(DISTINCT ts.`xh`) as total FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND ts.`RXNY`<CURRENT_TIMESTAMP";
         if (!StringUtils.isEmpty(collegeCode)){
             sql+=" AND ts.`YXSH`='"+collegeCode+"'";
         }
@@ -94,9 +94,9 @@ public class CetSexStatisticalJdbc {
             sql+=" AND ts.`BH`='"+classCode+"'";
         }
         if (!isAll){
-            sql+=" AND tcs.`SCORE`>=425";
+            sql+=" AND tcs.`SCORE`>=425 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
         }
-        sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%' GROUP BY ts.`nj`";
+        sql+="  GROUP BY ts.`nj`";
 
         logger.info("sql 语句>>>>>> "+sql);
         RowMapper<NjStatisticalInfoDomain>  rowMapper= (rs, rowNum) -> {
@@ -113,9 +113,8 @@ public class CetSexStatisticalJdbc {
     }
 
 
-
     public ScoreScaleDomain scoreStatisticalInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
-        String sql="SELECT COUNT(*) AS total FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`=218 AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND tcs.`ID` IS NULL";
+        String sql="SELECT COUNT(*) AS total FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`=218 AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND ts.`RXNY`<CURRENT_TIMESTAMP AND tcs.`ID` IS NULL";
         if (!StringUtils.isEmpty(collegeCode)){
             sql+=" AND ts.`YXSH`='"+collegeCode+"'";
         }
@@ -145,7 +144,7 @@ public class CetSexStatisticalJdbc {
     }
 
     public ScoreScaleDomain scoreScaleStatisticalInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType,Integer startScore,Integer endScore){
-        String sql="SELECT MAX(tcs.`SCORE`) AS total FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND tcs.`SCORE`<> ''";
+        String sql="SELECT MAX(tcs.`SCORE`) AS total FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND ts.`RXNY`<CURRENT_TIMESTAMP AND tcs.`SCORE`<> ''";
         if (!StringUtils.isEmpty(collegeCode)){
             sql+=" AND ts.`YXSH`='"+collegeCode+"'";
         }
