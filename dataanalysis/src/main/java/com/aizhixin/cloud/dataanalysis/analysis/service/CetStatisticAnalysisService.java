@@ -856,8 +856,8 @@ public class CetStatisticAnalysisService {
                         sql.append("SELECT ss.NAME_CODE as grade, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss WHERE 1=1");
                         sql.append(ql);
                         sql.append(" AND ss.STATISTICS_TYPE = '022'");
-                        sql.append(" AND ss.STATISTICS_TYPE = '012'");
-                        condition.put("collegeCode", professionCode);
+                        sql.append(" and ss.CODE = :professionCode");
+                        condition.put("professionCode", professionCode);
                         sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", collegeCode);
                         sql.append(" AND ss.NAME_CODE IS NOT NULL");
@@ -1072,8 +1072,9 @@ public class CetStatisticAnalysisService {
                     } else {
                         sql.append("SELECT ss.NAME_CODE as sex, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss  WHERE 1=1");
                         sql.append(ql);
-                        sql.append("  AND ss.STATISTICS_TYPE = '012'");
-                        condition.put("collegeCode", professionCode);
+                        sql.append(" AND ss.STATISTICS_TYPE = '012'");
+                        sql.append(" and ss.CODE = :professionCode");
+                        condition.put("professionCode", professionCode);
                         sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", collegeCode);
                         sql.append(" AND ss.NAME_CODE IS NOT NULL");
