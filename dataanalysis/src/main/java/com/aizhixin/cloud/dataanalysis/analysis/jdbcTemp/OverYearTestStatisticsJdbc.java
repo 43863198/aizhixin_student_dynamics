@@ -18,7 +18,7 @@ public class OverYearTestStatisticsJdbc {
     }
 
     public Integer countTotal(Long orgId,String startDate, String collegeCode, String professionCode, String classCode){
-        String sql="SELECT COUNT(*) FROM `t_xsjbxx` AS tx WHERE tx.RXNY<='"+startDate+"'AND tx.YBYNY>='"+startDate+"' AND tx.XXID="+orgId;
+        String sql="SELECT COUNT(DISTINCT tx.XH) FROM `t_xsjbxx` AS tx LEFT join `t_cet_score` AS tcs  ON tcs.JOB_NUMBER=tx.XH WHERE tx.RXNY<='"+startDate+"'AND tx.YBYNY>='"+startDate+"' AND tx.XXID="+orgId+" AND tcs.score>0";
         if (!StringUtils.isEmpty(collegeCode)){
             sql+=" AND tx.`YXSH`='"+collegeCode+"'";
         }
