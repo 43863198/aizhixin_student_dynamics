@@ -20,7 +20,9 @@ public class ScoreStatisticsService {
         scoreStatisticsRespository.save(ssList);
     }
 
-
+    public void deleteAll(){
+        scoreStatisticsRespository.deleteAll();
+    }
 
 
 

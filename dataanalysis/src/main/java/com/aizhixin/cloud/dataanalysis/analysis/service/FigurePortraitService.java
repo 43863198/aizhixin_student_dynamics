@@ -30,7 +30,7 @@ public class FigurePortraitService {
     @Autowired
     private AlertWarningInformationService alertWarningInformationService;
 
-    public PageData<StudentInfoVO> getStudentList(Long orgId, String collegeNumber, String professionNumber, String classNumber, Integer pageNumber, Integer pageSize) {
+    public PageData<StudentInfoVO> getStudentList(Long orgId, String collegeNumber, String professionNumber, String classNumber, Integer pageNumber,String nj,Integer pageSize) {
         PageData<StudentInfoVO> p = new PageData<>();
         List<StudentInfoVO> dataList = new ArrayList<>();
         Map<String, Object> condition = new HashMap<>();
@@ -57,6 +57,12 @@ public class FigurePortraitService {
                 sql.append(" AND BH = :classNumber");
                 cql.append(" AND BH = :classNumber");
                 condition.put("classNumber", classNumber);
+            }
+            if (!StringUtils.isBlank(nj)) {
+                sql.append(" AND (XM LIKE :name or XH LIKE :xh)");
+                cql.append(" AND (XM LIKE :name or XH LIKE :xh)");
+                condition.put("name", "%" + nj + "%");
+                condition.put("xh", "%"+nj+"%");
             }
             sql.append(" AND CURDATE() BETWEEN RXNY AND YBYNY");
             cql.append(" AND CURDATE() BETWEEN RXNY AND YBYNY");

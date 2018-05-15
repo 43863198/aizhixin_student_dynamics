@@ -41,10 +41,11 @@ public class FigurePortraitController {
             @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
             @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
-            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber,
+            @ApiParam(value = "nj 班号", required = false) @RequestParam(value = "nj", required = false) String nj,
+            @ApiParam(value = "classNumber 姓名/学号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize){
-        return new ResponseEntity<Object>(figurePortraitService.getStudentList(orgId, collegeNumber, professionNumber, classNumber, pageNumber, pageSize), HttpStatus.OK);
+        return new ResponseEntity<Object>(figurePortraitService.getStudentList(orgId, collegeNumber, professionNumber, classNumber, pageNumber,nj, pageSize), HttpStatus.OK);
     }
     /**
      * 人物画像---学生个人画像
@@ -61,7 +62,7 @@ public class FigurePortraitController {
     }
 
     /**
-     * 人物画像---学生个人画像
+     * 人物画像---学生个人画像---预警信息
      * @param orgId
      * @param jobNumber
      * @return
