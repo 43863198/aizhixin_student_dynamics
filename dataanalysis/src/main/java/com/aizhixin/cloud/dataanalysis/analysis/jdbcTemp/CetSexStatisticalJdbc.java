@@ -34,6 +34,8 @@ public class CetSexStatisticalJdbc {
         }
         if (!isAll){
             sql+=" AND tcs.`SCORE`>=425 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
+        }else{
+            sql+=" AND tcs.`SCORE`>=0 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
         }
         sql+="  GROUP BY ts.`xb`";
 
@@ -65,6 +67,8 @@ public class CetSexStatisticalJdbc {
         }
         if (!isAll){
             sql+=" AND tcs.`SCORE`>=425 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
+        }else{
+            sql+=" AND tcs.`SCORE`>=0 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
         }
         sql+="  GROUP BY ts.`nl`";
 
@@ -95,6 +99,8 @@ public class CetSexStatisticalJdbc {
         }
         if (!isAll){
             sql+=" AND tcs.`SCORE`>=425 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
+        }else{
+            sql+=" AND tcs.`SCORE`>=0 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
         }
         sql+="  GROUP BY ts.`nj`";
 
@@ -154,7 +160,7 @@ public class CetSexStatisticalJdbc {
         if (!StringUtils.isEmpty(classCode)){
             sql+=" AND ts.`BH`='"+classCode+"'";
         }
-        sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%' GROUP BY ts.`xh`";
+        sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%' and tcs.`SCORE`>0 GROUP BY ts.`xh`";
 
         String sql2="SELECT COUNT(1) AS t FROM ("+sql+") AS ss WHERE ss.total>="+startScore+" AND ss.total<= "+endScore;
         logger.info("sql 语句>>>>>> "+sql2);
