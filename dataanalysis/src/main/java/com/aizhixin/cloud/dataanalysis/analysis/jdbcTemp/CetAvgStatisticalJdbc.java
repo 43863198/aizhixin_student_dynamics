@@ -24,21 +24,21 @@ public class CetAvgStatisticalJdbc {
         return Integer.parseInt(bd.toString());
     }
     public List<AvgDomain> avgInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
-        String sql=" SELECT ROUND(AVG(tcs.`SCORE`),2) as sc";
+        String sql=" SELECT max(tcs.`SCORE`) as sc";
         if (StringUtils.isEmpty(collegeCode)){
-            sql+=" ,ts.`YXSMC` as name ";
+            sql+=" ,ts.`YXSMC` as `name` ";
         }else{
             if (!StringUtils.isEmpty(professionCode)){
                 if (!StringUtils.isEmpty(classCode)){
-                    sql+=" ,ts.`BJMC` as name ";
+                    sql+=" ,ts.`BJMC` as `name` ";
                 }else{
-                    sql+=" ,ts.`ZYMC` as name ";
+                    sql+=" ,ts.`ZYMC` as `name` ";
                 }
             }else{
-                sql+=" ,ts.`ZYMC` as name ";
+                sql+=" ,ts.`ZYMC` as `name` ";
             }
         }
-        sql+= "FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND tcs.`SCORE`<> ''";
+        sql+= "FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND ts.`RXNY`<CURRENT_TIMESTAMP AND tcs.`SCORE`>0 ";
         if (!StringUtils.isEmpty(collegeCode)){
             sql+=" AND ts.`YXSH`='"+collegeCode+"'";
         }
@@ -48,34 +48,37 @@ public class CetAvgStatisticalJdbc {
         if (!StringUtils.isEmpty(classCode)){
             sql+=" AND ts.`BH`='"+classCode+"'";
         }
-        sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
-        if (StringUtils.isEmpty(collegeCode)){
-            sql+=" GROUP BY ts.`YXSH`";
-        }else{
-            if (!StringUtils.isEmpty(professionCode)){
-                if (!StringUtils.isEmpty(classCode)){
-                    sql+=" GROUP BY ts.`ZYH`";
-                }else{
-                    sql+=" GROUP BY ts.`BH`";
-                }
-            }else{
-                sql+=" GROUP BY ts.`ZYH`";
-            }
-        }
-        logger.info("sql 语句>>>>>> "+sql);
+        sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%' GROUP BY tcs.`JOB_NUMBER`";
+//        if (StringUtils.isEmpty(collegeCode)){
+//            sql+=" GROUP BY ts.`YXSH`";
+//        }else{
+//            if (!StringUtils.isEmpty(professionCode)){
+//                if (!StringUtils.isEmpty(classCode)){
+//                    sql+=" GROUP BY ts.`ZYH`";
+//                }else{
+//                    sql+=" GROUP BY ts.`BH`";
+//                }
+//            }else{
+//                sql+=" GROUP BY ts.`ZYH`";
+//            }
+//        }
+
+        String sql2="SELECT c.name,ROUND(AVG(c.sc),2) AS sc FROM ("+sql+") AS c GROUP BY c.name";
+
+        logger.info("sql 语句>>>>>> "+sql2);
         RowMapper<AvgDomain> rowMapper= (rs, rowNum) -> {
             AvgDomain avgDomain=new AvgDomain();
             avgDomain.setName(rs.getString("name"));
             avgDomain.setScore(getInt(rs.getDouble("sc")));
             return avgDomain;
         };
-        return jdbcTemplate.query(sql,rowMapper);
+        return jdbcTemplate.query(sql2,rowMapper);
     }
 
 
     public List<AvgSexDomain> avgXbInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
-        String sql=" SELECT ROUND(AVG(tcs.`SCORE`),2) as sc,ts.`XB` ";
-        sql+= "FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND tcs.`SCORE`<> ''";
+        String sql=" SELECT max(tcs.`SCORE`) as sc,ts.`XB` ";
+        sql+= "FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND ts.`RXNY`<CURRENT_TIMESTAMP AND tcs.`SCORE`> 0";
         if (!StringUtils.isEmpty(collegeCode)){
             sql+=" AND ts.`YXSH`='"+collegeCode+"'";
         }
@@ -85,21 +88,23 @@ public class CetAvgStatisticalJdbc {
         if (!StringUtils.isEmpty(classCode)){
             sql+=" AND ts.`BH`='"+classCode+"'";
         }
-        sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%' GROUP BY ts.`XB`";
-        logger.info("sql 语句>>>>>> "+sql);
+        sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%' GROUP BY ts.`xh`";
+
+        String sql2="SELECT c.xb,ROUND(AVG(c.sc),2) AS sc FROM ("+sql+") as c GROUP BY c.xb";
+        logger.info("sql 语句>>>>>> "+sql2);
         RowMapper<AvgSexDomain> rowMapper= (rs, rowNum) -> {
             AvgSexDomain avgSexDomain=new AvgSexDomain();
             avgSexDomain.setSex(rs.getString("xb"));
             avgSexDomain.setScore(getInt(rs.getDouble("sc")));
             return avgSexDomain;
         };
-        return jdbcTemplate.query(sql,rowMapper);
+        return jdbcTemplate.query(sql2,rowMapper);
     }
 
 
     public List<AvgAgeDomain> avgAgeInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
-        String sql=" SELECT ROUND(AVG(tcs.`SCORE`),2) as sc,ts.`nl` ";
-        sql+= "FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND tcs.`SCORE`<> '' and ts.nl is not null";
+        String sql=" SELECT max(tcs.`SCORE`) as sc,ts.`nl` ";
+        sql+= "FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND ts.`RXNY`<CURRENT_TIMESTAMP AND tcs.`SCORE`>0  and ts.nl is not null";
         if (!StringUtils.isEmpty(collegeCode)){
             sql+=" AND ts.`YXSH`='"+collegeCode+"'";
         }
@@ -109,21 +114,22 @@ public class CetAvgStatisticalJdbc {
         if (!StringUtils.isEmpty(classCode)){
             sql+=" AND ts.`BH`='"+classCode+"'";
         }
-        sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%' GROUP BY ts.`nl`";
-        logger.info("sql 语句>>>>>> "+sql);
+        sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%' GROUP BY ts.`xh` ";
+        String sql2="SELECT c.nl,ROUND(AVG(c.sc),2) AS sc FROM ("+sql+") as c GROUP BY c.nl";
+        logger.info("sql 语句>>>>>> "+sql2);
         RowMapper<AvgAgeDomain> rowMapper= (rs, rowNum) -> {
             AvgAgeDomain avgAgeDomain=new AvgAgeDomain();
             avgAgeDomain.setAge(rs.getInt("nl"));
             avgAgeDomain.setScore(getInt(rs.getDouble("sc")));
             return avgAgeDomain;
         };
-        return jdbcTemplate.query(sql,rowMapper);
+        return jdbcTemplate.query(sql2,rowMapper);
     }
 
 
     public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
-        String sql=" SELECT ROUND(AVG(tcs.`SCORE`),2) as sc,ts.`NJ` ";
-        sql+= "FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND tcs.`SCORE`<> ''";
+        String sql=" SELECT max(tcs.`SCORE`) as sc,ts.`NJ` ";
+        sql+= "FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND tcs.`SCORE`>0 AND ts.`RXNY`<CURRENT_TIMESTAMP";
         if (!StringUtils.isEmpty(collegeCode)){
             sql+=" AND ts.`YXSH`='"+collegeCode+"'";
         }
@@ -133,14 +139,15 @@ public class CetAvgStatisticalJdbc {
         if (!StringUtils.isEmpty(classCode)){
             sql+=" AND ts.`BH`='"+classCode+"'";
         }
-        sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%' GROUP BY ts.`NJ`";
-        logger.info("sql 语句>>>>>> "+sql);
+        sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%' GROUP BY ts.`xh`";
+        String sql2="SELECT c.nj,ROUND(AVG(c.sc),2) AS sc FROM ("+sql+") as c group by c.nj";
+        logger.info("sql 语句>>>>>> "+sql2);
         RowMapper<AvgNjDomain> rowMapper= (rs, rowNum) -> {
             AvgNjDomain avgNjDomain=new AvgNjDomain();
             avgNjDomain.setNj(rs.getString("nj"));
             avgNjDomain.setScore(getInt(rs.getDouble("sc")));
             return avgNjDomain;
         };
-        return jdbcTemplate.query(sql,rowMapper);
+        return jdbcTemplate.query(sql2,rowMapper);
     }
 }
