@@ -31,8 +31,8 @@ public class OverYearTestStatisticsJdbc {
         return jdbcTemplate.queryForObject(sql,Integer.class);
     }
 
-    public Integer countPassTotal(Long orgId,String type, String collegeCode, String professionCode, String classCode,String startDate){
-        String sql="SELECT MAX(tcs.score) AS sc FROM `t_xsjbxx` AS tx LEFT JOIN `t_cet_score` AS tcs  ON tcs.JOB_NUMBER=tx.XH WHERE tcs.org_id="+orgId+" and tx.RXNY<='"+startDate+"' AND tx.YBYNY>='"+startDate+"' and  tcs.`TYPE` LIKE '%大学英语"+type+"%'";
+    public Integer countPassTotal(Long orgId,String type, String collegeCode, String professionCode, String classCode,String startDate,String endDate){
+        String sql="SELECT MAX(tcs.score) AS sc FROM `t_xsjbxx` AS tx LEFT JOIN `t_cet_score` AS tcs  ON tcs.JOB_NUMBER=tx.XH WHERE tcs.org_id="+orgId+" and tx.RXNY<='"+startDate+"' AND tx.YBYNY>='"+startDate+"' and tcs.EXAMINATION_DATE<='"+endDate+"'  AND  tcs.`TYPE` LIKE '%大学英语"+type+"%'";
         if (!StringUtils.isEmpty(collegeCode)){
             sql+=" AND tx.`YXSH`='"+collegeCode+"'";
         }
