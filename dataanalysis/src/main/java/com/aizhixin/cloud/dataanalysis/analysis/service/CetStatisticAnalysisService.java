@@ -1320,11 +1320,38 @@ public class CetStatisticAnalysisService {
 
     public Map<String, Object> currentStatistics(Long orgId,String collegeCode,String professionCode,String classCode, String cetType) {
         Map<String, Object> result = new HashMap<>();
-        Map<String, Object> condition = new HashMap<>();
+
         try {
             String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
-            StringBuilder sql = new StringBuilder("SELECT count(1) AS total,SUM(IF(cs.SCORE >= 425, 1, 0)) AS pass FROM t_cet_score cs LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
+            //在校人数
+            Map<String, Object> con = new HashMap<>();
+            StringBuilder tql = new StringBuilder("SELECT count(DISTINCT XH) as count FROM t_xsjbxx WHERE 1 = 1 ");
+            if (null != orgId) {
+                tql.append(" and XXID = :orgId");
+                con.put("orgId", orgId);
+            }
+            if (!StringUtils.isBlank(collegeCode)) {
+                tql.append(" and YXSH = :collegeCode");
+                con.put("collegeCode", collegeCode);
+            }
+            if (!StringUtils.isBlank(professionCode)) {
+                tql.append(" and ZYH = :professionCode");
+                con.put("professionCode", professionCode);
+            }
+            if (!StringUtils.isBlank(classCode)) {
+                tql.append(" and BH = :classCode");
+                con.put("classCode", classCode);
+            }
+            tql.append(" AND CURDATE() BETWEEN RXNY AND YBYNY");
+            Query tq = em.createNativeQuery(tql.toString());
+            for (Map.Entry<String, Object> e : con.entrySet()) {
+                tq.setParameter(e.getKey(), e.getValue());
+            }
+            tq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            Map tres = (Map)tq.getSingleResult();
+            Map<String, Object> condition = new HashMap<>();
+            StringBuilder sql = new StringBuilder("SELECT SUM(IF(cs.SCORE >= 425, 1, 0)) AS pass FROM t_cet_score cs LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
                     "WHERE ss.GRADUATION_DATE > "+date);
             StringBuilder avgsql = new StringBuilder("SELECT AVG(cs.SCORE) as avg FROM t_cet_score cs LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
                     "WHERE cs.SCORE >= 425 AND ss.GRADUATION_DATE > "+date);
@@ -1366,8 +1393,8 @@ public class CetStatisticAnalysisService {
             Map res = (Map)sq.getSingleResult();
             Map ares = (Map)aq.getSingleResult();
             ScoreStatisticsVO data = new ScoreStatisticsVO();
-            if(null!=res.get("total")){
-                data.setTotal(Integer.valueOf(res.get("total").toString()));
+            if(null!=tres.get("count")){
+                data.setTotal(Integer.valueOf(tres.get("count").toString()));
             }
             if(null!=res.get("pass")){
                 data.setPass(Integer.valueOf(res.get("pass").toString()));
