@@ -747,7 +747,8 @@ public class CetStatisticAnalysisService {
                         sql.append("SELECT ss.NAME_CODE as sex, ss.AVG_SCORE as avg FROM t_score_statistics ss WHERE 1=1");
                         sql.append(ql);
                         sql.append(" AND ss.STATISTICS_TYPE = '012'");
-                        condition.put("collegeCode", professionCode);
+                        sql.append(" and ss.CODE = :professionCode");
+                        condition.put("professionCode", professionCode);
                         sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", collegeCode);
                         sql.append(" AND ss.NAME_CODE IS NOT NULL");
