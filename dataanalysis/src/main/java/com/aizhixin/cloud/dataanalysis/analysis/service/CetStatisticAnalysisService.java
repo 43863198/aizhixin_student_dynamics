@@ -635,7 +635,7 @@ public class CetStatisticAnalysisService {
             if (!StringUtils.isBlank(collegeCode)) {
                 if (!StringUtils.isBlank(professionCode)) {
                     if (!StringUtils.isBlank(classCode)) {
-                        sql.append("SELECT c.NAME as name, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_class c ON ss.CODE = c.CLASS_NUMBER AND ss.PARENT_CODE = c.PROFESSION_CODE WHERE 1=1 AND ss.STATISTICS_TYPE = '003'");
+                        sql.append("SELECT c.NAME as name, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_student_status c ON ss.CODE = c.CLASS_NUMBER AND ss.PARENT_CODE = c.PROFESSION_CODE WHERE 1=1 AND ss.STATISTICS_TYPE = '003'");
                         sql.append(ql);
                         sql.append(" AND ss.STATISTICS_TYPE = '003'");
                         sql.append(" and ss.PARENT_CODE = :pCode");
@@ -644,7 +644,7 @@ public class CetStatisticAnalysisService {
                         condition.put("classCode", classCode);
                         sql.append(" AND c.NAME IS NOT NULL");
                     }else {
-                        sql.append("SELECT c.NAME as name, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_class c ON ss.CODE = c.CLASS_NUMBER AND ss.PARENT_CODE = c.PROFESSION_CODE WHERE 1=1 AND ss.STATISTICS_TYPE = '003'");
+                        sql.append("SELECT c.NAME as name, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_student_status c ON ss.CODE = c.CLASS_NUMBER AND ss.PARENT_CODE = c.PROFESSION_CODE WHERE 1=1 AND ss.STATISTICS_TYPE = '003'");
                         sql.append(ql);
                         sql.append(" AND ss.STATISTICS_TYPE = '003'");
                         sql.append(" and ss.PARENT_CODE = :pCode");
@@ -1329,39 +1329,12 @@ public class CetStatisticAnalysisService {
         Map<String, Object> result = new HashMap<>();
 
         try {
-            String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-
             //在校人数
-            Map<String, Object> con = new HashMap<>();
-            StringBuilder tql = new StringBuilder("SELECT count(DISTINCT XH) as count FROM t_xsjbxx WHERE 1 = 1 ");
-            if (null != orgId) {
-                tql.append(" and XXID = :orgId");
-                con.put("orgId", orgId);
-            }
-            if (!StringUtils.isBlank(collegeCode)) {
-                tql.append(" and YXSH = :collegeCode");
-                con.put("collegeCode", collegeCode);
-            }
-            if (!StringUtils.isBlank(professionCode)) {
-                tql.append(" and ZYH = :professionCode");
-                con.put("professionCode", professionCode);
-            }
-            if (!StringUtils.isBlank(classCode)) {
-                tql.append(" and BH = :classCode");
-                con.put("classCode", classCode);
-            }
-            tql.append(" AND CURDATE() BETWEEN RXNY AND YBYNY");
-            Query tq = em.createNativeQuery(tql.toString());
-            for (Map.Entry<String, Object> e : con.entrySet()) {
-                tq.setParameter(e.getKey(), e.getValue());
-            }
-            tq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-            Map tres = (Map)tq.getSingleResult();
             Map<String, Object> condition = new HashMap<>();
-            StringBuilder sql = new StringBuilder("SELECT SUM(IF(cs.SCORE >= 425, 1, 0)) AS pass FROM t_cet_score cs LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
-                    "WHERE ss.GRADUATION_DATE > "+date);
-            StringBuilder avgsql = new StringBuilder("SELECT AVG(cs.SCORE) as avg FROM t_cet_score cs LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
-                    "WHERE cs.SCORE >= 425 AND ss.GRADUATION_DATE > "+date);
+            StringBuilder sql = new StringBuilder("SELECT SUM(IF(cs.SCORE > 0, 1, 0)) AS total,SUM(IF(cs.SCORE >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN t_cet_score cs ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
+                    "WHERE 1=1");
+            StringBuilder avgsql = new StringBuilder("SELECT AVG(cs.SCORE) as avg FROM t_student_status ss LEFT JOIN t_cet_score cs ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
+                    "WHERE cs.SCORE >= 425 ");
             if (null != orgId) {
                 sql.append(" and cs.ORG_ID = :orgId");
                 avgsql.append(" and cs.ORG_ID = :orgId");
@@ -1400,8 +1373,8 @@ public class CetStatisticAnalysisService {
             Map res = (Map)sq.getSingleResult();
             Map ares = (Map)aq.getSingleResult();
             ScoreStatisticsVO data = new ScoreStatisticsVO();
-            if(null!=tres.get("count")){
-                data.setTotal(Integer.valueOf(tres.get("count").toString()));
+            if(null!=res.get("total")){
+                data.setTotal(Integer.valueOf(res.get("total").toString()));
             }
             if(null!=res.get("pass")){
                 data.setPass(Integer.valueOf(res.get("pass").toString()));
