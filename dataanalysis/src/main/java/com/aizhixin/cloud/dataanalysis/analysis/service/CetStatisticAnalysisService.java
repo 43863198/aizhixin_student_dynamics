@@ -490,7 +490,7 @@ public class CetStatisticAnalysisService {
 //        }
 //    }
 
-    public Map<String, Object> cetSingleDataStatistics(Long orgId, String teacherYear, String semester, String collegeCode, String professionCode, String classCode, String cetType) {
+    public Map<String, Object> cetSingleDataStatistics(Long orgId, String teacherYear, String semester, String collegeCode, String professionCode, String classCode,String className, String cetType) {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> condition = new HashMap<>();
         CetSingleDataStatisticsVO csdsVO = new CetSingleDataStatisticsVO();
@@ -532,6 +532,8 @@ public class CetStatisticAnalysisService {
                     if (!StringUtils.isBlank(classCode)) {
                         sql.append(" and ss.CODE = :classCode");
                         condition.put("classCode", classCode);
+                        sql.append(" and ss.CLASS_NAME = :className");
+                        condition.put("className", className);
                         sql.append(" and ss.STATISTICS_TYPE = '003'");
                         sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", professionCode);
@@ -595,7 +597,7 @@ public class CetStatisticAnalysisService {
     }
 
 
-    public Map<String, Object> cetSingleDataAvgScoure(Long orgId, String teacherYear, String semester, String collegeCode, String professionCode, String classCode, String cetType) {
+    public Map<String, Object> cetSingleDataAvgScoure(Long orgId, String teacherYear, String semester, String collegeCode, String professionCode, String classCode, String className, String cetType) {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> condition = new HashMap<>();
         List<CetScoreAnalysisVO> csaList = new ArrayList<>();
@@ -635,16 +637,18 @@ public class CetStatisticAnalysisService {
             if (!StringUtils.isBlank(collegeCode)) {
                 if (!StringUtils.isBlank(professionCode)) {
                     if (!StringUtils.isBlank(classCode)) {
-                        sql.append("SELECT c.NAME as name, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_student_status c ON ss.CODE = c.CLASS_NUMBER AND ss.PARENT_CODE = c.PROFESSION_CODE WHERE 1=1 AND ss.STATISTICS_TYPE = '003'");
+                        sql.append("SELECT ss.CLASS_NAME as name, ss.AVG_SCORE as avg FROM t_score_statistics ss WHERE 1=1 AND ss.STATISTICS_TYPE = '003'");
                         sql.append(ql);
                         sql.append(" AND ss.STATISTICS_TYPE = '003'");
                         sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", professionCode);
                         sql.append(" and ss.CODE = :classCode");
                         condition.put("classCode", classCode);
+                        sql.append(" and ss.CLASS_NAME = :className");
+                        condition.put("className", className);
                         sql.append(" AND c.NAME IS NOT NULL");
                     }else {
-                        sql.append("SELECT c.NAME as name, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_student_status c ON ss.CODE = c.CLASS_NUMBER AND ss.PARENT_CODE = c.PROFESSION_CODE WHERE 1=1 AND ss.STATISTICS_TYPE = '003'");
+                        sql.append("SELECT ss.CLASS_NAME as name, ss.AVG_SCORE as avg FROM t_score_statistics ss WHERE 1=1 AND ss.STATISTICS_TYPE = '003'");
                         sql.append(ql);
                         sql.append(" AND ss.STATISTICS_TYPE = '003'");
                         sql.append(" and ss.PARENT_CODE = :pCode");
@@ -697,7 +701,7 @@ public class CetStatisticAnalysisService {
     }
 
 
-    public Map<String, Object> cetSingleDataSexAvgScoure(Long orgId, String teacherYear, String semester, String collegeCode, String professionCode, String classCode, String cetType) {
+    public Map<String, Object> cetSingleDataSexAvgScoure(Long orgId, String teacherYear, String semester, String collegeCode, String professionCode, String classCode,String className, String cetType) {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> condition = new HashMap<>();
         List<CetScoreAnalysisVO> csaList = new ArrayList<>();
@@ -742,6 +746,8 @@ public class CetStatisticAnalysisService {
                             sql.append(" AND ss.STATISTICS_TYPE = '013'");
                             sql.append(" and ss.CODE = :classCode");
                             condition.put("classCode", classCode);
+                            sql.append(" and ss.CLASS_NAME = :className");
+                            condition.put("className", className);
                             sql.append(" and ss.PARENT_CODE = :pCode");
                             condition.put("pCode", professionCode);
                             sql.append(" AND ss.NAME_CODE IS NOT NULL");
@@ -801,7 +807,7 @@ public class CetStatisticAnalysisService {
     }
 
 
-    public Map<String, Object> cetSingleDataGradeNumberOfPeople(Long orgId, String teacherYear, String semester, String collegeCode, String professionCode, String classCode, String grade, String cetType) {
+    public Map<String, Object> cetSingleDataGradeNumberOfPeople(Long orgId, String teacherYear, String semester, String collegeCode, String professionCode, String classCode, String className, String grade, String cetType) {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> condition = new HashMap<>();
         List<CetScoreNumberOfPeopleVO> cnpList = new ArrayList<>();
@@ -850,6 +856,8 @@ public class CetStatisticAnalysisService {
                         sql.append(" AND ss.STATISTICS_TYPE = '023'");
                         sql.append(" and ss.CODE = :classCode");
                         condition.put("classCode", classCode);
+                        sql.append(" and ss.CLASS_NAME = :className");
+                        condition.put("className", className);
                         sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", professionCode);
                         sql.append(" AND ss.NAME_CODE IS NOT NULL");
@@ -916,7 +924,7 @@ public class CetStatisticAnalysisService {
     }
 
 
-    public Map<String, Object> cetSingleDataNumberOfPeople(Long orgId, String teacherYear, String semester, String collegeCode, String professionCode, String classCode, String cetType) {
+    public Map<String, Object> cetSingleDataNumberOfPeople(Long orgId, String teacherYear, String semester, String collegeCode, String professionCode, String classCode,String className, String cetType) {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> condition = new HashMap<>();
         List<CetScoreNumberOfPeopleVO> csnpList = new ArrayList<>();
@@ -964,6 +972,8 @@ public class CetStatisticAnalysisService {
                         condition.put("pCode", professionCode);
                         sql.append(" and ss.CODE = :classCode");
                         condition.put("classCode", classCode);
+                        sql.append(" and ss.CLASS_NAME = :className");
+                        condition.put("className", className);
                         sql.append(" AND c.NAME IS NOT NULL");
                     }else {
                         sql.append("SELECT c.NAME as name, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_class c ON ss.CODE = c.CLASS_NUMBER AND ss.PARENT_CODE = c.PROFESSION_CODE  WHERE 1=1 AND ss.STATISTICS_TYPE = '003'");
@@ -1021,7 +1031,7 @@ public class CetStatisticAnalysisService {
         }
     }
 
-    public Map<String, Object> cetSingleDataSexNumberOfPeople(Long orgId, String teacherYear, String semester, String collegeCode, String professionCode, String classCode, String grade, String cetType) {
+    public Map<String, Object> cetSingleDataSexNumberOfPeople(Long orgId, String teacherYear, String semester, String collegeCode, String professionCode, String classCode, String className,String grade, String cetType) {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> condition = new HashMap<>();
         List<CetScoreNumberOfPeopleVO> csnpList = new ArrayList<>();
@@ -1070,6 +1080,8 @@ public class CetStatisticAnalysisService {
                         sql.append("  AND ss.STATISTICS_TYPE = '013'");
                         sql.append(" and ss.CODE = :classCode");
                         condition.put("classCode", classCode);
+                        sql.append(" and ss.CLASS_NAME = :className");
+                        condition.put("className", className);
                         sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", professionCode);
                         sql.append(" AND ss.NAME_CODE IS NOT NULL");
@@ -1132,7 +1144,7 @@ public class CetStatisticAnalysisService {
     }
 
 
-    public Map<String, Object> cetSingleDataGradeAvgScoure(Long orgId, String teacherYear, String semester, String collegeCode, String professionCode, String classCode, String cetType) {
+    public Map<String, Object> cetSingleDataGradeAvgScoure(Long orgId, String teacherYear, String semester, String collegeCode, String professionCode, String classCode,String className, String cetType) {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> condition = new HashMap<>();
         List<CetScoreAnalysisVO> csaList = new ArrayList<>();
@@ -1177,6 +1189,8 @@ public class CetStatisticAnalysisService {
                         sql.append(" AND ss.STATISTICS_TYPE = '023'");
                         sql.append(" and ss.CODE = :classCode");
                         condition.put("classCode", classCode);
+                        sql.append(" and ss.CLASS_NAME = :className");
+                        condition.put("className", className);
                         sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", professionCode);
                         sql.append(" AND ss.NAME_CODE IS NOT NULL");
@@ -1331,9 +1345,9 @@ public class CetStatisticAnalysisService {
         try {
             //在校人数
             Map<String, Object> condition = new HashMap<>();
-            StringBuilder sql = new StringBuilder("SELECT SUM(IF(cs.SCORE > 0, 1, 0)) AS total,SUM(IF(cs.SCORE >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN t_cet_score cs ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
+            StringBuilder sql = new StringBuilder("SELECT SUM(IF(cs.SCORE > 0, 1, 0)) AS total,SUM(IF(cs.SCORE >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  t_cet_score cs ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
                     "WHERE 1=1");
-            StringBuilder avgsql = new StringBuilder("SELECT AVG(cs.SCORE) as avg FROM t_student_status ss LEFT JOIN t_cet_score cs ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
+            StringBuilder avgsql = new StringBuilder("SELECT AVG(cs.SCORE) as avg FROM t_cet_score cs LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
                     "WHERE cs.SCORE >= 425 ");
             if (null != orgId) {
                 sql.append(" and cs.ORG_ID = :orgId");

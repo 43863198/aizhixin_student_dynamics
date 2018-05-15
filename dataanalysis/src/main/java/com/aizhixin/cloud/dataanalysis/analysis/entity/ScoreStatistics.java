@@ -98,6 +98,13 @@ public class ScoreStatistics implements java.io.Serializable {
     @Column(name = "DELETE_FLAG")
     @Getter @Setter protected Integer deleteFlag = DataValidity.VALID.getState();
 
+    /*
+     *名称码
+     */
+    @Column(name = "CLASS_NAME")
+    @Getter @Setter
+    private String className;
+
 }
 
 

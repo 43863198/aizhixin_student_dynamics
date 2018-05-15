@@ -132,9 +132,10 @@ public class CetStatisticAnalysisController {
             @ApiParam(value = "semester 学期 (春;秋;)" , required = true) @RequestParam(value = "semester" , required = true) String semester,
             @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
             @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
-            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber
+            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber,
+            @ApiParam(value = "className 班名", required = false) @RequestParam(value = "className", required = false) String className
     ) {
-        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataStatistics(orgId, teacherYear, semester, collegeNumber, professionNumber, classNumber, cetType),HttpStatus.OK);
+        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataStatistics(orgId, teacherYear, semester, collegeNumber, professionNumber, classNumber,className, cetType),HttpStatus.OK);
     }
 
     /**
@@ -157,9 +158,10 @@ public class CetStatisticAnalysisController {
             @ApiParam(value = "semester 学期 (春;秋;)" , required = true) @RequestParam(value = "semester" , required = true) String semester,
             @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
             @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
-            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber
+            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber,
+            @ApiParam(value = "className 班名", required = false) @RequestParam(value = "className", required = false) String className
     ) {
-        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataAvgScoure(orgId, teacherYear, semester, collegeNumber, professionNumber, classNumber, cetType), HttpStatus.OK);
+        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataAvgScoure(orgId, teacherYear, semester, collegeNumber, professionNumber, classNumber,className, cetType), HttpStatus.OK);
     }
 
     /**
@@ -182,9 +184,10 @@ public class CetStatisticAnalysisController {
             @ApiParam(value = "semester 学期 (春;秋;)" , required = true) @RequestParam(value = "semester" , required = true) String semester,
             @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
             @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
-            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber
+            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber,
+            @ApiParam(value = "className 班名", required = false) @RequestParam(value = "className", required = false) String className
     ) {
-        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataSexAvgScoure(orgId, teacherYear, semester, collegeNumber, professionNumber, classNumber, cetType), HttpStatus.OK);
+        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataSexAvgScoure(orgId, teacherYear, semester, collegeNumber, professionNumber, classNumber,className, cetType), HttpStatus.OK);
     }
 
 
@@ -208,9 +211,10 @@ public class CetStatisticAnalysisController {
             @ApiParam(value = "semester 学期 (春;秋;)" , required = true) @RequestParam(value = "semester" , required = true) String semester,
             @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
             @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
-            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber
+            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber,
+            @ApiParam(value = "className 班名", required = false) @RequestParam(value = "className", required = false) String className
     ) {
-        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataGradeAvgScoure(orgId, teacherYear, semester, collegeNumber, professionNumber, classNumber, cetType), HttpStatus.OK);
+        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataGradeAvgScoure(orgId, teacherYear, semester, collegeNumber, professionNumber,className, classNumber, cetType), HttpStatus.OK);
     }
 
 
@@ -234,9 +238,10 @@ public class CetStatisticAnalysisController {
             @ApiParam(value = "semester 学期 (春;秋;)" , required = true) @RequestParam(value = "semester" , required = true) String semester,
             @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
             @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
-            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber
+            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber,
+            @ApiParam(value = "className 班名", required = false) @RequestParam(value = "className", required = false) String className
     ) {
-        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataNumberOfPeople(orgId, teacherYear, semester, collegeNumber, professionNumber, classNumber, cetType), HttpStatus.OK);
+        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataNumberOfPeople(orgId, teacherYear, semester, collegeNumber, professionNumber, classNumber,className, cetType), HttpStatus.OK);
     }
 
 
@@ -262,9 +267,10 @@ public class CetStatisticAnalysisController {
             @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
             @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
             @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber,
-            @ApiParam(value = "grade 年级", required = false) @RequestParam(value = "grade", required = false) String grade
+            @ApiParam(value = "grade 年级", required = false) @RequestParam(value = "grade", required = false) String grade,
+            @ApiParam(value = "className 班名", required = false) @RequestParam(value = "className", required = false) String className
     ) {
-        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataSexNumberOfPeople(orgId, teacherYear, semester, collegeNumber, professionNumber, classNumber, grade, cetType), HttpStatus.OK);
+        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataSexNumberOfPeople(orgId, teacherYear, semester, collegeNumber, professionNumber, classNumber, className,grade, cetType), HttpStatus.OK);
     }
 
     /**
@@ -289,9 +295,10 @@ public class CetStatisticAnalysisController {
             @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
             @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
             @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber,
-            @ApiParam(value = "grade 年级", required = false) @RequestParam(value = "grade", required = false) String grade
+            @ApiParam(value = "grade 年级", required = false) @RequestParam(value = "grade", required = false) String grade,
+            @ApiParam(value = "className 班名", required = false) @RequestParam(value = "className", required = false) String className
     ) {
-        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataGradeNumberOfPeople(orgId, teacherYear, semester, collegeNumber, professionNumber, classNumber, grade, cetType), HttpStatus.OK);
+        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataGradeNumberOfPeople(orgId, teacherYear, semester, collegeNumber, professionNumber, classNumber, className,grade, cetType), HttpStatus.OK);
     }
 
 

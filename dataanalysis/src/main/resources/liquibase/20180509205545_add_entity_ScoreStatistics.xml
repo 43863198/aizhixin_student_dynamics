@@ -30,6 +30,7 @@
             <column name="STATISTICS_TYPE" type="VARCHAR(50)" remarks="统计类型"/>
             <column name="PARENT_CODE" type="VARCHAR(50)" remarks="父级码"/>
             <column name="CODE" type="VARCHAR(50)" remarks="名称码"/>
+            <column name="CLASS_NAME" type="VARCHAR(100)" remarks="班级名称"/>
             <column name="DELETE_FLAG" type="INT(4)" defaultValueNumeric="0" remarks="删除标记(0正常,1删除)"/>
         </createTable>
     </changeSet>

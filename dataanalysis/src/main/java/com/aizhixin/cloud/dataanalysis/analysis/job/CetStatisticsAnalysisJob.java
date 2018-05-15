@@ -213,60 +213,6 @@ public class CetStatisticsAnalysisJob {
     public void cetScoreStatisticsTop() {
         List<ScoreTop> stList = new ArrayList<>();
         try {
-//            StringBuilder sql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,cs.EXAMINATION_DATE as date,ss.COLLEGE_CODE as collegeCode, " +
-//                    "ss.PROFESSION_CODE as professionCode,ss.CLASS_CODE as classCode,ss.GRADE as grade, sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,s.SEX as sex " +
-//                    "FROM t_cet_score cs " +
-//                    "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
-//                    "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
-//                    "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
-//                    "GROUP BY s.SEX,cs.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE,ss.COLLEGE_CODE, ss.PROFESSION_CODE, ss.CLASS_CODE, ss.GRADE");
-//            Query sq = em.createNativeQuery(sql.toString());
-//            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-//            List<Object> res =  sq.getResultList();
-//            if(null!=res&&res.size()>0){
-//                for(Object obj : res){
-//                    Map row = (Map)obj;
-//                    CetStatistics cs = new CetStatistics();
-//                    if(null!=row.get("type")){
-//                        cs.setScoreType(row.get("type").toString());
-//                    }
-//                    if(null!=row.get("orgId")){
-//                        cs.setOrgId(Long.valueOf(row.get("orgId").toString()));
-//                    }
-//                    if(null!=row.get("date")){
-//                        cs.setExamDate(new SimpleDateFormat("yyyy-MM-dd").parse(row.get("date").toString()));
-//                    }
-//                    if(null!=row.get("collegeCode")){
-//                        cs.setCollegeCode(row.get("collegeCode").toString());
-//                    }
-//                    if(null!=row.get("professionCode")){
-//                        cs.setProfessionCode(row.get("professionCode").toString());
-//                    }
-//                    if(null!=row.get("classCode")){
-//                        cs.setClassCode(row.get("classCode").toString());
-//                    }
-//                    if(null!=row.get("grade")){
-//                        cs.setGrade(row.get("grade").toString());
-//                    }
-//                    if(null!=row.get("count")){
-//                        cs.setJoinNumber(Integer.valueOf(row.get("count").toString()));
-//                    }
-//                    if(null!=row.get("avg")){
-//                        cs.setAvgScoure(Double.valueOf(row.get("avg").toString()));
-//                    }
-//                    if(null!=row.get("max")){
-//                        cs.setMaxScore(Double.valueOf(row.get("max").toString()));
-//                    }
-//                    if(null!=row.get("sex")){
-//                        cs.setSex(row.get("sex").toString());
-//                    }
-//                    if(null!=row.get("pass")){
-//                        cs.setPassNumber(Integer.valueOf(row.get("pass").toString()));
-//                    }
-//                    caList.add(cs);
-//                }
-//            }
-
             StringBuilder topql = new StringBuilder("SELECT cs.JOB_NUMBER as xh, s.NAME as name, cs.TYPE as type,cs.ORG_ID as orgId,cs.EXAMINATION_DATE as date,d.COMPANY_NAME AS dName,ss.COLLEGE_CODE AS collegeCode, " +
                     "p.NAME AS pName, ss.PROFESSION_CODE as professionCode ,ss.CLASS_CODE as classCode, ss.CLASS_NAME AS cName,ss.GRADE as grade, MAX(cs.SCORE) as max " +
                     "FROM t_cet_score cs " +
@@ -390,7 +336,7 @@ public class CetStatisticsAnalysisJob {
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
                     "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
                     "GROUP BY ss.ORG_ID,ss.COLLEGE_CODE,cs.EXAMINATION_DATE,cs.TYPE,ss.PROFESSION_CODE");
-            StringBuilder avgcql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,ss.PROFESSION_CODE as persion,cs.EXAMINATION_DATE as date,ss.CLASS_CODE as code, " +
+            StringBuilder avgcql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,ss.PROFESSION_CODE as persion,cs.EXAMINATION_DATE as date,ss.CLASS_CODE as code,ss.CLASS_NAME as className, " +
                     "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max " +
                     "FROM t_cet_score cs " +
                     "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
@@ -418,7 +364,7 @@ public class CetStatisticsAnalysisJob {
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
                     "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
                     "GROUP BY ss.ORG_ID,ss.COLLEGE_CODE,cs.EXAMINATION_DATE,cs.TYPE,ss.PROFESSION_CODE,ss.GRADE");
-            StringBuilder gradecql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,ss.PROFESSION_CODE as persion,cs.EXAMINATION_DATE as date,ss.CLASS_CODE as code, " +
+            StringBuilder gradecql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,ss.PROFESSION_CODE as persion,cs.EXAMINATION_DATE as date,ss.CLASS_CODE as code,ss.CLASS_NAME as className, " +
                     "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,ss.GRADE as grade " +
                     "FROM t_cet_score cs " +
                     "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
@@ -446,7 +392,7 @@ public class CetStatisticsAnalysisJob {
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
                     "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
                     "GROUP BY ss.ORG_ID,ss.COLLEGE_CODE,cs.EXAMINATION_DATE,cs.TYPE,ss.PROFESSION_CODE,s.SEX");
-            StringBuilder sexclql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,ss.PROFESSION_CODE as persion,cs.EXAMINATION_DATE as date,ss.CLASS_CODE as code, " +
+            StringBuilder sexclql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,ss.PROFESSION_CODE as persion,cs.EXAMINATION_DATE as date,ss.CLASS_CODE as code,ss.CLASS_NAME as className, " +
                     "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,s.SEX as sex " +
                     "FROM t_cet_score cs " +
                     "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
@@ -763,6 +709,9 @@ public class CetStatisticsAnalysisJob {
                     if (null != row.get("max")) {
                         ss.setMaxScore(Double.valueOf(row.get("max").toString()));
                     }
+                    if(null!=row.get("className")){
+                       ss.setClassName(row.get("className").toString());
+                    }
                     ssList.add(ss);
                 }
             }
@@ -915,6 +864,9 @@ public class CetStatisticsAnalysisJob {
                     if (null != row.get("max")) {
                         ss.setMaxScore(Double.valueOf(row.get("max").toString()));
                     }
+                    if(null!=row.get("className")){
+                        ss.setClassName(row.get("className").toString());
+                    }
                     ssList.add(ss);
                 }
             }
@@ -1066,6 +1018,9 @@ public class CetStatisticsAnalysisJob {
                     }
                     if (null != row.get("max")) {
                         ss.setMaxScore(Double.valueOf(row.get("max").toString()));
+                    }
+                    if(null!=row.get("className")){
+                        ss.setClassName(row.get("className").toString());
                     }
                     ssList.add(ss);
                 }

@@ -30,7 +30,7 @@ public class FigurePortraitService {
     @Autowired
     private AlertWarningInformationService alertWarningInformationService;
 
-    public PageData<StudentInfoVO> getStudentList(Long orgId, String collegeNumber, String professionNumber, String classNumber, Integer pageNumber,String nj,Integer pageSize) {
+    public PageData<StudentInfoVO> getStudentList(Long orgId, String collegeNumber, String professionNumber, String classNumber,String className, String nj, Integer pageNumber,Integer pageSize) {
         PageData<StudentInfoVO> p = new PageData<>();
         List<StudentInfoVO> dataList = new ArrayList<>();
         Map<String, Object> condition = new HashMap<>();
@@ -53,10 +53,13 @@ public class FigurePortraitService {
                 cql.append(" AND ZYH = :professionNumber");
                 condition.put("professionNumber", professionNumber);
             }
-            if (null != classNumber) {
+            if (null != classNumber&&null!=className) {
                 sql.append(" AND BH = :classNumber");
                 cql.append(" AND BH = :classNumber");
+                sql.append(" AND BJMC = :className");
+                cql.append(" AND BJMC = :className");
                 condition.put("classNumber", classNumber);
+                condition.put("className", className);
             }
             if (!StringUtils.isBlank(nj)) {
                 sql.append(" AND (XM LIKE :name or XH LIKE :xh)");
@@ -149,6 +152,18 @@ public class FigurePortraitService {
                 }
                 if (null != srow.get("nj")) {
                     sVO.setGrade(srow.get("nj").toString());
+                }
+                if(null!=srow.get("xb")){
+                    sVO.setSex(srow.get("xb").toString());
+                }
+                if(null!=srow.get("csrq")){
+                    sVO.setDateOfBirth(srow.get("csrq").toString());
+                }
+                if(null!=srow.get("rxny")){
+                    sVO.setRxq(srow.get("rxny").toString());
+                }
+                if(null!=srow.get("ybyny")){
+                    sVO.setByrq(srow.get("ybyny").toString());
                 }
                 sfp.setStudentIn(sVO);
             }

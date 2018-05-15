@@ -35,7 +35,7 @@ public class OverYearsTestStatisticsService {
         Integer c= Integer.parseInt(endTeacherYear);
         List<OverYearsInfoDomain> list=new ArrayList<>();
         for (int i=c-5;i<c;i++){
-         Map<String,Object> map= cetStatisticAnalysisService.cetSingleDataStatistics(orgId,i+"","春",collegeCode,professionCode,classCode,cetType);
+         Map<String,Object> map= cetStatisticAnalysisService.cetSingleDataStatistics(orgId,i+"","春",collegeCode,professionCode,classCode,null,cetType);
          if (map!=null){
              CetSingleDataStatisticsVO csdsVO = (CetSingleDataStatisticsVO) map.get("data");
              if (null!=csdsVO){
@@ -49,7 +49,7 @@ public class OverYearsTestStatisticsService {
                  list.add(overYearsInfoDomain);
              }
          }
-            Map<String,Object> map2= cetStatisticAnalysisService.cetSingleDataStatistics(orgId,i+"","秋",collegeCode,professionCode,classCode,cetType);
+            Map<String,Object> map2= cetStatisticAnalysisService.cetSingleDataStatistics(orgId,i+"","秋",collegeCode,professionCode,classCode,null,cetType);
             if (map!=null){
                 CetSingleDataStatisticsVO csdsVO = (CetSingleDataStatisticsVO) map2.get("data");
                 if (null!=csdsVO){
@@ -169,7 +169,7 @@ public class OverYearsTestStatisticsService {
         List<SemesterAvgScoreDomain> list=new ArrayList<>();
         List<SemesterAvgScoreAddRateDomain> semesterAvgScoreAddRateDomains=new ArrayList<>();
         for (int i=c-5;i<c;i++){
-            Map<String,Object> map= cetStatisticAnalysisService.cetSingleDataStatistics(orgId,i+"","春",collegeCode,professionCode,classCode,cetType);
+            Map<String,Object> map= cetStatisticAnalysisService.cetSingleDataStatistics(orgId,i+"","春",collegeCode,professionCode,classCode,null,cetType);
             if (map!=null) {
                 CetSingleDataStatisticsVO csdsVO = (CetSingleDataStatisticsVO) map.get("data");
                 if (null!=csdsVO){
@@ -180,7 +180,7 @@ public class OverYearsTestStatisticsService {
                 }
              }
 
-            Map<String,Object> map2= cetStatisticAnalysisService.cetSingleDataStatistics(orgId,i+"","秋",collegeCode,professionCode,classCode,cetType);
+            Map<String,Object> map2= cetStatisticAnalysisService.cetSingleDataStatistics(orgId,i+"","秋",collegeCode,professionCode,classCode,null,cetType);
             if (map2!=null) {
                 CetSingleDataStatisticsVO csdsVO = (CetSingleDataStatisticsVO) map2.get("data");
                 if (null!=csdsVO){
