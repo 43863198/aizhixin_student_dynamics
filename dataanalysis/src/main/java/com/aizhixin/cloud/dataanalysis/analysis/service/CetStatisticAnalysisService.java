@@ -847,7 +847,7 @@ public class CetStatisticAnalysisService {
                         sql.append(" AND ss.STATISTICS_TYPE = '023'");
                         sql.append(" and ss.CODE = :classCode");
                         condition.put("classCode", classCode);
-                        sql.append(" and ss.PARENT_CODE = :pCode order by grade");
+                        sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", professionCode);
                         sql.append(" AND ss.NAME_CODE IS NOT NULL");
                         sql.append(" order by grade ASC");
@@ -857,7 +857,7 @@ public class CetStatisticAnalysisService {
                         sql.append(" AND ss.STATISTICS_TYPE = '022'");
                         sql.append(" AND ss.STATISTICS_TYPE = '012'");
                         condition.put("collegeCode", professionCode);
-                        sql.append(" and ss.PARENT_CODE = :pCode order by grade");
+                        sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", collegeCode);
                         sql.append(" AND ss.NAME_CODE IS NOT NULL");
                         sql.append(" order by grade ASC");
@@ -868,7 +868,7 @@ public class CetStatisticAnalysisService {
                     sql.append(" AND ss.STATISTICS_TYPE = '021'");
                     sql.append(" and ss.CODE = :collegeCode");
                     condition.put("collegeCode", collegeCode);
-                    sql.append(" and ss.PARENT_CODE = :pCode order by grade");
+                    sql.append(" and ss.PARENT_CODE = :pCode");
                     condition.put("pCode", orgId);
                     sql.append(" AND ss.NAME_CODE IS NOT NULL");
                     sql.append(" order by grade ASC");
@@ -1171,7 +1171,7 @@ public class CetStatisticAnalysisService {
                         sql.append(" AND ss.STATISTICS_TYPE = '023'");
                         sql.append(" and ss.CODE = :classCode");
                         condition.put("classCode", classCode);
-                        sql.append(" and ss.PARENT_CODE = :pCode order by grade");
+                        sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", professionCode);
                         sql.append(" AND ss.NAME_CODE IS NOT NULL");
                         sql.append(" order by grade ASC");
@@ -1180,7 +1180,7 @@ public class CetStatisticAnalysisService {
                         sql.append(ql);
                         sql.append(" AND ss.STATISTICS_TYPE = '022'");
                         condition.put("collegeCode", professionCode);
-                        sql.append(" and ss.PARENT_CODE = :pCode order by grade");
+                        sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", collegeCode);
                         sql.append(" AND ss.NAME_CODE IS NOT NULL");
                         sql.append(" order by grade ASC");
@@ -1191,7 +1191,7 @@ public class CetStatisticAnalysisService {
                     sql.append(" AND ss.STATISTICS_TYPE = '021'");
                     sql.append(" and ss.CODE = :collegeCode");
                     condition.put("collegeCode", collegeCode);
-                    sql.append(" and ss.PARENT_CODE = :pCode order by grade");
+                    sql.append(" and ss.PARENT_CODE = :pCode");
                     condition.put("pCode", orgId);
                     sql.append(" AND ss.NAME_CODE IS NOT NULL");
                     sql.append(" order by grade ASC");
