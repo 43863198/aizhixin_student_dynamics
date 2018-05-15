@@ -1345,19 +1345,15 @@ public class CetStatisticAnalysisService {
         try {
             //在校人数
             Map<String, Object> condition = new HashMap<>();
-            StringBuilder sql = new StringBuilder("SELECT SUM(IF(cs.SCORE > 0, 1, 0)) AS total,SUM(IF(cs.SCORE >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  t_cet_score cs ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
-                    "WHERE 1=1");
+            StringBuilder sql = new StringBuilder("SELECT SUM(IF(c.max > 0, 1, 0)) AS total,SUM(IF(c.max >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
+                    "WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" +
+                      " GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1");
             StringBuilder avgsql = new StringBuilder("SELECT AVG(cs.SCORE) as avg FROM t_cet_score cs LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
-                    "WHERE cs.SCORE >= 425 ");
+                    "WHERE cs.SCORE >= 425 and cs.TYPE LIKE " + "'%大学英语" + cetType + "%' ");
             if (null != orgId) {
-                sql.append(" and cs.ORG_ID = :orgId");
-                avgsql.append(" and cs.ORG_ID = :orgId");
+                sql.append(" and ss.ORG_ID = :orgId");
+                avgsql.append(" and ss.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
-            }
-            if (!StringUtils.isBlank(cetType)) {
-                sql.append(" and cs.TYPE LIKE :cetType");
-                avgsql.append(" and cs.TYPE LIKE :cetType");
-                condition.put("cetType", "%大学英语" + cetType + "%");
             }
             if (!StringUtils.isBlank(collegeCode)) {
                 sql.append(" and ss.COLLEGE_CODE = :collegeCode");
@@ -1420,38 +1416,40 @@ public class CetStatisticAnalysisService {
                 ql.append(" and cs.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
-            if (!StringUtils.isBlank(cetType)) {
-                ql.append(" and cs.TYPE LIKE :cetType");
-                condition.put("cetType", "%大学英语" + cetType + "%");
-            }
             StringBuilder sql = new StringBuilder("");
             if (!StringUtils.isBlank(collegeCode)) {
                 if (!StringUtils.isBlank(professionCode)) {
                     if (!StringUtils.isBlank(classCode)) {
-                        sql.append("SELECT ss.CLASS_NAME as name, count(1) as total, SUM(IF(cs.SCORE >= 425, 1, 0)) AS pass FROM t_cet_score cs LEFT JOIN t_student_status ss ON ss.JOB_NUMBER = cs.JOB_NUMBER WHERE 1=1 AND ss.CLASS_NAME IS NOT NULL ");
+                        sql.append("SELECT SUM(IF(c.max > 0, 1, 0)) AS total,SUM(IF(c.max >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
+                                "WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" +
+                                " GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
                         sql.append(ql);
                         sql.append(" and ss.CLASS_CODE = :classCode");
                         sql.append(" and ss.PROFESSION_CODE = :professionCode");
                         condition.put("classCode", classCode);
                         condition.put("professionCode", professionCode);
                     }else {
-                        sql.append("SELECT ss.CLASS_NAME as name, count(1) as total, SUM(IF(cs.SCORE >= 425, 1, 0)) AS pass FROM t_cet_score cs LEFT JOIN t_student_status ss ON ss.JOB_NUMBER = cs.JOB_NUMBER WHERE 1=1 ");
+                        sql.append("SELECT SUM(IF(cs.SCORE > 0, 1, 0)) AS total,SUM(IF(cs.SCORE >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
+                                "WHERE 1=1 cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" +
+                                " GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
                         sql.append(ql);
                         sql.append(" and ss.PROFESSION_CODE = :professionCode");
                         condition.put("professionCode", professionCode);
                         sql.append(" AND ss.CLASS_NAME IS NOT NULL group by ss.CLASS_CODE");
                     }
                 } else {
-                    sql.append("SELECT p.NAME as name, count(1) as total, SUM(IF(cs.SCORE >= 425, 1, 0)) AS pass FROM t_cet_score cs LEFT JOIN t_student_status ss ON ss.JOB_NUMBER = cs.JOB_NUMBER " +
-                            "LEFT JOIN t_profession p ON p.CODE = ss.PROFESSION_CODE WHERE 1=1");
+                    sql.append("SELECT SUM(IF(cs.SCORE > 0, 1, 0)) AS total,SUM(IF(cs.SCORE >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
+                            "WHERE 1=1 cs.TYPE LIKE "+"%大学英语" + cetType + "%" +
+                            " GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
                     sql.append(ql);
                     sql.append(" and ss.COLLEGE_CODE = :collegeCode");
                     condition.put("collegeCode", collegeCode);
                     sql.append(" AND p.NAME IS NOT NULL group by ss.PROFESSION_CODE");
                 }
             } else {
-                sql.append("SELECT d.COMPANY_NAME as name, count(1) as total, SUM(IF(cs.SCORE >= 425, 1, 0)) AS pass FROM t_cet_score cs LEFT JOIN t_student_status ss ON ss.JOB_NUMBER = cs.JOB_NUMBER " +
-                        "LEFT JOIN t_department d ON ss.COLLEGE_CODE = d.COMPANY_NUMBER AND d.COMPANY_NUMBER IS NOT NULL WHERE 1=1");
+                sql.append("SELECT SUM(IF(cs.SCORE > 0, 1, 0)) AS total,SUM(IF(cs.SCORE >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
+                        "WHERE 1=1 cs.TYPE LIKE "+"%大学英语" + cetType + "%" +
+                        " GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
                 sql.append(ql);
                 sql.append(" AND d.COMPANY_NAME IS NOT NULL group by ss.COLLEGE_CODE");
             }
