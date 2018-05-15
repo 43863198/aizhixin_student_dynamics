@@ -165,6 +165,9 @@ public class FigurePortraitService {
                 if(null!=srow.get("ybyny")){
                     sVO.setByrq(srow.get("ybyny").toString());
                 }
+                if(null!=srow.get("csd")){
+                    sVO.setPoliticalOutlook(srow.get("csd").toString());
+                }
                 sfp.setStudentIn(sVO);
             }
             //成绩详情
