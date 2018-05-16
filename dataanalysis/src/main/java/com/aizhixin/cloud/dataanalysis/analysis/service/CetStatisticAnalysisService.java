@@ -965,7 +965,7 @@ public class CetStatisticAnalysisService {
             if (!StringUtils.isBlank(collegeCode)) {
                 if (!StringUtils.isBlank(professionCode)) {
                     if (!StringUtils.isBlank(classCode)) {
-                        sql.append("SELECT c.NAME as name, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_class c ON ss.CODE = c.CLASS_NUMBER AND ss.PARENT_CODE = c.PROFESSION_CODE WHERE 1=1 AND ss.STATISTICS_TYPE = '003'");
+                        sql.append("SELECT c.NAME as name, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss WHERE 1=1 AND ss.STATISTICS_TYPE = '003'");
                         sql.append(ql);
                         sql.append(" AND ss.STATISTICS_TYPE = '003'");
                         sql.append(" and ss.PARENT_CODE = :pCode");
@@ -974,14 +974,14 @@ public class CetStatisticAnalysisService {
                         condition.put("classCode", classCode);
                         sql.append(" and ss.CLASS_NAME = :className");
                         condition.put("className", className);
-                        sql.append(" AND c.NAME IS NOT NULL");
+                        sql.append(" AND ss.CLASS_NAME IS NOT NULL");
                     }else {
-                        sql.append("SELECT c.NAME as name, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_class c ON ss.CODE = c.CLASS_NUMBER AND ss.PARENT_CODE = c.PROFESSION_CODE  WHERE 1=1 AND ss.STATISTICS_TYPE = '003'");
+                        sql.append("SELECT c.NAME as name, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss  WHERE 1=1 AND ss.STATISTICS_TYPE = '003'");
                         sql.append(ql);
                         sql.append(" AND ss.STATISTICS_TYPE = '003'");
                         sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", professionCode);
-                        sql.append(" AND c.NAME IS NOT NULL");
+                        sql.append(" AND ss.CLASS_NAME IS NOT NULL");
                 }
                 } else {
                     sql.append("SELECT p.NAME as name, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_profession p ON ss.CODE = p.CODE WHERE 1=1");
@@ -1506,11 +1506,25 @@ public class CetStatisticAnalysisService {
         try {
             Date start = null;
             Date end = null;
+            if (!StringUtils.isBlank(teacherYear)&&!StringUtils.isBlank(semester)) {
+                Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, teacherYear, semester);
+                if (null != schoolCalendar) {
+                    if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
+                        List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
+                        if (tysList.size() > 0) {
+                            start = sdf.parse(tysList.get(0).getStartTime());
+                            end = sdf.parse(tysList.get(0).getEndTime());
+                        }
+                    }
+                }
+            }
             Map<String, Object> condition = new HashMap<>();
             StringBuilder sql = new StringBuilder("SELECT cs.JOB_NUMBER as xh,x.XM as xm,x.BJMC as bj,x.ZYMC as zy,x.YXSMC xy,x.NJ nj,cs.EXAMINATION_DATE as date,cs.SCORE as score " +
-                    "FROM t_xsjbxx x LEFT JOIN t_cet_score cs ON x.XH = cs.JOB_NUMBER WHERE 1=1 AND cs.JOB_NUMBER IS NOT NULL ");
+                    "FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, SCORE, ORG_ID,EXAMINATION_DATE,TYPE FROM t_cet_score WHERE EXAMINATION_DATE BETWEEN :start AND :end ) cs ON x.XH = cs.JOB_NUMBER WHERE 1=1 ");
             StringBuilder cql = new StringBuilder("SELECT count(1) " +
-                    "FROM t_xsjbxx x LEFT JOIN t_cet_score cs ON x.XH = cs.JOB_NUMBER WHERE 1=1 AND cs.JOB_NUMBER IS NOT NULL ");
+                    "FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, SCORE, ORG_ID,EXAMINATION_DATE,TYPE FROM t_cet_score WHERE EXAMINATION_DATE BETWEEN :start AND :end ) cs ON x.XH = cs.JOB_NUMBER WHERE 1=1 ");
+            condition.put("start", start);
+            condition.put("end", end);
             if (null != orgId) {
                 sql.append(" and cs.ORG_ID = :orgId");
                 cql.append(" and cs.ORG_ID = :orgId");
@@ -1536,24 +1550,6 @@ public class CetStatisticAnalysisService {
                 cql.append(" and BH = :classCode");
                 condition.put("classCode", classCode);
             }
-            if (!StringUtils.isBlank(teacherYear)&&!StringUtils.isBlank(semester)) {
-                Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, teacherYear, semester);
-                if (null != schoolCalendar) {
-                    if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
-                        List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
-                        if (tysList.size() > 0) {
-                            start = sdf.parse(tysList.get(0).getStartTime());
-                            end = sdf.parse(tysList.get(0).getEndTime());
-                        }
-                    }
-                }
-            }
-            if(null!=start&&null!=end){
-                sql.append(" and cs.EXAMINATION_DATE BETWEEN :start AND :end");
-                cql.append(" and cs.EXAMINATION_DATE BETWEEN :start AND :end");
-                condition.put("start", start);
-                condition.put("end", end);
-            }
 
             if(null!=isPass&&isPass.equals("1")){
                 sql.append(" and cs.SCORE >= 425");
@@ -1563,10 +1559,12 @@ public class CetStatisticAnalysisService {
                     sql.append(" and cs.SCORE < 425");
                     cql.append(" and cs.SCORE < 425");
                 } else {
-                    sql.append(" and cs.SCORE >= 0");
-                    cql.append(" and cs.SCORE >= 0");
+                    sql.append(" and cs.SCORE > 0");
+                    cql.append(" and cs.SCORE > 0");
                 }
             }
+            sql.append(" ORDER BY cs.JOB_NUMBER");
+            cql.append(" ORDER BY cs.JOB_NUMBER");
             Query sq = em.createNativeQuery(sql.toString());
             Query cq = em.createNativeQuery(cql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
