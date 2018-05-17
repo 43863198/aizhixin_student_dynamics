@@ -413,9 +413,10 @@ public class CetStatisticAnalysisController {
             @ApiParam(value = "cetType 成绩类型： (四级;六级;)" , required = true ) @RequestParam(value = "cetType" , required = true) String cetType,
             @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
             @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
-            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber
+            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber,
+            @ApiParam(value = "className 班级名称", required = false) @RequestParam(value = "className", required = false) String className
     ) {
-        return new ResponseEntity<Map<String, Object>>(overYearsTestStatisticsService.OverYearsPassRate(orgId, collegeNumber, professionNumber, classNumber, cetType), HttpStatus.OK);
+        return new ResponseEntity<Map<String, Object>>(overYearsTestStatisticsService.OverYearsPassRate(orgId, collegeNumber, professionNumber, classNumber, cetType,className), HttpStatus.OK);
     }
 
 
@@ -426,9 +427,10 @@ public class CetStatisticAnalysisController {
             @ApiParam(value = "cetType 成绩类型： (四级;六级;)" , required = true ) @RequestParam(value = "cetType" , required = true) String cetType,
             @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
             @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
-            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber
+            @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber,
+            @ApiParam(value = "className 班级名称", required = false) @RequestParam(value = "className", required = false) String className
     ) {
-        return new ResponseEntity<Map<String, Object>>(overYearsTestStatisticsService.OverYearsAvgScore(orgId, collegeNumber, professionNumber, classNumber, cetType), HttpStatus.OK);
+        return new ResponseEntity<Map<String, Object>>(overYearsTestStatisticsService.OverYearsAvgScore(orgId, collegeNumber, professionNumber, classNumber, cetType,className), HttpStatus.OK);
     }
 
 

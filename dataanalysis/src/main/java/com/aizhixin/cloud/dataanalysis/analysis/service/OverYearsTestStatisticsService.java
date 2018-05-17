@@ -26,7 +26,7 @@ public class OverYearsTestStatisticsService {
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
 
-    public Map<String, Object> OverYearsPassRate(Long orgId,   String collegeCode, String professionCode, String classCode, String cetType) {
+    public Map<String, Object> OverYearsPassRate(Long orgId,   String collegeCode, String professionCode, String classCode, String cetType,String className) {
         Map<String, Object> rs=new HashMap<>();
         List<SemesterPassRateDomain> semesterPassRateDomains=new ArrayList<>();
         List<SemesterAddRateDomain> semesterAddRateDomains=new ArrayList<>();
@@ -35,7 +35,7 @@ public class OverYearsTestStatisticsService {
         Integer c= Integer.parseInt(endTeacherYear);
         List<OverYearsInfoDomain> list=new ArrayList<>();
         for (int i=c-5;i<c;i++){
-         Map<String,Object> map= cetStatisticAnalysisService.cetSingleDataStatistics(orgId,i+"","春",collegeCode,professionCode,classCode,null,cetType);
+         Map<String,Object> map= cetStatisticAnalysisService.cetSingleDataStatistics(orgId,i+"","春",collegeCode,professionCode,classCode,className,cetType);
          if (map!=null){
              CetSingleDataStatisticsVO csdsVO = (CetSingleDataStatisticsVO) map.get("data");
              if (null!=csdsVO){
@@ -49,7 +49,7 @@ public class OverYearsTestStatisticsService {
                  list.add(overYearsInfoDomain);
              }
          }
-            Map<String,Object> map2= cetStatisticAnalysisService.cetSingleDataStatistics(orgId,i+"","秋",collegeCode,professionCode,classCode,null,cetType);
+            Map<String,Object> map2= cetStatisticAnalysisService.cetSingleDataStatistics(orgId,i+"","秋",collegeCode,professionCode,classCode,className,cetType);
             if (map!=null){
                 CetSingleDataStatisticsVO csdsVO = (CetSingleDataStatisticsVO) map2.get("data");
                 if (null!=csdsVO){
@@ -69,7 +69,7 @@ public class OverYearsTestStatisticsService {
             SemesterAddRateDomain semesterAddRateDomain=new SemesterAddRateDomain();
             semesterAddRateDomain.setSemesterInfo(overYearsInfoDomain.getSemesterInfo());
             if (i==0){
-                semesterAddRateDomain.setAddRate(0+"");
+                semesterAddRateDomain.setAddRate(null);
             }else{
                 if (overYearsInfoDomain.getPassRate()!=null&&list.get(i-1).getPassRate()!=null) {
                     Double a = (Double.valueOf(overYearsInfoDomain.getPassRate()).doubleValue()-Double.valueOf(list.get(i-1).getPassRate()).doubleValue()) / Double.valueOf(list.get(i-1).getPassRate()).doubleValue() ;
@@ -138,7 +138,7 @@ public class OverYearsTestStatisticsService {
                 SemesterLeiJiAddRateDomain semesterLeiJiAddRateDomain=new SemesterLeiJiAddRateDomain();
                 semesterLeiJiAddRateDomain.setSemesterInfo(semesterLeiJiRateDomain.getSemesterInfo());
                 if (i==0){
-                    semesterLeiJiAddRateDomain.setLeijiRate("0");
+                    semesterLeiJiAddRateDomain.setLeijiRate(null);
                 }else{
                     Double a=Double.parseDouble(semesterLeiJiRateDomain.getLeijiRate());
                     Double b=Double.parseDouble(semesterLeiJiRateDomainList.get(i-1).getLeijiRate());
@@ -161,7 +161,7 @@ public class OverYearsTestStatisticsService {
 
 
 
-    public Map<String, Object> OverYearsAvgScore(Long orgId,   String collegeCode, String professionCode, String classCode, String cetType) {
+    public Map<String, Object> OverYearsAvgScore(Long orgId,   String collegeCode, String professionCode, String classCode, String cetType,String className) {
         Map<String, Object> rs=new HashMap<>();
         Date date=new Date();
         String endTeacherYear=sdf.format(date);
@@ -169,7 +169,7 @@ public class OverYearsTestStatisticsService {
         List<SemesterAvgScoreDomain> list=new ArrayList<>();
         List<SemesterAvgScoreAddRateDomain> semesterAvgScoreAddRateDomains=new ArrayList<>();
         for (int i=c-5;i<c;i++){
-            Map<String,Object> map= cetStatisticAnalysisService.cetSingleDataStatistics(orgId,i+"","春",collegeCode,professionCode,classCode,null,cetType);
+            Map<String,Object> map= cetStatisticAnalysisService.cetSingleDataStatistics(orgId,i+"","春",collegeCode,professionCode,classCode,className,cetType);
             if (map!=null) {
                 CetSingleDataStatisticsVO csdsVO = (CetSingleDataStatisticsVO) map.get("data");
                 if (null!=csdsVO){
@@ -180,7 +180,7 @@ public class OverYearsTestStatisticsService {
                 }
              }
 
-            Map<String,Object> map2= cetStatisticAnalysisService.cetSingleDataStatistics(orgId,i+"","秋",collegeCode,professionCode,classCode,null,cetType);
+            Map<String,Object> map2= cetStatisticAnalysisService.cetSingleDataStatistics(orgId,i+"","秋",collegeCode,professionCode,classCode,className,cetType);
             if (map2!=null) {
                 CetSingleDataStatisticsVO csdsVO = (CetSingleDataStatisticsVO) map2.get("data");
                 if (null!=csdsVO){
@@ -197,7 +197,7 @@ public class OverYearsTestStatisticsService {
                 SemesterAvgScoreAddRateDomain semesterAvgScoreAddRateDomain=new SemesterAvgScoreAddRateDomain();
                 semesterAvgScoreAddRateDomain.setSemesterInfo(semesterAvgScoreDomain.getSemesterInfo());
                  if (i==0){
-                     semesterAvgScoreAddRateDomain.setAvgAddRate("0");
+                     semesterAvgScoreAddRateDomain.setAvgAddRate(null);
                  }else{
                      if (!StringUtils.isEmpty(semesterAvgScoreDomain.getScore())&&!StringUtils.isEmpty(list.get(i - 1).getScore())) {
                          Double a = Double.parseDouble(semesterAvgScoreDomain.getScore());

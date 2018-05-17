@@ -33,7 +33,7 @@ import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMeth
  *
  */
 @SuppressWarnings("deprecation")
-@ResponseStatus(HttpStatus.BAD_REQUEST)
+@ResponseStatus(HttpStatus.OK)
 @RestControllerAdvice
 public class ExceptionHandle {
     private final static Logger LOG = LoggerFactory.getLogger(ExceptionHandle.class);
