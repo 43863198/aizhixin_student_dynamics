@@ -23,7 +23,7 @@ public class BaseDataController {
         this.baseDataService = baseDataService;
     }
 
-    @GetMapping(value = "/org/{orgId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/org/{orgId}/college", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "查询学校的所有学院信息", response = Void.class, notes = "查询学校的所有学院信息<br><br><b>@author zhen.pan</b>")
     public List<CollegeVO> queryCollege(
             @ApiParam(value = "orgId 学校ID", required = true) @PathVariable Long orgId) {
