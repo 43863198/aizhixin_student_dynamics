@@ -29,7 +29,7 @@ public class AlarmReceiverService {
         return new AlertReceiverVO (alarmReceiver);
     }
 
-    public AlarmReceiver save(AlertReceiverVO alertReceiverVO){
+    public AlarmReceiver save(Long orgId, AlertReceiverVO alertReceiverVO){
         if (null == alertReceiverVO) {
             throw new CommonException(PublicErrorCode.PARAM_EXCEPTION.getIntValue(), "输入参数是必须的");
         }
@@ -46,6 +46,7 @@ public class AlarmReceiverService {
             throw new CommonException(PublicErrorCode.PARAM_EXCEPTION.getIntValue(), "老师手机号码是必须的");
         }
         AlarmReceiver alarmReceiver = new AlarmReceiver();
+        alarmReceiver.setOrgId(orgId);
         alarmReceiver.setCollegeId(alertReceiverVO.getCollegeId());
         alarmReceiver.setCollegeName(alertReceiverVO.getCollegeName());
         alarmReceiver.setTeacherId(alertReceiverVO.getTeacherId());
@@ -56,7 +57,7 @@ public class AlarmReceiverService {
         return alarmReceiverManager.save(alarmReceiver);
     }
 
-    public AlarmReceiver update(String id, AlertReceiverVO alertReceiverVO){
+    public AlarmReceiver update(Long orgId, String id, AlertReceiverVO alertReceiverVO){
         if (null == alertReceiverVO) {
             throw new CommonException(PublicErrorCode.PARAM_EXCEPTION.getIntValue(), "输入参数是必须的");
         }
@@ -79,6 +80,7 @@ public class AlarmReceiverService {
         if (StringUtils.isEmpty(alertReceiverVO.getTeacherPhone())) {
             throw new CommonException(PublicErrorCode.PARAM_EXCEPTION.getIntValue(), "老师手机号码是必须的");
         }
+        alarmReceiver.setOrgId(orgId);
         alarmReceiver.setCollegeId(alertReceiverVO.getCollegeId());
         alarmReceiver.setCollegeName(alertReceiverVO.getCollegeName());
         alarmReceiver.setTeacherId(alertReceiverVO.getTeacherId());
