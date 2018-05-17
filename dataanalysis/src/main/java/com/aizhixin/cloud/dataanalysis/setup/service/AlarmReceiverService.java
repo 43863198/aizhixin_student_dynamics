@@ -1,7 +1,10 @@
 package com.aizhixin.cloud.dataanalysis.setup.service;
 
+import com.aizhixin.cloud.dataanalysis.alertinformation.dto.CollegeWarningInfoDTO;
+import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.core.DataValidity;
+import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.common.core.PublicErrorCode;
 import com.aizhixin.cloud.dataanalysis.common.domain.IdCountDTO;
 import com.aizhixin.cloud.dataanalysis.common.exception.CommonException;
@@ -11,6 +14,7 @@ import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmReceiver;
 import com.aizhixin.cloud.dataanalysis.setup.manager.AlarmReceiverManager;
 import com.aizhixin.cloud.dataanalysis.setup.vo.AlertReceiverVO;
 import com.aizhixin.cloud.dataanalysis.setup.vo.CollegeAlertReceiverVO;
+import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,11 +30,14 @@ import java.util.Map;
  */
 @Component
 @Transactional
+@Log4j
 public class AlarmReceiverService {
     @Autowired
     private AlarmReceiverManager alarmReceiverManager;
     @Autowired
     private OrgManagerFeignService orgManagerFeignService;
+    @Autowired
+    private AlertWarningInformationService alertWarningInformationService;
 
     @Transactional (readOnly = true)
     public AlertReceiverVO get(String id){
@@ -148,5 +155,38 @@ public class AlarmReceiverService {
         }
 
         return rs;
+    }
+
+    public void sendMsg (Long orgId, Integer teacherYear, Integer semester, String type) {
+        Map<String, Object> map = alertWarningInformationService.getStatisticsByCollege(PageUtil.createNoErrorPageRequest(1, Integer.MAX_VALUE), orgId, type, teacherYear, semester);
+        List<AlarmReceiver> receiverList = alarmReceiverManager.findByOrgAll(orgId);
+        if (null != map && (null != receiverList && receiverList.size() > 0)) {//接收人有数据，并且预警有数据
+
+            Map<String, List<AlarmReceiver>> collegeReceiverMap = new HashMap<>();//按照学院组织接收人
+            for (AlarmReceiver a : receiverList) {
+                List<AlarmReceiver> collegeReceiverList = collegeReceiverMap.get(a.getCollegeName());
+                if (null == collegeReceiverList) {
+                    collegeReceiverList = new ArrayList<>();
+                    collegeReceiverMap.put(a.getCollegeName(), collegeReceiverList);
+                }
+                collegeReceiverList.add(a);
+            }
+
+            PageData<CollegeWarningInfoDTO> p = (PageData<CollegeWarningInfoDTO>)map.get("pagData");
+            if (null != p) {
+                List<CollegeWarningInfoDTO> list = p.getData();
+                if (null != list && list.size() > 0) {
+                    StringBuilder sb = new StringBuilder();
+                    for (CollegeWarningInfoDTO dto : list) {
+                        sb.delete(0, sb.length());
+                        List<AlarmReceiver> collegeReceiverList = collegeReceiverMap.get(dto.getCollegeName());
+                        if (null == collegeReceiverList || collegeReceiverList.size() <= 0) {
+                            log.info("College:({}) have not any receiver .");
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

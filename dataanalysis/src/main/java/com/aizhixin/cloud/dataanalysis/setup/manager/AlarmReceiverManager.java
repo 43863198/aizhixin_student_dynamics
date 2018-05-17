@@ -38,4 +38,8 @@ public class AlarmReceiverManager {
     public List<IdCountDTO> countByOrgAndGroupByCollegeId(Long orgId) {
         return  alarmReceiverRespository.countByOrgAndGroupByCollegeId(orgId, DataValidity.VALID.getIntValue());
     }
+
+    public List<AlarmReceiver> findByOrgAll(Long orgId) {
+        return alarmReceiverRespository.findByOrgIdAndDeleteFlag(orgId, DataValidity.VALID.getIntValue());
+    }
 }
