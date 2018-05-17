@@ -382,8 +382,8 @@ public class CetStatisticAnalysisController {
             @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
             @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber,
             @ApiParam(value = "nj 姓名或学号", required = false) @RequestParam(value = "nj", required = false) String nj,
-            @ApiParam(value = "teacherYear 学年" , required = false ) @RequestParam(value = "teacherYear" , required = false) String teacherYear,
-            @ApiParam(value = "semester 学期 (春;秋;)" , required = false) @RequestParam(value = "semester" , required = false) String semester,
+            @ApiParam(value = "teacherYear 学年" , required = true ) @RequestParam(value = "teacherYear" , required = true) String teacherYear,
+            @ApiParam(value = "semester 学期 (春;秋;)" , required = true) @RequestParam(value = "semester" , required = true) String semester,
             @ApiParam(value = "isPass 是否通过（1:通过;0:未通过）", required = false) @RequestParam(value = "isPass", required = false) String isPass,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize){

@@ -3,7 +3,9 @@ package com.aizhixin.cloud.dataanalysis.alertinformation.controller;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
 import com.aizhixin.cloud.dataanalysis.common.util.RestUtil;
+import com.aizhixin.cloud.dataanalysis.setup.entity.Rule;
 import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
+import com.aizhixin.cloud.dataanalysis.setup.service.RuleService;
 import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,6 +39,8 @@ public class AddDataController {
     private AlertWarningInformationService alertWarningInformationService;
     @Autowired
     private WarningTypeService warningTypeService;
+    @Autowired
+    private RuleService ruleService;
 
     @GetMapping(value = "/addwaringtype", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "添加预警类型数据", response = Void.class, notes = "添加测试预警信息数据<br><br><b>@author jianwei.wu</b>")
@@ -52,7 +56,6 @@ public class AddDataController {
       warningType1.setWarningTypeDescribe("短期过程性预警");
       warningType1.setWarningName("迎新报到预警");
       warningType1.setSetupCloseFlag(20);
-      warningType1.setWarningDescribe("未报到注册天数≥");
       warningTypeList.add(warningType1);
       WarningType warningType2 = new WarningType();
       warningType2.setOrgId(orgId);
@@ -60,7 +63,6 @@ public class AddDataController {
       warningType2.setWarningTypeDescribe("结果性预警");
       warningType2.setWarningName("退学预警");
       warningType2.setSetupCloseFlag(20);
-      warningType2.setWarningDescribe("必修课和专业选修课不及格课程累计学分≥");
       warningTypeList.add(warningType2);
       WarningType warningType3 = new WarningType();
       warningType3.setOrgId(orgId);
@@ -68,7 +70,6 @@ public class AddDataController {
       warningType3.setWarningTypeDescribe("结果性预警");
       warningType3.setWarningName("修读异常预警");
       warningType3.setSetupCloseFlag(20);
-      warningType3.setWarningDescribe("不合格的必修课程（含集中性实践教学环节）学分≥");
       warningTypeList.add(warningType3);
       WarningType warningType4 = new WarningType();
       warningType4.setOrgId(orgId);
@@ -76,7 +77,6 @@ public class AddDataController {
       warningType4.setWarningTypeDescribe("全学期过程性预警");
       warningType4.setWarningName("旷课预警");
       warningType4.setSetupCloseFlag(20);
-      warningType4.setWarningDescribe("本学期内旷课次数≥");
       warningTypeList.add(warningType4);
       WarningType warningType5 = new WarningType();
       warningType5.setOrgId(orgId);
@@ -84,7 +84,6 @@ public class AddDataController {
       warningType5.setWarningTypeDescribe("结果性预警");
       warningType5.setWarningName("总评成绩预警");
       warningType5.setSetupCloseFlag(20);
-      warningType5.setWarningDescribe("上学期总评不及格课程门数≥,上学期平均学分绩点≤");
       warningTypeList.add(warningType5);
       WarningType warningType6 = new WarningType();
       warningType6.setOrgId(orgId);
@@ -92,7 +91,6 @@ public class AddDataController {
       warningType6.setWarningTypeDescribe("结果性预警");
       warningType6.setWarningName("补考成绩预警");
       warningType6.setSetupCloseFlag(20);
-      warningType6.setWarningDescribe("补考后上学期总评不及格课程门数≥");
       warningTypeList.add(warningType6);
       WarningType warningType7 = new WarningType();
       warningType7.setOrgId(orgId);
@@ -100,7 +98,6 @@ public class AddDataController {
       warningType7.setWarningTypeDescribe("结果性预警");
       warningType7.setWarningName("成绩波动预警");
       warningType7.setSetupCloseFlag(20);
-      warningType7.setWarningDescribe("相邻两个学期平均绩点相比下降数值≥,班级成绩排名下降名次≥");
       warningTypeList.add(warningType7);
       WarningType warningType8 = new WarningType();
       warningType8.setOrgId(orgId);
@@ -108,9 +105,45 @@ public class AddDataController {
       warningType8.setWarningTypeDescribe("结果性预警");
       warningType8.setWarningName("CET-4成绩预警");
       warningType8.setSetupCloseFlag(20);
-      warningType8.setWarningDescribe("英语四级分数小于425分并且在校学年数已≥");
       warningTypeList.add(warningType8);
       warningTypeService.save(warningTypeList);
+
+      ruleService.deleteAll();
+      List<Rule> ruleList = new ArrayList<>();
+      Rule  rule1 = new Rule();
+      rule1.setOrgId(orgId);
+      rule1.setName("未报到注册天数≥");
+      ruleList.add(rule1);
+      Rule  rule2 = new Rule();
+      rule2.setOrgId(orgId);
+      rule2.setName("必修课和专业选修课不及格课程累计学分≥");
+      ruleList.add(rule2);
+      Rule  rule3 = new Rule();
+      rule3.setOrgId(orgId);
+      rule3.setName("不合格的必修课程（含集中性实践教学环节）学分≥");
+      ruleList.add(rule3);
+      Rule  rule4 = new Rule();
+      rule4.setOrgId(orgId);
+      rule4.setName("本学期内旷课次数≥");
+      ruleList.add(rule4);
+      Rule  rule5 = new Rule();
+      rule5.setOrgId(orgId);
+      rule5.setName("上学期总评不及格课程门数≥");
+      ruleList.add(rule5);
+      Rule  rule6 = new Rule();
+      rule6.setOrgId(orgId);
+      rule6.setName("补考后上学期总评不及格课程门数≥");
+      ruleList.add(rule6);
+      Rule  rule7 = new Rule();
+      rule7.setOrgId(orgId);
+      rule7.setName("相邻两个学期平均绩点相比下降数值≥");
+      ruleList.add(rule7);
+      Rule  rule8 = new Rule();
+      rule8.setOrgId(orgId);
+      rule8.setName("英语四级分数小于425分并且在校学年数已≥");
+      ruleList.add(rule8);
+      ruleService.save(ruleList);
+
      }catch (Exception e){
       e.printStackTrace();
       return "添加基础数据失败！";

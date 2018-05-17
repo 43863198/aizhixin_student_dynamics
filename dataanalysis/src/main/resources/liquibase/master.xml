@@ -72,4 +72,5 @@
     <include file="classpath:liquibase/20180509205545_add_entity_ScoreTop.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20180509205545_add_entity_ScoreStatistics.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/201805111056_add_entity_ClassTeacher.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20180517154645_add_entity_Rule.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

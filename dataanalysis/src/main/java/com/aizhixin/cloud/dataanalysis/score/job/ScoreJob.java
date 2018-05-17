@@ -130,7 +130,6 @@ public class ScoreJob {
 			HashMap<Long, Long> alarmMap = new HashMap<Long, Long>();
 			// 按orgId归类告警等级阀值
 			for (AlarmSettings settings : settingsList) {
-
 				Long orgId = settings.getOrgId();
 				alarmMap.put(orgId, orgId);
 			}
@@ -237,8 +236,7 @@ public class ScoreJob {
 		}
 	}
 
-	private ScoreFluctuateCount setSecondScoreDomainInfor(
-			List<Score> userScoreList, Long orgId, int secondSchoolYear,
+	private ScoreFluctuateCount setSecondScoreDomainInfor(List<Score> userScoreList, Long orgId, int secondSchoolYear,
 			int secondSemester) {
 
 		ScoreFluctuateCount scoreDomain = new ScoreFluctuateCount();
@@ -335,10 +333,13 @@ public class ScoreJob {
 		return scoreDomain;
 	}
 
+
+
 	/**
-	 * 成绩波动预警定时任务
+	 * 上上个学期平均学分绩点与上学期平均学分绩点的差 -------(成绩波动预警定时任务)-------
 	 */
-	public void scoreFluctuateJob(int schoolYear,int semester) {
+	public List<WarningInformation> scoreFluctuateJob(int schoolYear,int semester) {
+		ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
 		// 获取的预警类型
 		List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
@@ -433,7 +434,7 @@ public class ScoreJob {
 				//删除已生成的预警信息
 				alertWarningInformationService.deleteWarningInformation(orgId,WarningTypeConstant.PerformanceFluctuation.toString(),schoolYear,semester);
 				HashMap<String, WarningInformation> warnMap = new HashMap<String, WarningInformation>();
-				ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
+//				ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 				// 获取成绩波动数据
 				List<ScoreFluctuateCount> scoreFluctuateCountList = scoreFluctuateCountMongoRespository
 						.findAllByOrgId(orgId);
@@ -551,12 +552,13 @@ public class ScoreJob {
 						}
 				}
 			}
-			if (!alertInforList.isEmpty()) {
-				alertWarningInformationService.save(alertInforList);
-			}
+//			if (!alertInforList.isEmpty()) {
+//				alertWarningInformationService.save(alertInforList);
+//			}
 		}
-	}
 
+	}
+		return alertInforList;
 	}
 
 	/**
