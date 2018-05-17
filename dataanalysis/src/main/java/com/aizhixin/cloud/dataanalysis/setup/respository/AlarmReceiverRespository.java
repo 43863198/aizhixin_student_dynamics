@@ -14,5 +14,5 @@ public interface AlarmReceiverRespository extends JpaRepository<AlarmReceiver, S
     List<AlarmReceiver> findByCollegeIdAndDeleteFlag(Long collegeId, Integer deleteFlag);
 
     @Query("select new com.aizhixin.cloud.dataanalysis.common.domain.IdCountDTO(t.collegeId, count(t.id)) from #{#entityName} t where t.deleteFlag = :deleteFlag and t.orgId=:orgId group by t.collegeId")
-    List<IdCountDTO> countByOrgAndGroupByCollegeId(@Param(value = "orgId") Long orgId, @Param(value = "orgId")Integer deleteFlag);
+    List<IdCountDTO> countByOrgAndGroupByCollegeId(@Param(value = "orgId") Long orgId, @Param(value = "deleteFlag")Integer deleteFlag);
 }
