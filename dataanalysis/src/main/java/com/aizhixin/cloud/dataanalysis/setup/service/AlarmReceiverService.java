@@ -8,14 +8,17 @@ import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.common.core.PublicErrorCode;
 import com.aizhixin.cloud.dataanalysis.common.domain.IdCountDTO;
 import com.aizhixin.cloud.dataanalysis.common.exception.CommonException;
+import com.aizhixin.cloud.dataanalysis.common.util.RestUtil;
 import com.aizhixin.cloud.dataanalysis.feign.OrgManagerFeignService;
 import com.aizhixin.cloud.dataanalysis.feign.vo.CollegeVO;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmReceiver;
 import com.aizhixin.cloud.dataanalysis.setup.manager.AlarmReceiverManager;
 import com.aizhixin.cloud.dataanalysis.setup.vo.AlertReceiverVO;
 import com.aizhixin.cloud.dataanalysis.setup.vo.CollegeAlertReceiverVO;
-import lombok.extern.log4j.Log4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -30,14 +33,18 @@ import java.util.Map;
  */
 @Component
 @Transactional
-@Log4j
 public class AlarmReceiverService {
+    private final static Logger LOG = LoggerFactory.getLogger(AlarmReceiverService.class);
     @Autowired
     private AlarmReceiverManager alarmReceiverManager;
     @Autowired
     private OrgManagerFeignService orgManagerFeignService;
     @Autowired
     private AlertWarningInformationService alertWarningInformationService;
+    @Autowired
+    private RestUtil restUtil;
+    @Value("${dl.dledu.back.host}")
+    private String zhixinUrl;
 
     @Transactional (readOnly = true)
     public AlertReceiverVO get(String id){
@@ -181,12 +188,34 @@ public class AlarmReceiverService {
                         sb.delete(0, sb.length());
                         List<AlarmReceiver> collegeReceiverList = collegeReceiverMap.get(dto.getCollegeName());
                         if (null == collegeReceiverList || collegeReceiverList.size() <= 0) {
-                            log.info("College:({}) have not any receiver .");
+                            LOG.info("College:({}) have not any receiver .", dto.getCollegeName());
                             continue;
+                        }
+                        sb.append(teacherYear).append("年");
+                        if (null != semester) {
+                            if (1 == semester.intValue()) {
+                                sb.append("春季");
+                            } else {
+                                sb.append("秋季");
+                            }
+                            sb.append("学期");
+                        }
+                        sb.append(dto.getCollegeName());
+                        sb.append("的学生共产生").append(dto.getTotal()).append("条总评成绩预警，其中红色预警");
+                        sb.append(dto.getSum1()).append("条，橙色预警").append(dto.getSum2()).append("条，黄色预警").append(dto.getSum3()).append("6条。");
+                        for (AlarmReceiver r : receiverList) {
+                            try {
+                                restUtil.post(zhixinUrl + "/api/web/v1/msg/send?phone=" + r.getTeacherPhone() + "&msg=" + sb.toString(), null);
+                                LOG.warn("给[" + dto.getCollegeName() + "]电话号码[" + r.getTeacherPhone() + "]发送告警短信:[" + sb.toString() + "]成功");
+                            } catch (Exception e) {
+                                LOG.warn("给[" + dto.getCollegeName() + "]电话号码[" + r.getTeacherPhone() + "]发送告警短信:[" + sb.toString() + "]失败");
+                            }
                         }
                     }
                 }
             }
+        } else {
+            LOG.info("Not alert data or not any receiver .");
         }
     }
 }
