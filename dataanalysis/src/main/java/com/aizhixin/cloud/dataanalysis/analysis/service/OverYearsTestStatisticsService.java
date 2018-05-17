@@ -75,6 +75,8 @@ public class OverYearsTestStatisticsService {
                     Double a = (Double.valueOf(overYearsInfoDomain.getPassRate()).doubleValue()-Double.valueOf(list.get(i-1).getPassRate()).doubleValue()) / Double.valueOf(list.get(i-1).getPassRate()).doubleValue() ;
                     System.out.println(a);
                     semesterAddRateDomain.setAddRate(new DecimalFormat("0.0000").format(a));
+                }else{
+                    semesterAddRateDomain.setAddRate(0+"");
                 }
             }
             semesterAddRateDomains.add(semesterAddRateDomain);
@@ -208,6 +210,8 @@ public class OverYearsTestStatisticsService {
                          } else {
                              semesterAvgScoreAddRateDomain.setAvgAddRate("0");
                          }
+                     }else{
+                         semesterAvgScoreAddRateDomain.setAvgAddRate("0");
                      }
                  }
                 i++;
