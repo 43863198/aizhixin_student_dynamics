@@ -99,6 +99,20 @@ public class AlarmReceiverController {
             @ApiParam(value = "orgId", required = true) @PathVariable Long orgId) {
         return alarmReceiverService.getCollegeAndReceiveCount(orgId);
     }
+
+
+
+    @PutMapping(value = "/msg", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "PUT", value = "查询告警数据并发送告警短信", response = Void.class, notes = "查询告警数据并发送告警短信<br><br><b>@author zhen.pan</b>")
+    public MessageVO setMsg(
+            @ApiParam(value = "orgId", required = true) @PathVariable Long orgId,
+            @ApiParam(value = "teacherYear 学年") @RequestParam(value = "teacherYear", required = false) Integer teacherYear,
+            @ApiParam(value = "semester 学期") @RequestParam(value = "semester", required = false) Integer semester,
+            @ApiParam(value = "type 类型") @RequestParam(value = "type", required = false) String type) {
+        alarmReceiverService.sendMsg(orgId, teacherYear, semester, type);
+        MessageVO vo = new MessageVO();
+        return vo;
+    }
 }
 
 
