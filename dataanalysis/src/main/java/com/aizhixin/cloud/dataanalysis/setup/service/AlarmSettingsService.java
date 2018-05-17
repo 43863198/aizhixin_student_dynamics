@@ -121,44 +121,50 @@ public class AlarmSettingsService {
         WarningSettingsDTO warningSettingsDTO = new WarningSettingsDTO();
         try {
             WarningType warningType = warningTypeService.getWarningTypeById(warningTypeId);
-            String[] wd = warningType.getWarningDescribe().split(",");
+//          String[] wd = warningType.getWarningDescribe().split(",");
             warningSettingsDTO.setWarningName(warningType.getWarningName());
             warningSettingsDTO.setSetupCloseFlag(warningType.getSetupCloseFlag());
             warningSettingsDTO.setWarningTypeId(warningTypeId);
             warningSettingsDTO.setStartTime(warningType.getStartTime());
             List<WarningGradeDTO> warningGradeDTOList = new ArrayList<>();
-
+            List<AlarmSettings> asList = alarmSettingsRepository.findByOrgIdAndWarningTypeAndDeleteFlag(warningType.getOrgId(), warningType.getWarningType(), DataValidity.VALID.getState());
             List<WarningDescparameterDTO> waringDescParameterDTOArrayList1 = new ArrayList<>();
-            if (wd.length > 0) {
-                int serialNumber = 1;
-                for (String d : wd) {
-                    WarningDescparameterDTO waringDescParameterDTO1 = new WarningDescparameterDTO();
-                    waringDescParameterDTO1.setDescribe(d);
-                    waringDescParameterDTO1.setSerialNumber(serialNumber);
-                    waringDescParameterDTOArrayList1.add(waringDescParameterDTO1);
-                    serialNumber++;
-                }
-            }
             List<WarningDescparameterDTO> waringDescParameterDTOArrayList2 = new ArrayList<>();
-            if (wd.length > 0) {
-                int serialNumber = 1;
-                for (String d : wd) {
-                	WarningDescparameterDTO waringDescParameterDTO2 = new WarningDescparameterDTO();
-                    waringDescParameterDTO2.setDescribe(d);
-                    waringDescParameterDTO2.setSerialNumber(serialNumber);
-                    waringDescParameterDTOArrayList2.add(waringDescParameterDTO2);
-                    serialNumber++;
-                }
-            }
             List<WarningDescparameterDTO> waringDescParameterDTOArrayList3 = new ArrayList<>();
-            if (wd.length > 0) {
-                int serialNumber = 1;
-                for (String d : wd) {
-                	WarningDescparameterDTO waringDescParameterDTO3 = new WarningDescparameterDTO();
-                    waringDescParameterDTO3.setDescribe(d);
-                    waringDescParameterDTO3.setSerialNumber(serialNumber);
-                    waringDescParameterDTOArrayList3.add(waringDescParameterDTO3);
-                    serialNumber++;
+            if(null!=asList&&asList.size()>0){
+                AlarmSettings as = asList.get(0);
+                if(null!=as.getRuleSet()&&!as.getRuleSet().equals("")){
+                    String[] wd = as.getRuleSet().split(",");
+                    if (wd.length > 0) {
+                        int serialNumber = 1;
+                        for (String d : wd) {
+                            WarningDescparameterDTO waringDescParameterDTO1 = new WarningDescparameterDTO();
+                            waringDescParameterDTO1.setDescribe(alarmRuleService.getAlarmRuleById(d).getName());
+                            waringDescParameterDTO1.setSerialNumber(serialNumber);
+                            waringDescParameterDTOArrayList1.add(waringDescParameterDTO1);
+                            serialNumber++;
+                        }
+                    }
+                    if (wd.length > 0) {
+                        int serialNumber = 1;
+                        for (String d : wd) {
+                            WarningDescparameterDTO waringDescParameterDTO2 = new WarningDescparameterDTO();
+                            waringDescParameterDTO2.setDescribe(alarmRuleService.getAlarmRuleById(d).getName());
+                            waringDescParameterDTO2.setSerialNumber(serialNumber);
+                            waringDescParameterDTOArrayList2.add(waringDescParameterDTO2);
+                            serialNumber++;
+                        }
+                    }
+                    if (wd.length > 0) {
+                        int serialNumber = 1;
+                        for (String d : wd) {
+                            WarningDescparameterDTO waringDescParameterDTO3 = new WarningDescparameterDTO();
+                            waringDescParameterDTO3.setDescribe(alarmRuleService.getAlarmRuleById(d).getName());
+                            waringDescParameterDTO3.setSerialNumber(serialNumber);
+                            waringDescParameterDTOArrayList3.add(waringDescParameterDTO3);
+                            serialNumber++;
+                        }
+                    }
                 }
             }
             //一级红色预警

@@ -965,7 +965,7 @@ public class CetStatisticAnalysisService {
             if (!StringUtils.isBlank(collegeCode)) {
                 if (!StringUtils.isBlank(professionCode)) {
                     if (!StringUtils.isBlank(classCode)) {
-                        sql.append("SELECT c.NAME as name, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss WHERE 1=1 AND ss.STATISTICS_TYPE = '003'");
+                        sql.append("SELECT ss.CLASS_NAME as name, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss WHERE 1=1 AND ss.STATISTICS_TYPE = '003'");
                         sql.append(ql);
                         sql.append(" AND ss.STATISTICS_TYPE = '003'");
                         sql.append(" and ss.PARENT_CODE = :pCode");
@@ -976,7 +976,7 @@ public class CetStatisticAnalysisService {
                         condition.put("className", className);
                         sql.append(" AND ss.CLASS_NAME IS NOT NULL");
                     }else {
-                        sql.append("SELECT c.NAME as name, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss  WHERE 1=1 AND ss.STATISTICS_TYPE = '003'");
+                        sql.append("SELECT ss.CLASS_NAME as name, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss  WHERE 1=1 AND ss.STATISTICS_TYPE = '003'");
                         sql.append(ql);
                         sql.append(" AND ss.STATISTICS_TYPE = '003'");
                         sql.append(" and ss.PARENT_CODE = :pCode");
@@ -1520,9 +1520,9 @@ public class CetStatisticAnalysisService {
             }
             Map<String, Object> condition = new HashMap<>();
             StringBuilder sql = new StringBuilder("SELECT cs.JOB_NUMBER as xh,x.XM as xm,x.BJMC as bj,x.ZYMC as zy,x.YXSMC xy,x.NJ nj,cs.EXAMINATION_DATE as date,cs.SCORE as score " +
-                    "FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, SCORE, ORG_ID,EXAMINATION_DATE,TYPE FROM t_cet_score WHERE EXAMINATION_DATE BETWEEN :start AND :end ) cs ON x.XH = cs.JOB_NUMBER WHERE 1=1 ");
+                    "FROM t_cet_score cs LEFT JOIN t_xsjbxx x  ON x.XH = cs.JOB_NUMBER WHERE cs.EXAMINATION_DATE BETWEEN :start AND :end ");
             StringBuilder cql = new StringBuilder("SELECT count(1) " +
-                    "FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, SCORE, ORG_ID,EXAMINATION_DATE,TYPE FROM t_cet_score WHERE EXAMINATION_DATE BETWEEN :start AND :end ) cs ON x.XH = cs.JOB_NUMBER WHERE 1=1 ");
+                    "FROM t_cet_score cs LEFT JOIN t_xsjbxx x  ON x.XH = cs.JOB_NUMBER WHERE cs.EXAMINATION_DATE BETWEEN :start AND :end ");
             condition.put("start", start);
             condition.put("end", end);
             if (null != orgId) {
