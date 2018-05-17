@@ -414,7 +414,7 @@ public class CetStatisticAnalysisController {
             @ApiParam(value = "collegeNumber 学院码", required = false) @RequestParam(value = "collegeNumber", required = false) String collegeNumber,
             @ApiParam(value = "professionNumber 专业码", required = false) @RequestParam(value = "professionNumber", required = false) String professionNumber,
             @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber,
-            @ApiParam(value = "className 班号", required = false) @RequestParam(value = "className", required = false) String className
+            @ApiParam(value = "className 班级名称", required = false) @RequestParam(value = "className", required = false) String className
     ) {
         return new ResponseEntity<Map<String, Object>>(overYearsTestStatisticsService.OverYearsPassRate(orgId, collegeNumber, professionNumber, classNumber,className, cetType), HttpStatus.OK);
     }
