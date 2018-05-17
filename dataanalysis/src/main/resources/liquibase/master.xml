@@ -68,8 +68,9 @@
     <!--<include file="classpath:liquibase/20184203154645_add_entity_ChoiceCourse.xml" relativeToChangelogFile="false"/>-->
     <!--<include file="classpath:liquibase/20184233154645_add_entity_Department.xml" relativeToChangelogFile="false"/>-->
     <!--<include file="classpath:liquibase/20184263154645_add_entity_CourseTimetable.xml" relativeToChangelogFile="false"/>-->
-    <include file="classpath:liquibase/20180507205545_add_entity_CetStatistics.xml" relativeToChangelogFile="false"/>
-    <include file="classpath:liquibase/20180509205545_add_entity_ScoreTop.xml" relativeToChangelogFile="false"/>
-    <include file="classpath:liquibase/20180509205545_add_entity_ScoreStatistics.xml" relativeToChangelogFile="false"/>
+    <!--<include file="classpath:liquibase/20180507205545_add_entity_CetStatistics.xml" relativeToChangelogFile="false"/>-->
+    <!--<include file="classpath:liquibase/20180509205545_add_entity_ScoreTop.xml" relativeToChangelogFile="false"/>-->
+    <!--<include file="classpath:liquibase/20180509205545_add_entity_ScoreStatistics.xml" relativeToChangelogFile="false"/>-->
     <include file="classpath:liquibase/201805111056_add_entity_ClassTeacher.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20180517134045_add_entity_AlarmReceiver.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
