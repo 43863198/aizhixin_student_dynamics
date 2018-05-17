@@ -4,6 +4,7 @@ import com.aizhixin.cloud.dataanalysis.common.domain.MessageVO;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmReceiver;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmReceiverService;
 import com.aizhixin.cloud.dataanalysis.setup.vo.AlertReceiverVO;
+import com.aizhixin.cloud.dataanalysis.setup.vo.CollegeAlertReceiverVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -90,6 +91,13 @@ public class AlarmReceiverController {
             @ApiParam(value = "orgId", required = true) @PathVariable Long orgId,
             @ApiParam(value = "collegeId 学院ID", required = true) @PathVariable Long collegeId) {
         return alarmReceiverService.getByCollegeId(collegeId);
+    }
+
+    @GetMapping(value = "/college", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "查询学校下所有学院及预警老师数量统计信息", response = Void.class, notes = "查询学校下所有学院及预警老师数量统计信息<br><br><b>@author zhen.pan</b>")
+    public List<CollegeAlertReceiverVO> getAllCollege(
+            @ApiParam(value = "orgId", required = true) @PathVariable Long orgId) {
+        return alarmReceiverService.getCollegeAndReceiveCount(orgId);
     }
 }
 

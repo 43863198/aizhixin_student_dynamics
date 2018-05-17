@@ -1,6 +1,7 @@
 package com.aizhixin.cloud.dataanalysis.setup.manager;
 
 import com.aizhixin.cloud.dataanalysis.common.core.DataValidity;
+import com.aizhixin.cloud.dataanalysis.common.domain.IdCountDTO;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmReceiver;
 import com.aizhixin.cloud.dataanalysis.setup.respository.AlarmReceiverRespository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,5 +32,10 @@ public class AlarmReceiverManager {
     @Transactional (readOnly = true)
     public List<AlarmReceiver> findByCollegeId(Long collegeId) {
         return  alarmReceiverRespository.findByCollegeIdAndDeleteFlag(collegeId, DataValidity.VALID.getIntValue());
+    }
+
+    @Transactional (readOnly = true)
+    public List<IdCountDTO> countByOrgAndGroupByCollegeId(Long orgId) {
+        return  alarmReceiverRespository.countByOrgAndGroupByCollegeId(orgId, DataValidity.VALID.getIntValue());
     }
 }

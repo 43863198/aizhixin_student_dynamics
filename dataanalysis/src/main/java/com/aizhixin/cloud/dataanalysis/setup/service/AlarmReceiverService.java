@@ -1,18 +1,25 @@
 package com.aizhixin.cloud.dataanalysis.setup.service;
 
+import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.core.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.core.PublicErrorCode;
+import com.aizhixin.cloud.dataanalysis.common.domain.IdCountDTO;
 import com.aizhixin.cloud.dataanalysis.common.exception.CommonException;
+import com.aizhixin.cloud.dataanalysis.feign.OrgManagerFeignService;
+import com.aizhixin.cloud.dataanalysis.feign.vo.CollegeVO;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmReceiver;
 import com.aizhixin.cloud.dataanalysis.setup.manager.AlarmReceiverManager;
 import com.aizhixin.cloud.dataanalysis.setup.vo.AlertReceiverVO;
+import com.aizhixin.cloud.dataanalysis.setup.vo.CollegeAlertReceiverVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *  告警信息接收人管理及相关操作逻辑
@@ -22,6 +29,8 @@ import java.util.List;
 public class AlarmReceiverService {
     @Autowired
     private AlarmReceiverManager alarmReceiverManager;
+    @Autowired
+    private OrgManagerFeignService orgManagerFeignService;
 
     @Transactional (readOnly = true)
     public AlertReceiverVO get(String id){
@@ -116,4 +125,28 @@ public class AlarmReceiverService {
         return rs;
     }
 
+    public List<CollegeAlertReceiverVO> getCollegeAndReceiveCount(Long orgId) {
+        List<CollegeAlertReceiverVO> rs = new ArrayList<>();
+        PageData<CollegeVO>  page = orgManagerFeignService.queryCollege(orgId, null, 1, Integer.MAX_VALUE);
+        if (null != page && null != page.getData()) {
+            Map<Long, CollegeAlertReceiverVO> map = new HashMap<>();
+            for (CollegeVO c : page.getData()) {
+                CollegeAlertReceiverVO v = new CollegeAlertReceiverVO();
+                v.setCollegeId(c.getId());
+                v.setCollegeName(c.getName());
+                v.setReceiverCount(0L);
+                rs.add(v);
+                map.put(v.getCollegeId(), v);
+            }
+            List<IdCountDTO> clist = alarmReceiverManager.countByOrgAndGroupByCollegeId(orgId);
+            for (IdCountDTO c : clist) {
+                CollegeAlertReceiverVO v = map.get(c.getId());
+                if (null != v) {
+                    v.setReceiverCount(c.getCount());
+                }
+            }
+        }
+
+        return rs;
+    }
 }
