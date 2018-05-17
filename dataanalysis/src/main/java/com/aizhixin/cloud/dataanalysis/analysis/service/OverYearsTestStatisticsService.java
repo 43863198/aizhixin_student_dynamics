@@ -26,7 +26,7 @@ public class OverYearsTestStatisticsService {
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
 
-    public Map<String, Object> OverYearsPassRate(Long orgId,   String collegeCode, String professionCode, String classCode, String cetType) {
+    public Map<String, Object> OverYearsPassRate(Long orgId,   String collegeCode, String professionCode, String classCode, String cetType,String className) {
         Map<String, Object> rs=new HashMap<>();
         List<SemesterPassRateDomain> semesterPassRateDomains=new ArrayList<>();
         List<SemesterAddRateDomain> semesterAddRateDomains=new ArrayList<>();
@@ -35,7 +35,7 @@ public class OverYearsTestStatisticsService {
         Integer c= Integer.parseInt(endTeacherYear);
         List<OverYearsInfoDomain> list=new ArrayList<>();
         for (int i=c-5;i<c;i++){
-         Map<String,Object> map= cetStatisticAnalysisService.cetSingleDataStatistics(orgId,i+"","春",collegeCode,professionCode,classCode,null,cetType);
+         Map<String,Object> map= cetStatisticAnalysisService.cetSingleDataStatistics(orgId,i+"","春",collegeCode,professionCode,classCode,className,cetType);
          if (map!=null){
              CetSingleDataStatisticsVO csdsVO = (CetSingleDataStatisticsVO) map.get("data");
              if (null!=csdsVO){
