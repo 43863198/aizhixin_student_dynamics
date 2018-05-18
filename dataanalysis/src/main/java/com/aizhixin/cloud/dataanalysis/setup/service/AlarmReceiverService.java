@@ -245,7 +245,7 @@ public class AlarmReceiverService {
                         sb.append("，其中红色预警");
                         sb.append(dto.getSum1()).append("条，橙色预警").append(dto.getSum2()).append("条，黄色预警").append(dto.getSum3()).append("条。");
                         String msg = sb.toString();
-                        for (AlarmReceiver r : receiverList) {
+                        for (AlarmReceiver r : collegeReceiverList) {
                             try {
                                 restUtil.post(zhixinUrl + "/api/web/v1/msg/send?phone=" + r.getTeacherPhone() + "&msg=" + msg, null);
                                 LOG.info("给[" + dto.getCollegeName() + "]电话号码[" + r.getTeacherPhone() + "]发送告警短信:[" + msg + "]成功");
