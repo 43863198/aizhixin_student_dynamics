@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import com.aizhixin.cloud.dataanalysis.alertinformation.JdbcTemplate.StudentJdbc;
 import com.aizhixin.cloud.dataanalysis.alertinformation.domain.*;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.*;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AttachmentInformation;
@@ -61,6 +62,8 @@ public class AlertWarningInformationService {
     private WarningTypeService warningTypeService;
     @Autowired
     private OrgManagerFeignService orgManagerFeignService;
+    @Autowired
+    private StudentJdbc studentJdbc;
 
     /**
      * 修改预警状态按预警等级和机构id
@@ -659,6 +662,7 @@ public class AlertWarningInformationService {
 
     /**
      * 学生预警 组装按条件查询的预警信息和按预警等级统计的数量
+     *
      * @param orgId
      * @param userId
      * @param jobNum
@@ -1169,6 +1173,12 @@ public class AlertWarningInformationService {
                 warningDetailsDTO.setDealTime(alertWarningInformation.getLastModifiedDate());
                 warningDetailsDTO.setWarningCondition(alertWarningInformation.getWarningCondition());
                 warningDetailsDTO.setWarningSource(alertWarningInformation.getWarningSource());
+
+                Map stuMap = studentJdbc.findOne(warningDetailsDTO.getJobNumber(), alertWarningInformation.getOrgId());
+                if (stuMap != null && stuMap.get("nj") != null) {
+                    warningDetailsDTO.setNj(stuMap.get("nj").toString());
+                }
+
                 String standard = "";
                 if (null != alertWarningInformation.getAlarmSettingsId()) {
                     List<AlarmRule> alarmRuleList = alarmRuleService.getByAlarmSettingId(alertWarningInformation.getAlarmSettingsId());
