@@ -17,6 +17,8 @@ public class CetScoreDomain {
     private Integer teachingYear;
     @ApiModelProperty(value = "学期")
     private String semester;
+    @ApiModelProperty(value = "考试时间")
+    private String date;
     @ApiModelProperty(value = "考试类型")
     private String type;
     @ApiModelProperty(value = "成绩")
