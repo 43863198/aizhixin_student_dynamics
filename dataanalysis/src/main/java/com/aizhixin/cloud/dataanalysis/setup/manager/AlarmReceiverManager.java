@@ -19,27 +19,31 @@ public class AlarmReceiverManager {
 
     @Autowired
     private AlarmReceiverRespository alarmReceiverRespository;
-
     public AlarmReceiver save (AlarmReceiver entity) {
         return alarmReceiverRespository.save(entity);
     }
-
     @Transactional (readOnly = true)
     public AlarmReceiver findById(String id) {
         return alarmReceiverRespository.findOne(id);
     }
-
     @Transactional (readOnly = true)
     public List<AlarmReceiver> findByCollegeId(Long collegeId) {
         return  alarmReceiverRespository.findByCollegeIdAndDeleteFlag(collegeId, DataValidity.VALID.getIntValue());
     }
-
     @Transactional (readOnly = true)
     public List<IdCountDTO> countByOrgAndGroupByCollegeId(Long orgId) {
         return  alarmReceiverRespository.countByOrgAndGroupByCollegeId(orgId, DataValidity.VALID.getIntValue());
     }
-
+    @Transactional (readOnly = true)
     public List<AlarmReceiver> findByOrgAll(Long orgId) {
         return alarmReceiverRespository.findByOrgIdAndDeleteFlag(orgId, DataValidity.VALID.getIntValue());
+    }
+    @Transactional (readOnly = true)
+    public long countByTeacherIdAndCollege(Long teacherId, Long collegeId) {
+        return alarmReceiverRespository.countByTeacherdAndCollegeIdAndDeleteFlag(teacherId, collegeId, DataValidity.VALID.getIntValue());
+    }
+    @Transactional (readOnly = true)
+    public long countByTeacherIdAndCollegeAndIdNot(Long teacherId, Long collegeId, String id) {
+        return alarmReceiverRespository.countByTeacherIdAndCollegeIdAndIdNotAndDeleteFlag(teacherId, collegeId, id, DataValidity.VALID.getIntValue());
     }
 }

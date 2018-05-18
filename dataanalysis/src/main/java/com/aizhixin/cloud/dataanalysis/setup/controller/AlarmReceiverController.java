@@ -33,6 +33,7 @@ public class AlarmReceiverController {
     public MessageVO save(
             @ApiParam(value = "orgId", required = true) @PathVariable Long orgId,
             @ApiParam(value = "<b>必填:</b><br>collegeId:学院id;<br><b>" +
+                    "</b><br>collegeName:学院名称;" +
                     "</b><br>teacherId:老师ID;" +
                     "</b><br>teacherName:老师姓名;" +
                     "</b><br>teacherJobNumber:老师工号;" +
@@ -41,7 +42,7 @@ public class AlarmReceiverController {
             @RequestBody AlertReceiverVO alertReceiverVO) {
         MessageVO vo = new MessageVO();
         AlarmReceiver alarmReceiver = alarmReceiverService.save(orgId, alertReceiverVO);
-        vo.setMessage(alarmReceiver.getId());
+        vo.setData(alarmReceiver.getId());
         return vo;
     }
 
@@ -51,6 +52,7 @@ public class AlarmReceiverController {
             @ApiParam(value = "orgId", required = true) @PathVariable Long orgId,
             @ApiParam(value = "ID", required = true) @PathVariable String id,
             @ApiParam(value = "<b>必填:</b><br>collegeId:学院id;<br><b>" +
+                    "</b><br>collegeName:学院名称;" +
                     "</b><br>teacherId:老师ID;" +
                     "</b><br>teacherName:老师姓名;" +
                     "</b><br>teacherJobNumber:老师工号;" +
@@ -59,7 +61,7 @@ public class AlarmReceiverController {
             @RequestBody AlertReceiverVO alertReceiverVO) {
         MessageVO vo = new MessageVO();
         AlarmReceiver alarmReceiver = alarmReceiverService.update(orgId, id, alertReceiverVO);
-        vo.setMessage(alarmReceiver.getId());
+        vo.setData(alarmReceiver.getId());
         return vo;
     }
 
@@ -80,7 +82,7 @@ public class AlarmReceiverController {
         AlarmReceiver alarmReceiver = alarmReceiverService.delete(id);
 
         if (null != vo) {
-            vo.setMessage(alarmReceiver.getId());
+            vo.setData(alarmReceiver.getId());
         }
         return vo;
     }
