@@ -218,14 +218,39 @@ public class AlarmReceiverService {
                             sb.append("学期");
                         }
                         sb.append(dto.getCollegeName());
-                        sb.append("的学生共产生").append(dto.getTotal()).append("条总评成绩预警，其中红色预警");
-                        sb.append(dto.getSum1()).append("条，橙色预警").append(dto.getSum2()).append("条，黄色预警").append(dto.getSum3()).append("6条。");
+                        sb.append("的学生共产生").append(dto.getTotal()).append("条");
+                        if (!StringUtils.isEmpty(type)) {
+                            if ("Register".equalsIgnoreCase(type)) {
+                                sb.append("迎新报到预警");
+                            } else if ("LeaveSchool".equalsIgnoreCase(type)) {
+                                sb.append("修读异常预警");
+                            } else if ("AttendAbnormal".equalsIgnoreCase(type)) {
+                                sb.append("旷课预警");
+                            } else if ("Absenteeism".equalsIgnoreCase(type)) {
+                                sb.append("旷课预警");
+                            } else if ("TotalAchievement".equalsIgnoreCase(type)) {
+                                sb.append("总评成绩预警");
+                            } else if ("SupplementAchievement".equalsIgnoreCase(type)) {
+                                sb.append("补考成绩预警");
+                            } else if ("PerformanceFluctuation".equalsIgnoreCase(type)) {
+                                sb.append("成绩波动预警");
+                            } else if ("Cet".equalsIgnoreCase(type)) {
+                                sb.append("CET-4成绩预警");
+                            } else {
+                                sb.append("未知类型预警");
+                            }
+                        } else {
+                            sb.append("未知类型预警");
+                        }
+                        sb.append("，其中红色预警");
+                        sb.append(dto.getSum1()).append("条，橙色预警").append(dto.getSum2()).append("条，黄色预警").append(dto.getSum3()).append("条。");
+                        String msg = sb.toString();
                         for (AlarmReceiver r : receiverList) {
                             try {
-                                restUtil.post(zhixinUrl + "/api/web/v1/msg/send?phone=" + r.getTeacherPhone() + "&msg=" + sb.toString(), null);
-                                LOG.warn("给[" + dto.getCollegeName() + "]电话号码[" + r.getTeacherPhone() + "]发送告警短信:[" + sb.toString() + "]成功");
+                                restUtil.post(zhixinUrl + "/api/web/v1/msg/send?phone=" + r.getTeacherPhone() + "&msg=" + msg, null);
+                                LOG.info("给[" + dto.getCollegeName() + "]电话号码[" + r.getTeacherPhone() + "]发送告警短信:[" + msg + "]成功");
                             } catch (Exception e) {
-                                LOG.warn("给[" + dto.getCollegeName() + "]电话号码[" + r.getTeacherPhone() + "]发送告警短信:[" + sb.toString() + "]失败");
+                                LOG.warn("给[" + dto.getCollegeName() + "]电话号码[" + r.getTeacherPhone() + "]发送告警短信:[" + msg + "]失败");
                             }
                         }
                     }
