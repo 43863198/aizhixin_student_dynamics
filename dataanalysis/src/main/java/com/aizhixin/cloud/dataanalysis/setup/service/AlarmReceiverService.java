@@ -154,6 +154,7 @@ public class AlarmReceiverService {
         return rs;
     }
 
+    @Transactional (readOnly = true)
     public List<CollegeAlertReceiverVO> getCollegeAndReceiveCount(Long orgId) {
         List<CollegeAlertReceiverVO> rs = new ArrayList<>();
         PageData<CollegeVO>  page = orgManagerFeignService.queryCollege(orgId, null, 1, Integer.MAX_VALUE);
@@ -179,6 +180,7 @@ public class AlarmReceiverService {
         return rs;
     }
 
+    @Transactional (readOnly = true)
     public void sendMsg (Long orgId, Integer teacherYear, Integer semester, String type) {
         Map<String, Object> map = alertWarningInformationService.getStatisticsByCollege(PageUtil.createNoErrorPageRequest(1, Integer.MAX_VALUE), orgId, type, teacherYear, semester);
         List<AlarmReceiver> receiverList = alarmReceiverManager.findByOrgAll(orgId);
