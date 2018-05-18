@@ -40,7 +40,7 @@ public class AlarmReceiverManager {
     }
     @Transactional (readOnly = true)
     public long countByTeacherIdAndCollege(Long teacherId, Long collegeId) {
-        return alarmReceiverRespository.countByTeacherdAndCollegeIdAndDeleteFlag(teacherId, collegeId, DataValidity.VALID.getIntValue());
+        return alarmReceiverRespository.countByTeacherdIdAndCollegeIdAndDeleteFlag(teacherId, collegeId, DataValidity.VALID.getIntValue());
     }
     @Transactional (readOnly = true)
     public long countByTeacherIdAndCollegeAndIdNot(Long teacherId, Long collegeId, String id) {
