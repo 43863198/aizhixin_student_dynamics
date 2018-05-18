@@ -74,8 +74,5 @@
     <include file="classpath:liquibase/201805111056_add_entity_ClassTeacher.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20180517154645_add_entity_Rule.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20180517134045_add_entity_AlarmReceiver.xml" relativeToChangelogFile="false"/>
-<<<<<<< HEAD
-=======
     <include file="classpath:liquibase/20180517163245_update_entity_AlarmReceiver.xml" relativeToChangelogFile="false"/>
->>>>>>> 80fc9fea41fbd1d9843251250130ab1cfc6c3c57
 </databaseChangeLog>
