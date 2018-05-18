@@ -59,6 +59,9 @@ public class AlarmReceiverService {
         if (StringUtils.isEmpty(alertReceiverVO.getCollegeId())) {
             throw new CommonException(PublicErrorCode.PARAM_EXCEPTION.getIntValue(), "学院ID是必须的");
         }
+        if (StringUtils.isEmpty(alertReceiverVO.getCollegeName())) {
+            throw new CommonException(PublicErrorCode.PARAM_EXCEPTION.getIntValue(), "学院名称是必须的");
+        }
         if (null == alertReceiverVO.getTeacherId() || alertReceiverVO.getTeacherId() <= 0) {
             throw new CommonException(PublicErrorCode.PARAM_EXCEPTION.getIntValue(), "老师ID是必须的");
         }
@@ -67,6 +70,10 @@ public class AlarmReceiverService {
         }
         if (StringUtils.isEmpty(alertReceiverVO.getTeacherPhone())) {
             throw new CommonException(PublicErrorCode.PARAM_EXCEPTION.getIntValue(), "老师手机号码是必须的");
+        }
+        long tc = alarmReceiverManager.countByTeacherIdAndCollege(alertReceiverVO.getTeacherId(), alertReceiverVO.getCollegeId());
+        if (tc > 0) {
+            throw new CommonException(PublicErrorCode.PARAM_EXCEPTION.getIntValue(), "该老师已经存在");
         }
         AlarmReceiver alarmReceiver = new AlarmReceiver();
         alarmReceiver.setOrgId(orgId);
@@ -85,7 +92,7 @@ public class AlarmReceiverService {
             throw new CommonException(PublicErrorCode.PARAM_EXCEPTION.getIntValue(), "输入参数是必须的");
         }
         if (StringUtils.isEmpty(id)) {
-            throw new CommonException(PublicErrorCode.PARAM_EXCEPTION.getIntValue(), "学院ID是必须的");
+            throw new CommonException(PublicErrorCode.PARAM_EXCEPTION.getIntValue(), "ID是必须的");
         }
         AlarmReceiver alarmReceiver = alarmReceiverManager.findById(id);
         if (null == alarmReceiver) {
@@ -93,6 +100,9 @@ public class AlarmReceiverService {
         }
         if (StringUtils.isEmpty(alertReceiverVO.getCollegeId())) {
             throw new CommonException(PublicErrorCode.PARAM_EXCEPTION.getIntValue(), "学院ID是必须的");
+        }
+        if (StringUtils.isEmpty(alertReceiverVO.getCollegeName())) {
+            throw new CommonException(PublicErrorCode.PARAM_EXCEPTION.getIntValue(), "学院名称是必须的");
         }
         if (null == alertReceiverVO.getTeacherId() || alertReceiverVO.getTeacherId() <= 0) {
             throw new CommonException(PublicErrorCode.PARAM_EXCEPTION.getIntValue(), "老师ID是必须的");
@@ -102,6 +112,11 @@ public class AlarmReceiverService {
         }
         if (StringUtils.isEmpty(alertReceiverVO.getTeacherPhone())) {
             throw new CommonException(PublicErrorCode.PARAM_EXCEPTION.getIntValue(), "老师手机号码是必须的");
+        }
+
+        long tc = alarmReceiverManager.countByTeacherIdAndCollegeAndIdNot(alertReceiverVO.getTeacherId(), alertReceiverVO.getCollegeId(), id);
+        if (tc > 0) {
+            throw new CommonException(PublicErrorCode.PARAM_EXCEPTION.getIntValue(), "该老师已经存在");
         }
         alarmReceiver.setOrgId(orgId);
         alarmReceiver.setCollegeId(alertReceiverVO.getCollegeId());
@@ -117,7 +132,7 @@ public class AlarmReceiverService {
     public AlarmReceiver delete(String id){
 
         if (StringUtils.isEmpty(id)) {
-            throw new CommonException(PublicErrorCode.PARAM_EXCEPTION.getIntValue(), "学院ID是必须的");
+            throw new CommonException(PublicErrorCode.PARAM_EXCEPTION.getIntValue(), "ID是必须的");
         }
         AlarmReceiver alarmReceiver = alarmReceiverManager.findById(id);
         if (null == alarmReceiver) {
