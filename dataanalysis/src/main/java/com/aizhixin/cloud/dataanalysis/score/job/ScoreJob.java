@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.aizhixin.cloud.dataanalysis.common.util.TermConversion;
-import com.aizhixin.cloud.dataanalysis.rollCall.mongoEntity.RollCallCount;
 import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
 import com.mongodb.BasicDBObject;
@@ -358,19 +357,6 @@ public class ScoreJob {
 						.toString());
 		if (null != settingsList && settingsList.size() > 0) {
 
-//			Calendar c = Calendar.getInstance();
-//			// 当前年份
-//			int schoolYear = c.get(Calendar.YEAR);
-//			// 当前月份
-//			int month = c.get(Calendar.MONTH) + 1;
-//			// 当前学期编号
-//			int semester = 2;
-//			if (month > 1 && month < 9) {
-//				semester = 1;
-//			}
-//			if (month == 1) {
-//				schoolYear = schoolYear - 1;
-//			}
 			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
 			Set<String> warnRuleIdList = new HashSet<String>();
 			Set<String> warnSettingsIdList = new HashSet<String>();
@@ -399,6 +385,7 @@ public class ScoreJob {
 					}
 				}
 			}
+
 			// 预警规则获取
 			HashMap<String, List<AlarmRule>> alarmRuleMap = new HashMap<String, List<AlarmRule>>();
 			List<AlarmRule> alarmList = alarmRuleService
@@ -711,7 +698,8 @@ public class ScoreJob {
 	/**
 	 * 总评成绩预警
 	 */
-	public void totalScoreJob(int schoolYear,int semester) {
+	public List<WarningInformation> totalScoreJob(int schoolYear,int semester) {
+		ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
 		// 获取的预警类型
 		List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
@@ -807,7 +795,6 @@ public class ScoreJob {
 			while (iter.hasNext()) {
 
 				// 更新预警集合
-				ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 				HashMap<String, WarningInformation> warnMap = new HashMap<String, WarningInformation>();
 				Map.Entry entry = (Map.Entry) iter.next();
 				Long orgId = (Long) entry.getKey();
@@ -1015,17 +1002,19 @@ public class ScoreJob {
 					}
 				}
 				
-				if (!alertInforList.isEmpty()) {
-					alertWarningInformationService.save(alertInforList);
-				}
+//				if (!alertInforList.isEmpty()) {
+//					alertWarningInformationService.save(alertInforList);
+//				}
 			}
 		}
+		return alertInforList;
 	}
 
 	/**
 	 * 修读异常预警
 	 */
-	public void attendAbnormalJob(int schoolYear,int semester) {
+	public ArrayList<WarningInformation> attendAbnormalJob(int schoolYear,int semester) {
+		ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
 		// 获取的预警类型
 		List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
@@ -1104,9 +1093,6 @@ public class ScoreJob {
 
 			Iterator iter = alarmMap.entrySet().iterator();
 			while (iter.hasNext()) {
-
-				// 更新预警集合
-				ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 				// 定时任务产生的新的预警数据
 				HashMap<String, WarningInformation> warnMap = new HashMap<String, WarningInformation>();
 				Map.Entry entry = (Map.Entry) iter.next();
@@ -1203,11 +1189,12 @@ public class ScoreJob {
 						}
 					}
 				}
-				if (!alertInforList.isEmpty()) {
-					alertWarningInformationService.save(alertInforList);
-				}
+//				if (!alertInforList.isEmpty()) {
+//					alertWarningInformationService.save(alertInforList);
+//				}
 			}
 		}
+		return alertInforList;
 	}
 
 	/**
@@ -1371,7 +1358,8 @@ public class ScoreJob {
 		}
 	}
     //补考成绩预警定时任务
-	public void makeUpScoreJob(int schoolYear,int semester) {
+	public ArrayList<WarningInformation> makeUpScoreJob(int schoolYear,int semester) {
+		ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
 		// 获取的预警类型
 		List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
@@ -1441,9 +1429,6 @@ public class ScoreJob {
 
 			Iterator iter = alarmMap.entrySet().iterator();
 			while (iter.hasNext()) {
-
-				// 更新预警集合
-				ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 				// 定时任务产生的新的预警数据
 				HashMap<String, WarningInformation> warnMap = new HashMap<String, WarningInformation>();
 				Map.Entry entry = (Map.Entry) iter.next();
@@ -1532,17 +1517,19 @@ public class ScoreJob {
 						}
 					}
 				}
-				if (!alertInforList.isEmpty()) {
-					alertWarningInformationService.save(alertInforList);
-				}
+//				if (!alertInforList.isEmpty()) {
+//					alertWarningInformationService.save(alertInforList);
+//				}
 			}
 		}
+		return alertInforList;
 	}
 
 	/**
 	 * 英语四级考试成绩未通过预警
 	 */
-	public void cet4ScoreJob(int schoolYear,int semester) {
+	public ArrayList<WarningInformation> cet4ScoreJob(int schoolYear,int semester) {
+		ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
 		// 获取的预警类型
 		List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
@@ -1624,9 +1611,6 @@ public class ScoreJob {
 
 			Iterator iter = alarmMap.entrySet().iterator();
 			while (iter.hasNext()) {
-
-				// 更新预警集合
-				ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 				Map.Entry entry = (Map.Entry) iter.next();
 				Long orgId = (Long) entry.getKey();
 				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
@@ -1737,17 +1721,19 @@ public class ScoreJob {
 						}
 					}
 				}
-				if (!alertInforList.isEmpty()) {
-					alertWarningInformationService.save(alertInforList);
-				}
+//				if (!alertInforList.isEmpty()) {
+//					alertWarningInformationService.save(alertInforList);
+//				}
 			}
 		}
+		return alertInforList;
 	}
 
 	/**
 	 * 退学预警
 	 */
-	public void dropOutJob(int schoolYear,int semester) {
+	public ArrayList<WarningInformation> dropOutJob(int schoolYear,int semester) {
+		ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
 		// 获取的预警类型
 		List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
@@ -1832,9 +1818,6 @@ public class ScoreJob {
 
 			Iterator iter = alarmMap.entrySet().iterator();
 			while (iter.hasNext()) {
-
-				// 更新预警集合
-				ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 				Map.Entry entry = (Map.Entry) iter.next();
 				Long orgId = (Long) entry.getKey();
 				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
@@ -1919,11 +1902,12 @@ public class ScoreJob {
 						}
 					}
 				}
-				if (!alertInforList.isEmpty()) {
-					alertWarningInformationService.save(alertInforList);
-				}
+//				if (!alertInforList.isEmpty()) {
+//					alertWarningInformationService.save(alertInforList);
+//				}
 			}
 		}
+		return alertInforList;
 	}
 
 }

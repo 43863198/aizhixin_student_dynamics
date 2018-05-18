@@ -77,8 +77,11 @@ public class AlarmSettingsController {
                     "</b><br>alarmSettingsId:预警设置id;" +
                     "</b><br>grade:等级;" +
                     "</b><br>setupCloseFlag:开启状态(10:启用 ;20:关闭;" +
+                    "</b><br>relation:规则直接的关系(与，或);" +
                     "</b><br>waringParameterDomainList:包含;" +
                     "</b><br>serialNumber:序号;" +
+                    "</b><br>ruleName:规则名称;" +
+                    "</b><br>ruleId:规则id;" +
                     "<br><br>parameter:参数;<br><b>"
             )
             @RequestBody AlarmSettingDomain alarmSettingDomain
