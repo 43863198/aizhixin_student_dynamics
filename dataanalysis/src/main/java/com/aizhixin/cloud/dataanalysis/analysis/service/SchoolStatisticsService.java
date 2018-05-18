@@ -641,7 +641,7 @@ public class SchoolStatisticsService {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
             Date date = new Date();
             String year = sdf.format(date);
-            StringBuilder sql = new StringBuilder("SELECT count(rsrc.STRUDENT_JOB_NUMBER) as count FROM (SELECT distinct STRUDENT_JOB_NUMBER FROM t_teachingclass_students WHERE 1 = 1");
+            StringBuilder sql = new StringBuilder("SELECT count(ss.JOB_NUMBER) as count FROM t_student_status ss WHERE 1 = 1");
             StringBuilder cql = new StringBuilder("SELECT count(ts.STRUDENT_JOB_NUMBER) AS count FROM (SELECT DISTINCT STRUDENT_JOB_NUMBER FROM " +
                     "t_teachingclass_students WHERE 1=1");
             if (null != orgId) {
@@ -649,7 +649,7 @@ public class SchoolStatisticsService {
                 cql.append(" AND ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
-            sql.append(" ) rsrc");
+            sql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
             cql.append(" ) ts INNER JOIN t_school_record_change src ON src.STRUDENT_JOB_NUMBER = ts.STRUDENT_JOB_NUMBER " +
                     "WHERE src.DATE_OF_CHANGE > '" + year + "-00-00'" +
                     " AND src.CHANGE_DESCRIPTION LIKE '%离校%' OR src.CHANGE_DESCRIPTION LIKE '%退学%'");

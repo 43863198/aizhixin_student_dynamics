@@ -214,7 +214,7 @@ public class CetStatisticAnalysisController {
             @ApiParam(value = "classNumber 班号", required = false) @RequestParam(value = "classNumber", required = false) String classNumber,
             @ApiParam(value = "className 班名", required = false) @RequestParam(value = "className", required = false) String className
     ) {
-        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataGradeAvgScoure(orgId, teacherYear, semester, collegeNumber, professionNumber,className, classNumber, cetType), HttpStatus.OK);
+        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleDataGradeAvgScoure(orgId, teacherYear, semester, collegeNumber, professionNumber, classNumber,className, cetType), HttpStatus.OK);
     }
 
 

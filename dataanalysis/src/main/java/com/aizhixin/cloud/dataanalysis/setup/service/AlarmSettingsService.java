@@ -239,6 +239,7 @@ public class AlarmSettingsService {
                 alarmSettings.setSetupCloseFlag(wg.getSetupCloseFlag());
                 alarmSettings.setWarningLevel(wg.getGrade());
                 alarmSettings.setOrgId(warningType.getOrgId());
+                alarmSettings.setStartTime(wg.getStartTime());
                 alarmSettings.setWarningType(warningType.getWarningType());
                 String alarmSettingsId = alarmSettingsRepository.save(alarmSettings).getId();
                 String ruids = "";
@@ -248,7 +249,6 @@ public class AlarmSettingsService {
                     if (null == alarmRule) {
                         alarmRule = new AlarmRule();
                     }
-                    alarmRule.setAlarmSettingsId(alarmSettingsId);
                     alarmRule.setSerialNumber(wp.getSerialNumber());
                     alarmRule.setRightParameter(wp.getParameter());
                     alarmRule.setOrgId(warningType.getOrgId());
@@ -257,9 +257,8 @@ public class AlarmSettingsService {
                      result.put("warningType", warningType.getWarningType());
                      result.put("orgId", warningType.getOrgId());
                     }
-                    
                     if (wd.length > 0) {
-                        alarmRule.setName(wd[wp.getSerialNumber()-1]);
+                        alarmRule.setName(wd[wp.getSerialNumber() - 1]);
                         String relationship = alarmRule.getName().substring(alarmRule.getName().length()-1);
                         alarmRule.setRightRelationship(relationConversionService.getRelation(relationship));
                     }

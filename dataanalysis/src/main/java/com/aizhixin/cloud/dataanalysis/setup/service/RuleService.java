@@ -20,6 +20,10 @@ public class RuleService {
     @Autowired
     private RuleRespository ruleRespository;
 
+    public Rule getById(String id){
+        return ruleRespository.findOne(id);
+    }
+
     public void deleteAll() {
         ruleRespository.deleteAll();
     }

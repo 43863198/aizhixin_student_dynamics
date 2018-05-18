@@ -1556,8 +1556,8 @@ public class CetStatisticAnalysisService {
                 cql.append(" and cs.SCORE >= 425");
             }else {
                 if (null!=isPass&&isPass.equals("0")) {
-                    sql.append(" and cs.SCORE < 425");
-                    cql.append(" and cs.SCORE < 425");
+                    sql.append(" and cs.SCORE < 425 and cs.SCORE > 0");
+                    cql.append(" and cs.SCORE < 425 and cs.SCORE > 0");
                 } else {
                     sql.append(" and cs.SCORE > 0");
                     cql.append(" and cs.SCORE > 0");
