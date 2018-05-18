@@ -46,6 +46,9 @@ public class    WarningDetailsDTO {
 
     @ApiModelProperty(value = "学年")
     private Integer teacherYear;
+
+    @ApiModelProperty(value = "年级")
+    private String nj;
     
     @ApiModelProperty(value = "学期")
     private Integer semester;

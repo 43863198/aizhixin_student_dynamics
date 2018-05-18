@@ -27,8 +27,8 @@ public class BaseDataService {
         return new ArrayList<>();
     }
 
-    public List<TeacherVO> queryTeacher(Long orgId, String name) {
-        PageData<TeacherVO> page =  orgManagerFeignService.queryTeacher(orgId, null, name, 1, Integer.MAX_VALUE);
+    public List<TeacherVO> queryTeacher(Long orgId, Long collegeId, String name) {
+        PageData<TeacherVO> page =  orgManagerFeignService.queryTeacher(orgId, collegeId, name, 1, Integer.MAX_VALUE);
         if (null != page) {
             return page.getData();
         }

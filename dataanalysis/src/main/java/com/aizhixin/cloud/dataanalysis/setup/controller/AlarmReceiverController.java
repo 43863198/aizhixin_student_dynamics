@@ -4,6 +4,7 @@ import com.aizhixin.cloud.dataanalysis.common.domain.MessageVO;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmReceiver;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmReceiverService;
 import com.aizhixin.cloud.dataanalysis.setup.vo.AlertReceiverVO;
+import com.aizhixin.cloud.dataanalysis.setup.vo.CollegeAlertReceiverVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -32,6 +33,7 @@ public class AlarmReceiverController {
     public MessageVO save(
             @ApiParam(value = "orgId", required = true) @PathVariable Long orgId,
             @ApiParam(value = "<b>必填:</b><br>collegeId:学院id;<br><b>" +
+                    "</b><br>collegeName:学院名称;" +
                     "</b><br>teacherId:老师ID;" +
                     "</b><br>teacherName:老师姓名;" +
                     "</b><br>teacherJobNumber:老师工号;" +
@@ -40,7 +42,7 @@ public class AlarmReceiverController {
             @RequestBody AlertReceiverVO alertReceiverVO) {
         MessageVO vo = new MessageVO();
         AlarmReceiver alarmReceiver = alarmReceiverService.save(orgId, alertReceiverVO);
-        vo.setMessage(alarmReceiver.getId());
+        vo.setData(alarmReceiver.getId());
         return vo;
     }
 
@@ -50,6 +52,7 @@ public class AlarmReceiverController {
             @ApiParam(value = "orgId", required = true) @PathVariable Long orgId,
             @ApiParam(value = "ID", required = true) @PathVariable String id,
             @ApiParam(value = "<b>必填:</b><br>collegeId:学院id;<br><b>" +
+                    "</b><br>collegeName:学院名称;" +
                     "</b><br>teacherId:老师ID;" +
                     "</b><br>teacherName:老师姓名;" +
                     "</b><br>teacherJobNumber:老师工号;" +
@@ -58,7 +61,7 @@ public class AlarmReceiverController {
             @RequestBody AlertReceiverVO alertReceiverVO) {
         MessageVO vo = new MessageVO();
         AlarmReceiver alarmReceiver = alarmReceiverService.update(orgId, id, alertReceiverVO);
-        vo.setMessage(alarmReceiver.getId());
+        vo.setData(alarmReceiver.getId());
         return vo;
     }
 
@@ -79,7 +82,7 @@ public class AlarmReceiverController {
         AlarmReceiver alarmReceiver = alarmReceiverService.delete(id);
 
         if (null != vo) {
-            vo.setMessage(alarmReceiver.getId());
+            vo.setData(alarmReceiver.getId());
         }
         return vo;
     }
@@ -90,6 +93,25 @@ public class AlarmReceiverController {
             @ApiParam(value = "orgId", required = true) @PathVariable Long orgId,
             @ApiParam(value = "collegeId 学院ID", required = true) @PathVariable Long collegeId) {
         return alarmReceiverService.getByCollegeId(collegeId);
+    }
+
+    @GetMapping(value = "/college", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "查询学校下所有学院及预警老师数量统计信息", response = Void.class, notes = "查询学校下所有学院及预警老师数量统计信息<br><br><b>@author zhen.pan</b>")
+    public List<CollegeAlertReceiverVO> getAllCollege(
+            @ApiParam(value = "orgId", required = true) @PathVariable Long orgId) {
+        return alarmReceiverService.getCollegeAndReceiveCount(orgId);
+    }
+
+    @PutMapping(value = "/msg", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "PUT", value = "查询告警数据并发送告警短信", response = Void.class, notes = "查询告警数据并发送告警短信<br><br><b>@author zhen.pan</b>")
+    public MessageVO setMsg(
+            @ApiParam(value = "orgId 学校ID", required = true) @PathVariable Long orgId,
+            @ApiParam(value = "teacherYear 学年") @RequestParam(value = "teacherYear", required = false) Integer teacherYear,
+            @ApiParam(value = "semester 学期") @RequestParam(value = "semester", required = false) Integer semester,
+            @ApiParam(value = "type 类型") @RequestParam(value = "type", required = false) String type) {
+        alarmReceiverService.sendMsg(orgId, teacherYear, semester, type);
+        MessageVO vo = new MessageVO();
+        return vo;
     }
 }
 
