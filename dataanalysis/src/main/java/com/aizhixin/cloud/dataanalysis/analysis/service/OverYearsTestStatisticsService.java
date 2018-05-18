@@ -72,11 +72,15 @@ public class OverYearsTestStatisticsService {
                 semesterAddRateDomain.setAddRate(null);
             }else{
                 if (overYearsInfoDomain.getPassRate()!=null&&list.get(i-1).getPassRate()!=null) {
-                    Double a = (Double.valueOf(overYearsInfoDomain.getPassRate()).doubleValue()-Double.valueOf(list.get(i-1).getPassRate()).doubleValue()) / Double.valueOf(list.get(i-1).getPassRate()).doubleValue() ;
-                    System.out.println(a);
-                    semesterAddRateDomain.setAddRate(new DecimalFormat("0.0000").format(a));
-                }else{
-                    semesterAddRateDomain.setAddRate(0+"");
+                    if (!overYearsInfoDomain.getPassRate().equals("0.00")&&!list.get(i-1).getPassRate().equals("0.00")) {
+                        Double a = (Double.valueOf(overYearsInfoDomain.getPassRate()).doubleValue() - Double.valueOf(list.get(i - 1).getPassRate()).doubleValue()) / Double.valueOf(list.get(i - 1).getPassRate()).doubleValue();
+                        System.out.println(a);
+                        semesterAddRateDomain.setAddRate(new DecimalFormat("0.0000").format(a));
+                    }else{
+                        semesterAddRateDomain.setAddRate("0");
+                    }
+                }else {
+                    semesterAddRateDomain.setAddRate(null);
                 }
             }
             semesterAddRateDomains.add(semesterAddRateDomain);
@@ -111,8 +115,10 @@ public class OverYearsTestStatisticsService {
                if (a!=0&&b!=0){
                    Double d=Double.parseDouble(b+"")/Double.parseDouble(a+"");
                    semesterLeiJiRateDomain.setLeijiRate(new DecimalFormat("0.0000").format(d));
-               }else{
+               }else if (a!=0){
                    semesterLeiJiRateDomain.setLeijiRate("0");
+               }else{
+                   semesterLeiJiRateDomain.setLeijiRate(null);
                }
                semesterLeiJiRateDomainList.add(semesterLeiJiRateDomain);
            }
@@ -128,8 +134,10 @@ public class OverYearsTestStatisticsService {
                 if (a!=0&&b!=0){
                     Double d=Double.parseDouble(b+"")/Double.parseDouble(a+"");
                     semesterLeiJiRateDomain.setLeijiRate(new DecimalFormat("0.0000").format(d));
-                }else{
+                }else if (a!=0){
                     semesterLeiJiRateDomain.setLeijiRate("0");
+                }else{
+                    semesterLeiJiRateDomain.setLeijiRate(null);
                 }
                 semesterLeiJiRateDomainList.add(semesterLeiJiRateDomain);
             }
@@ -142,13 +150,17 @@ public class OverYearsTestStatisticsService {
                 if (i==0){
                     semesterLeiJiAddRateDomain.setLeijiRate(null);
                 }else{
-                    Double a=Double.parseDouble(semesterLeiJiRateDomain.getLeijiRate());
-                    Double b=Double.parseDouble(semesterLeiJiRateDomainList.get(i-1).getLeijiRate());
-                    if (a!=0&&b!=0){
+                    if (null!=semesterLeiJiRateDomain.getLeijiRate()&&semesterLeiJiRateDomainList.get(i-1).getLeijiRate()!=null){
+                      Double a=Double.parseDouble(semesterLeiJiRateDomain.getLeijiRate());
+                      Double b=Double.parseDouble(semesterLeiJiRateDomainList.get(i-1).getLeijiRate());
+                      if (a!=0&&b!=0){
                         Double c=(a-b)/b;
                         semesterLeiJiAddRateDomain.setLeijiRate(new DecimalFormat("0.0000").format(c));
-                    }else{
+                      }else{
                         semesterLeiJiAddRateDomain.setLeijiRate("0");
+                      }
+                    }else{
+                        semesterLeiJiAddRateDomain.setLeijiRate(null);
                     }
                 }
                 i++;
@@ -211,7 +223,7 @@ public class OverYearsTestStatisticsService {
                              semesterAvgScoreAddRateDomain.setAvgAddRate("0");
                          }
                      }else{
-                         semesterAvgScoreAddRateDomain.setAvgAddRate("0");
+                         semesterAvgScoreAddRateDomain.setAvgAddRate(null);
                      }
                  }
                 i++;
