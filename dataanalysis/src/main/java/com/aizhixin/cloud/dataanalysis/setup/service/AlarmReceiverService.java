@@ -138,7 +138,7 @@ public class AlarmReceiverService {
         if (null == alarmReceiver) {
             throw new CommonException(PublicErrorCode.PARAM_EXCEPTION.getIntValue(), "根据ID没有查找到相应的接收人信息");
         }
-        alarmReceiver.setDeleteFlag(DataValidity.VALID.getIntValue());
+        alarmReceiver.setDeleteFlag(DataValidity.INVALID.getIntValue());
         alarmReceiverManager.save(alarmReceiver);
         return alarmReceiver;
     }
