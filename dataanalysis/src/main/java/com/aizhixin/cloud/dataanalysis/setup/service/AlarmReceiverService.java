@@ -223,9 +223,9 @@ public class AlarmReceiverService {
                             if ("Register".equalsIgnoreCase(type)) {
                                 sb.append("迎新报到预警");
                             } else if ("LeaveSchool".equalsIgnoreCase(type)) {
-                                sb.append("修读异常预警");
+                                sb.append("退学预警");
                             } else if ("AttendAbnormal".equalsIgnoreCase(type)) {
-                                sb.append("旷课预警");
+                                sb.append("修读异常预警");
                             } else if ("Absenteeism".equalsIgnoreCase(type)) {
                                 sb.append("旷课预警");
                             } else if ("TotalAchievement".equalsIgnoreCase(type)) {
