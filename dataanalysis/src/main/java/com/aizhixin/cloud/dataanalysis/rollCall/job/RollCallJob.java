@@ -1,14 +1,11 @@
 package com.aizhixin.cloud.dataanalysis.rollCall.job;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
@@ -22,7 +19,6 @@ import com.aizhixin.cloud.dataanalysis.rollCall.mongoEntity.RollCallCount;
 import com.aizhixin.cloud.dataanalysis.rollCall.mongoRespository.RollCallCountMongoRespository;
 import com.aizhixin.cloud.dataanalysis.rollCall.mongoRespository.RollCallMongoRespository;
 import com.aizhixin.cloud.dataanalysis.setup.entity.RuleParameter;
-import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
 import com.aizhixin.cloud.dataanalysis.setup.service.ProcessingModeService;
 
@@ -30,20 +26,11 @@ import com.aizhixin.cloud.dataanalysis.setup.service.RuleParameterService;
 import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
 import org.apache.log4j.Logger;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
-import com.aizhixin.cloud.dataanalysis.setup.entity.ProcessingMode;
 
 @Component
 public class RollCallJob {
@@ -60,10 +47,6 @@ public class RollCallJob {
     private RollCallCountMongoRespository rollCallCountMongoRespository;
     @Autowired
     private AlertWarningInformationService alertWarningInformationService;
-    @Autowired
-    private ProcessingModeService processingModeService;
-    @Autowired
-    private WarningTypeService warningTypeService;
     @Autowired
     private RuleParameterService ruleParameterService;
 
