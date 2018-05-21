@@ -1,6 +1,5 @@
 package com.aizhixin.cloud.dataanalysis.alertinformation.dto;
 
-import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmRule;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

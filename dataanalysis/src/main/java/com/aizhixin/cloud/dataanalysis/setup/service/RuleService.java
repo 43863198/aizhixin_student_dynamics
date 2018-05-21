@@ -35,6 +35,12 @@ public class RuleService {
     public List<Rule> getRuleList(Long orgId) {
         return ruleRespository.findByOrgIdAndDeleteFlag(orgId, DataValidity.VALID.getState());
     }
+
+    public List<Rule> getRuleList(Long orgId,String name) {
+        return ruleRespository.findByOrgIdAndName(orgId, name);
+    }
+
+
 }
 
 

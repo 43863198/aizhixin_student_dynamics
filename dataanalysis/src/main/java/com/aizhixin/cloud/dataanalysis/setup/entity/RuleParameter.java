@@ -20,28 +20,25 @@ import javax.validation.constraints.NotNull;
  * @Date: 2017-11-13
  */
 @Entity
-@Table(name = "T_ALARM_RULE")
+@Table(name = "T_RULE_PARAMETER")
 @ToString
-public class  AlarmRule extends AbstractEntity {
-
+public class  RuleParameter extends AbstractEntity {
     /*
-    * 规则名称
-    */
-    @Column(name = "NAME")
-    @Getter @Setter private String name;
-
-    /*
-     * 预警设置ID
+     * 机构id
      */
-    @Column(name = "ALARMSETTINGS_ID")
-    @Getter @Setter private String alarmSettingsId;
-
-    /*
-    * 机构id
-    */
     @Column(name = "ORG_ID")
     @Getter @Setter private Long orgId;
 
+     /*
+      * 规则名称
+      */
+    @Column(name = "RULE_NAME")
+    @Getter @Setter private String ruleName;
+    /*
+    * 规则描述
+    */
+    @Column(name = "RULE_DESCRIBE")
+    @Getter @Setter private String ruledescribe;
     /*
      * 规则左区间参数值
      */

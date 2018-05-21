@@ -79,20 +79,21 @@ public class AlarmSettingsController {
                     "</b><br>setupCloseFlag:开启状态(10:启用 ;20:关闭;" +
                     "</b><br>relation:规则直接的关系(与，或);" +
                     "</b><br>waringParameterDomainList:包含;" +
+                    "</b><br>id:id;" +
                     "</b><br>serialNumber:序号;" +
                     "</b><br>ruleName:规则名称;" +
-                    "</b><br>ruleId:规则id;" +
+                    "</b><br>ruledescribe:规则描述;" +
                     "<br><br>parameter:参数;<br><b>"
             )
             @RequestBody AlarmSettingDomain alarmSettingDomain
     ) {
         Map<String, Object> result = alarmSettingsService.warningSet(alarmSettingDomain);
 
-        if (null != result.get("warningType")) {
-            String warningType = (String) result.get("warningType");
-            Long orgId = (Long) result.get("orgId");
-            alarmSettingsService.rebuildAlertInfor(warningType, orgId);
-        }
+//        if (null != result.get("warningType")) {
+//            String warningType = (String) result.get("warningType");
+//            Long orgId = (Long) result.get("orgId");
+//            alarmSettingsService.rebuildAlertInfor(warningType, orgId);
+//        }
         return result;
     }
 
