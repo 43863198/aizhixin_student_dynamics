@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -22,54 +23,45 @@ import java.util.Date;
 @Table(name = "T_WARNING_TYPE")
 @ToString
 public class WarningType extends AbstractEntity {
-
     /*
      * 机构id
      */
-    @NotNull
     @Column(name = "ORG_ID")
     @Getter @Setter private Long orgId;
 
     /*
      * 预警类型
      */
-    @NotNull
     @Column(name = "TYPE")
-    @Getter @Setter private String warningType;
+    @Getter @Setter private String type;
 
     /*
     * 预警类型描述
     */
-    @NotNull
     @Column(name = "TYPE_DESCRIBE")
-    @Getter @Setter private String warningTypeDescribe;
+    @Getter @Setter private String typeDescribe;
 
     /*
    * 预警名称
    */
-    @NotNull
     @Column(name = "WARNING_NAME")
     @Getter @Setter private String warningName;
 
     /*
-    * 预警描述(多个时候使用“,”分割;描述和序号用“-”分隔开)
+    * 预警描述
     */
-    @NotNull
     @Column(name = "WARNING_DESCRIBE")
     @Getter @Setter private String warningDescribe;
 
     /*
      * 开启或关闭(10开启；20关闭)
      */
-    @NotNull
     @Column(name = "SETUP_CLOSE_FLAG")
     @Getter @Setter private int setupCloseFlag;
 
-
-
     /*
-     * 告警开始时间
-     */
+    * 告警开始时间
+    */
     @ApiModelProperty(value = "预警起始时间")
     @CreatedDate
     @Column(name = "START_TIME")

@@ -19,14 +19,14 @@ import java.util.Set;
 public interface WarningTypeRespository extends JpaRepository<WarningType, String>  {
 
     @Query("select tp from #{#entityName} tp where tp.deleteFlag = :deleteFlag ")
-    List<WarningType> getAllWarningType( @Param("deleteFlag")int deleteFlag);
+    List<WarningType> getAllWarningType( @Param("deleteFlag")Integer deleteFlag);
 
 
     @Query("select tp from #{#entityName} tp where tp.orgId = :orgId and tp.deleteFlag = :deleteFlag ")
-    List<WarningType> getWarningTypeByOrgId(@Param("orgId")Long orgId, @Param("deleteFlag")int deleteFlag);
+    List<WarningType> getWarningTypeByOrgId(@Param("orgId")Long orgId, @Param("deleteFlag")Integer deleteFlag);
 
-    @Query("select tp from #{#entityName} tp where tp.warningType in :typeList and tp.deleteFlag = :deleteFlag ")
-    List<WarningType> getWarningTypeByTypeList(@Param("typeList")Set<String> typeList, @Param("deleteFlag")int deleteFlag);
+    @Query("select tp from #{#entityName} tp where tp.type in :typeList and tp.deleteFlag = :deleteFlag ")
+    List<WarningType> getWarningTypeByTypeList(@Param("typeList")Set<String> typeList, @Param("deleteFlag")Integer deleteFlag);
 
     @Query("select distinct new com.aizhixin.cloud.dataanalysis.setup.domain.WarningTypeDomain(wt.orgId)  from com.aizhixin.cloud.dataanalysis.setup.entity.WarningType wt" ) 
     List<WarningTypeDomain> getAllOrgId();
@@ -35,7 +35,7 @@ public interface WarningTypeRespository extends JpaRepository<WarningType, Strin
     @Query("delete from #{#entityName} tp where tp.orgId = :orgId ")
     int deleteByOrgId(@Param("orgId")Long orgId);
 
-    WarningType findOneByOrgIdAndWarningType(Long orgId, String warningType);
+    WarningType findOneByOrgIdAndType(Long orgId, String type);
 
     List<WarningType> findByOrgIdAndDeleteFlag(Long orgId,Integer deleteFlag);
 

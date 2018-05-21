@@ -1536,19 +1536,27 @@ public class CetStatisticAnalysisService {
                 condition.put("cetType", "%大学英语" + cetType + "%");
             }
             if (!StringUtils.isBlank(collegeCode)) {
-                sql.append(" and YXSH = :collegeCode");
-                cql.append(" and YXSH = :collegeCode");
+                sql.append(" and x.YXSH = :collegeCode");
+                cql.append(" and x.YXSH = :collegeCode");
                 condition.put("collegeCode", collegeCode);
             }
             if (!StringUtils.isBlank(professionCode)) {
-                sql.append(" and ZYH = :professionCode");
-                cql.append(" and ZYH = :professionCode");
+                sql.append(" and x.ZYH = :professionCode");
+                cql.append(" and x.ZYH = :professionCode");
                 condition.put("professionCode", professionCode);
             }
             if (!StringUtils.isBlank(classCode)) {
-                sql.append(" and BH = :classCode");
-                cql.append(" and BH = :classCode");
+                sql.append(" and x.BH = :classCode");
+                cql.append(" and x.BH = :classCode");
                 condition.put("classCode", classCode);
+            }
+            if (!StringUtils.isBlank(nj)) {
+                sql.append(" and (x.XM LIKE :xm");
+                cql.append(" and (x.XM LIKE :xm");
+                sql.append(" or x.XH LIKE :xh)");
+                cql.append(" or x.XH LIKE :xh)");
+                condition.put("xm", "%" + nj + "%");
+                condition.put("xh", "%"+nj+"%");
             }
 
             if(null!=isPass&&isPass.equals("1")){

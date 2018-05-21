@@ -18,7 +18,11 @@ import javax.persistence.Table;
 @Table(name = "T_RULE")
 @ToString
 public class  Rule extends AbstractEntity {
-
+    /*
+    * 机构id
+    */
+    @Column(name = "ORG_ID")
+    @Getter @Setter private Long orgId;
     /*
     * 规则名称
     */
@@ -28,10 +32,10 @@ public class  Rule extends AbstractEntity {
     private String name;
 
     /*
-    * 机构id
-    */
-    @Column(name = "ORG_ID")
-    @Getter @Setter private Long orgId;
+     * 规则描述
+     */
+    @Column(name = "RULE_DESCRIBE")
+    @Getter @Setter private String ruleDescribe;
 
 }
 

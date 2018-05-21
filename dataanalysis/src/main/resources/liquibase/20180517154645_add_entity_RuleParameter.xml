@@ -7,20 +7,20 @@
     <property name="now" value="now()" dbms="mysql,h2"/>
     <property name="now" value="current_timestamp" dbms="postgresql"/>
     <property name="now" value="sysdate" dbms="oracle"/>
-    <!-- 预警规则参数表结构-->
-    <changeSet id="20171113154645" author="jianwei.wu">
+    <!-- 规则参数表结构-->
+    <changeSet id="20180517154645" author="jianwei.wu">
 		<preConditions onFail="MARK_RAN">
 	        <not>
-	            <tableExists tableName="T_ALARM_RULE"/>
+	            <tableExists tableName="T_RULE_PARAMETER"/>
 	        </not>
 	    </preConditions>
-        <createTable tableName="T_ALARM_RULE" remarks="预警规则参数表">
+        <createTable tableName="T_RULE_PARAMETER" remarks="规则参数表">
             <column name="ID" type="VARCHAR(50)">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="NAME" type="VARCHAR(50)" remarks="规则名称"/>
-            <column name="ALARMSETTINGS_ID" type="VARCHAR(50)"  remarks="预警设置ID"/>
             <column name="ORG_ID" type="BIGINT" remarks="机构id"/>
+            <column name="RULE_NAME" type="VARCHAR(50)" remarks="规则名称"/>
+            <column name="RULE_DESCRIBE" type="VARCHAR(500)" remarks="规则描述"/>
             <column name="LEFT_PARAMETER" type="INT(4)"  remarks="规则左区间参数值"/>
             <column name="LFET_RELATIONSHIP" type="VARCHAR(50)" remarks="规则左区间参数关系(大于,大于等于)"/>
             <column name="RIGHT_PARAMETER" type="INT(4)"  remarks="规则右区间参数值"/>

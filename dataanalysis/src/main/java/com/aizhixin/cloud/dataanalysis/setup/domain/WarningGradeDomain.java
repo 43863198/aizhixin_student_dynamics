@@ -27,6 +27,9 @@ public class WarningGradeDomain {
     @ApiModelProperty(value = "开始时间")
     private Date startTime;
 
+    @ApiModelProperty(value = "规则之间关系")
+    private String relationship ;
+
     @ApiModelProperty(value = "规则序号及参数")
     List<WaringParameterDomain> waringParameterDomainList;
 

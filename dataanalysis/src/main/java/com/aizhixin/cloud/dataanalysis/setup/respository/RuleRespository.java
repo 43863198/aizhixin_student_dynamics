@@ -14,5 +14,6 @@ public interface RuleRespository  extends PagingAndSortingRepository<Rule, Strin
 
      List<Rule> findByOrgIdAndDeleteFlag(Long orgId,Integer deleteFlag);
 
+     List<Rule> findByOrgIdAndName(Long orgId,String name);
 
 }

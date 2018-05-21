@@ -35,7 +35,6 @@ import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.rollCall.mongoEntity.RollCall;
 import com.aizhixin.cloud.dataanalysis.rollCall.mongoRespository.RollCallMongoRespository;
 import com.aizhixin.cloud.dataanalysis.rollCall.service.RollCallService;
-import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 import com.aizhixin.cloud.dataanalysis.score.mongoRespository.ScoreMongoRespository;
 import com.aizhixin.cloud.dataanalysis.score.service.ScoreService;
@@ -64,8 +63,8 @@ public class TestDataController {
 	private RollCallMongoRespository rollCallMongoRespository;
 	@Autowired
 	private ScoreMongoRespository scoreMongoRespository;
-	@Autowired
-	private ScoreJob scoreJob;
+//	@Autowired
+//	private ScoreJob scoreJob;
 	@Autowired
 	private StudentRegisterService registerService;
 	@Autowired

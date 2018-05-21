@@ -18,11 +18,13 @@ import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
 import com.aizhixin.cloud.dataanalysis.feign.OrgManagerFeignService;
-import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmRule;
-import com.aizhixin.cloud.dataanalysis.setup.service.AlarmRuleService;
+import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
+import com.aizhixin.cloud.dataanalysis.setup.entity.RuleParameter;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
+import com.aizhixin.cloud.dataanalysis.setup.service.RuleParameterService;
 import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +53,6 @@ public class AlertWarningInformationService {
     @Autowired
     private AlertWarningInformationRepository alertWarningInformationRepository;
     @Autowired
-    private AlarmRuleService alarmRuleService;
-    @Autowired
     private PageJdbcUtil pageJdbcUtil;
     @Autowired
     private OperaionRecordService operaionRecordService;
@@ -64,6 +64,10 @@ public class AlertWarningInformationService {
     private OrgManagerFeignService orgManagerFeignService;
     @Autowired
     private StudentJdbc studentJdbc;
+    @Autowired
+    private AlarmSettingsService alarmSettingsService;
+    @Autowired
+    private RuleParameterService ruleParameterService;
 
     /**
      * 修改预警状态按预警等级和机构id
@@ -1181,9 +1185,14 @@ public class AlertWarningInformationService {
 
                 String standard = "";
                 if (null != alertWarningInformation.getAlarmSettingsId()) {
-                    List<AlarmRule> alarmRuleList = alarmRuleService.getByAlarmSettingId(alertWarningInformation.getAlarmSettingsId());
-                    for (AlarmRule ar : alarmRuleList) {
-                        standard = standard + ar.getName() + ar.getRightParameter() + "或";
+                    AlarmSettings as = alarmSettingsService.getAlarmSettingsById(alertWarningInformation.getId());
+                    String[] rpIds = as.getRuleSet().split(",");
+                    if(rpIds.length>0){
+                        for(String rpId :rpIds){
+                            RuleParameter rp = ruleParameterService.findById(rpId);
+                            standard = standard + rp.getRuledescribe() + rp.getRightParameter() + as.getRelationship();
+
+                        }
                     }
                 }
                 if (!StringUtils.isBlank(standard)) {
