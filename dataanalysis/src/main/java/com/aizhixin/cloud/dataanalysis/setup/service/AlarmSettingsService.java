@@ -394,93 +394,95 @@ public class AlarmSettingsService {
 
     @Async
     public void generateData(Long orgId, String warningType) {
-        Calendar c = Calendar.getInstance();
-        // 当前年份
-        int schoolYear = c.get(Calendar.YEAR);
-        // 当前月份
-        int month = c.get(Calendar.MONTH) + 1;
-        // 当前学期编号
-        int semester = 2;
-        if (month > 1 && month < 9) {
-            semester = 1;
-        }
-        if (month == 1) {
-            schoolYear = schoolYear - 1;
-        }
+//        Calendar c = Calendar.getInstance();
+//        // 当前年份
+//        int schoolYear = c.get(Calendar.YEAR);
+//        // 当前月份
+//        int month = c.get(Calendar.MONTH) + 1;
+//        // 当前学期编号
+//        int semester = 2;
+//        if (month > 1 && month < 9) {
+//            semester = 1;
+//        }
+//        if (month == 1) {
+//            schoolYear = schoolYear - 1;
+//        }
 
         try {
-            if (warningType.equals(WarningTypeConstant.Register.toString())) {
-                StringBuilder path = new StringBuilder("/GenerateData");
-                path.append("/Register");
-                if (distributeLock.getLock(path)) {
-                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Register.toString(), orgId, schoolYear, semester);
-//                    studentRegisterJob.studenteRegisterJob(schoolYear, semester);
-                    distributeLock.delete(path);//删除锁
-                }
-            }
-            if (warningType.equals(WarningTypeConstant.LeaveSchool.toString())) {
-                StringBuilder path = new StringBuilder("/GenerateData");
-                path.append("/LeaveSchool");
-                if (distributeLock.getLock(path)) {
-                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.LeaveSchool.toString(), orgId, schoolYear, semester);
-//                    scoreJob.dropOutJob(schoolYear, semester);
-                    distributeLock.delete(path);//删除锁
-                }
-            }
-//                if (warningType.equals(WarningTypeConstant.AttendAbnormal.toString())) {
-//                    StringBuilder path = new StringBuilder("/GenerateData");
-//                    path.append("/AttendAbnormal");
-//                    if (distributeLock.getLock(path)) {
-//                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.AttendAbnormal.toString(), orgId,schoolYear,semester);
-//                    scoreJob.attendAbnormalJob(schoolYear,semester);
-//                        distributeLock.delete(path);//删除锁
-//                    }
+            StringBuilder path = new StringBuilder("/GenerateData");
+
+//            if (warningType.equals(WarningTypeConstant.Register.toString())) {
+//                StringBuilder path = new StringBuilder("/GenerateData");
+//                path.append("/Register");
+//                if (distributeLock.getLock(path)) {
+//                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Register.toString(), orgId, schoolYear, semester);
+////                    studentRegisterJob.studenteRegisterJob(schoolYear, semester);
+//                    distributeLock.delete(path);//删除锁
 //                }
-            if (warningType.equals(WarningTypeConstant.Absenteeism.toString())) {
-                StringBuilder path = new StringBuilder("/GenerateData");
-                path.append("/Absenteeism");
-                if (distributeLock.getLock(path)) {
-                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Absenteeism.toString(), orgId, schoolYear, semester);
-//                    rollCallJob.rollCallJob(schoolYear, semester);
-                    distributeLock.delete(path);//删除锁
-                }
-            }
-            if (warningType.equals(WarningTypeConstant.TotalAchievement.toString())) {
-                StringBuilder path = new StringBuilder("/GenerateData");
-                path.append("/TotalAchievement");
-                if (distributeLock.getLock(path)) {
-                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.TotalAchievement.toString(), orgId, schoolYear, semester);
-//                    scoreJob.totalScoreJob(schoolYear, semester);
-                    distributeLock.delete(path);//删除锁
-                }
-            }
-            if (warningType.equals(WarningTypeConstant.SupplementAchievement.toString())) {
-                StringBuilder path = new StringBuilder("/GenerateData");
-                path.append("/SupplementAchievement");
-                if (distributeLock.getLock(path)) {
-                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.SupplementAchievement.toString(), orgId, schoolYear, semester);
-//                    scoreJob.makeUpScoreJob(schoolYear, semester);
-                    distributeLock.delete(path);//删除锁
-                }
-            }
-            if (warningType.equals(WarningTypeConstant.PerformanceFluctuation.toString())) {
-                StringBuilder path = new StringBuilder("/GenerateData");
-                path.append("/PerformanceFluctuation");
-                if (distributeLock.getLock(path)) {
-                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.PerformanceFluctuation.toString(), orgId, schoolYear, semester);
-//                    scoreJob.scoreFluctuateJob(schoolYear, semester);
-                    distributeLock.delete(path);//删除锁
-                }
-            }
-            if (warningType.equals(WarningTypeConstant.Cet.toString())) {
-                StringBuilder path = new StringBuilder("/GenerateData");
-                path.append("/PerformanceFluctuation");
-                if (distributeLock.getLock(path)) {
-                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Cet.toString(), orgId, schoolYear, semester);
-//                    scoreJob.cet4ScoreJob(schoolYear, semester);
-                    distributeLock.delete(path);//删除锁
-                }
-            }
+//            }
+//            if (warningType.equals(WarningTypeConstant.LeaveSchool.toString())) {
+//                StringBuilder path = new StringBuilder("/GenerateData");
+//                path.append("/LeaveSchool");
+//                if (distributeLock.getLock(path)) {
+//                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.LeaveSchool.toString(), orgId, schoolYear, semester);
+////                    scoreJob.dropOutJob(schoolYear, semester);
+//                    distributeLock.delete(path);//删除锁
+//                }
+//            }
+////                if (warningType.equals(WarningTypeConstant.AttendAbnormal.toString())) {
+////                    StringBuilder path = new StringBuilder("/GenerateData");
+////                    path.append("/AttendAbnormal");
+////                    if (distributeLock.getLock(path)) {
+////                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.AttendAbnormal.toString(), orgId,schoolYear,semester);
+////                    scoreJob.attendAbnormalJob(schoolYear,semester);
+////                        distributeLock.delete(path);//删除锁
+////                    }
+////                }
+//            if (warningType.equals(WarningTypeConstant.Absenteeism.toString())) {
+//                StringBuilder path = new StringBuilder("/GenerateData");
+//                path.append("/Absenteeism");
+//                if (distributeLock.getLock(path)) {
+//                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Absenteeism.toString(), orgId, schoolYear, semester);
+////                    rollCallJob.rollCallJob(schoolYear, semester);
+//                    distributeLock.delete(path);//删除锁
+//                }
+//            }
+//            if (warningType.equals(WarningTypeConstant.TotalAchievement.toString())) {
+//                StringBuilder path = new StringBuilder("/GenerateData");
+//                path.append("/TotalAchievement");
+//                if (distributeLock.getLock(path)) {
+//                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.TotalAchievement.toString(), orgId, schoolYear, semester);
+////                    scoreJob.totalScoreJob(schoolYear, semester);
+//                    distributeLock.delete(path);//删除锁
+//                }
+//            }
+//            if (warningType.equals(WarningTypeConstant.SupplementAchievement.toString())) {
+//                StringBuilder path = new StringBuilder("/GenerateData");
+//                path.append("/SupplementAchievement");
+//                if (distributeLock.getLock(path)) {
+//                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.SupplementAchievement.toString(), orgId, schoolYear, semester);
+////                    scoreJob.makeUpScoreJob(schoolYear, semester);
+//                    distributeLock.delete(path);//删除锁
+//                }
+//            }
+//            if (warningType.equals(WarningTypeConstant.PerformanceFluctuation.toString())) {
+//                StringBuilder path = new StringBuilder("/GenerateData");
+//                path.append("/PerformanceFluctuation");
+//                if (distributeLock.getLock(path)) {
+//                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.PerformanceFluctuation.toString(), orgId, schoolYear, semester);
+////                    scoreJob.scoreFluctuateJob(schoolYear, semester);
+//                    distributeLock.delete(path);//删除锁
+//                }
+//            }
+//            if (warningType.equals(WarningTypeConstant.Cet.toString())) {
+//                StringBuilder path = new StringBuilder("/GenerateData");
+//                path.append("/PerformanceFluctuation");
+//                if (distributeLock.getLock(path)) {
+//                    alertWarningInformationService.logicDeleteByOrgIdAndWarnType(WarningTypeConstant.Cet.toString(), orgId, schoolYear, semester);
+////                    scoreJob.cet4ScoreJob(schoolYear, semester);
+//                    distributeLock.delete(path);//删除锁
+//                }
+//            }
         } catch (Exception e) {
             logger.info("手动生成数据异常！");
         } finally {
