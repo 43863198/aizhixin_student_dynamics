@@ -29,8 +29,6 @@ public class WarningTypeService {
     @Autowired
     private WarningTypeRespository warningTypeRespository;
     @Autowired
-    private WarningTypeService warningTypeService;
-    @Autowired
     private RuleService ruleService;
 
     public WarningType getWarningTypeById(String id) {
@@ -69,9 +67,10 @@ public class WarningTypeService {
         warningTypeRespository.deleteByOrgId(orgId);
     }
 
-
+    @Transactional
     public String setWarningType(Long orgId) {
         try {
+            warningTypeRespository.deleteAll();
             List<WarningType> warningTypeList = new ArrayList<>();
             WarningType warningType1 = new WarningType();
             warningType1.setOrgId(orgId);
@@ -79,7 +78,6 @@ public class WarningTypeService {
             warningType1.setTypeDescribe("短期过程性预警");
             warningType1.setWarningName("迎新报到预警");
             warningType1.setSetupCloseFlag(20);
-            this.warningTypeService.save(warningType1);
             warningTypeList.add(warningType1);
             WarningType warningType2 = new WarningType();
             warningType2.setOrgId(orgId);
@@ -130,8 +128,8 @@ public class WarningTypeService {
             warningType8.setWarningName("CET-4成绩预警");
             warningType8.setSetupCloseFlag(20);
             warningTypeList.add(warningType8);
-            this.warningTypeService.save(warningTypeList);
-
+            warningTypeRespository.save(warningTypeList);
+            ruleService.deleteAll();
             List<Rule> ruleList = new ArrayList<>();
             Rule rule1 = new Rule();
             rule1.setOrgId(orgId);
@@ -173,7 +171,7 @@ public class WarningTypeService {
             rule8.setName("CetEarlyWarning");//cet预警
             rule8.setRuleDescribe("英语四级分数小于425分并且在校学年数已≥");
             ruleList.add(rule8);
-            this.ruleService.save(ruleList);
+            ruleService.save(ruleList);
         } catch (Exception e) {
             e.printStackTrace();
             return "添加基础数据失败！";
