@@ -27,7 +27,7 @@ public interface OrgManagerFeignService {
     Map getUser(@PathVariable(value = "id") Long id);
 
     @RequestMapping(value = "/v1/classesteacher/getclassesbyteacher", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    ClassVO getClassesByTeacher(@RequestParam(value = "teacherId") Long teacherId);
+    String getClassesByTeacher(@RequestParam(value = "teacherId") Long teacherId);
 
     @RequestMapping(value = "/v1/classesteacher/getteacherids", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     Long[] getTeacherIds(@RequestParam(value = "orgId") Long orgId);

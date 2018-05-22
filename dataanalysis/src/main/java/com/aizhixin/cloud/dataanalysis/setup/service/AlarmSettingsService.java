@@ -139,9 +139,9 @@ public class AlarmSettingsService {
                 for (WarningGradeDTO wg : warningGradeDTOList) {
                     for (AlarmSettings as : asList) {
                         if (as.getWarningLevel() == wg.getGrade()) {
-                            warningGradeDTO.setSetupCloseFlag(as.getSetupCloseFlag());
-                            warningGradeDTO.setAlarmSettingsId(as.getId());
-                            warningGradeDTO.setRelationship(as.getRelationship());
+                            wg.setSetupCloseFlag(as.getSetupCloseFlag());
+                            wg.setAlarmSettingsId(as.getId());
+                            wg.setRelationship(as.getRelationship());
                             if (null != as.getRuleSet() && !as.getRuleSet().equals("")) {
                                 String[] alarmRules = as.getRuleSet().split(",");
                                 if (alarmRules.length > 0) {
@@ -158,7 +158,7 @@ public class AlarmSettingsService {
                                         }
                                         warningDescparameterDTOList.add(warningDescparameterDTO);
                                     }
-                                    warningGradeDTO.setDescribeParameter(warningDescparameterDTOList);
+                                    wg.setDescribeParameter(warningDescparameterDTOList);
                                 }
                             }
                             break;
