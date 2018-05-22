@@ -1,6 +1,7 @@
 package com.aizhixin.cloud.dataanalysis.feign;
 
 import com.aizhixin.cloud.dataanalysis.common.PageData;
+import com.aizhixin.cloud.dataanalysis.feign.vo.ClassVO;
 import com.aizhixin.cloud.dataanalysis.feign.vo.CollegeVO;
 import com.aizhixin.cloud.dataanalysis.feign.vo.TeacherVO;
 import org.springframework.cloud.netflix.feign.FeignClient;
@@ -26,7 +27,7 @@ public interface OrgManagerFeignService {
     Map getUser(@PathVariable(value = "id") Long id);
 
     @RequestMapping(value = "/v1/classesteacher/getclassesbyteacher", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    String getClassesByTeacher(@RequestParam(value = "teacherId") Long teacherId);
+    ClassVO getClassesByTeacher(@RequestParam(value = "teacherId") Long teacherId);
 
     @RequestMapping(value = "/v1/classesteacher/getteacherids", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     Long[] getTeacherIds(@RequestParam(value = "orgId") Long orgId);
