@@ -28,11 +28,13 @@ public class SyncClassTeacher {
         Object[] data = new Object[3];
         List<Object[]> classTeacherData = new ArrayList<>();
         Long[]  teacherIds = orgManagerFeignService.getTeacherIds(orgId);
-        if(null!=teacherIds){
-            String classes = orgManagerFeignService.getClassesByTeacher(182384L);
+        if(null!=teacherIds&&teacherIds.length>0){
+            for(Long tid : teacherIds) {
+                String classes = orgManagerFeignService.getClassesByTeacher(tid);
+            }
         }
         String sql = "insert into t_class_teacher(CLASSES_ID,CLASSES_NAME,TEACHER_ID) values(?,?,?)";
-        int[] row = jdbcTemplate.batchUpdate(sql.toString(),classTeacherData);
+        int[] row = jdbcTemplate.batchUpdate(sql.toString(), classTeacherData);
     }
 
 
