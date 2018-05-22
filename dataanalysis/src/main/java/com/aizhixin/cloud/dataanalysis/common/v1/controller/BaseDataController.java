@@ -2,13 +2,16 @@ package com.aizhixin.cloud.dataanalysis.common.v1.controller;
 
 
 import com.aizhixin.cloud.dataanalysis.common.service.BaseDataService;
+import com.aizhixin.cloud.dataanalysis.common.service.SyncClassTeacher;
 import com.aizhixin.cloud.dataanalysis.feign.vo.CollegeVO;
 import com.aizhixin.cloud.dataanalysis.feign.vo.TeacherVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,7 +20,10 @@ import java.util.List;
 @RequestMapping("/v1/base")
 @Api(description = "基础数据平台基础数据获取API")
 public class BaseDataController {
+    @Autowired
     private BaseDataService baseDataService;
+    @Autowired
+    private SyncClassTeacher syncClassTeacher;
     @Autowired
     public BaseDataController (BaseDataService baseDataService) {
         this.baseDataService = baseDataService;
@@ -37,5 +43,13 @@ public class BaseDataController {
             @ApiParam(value = "collegeId 学院ID", required = true) @PathVariable Long collegeId,
             @ApiParam(value = "name 老师姓名或工号", required = true) @RequestParam(value = "name") String name) {
         return baseDataService.queryTeacher(orgId, collegeId, name);
+    }
+
+
+    @GetMapping(value = "/sync/classteacher", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "同步平台的班级所对应的老师信息", response = Void.class, notes = "同步平台的班级所对应的老师信息<br><br><b>@author zhen.pan</b>")
+    public void syncClassTeacher(
+            @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId",defaultValue="0", required = true) Long orgId) {
+         syncClassTeacher.syncData(orgId);
     }
 }

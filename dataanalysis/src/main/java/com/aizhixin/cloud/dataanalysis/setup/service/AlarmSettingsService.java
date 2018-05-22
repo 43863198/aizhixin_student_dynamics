@@ -45,16 +45,6 @@ public class AlarmSettingsService {
     @Autowired
     private AlertWarningInformationService alertWarningInformationService;
     @Autowired
-    private StudentRegisterJob studentRegisterJob;
-    @Autowired
-    private RollCallJob rollCallJob;
-    @Autowired
-    private ScoreJob scoreJob;
-    @Autowired
-    private RelationConversionService relationConversionService;
-    @Autowired
-    private SchoolStatisticsAnalysisJob schoolStatisticsJob;
-    @Autowired
     private DistributeLock distributeLock;
     @Autowired
     private RuleService ruleService;
@@ -146,7 +136,6 @@ public class AlarmSettingsService {
                 warningGradeDTOList.add(warningGradeDTO3);
 
                 List<AlarmSettings> asList = alarmSettingsRepository.findByOrgIdAndWarningTypeAndDeleteFlag(warningType.getOrgId(), warningType.getType(), DataValidity.VALID.getState());
-                List<WarningDescparameterDTO> waringDescParameterDTOArrayList = new ArrayList<>();
                 for (WarningGradeDTO wg : warningGradeDTOList) {
                     for (AlarmSettings as : asList) {
                         if (as.getWarningLevel() == wg.getGrade()) {
@@ -170,9 +159,9 @@ public class AlarmSettingsService {
                                         }
                                         warningDescparameterDTOList.add(warningDescparameterDTO);
                                     }
+                                    warningGradeDTO.setDescribeParameter(warningDescparameterDTOList);
                                 }
                             }
-                            break;
                         }
                     }
                 }
@@ -200,7 +189,10 @@ public class AlarmSettingsService {
                 AlarmSettings alarmSettings = null;
                 if (!StringUtils.isBlank(wg.getAlarmSettingsId())) {
                     alarmSettings = alarmSettingsRepository.findOne(wg.getAlarmSettingsId());
-                } else {
+                    if(null==alarmSettings){
+                        alarmSettings = new AlarmSettings();
+                    }
+                }else {
                     alarmSettings = new AlarmSettings();
                 }
                 alarmSettings.setSetupCloseFlag(wg.getSetupCloseFlag());
@@ -214,6 +206,9 @@ public class AlarmSettingsService {
                     RuleParameter rp = null;
                     if (!StringUtils.isBlank(wp.getId())) {
                         rp = ruleParameterService.findById(wp.getId());
+                        if(null==rp){
+                            rp = new RuleParameter();
+                        }
                     } else {
                         rp = new RuleParameter();
                     }
@@ -229,9 +224,9 @@ public class AlarmSettingsService {
                 }
                 alarmSettingsList.add(alarmSettings);
             }
-            this.saveAlarmSettingsList(alarmSettingsList);
+            alarmSettingsRepository.save(alarmSettingsList);
         } catch (Exception e) {
-            result.put("success", true);
+            result.put("success", false);
             result.put("message", "预警设置保存异常！");
         }
         result.put("success", true);
@@ -325,7 +320,7 @@ public class AlarmSettingsService {
         try {
             WarningType warningType = warningTypeService.getWarningTypeById(warningTypeId);
             warningType.setSetupCloseFlag(10);
-//            warningType.setStartTime(sdf.parse(expiryDate));
+            warningType.setStartTime(sdf.parse(expiryDate));
             warningTypeService.save(warningType);
         } catch (Exception e) {
             e.printStackTrace();

@@ -7,6 +7,7 @@ import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.setup.job.WarningTypeOnAndOffJob;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
 
+import com.aizhixin.cloud.dataanalysis.setup.service.GenerateWarningInfoService;
 import com.aizhixin.cloud.dataanalysis.setup.service.RuleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,6 +37,8 @@ public class AlarmSettingsController {
     private WarningTypeOnAndOffJob warningTypeOnAndOffJob;
     @Autowired
     private RuleService ruleService;
+    @Autowired
+    private GenerateWarningInfoService generateWarningInfoService;
 
     /**
      * 预警类型列表
@@ -179,10 +182,12 @@ public class AlarmSettingsController {
     @ApiOperation(httpMethod = "GET", value = "手动生成数据", response = Void.class, notes = "手动生成数据<br><br><b>@author jianwei.wu</b>")
     public Map<String, Object> generateData(
             @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "warningType 预警类型", required = true) @RequestParam(value = "warningType", required = true) String warningType
+            @ApiParam(value = "warningType 预警类型", required = true) @RequestParam(value = "warningType", required = true) String warningType,
+            @ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
+            @ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
     ) {
         Map<String, Object> result = new HashMap<>();
-        alarmSettingsService.generateData(orgId, warningType);
+        generateWarningInfoService.warningInfo(orgId, warningType,teacherYear,semester);
         result.put("success", true);
         result.put("message", "手动生成数据成功!");
         return result;
