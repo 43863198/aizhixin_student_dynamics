@@ -2,6 +2,7 @@ package com.aizhixin.cloud.dataanalysis.common.service;
 
 import com.aizhixin.cloud.dataanalysis.common.dto.ClassTeacherDTO;
 import com.aizhixin.cloud.dataanalysis.feign.OrgManagerFeignService;
+import com.aizhixin.cloud.dataanalysis.feign.vo.ClassVO;
 import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,12 +26,18 @@ public class SyncClassTeacher {
     private JdbcTemplate jdbcTemplate;
 
     public void syncData(Long orgId){
-        Object[] data = new Object[3];
         List<Object[]> classTeacherData = new ArrayList<>();
         Long[]  teacherIds = orgManagerFeignService.getTeacherIds(orgId);
         if(null!=teacherIds&&teacherIds.length>0){
             for(Long tid : teacherIds) {
-                String classes = orgManagerFeignService.getClassesByTeacher(tid);
+                ClassVO classes = orgManagerFeignService.getClassesByTeacher(tid);
+                if(null!=classes){
+                    Object[] data = new Object[3];
+                    data[0] = classes.getId();
+                    data[1] = classes.getName();
+                    data[2] = tid;
+                    classTeacherData.add(data);
+                }
             }
         }
         String sql = "insert into t_class_teacher(CLASSES_ID,CLASSES_NAME,TEACHER_ID) values(?,?,?)";

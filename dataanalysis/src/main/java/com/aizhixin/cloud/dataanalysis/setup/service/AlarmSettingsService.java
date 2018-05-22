@@ -141,7 +141,6 @@ public class AlarmSettingsService {
                         if (as.getWarningLevel() == wg.getGrade()) {
                             warningGradeDTO.setSetupCloseFlag(as.getSetupCloseFlag());
                             warningGradeDTO.setAlarmSettingsId(as.getId());
-                            warningGradeDTO.setGrade(as.getWarningLevel());
                             warningGradeDTO.setRelationship(as.getRelationship());
                             if (null != as.getRuleSet() && !as.getRuleSet().equals("")) {
                                 String[] alarmRules = as.getRuleSet().split(",");
@@ -162,6 +161,7 @@ public class AlarmSettingsService {
                                     warningGradeDTO.setDescribeParameter(warningDescparameterDTOList);
                                 }
                             }
+                            break;
                         }
                     }
                 }
