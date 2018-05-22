@@ -25,6 +25,13 @@ public interface OrgManagerFeignService {
     @RequestMapping(value = "/v1/user/get/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     Map getUser(@PathVariable(value = "id") Long id);
 
+    @RequestMapping(value = "/v1/classesteacher/getclassesbyteacher", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    String getClassesByTeacher(@RequestParam(value = "teacherId") Long teacherId);
+
+    @RequestMapping(value = "/v1/classesteacher/getteacherids", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    Long[] getTeacherIds(@RequestParam(value = "orgId") Long orgId);
+
+
     /**
      * 分页查询所有的学院信息
      *
