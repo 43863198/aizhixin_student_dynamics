@@ -1625,11 +1625,9 @@ public class ScoreJob {
 	}
 
 	/**
-	 * 退学预警
+	 * 退学预警（LeaveSchoolEarlyWarning）
 	 */
 	public ArrayList<WarningInformation> dropOutJob(Long orgId,int schoolYear,int semester,String ruleId) {
-
-		String ruleName = "LeaveSchoolEarlyWarning";//退学预警算法
 
 		ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 

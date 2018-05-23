@@ -79,7 +79,7 @@ public class GenerateWarningInfoService {
         warningInfo(orgId, warningType, schoolYear, semester);
     }
 
-    @Async
+//    @Async
     public void warningInfo(Long orgId, String type,int schoolYear,int semester ){
         List<AlarmSettings> alarmSettingsList = alarmSettingsService.getAlarmSettingsByOrgIdAndWarningType(orgId,type);
         HashMap<Integer, List<WarningInformation>> restHasMap = new HashMap<>();
