@@ -333,11 +333,9 @@ public class ScoreJob {
 
 
 	/**
-	 * 上上个学期平均学分绩点与上学期平均学分绩点的差 -------(成绩波动预警定时任务)-------
+	 * 上上个学期平均学分绩点与上学期平均学分绩点的差 -------成绩波动预警定时任务(PerformanceFluctuationEarlyWarning)-------
 	 */
 	public List<WarningInformation> scoreFluctuateJob(Long orgId,int schoolYear,int semester,String ruleId) {
-
-        String ruleName = "PerformanceFluctuationEarlyWarning";//成绩波动指标
 
 		ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
@@ -671,11 +669,9 @@ public class ScoreJob {
 	}
 
 	/**
-	 * 总评成绩预警
+	 * 总评成绩指标(TotalAchievementEarlyWarning)
 	 */
 	public List<WarningInformation> totalScoreJob(Long orgId, int schoolYear,int semester,String ruleId) {
-
-		String ruleName = "TotalAchievementEarlyWarning";//总评成绩指标
 
 		ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
@@ -954,7 +950,7 @@ public class ScoreJob {
 	}
 
 	/**
-	 * 修读异常预警
+	 * 修读异常预警 （AttendAbnormalEarlyWarning）
 	 */
 	public ArrayList<WarningInformation> attendAbnormalJob(Long orgId,int schoolYear,int semester,String ruleId) {
 		ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
@@ -1284,10 +1280,9 @@ public class ScoreJob {
 	}
 
 
-    //补考成绩预警定时任务
+    //补考成绩预警定时任务（SupplementAchievementEarlyWarning）
 	public ArrayList<WarningInformation> makeUpScoreJob(Long orgId,int schoolYear,int semester, String ruleId) {
 
-		String ruleName = "SupplementAchievementEarlyWarning";//补考成绩预警指标算法
 
 		ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
@@ -1438,11 +1433,9 @@ public class ScoreJob {
 	}
 
 	/**
-	 * 英语四级考试成绩未通过预警
+	 * 英语四级考试成绩未通过预警（CetEarlyWarning）
 	 */
 	public ArrayList<WarningInformation> cet4ScoreJob(Long orgId,int schoolYear,int semester,String ruleId) {
-
-		String ruleName = "CetEarlyWarning";//cet预警指标算法
 
 		ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 

@@ -138,11 +138,9 @@ public class RollCallJob {
 
 
     /**
-     * 旷课预警
+     * 旷课预警（AbsenteeismEarlyWarning）
      */
     public ArrayList<WarningInformation> rollCallJob(Long orgId, int schoolYear, int semester, String ruleId) {
-
-        String ruleName = "AbsenteeismEarlyWarning";//旷课预警算法
 
         ArrayList<WarningInformation> returnList = new ArrayList<WarningInformation>();
 

@@ -56,12 +56,10 @@ public class StudentRegisterJob {
     private WarningTypeService warningTypeService;
     @Autowired
     private RuleParameterService ruleParameterService;
-
+    //报到注册预警指标算法(RegisterEarlyWarning)
     public ArrayList<WarningInformation> studenteRegisterJob(Long orgId, int schoolYear, int semester,  String ruleId, Date startTime) {
 
         ArrayList<WarningInformation> returnList = new ArrayList<>();
-
-        String ruleName = "RegisterEarlyWarning";//报到注册预警指标算法
 
         //只在第一学期才产生迎新报到注册预警信息
         if (semester != 2) {
