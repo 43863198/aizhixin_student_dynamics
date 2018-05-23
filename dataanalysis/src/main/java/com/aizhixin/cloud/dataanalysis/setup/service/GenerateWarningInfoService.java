@@ -84,7 +84,7 @@ public class GenerateWarningInfoService {
         List<AlarmSettings> alarmSettingsList = alarmSettingsService.getAlarmSettingsByOrgIdAndWarningType(orgId,type);
         HashMap<Integer, List<WarningInformation>> restHasMap = new HashMap<>();
         for(AlarmSettings as: alarmSettingsList) {
-            if (null != as) {
+            if (null != as && as.getSetupCloseFlag() ==10) {
                 String[] ruleIds = as.getRuleSet().split(",");
                 List<WarningInformation> gradeList = new ArrayList<>();
                 ArrayList<WarningInformation> registerList = null;

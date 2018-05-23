@@ -249,11 +249,10 @@ public class RollCallJob {
             warnDbMap
                     .put(warningInfor.getJobNumber(), warningInfor);
         }
-
+        RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
         if (null != rollCallCountList && rollCallCountList.size() > 0) {
             Date today = new Date();
             for (RollCallCount rollCallCount : rollCallCountList) {
-                RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
                 if (null != ruleParameter) {
                     if (rollCallCount.getOutSchoolTimes() >= Float.parseFloat(ruleParameter.getRightParameter())) {
                         WarningInformation alertInfor = new WarningInformation();

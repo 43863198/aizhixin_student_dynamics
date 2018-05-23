@@ -410,6 +410,7 @@ public class ScoreJob {
 				// 获取成绩波动数据
 				List<ScoreFluctuateCount> scoreFluctuateCountList = scoreFluctuateCountMongoRespository
 						.findAllByOrgId(orgId);
+		        RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
 				if (null != scoreFluctuateCountList
 						&& scoreFluctuateCountList.size() > 0) {
 					for (ScoreFluctuateCount scoreFluctuateCount : scoreFluctuateCountList) {
@@ -419,7 +420,7 @@ public class ScoreJob {
 							break;
 						}
 //						for (AlarmSettings alarmSettings : val) {
-							RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
+
 							if (null != ruleParameter) {
 								if (null != warnMap.get(scoreFluctuateCount
 										.getJobNum())) {
@@ -756,7 +757,7 @@ public class ScoreJob {
 				List<TotalScoreCount> totalScoreCountList = totalScoreCountMongoRespository
 						.findAllBySchoolYearAndSemesterAndOrgId(lastSchoolYear,
 								lastSemester, orgId);
-
+		        RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
 				if (null != totalScoreCountList
 						&& totalScoreCountList.size() > 0) {
 					for (TotalScoreCount totalScoreCount : totalScoreCountList) {
@@ -765,7 +766,7 @@ public class ScoreJob {
 									.getJobNum())) {
 								break;
 							}
-							RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
+
 							if (null != ruleParameter) {
 								if (null != warnMap.get(totalScoreCount
 										.getJobNum())) {
@@ -1028,7 +1029,6 @@ public class ScoreJob {
 				//删除已生成的预警信息
 				alertWarningInformationService.deleteWarningInformation(orgId,WarningTypeConstant.AttendAbnormal.toString(),schoolYear,semester);
 
-				// 按orgId查询未报到的学生信息
 				List<TotalScoreCount> totalScoreCountList = totalScoreCountMongoRespository
 						.findAllBySchoolYearAndSemesterAndOrgId(lastSchoolYear,
 								lastSemester, orgId);
@@ -1036,12 +1036,12 @@ public class ScoreJob {
 				if (null != totalScoreCountList
 						&& totalScoreCountList.size() > 0) {
 					Date today = new Date();
+					RuleParameter alarmRule = ruleParameterService.findById(ruleId);
 					for (TotalScoreCount totalScoreCount : totalScoreCountList) {
 								if(null != warnMap.get(totalScoreCount
 										.getJobNum())){
 									break;
 								}
-								RuleParameter alarmRule = ruleParameterService.findById(ruleId);
 						if (null != alarmRule) {
 									if (StringUtils.isEmpty(totalScoreCount
 											.getRequireCreditCount())) {
@@ -1364,12 +1364,11 @@ public class ScoreJob {
 				// 按orgId查询未报到的学生信息
 				List<MakeUpScoreCount> makeUpScoreCountList = makeUpScoreCountMongoRespository
 						.findAllByOrgId(orgId);
-
+		RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
 				if (null != makeUpScoreCountList
 						&& makeUpScoreCountList.size() > 0) {
 					for (MakeUpScoreCount makeUpScoreCount : makeUpScoreCountList) {
 //						for (AlarmSettings alarmSettings : val) {
-								RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
 								if (null != ruleParameter) {
 									if (makeUpScoreCount.getFailCourseNum() >= Float
 											.parseFloat(ruleParameter
@@ -1561,11 +1560,11 @@ public class ScoreJob {
 						alarmScoreList.add(score);
 					}
 				}
-
+		RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
 				if (null != alarmScoreList && alarmScoreList.size() > 0) {
 					for (Score score : alarmScoreList) {
 //						for (AlarmSettings alarmSettings : val) {
-								RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
+
 								if (null != ruleParameter) {
 									int grade = 0;
 									if (null != gradeMap.get(score.getGrade())) {
@@ -1728,12 +1727,12 @@ public class ScoreJob {
 
 				List<MakeUpScoreCount> makeUpScoreCountList = makeUpScoreCountMongoRespository
 						.findAllByOrgId(orgId);
-
+			RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
 				if (null != makeUpScoreCountList
 						&& makeUpScoreCountList.size() > 0) {
 					for (MakeUpScoreCount makeUpScoreCount : makeUpScoreCountList) {
 //						for (AlarmSettings alarmSettings : val) {
-								RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
+
 								if (null != ruleParameter) {
 									if (makeUpScoreCount.getFailCourseCredit() >= Float
 											.parseFloat(ruleParameter
