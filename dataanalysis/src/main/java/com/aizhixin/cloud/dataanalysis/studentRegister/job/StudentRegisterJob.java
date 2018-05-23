@@ -57,7 +57,7 @@ public class StudentRegisterJob {
     @Autowired
     private RuleParameterService ruleParameterService;
 
-    public ArrayList<WarningInformation> studenteRegisterJob(Long orgId, int schoolYear, int semester, String asId, String ruleId, Date startTime) {
+    public ArrayList<WarningInformation> studenteRegisterJob(Long orgId, int schoolYear, int semester,  String ruleId, Date startTime) {
 
         ArrayList<WarningInformation> returnList = new ArrayList<>();
 
@@ -192,8 +192,8 @@ public class StudentRegisterJob {
                                     alertInfor.setTeacherYear(studentRegister.getSchoolYear());
 //                                                alertInfor.setWarningLevel(alarmSettings
 //                                                        .getWarningLevel());
-                                    alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-                                                alertInfor.setAlarmSettingsId(asId);
+//                                    alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+//                                                alertInfor.setAlarmSettingsId(asId);
                                     alertInfor
                                             .setWarningType(WarningTypeConstant.Register
                                                     .toString());

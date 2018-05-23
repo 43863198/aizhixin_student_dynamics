@@ -86,13 +86,13 @@ public class WarningTypeService {
             warningType2.setWarningName("退学预警");
             warningType2.setSetupCloseFlag(20);
             warningTypeList.add(warningType2);
-//      WarningType warningType3 = new WarningType();
-//      warningType3.setOrgId(orgId);
-//      warningType3.setWarningType("AttendAbnormal");
-//      warningType3.setWarningTypeDescribe("结果性预警");
-//      warningType3.setWarningName("修读异常预警");
-//      warningType3.setSetupCloseFlag(20);
-//      warningTypeList.add(warningType3);
+            WarningType warningType3 = new WarningType();
+            warningType3.setOrgId(orgId);
+            warningType3.setType("AttendAbnormal");
+            warningType3.setTypeDescribe("结果性预警");
+            warningType3.setWarningName("修读异常预警");
+            warningType3.setSetupCloseFlag(20);
+            warningTypeList.add(warningType3);
             WarningType warningType4 = new WarningType();
             warningType4.setOrgId(orgId);
             warningType4.setType("Absenteeism");
@@ -141,11 +141,11 @@ public class WarningTypeService {
             rule2.setName("LeaveSchoolEarlyWarning");//退学预警
             rule2.setRuleDescribe("必修课和专业选修课不及格课程累计学分≥");
             ruleList.add(rule2);
-//      Rule  rule3 = new Rule();
-//      rule3.setOrgId(orgId);
-//      rule3.setName("AttendAbnormalEarlyWarning");//修读异常预警
-//      rule3.setRuleDescribe("不合格的必修课程（含集中性实践教学环节）学分≥");
-//      ruleList.add(rule3);
+            Rule  rule3 = new Rule();
+            rule3.setOrgId(orgId);
+            rule3.setName("AttendAbnormalEarlyWarning");//修读异常预警
+            rule3.setRuleDescribe("不合格的必修课程（含集中性实践教学环节）学分≥");
+            ruleList.add(rule3);
             Rule rule4 = new Rule();
             rule4.setOrgId(orgId);
             rule4.setName("AbsenteeismEarlyWarning");//旷课预警

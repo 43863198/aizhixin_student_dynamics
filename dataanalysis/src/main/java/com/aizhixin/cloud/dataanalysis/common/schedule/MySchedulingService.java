@@ -168,7 +168,8 @@ public class MySchedulingService {
     public void SyncDate() {
         if (distributeLock.getSyncClassTeacherLock()) {
             LOG.info("开始启动学生注册报到预警定时任务");
-            Long orgId = 138L;//现网桂林理工的学校id
+            Long orgId = 218L;//测试学校id218
+            //Long orgId = 138L;//现网桂林理工的学校id
             syncClassTeacher.syncData(orgId);
         } else {
             LOG.info("启动学生注册报到预警，获取锁失败");
