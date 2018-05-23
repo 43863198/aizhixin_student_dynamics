@@ -79,7 +79,7 @@ public class GenerateWarningInfoService {
         warningInfo(orgId, warningType, schoolYear, semester);
     }
 
-//    @Async
+    @Async
     public void warningInfo(Long orgId, String type,int schoolYear,int semester ){
         List<AlarmSettings> alarmSettingsList = alarmSettingsService.getAlarmSettingsByOrgIdAndWarningType(orgId,type);
         HashMap<Integer, List<WarningInformation>> restHasMap = new HashMap<>();
@@ -459,6 +459,7 @@ public class GenerateWarningInfoService {
         if(restHasMap.containsKey(1)){
             for(WarningInformation w : restHasMap.get(1)){
                 w.setWarningLevel(1);
+                w.setWarningType(type);
                 jobNumber.add(w.getJobNumber());
                 resList.add(w);
             }
@@ -467,6 +468,7 @@ public class GenerateWarningInfoService {
             for(WarningInformation w : restHasMap.get(1)){
                 if(!jobNumber.contains(w.getJobNumber())) {
                     w.setWarningLevel(2);
+                    w.setWarningType(type);
                     jobNumber.add(w.getJobNumber());
                     resList.add(w);
                 }
@@ -476,6 +478,7 @@ public class GenerateWarningInfoService {
             for(WarningInformation w : restHasMap.get(3)){
                 if(!jobNumber.contains(w.getJobNumber())) {
                     w.setWarningLevel(3);
+                    w.setWarningType(type);
                     jobNumber.add(w.getJobNumber());
                     resList.add(w);
                 }

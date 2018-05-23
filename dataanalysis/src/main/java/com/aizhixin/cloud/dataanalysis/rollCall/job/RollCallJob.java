@@ -288,9 +288,9 @@ public class RollCallJob {
                                 .setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
 //										alertInfor.setAlarmSettingsId(asId
 //												);
-                        alertInfor
-                                .setWarningType(WarningTypeConstant.Absenteeism
-                                        .toString());
+//                        alertInfor
+//                                .setWarningType(WarningTypeConstant.Absenteeism
+//                                        .toString());
                         alertInfor.setWarningTime(new Date());
                         alertInfor.setWarningCondition("本学期累计旷课次数为:" + rollCallCount.getOutSchoolTimes());
                         alertInfor.setPhone(rollCallCount.getUserPhone());
