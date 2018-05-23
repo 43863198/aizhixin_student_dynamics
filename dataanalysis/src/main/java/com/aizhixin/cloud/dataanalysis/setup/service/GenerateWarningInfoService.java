@@ -76,6 +76,7 @@ public class GenerateWarningInfoService {
                 List<WarningInformation> totalAchievementList = null;
                 List<WarningInformation> leaveSchoolList = null;
                 List<WarningInformation> cetList = null;
+                List<WarningInformation> attendAbnormalList = null;
                 for (String ruleId : ruleIds) {
                     if (!StringUtils.isEmpty(ruleId)) {
                         RuleParameter rp = ruleParameterService.findById(ruleId);
@@ -104,7 +105,7 @@ public class GenerateWarningInfoService {
                             cetList = scoreJob.cet4ScoreJob(orgId, schoolYear, semester, ruleId);
                         }
                         if (rp.getRuleName().equals("AttendAbnormalEarlyWarning")) {
-                            cetList = scoreJob.attendAbnormalJob(orgId, schoolYear, semester, ruleId);
+                            attendAbnormalList = scoreJob.attendAbnormalJob(orgId, schoolYear, semester, ruleId);
                         }
                     }
                 }
@@ -285,8 +286,34 @@ public class GenerateWarningInfoService {
                             gradeList = addList;
                         }
                     }
+
+                    if (null != attendAbnormalList) {
+                        if (studentJobNumberSet.isEmpty()) {
+                            for (WarningInformation wi : attendAbnormalList) {
+                                wi.setAlarmSettingsId(as.getId());
+                                wi.setWarningLevel(as.getWarningLevel());
+                                studentJobNumberSet.add(wi.getJobNumber());
+                            }
+                            gradeList.addAll(attendAbnormalList);
+                        } else {
+                            List<WarningInformation> addList = new ArrayList<>();
+                            for (WarningInformation gwi : gradeList) {
+                                gwi.setAlarmSettingsId(as.getId());
+                                gwi.setWarningLevel(as.getWarningLevel());
+                                for (WarningInformation wi : attendAbnormalList) {
+                                    if (gwi.getJobNumber().equals(wi.getJobNumber())) {
+                                        gwi.setWarningCondition(gwi.getWarningCondition() + "且" + wi.getWarningCondition());
+                                        gwi.setWarningSource(gwi.getWarningSource() + ";" + wi.getWarningSource());
+                                        addList.add(gwi);
+                                        break;
+                                    }
+                                }
+                            }
+                            gradeList = addList;
+                        }
+                    }
                 } else {
-                    if (null != registerList && gradeList.isEmpty()) {
+                    if (null != registerList) {
                         for (WarningInformation gwi : gradeList) {
                             gwi.setAlarmSettingsId(as.getId());
                             gwi.setWarningLevel(as.getWarningLevel());
@@ -300,7 +327,7 @@ public class GenerateWarningInfoService {
                         }
                         gradeList.addAll(registerList);
                     }
-                    if (null != absenteeismList && absenteeismList.isEmpty()) {
+                    if (null != absenteeismList) {
                         for (WarningInformation gwi : gradeList) {
                             gwi.setAlarmSettingsId(as.getId());
                             gwi.setWarningLevel(as.getWarningLevel());
@@ -315,7 +342,7 @@ public class GenerateWarningInfoService {
                         gradeList.addAll(absenteeismList);
 
                     }
-                    if (null != performanceFluctuationList && performanceFluctuationList.isEmpty()) {
+                    if (null != performanceFluctuationList) {
                         for (WarningInformation gwi : gradeList) {
                             gwi.setAlarmSettingsId(as.getId());
                             gwi.setWarningLevel(as.getWarningLevel());
@@ -330,7 +357,7 @@ public class GenerateWarningInfoService {
                         gradeList.addAll(performanceFluctuationList);
 
                     }
-                    if (null != supplementAchievementList && supplementAchievementList.isEmpty()) {
+                    if (null != supplementAchievementList) {
                         for (WarningInformation gwi : gradeList) {
                             for (WarningInformation wi : supplementAchievementList) {
                                 if (gwi.getJobNumber().equals(wi.getJobNumber())) {
@@ -344,7 +371,7 @@ public class GenerateWarningInfoService {
                         gradeList.addAll(supplementAchievementList);
 
                     }
-                    if (null != totalAchievementList && totalAchievementList.isEmpty()) {
+                    if (null != totalAchievementList) {
                         for (WarningInformation gwi : gradeList) {
                             gwi.setAlarmSettingsId(as.getId());
                             gwi.setWarningLevel(as.getWarningLevel());
@@ -359,7 +386,7 @@ public class GenerateWarningInfoService {
                         gradeList.addAll(totalAchievementList);
 
                     }
-                    if (null != leaveSchoolList && leaveSchoolList.isEmpty()) {
+                    if (null != leaveSchoolList) {
                         for (WarningInformation gwi : gradeList) {
                             gwi.setAlarmSettingsId(as.getId());
                             gwi.setWarningLevel(as.getWarningLevel());
@@ -374,7 +401,7 @@ public class GenerateWarningInfoService {
                         gradeList.addAll(leaveSchoolList);
 
                     }
-                    if (null != cetList && cetList.isEmpty()) {
+                    if (null != cetList) {
                         for (WarningInformation gwi : gradeList) {
                             gwi.setAlarmSettingsId(as.getId());
                             gwi.setWarningLevel(as.getWarningLevel());
@@ -387,6 +414,20 @@ public class GenerateWarningInfoService {
                             }
                         }
                         gradeList.addAll(cetList);
+                    }
+                    if (null != attendAbnormalList) {
+                        for (WarningInformation gwi : gradeList) {
+                            gwi.setAlarmSettingsId(as.getId());
+                            gwi.setWarningLevel(as.getWarningLevel());
+                            for (WarningInformation wi : attendAbnormalList) {
+                                if (gwi.getJobNumber().equals(wi.getJobNumber())) {
+                                    gwi.setWarningCondition(gwi.getWarningCondition() + "或" + wi.getWarningCondition());
+                                    gwi.setWarningSource(gwi.getWarningSource() + ";" + wi.getWarningSource());
+                                    cetList.remove(wi);
+                                }
+                            }
+                        }
+                        gradeList.addAll(attendAbnormalList);
                     }
 
                 }
