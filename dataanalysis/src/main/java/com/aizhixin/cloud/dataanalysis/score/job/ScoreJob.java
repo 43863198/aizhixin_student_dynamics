@@ -488,9 +488,9 @@ public class ScoreJob {
 										alertInfor.setSemester(semester);
 										alertInfor
 												.setTeacherYear(schoolYear);
-										alertInfor
-												.setWarningType(WarningTypeConstant.PerformanceFluctuation
-														.toString());
+//										alertInfor
+//												.setWarningType(WarningTypeConstant.PerformanceFluctuation
+//														.toString());
 										alertInfor
 												.setWarningCondition(
 														termConversion.getSemester(schoolYear, semester, 2).get("schoolYear") + "年" + termConversion.getSemester(schoolYear, semester, 2).get("semester") + "学期平均绩点为："
@@ -814,9 +814,9 @@ public class ScoreJob {
 //										alertInfor
 //												.setAlarmSettingsId(asId
 //														);
-										alertInfor
-												.setWarningType(WarningTypeConstant.TotalAchievement
-														.toString());
+//										alertInfor
+//												.setWarningType(WarningTypeConstant.TotalAchievement
+//														.toString());
 										alertInfor.setWarningTime(new Date());
 										alertInfor.setSemester(semester);
 										alertInfor.setTeacherYear(schoolYear);
@@ -1082,9 +1082,9 @@ public class ScoreJob {
 												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
 //										alertInfor.setAlarmSettingsId(alarmSettings
 //												.getId());
-										alertInfor
-												.setWarningType(WarningTypeConstant.AttendAbnormal
-														.toString());
+//										alertInfor
+//												.setWarningType(WarningTypeConstant.AttendAbnormal
+//														.toString());
 										alertInfor.setWarningTime(new Date());
 										alertInfor
 												.setWarningCondition(termConversion.getSemester(schoolYear, semester, 1).get("schoolYear") + "年第" + termConversion.getSemester(schoolYear, semester, 1).get("semester") + "学期不及格必修课程学分为："
@@ -1403,9 +1403,9 @@ public class ScoreJob {
 												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
 //										alertInfor.setAlarmSettingsId(asId
 //												);
-										alertInfor
-												.setWarningType(WarningTypeConstant.SupplementAchievement
-														.toString());
+//										alertInfor
+//												.setWarningType(WarningTypeConstant.SupplementAchievement
+//														.toString());
 										alertInfor
 												.setWarningCondition("补考后" + termConversion.getSemester(schoolYear, semester, 1).get("schoolYear") + "年第" + termConversion.getSemester(schoolYear, semester, 1).get("semester") + "学期总评成绩不及格课程数:"
 														+ makeUpScoreCount
@@ -1598,9 +1598,9 @@ public class ScoreJob {
 												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
 //										alertInfor.setAlarmSettingsId(asId
 //												);
-										alertInfor
-												.setWarningType(WarningTypeConstant.Cet
-														.toString());
+//										alertInfor
+//												.setWarningType(WarningTypeConstant.Cet
+//														.toString());
 										alertInfor.setWarningCondition("第" + grade
 												+ "学年仍未通过英语四级考试");
 										alertInfor.setSemester(semester);
@@ -1767,9 +1767,9 @@ public class ScoreJob {
 												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
 //										alertInfor.setAlarmSettingsId(asId
 //											);
-										alertInfor
-												.setWarningType(WarningTypeConstant.LeaveSchool
-														.toString());
+//										alertInfor
+//												.setWarningType(WarningTypeConstant.LeaveSchool
+//														.toString());
 										BigDecimal failCourseCredit = new BigDecimal(
 												makeUpScoreCount
 														.getFailCourseCredit());
