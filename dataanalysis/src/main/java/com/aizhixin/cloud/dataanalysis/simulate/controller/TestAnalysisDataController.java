@@ -46,10 +46,6 @@ public class TestAnalysisDataController {
 	@Autowired
 	private TeachingScoreStatisticsJob teachingScoreStatisticsJob;
 	@Autowired
-	private CetStatisticsAnalysisJob cetStatisticsAnalysisJob;
-	@Autowired
-	private MongoTemplate mongoTemplate;
-	@Autowired
 	private StudentRegisterService studentRegisterService;
 	@Autowired
 	private TeachingScoreService teachingScoreService;

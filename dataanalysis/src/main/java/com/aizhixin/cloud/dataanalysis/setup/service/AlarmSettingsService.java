@@ -19,6 +19,7 @@ import com.aizhixin.cloud.dataanalysis.studentRegister.job.StudentRegisterJob;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,14 +43,16 @@ public class AlarmSettingsService {
     private WarningTypeService warningTypeService;
     @Autowired
     private ProcessingModeService processingModeService;
-    @Autowired
-    private AlertWarningInformationService alertWarningInformationService;
+//    @Autowired
+//    @Lazy
+//    private AlertWarningInformationService alertWarningInformationService;
     @Autowired
     private DistributeLock distributeLock;
     @Autowired
     private RuleService ruleService;
     @Autowired
     private RuleParameterService ruleParameterService;
+
 
 
     public AlarmSettings getAlarmSettingsById(String id) {
@@ -234,68 +237,70 @@ public class AlarmSettingsService {
         return result;
     }
 
-    @Async
-    public void rebuildAlertInfor(String warningType, Long orgId) {
-        Calendar c = Calendar.getInstance();
-        // 当前年份
-        int schoolYear = c.get(Calendar.YEAR);
-        // 当前月份
-        int month = c.get(Calendar.MONTH) + 1;
-        // 当前学期编号
-        int semester = 2;
-        if (month > 1 && month < 9) {
-            semester = 1;
-        }
-        if (month == 1) {
-            schoolYear = schoolYear - 1;
-        }
-        logger.debug("开始删除warningType=" + warningType + ",orgId=" + orgId + "的预警信息。。。。。、");
+//    @Async
+//    public void rebuildAlertInfor(String warningType, Long orgId) {
+//        Calendar c = Calendar.getInstance();
+//        // 当前年份
+//        int schoolYear = c.get(Calendar.YEAR);
+//        // 当前月份
+//        int month = c.get(Calendar.MONTH) + 1;
+//        // 当前学期编号
+//        int semester = 2;
+//        if (month > 1 && month < 9) {
+//            semester = 1;
+//        }
+//        if (month == 1) {
+//            schoolYear = schoolYear - 1;
+//        }
+//        logger.debug("开始删除warningType=" + warningType + ",orgId=" + orgId + "的预警信息。。。。。、");
+//
+//        alertWarningInformationService.logicDeleteByOrgIdAndWarnType(warningType, orgId, schoolYear, semester);
+//
+//        logger.debug("删除warningType=" + warningType + ",orgId=" + orgId + "的预警信息结束。。。。。、");
+//
+//        generateWarningInfoService.warningJob();
 
-        alertWarningInformationService.logicDeleteByOrgIdAndWarnType(warningType, orgId, schoolYear, semester);
-
-        logger.debug("删除warningType=" + warningType + ",orgId=" + orgId + "的预警信息结束。。。。。、");
-
-        if (WarningTypeConstant.Register.toString().equals(warningType) && semester != 2) {
-            logger.debug("开始重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息。。。。。、");
-//            studentRegisterJob.studenteRegisterJob(schoolYear, semester);
-            logger.debug("重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息结束。。。。。、");
-        }
-        if (WarningTypeConstant.Absenteeism.toString().equals(warningType)) {
-            logger.debug("开始重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息。。。。。、");
-//            rollCallJob.rollCallJob(schoolYear, semester);
-            logger.debug("重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息结束。。。。。、");
-        }
-//    	if(WarningTypeConstant.AttendAbnormal.toString().equals(warningType)){
-//    		logger.debug("开始重新生成warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
-//    		scoreJob.attendAbnormalJob(schoolYear,semester);
-//    		logger.debug("重新生成warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
-//    	}
-        if (WarningTypeConstant.Cet.toString().equals(warningType)) {
-            logger.debug("开始重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息。。。。。、");
-//            scoreJob.cet4ScoreJob(schoolYear, semester);
-            logger.debug("重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息结束。。。。。、");
-        }
-        if (WarningTypeConstant.PerformanceFluctuation.toString().equals(warningType)) {
-            logger.debug("开始重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息。。。。。、");
-//            scoreJob.scoreFluctuateJob(schoolYear, semester);
-            logger.debug("重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息结束。。。。。、");
-        }
-        if (WarningTypeConstant.TotalAchievement.toString().equals(warningType)) {
-            logger.debug("开始重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息。。。。。、");
-//            scoreJob.totalScoreJob(schoolYear, semester);
-            logger.debug("重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息结束。。。。。、");
-        }
-        if (WarningTypeConstant.SupplementAchievement.toString().equals(warningType)) {
-            logger.debug("开始重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息。。。。。、");
-//            scoreJob.makeUpScoreJob(schoolYear, semester);
-            logger.debug("重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息结束。。。。。、");
-        }
-        if (WarningTypeConstant.LeaveSchool.toString().equals(warningType)) {
-            logger.debug("开始重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息。。。。。、");
-//            scoreJob.dropOutJob(schoolYear, semester);
-            logger.debug("重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息结束。。。。。、");
-        }
-    }
+//        if (WarningTypeConstant.Register.toString().equals(warningType) && semester != 2) {
+//            logger.debug("开始重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息。。。。。、");
+////            studentRegisterJob.studenteRegisterJob(schoolYear, semester);
+//            logger.debug("重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息结束。。。。。、");
+//        }
+//        if (WarningTypeConstant.Absenteeism.toString().equals(warningType)) {
+//            logger.debug("开始重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息。。。。。、");
+////            rollCallJob.rollCallJob(schoolYear, semester);
+//            logger.debug("重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息结束。。。。。、");
+//        }
+////    	if(WarningTypeConstant.AttendAbnormal.toString().equals(warningType)){
+////    		logger.debug("开始重新生成warningType="+warningType+",orgId="+orgId+"的预警信息。。。。。、");
+////    		scoreJob.attendAbnormalJob(schoolYear,semester);
+////    		logger.debug("重新生成warningType="+warningType+",orgId="+orgId+"的预警信息结束。。。。。、");
+////    	}
+//        if (WarningTypeConstant.Cet.toString().equals(warningType)) {
+//            logger.debug("开始重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息。。。。。、");
+////            scoreJob.cet4ScoreJob(schoolYear, semester);
+//            logger.debug("重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息结束。。。。。、");
+//        }
+//        if (WarningTypeConstant.PerformanceFluctuation.toString().equals(warningType)) {
+//            logger.debug("开始重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息。。。。。、");
+////            scoreJob.scoreFluctuateJob(schoolYear, semester);
+//            logger.debug("重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息结束。。。。。、");
+//        }
+//        if (WarningTypeConstant.TotalAchievement.toString().equals(warningType)) {
+//            logger.debug("开始重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息。。。。。、");
+////            scoreJob.totalScoreJob(schoolYear, semester);
+//            logger.debug("重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息结束。。。。。、");
+//        }
+//        if (WarningTypeConstant.SupplementAchievement.toString().equals(warningType)) {
+//            logger.debug("开始重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息。。。。。、");
+////            scoreJob.makeUpScoreJob(schoolYear, semester);
+//            logger.debug("重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息结束。。。。。、");
+//        }
+//        if (WarningTypeConstant.LeaveSchool.toString().equals(warningType)) {
+//            logger.debug("开始重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息。。。。。、");
+////            scoreJob.dropOutJob(schoolYear, semester);
+//            logger.debug("重新生成warningType=" + warningType + ",orgId=" + orgId + "的预警信息结束。。。。。、");
+//        }
+//    }
 
 
     public Map<String, Object> getProcessingMode(String warningTypeId) {

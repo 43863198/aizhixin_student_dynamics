@@ -61,6 +61,24 @@ public class GenerateWarningInfoService {
             }
         }
     }
+
+    public void enerateWarningInfo(Long orgId, String warningType) {
+        Calendar c = Calendar.getInstance();
+        // 当前年份
+        int schoolYear = c.get(Calendar.YEAR);
+        // 当前月份
+        int month = c.get(Calendar.MONTH)+1;
+        // 当前学期编号
+        int semester = 2;
+        if (month > 1 && month < 9) {
+            semester = 1;
+        }
+        if(month == 1 ){
+            schoolYear = schoolYear - 1;
+        }
+        warningInfo(orgId, warningType, schoolYear, semester);
+    }
+
     @Async
     public void warningInfo(Long orgId, String type,int schoolYear,int semester ){
         List<AlarmSettings> alarmSettingsList = alarmSettingsService.getAlarmSettingsByOrgIdAndWarningType(orgId,type);

@@ -15,6 +15,7 @@ import com.aizhixin.cloud.dataanalysis.studentRegister.job.StudentRegisterJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -32,6 +33,7 @@ public class WarningTypeOnAndOffJob {
     @Autowired
     private WarningTypeService warningTypeService;
     @Autowired
+    @Lazy
     private AlarmSettingsService alarmSettingsService;
     @Autowired
     private AlertWarningInformationService warningInformationService;

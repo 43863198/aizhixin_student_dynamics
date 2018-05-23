@@ -182,12 +182,10 @@ public class AlarmSettingsController {
     @ApiOperation(httpMethod = "GET", value = "手动生成数据", response = Void.class, notes = "手动生成数据<br><br><b>@author jianwei.wu</b>")
     public Map<String, Object> generateData(
             @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "warningType 预警类型", required = true) @RequestParam(value = "warningType", required = true) String warningType,
-            @ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
-            @ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
+            @ApiParam(value = "warningType 预警类型", required = true) @RequestParam(value = "warningType", required = true) String warningType
     ) {
         Map<String, Object> result = new HashMap<>();
-        generateWarningInfoService.warningInfo(orgId, warningType,teacherYear,semester);
+        generateWarningInfoService.enerateWarningInfo(orgId, warningType);
         result.put("success", true);
         result.put("message", "手动生成数据成功!");
         return result;
