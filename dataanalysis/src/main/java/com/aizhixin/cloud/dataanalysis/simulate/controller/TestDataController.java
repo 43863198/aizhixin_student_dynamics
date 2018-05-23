@@ -63,8 +63,6 @@ public class TestDataController {
 	private RollCallMongoRespository rollCallMongoRespository;
 	@Autowired
 	private ScoreMongoRespository scoreMongoRespository;
-//	@Autowired
-//	private ScoreJob scoreJob;
 	@Autowired
 	private StudentRegisterService registerService;
 	@Autowired
@@ -178,7 +176,6 @@ public class TestDataController {
 		}
 		List<Score> scoreList = new ArrayList<Score>();
 			Score score = new Score();
-
 			score.setUserId(1L);
 			score.setClassId(1L);
 			score.setClassName("测试1班");

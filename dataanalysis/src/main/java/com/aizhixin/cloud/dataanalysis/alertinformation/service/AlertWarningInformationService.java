@@ -65,6 +65,7 @@ public class AlertWarningInformationService {
     @Autowired
     private StudentJdbc studentJdbc;
     @Autowired
+    @Lazy
     private AlarmSettingsService alarmSettingsService;
     @Autowired
     private RuleParameterService ruleParameterService;
