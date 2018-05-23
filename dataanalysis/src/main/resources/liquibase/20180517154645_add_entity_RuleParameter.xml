@@ -21,9 +21,9 @@
             <column name="ORG_ID" type="BIGINT" remarks="机构id"/>
             <column name="RULE_NAME" type="VARCHAR(50)" remarks="规则名称"/>
             <column name="RULE_DESCRIBE" type="VARCHAR(500)" remarks="规则描述"/>
-            <column name="LEFT_PARAMETER" type="INT(4)"  remarks="规则左区间参数值"/>
+            <column name="LEFT_PARAMETER" type="VARCHAR(50)"  remarks="规则左区间参数值"/>
             <column name="LFET_RELATIONSHIP" type="VARCHAR(50)" remarks="规则左区间参数关系(大于,大于等于)"/>
-            <column name="RIGHT_PARAMETER" type="INT(4)"  remarks="规则右区间参数值"/>
+            <column name="RIGHT_PARAMETER" type="VARCHAR(50)"  remarks="规则右区间参数值"/>
             <column name="RIGHT_RELATIONSHIP" type="VARCHAR(50)" remarks="规则右区间参数关系(大于,大于等于)"/>
             <column name="SERIAL_NUMBER" type="INT(4)"  remarks="规则的序号"/>
             <column name="CREATED_BY" type="BIGINT" remarks="创建人ID"/>
