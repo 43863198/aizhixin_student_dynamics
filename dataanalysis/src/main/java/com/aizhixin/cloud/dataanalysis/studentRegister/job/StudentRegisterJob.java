@@ -151,7 +151,7 @@ public class StudentRegisterJob {
             for (WarningInformation warningInfor : warnDbList) {
                 warnDbMap.put(warningInfor.getJobNumber(), warningInfor);
             }
-
+            RuleParameter alarmRule = ruleParameterService.findById(ruleId);
             if (null != stuRegisterList && stuRegisterList.size() > 0) {
                 Date today = new Date();
                 for (StudentRegister studentRegister : stuRegisterList) {
@@ -159,7 +159,6 @@ public class StudentRegisterJob {
                         if (startTime.getTime() <= new Date().getTime()) {
                             int result = DateUtil.getDaysBetweenDate(
                                     startTime, today);
-                            RuleParameter alarmRule = ruleParameterService.findById(ruleId);
                             if (null != alarmRule) {
                                 if (result >= Float.parseFloat(alarmRule.getRightParameter())) {
                                     WarningInformation alertInfor = new WarningInformation();
