@@ -335,7 +335,7 @@ public class ScoreJob {
 	/**
 	 * 上上个学期平均学分绩点与上学期平均学分绩点的差 -------(成绩波动预警定时任务)-------
 	 */
-	public List<WarningInformation> scoreFluctuateJob(Long orgId,int schoolYear,int semester,String asId,String ruleId) {
+	public List<WarningInformation> scoreFluctuateJob(Long orgId,int schoolYear,int semester,String ruleId) {
 
         String ruleName = "PerformanceFluctuationEarlyWarning";//成绩波动指标
 
@@ -483,9 +483,9 @@ public class ScoreJob {
 //														.getWarningLevel());
 										alertInfor
 												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-										alertInfor
-												.setAlarmSettingsId(asId
-														);
+//										alertInfor
+//												.setAlarmSettingsId(asId
+//														);
 										alertInfor.setSemester(semester);
 										alertInfor
 												.setTeacherYear(schoolYear);
@@ -673,7 +673,7 @@ public class ScoreJob {
 	/**
 	 * 总评成绩预警
 	 */
-	public List<WarningInformation> totalScoreJob(Long orgId, int schoolYear,int semester,String asId,String ruleId) {
+	public List<WarningInformation> totalScoreJob(Long orgId, int schoolYear,int semester,String ruleId) {
 
 		String ruleName = "TotalAchievementEarlyWarning";//总评成绩指标
 
@@ -814,9 +814,9 @@ public class ScoreJob {
 //														.getWarningLevel());
 										alertInfor
 												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-										alertInfor
-												.setAlarmSettingsId(asId
-														);
+//										alertInfor
+//												.setAlarmSettingsId(asId
+//														);
 										alertInfor
 												.setWarningType(WarningTypeConstant.TotalAchievement
 														.toString());
@@ -956,9 +956,9 @@ public class ScoreJob {
 	/**
 	 * 修读异常预警
 	 */
-//	public ArrayList<WarningInformation> attendAbnormalJob(int schoolYear,int semester) {
-//		ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
-//
+	public ArrayList<WarningInformation> attendAbnormalJob(Long orgId,int schoolYear,int semester,String ruleId) {
+		ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
+
 //		// 获取的预警类型
 //		List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
 //
@@ -975,33 +975,19 @@ public class ScoreJob {
 //				.getAlarmSettingsByType(WarningTypeConstant.AttendAbnormal
 //						.toString());
 //		if (null != settingsList && settingsList.size() > 0) {
-//
-////			Calendar c = Calendar.getInstance();
-////			// 当前年份
-////			int schoolYear = c.get(Calendar.YEAR);
-////			// 当前月份
-////			int month = c.get(Calendar.MONTH)+1;
-////			// 当前学期编号
-////			int semester = 2;
-////			if (month > 1 && month < 9) {
-////				semester = 1;
-////			}
-////			if(month == 1 ){
-////				schoolYear = schoolYear - 1;
-////			}
-//
-//			int lastSchoolYear = schoolYear;
-//			// 上学期编号
-//			int lastSemester = 1;
-//			if (semester == 1) {
-//				lastSemester = 2;
-//				lastSchoolYear = schoolYear - 1;
+
+			int lastSchoolYear = schoolYear;
+			// 上学期编号
+			int lastSemester = 1;
+			if (semester == 1) {
+				lastSemester = 2;
+				lastSchoolYear = schoolYear - 1;
 //			}
-//
-//			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
-//			Set<String> warnRuleIdList = new HashSet<String>();
-//			Set<String> warnSettingsIdList = new HashSet<String>();
-//			// 按orgId归类告警等级阀值
+
+			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
+			Set<String> warnRuleIdList = new HashSet<String>();
+			Set<String> warnSettingsIdList = new HashSet<String>();
+			// 按orgId归类告警等级阀值
 //			for (AlarmSettings settings : settingsList) {
 //				if(orgIdSet.contains(settings.getOrgId())&&settings.getSetupCloseFlag()==10) {
 //					warnSettingsIdList.add(settings.getId());
@@ -1036,109 +1022,106 @@ public class ScoreJob {
 //
 //			Iterator iter = alarmMap.entrySet().iterator();
 //			while (iter.hasNext()) {
-//				// 定时任务产生的新的预警数据
-//				HashMap<String, WarningInformation> warnMap = new HashMap<String, WarningInformation>();
+				// 定时任务产生的新的预警数据
+				HashMap<String, WarningInformation> warnMap = new HashMap<String, WarningInformation>();
 //				Map.Entry entry = (Map.Entry) iter.next();
 //				Long orgId = (Long) entry.getKey();
 //				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
 //						.getValue();
-//
-//				//删除已生成的预警信息
-//				alertWarningInformationService.deleteWarningInformation(orgId,WarningTypeConstant.AttendAbnormal.toString(),schoolYear,semester);
-//
-//				// 按orgId查询未报到的学生信息
-//				List<TotalScoreCount> totalScoreCountList = totalScoreCountMongoRespository
-//						.findAllBySchoolYearAndSemesterAndOrgId(lastSchoolYear,
-//								lastSemester, orgId);
-//
-//				if (null != totalScoreCountList
-//						&& totalScoreCountList.size() > 0) {
-//					Date today = new Date();
-//					for (TotalScoreCount totalScoreCount : totalScoreCountList) {
-//						for (AlarmSettings alarmSettings : val) {
-//
-//								if(null != warnMap.get(totalScoreCount
-//										.getJobNum())){
-//									break;
-//								}
-//								AlarmRule alarmRule = alarmRuleMap
-//										.get(alarmSettings.getRuleSet());
-//								if (null != alarmRule) {
-//									if (StringUtils.isEmpty(totalScoreCount
-//											.getRequireCreditCount())) {
-//										continue;
-//									}
-//									if (totalScoreCount.getRequireCreditCount() >= Float
-//											.parseFloat(String.valueOf(alarmRule
-//													.getRightParameter()))) {
-//										WarningInformation alertInfor = new WarningInformation();
-//										String alertId = UUID.randomUUID()
-//												.toString();
-//										alertInfor.setId(alertId);
-//										alertInfor.setDefendantId(totalScoreCount
-//												.getUserId());
-//										alertInfor.setName(totalScoreCount
-//												.getUserName());
-//										alertInfor.setJobNumber(totalScoreCount
-//												.getJobNum());
-//										alertInfor.setCollogeId(totalScoreCount
-//												.getCollegeId());
-//										alertInfor.setCollogeName(totalScoreCount
-//												.getCollegeName());
-//										alertInfor.setClassId(totalScoreCount
-//												.getClassId());
-//										alertInfor.setClassName(totalScoreCount
-//												.getClassName());
-//										alertInfor
-//												.setProfessionalId(totalScoreCount
-//														.getProfessionalId());
-//										alertInfor
-//												.setProfessionalName(totalScoreCount
-//														.getProfessionalName());
-//										alertInfor.setTeacherYear(totalScoreCount
-//												.getSchoolYear());
+
+				//删除已生成的预警信息
+				alertWarningInformationService.deleteWarningInformation(orgId,WarningTypeConstant.AttendAbnormal.toString(),schoolYear,semester);
+
+				// 按orgId查询未报到的学生信息
+				List<TotalScoreCount> totalScoreCountList = totalScoreCountMongoRespository
+						.findAllBySchoolYearAndSemesterAndOrgId(lastSchoolYear,
+								lastSemester, orgId);
+
+				if (null != totalScoreCountList
+						&& totalScoreCountList.size() > 0) {
+					Date today = new Date();
+					for (TotalScoreCount totalScoreCount : totalScoreCountList) {
+								if(null != warnMap.get(totalScoreCount
+										.getJobNum())){
+									break;
+								}
+								RuleParameter alarmRule = ruleParameterService.findById(ruleId);
+						if (null != alarmRule) {
+									if (StringUtils.isEmpty(totalScoreCount
+											.getRequireCreditCount())) {
+										continue;
+									}
+									if (totalScoreCount.getRequireCreditCount() >= Float
+											.parseFloat(String.valueOf(alarmRule
+													.getRightParameter()))) {
+										WarningInformation alertInfor = new WarningInformation();
+										String alertId = UUID.randomUUID()
+												.toString();
+										alertInfor.setId(alertId);
+										alertInfor.setDefendantId(totalScoreCount
+												.getUserId());
+										alertInfor.setName(totalScoreCount
+												.getUserName());
+										alertInfor.setJobNumber(totalScoreCount
+												.getJobNum());
+										alertInfor.setCollogeId(totalScoreCount
+												.getCollegeId());
+										alertInfor.setCollogeName(totalScoreCount
+												.getCollegeName());
+										alertInfor.setClassId(totalScoreCount
+												.getClassId());
+										alertInfor.setClassName(totalScoreCount
+												.getClassName());
+										alertInfor
+												.setProfessionalId(totalScoreCount
+														.getProfessionalId());
+										alertInfor
+												.setProfessionalName(totalScoreCount
+														.getProfessionalName());
+										alertInfor.setTeacherYear(totalScoreCount
+												.getSchoolYear());
 //										alertInfor.setWarningLevel(alarmSettings
 //												.getWarningLevel());
-//										alertInfor
-//												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+										alertInfor
+												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
 //										alertInfor.setAlarmSettingsId(alarmSettings
 //												.getId());
-//										alertInfor
-//												.setWarningType(WarningTypeConstant.AttendAbnormal
-//														.toString());
-//										alertInfor.setWarningTime(new Date());
-//										alertInfor
-//												.setWarningCondition(termConversion.getSemester(schoolYear, semester, 1).get("schoolYear") + "年第" + termConversion.getSemester(schoolYear, semester, 1).get("semester") + "学期不及格必修课程学分为："
-//														+ totalScoreCount
-//														.getRequireCreditCount());
-//										alertInfor.setPhone(totalScoreCount
-//												.getUserPhone());
-//										alertInfor.setSemester(semester);
-//										alertInfor.setTeacherYear(schoolYear);
-//										alertInfor.setOrgId(alarmRule.getOrgId());
-//										alertInforList.add(alertInfor);
-//										if (null != totalScoreCount.getDataSource() && totalScoreCount.getDataSource().length() > 0) {
-//											alertInfor.setWarningSource(totalScoreCount.getDataSource().substring(0, totalScoreCount.getDataSource().length() - 1));
-//										}
-//
-//										warnMap.put(totalScoreCount
-//												.getJobNum(),alertInfor);
-//										break;
-//									} else {
-//										continue;
-//									}
-//
-//							}
-//						}
-//					}
+										alertInfor
+												.setWarningType(WarningTypeConstant.AttendAbnormal
+														.toString());
+										alertInfor.setWarningTime(new Date());
+										alertInfor
+												.setWarningCondition(termConversion.getSemester(schoolYear, semester, 1).get("schoolYear") + "年第" + termConversion.getSemester(schoolYear, semester, 1).get("semester") + "学期不及格必修课程学分为："
+														+ totalScoreCount
+														.getRequireCreditCount());
+										alertInfor.setPhone(totalScoreCount
+												.getUserPhone());
+										alertInfor.setSemester(semester);
+										alertInfor.setTeacherYear(schoolYear);
+										alertInfor.setOrgId(alarmRule.getOrgId());
+										alertInforList.add(alertInfor);
+										if (null != totalScoreCount.getDataSource() && totalScoreCount.getDataSource().length() > 0) {
+											alertInfor.setWarningSource(totalScoreCount.getDataSource().substring(0, totalScoreCount.getDataSource().length() - 1));
+										}
+
+										warnMap.put(totalScoreCount
+												.getJobNum(),alertInfor);
+										break;
+									} else {
+										continue;
+									}
+
+							}
+						}
+					}
 //				}
-////				if (!alertInforList.isEmpty()) {
-////					alertWarningInformationService.save(alertInforList);
-////				}
+//				if (!alertInforList.isEmpty()) {
+//					alertWarningInformationService.save(alertInforList);
+//				}
 //			}
-//		}
-//		return alertInforList;
-//	}
+		}
+		return alertInforList;
+	}
 
 	/**
 	 * 统计mongo里的补考不及格成绩汇总到
@@ -1160,7 +1143,6 @@ public class ScoreJob {
 			HashMap<Long, Long> alarmMap = new HashMap<Long, Long>();
 			// 按orgId归类告警等级阀值
 			for (AlarmSettings settings : settingsList) {
-
 				Long orgId = settings.getOrgId();
 				alarmMap.put(orgId, orgId);
 			}
@@ -1303,7 +1285,7 @@ public class ScoreJob {
 
 
     //补考成绩预警定时任务
-	public ArrayList<WarningInformation> makeUpScoreJob(Long orgId,int schoolYear,int semester,String asId, String ruleId) {
+	public ArrayList<WarningInformation> makeUpScoreJob(Long orgId,int schoolYear,int semester, String ruleId) {
 
 		String ruleName = "SupplementAchievementEarlyWarning";//补考成绩预警指标算法
 
@@ -1425,8 +1407,8 @@ public class ScoreJob {
 //												.getWarningLevel());
 										alertInfor
 												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-										alertInfor.setAlarmSettingsId(asId
-												);
+//										alertInfor.setAlarmSettingsId(asId
+//												);
 										alertInfor
 												.setWarningType(WarningTypeConstant.SupplementAchievement
 														.toString());
@@ -1458,7 +1440,7 @@ public class ScoreJob {
 	/**
 	 * 英语四级考试成绩未通过预警
 	 */
-	public ArrayList<WarningInformation> cet4ScoreJob(Long orgId,int schoolYear,int semester,String asId, String ruleId) {
+	public ArrayList<WarningInformation> cet4ScoreJob(Long orgId,int schoolYear,int semester,String ruleId) {
 
 		String ruleName = "CetEarlyWarning";//cet预警指标算法
 
@@ -1622,8 +1604,8 @@ public class ScoreJob {
 //												.getWarningLevel());
 										alertInfor
 												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-										alertInfor.setAlarmSettingsId(asId
-												);
+//										alertInfor.setAlarmSettingsId(asId
+//												);
 										alertInfor
 												.setWarningType(WarningTypeConstant.Cet
 														.toString());
@@ -1652,7 +1634,7 @@ public class ScoreJob {
 	/**
 	 * 退学预警
 	 */
-	public ArrayList<WarningInformation> dropOutJob(Long orgId,int schoolYear,int semester,String asId,String ruleId) {
+	public ArrayList<WarningInformation> dropOutJob(Long orgId,int schoolYear,int semester,String ruleId) {
 
 		String ruleName = "LeaveSchoolEarlyWarning";//退学预警算法
 
@@ -1793,8 +1775,8 @@ public class ScoreJob {
 //												.getWarningLevel());
 										alertInfor
 												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-										alertInfor.setAlarmSettingsId(asId
-											);
+//										alertInfor.setAlarmSettingsId(asId
+//											);
 										alertInfor
 												.setWarningType(WarningTypeConstant.LeaveSchool
 														.toString());

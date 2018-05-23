@@ -140,7 +140,7 @@ public class RollCallJob {
     /**
      * 旷课预警
      */
-    public ArrayList<WarningInformation> rollCallJob(Long orgId, int schoolYear, int semester, String asId, String ruleId) {
+    public ArrayList<WarningInformation> rollCallJob(Long orgId, int schoolYear, int semester, String ruleId) {
 
         String ruleName = "AbsenteeismEarlyWarning";//旷课预警算法
 
@@ -289,8 +289,8 @@ public class RollCallJob {
 //												.getWarningLevel());
                         alertInfor
                                 .setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-										alertInfor.setAlarmSettingsId(asId
-												);
+//										alertInfor.setAlarmSettingsId(asId
+//												);
                         alertInfor
                                 .setWarningType(WarningTypeConstant.Absenteeism
                                         .toString());
