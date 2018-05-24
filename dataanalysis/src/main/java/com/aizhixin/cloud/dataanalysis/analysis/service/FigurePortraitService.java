@@ -171,8 +171,8 @@ public class FigurePortraitService {
                 sfp.setStudentIn(sVO);
             }
             //成绩详情
-            StringBuilder scoresql = new StringBuilder("SELECT s.KCH as kch,c.COURSE_NAME as cName,s.JSXM as teacher, c.CREDIT as kxf,s.XKSX as kclx,s.DJLKSCJ as djlkscj,s.PSCJ as pscj,s.FSLKSCJ as fslksch,s.JD as jd " +
-                    "FROM t_xscjxx s LEFT JOIN t_course c ON s.KCH = c.COURSE_NUMBER WHERE 1 = 1 AND XH = :jobNumber");
+            StringBuilder scoresql = new StringBuilder("SELECT s.KCH as kch,c.COURSE_NAME as cName,s.JSXM as teacher, c.CREDIT as kxf,s.XKSX as kclx,s.DJLKSCJ as djlkscj, max(s.PSCJ) as pscj,s.FSLKSCJ as fslksch,s.JD as jd " +
+                    "FROM t_xscjxx s LEFT JOIN t_course c ON s.KCH = c.COURSE_NUMBER WHERE 1 = 1 AND XH = :jobNumber GROUP BY s.KCH");
             Query scoresq = em.createNativeQuery(scoresql.toString());
             scoresq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             scoresq.setParameter("jobNumber", jobNumber);
