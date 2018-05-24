@@ -202,7 +202,7 @@ public class StudentRegisterJob {
                                     warnMap.put(alertInfor.getJobNumber(),
                                             alertInfor);
 
-                                    break;
+//                                    break;
                                 } else {
                                     continue;
                                 }

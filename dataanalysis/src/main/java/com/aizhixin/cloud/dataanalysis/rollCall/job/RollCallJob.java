@@ -300,7 +300,7 @@ public class RollCallJob {
                                 alertInfor);
 
 
-                        break;
+//                        break;
                     } else {
                         continue;
                     }
