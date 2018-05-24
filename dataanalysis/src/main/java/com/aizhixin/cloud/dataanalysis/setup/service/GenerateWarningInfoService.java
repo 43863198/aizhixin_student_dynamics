@@ -484,6 +484,7 @@ public class GenerateWarningInfoService {
                 }
             }
         }
+        warningInformationService.deleteWarningInformation(orgId,type,schoolYear,semester);
         warningInformationService.save(resList);
     }
 
