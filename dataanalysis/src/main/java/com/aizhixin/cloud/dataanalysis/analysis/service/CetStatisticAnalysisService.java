@@ -19,6 +19,10 @@ import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 
 import com.mongodb.BasicDBObject;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,16 +33,28 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author: Created by jianwei.wu
@@ -1484,7 +1500,7 @@ public class CetStatisticAnalysisService {
             totalInfoDomain.setMapSex(sexTotal(orgId,collegeCode,professionCode,classCode,cetType));
             totalInfoDomain.setAgeSexStatisticalInfoDomains(ageTotal(orgId,collegeCode,professionCode,classCode,cetType));
             totalInfoDomain.setNjStatisticalInfoDomains(njTotal(orgId,collegeCode,professionCode,classCode,cetType));
-            totalInfoDomain.setScoreScaleDomains(scoreScaleTotal(orgId,collegeCode,professionCode,classCode,cetType));
+            totalInfoDomain.setScoreScaleDomains(scoreScaleTotal(orgId, collegeCode, professionCode, classCode, cetType));
 //            sd.setTotalInfoDomain(totalInfoDomain);
 //            AvgInfoDomain avgInfoDomain=new AvgInfoDomain();
 //            avgInfoDomain.setAvgDomains(avgInfo(orgId,collegeCode,professionCode,classCode,cetType));
@@ -1741,7 +1757,7 @@ public class CetStatisticAnalysisService {
 
     public List<AvgDomain> avgInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
     List<AvgDomain> avgDomainList=new ArrayList<>();
-    List<AvgDomain> avgDomains=cetAvgStatisticalJdbc.avgInfo(orgId,collegeCode,professionCode,classCode,cetType);
+    List<AvgDomain> avgDomains=cetAvgStatisticalJdbc.avgInfo(orgId, collegeCode, professionCode, classCode, cetType);
     if (null!=avgDomains&&0<avgDomains.size()){
         avgDomainList.addAll(avgDomains);
     }
@@ -1760,7 +1776,7 @@ public class CetStatisticAnalysisService {
 //年龄
     public List<AvgAgeDomain> avgAvgInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
         List<AvgAgeDomain> avgDomainList=new ArrayList<>();
-        List<AvgAgeDomain> avgDomains=cetAvgStatisticalJdbc.avgAgeInfo(orgId,collegeCode,professionCode,classCode,cetType);
+        List<AvgAgeDomain> avgDomains=cetAvgStatisticalJdbc.avgAgeInfo(orgId, collegeCode, professionCode, classCode, cetType);
         if (null!=avgDomains&&0<avgDomains.size()){
             avgDomainList.addAll(avgDomains);
         }
@@ -1769,11 +1785,110 @@ public class CetStatisticAnalysisService {
 //年级
 public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
     List<AvgNjDomain> avgDomainList=new ArrayList<>();
-    List<AvgNjDomain> avgDomains=cetAvgStatisticalJdbc.avgNjInfo(orgId,collegeCode,professionCode,classCode,cetType);
+    List<AvgNjDomain> avgDomains=cetAvgStatisticalJdbc.avgNjInfo(orgId, collegeCode, professionCode, classCode, cetType);
     if (null!=avgDomains&&0<avgDomains.size()){
         avgDomainList.addAll(avgDomains);
     }
     return avgDomainList;
 }
+
+
+    public ResponseEntity<byte[]> cetSingleStatisticsExport(Long orgId, Long semesterId) {
+
+
+        ByteArrayOutputStream os = null;
+        FileOutputStream fos = null;
+        try {
+            List<SingleStatisticsCollegeVO> collegeList = new ArrayList<>();
+            List<SingleStatisticsMajorVO>  majorList = new ArrayList<>();
+            List<SingleStatisticsClassVO> classList = new ArrayList<>();
+            List<SingleStatisticsGradeVO> gradeList = new ArrayList<>();
+            InputStream resourceAsStream = this.getClass().getResourceAsStream("/template/departmentStatisticsExportExcel.xlsx");
+
+
+
+            XSSFWorkbook wb = new XSSFWorkbook(resourceAsStream);
+            cetSingleStatisticsExcel(wb, collegeList, majorList, classList, gradeList);
+            // 输出转输入
+            os = new ByteArrayOutputStream();
+            wb.write(os);
+            byte[] brollcall = os.toByteArray();
+            String fileName = "按院系统计教务数据.xlsx";
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .header("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "utf-8")).body(brollcall);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new byte[]{});
+        } finally {
+            try {
+                if (fos != null) {
+                    fos.close();
+                }
+                if (os != null) {
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void cetSingleStatisticsExcel(XSSFWorkbook wb, List<SingleStatisticsCollegeVO> collegeList,List<SingleStatisticsMajorVO>  majorList,List<SingleStatisticsClassVO> classList,List<SingleStatisticsGradeVO> gradeList) {
+        XSSFSheet sheet = wb.getSheet("学院");
+        // 遍历集合数据，产生数据行
+        Iterator<SingleStatisticsCollegeVO> it = collegeList.iterator();
+        int index = 0;
+        XSSFRow rowTemp = sheet.getRow(1);
+        while (it.hasNext()) {
+            index++;
+            XSSFRow row = sheet.createRow(index);
+            SingleStatisticsCollegeVO t = (SingleStatisticsCollegeVO) it.next();
+            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
+            Field[] fields = t.getClass().getDeclaredFields();
+            for (short i = 0; i < fields.length; i++) {
+                XSSFCell cell = row.createCell(i);
+                Field field = fields[i];
+                String fieldName = field.getName();
+                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+                try {
+                    Class tCls = t.getClass();
+                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
+                    Object value = getMethod.invoke(t, new Object[]{});
+
+                    // 判断值的类型后进行强制类型转换
+                    String textValue = value == null ? "" : value.toString();
+
+                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
+                    if (textValue != null) {
+                        Pattern p = Pattern.compile("^//d+(//.//d+)?$");
+                        Matcher matcher = p.matcher(textValue);
+                        if (matcher.matches()) {
+                            // 是数字当作double处理
+                            cell.setCellValue(Double.parseDouble(textValue));
+                        } else {
+                            cell.setCellValue(textValue);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    // 清理资源
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+    }
+
+
+
+
+
 
 }

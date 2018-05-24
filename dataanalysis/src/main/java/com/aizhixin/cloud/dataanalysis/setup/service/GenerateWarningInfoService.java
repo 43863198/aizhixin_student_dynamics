@@ -129,7 +129,7 @@ public class GenerateWarningInfoService {
                 }
                 Set<String> studentJobNumberSet = new HashSet<>();
                 if (as.getRelationship().equals("与")) {
-                    if (null != registerList) {
+                    if (null != registerList&&registerList.size()>0) {
                         if (studentJobNumberSet.isEmpty()) {
                             for (WarningInformation wi : registerList) {
                                 wi.setAlarmSettingsId(as.getId());
@@ -154,7 +154,7 @@ public class GenerateWarningInfoService {
                             gradeList = addList;
                         }
                     }
-                    if (null != absenteeismList) {
+                    if (null != absenteeismList&&absenteeismList.size()>0) {
                         if (studentJobNumberSet.isEmpty()) {
                             for (WarningInformation wi : absenteeismList) {
                                 wi.setAlarmSettingsId(as.getId());
@@ -179,7 +179,7 @@ public class GenerateWarningInfoService {
                             gradeList = addList;
                         }
                     }
-                    if (null != performanceFluctuationList) {
+                    if (null != performanceFluctuationList&&performanceFluctuationList.size()>0) {
                         if (studentJobNumberSet.isEmpty()) {
                             for (WarningInformation wi : performanceFluctuationList) {
                                 wi.setAlarmSettingsId(as.getId());
@@ -204,7 +204,7 @@ public class GenerateWarningInfoService {
                             gradeList = addList;
                         }
                     }
-                    if (null != supplementAchievementList) {
+                    if (null != supplementAchievementList&&supplementAchievementList.size()>0) {
                         if (studentJobNumberSet.isEmpty()) {
                             for (WarningInformation wi : supplementAchievementList) {
                                 wi.setAlarmSettingsId(as.getId());
@@ -229,7 +229,7 @@ public class GenerateWarningInfoService {
                             gradeList = addList;
                         }
                     }
-                    if (null != totalAchievementList) {
+                    if (null != totalAchievementList&&totalAchievementList.size()>0) {
                         if (studentJobNumberSet.isEmpty()) {
                             for (WarningInformation wi : totalAchievementList) {
                                 wi.setAlarmSettingsId(as.getId());
@@ -254,7 +254,7 @@ public class GenerateWarningInfoService {
                             gradeList = addList;
                         }
                     }
-                    if (null != leaveSchoolList) {
+                    if (null != leaveSchoolList&&leaveSchoolList.size()>0) {
                         if (studentJobNumberSet.isEmpty()) {
                             for (WarningInformation wi : leaveSchoolList) {
                                 wi.setAlarmSettingsId(as.getId());
@@ -279,7 +279,7 @@ public class GenerateWarningInfoService {
                             gradeList = addList;
                         }
                     }
-                    if (null != cetList) {
+                    if (null != cetList&&cetList.size()>0) {
                         if (studentJobNumberSet.isEmpty()) {
                             for (WarningInformation wi : cetList) {
                                 wi.setAlarmSettingsId(as.getId());
@@ -305,7 +305,7 @@ public class GenerateWarningInfoService {
                         }
                     }
 
-                    if (null != attendAbnormalList) {
+                    if (null != attendAbnormalList&&attendAbnormalList.size()>0) {
                         if (studentJobNumberSet.isEmpty()) {
                             for (WarningInformation wi : attendAbnormalList) {
                                 wi.setAlarmSettingsId(as.getId());
@@ -331,7 +331,8 @@ public class GenerateWarningInfoService {
                         }
                     }
                 } else {
-                    if (null != registerList) {
+                    if (null != registerList&&registerList.size()>0) {
+                        List<WarningInformation> tmpList = new ArrayList<>();
                         for (WarningInformation gwi : gradeList) {
                             gwi.setAlarmSettingsId(as.getId());
                             gwi.setWarningLevel(as.getWarningLevel());
@@ -339,13 +340,15 @@ public class GenerateWarningInfoService {
                                 if (gwi.getJobNumber().equals(wi.getJobNumber())) {
                                     gwi.setWarningCondition(gwi.getWarningCondition() + "或" + wi.getWarningCondition());
                                     gwi.setWarningSource(gwi.getWarningSource() + ";" + wi.getWarningSource());
-                                    registerList.remove(wi);
+                                }else {
+                                    tmpList.add(wi);
                                 }
                             }
                         }
-                        gradeList.addAll(registerList);
+                        gradeList.addAll(tmpList);
                     }
-                    if (null != absenteeismList) {
+                    if (null != absenteeismList&&absenteeismList.size()>0) {
+                        List<WarningInformation> tmpList = new ArrayList<>();
                         for (WarningInformation gwi : gradeList) {
                             gwi.setAlarmSettingsId(as.getId());
                             gwi.setWarningLevel(as.getWarningLevel());
@@ -353,14 +356,16 @@ public class GenerateWarningInfoService {
                                 if (gwi.getJobNumber().equals(wi.getJobNumber())) {
                                     gwi.setWarningCondition(gwi.getWarningCondition() + "或" + wi.getWarningCondition());
                                     gwi.setWarningSource(gwi.getWarningSource() + ";" + wi.getWarningSource());
-                                    absenteeismList.remove(wi);
+                                }else {
+                                    tmpList.add(wi);
                                 }
                             }
                         }
-                        gradeList.addAll(absenteeismList);
+                        gradeList.addAll(tmpList);
 
                     }
-                    if (null != performanceFluctuationList) {
+                    if (null != performanceFluctuationList&&performanceFluctuationList.size()>0) {
+                        List<WarningInformation> tmpList = new ArrayList<>();
                         for (WarningInformation gwi : gradeList) {
                             gwi.setAlarmSettingsId(as.getId());
                             gwi.setWarningLevel(as.getWarningLevel());
@@ -368,28 +373,32 @@ public class GenerateWarningInfoService {
                                 if (gwi.getJobNumber().equals(wi.getJobNumber())) {
                                     gwi.setWarningCondition(gwi.getWarningCondition() + "或" + wi.getWarningCondition());
                                     gwi.setWarningSource(gwi.getWarningSource() + ";" + wi.getWarningSource());
-                                    performanceFluctuationList.remove(wi);
+                                }else {
+                                    tmpList.add(wi);
                                 }
                             }
                         }
-                        gradeList.addAll(performanceFluctuationList);
+                        gradeList.addAll(tmpList);
 
                     }
-                    if (null != supplementAchievementList) {
+                    if (null != supplementAchievementList&&supplementAchievementList.size()>0) {
+                        List<WarningInformation> tmpList = new ArrayList<>();
                         for (WarningInformation gwi : gradeList) {
                             for (WarningInformation wi : supplementAchievementList) {
                                 if (gwi.getJobNumber().equals(wi.getJobNumber())) {
                                     gwi.setAlarmSettingsId(as.getId());
                                     gwi.setWarningCondition(gwi.getWarningCondition() + "或" + wi.getWarningCondition());
                                     gwi.setWarningSource(gwi.getWarningSource() + ";" + wi.getWarningSource());
-                                    supplementAchievementList.remove(wi);
+                                }else {
+                                    tmpList.add(wi);
                                 }
                             }
                         }
-                        gradeList.addAll(supplementAchievementList);
+                        gradeList.addAll(tmpList);
 
                     }
-                    if (null != totalAchievementList) {
+                    if (null != totalAchievementList&&totalAchievementList.size()>0) {
+                        List<WarningInformation> tmpList = new ArrayList<>();
                         for (WarningInformation gwi : gradeList) {
                             gwi.setAlarmSettingsId(as.getId());
                             gwi.setWarningLevel(as.getWarningLevel());
@@ -397,14 +406,16 @@ public class GenerateWarningInfoService {
                                 if (gwi.getJobNumber().equals(wi.getJobNumber())) {
                                     gwi.setWarningCondition(gwi.getWarningCondition() + "或" + wi.getWarningCondition());
                                     gwi.setWarningSource(gwi.getWarningSource() + ";" + wi.getWarningSource());
-                                    totalAchievementList.remove(wi);
+                                }else {
+                                    tmpList.add(wi);
                                 }
                             }
                         }
-                        gradeList.addAll(totalAchievementList);
+                        gradeList.addAll(tmpList);
 
                     }
-                    if (null != leaveSchoolList) {
+                    if (null != leaveSchoolList && leaveSchoolList.size()>0) {
+                        List<WarningInformation> tmpList = new ArrayList<>();
                         for (WarningInformation gwi : gradeList) {
                             gwi.setAlarmSettingsId(as.getId());
                             gwi.setWarningLevel(as.getWarningLevel());
@@ -412,14 +423,16 @@ public class GenerateWarningInfoService {
                                 if (gwi.getJobNumber().equals(wi.getJobNumber())) {
                                     gwi.setWarningCondition(gwi.getWarningCondition() + "或" + wi.getWarningCondition());
                                     gwi.setWarningSource(gwi.getWarningSource() + ";" + wi.getWarningSource());
-                                    leaveSchoolList.remove(wi);
+                                }else {
+                                    tmpList.add(wi);
                                 }
                             }
                         }
-                        gradeList.addAll(leaveSchoolList);
+                        gradeList.addAll(tmpList);
 
                     }
-                    if (null != cetList) {
+                    if (null != cetList&&cetList.size()>0) {
+                        List<WarningInformation> tmpList = new ArrayList<>();
                         for (WarningInformation gwi : gradeList) {
                             gwi.setAlarmSettingsId(as.getId());
                             gwi.setWarningLevel(as.getWarningLevel());
@@ -427,13 +440,15 @@ public class GenerateWarningInfoService {
                                 if (gwi.getJobNumber().equals(wi.getJobNumber())) {
                                     gwi.setWarningCondition(gwi.getWarningCondition() + "或" + wi.getWarningCondition());
                                     gwi.setWarningSource(gwi.getWarningSource() + ";" + wi.getWarningSource());
-                                    cetList.remove(wi);
+                                }else {
+                                    tmpList.add(wi);
                                 }
                             }
                         }
-                        gradeList.addAll(cetList);
+                        gradeList.addAll(tmpList);
                     }
-                    if (null != attendAbnormalList) {
+                    if (null != attendAbnormalList&&attendAbnormalList.size()>0) {
+                        List<WarningInformation> tmpList = new ArrayList<>();
                         for (WarningInformation gwi : gradeList) {
                             gwi.setAlarmSettingsId(as.getId());
                             gwi.setWarningLevel(as.getWarningLevel());
@@ -441,11 +456,12 @@ public class GenerateWarningInfoService {
                                 if (gwi.getJobNumber().equals(wi.getJobNumber())) {
                                     gwi.setWarningCondition(gwi.getWarningCondition() + "或" + wi.getWarningCondition());
                                     gwi.setWarningSource(gwi.getWarningSource() + ";" + wi.getWarningSource());
-                                    cetList.remove(wi);
+                                }else {
+                                    tmpList.add(wi);
                                 }
                             }
                         }
-                        gradeList.addAll(attendAbnormalList);
+                        gradeList.addAll(tmpList);
                     }
 
                 }

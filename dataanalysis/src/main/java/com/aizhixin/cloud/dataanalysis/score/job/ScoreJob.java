@@ -510,7 +510,7 @@ public class ScoreJob {
 										alertInforList.add(alertInfor);
 										warnMap.put(scoreFluctuateCount
 												.getJobNum(), alertInfor);
-										break;
+//										break;
 									} else {
 										continue;
 									}
@@ -834,7 +834,7 @@ public class ScoreJob {
 										alertInforList.add(alertInfor);
 										warnMap.put(totalScoreCount
 												.getJobNum(), alertInfor);
-										break;
+//										break;
 									} else {
 										continue;
 									}
@@ -1102,7 +1102,7 @@ public class ScoreJob {
 
 										warnMap.put(totalScoreCount
 												.getJobNum(),alertInfor);
-										break;
+//										break;
 									} else {
 										continue;
 									}
@@ -1364,7 +1364,7 @@ public class ScoreJob {
 				// 按orgId查询未报到的学生信息
 				List<MakeUpScoreCount> makeUpScoreCountList = makeUpScoreCountMongoRespository
 						.findAllByOrgId(orgId);
-		RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
+		        RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
 				if (null != makeUpScoreCountList
 						&& makeUpScoreCountList.size() > 0) {
 					for (MakeUpScoreCount makeUpScoreCount : makeUpScoreCountList) {
@@ -1421,7 +1421,7 @@ public class ScoreJob {
 											alertInfor.setWarningSource(makeUpScoreCount.getDataSource().substring(0, makeUpScoreCount.getDataSource().length() - 1));
 										}
 
-										break;
+//										break;
 									} else {
 										continue;
 									}
@@ -1610,7 +1610,7 @@ public class ScoreJob {
 										alertInfor.setOrgId(ruleParameter.getOrgId());
 										alertInforList.add(alertInfor);
 
-										break;
+//										break;
 									} else {
 										continue;
 									}
@@ -1792,7 +1792,7 @@ public class ScoreJob {
 											alertInfor.setWarningSource(makeUpScoreCount.getDataSource().substring(0, makeUpScoreCount.getDataSource().length() - 1));
 										}
 
-										break;
+//										break;
 									} else {
 										continue;
 									}
