@@ -1793,9 +1793,7 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
 }
 
 
-    public ResponseEntity<byte[]> cetSingleStatisticsExport(Long orgId, Long semesterId) {
-
-
+    public ResponseEntity<byte[]> cetSingleStatisticsExport(Long orgId,String teacherYear, String semester) {
         ByteArrayOutputStream os = null;
         FileOutputStream fos = null;
         try {
