@@ -458,7 +458,7 @@ public class CetStatisticAnalysisController {
      * @param semester
      * @return
      */
-    @GetMapping(value = "/singlexport", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/currentexport", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "英语四六级当前状况统计导出", response = Void.class, notes = "英语四六级当前状况统计导出<br><br><b>@author jianwei.wu</b>")
     public ResponseEntity<byte[]> cetCurrentStatisticsExport(
             @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
