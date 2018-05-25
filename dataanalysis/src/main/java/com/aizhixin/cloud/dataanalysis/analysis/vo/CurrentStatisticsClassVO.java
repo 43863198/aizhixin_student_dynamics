@@ -16,4 +16,5 @@ public class CurrentStatisticsClassVO {
     private int passNumber;
     private String rate;
     private String avg;
+    private String max;
 }

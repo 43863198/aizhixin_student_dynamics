@@ -1809,10 +1809,10 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     type = "大学英语六级考试";
                 }
             }
-            InputStream resourceAsStream = this.getClass().getResourceAsStream("/template/departmentStatisticsExportExcel.xlsx");
+            InputStream resourceAsStream = this.getClass().getResourceAsStream("/template/singleStatistics.xlsx");
             StringBuilder  dql = new StringBuilder("SELECT d.COMPANY_NAME as name, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1");
             dql.append(" AND ss.STATISTICS_TYPE = '001'");
-            dql.append(" AND ss.SCORE_TYPE = "+type);
+            dql.append(" AND ss.SCORE_TYPE = '"+type+"'");
             dql.append(" and ss.PARENT_CODE = " + orgId);
             dql.append(" and ss.ORG_ID = " + orgId);
             dql.append(" AND d.COMPANY_NAME IS NOT NULL");
@@ -1832,6 +1832,9 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     if (null != d.get("pass")) {
                         collegeVO.setPassNumber(Integer.valueOf(d.get("pass").toString()));
                     }
+                    if(collegeVO.getJoinNumber()>0){
+                        collegeVO.setRate(new DecimalFormat("0.00").format((double) collegeVO.getPassNumber() * 100 / collegeVO.getJoinNumber()));
+                    }
                     if (null != d.get("avg")) {
                         collegeVO.setAvg(Math.round(Float.valueOf(d.get("avg").toString())) + "");
                     }
@@ -1843,7 +1846,7 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             }
             StringBuilder  pql = new StringBuilder("SELECT d.COMPANY_NAME as dname, p.NAME as pname, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_profession p ON ss.CODE = p.CODE LEFT JOIN t_department d ON ss.PARENT_CODE = d.COMPANY_NUMBER WHERE 1=1");
             pql.append(" AND ss.STATISTICS_TYPE = '002'");
-            pql.append(" AND ss.SCORE_TYPE = "+type);
+            pql.append(" AND ss.SCORE_TYPE = '"+type+"'");
             pql.append(" and ss.ORG_ID = " + orgId);
             pql.append(" AND p.NAME IS NOT NULL");
             Query pq = em.createNativeQuery(pql.toString());
@@ -1865,6 +1868,9 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     if (null != d.get("pass")) {
                         majorVO.setPassNumber(Integer.valueOf(d.get("pass").toString()));
                     }
+                    if(majorVO.getJoinNumber()>0){
+                        majorVO.setRate(new DecimalFormat("0.00").format((double) majorVO.getPassNumber() * 100 / majorVO.getJoinNumber()));
+                    }
                     if (null != d.get("avg")) {
                         majorVO.setAvg(Math.round(Float.valueOf(d.get("avg").toString())) + "");
                     }
@@ -1876,7 +1882,7 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             }
             StringBuilder  cql = new StringBuilder("SELECT d.COMPANY_NAME as dname, p.NAME as pname, ss.CLASS_NAME as cname, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_profession p ON ss.PARENT_CODE = p.CODE LEFT JOIN t_department d ON p.COMPANY_NUMBER = d.COMPANY_NUMBER WHERE 1=1");
             cql.append(" AND ss.STATISTICS_TYPE = '003'");
-            cql.append(" AND ss.SCORE_TYPE = "+type);
+            cql.append(" AND ss.SCORE_TYPE = '"+type+"'");
             cql.append(" and ss.ORG_ID = " + orgId);
             cql.append(" AND d.COMPANY_NAME IS NOT NULL");
             Query cq = em.createNativeQuery(cql.toString());
@@ -1901,6 +1907,9 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     if (null != d.get("pass")) {
                         classVO.setPassNumber(Integer.valueOf(d.get("pass").toString()));
                     }
+                    if(classVO.getJoinNumber()>0){
+                        classVO.setRate(new DecimalFormat("0.00").format((double) classVO.getPassNumber() * 100 / classVO.getJoinNumber()));
+                    }
                     if (null != d.get("avg")) {
                         classVO.setAvg(Math.round(Float.valueOf(d.get("avg").toString())) + "");
                     }
@@ -1910,9 +1919,9 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     classList.add(classVO);
                 }
             }
-            StringBuilder  gql = new StringBuilder("SELECT d.COMPANY_NAME as dname, ss.NAME_CODE as grade, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1");
+            StringBuilder  gql = new StringBuilder("SELECT d.COMPANY_NAME as dname, ss.NAME_CODE as grade, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1");
             gql.append(" AND ss.STATISTICS_TYPE = '021'");
-            gql.append(" AND ss.SCORE_TYPE = "+type);
+            gql.append(" AND ss.SCORE_TYPE = '"+type+"'");
             gql.append(" and ss.PARENT_CODE = " + orgId);
             gql.append(" AND ss.NAME_CODE IS NOT NULL");
             gql.append(" order by grade ASC");
@@ -1935,6 +1944,9 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     if (null != d.get("pass")) {
                         gradeVO.setPassNumber(Integer.valueOf(d.get("pass").toString()));
                     }
+                    if(gradeVO.getJoinNumber()>0){
+                        gradeVO.setRate(new DecimalFormat("0.00").format((double) gradeVO.getPassNumber() * 100 / gradeVO.getJoinNumber()));
+                    }
                     if (null != d.get("avg")) {
                         gradeVO.setAvg(Math.round(Float.valueOf(d.get("avg").toString())) + "");
                     }
@@ -1950,10 +1962,11 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             os = new ByteArrayOutputStream();
             wb.write(os);
             byte[] brollcall = os.toByteArray();
-            String fileName = "四六级单次考试导出模板.xlsx";
+            String fileName = cetType+"级单次考试导出模板.xlsx";
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .header("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "utf-8")).body(brollcall);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new byte[]{});
         } finally {
             try {
@@ -2149,7 +2162,7 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             List<CurrentStatisticsMajorVO>  majorList = new ArrayList<>();
             List<CurrentStatisticsClassVO> classList = new ArrayList<>();
             List<CurrentStatisticsGradeVO> gradeList = new ArrayList<>();
-            InputStream resourceAsStream = this.getClass().getResourceAsStream("/template/departmentStatisticsExportExcel.xlsx");
+            InputStream resourceAsStream = this.getClass().getResourceAsStream("/template/currentStatistics.xlsx");
             String type = "";
             if(cetType.equals("四级")){
                 type = "大学英语四级考试";
@@ -2158,9 +2171,9 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     type = "大学英语六级考试";
                 }
             }
-            StringBuilder  dql = new StringBuilder("SELECT x.YXSMC as college, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>425,1,0)) as pass, AVG(cs.SCORE) as avg");
-            dql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, TYPE, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = "+type+" GROUP BY JOB_NUMBER,TYPE");
-            dql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY AND (cs.TYPE = '大学英语四级考试' OR cs.TYPE = '大学英语六级考试')");
+            StringBuilder  dql = new StringBuilder("SELECT x.YXSMC as college, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>425,1,0)) as pass, AVG(cs.SCORE) as avg, MAX(cs.SCORE) as max");
+            dql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, TYPE, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER,TYPE");
+            dql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY ");
             dql.append(" and x.XXID = " + orgId);
             dql.append(" GROUP BY cs.TYPE, x.YXSH");
             Query dq = em.createNativeQuery(dql.toString());
@@ -2179,53 +2192,31 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     if (null != d.get("pass")) {
                         collegeVO.setPassNumber(Integer.valueOf(d.get("pass").toString()));
                     }
+                    if(collegeVO.getJoinNumber()>0){
+                        collegeVO.setRate(new DecimalFormat("0.00").format((double) collegeVO.getPassNumber() * 100 / collegeVO.getJoinNumber()));
+                    }
                     if (null != d.get("avg")) {
                         collegeVO.setAvg(Math.round(Float.valueOf(d.get("avg").toString())) + "");
+                    }
+                    if (null != d.get("max")) {
+                        collegeVO.setMax(Math.round(Float.valueOf(d.get("max").toString())) + "");
                     }
                     collegeList.add(collegeVO);
                 }
             }
 
-//            StringBuilder  dql = new StringBuilder("SELECT x.YXSMC as college, x. SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>425,1,0)) as pass, AVG(cs.SCORE) as avg ");
-//            dql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, TYPE, MAX(SCORE) as SCORE FROM t_cet_score WHERE (TYPE = '大学英语四级考试' OR TYPE = '大学英语六级考试') GROUP BY JOB_NUMBER,TYPE");
-//            dql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY AND (cs.TYPE = '大学英语四级考试' OR cs.TYPE = '大学英语六级考试')");
-//            dql.append(" and x.XXID = " + orgId);
-//            dql.append(" GROUP BY cs.TYPE, x.YXSH");
-//            Query dq = em.createNativeQuery(dql.toString());
-//            dq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-//            List<Object> dres = dq.getResultList();
-//            if (null != dres) {
-//                for(Object obj: dres) {
-//                    Map d = (Map) obj;
-//                    CurrentStatisticsMajorVO majorVO = new CurrentStatisticsMajorVO();
-//                    if (null != d.get("college")) {
-//                        majorVO.setCollegeName(d.get("college").toString());
-//                    }
-//                    if (null != d.get("cj")) {
-//                        collegeVO.setJoinNumber(Integer.valueOf(d.get("cj").toString()));
-//                    }
-//                    if (null != d.get("pass")) {
-//                        collegeVO.setPassNumber(Integer.valueOf(d.get("pass").toString()));
-//                    }
-//                    if (null != d.get("avg")) {
-//                        collegeVO.setAvg(Math.round(Float.valueOf(d.get("avg").toString())) + "");
-//                    }
-//                    collegeList.add(collegeVO);
-//                }
-//            }
-
-
-            StringBuilder  pql = new StringBuilder("SELECT d.COMPANY_NAME as dname, p.NAME as pname, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_profession p ON ss.CODE = p.CODE LEFT JOIN t_department d ON ss.PARENT_CODE = d.COMPANY_NUMBER WHERE 1=1");
-            pql.append(" AND ss.STATISTICS_TYPE = '002'");
-            pql.append(" and ss.ORG_ID = " + orgId);
-            pql.append(" AND p.NAME IS NOT NULL");
+            StringBuilder  pql = new StringBuilder("SELECT x.YXSMC as dname, x.ZYMC as pname, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>425,1,0)) as pass, AVG(cs.SCORE) as avg ");
+            pql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, TYPE, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER,TYPE");
+            pql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY");
+            pql.append(" and x.XXID = " + orgId);
+            pql.append(" GROUP BY cs.TYPE, x.ZYH");
             Query pq = em.createNativeQuery(pql.toString());
             pq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             List<Object> pres = pq.getResultList();
             if (null != pres) {
                 for(Object obj: pres) {
                     Map d = (Map) obj;
-                    SingleStatisticsMajorVO majorVO = new SingleStatisticsMajorVO();
+                    CurrentStatisticsMajorVO majorVO = new CurrentStatisticsMajorVO();
                     if (null != d.get("dname")) {
                         majorVO.setCollegeName(d.get("dname").toString());
                     }
@@ -2238,26 +2229,31 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     if (null != d.get("pass")) {
                         majorVO.setPassNumber(Integer.valueOf(d.get("pass").toString()));
                     }
+                    if(majorVO.getJoinNumber()>0){
+                        majorVO.setRate(new DecimalFormat("0.00").format((double) majorVO.getPassNumber() * 100 / majorVO.getJoinNumber()));
+                    }
                     if (null != d.get("avg")) {
                         majorVO.setAvg(Math.round(Float.valueOf(d.get("avg").toString())) + "");
                     }
                     if (null != d.get("max")) {
                         majorVO.setMax(Math.round(Float.valueOf(d.get("max").toString())) + "");
                     }
-//                    majorList.add(majorVO);
+                    majorList.add(majorVO);
                 }
             }
-            StringBuilder  cql = new StringBuilder("SELECT d.COMPANY_NAME as dname, p.NAME as pname, ss.CLASS_NAME as cname, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_profession p ON ss.PARENT_CODE = p.CODE LEFT JOIN t_department d ON p.COMPANY_NUMBER = d.COMPANY_NUMBER WHERE 1=1");
-            pql.append(" AND ss.STATISTICS_TYPE = '003'");
-            pql.append(" and ss.ORG_ID = " + orgId);
-            cql.append(" AND d.COMPANY_NAME IS NOT NULL");
+
+            StringBuilder  cql = new StringBuilder("SELECT x.YXSMC as dname, x.ZYMC as pname, x.BJMC as cname, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>425,1,0)) as pass, AVG(cs.SCORE) as avg ");
+            cql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, TYPE, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER,TYPE");
+            cql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY");
+            cql.append(" and x.XXID = " + orgId);
+            cql.append(" GROUP BY cs.TYPE, x.BJMC");
             Query cq = em.createNativeQuery(cql.toString());
             cq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             List<Object> cres = cq.getResultList();
             if (null != cres) {
                 for(Object obj: cres) {
                     Map d = (Map) obj;
-                    SingleStatisticsClassVO classVO = new SingleStatisticsClassVO();
+                    CurrentStatisticsClassVO classVO = new CurrentStatisticsClassVO();
                     if (null != d.get("dname")) {
                         classVO.setCollegeName(d.get("dname").toString());
                     }
@@ -2273,32 +2269,36 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     if (null != d.get("pass")) {
                         classVO.setPassNumber(Integer.valueOf(d.get("pass").toString()));
                     }
+                    if(classVO.getJoinNumber()>0){
+                        classVO.setRate(new DecimalFormat("0.00").format((double) classVO.getPassNumber() * 100 / classVO.getJoinNumber()));
+                    }
                     if (null != d.get("avg")) {
                         classVO.setAvg(Math.round(Float.valueOf(d.get("avg").toString())) + "");
                     }
                     if (null != d.get("max")) {
                         classVO.setMax(Math.round(Float.valueOf(d.get("max").toString())) + "");
                     }
-//                    classList.add(classVO);
+                    classList.add(classVO);
                 }
             }
-            StringBuilder  gql = new StringBuilder("SELECT d.COMPANY_NAME as dname, ss.NAME_CODE as grade, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1");
-            gql.append(" AND ss.STATISTICS_TYPE = '021'");
-            gql.append(" and ss.PARENT_CODE = " + orgId);
-            gql.append(" AND ss.NAME_CODE IS NOT NULL");
-            gql.append(" order by grade ASC");
+
+            StringBuilder  gql = new StringBuilder("SELECT x.YXSMC as dname, x.NJ as nj, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>425,1,0)) as pass, AVG(cs.SCORE) as avg ");
+            gql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, TYPE, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER,TYPE");
+            gql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY");
+            gql.append(" and x.XXID = " + orgId);
+            gql.append(" GROUP BY cs.TYPE, x.BJMC");
             Query gq = em.createNativeQuery(gql.toString());
             gq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-            List<Object> gres = cq.getResultList();
+            List<Object> gres = gq.getResultList();
             if (null != gres) {
                 for(Object obj: gres) {
                     Map d = (Map) obj;
-                    SingleStatisticsGradeVO gradeVO = new SingleStatisticsGradeVO();
+                    CurrentStatisticsGradeVO gradeVO = new CurrentStatisticsGradeVO();
                     if (null != d.get("dname")) {
                         gradeVO.setCollegeName(d.get("dname").toString());
                     }
-                    if (null != d.get("grade")) {
-                        gradeVO.setGradeName(d.get("grade").toString());
+                    if (null != d.get("nj")) {
+                        gradeVO.setGradeName(d.get("nj").toString());
                     }
                     if (null != d.get("cj")) {
                         gradeVO.setJoinNumber(Integer.valueOf(d.get("cj").toString()));
@@ -2306,25 +2306,30 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     if (null != d.get("pass")) {
                         gradeVO.setPassNumber(Integer.valueOf(d.get("pass").toString()));
                     }
+                    if(gradeVO.getJoinNumber()>0){
+                        gradeVO.setRate(new DecimalFormat("0.00").format((double) gradeVO.getPassNumber() * 100 / gradeVO.getJoinNumber()));
+                    }
                     if (null != d.get("avg")) {
                         gradeVO.setAvg(Math.round(Float.valueOf(d.get("avg").toString())) + "");
                     }
                     if (null != d.get("max")) {
                         gradeVO.setMax(Math.round(Float.valueOf(d.get("max").toString())) + "");
                     }
-//                    gradeList.add(gradeVO);
+                    gradeList.add(gradeVO);
                 }
             }
+
             XSSFWorkbook wb = new XSSFWorkbook(resourceAsStream);
             cetCurrentStatisticsExcel(wb, collegeList, majorList, classList, gradeList);
             // 输出转输入
             os = new ByteArrayOutputStream();
             wb.write(os);
             byte[] brollcall = os.toByteArray();
-            String fileName = "四六级单次考试导出模板.xlsx";
+            String fileName = cetType+"级单次考试导出模板.xlsx";
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .header("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "utf-8")).body(brollcall);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new byte[]{});
         } finally {
             try {
@@ -2346,168 +2351,168 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
         XSSFSheet sheet3 = wb.getSheet("班级");
         XSSFSheet sheet4 = wb.getSheet("年级");
         // 遍历集合数据，产生数据行
-//        Iterator<SingleStatisticsCollegeVO> d = collegeList.iterator();
-//        Iterator<SingleStatisticsMajorVO> p = majorList.iterator();
-//        Iterator<SingleStatisticsClassVO> c = classList.iterator();
-//        Iterator<SingleStatisticsGradeVO> g = gradeList.iterator();
-//        int dindex = 0;
-//        int pindex = 0;
-//        int cindex = 0;
-//        int gindex = 0;
-//        XSSFRow drowTemp = sheet1.getRow(1);
-//        XSSFRow prowTemp = sheet2.getRow(1);
-//        XSSFRow crowTemp = sheet3.getRow(1);
-//        XSSFRow growTemp = sheet4.getRow(1);
-//        while (d.hasNext()) {
-//            dindex++;
-//            XSSFRow row = sheet1.createRow(dindex);
-//            SingleStatisticsCollegeVO t = (SingleStatisticsCollegeVO) d.next();
-//            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
-//            Field[] fields = t.getClass().getDeclaredFields();
-//            for (short i = 0; i < fields.length; i++) {
-//                XSSFCell cell = row.createCell(i);
-//                Field field = fields[i];
-//                String fieldName = field.getName();
-//                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-//                try {
-//                    Class tCls = t.getClass();
-//                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
-//                    Object value = getMethod.invoke(t, new Object[]{});
-//
-//                    // 判断值的类型后进行强制类型转换
-//                    String textValue = value == null ? "" : value.toString();
-//
-//                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
-//                    if (textValue != null) {
-//                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
-//                        Matcher matcher = pa.matcher(textValue);
-//                        if (matcher.matches()) {
-//                            // 是数字当作double处理
-//                            cell.setCellValue(Double.parseDouble(textValue));
-//                        } else {
-//                            cell.setCellValue(textValue);
-//                        }
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                } finally {
-//                    // 清理资源
-//                }
-//            }
-//        }
-//        while (p.hasNext()) {
-//            pindex++;
-//            XSSFRow row = sheet2.createRow(pindex);
-//            SingleStatisticsMajorVO t = (SingleStatisticsMajorVO) p.next();
-//            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
-//            Field[] fields = t.getClass().getDeclaredFields();
-//            for (short i = 0; i < fields.length; i++) {
-//                XSSFCell cell = row.createCell(i);
-//                Field field = fields[i];
-//                String fieldName = field.getName();
-//                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-//                try {
-//                    Class tCls = t.getClass();
-//                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
-//                    Object value = getMethod.invoke(t, new Object[]{});
-//
-//                    // 判断值的类型后进行强制类型转换
-//                    String textValue = value == null ? "" : value.toString();
-//
-//                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
-//                    if (textValue != null) {
-//                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
-//                        Matcher matcher = pa.matcher(textValue);
-//                        if (matcher.matches()) {
-//                            // 是数字当作double处理
-//                            cell.setCellValue(Double.parseDouble(textValue));
-//                        } else {
-//                            cell.setCellValue(textValue);
-//                        }
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                } finally {
-//                    // 清理资源
-//                }
-//            }
-//        }
-//
-//        while (c.hasNext()) {
-//            cindex++;
-//            XSSFRow row = sheet3.createRow(cindex);
-//            SingleStatisticsClassVO t = (SingleStatisticsClassVO) c.next();
-//            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
-//            Field[] fields = t.getClass().getDeclaredFields();
-//            for (short i = 0; i < fields.length; i++) {
-//                XSSFCell cell = row.createCell(i);
-//                Field field = fields[i];
-//                String fieldName = field.getName();
-//                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-//                try {
-//                    Class tCls = t.getClass();
-//                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
-//                    Object value = getMethod.invoke(t, new Object[]{});
-//
-//                    // 判断值的类型后进行强制类型转换
-//                    String textValue = value == null ? "" : value.toString();
-//
-//                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
-//                    if (textValue != null) {
-//                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
-//                        Matcher matcher = pa.matcher(textValue);
-//                        if (matcher.matches()) {
-//                            // 是数字当作double处理
-//                            cell.setCellValue(Double.parseDouble(textValue));
-//                        } else {
-//                            cell.setCellValue(textValue);
-//                        }
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                } finally {
-//                    // 清理资源
-//                }
-//            }
-//        }
-//
-//        while (g.hasNext()) {
-//            gindex++;
-//            XSSFRow row = sheet4.createRow(gindex);
-//            SingleStatisticsGradeVO t = (SingleStatisticsGradeVO) g.next();
-//            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
-//            Field[] fields = t.getClass().getDeclaredFields();
-//            for (short i = 0; i < fields.length; i++) {
-//                XSSFCell cell = row.createCell(i);
-//                Field field = fields[i];
-//                String fieldName = field.getName();
-//                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-//                try {
-//                    Class tCls = t.getClass();
-//                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
-//                    Object value = getMethod.invoke(t, new Object[]{});
-//
-//                    // 判断值的类型后进行强制类型转换
-//                    String textValue = value == null ? "" : value.toString();
-//
-//                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
-//                    if (textValue != null) {
-//                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
-//                        Matcher matcher = pa.matcher(textValue);
-//                        if (matcher.matches()) {
-//                            // 是数字当作double处理
-//                            cell.setCellValue(Double.parseDouble(textValue));
-//                        } else {
-//                            cell.setCellValue(textValue);
-//                        }
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                } finally {
-//                    // 清理资源
-//                }
-//            }
-//        }
+        Iterator<CurrentStatisticsCollegeVO> d = collegeList.iterator();
+        Iterator<CurrentStatisticsMajorVO> p = majorList.iterator();
+        Iterator<CurrentStatisticsClassVO> c = classList.iterator();
+        Iterator<CurrentStatisticsGradeVO> g = gradeList.iterator();
+        int dindex = 0;
+        int pindex = 0;
+        int cindex = 0;
+        int gindex = 0;
+        XSSFRow drowTemp = sheet1.getRow(1);
+        XSSFRow prowTemp = sheet2.getRow(1);
+        XSSFRow crowTemp = sheet3.getRow(1);
+        XSSFRow growTemp = sheet4.getRow(1);
+        while (d.hasNext()) {
+            dindex++;
+            XSSFRow row = sheet1.createRow(dindex);
+            CurrentStatisticsCollegeVO t = (CurrentStatisticsCollegeVO) d.next();
+            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
+            Field[] fields = t.getClass().getDeclaredFields();
+            for (short i = 0; i < fields.length; i++) {
+                XSSFCell cell = row.createCell(i);
+                Field field = fields[i];
+                String fieldName = field.getName();
+                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+                try {
+                    Class tCls = t.getClass();
+                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
+                    Object value = getMethod.invoke(t, new Object[]{});
+
+                    // 判断值的类型后进行强制类型转换
+                    String textValue = value == null ? "" : value.toString();
+
+                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
+                    if (textValue != null) {
+                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
+                        Matcher matcher = pa.matcher(textValue);
+                        if (matcher.matches()) {
+                            // 是数字当作double处理
+                            cell.setCellValue(Double.parseDouble(textValue));
+                        } else {
+                            cell.setCellValue(textValue);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    // 清理资源
+                }
+            }
+        }
+        while (p.hasNext()) {
+            pindex++;
+            XSSFRow row = sheet2.createRow(pindex);
+            CurrentStatisticsMajorVO t = (CurrentStatisticsMajorVO) p.next();
+            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
+            Field[] fields = t.getClass().getDeclaredFields();
+            for (short i = 0; i < fields.length; i++) {
+                XSSFCell cell = row.createCell(i);
+                Field field = fields[i];
+                String fieldName = field.getName();
+                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+                try {
+                    Class tCls = t.getClass();
+                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
+                    Object value = getMethod.invoke(t, new Object[]{});
+
+                    // 判断值的类型后进行强制类型转换
+                    String textValue = value == null ? "" : value.toString();
+
+                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
+                    if (textValue != null) {
+                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
+                        Matcher matcher = pa.matcher(textValue);
+                        if (matcher.matches()) {
+                            // 是数字当作double处理
+                            cell.setCellValue(Double.parseDouble(textValue));
+                        } else {
+                            cell.setCellValue(textValue);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    // 清理资源
+                }
+            }
+        }
+
+        while (c.hasNext()) {
+            cindex++;
+            XSSFRow row = sheet3.createRow(cindex);
+            CurrentStatisticsClassVO t = (CurrentStatisticsClassVO) c.next();
+            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
+            Field[] fields = t.getClass().getDeclaredFields();
+            for (short i = 0; i < fields.length; i++) {
+                XSSFCell cell = row.createCell(i);
+                Field field = fields[i];
+                String fieldName = field.getName();
+                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+                try {
+                    Class tCls = t.getClass();
+                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
+                    Object value = getMethod.invoke(t, new Object[]{});
+
+                    // 判断值的类型后进行强制类型转换
+                    String textValue = value == null ? "" : value.toString();
+
+                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
+                    if (textValue != null) {
+                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
+                        Matcher matcher = pa.matcher(textValue);
+                        if (matcher.matches()) {
+                            // 是数字当作double处理
+                            cell.setCellValue(Double.parseDouble(textValue));
+                        } else {
+                            cell.setCellValue(textValue);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    // 清理资源
+                }
+            }
+        }
+
+        while (g.hasNext()) {
+            gindex++;
+            XSSFRow row = sheet4.createRow(gindex);
+            CurrentStatisticsGradeVO t = (CurrentStatisticsGradeVO) g.next();
+            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
+            Field[] fields = t.getClass().getDeclaredFields();
+            for (short i = 0; i < fields.length; i++) {
+                XSSFCell cell = row.createCell(i);
+                Field field = fields[i];
+                String fieldName = field.getName();
+                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+                try {
+                    Class tCls = t.getClass();
+                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
+                    Object value = getMethod.invoke(t, new Object[]{});
+
+                    // 判断值的类型后进行强制类型转换
+                    String textValue = value == null ? "" : value.toString();
+
+                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
+                    if (textValue != null) {
+                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
+                        Matcher matcher = pa.matcher(textValue);
+                        if (matcher.matches()) {
+                            // 是数字当作double处理
+                            cell.setCellValue(Double.parseDouble(textValue));
+                        } else {
+                            cell.setCellValue(textValue);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    // 清理资源
+                }
+            }
+        }
     }
 
 
