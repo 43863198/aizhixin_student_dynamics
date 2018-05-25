@@ -172,7 +172,7 @@ public class AlarmSettingsService {
 
         } catch (Exception e) {
             e.printStackTrace();
-            result.put("success", true);
+            result.put("success", false);
             result.put("message", "获取告警设置列表异常！");
         }
         result.put("success", true);
