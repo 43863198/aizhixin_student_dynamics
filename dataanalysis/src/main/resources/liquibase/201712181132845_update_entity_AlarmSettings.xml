@@ -10,7 +10,7 @@
     <changeSet id="201712181132845" author="jianwei.wu" runOnChange="true">
         <modifyDataType
                 columnName="RULE_SET"
-                newDataType="VARCHAR(5000)"
+                newDataType="VARCHAR(10000)"
                 tableName="T_ALARM_SETTINGS"/>
     </changeSet>
 </databaseChangeLog>
