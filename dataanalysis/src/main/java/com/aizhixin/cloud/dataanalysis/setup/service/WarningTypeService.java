@@ -24,7 +24,6 @@ import java.util.Set;
  * @Date: 2017-11-24
  */
 @Service
-@Transactional
 public class WarningTypeService {
     @Autowired
     private WarningTypeRespository warningTypeRespository;
@@ -67,7 +66,6 @@ public class WarningTypeService {
         warningTypeRespository.deleteByOrgId(orgId);
     }
 
-    @Transactional
     public String setWarningType(Long orgId) {
         try {
             warningTypeRespository.deleteAll();

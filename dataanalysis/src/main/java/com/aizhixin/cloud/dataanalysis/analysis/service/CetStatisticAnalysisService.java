@@ -1793,7 +1793,7 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
 }
 
 
-    public ResponseEntity<byte[]> cetSingleStatisticsExport(Long orgId,String teacherYear, String semester) {
+    public ResponseEntity<byte[]> cetSingleStatisticsExport(Long orgId, String cetType, String teacherYear, String semester) {
         ByteArrayOutputStream os = null;
         FileOutputStream fos = null;
         try {
@@ -1801,9 +1801,18 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             List<SingleStatisticsMajorVO>  majorList = new ArrayList<>();
             List<SingleStatisticsClassVO> classList = new ArrayList<>();
             List<SingleStatisticsGradeVO> gradeList = new ArrayList<>();
+            String type = "";
+            if(cetType.equals("四级")){
+                type = "大学英语四级考试";
+            }else {
+                if(cetType.equals("六级")){
+                    type = "大学英语六级考试";
+                }
+            }
             InputStream resourceAsStream = this.getClass().getResourceAsStream("/template/departmentStatisticsExportExcel.xlsx");
             StringBuilder  dql = new StringBuilder("SELECT d.COMPANY_NAME as name, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1");
             dql.append(" AND ss.STATISTICS_TYPE = '001'");
+            dql.append(" AND ss.SCORE_TYPE = "+type);
             dql.append(" and ss.PARENT_CODE = " + orgId);
             dql.append(" and ss.ORG_ID = " + orgId);
             dql.append(" AND d.COMPANY_NAME IS NOT NULL");
@@ -1834,6 +1843,7 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             }
             StringBuilder  pql = new StringBuilder("SELECT d.COMPANY_NAME as dname, p.NAME as pname, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_profession p ON ss.CODE = p.CODE LEFT JOIN t_department d ON ss.PARENT_CODE = d.COMPANY_NUMBER WHERE 1=1");
             pql.append(" AND ss.STATISTICS_TYPE = '002'");
+            pql.append(" AND ss.SCORE_TYPE = "+type);
             pql.append(" and ss.ORG_ID = " + orgId);
             pql.append(" AND p.NAME IS NOT NULL");
             Query pq = em.createNativeQuery(pql.toString());
@@ -1865,8 +1875,9 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                 }
             }
             StringBuilder  cql = new StringBuilder("SELECT d.COMPANY_NAME as dname, p.NAME as pname, ss.CLASS_NAME as cname, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_profession p ON ss.PARENT_CODE = p.CODE LEFT JOIN t_department d ON p.COMPANY_NUMBER = d.COMPANY_NUMBER WHERE 1=1");
-            pql.append(" AND ss.STATISTICS_TYPE = '003'");
-            pql.append(" and ss.ORG_ID = " + orgId);
+            cql.append(" AND ss.STATISTICS_TYPE = '003'");
+            cql.append(" AND ss.SCORE_TYPE = "+type);
+            cql.append(" and ss.ORG_ID = " + orgId);
             cql.append(" AND d.COMPANY_NAME IS NOT NULL");
             Query cq = em.createNativeQuery(cql.toString());
             cq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
@@ -1901,6 +1912,7 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             }
             StringBuilder  gql = new StringBuilder("SELECT d.COMPANY_NAME as dname, ss.NAME_CODE as grade, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1");
             gql.append(" AND ss.STATISTICS_TYPE = '021'");
+            gql.append(" AND ss.SCORE_TYPE = "+type);
             gql.append(" and ss.PARENT_CODE = " + orgId);
             gql.append(" AND ss.NAME_CODE IS NOT NULL");
             gql.append(" order by grade ASC");
@@ -2129,7 +2141,7 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
 
 
 
-    public ResponseEntity<byte[]> cetCurrentStatisticsExport(Long orgId,String teacherYear, String semester) {
+    public ResponseEntity<byte[]> cetCurrentStatisticsExport(Long orgId, String cetType) {
         ByteArrayOutputStream os = null;
         FileOutputStream fos = null;
         try {
@@ -2138,8 +2150,16 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             List<CurrentStatisticsClassVO> classList = new ArrayList<>();
             List<CurrentStatisticsGradeVO> gradeList = new ArrayList<>();
             InputStream resourceAsStream = this.getClass().getResourceAsStream("/template/departmentStatisticsExportExcel.xlsx");
-            StringBuilder  dql = new StringBuilder("SELECT cs.TYPE,x.YXSMC as college, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>425,1,0)) as pass, AVG(cs.SCORE) as avg ");
-            dql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, TYPE, MAX(SCORE) as SCORE FROM t_cet_score WHERE (TYPE = '大学英语四级考试' OR TYPE = '大学英语六级考试') GROUP BY JOB_NUMBER,TYPE");
+            String type = "";
+            if(cetType.equals("四级")){
+                type = "大学英语四级考试";
+            }else {
+                if(cetType.equals("六级")){
+                    type = "大学英语六级考试";
+                }
+            }
+            StringBuilder  dql = new StringBuilder("SELECT x.YXSMC as college, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>425,1,0)) as pass, AVG(cs.SCORE) as avg");
+            dql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, TYPE, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = "+type+" GROUP BY JOB_NUMBER,TYPE");
             dql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY AND (cs.TYPE = '大学英语四级考试' OR cs.TYPE = '大学英语六级考试')");
             dql.append(" and x.XXID = " + orgId);
             dql.append(" GROUP BY cs.TYPE, x.YXSH");
@@ -2149,9 +2169,9 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             if (null != dres) {
                 for(Object obj: dres) {
                     Map d = (Map) obj;
-                    SingleStatisticsCollegeVO collegeVO = new SingleStatisticsCollegeVO();
-                    if (null != d.get("name")) {
-                        collegeVO.setCollegeName(d.get("name").toString());
+                    CurrentStatisticsCollegeVO collegeVO = new CurrentStatisticsCollegeVO();
+                    if (null != d.get("college")) {
+                        collegeVO.setCollegeName(d.get("college").toString());
                     }
                     if (null != d.get("cj")) {
                         collegeVO.setJoinNumber(Integer.valueOf(d.get("cj").toString()));
@@ -2162,12 +2182,39 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     if (null != d.get("avg")) {
                         collegeVO.setAvg(Math.round(Float.valueOf(d.get("avg").toString())) + "");
                     }
-                    if (null != d.get("max")) {
-                        collegeVO.setMax(Math.round(Float.valueOf(d.get("max").toString())) + "");
-                    }
-//                    collegeList.add(collegeVO);
+                    collegeList.add(collegeVO);
                 }
             }
+
+//            StringBuilder  dql = new StringBuilder("SELECT x.YXSMC as college, x. SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>425,1,0)) as pass, AVG(cs.SCORE) as avg ");
+//            dql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, TYPE, MAX(SCORE) as SCORE FROM t_cet_score WHERE (TYPE = '大学英语四级考试' OR TYPE = '大学英语六级考试') GROUP BY JOB_NUMBER,TYPE");
+//            dql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY AND (cs.TYPE = '大学英语四级考试' OR cs.TYPE = '大学英语六级考试')");
+//            dql.append(" and x.XXID = " + orgId);
+//            dql.append(" GROUP BY cs.TYPE, x.YXSH");
+//            Query dq = em.createNativeQuery(dql.toString());
+//            dq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+//            List<Object> dres = dq.getResultList();
+//            if (null != dres) {
+//                for(Object obj: dres) {
+//                    Map d = (Map) obj;
+//                    CurrentStatisticsMajorVO majorVO = new CurrentStatisticsMajorVO();
+//                    if (null != d.get("college")) {
+//                        majorVO.setCollegeName(d.get("college").toString());
+//                    }
+//                    if (null != d.get("cj")) {
+//                        collegeVO.setJoinNumber(Integer.valueOf(d.get("cj").toString()));
+//                    }
+//                    if (null != d.get("pass")) {
+//                        collegeVO.setPassNumber(Integer.valueOf(d.get("pass").toString()));
+//                    }
+//                    if (null != d.get("avg")) {
+//                        collegeVO.setAvg(Math.round(Float.valueOf(d.get("avg").toString())) + "");
+//                    }
+//                    collegeList.add(collegeVO);
+//                }
+//            }
+
+
             StringBuilder  pql = new StringBuilder("SELECT d.COMPANY_NAME as dname, p.NAME as pname, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_profession p ON ss.CODE = p.CODE LEFT JOIN t_department d ON ss.PARENT_CODE = d.COMPANY_NUMBER WHERE 1=1");
             pql.append(" AND ss.STATISTICS_TYPE = '002'");
             pql.append(" and ss.ORG_ID = " + orgId);
