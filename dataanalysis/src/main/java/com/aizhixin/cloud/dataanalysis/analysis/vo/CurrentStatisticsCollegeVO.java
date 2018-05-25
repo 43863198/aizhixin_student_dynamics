@@ -8,12 +8,10 @@ import lombok.Data;
  * @Date: 2018-05-24
  */
 @Data
-public class SingleStatisticsGradeVO {
-    private String gradeName;
+public class CurrentStatisticsCollegeVO {
     private String collegeName;
     private int joinNumber;
     private int passNumber;
     private String rate;
     private String avg;
-    private String max;
 }

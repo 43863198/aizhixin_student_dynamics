@@ -443,12 +443,29 @@ public class CetStatisticAnalysisController {
      */
     @GetMapping(value = "/singlexport", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "英语四六级单次考试统计导出", response = Void.class, notes = "英语四六级单次考试统计导出<br><br><b>@author jianwei.wu</b>")
-    public ResponseEntity<byte[]> cetSingleDataSexNumberOfPeople(
+    public ResponseEntity<byte[]> cetSingleStatisticsExport(
             @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "teacherYear 学年" , required = true ) @RequestParam(value = "teacherYear" , required = true) String teacherYear,
             @ApiParam(value = "semester 学期 (春;秋;)" , required = true) @RequestParam(value = "semester" , required = true) String semester
     ) {
         return cetStatisticAnalysisService.cetSingleStatisticsExport(orgId, teacherYear, semester);
+    }
+
+    /**
+     * 英语四六级当前状况统计导出
+     * @param orgId
+     * @param teacherYear
+     * @param semester
+     * @return
+     */
+    @GetMapping(value = "/singlexport", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "英语四六级当前状况统计导出", response = Void.class, notes = "英语四六级当前状况统计导出<br><br><b>@author jianwei.wu</b>")
+    public ResponseEntity<byte[]> cetCurrentStatisticsExport(
+            @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "teacherYear 学年" , required = true ) @RequestParam(value = "teacherYear" , required = true) String teacherYear,
+            @ApiParam(value = "semester 学期 (春;秋;)" , required = true) @RequestParam(value = "semester" , required = true) String semester
+    ) {
+        return cetStatisticAnalysisService.cetCurrentStatisticsExport(orgId, teacherYear, semester);
     }
 
 

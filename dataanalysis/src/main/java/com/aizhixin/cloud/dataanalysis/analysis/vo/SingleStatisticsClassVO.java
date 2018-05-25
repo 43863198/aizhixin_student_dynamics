@@ -15,6 +15,6 @@ public class SingleStatisticsClassVO {
     private int joinNumber;
     private int passNumber;
     private String rate;
-    private float avg;
-    private float max;
+    private String avg;
+    private String max;
 }
