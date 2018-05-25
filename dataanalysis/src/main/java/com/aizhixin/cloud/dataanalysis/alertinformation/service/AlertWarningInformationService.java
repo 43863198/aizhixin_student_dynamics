@@ -1186,7 +1186,7 @@ public class AlertWarningInformationService {
 
                 String standard = "";
                 if (null != alertWarningInformation.getAlarmSettingsId()) {
-                    AlarmSettings as = alarmSettingsService.getAlarmSettingsById(alertWarningInformation.getId());
+                    AlarmSettings as = alarmSettingsService.getAlarmSettingsById(alertWarningInformation.getAlarmSettingsId());
                     String[] rpIds = as.getRuleSet().split(",");
                     if(rpIds.length>0){
                         for(String rpId :rpIds){
@@ -1196,7 +1196,7 @@ public class AlertWarningInformationService {
                         }
                     }
                 }
-                if (!StringUtils.isBlank(standard)) {
+                if (!StringUtils.isBlank(standard)&&standard.length()>1) {
                     warningDetailsDTO.setWarningStandard(standard.substring(0, standard.length() - 1));
                 }
                 List<DealDomain> dealDomainList = new ArrayList<>();
@@ -1227,6 +1227,7 @@ public class AlertWarningInformationService {
                 warningDetailsDTO.setDealDomainList(dealDomainList);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             result.put("success", false);
             result.put("message", "获取预警详情异常！");
             return result;

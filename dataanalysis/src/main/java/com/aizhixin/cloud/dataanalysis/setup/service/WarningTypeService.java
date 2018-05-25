@@ -144,7 +144,7 @@ public class WarningTypeService {
             Rule  rule3 = new Rule();
             rule3.setOrgId(orgId);
             rule3.setName("AttendAbnormalEarlyWarning");//修读异常预警
-            rule3.setRuleDescribe("不合格的必修课程（含集中性实践教学环节）学分≥");
+            rule3.setRuleDescribe("上学期不合格的必修课程（含集中性实践教学环节）学分≥");
             ruleList.add(rule3);
             Rule rule4 = new Rule();
             rule4.setOrgId(orgId);

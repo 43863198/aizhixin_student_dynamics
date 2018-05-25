@@ -589,7 +589,7 @@ public class GenerateWarningInfoService {
             }
         }
         if(restHasMap.containsKey(2)){
-            for(WarningInformation w : restHasMap.get(1)){
+            for(WarningInformation w : restHasMap.get(2)){
                 if(!jobNumber.contains(w.getJobNumber())) {
                     w.setWarningLevel(2);
                     w.setWarningType(type);
