@@ -1802,6 +1802,67 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             List<SingleStatisticsClassVO> classList = new ArrayList<>();
             List<SingleStatisticsGradeVO> gradeList = new ArrayList<>();
             InputStream resourceAsStream = this.getClass().getResourceAsStream("/template/departmentStatisticsExportExcel.xlsx");
+            StringBuilder  dql = new StringBuilder("SELECT d.COMPANY_NAME as name, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1");
+            dql.append(" AND ss.STATISTICS_TYPE = '001'");
+            dql.append(" and ss.PARENT_CODE = " + orgId);
+            dql.append(" AND d.COMPANY_NAME IS NOT NULL");
+            Query dq = em.createNativeQuery(dql.toString());
+            dq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            List<Object> res = dq.getResultList();
+            if (null != res) {
+                for(Object obj: res) {
+                    Map d = (Map) obj;
+                    SingleStatisticsCollegeVO collegeVO = new SingleStatisticsCollegeVO();
+                    if (null != d.get("name")) {
+                        collegeVO.setCollegeName(d.get("name").toString());
+                    }
+                    if (null != d.get("cj")) {
+                        collegeVO.setJoinNumber(Integer.valueOf(d.get("cj").toString()));
+                    }
+                    if (null != d.get("pass")) {
+                        collegeVO.setPassNumber(Integer.valueOf(d.get("pass").toString()));
+                    }
+                    if (null != d.get("avg")) {
+                        collegeVO.setAvg(Math.round(Float.valueOf(d.get("avg").toString())) + "");
+                    }
+                    if (null != d.get("max")) {
+                        collegeVO.setMax(Math.round(Float.valueOf(d.get("max").toString())) + "");
+                    }
+                }
+
+            }
+
+
+
+//            StringBuilder  pql = new StringBuilder("SELECT d.COMPANY_NAME as name, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1");
+//            pql.append(" AND ss.STATISTICS_TYPE = '001'");
+//            pql.append(" and ss.PARENT_CODE = :pCode");
+//            condition.put("pCode", orgId);
+//            pql.append(" AND d.COMPANY_NAME IS NOT NULL");
+//
+//            StringBuilder  cql = new StringBuilder("SELECT d.COMPANY_NAME as name, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1");
+//            cql.append(" AND ss.STATISTICS_TYPE = '001'");
+//            cql.append(" and ss.PARENT_CODE = :pCode");
+//            condition.put("pCode", orgId);
+//            cql.append(" AND d.COMPANY_NAME IS NOT NULL");
+//
+//            StringBuilder  gql = new StringBuilder("SELECT d.COMPANY_NAME as name, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1");
+//            gql.append(" AND ss.STATISTICS_TYPE = '001'");
+//            gql.append(" and ss.PARENT_CODE = :pCode");
+//            condition.put("pCode", orgId);
+//            gql.append(" AND d.COMPANY_NAME IS NOT NULL");
+//
+//
+//
+//
+//
+//            if (null != orgId) {
+//                ql.append(" and ss.ORG_ID = :orgId");
+//                condition.put("orgId", orgId);
+//            }
+
+
+
 
 
 
