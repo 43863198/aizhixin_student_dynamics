@@ -1829,17 +1829,21 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     if (null != d.get("cj")) {
                         collegeVO.setJoinNumber(Integer.valueOf(d.get("cj").toString()));
                     }
-                    if (null != d.get("pass")) {
+                    if (null != d.get("pass")&&!d.get("pass").equals("")) {
                         collegeVO.setPassNumber(Integer.valueOf(d.get("pass").toString()));
                     }
                     if(collegeVO.getJoinNumber()>0){
                         collegeVO.setRate(new DecimalFormat("0.00").format((double) collegeVO.getPassNumber() * 100 / collegeVO.getJoinNumber()));
                     }
-                    if (null != d.get("avg")) {
+                    if (null != d.get("avg")&&!d.get("avg").equals("")) {
                         collegeVO.setAvg(Math.round(Float.valueOf(d.get("avg").toString())) + "");
+                    }else {
+                        collegeVO.setAvg("0");
                     }
-                    if (null != d.get("max")) {
+                    if (null != d.get("max")&&!d.get("max").equals("")) {
                         collegeVO.setMax(Math.round(Float.valueOf(d.get("max").toString())) + "");
+                    }else {
+                        collegeVO.setMax("0");
                     }
                     collegeList.add(collegeVO);
                 }
@@ -1865,17 +1869,21 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     if (null != d.get("cj")) {
                         majorVO.setJoinNumber(Integer.valueOf(d.get("cj").toString()));
                     }
-                    if (null != d.get("pass")) {
+                    if (null != d.get("pass")&&!d.get("pass").equals("")) {
                         majorVO.setPassNumber(Integer.valueOf(d.get("pass").toString()));
                     }
                     if(majorVO.getJoinNumber()>0){
                         majorVO.setRate(new DecimalFormat("0.00").format((double) majorVO.getPassNumber() * 100 / majorVO.getJoinNumber()));
                     }
-                    if (null != d.get("avg")) {
+                    if (null != d.get("avg")&&!d.get("avg").equals("")) {
                         majorVO.setAvg(Math.round(Float.valueOf(d.get("avg").toString())) + "");
+                    }else {
+                        majorVO.setAvg("0");
                     }
-                    if (null != d.get("max")) {
+                    if (null != d.get("max")&&!d.get("max").equals("")) {
                         majorVO.setMax(Math.round(Float.valueOf(d.get("max").toString())) + "");
+                    }else {
+                        majorVO.setMax("0");
                     }
                     majorList.add(majorVO);
                 }
@@ -1901,20 +1909,24 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     if (null != d.get("cname")) {
                         classVO.setClassName(d.get("cname").toString());
                     }
-                    if (null != d.get("cj")) {
+                    if (null != d.get("cj")&&!d.get("cj").equals("")) {
                         classVO.setJoinNumber(Integer.valueOf(d.get("cj").toString()));
                     }
-                    if (null != d.get("pass")) {
+                    if (null != d.get("pass")&&!d.get("pass").equals("")) {
                         classVO.setPassNumber(Integer.valueOf(d.get("pass").toString()));
                     }
                     if(classVO.getJoinNumber()>0){
                         classVO.setRate(new DecimalFormat("0.00").format((double) classVO.getPassNumber() * 100 / classVO.getJoinNumber()));
                     }
-                    if (null != d.get("avg")) {
+                    if (null != d.get("avg")&&!d.get("avg").equals("")) {
                         classVO.setAvg(Math.round(Float.valueOf(d.get("avg").toString())) + "");
+                    }else {
+                        classVO.setAvg("0");
                     }
-                    if (null != d.get("max")) {
+                    if (null != d.get("max")&&!d.get("max").equals("")) {
                         classVO.setMax(Math.round(Float.valueOf(d.get("max").toString())) + "");
+                    }else {
+                        classVO.setMax("0");
                     }
                     classList.add(classVO);
                 }
@@ -1927,7 +1939,7 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             gql.append(" order by grade ASC");
             Query gq = em.createNativeQuery(gql.toString());
             gq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-            List<Object> gres = cq.getResultList();
+            List<Object> gres = gq.getResultList();
             if (null != gres) {
                 for(Object obj: gres) {
                     Map d = (Map) obj;
@@ -1938,20 +1950,24 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     if (null != d.get("grade")) {
                         gradeVO.setGradeName(d.get("grade").toString());
                     }
-                    if (null != d.get("cj")) {
+                    if (null != d.get("cj")&&!d.get("cj").equals("")) {
                         gradeVO.setJoinNumber(Integer.valueOf(d.get("cj").toString()));
                     }
-                    if (null != d.get("pass")) {
+                    if (null != d.get("pass")&&!d.get("pass").equals("")) {
                         gradeVO.setPassNumber(Integer.valueOf(d.get("pass").toString()));
                     }
                     if(gradeVO.getJoinNumber()>0){
                         gradeVO.setRate(new DecimalFormat("0.00").format((double) gradeVO.getPassNumber() * 100 / gradeVO.getJoinNumber()));
                     }
-                    if (null != d.get("avg")) {
+                    if (null != d.get("avg")&&!d.get("avg").equals("")) {
                         gradeVO.setAvg(Math.round(Float.valueOf(d.get("avg").toString())) + "");
+                    }else {
+                        gradeVO.setAvg("0");
                     }
-                    if (null != d.get("max")) {
+                    if (null != d.get("max")&&!d.get("max").equals("")) {
                         gradeVO.setMax(Math.round(Float.valueOf(d.get("max").toString())) + "");
+                    }else {
+                        gradeVO.setMax("0");
                     }
                     gradeList.add(gradeVO);
                 }
@@ -1962,7 +1978,7 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             os = new ByteArrayOutputStream();
             wb.write(os);
             byte[] brollcall = os.toByteArray();
-            String fileName = cetType+"级单次考试导出模板.xlsx";
+            String fileName = teacherYear+semester+cetType+"级考试统计.xlsx";
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .header("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "utf-8")).body(brollcall);
         } catch (Exception e) {
@@ -2175,7 +2191,9 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             dql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, TYPE, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER,TYPE");
             dql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY ");
             dql.append(" and x.XXID = " + orgId);
-            dql.append(" GROUP BY cs.TYPE, x.YXSH");
+            dql.append(" AND x.YXSMC IS NOT NULL");
+            dql.append(" GROUP BY x.YXSH");
+
             Query dq = em.createNativeQuery(dql.toString());
             dq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             List<Object> dres = dq.getResultList();
@@ -2186,30 +2204,35 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     if (null != d.get("college")) {
                         collegeVO.setCollegeName(d.get("college").toString());
                     }
-                    if (null != d.get("cj")) {
+                    if (null != d.get("cj")&&!d.get("cj").equals("")) {
                         collegeVO.setJoinNumber(Integer.valueOf(d.get("cj").toString()));
                     }
-                    if (null != d.get("pass")) {
+                    if (null != d.get("pass")&&!d.get("pass").equals("")) {
                         collegeVO.setPassNumber(Integer.valueOf(d.get("pass").toString()));
                     }
                     if(collegeVO.getJoinNumber()>0){
                         collegeVO.setRate(new DecimalFormat("0.00").format((double) collegeVO.getPassNumber() * 100 / collegeVO.getJoinNumber()));
                     }
-                    if (null != d.get("avg")) {
+                    if (null != d.get("avg")&&!d.get("avg").equals("")) {
                         collegeVO.setAvg(Math.round(Float.valueOf(d.get("avg").toString())) + "");
+                    }else {
+                        collegeVO.setAvg("0");
                     }
-                    if (null != d.get("max")) {
+                    if (null != d.get("max")&&!d.get("max").equals("")) {
                         collegeVO.setMax(Math.round(Float.valueOf(d.get("max").toString())) + "");
+                    }else {
+                        collegeVO.setMax("0");
                     }
                     collegeList.add(collegeVO);
                 }
             }
 
-            StringBuilder  pql = new StringBuilder("SELECT x.YXSMC as dname, x.ZYMC as pname, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>425,1,0)) as pass, AVG(cs.SCORE) as avg ");
+            StringBuilder  pql = new StringBuilder("SELECT x.YXSMC as dname, x.ZYMC as pname, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>425,1,0)) as pass, AVG(cs.SCORE) as avg, MAX(cs.SCORE) as max ");
             pql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, TYPE, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER,TYPE");
             pql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY");
             pql.append(" and x.XXID = " + orgId);
-            pql.append(" GROUP BY cs.TYPE, x.ZYH");
+            pql.append(" AND x.ZYMC IS NOT NULL");
+            pql.append(" GROUP BY x.ZYH");
             Query pq = em.createNativeQuery(pql.toString());
             pq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             List<Object> pres = pq.getResultList();
@@ -2223,30 +2246,35 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     if (null != d.get("pname")) {
                         majorVO.setMajorName(d.get("pname").toString());
                     }
-                    if (null != d.get("cj")) {
+                    if (null != d.get("cj")&&!d.get("cj").equals("")) {
                         majorVO.setJoinNumber(Integer.valueOf(d.get("cj").toString()));
                     }
-                    if (null != d.get("pass")) {
+                    if (null != d.get("pass")&&!d.get("pass").equals("")) {
                         majorVO.setPassNumber(Integer.valueOf(d.get("pass").toString()));
                     }
                     if(majorVO.getJoinNumber()>0){
                         majorVO.setRate(new DecimalFormat("0.00").format((double) majorVO.getPassNumber() * 100 / majorVO.getJoinNumber()));
                     }
-                    if (null != d.get("avg")) {
+                    if (null != d.get("avg")&&!d.get("avg").equals("")) {
                         majorVO.setAvg(Math.round(Float.valueOf(d.get("avg").toString())) + "");
+                    }else {
+                        majorVO.setAvg("0");
                     }
-                    if (null != d.get("max")) {
+                    if (null != d.get("max")&&!d.get("max").equals("")) {
                         majorVO.setMax(Math.round(Float.valueOf(d.get("max").toString())) + "");
+                    }else {
+                        majorVO.setMax("0");
                     }
                     majorList.add(majorVO);
                 }
             }
 
-            StringBuilder  cql = new StringBuilder("SELECT x.YXSMC as dname, x.ZYMC as pname, x.BJMC as cname, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>425,1,0)) as pass, AVG(cs.SCORE) as avg ");
+            StringBuilder  cql = new StringBuilder("SELECT x.YXSMC as dname, x.ZYMC as pname, x.BJMC as cname, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>425,1,0)) as pass, AVG(cs.SCORE) as avg, MAX(cs.SCORE) as max ");
             cql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, TYPE, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER,TYPE");
             cql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY");
             cql.append(" and x.XXID = " + orgId);
-            cql.append(" GROUP BY cs.TYPE, x.BJMC");
+            cql.append(" AND x.BJMC IS NOT NULL");
+            cql.append(" GROUP BY x.BJMC");
             Query cq = em.createNativeQuery(cql.toString());
             cq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             List<Object> cres = cq.getResultList();
@@ -2263,30 +2291,35 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     if (null != d.get("cname")) {
                         classVO.setClassName(d.get("cname").toString());
                     }
-                    if (null != d.get("cj")) {
+                    if (null != d.get("cj")&&!d.get("cj").equals("")) {
                         classVO.setJoinNumber(Integer.valueOf(d.get("cj").toString()));
                     }
-                    if (null != d.get("pass")) {
+                    if (null != d.get("pass")&&!d.get("pass").equals("")) {
                         classVO.setPassNumber(Integer.valueOf(d.get("pass").toString()));
                     }
                     if(classVO.getJoinNumber()>0){
                         classVO.setRate(new DecimalFormat("0.00").format((double) classVO.getPassNumber() * 100 / classVO.getJoinNumber()));
                     }
-                    if (null != d.get("avg")) {
+                    if (null != d.get("avg")&&!d.get("avg").equals("")) {
                         classVO.setAvg(Math.round(Float.valueOf(d.get("avg").toString())) + "");
+                    }else {
+                        classVO.setAvg("0");
                     }
-                    if (null != d.get("max")) {
+                    if (null != d.get("max")&&!d.get("max").equals("")) {
                         classVO.setMax(Math.round(Float.valueOf(d.get("max").toString())) + "");
+                    }else {
+                        classVO.setMax("0");
                     }
                     classList.add(classVO);
                 }
             }
 
-            StringBuilder  gql = new StringBuilder("SELECT x.YXSMC as dname, x.NJ as nj, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>425,1,0)) as pass, AVG(cs.SCORE) as avg ");
+            StringBuilder  gql = new StringBuilder("SELECT x.YXSMC as dname, x.NJ as nj, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>425,1,0)) as pass, AVG(cs.SCORE) as avg, MAX(cs.SCORE) as max ");
             gql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, TYPE, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER,TYPE");
             gql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY");
             gql.append(" and x.XXID = " + orgId);
-            gql.append(" GROUP BY cs.TYPE, x.BJMC");
+            gql.append(" AND x.NJ IS NOT NULL");
+            gql.append(" GROUP BY x.NJ");
             Query gq = em.createNativeQuery(gql.toString());
             gq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             List<Object> gres = gq.getResultList();
@@ -2300,20 +2333,24 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     if (null != d.get("nj")) {
                         gradeVO.setGradeName(d.get("nj").toString());
                     }
-                    if (null != d.get("cj")) {
+                    if (null != d.get("cj")&&!d.get("cj").equals("")) {
                         gradeVO.setJoinNumber(Integer.valueOf(d.get("cj").toString()));
                     }
-                    if (null != d.get("pass")) {
+                    if (null != d.get("pass")&&!d.get("pass").equals("")) {
                         gradeVO.setPassNumber(Integer.valueOf(d.get("pass").toString()));
                     }
                     if(gradeVO.getJoinNumber()>0){
                         gradeVO.setRate(new DecimalFormat("0.00").format((double) gradeVO.getPassNumber() * 100 / gradeVO.getJoinNumber()));
                     }
-                    if (null != d.get("avg")) {
+                    if (null != d.get("avg")&&!d.get("avg").equals("")) {
                         gradeVO.setAvg(Math.round(Float.valueOf(d.get("avg").toString())) + "");
+                    }else {
+                        gradeVO.setAvg("0");
                     }
-                    if (null != d.get("max")) {
+                    if (null != d.get("max")&&!d.get("max").equals("")) {
                         gradeVO.setMax(Math.round(Float.valueOf(d.get("max").toString())) + "");
+                    }else {
+                        gradeVO.setMax("0");
                     }
                     gradeList.add(gradeVO);
                 }
@@ -2325,7 +2362,7 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             os = new ByteArrayOutputStream();
             wb.write(os);
             byte[] brollcall = os.toByteArray();
-            String fileName = cetType+"级单次考试导出模板.xlsx";
+            String fileName = cetType+"级当前累计通过情况.xlsx";
             return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .header("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "utf-8")).body(brollcall);
         } catch (Exception e) {
