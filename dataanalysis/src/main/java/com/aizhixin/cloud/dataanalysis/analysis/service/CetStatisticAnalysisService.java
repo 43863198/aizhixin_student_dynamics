@@ -1796,12 +1796,27 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
     public ResponseEntity<byte[]> cetSingleStatisticsExport(Long orgId, String cetType, String teacherYear, String semester) {
         ByteArrayOutputStream os = null;
         FileOutputStream fos = null;
+        Map<String, Object> condition = new HashMap<>();
         try {
+            Date start = null;
+            Date end = null;
+            if (!StringUtils.isBlank(teacherYear)&&!StringUtils.isBlank(semester)) {
+                Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, teacherYear, semester);
+                if (null != schoolCalendar) {
+                    if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
+                        List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
+                        if (tysList.size() > 0) {
+                            start = sdf.parse(tysList.get(0).getStartTime());
+                            end = sdf.parse(tysList.get(0).getEndTime());
+                        }
+                    }
+                }
+            }
             List<SingleStatisticsCollegeVO> collegeList = new ArrayList<>();
             List<SingleStatisticsMajorVO>  majorList = new ArrayList<>();
             List<SingleStatisticsClassVO> classList = new ArrayList<>();
             List<SingleStatisticsGradeVO> gradeList = new ArrayList<>();
-            String type = "";
+            String type = null;
             if(cetType.equals("四级")){
                 type = "大学英语四级考试";
             }else {
@@ -1809,14 +1824,30 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     type = "大学英语六级考试";
                 }
             }
+            StringBuilder  ql = new StringBuilder("");
+            if(null!=type&&!type.equals("")){
+                ql.append(" AND ss.SCORE_TYPE = :type");
+                condition.put("type",type);
+            }
+            if(null!=orgId){
+                ql.append(" AND ss.ORG_ID = :orgId");
+                condition.put("orgId", orgId);
+            }
+            if(null!=start&&null!=end){
+                ql.append(" AND ss.EXAMINATION_DATE BETWEEN :start AND :end");
+                condition.put("start", start);
+                condition.put("end",end);
+            }
             InputStream resourceAsStream = this.getClass().getResourceAsStream("/template/singleStatistics.xlsx");
             StringBuilder  dql = new StringBuilder("SELECT d.COMPANY_NAME as name, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1");
             dql.append(" AND ss.STATISTICS_TYPE = '001'");
-            dql.append(" AND ss.SCORE_TYPE = '"+type+"'");
             dql.append(" and ss.PARENT_CODE = " + orgId);
-            dql.append(" and ss.ORG_ID = " + orgId);
+            dql.append(ql);
             dql.append(" AND d.COMPANY_NAME IS NOT NULL");
             Query dq = em.createNativeQuery(dql.toString());
+            for (Map.Entry<String, Object> e : condition.entrySet()) {
+                dq.setParameter(e.getKey(), e.getValue());
+            }
             dq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             List<Object> dres = dq.getResultList();
             if (null != dres) {
@@ -1848,12 +1879,14 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     collegeList.add(collegeVO);
                 }
             }
-            StringBuilder  pql = new StringBuilder("SELECT d.COMPANY_NAME as dname, p.NAME as pname, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_profession p ON ss.CODE = p.CODE LEFT JOIN t_department d ON ss.PARENT_CODE = d.COMPANY_NUMBER WHERE 1=1");
+            StringBuilder  pql = new StringBuilder("SELECT d.COMPANY_NAME as dname, p.NAME as pname, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_profession p ON ss.CODE = p.CODE LEFT JOIN t_department d ON p.COMPANY_NUMBER = d.COMPANY_NUMBER WHERE 1=1");
             pql.append(" AND ss.STATISTICS_TYPE = '002'");
-            pql.append(" AND ss.SCORE_TYPE = '"+type+"'");
-            pql.append(" and ss.ORG_ID = " + orgId);
+            pql.append(ql);
             pql.append(" AND p.NAME IS NOT NULL");
             Query pq = em.createNativeQuery(pql.toString());
+            for (Map.Entry<String, Object> e : condition.entrySet()) {
+                pq.setParameter(e.getKey(), e.getValue());
+            }
             pq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             List<Object> pres = pq.getResultList();
             if (null != pres) {
@@ -1890,10 +1923,12 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             }
             StringBuilder  cql = new StringBuilder("SELECT d.COMPANY_NAME as dname, p.NAME as pname, ss.CLASS_NAME as cname, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_profession p ON ss.PARENT_CODE = p.CODE LEFT JOIN t_department d ON p.COMPANY_NUMBER = d.COMPANY_NUMBER WHERE 1=1");
             cql.append(" AND ss.STATISTICS_TYPE = '003'");
-            cql.append(" AND ss.SCORE_TYPE = '"+type+"'");
-            cql.append(" and ss.ORG_ID = " + orgId);
+            cql.append(ql);
             cql.append(" AND d.COMPANY_NAME IS NOT NULL");
             Query cq = em.createNativeQuery(cql.toString());
+            for (Map.Entry<String, Object> e : condition.entrySet()) {
+                cq.setParameter(e.getKey(), e.getValue());
+            }
             cq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             List<Object> cres = cq.getResultList();
             if (null != cres) {
@@ -1933,11 +1968,13 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             }
             StringBuilder  gql = new StringBuilder("SELECT d.COMPANY_NAME as dname, ss.NAME_CODE as grade, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1");
             gql.append(" AND ss.STATISTICS_TYPE = '021'");
-            gql.append(" AND ss.SCORE_TYPE = '"+type+"'");
-            gql.append(" and ss.PARENT_CODE = " + orgId);
+            gql.append(ql);
             gql.append(" AND ss.NAME_CODE IS NOT NULL");
             gql.append(" order by grade ASC");
             Query gq = em.createNativeQuery(gql.toString());
+            for (Map.Entry<String, Object> e : condition.entrySet()) {
+                gq.setParameter(e.getKey(), e.getValue());
+            }
             gq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             List<Object> gres = gq.getResultList();
             if (null != gres) {
