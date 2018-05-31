@@ -78,6 +78,7 @@ public class CetStatisticAnalysisService {
     @Autowired
     private CetAvgStatisticalJdbc cetAvgStatisticalJdbc;
 
+
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     public void deleteAllByOrgId(Long orgId) {
@@ -2406,11 +2407,24 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     gradeList.add(gradeVO);
                 }
             }
+            TeacherYearSemesterDTO yearSemesterDTO = new TeacherYearSemesterDTO();
+            Map<String, Object> schoolCalendar = schoolYearTermService.getCurrentSchoolCalendar(orgId);
+            if (null != schoolCalendar) {
+                if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
+                    List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
+                    if(null!=tysList&&tysList.size()>0){
+                        yearSemesterDTO = tysList.get(0);
+                    }
+                }
+            }
+
+
             Map<String,Object> data = new HashMap<>();
             data.put("college",collegeList);
             data.put("major",majorList);
             data.put("class",classList);
             data.put("grade",gradeList);
+            data.put("current",yearSemesterDTO);
             result.put("success",true);
             result.put("data",data);
             return result;
