@@ -26,7 +26,8 @@ import java.util.List;
 @Data
 @ToString
 @NoArgsConstructor
-public class NewStudentProfileDTO {
+public class
+        NewStudentProfileDTO {
     @ApiModelProperty(value = "新生总数量", required = false)
     private Long studentNumber=0l;
     @ApiModelProperty(value = "已报到人数", required = false)
