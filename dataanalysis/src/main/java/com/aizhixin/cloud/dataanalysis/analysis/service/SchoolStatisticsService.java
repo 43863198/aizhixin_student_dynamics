@@ -137,6 +137,7 @@ public class SchoolStatisticsService {
                     time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(String.valueOf(d[4]));
                 }
             }
+
             newStudentProfileDTO.setStudentNumber(studentNumber);
             newStudentProfileDTO.setAlreadyReport(alreadyReport);
             newStudentProfileDTO.setUnreported(studentNumber - alreadyReport);
@@ -189,13 +190,10 @@ public class SchoolStatisticsService {
         Map currentGradeMap = new HashMap();
         try {
             currentGradeMap = jdbcTemplate.queryForMap(sql);
-        } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
-            return null;
-        }
+
         int teacherYear = Integer.valueOf(currentGradeMap.get("TEACHER_YEAR") + "");
         int semester = Integer.valueOf(currentGradeMap.get("SEMESTER") + "");
         PracticeStaticsDTO practiceStaticsDTO = practiceStaticsRespository.getPracticeStatics(orgId, teacherYear, semester);
-
         SchoolProfileDTO schoolProfileDTO = schoolStatisticsRespository.getSchoolPersonStatistics(orgId, teacherYear);
         schoolProfileDTO.setOutSchoolStudent(Long.valueOf(practiceStaticsDTO.getPracticeStudentNum()));
         schoolProfileDTO.setInSchoolStudent(Long.valueOf(schoolProfileDTO.getAllStudent()) - Long.valueOf(schoolProfileDTO.getOutSchoolStudent()));
@@ -204,8 +202,34 @@ public class SchoolStatisticsService {
         teacherlYearData.setSemester(semester);
         teacherlYearData.setTeacherYear(teacherYear);
         h.setTeacherlYearData(teacherlYearData);
+
+        Map<String, Object> con = new HashMap<>();
+        StringBuilder ssl = new StringBuilder("SELECT count(x.XH) as count, sum(if(x.YBYNY > now() and datediff(x.YBYNY,now()) < 300,1,0)) as yby FROM t_xsjbxx x WHERE 1 = 1");
+        if (null != orgId) {
+            ssl.append(" AND x.XXID = :orgId");
+            con.put("orgId", orgId);
+        }
+        Query ssq = em.createNativeQuery(ssl.toString());
+        ssq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+        for (Map.Entry<String, Object> e : con.entrySet()) {
+            ssq.setParameter(e.getKey(), e.getValue());
+        }
+        Object re = ssq.getSingleResult();
+        Map<String,Object> map = (Map) re;
+        if(null!=map){
+            if(null!=map.get("count")){
+                schoolProfileDTO.setInSchoolStudent(Long.valueOf(map.get("count").toString()));
+            }
+            if(null!=map.get("yby")){
+                schoolProfileDTO.setReadyGraduation(Long.valueOf(map.get("yby").toString()));
+            }
+        }
+
         h.setObjData(schoolProfileDTO);
         return h;
+        } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
+            return null;
+        }
     }
 
     /**

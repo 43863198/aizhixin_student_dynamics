@@ -145,6 +145,7 @@ public class SchoolStatisticsAnalysisJob {
 		Map<String, Object> result = new HashMap<>();
 		List<SchoolStatistics> schoolStatisticsList = new ArrayList<SchoolStatistics>();
 		List<SchoolStatisticsDTO> countList = this.peopleNumCount(orgId.toString());
+
 		try{
 			schoolStatisticsService.deleteByOrgIdAndTeacherYear(orgId,teacherYear);
 		   Criteria criteria = Criteria.where("orgId").is(orgId);
@@ -167,7 +168,11 @@ public class SchoolStatisticsAnalysisJob {
 			ss.setConvenienceChannel(0);
 			ss.setCollegeName(count.getMappedResults().get(n).getString("collegeName"));
 			ss.setCollegeId(collegeId);
+
+
 			ss.setNewStudentsCount(count.getMappedResults().get(n).getInt("count"));
+
+
 			for (SchoolStatisticsDTO dto : countList) {
 				if (null != dto) {
 					if(dto.getCollegeId().equals(collegeId)) {
@@ -180,6 +185,11 @@ public class SchoolStatisticsAnalysisJob {
 					}
 				}
 			}
+
+
+
+
+
 			int max = 40;
 			int min = 5;
 			Random random = new Random();
@@ -189,7 +199,9 @@ public class SchoolStatisticsAnalysisJob {
 			ss.setReadyGraduation(300 + s);
 			ss.setStatisticalTime(new Date());
 			ss.setConvenienceChannel(0);
-			schoolStatisticsList.add(ss);
+			  if(null!=ss.getCollegeName()&!ss.getCollegeName().equals("")) {
+				  schoolStatisticsList.add(ss);
+			  }
 		}
 
 		Criteria criteriaReport = Criteria.where("orgId").is(orgId);
