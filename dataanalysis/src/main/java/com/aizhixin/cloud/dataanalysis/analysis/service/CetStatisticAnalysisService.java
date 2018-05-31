@@ -1356,7 +1356,7 @@ public class CetStatisticAnalysisService {
     }
 
 
-    public Map<String, Object> currentStatistics(Long orgId,String collegeCode,String professionCode,String classCode, String cetType) {
+    public Map<String, Object> currentStatistics(Long orgId,String collegeCode,String professionCode,String classCode, String className, String cetType) {
         Map<String, Object> result = new HashMap<>();
 
         try {
@@ -1382,10 +1382,13 @@ public class CetStatisticAnalysisService {
                 avgsql.append(" and ss.PROFESSION_CODE = :professionCode");
                 condition.put("professionCode", professionCode);
             }
-            if (!StringUtils.isBlank(classCode)) {
+            if (!StringUtils.isBlank(classCode)&&!StringUtils.isBlank(className)) {
                 sql.append(" and ss.CLASS_CODE = :classCode");
+                sql.append(" and ss.CLASS_NAME = :className");
                 avgsql.append(" and ss.CLASS_CODE = :classCode");
+                avgsql.append(" and ss.CLASS_NAME = :className");
                 condition.put("classCode", classCode);
+                condition.put("className", className);
             }
             sql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
             avgsql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
@@ -1422,7 +1425,7 @@ public class CetStatisticAnalysisService {
         }
     }
 
-    public Map<String, Object> organizationStatistics(Long orgId,String collegeCode,String professionCode,String classCode, String cetType) {
+    public Map<String, Object> organizationStatistics(Long orgId,String collegeCode,String professionCode,String classCode, String className, String cetType) {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> condition = new HashMap<>();
         List<CetScoreNumberOfPeopleVO> csnpList = new ArrayList<>();
@@ -1436,14 +1439,16 @@ public class CetStatisticAnalysisService {
             StringBuilder sql = new StringBuilder("");
             if (!StringUtils.isBlank(collegeCode)) {
                 if (!StringUtils.isBlank(professionCode)) {
-                    if (!StringUtils.isBlank(classCode)) {
+                    if (!StringUtils.isBlank(classCode)&&!StringUtils.isBlank(className)) {
                         sql.append("SELECT ss.CLASS_NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total,SUM(IF(c.max >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
                                 " WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" +
                                 " GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
                         sql.append(ql);
                         sql.append(" and ss.CLASS_CODE = :classCode");
+                        sql.append(" and ss.CLASS_NAME = :className");
                         sql.append(" and ss.PROFESSION_CODE = :professionCode");
                         condition.put("classCode", classCode);
+                        condition.put("className", className);
                         condition.put("professionCode", professionCode);
                     }else {
                         sql.append("SELECT ss.CLASS_NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total,SUM(IF(c.max >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
@@ -2240,7 +2245,7 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                 }
             }
             StringBuilder  dql = new StringBuilder("SELECT x.YXSMC as college, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE >= 425,1,0)) as pass, AVG(cs.SCORE) as avg, MAX(cs.SCORE) as max");
-            dql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, TYPE, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER,TYPE");
+            dql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER");
             dql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY ");
             dql.append(" and x.XXID = " + orgId);
             dql.append(" AND cs.SCORE>0");
@@ -2281,7 +2286,7 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             }
 
             StringBuilder  pql = new StringBuilder("SELECT x.YXSMC as dname, x.ZYMC as pname, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>=425,1,0)) as pass, AVG(cs.SCORE) as avg, MAX(cs.SCORE) as max ");
-            pql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, TYPE, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER,TYPE");
+            pql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER");
             pql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY");
             pql.append(" and x.XXID = " + orgId);
             pql.append(" AND cs.SCORE>0");
@@ -2324,7 +2329,7 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             }
 
             StringBuilder  cql = new StringBuilder("SELECT x.YXSMC as dname, x.ZYMC as pname, x.BJMC as cname, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>=425,1,0)) as pass, AVG(cs.SCORE) as avg, MAX(cs.SCORE) as max ");
-            cql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, TYPE, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER,TYPE");
+            cql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER");
             cql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY");
             cql.append(" and x.XXID = " + orgId);
             cql.append(" AND cs.SCORE>0");
@@ -2370,7 +2375,7 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             }
 
             StringBuilder  gql = new StringBuilder("SELECT x.YXSMC as dname, x.NJ as nj, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE >= 425,1,0)) as pass, AVG(cs.SCORE) as avg, MAX(cs.SCORE) as max ");
-            gql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, TYPE, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER,TYPE");
+            gql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER,  MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER");
             gql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY");
             gql.append(" and x.XXID = " + orgId);
             gql.append(" AND cs.SCORE>0");
