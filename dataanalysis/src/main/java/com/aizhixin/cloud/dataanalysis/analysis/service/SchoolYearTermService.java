@@ -186,4 +186,52 @@ public class SchoolYearTermService {
         }
     }
 
+    public Map<String, Object> getCurrentSchoolCalendar(Long orgId) {
+        Map<String, Object> result = new HashMap<>();
+        List<TeacherYearSemesterDTO> tysList = new ArrayList<>();
+        Map<String, Object> condition = new HashMap<>();
+        try {
+            StringBuilder sql = new StringBuilder("SELECT  TEACHER_YEAR as teacherYear, SEMESTER as semester, START_TIME as startTime, WEEK as week, END_TIME as endTime FROM t_school_calendar WHERE 1=1");
+            if (null != orgId) {
+                sql.append(" AND ORG_ID = :orgId");
+                condition.put("orgId", orgId);
+            }
+            sql.append(" AND CURDATE() BETWEEN START_TIME AND END_TIME");
+
+            Query sq = em.createNativeQuery(sql.toString());
+            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            for (Map.Entry<String, Object> e : condition.entrySet()) {
+                sq.setParameter(e.getKey(), e.getValue());
+            }
+            List<Object> res = sq.getResultList();
+            for (Object obj : res) {
+                Map row = (Map) obj;
+                TeacherYearSemesterDTO tys = new TeacherYearSemesterDTO();
+                if (null != row.get("teacherYear")) {
+                    tys.setTeacherYear(row.get("teacherYear").toString());
+                    if (null != row.get("semester")) {
+                        tys.setSemester(row.get("semester").toString());
+                        if(null!=row.get("startTime")){
+                            tys.setStartTime(row.get("startTime").toString());
+                        }
+                        if(null!=row.get("week")){
+                            tys.setWeek(Integer.valueOf(row.get("week").toString()));
+                        }
+                        if(null!=row.get("endTime")){
+                            tys.setEndTime(row.get("endTime").toString());
+                        }
+                    }
+                    tysList.add(tys);
+                }
+            }
+            result.put("success", true);
+            result.put("data", tysList);
+            return result;
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", "获取学当前年学期失败！");
+            return result;
+        }
+    }
+
 }
