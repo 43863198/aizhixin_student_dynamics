@@ -443,13 +443,13 @@ public class CetStatisticAnalysisController {
      */
     @GetMapping(value = "/singlexport", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "英语四六级单次考试统计导出", response = Void.class, notes = "英语四六级单次考试统计导出<br><br><b>@author jianwei.wu</b>")
-    public ResponseEntity<byte[]> cetSingleStatisticsExport(
+    public ResponseEntity<Map<String, Object>> cetSingleStatisticsExport(
             @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "cetType 成绩类型： (四级;六级;)" , required = true ) @RequestParam(value = "cetType" , required = true) String cetType,
             @ApiParam(value = "teacherYear 学年" , required = true ) @RequestParam(value = "teacherYear" , required = true) String teacherYear,
             @ApiParam(value = "semester 学期 (春;秋;)" , required = true) @RequestParam(value = "semester" , required = true) String semester
     ) {
-        return cetStatisticAnalysisService.cetSingleStatisticsExport(orgId,cetType,teacherYear, semester);
+        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetSingleStatisticsExport(orgId,cetType,teacherYear, semester),HttpStatus.OK);
     }
 
     /**
@@ -459,11 +459,11 @@ public class CetStatisticAnalysisController {
      */
     @GetMapping(value = "/currentexport", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "英语四六级当前状况统计导出", response = Void.class, notes = "英语四六级当前状况统计导出<br><br><b>@author jianwei.wu</b>")
-    public ResponseEntity<byte[]> cetCurrentStatisticsExport(
+    public ResponseEntity<Map<String, Object>> cetCurrentStatisticsExport(
             @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "cetType 成绩类型： (四级;六级;)" , required = true ) @RequestParam(value = "cetType" , required = true) String cetType
     ) {
-        return cetStatisticAnalysisService.cetCurrentStatisticsExport(orgId,cetType);
+        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.cetCurrentStatisticsExport(orgId,cetType),HttpStatus.OK);
     }
 
 

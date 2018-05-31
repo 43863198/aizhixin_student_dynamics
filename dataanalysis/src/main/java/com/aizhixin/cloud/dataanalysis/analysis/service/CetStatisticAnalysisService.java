@@ -1793,10 +1793,11 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
 }
 
 
-    public ResponseEntity<byte[]> cetSingleStatisticsExport(Long orgId, String cetType, String teacherYear, String semester) {
-        ByteArrayOutputStream os = null;
-        FileOutputStream fos = null;
+    public Map<String, Object> cetSingleStatisticsExport(Long orgId, String cetType, String teacherYear, String semester) {
+//        ByteArrayOutputStream os = null;
+//        FileOutputStream fos = null;
         Map<String, Object> condition = new HashMap<>();
+        Map<String, Object> result = new HashMap<>();
         try {
             Date start = null;
             Date end = null;
@@ -2009,207 +2010,220 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     gradeList.add(gradeVO);
                 }
             }
-            XSSFWorkbook wb = new XSSFWorkbook(resourceAsStream);
-            cetSingleStatisticsExcel(wb, collegeList, majorList, classList, gradeList);
+            Map<String,Object> data = new HashMap<>();
+            data.put("college",collegeList);
+            data.put("major",majorList);
+            data.put("class",classList);
+            data.put("grade",gradeList);
+            result.put("success",true);
+            result.put("data",data);
+            return result;
+
+//            XSSFWorkbook wb = new XSSFWorkbook(resourceAsStream);
+//            cetSingleStatisticsExcel(wb, collegeList, majorList, classList, gradeList);
             // 输出转输入
-            os = new ByteArrayOutputStream();
-            wb.write(os);
-            byte[] brollcall = os.toByteArray();
-            String fileName = teacherYear+semester+cetType+"级考试统计.xlsx";
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .header("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "utf-8")).body(brollcall);
+//            os = new ByteArrayOutputStream();
+//            wb.write(os);
+//            byte[] brollcall = os.toByteArray();
+//            String fileName = teacherYear+semester+cetType+"级考试统计.xlsx";
+//            return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
+//                    .header("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "utf-8")).body(brollcall);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new byte[]{});
-        } finally {
-            try {
-                if (fos != null) {
-                    fos.close();
-                }
-                if (os != null) {
-                    os.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new byte[]{});
+//        } finally {
+//            try {
+//                if (fos != null) {
+//                    fos.close();
+//                }
+//                if (os != null) {
+//                    os.close();
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+            result.put("success",false);
+            result.put("message","单次统计导出英语成绩失败！");
+            return result;
         }
     }
 
-    public void cetSingleStatisticsExcel(XSSFWorkbook wb, List<SingleStatisticsCollegeVO> collegeList,List<SingleStatisticsMajorVO>  majorList,List<SingleStatisticsClassVO> classList,List<SingleStatisticsGradeVO> gradeList) {
-        XSSFSheet sheet1 = wb.getSheet("学院");
-        XSSFSheet sheet2 = wb.getSheet("专业");
-        XSSFSheet sheet3 = wb.getSheet("班级");
-        XSSFSheet sheet4 = wb.getSheet("年级");
-        // 遍历集合数据，产生数据行
-        Iterator<SingleStatisticsCollegeVO> d = collegeList.iterator();
-        Iterator<SingleStatisticsMajorVO> p = majorList.iterator();
-        Iterator<SingleStatisticsClassVO> c = classList.iterator();
-        Iterator<SingleStatisticsGradeVO> g = gradeList.iterator();
-        int dindex = 0;
-        int pindex = 0;
-        int cindex = 0;
-        int gindex = 0;
-        XSSFRow drowTemp = sheet1.getRow(1);
-        XSSFRow prowTemp = sheet2.getRow(1);
-        XSSFRow crowTemp = sheet3.getRow(1);
-        XSSFRow growTemp = sheet4.getRow(1);
-        while (d.hasNext()) {
-            dindex++;
-            XSSFRow row = sheet1.createRow(dindex);
-            SingleStatisticsCollegeVO t = (SingleStatisticsCollegeVO) d.next();
-            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
-            Field[] fields = t.getClass().getDeclaredFields();
-            for (short i = 0; i < fields.length; i++) {
-                XSSFCell cell = row.createCell(i);
-                Field field = fields[i];
-                String fieldName = field.getName();
-                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-                try {
-                    Class tCls = t.getClass();
-                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
-                    Object value = getMethod.invoke(t, new Object[]{});
+//    public void cetSingleStatisticsExcel(XSSFWorkbook wb, List<SingleStatisticsCollegeVO> collegeList,List<SingleStatisticsMajorVO>  majorList,List<SingleStatisticsClassVO> classList,List<SingleStatisticsGradeVO> gradeList) {
+//        XSSFSheet sheet1 = wb.getSheet("学院");
+//        XSSFSheet sheet2 = wb.getSheet("专业");
+//        XSSFSheet sheet3 = wb.getSheet("班级");
+//        XSSFSheet sheet4 = wb.getSheet("年级");
+//        // 遍历集合数据，产生数据行
+//        Iterator<SingleStatisticsCollegeVO> d = collegeList.iterator();
+//        Iterator<SingleStatisticsMajorVO> p = majorList.iterator();
+//        Iterator<SingleStatisticsClassVO> c = classList.iterator();
+//        Iterator<SingleStatisticsGradeVO> g = gradeList.iterator();
+//        int dindex = 0;
+//        int pindex = 0;
+//        int cindex = 0;
+//        int gindex = 0;
+//        XSSFRow drowTemp = sheet1.getRow(1);
+//        XSSFRow prowTemp = sheet2.getRow(1);
+//        XSSFRow crowTemp = sheet3.getRow(1);
+//        XSSFRow growTemp = sheet4.getRow(1);
+//        while (d.hasNext()) {
+//            dindex++;
+//            XSSFRow row = sheet1.createRow(dindex);
+//            SingleStatisticsCollegeVO t = (SingleStatisticsCollegeVO) d.next();
+//            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
+//            Field[] fields = t.getClass().getDeclaredFields();
+//            for (short i = 0; i < fields.length; i++) {
+//                XSSFCell cell = row.createCell(i);
+//                Field field = fields[i];
+//                String fieldName = field.getName();
+//                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+//                try {
+//                    Class tCls = t.getClass();
+//                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
+//                    Object value = getMethod.invoke(t, new Object[]{});
+//
+//                    // 判断值的类型后进行强制类型转换
+//                    String textValue = value == null ? "" : value.toString();
+//
+//                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
+//                    if (textValue != null) {
+//                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
+//                        Matcher matcher = pa.matcher(textValue);
+//                        if (matcher.matches()) {
+//                            // 是数字当作double处理
+//                            cell.setCellValue(Double.parseDouble(textValue));
+//                        } else {
+//                            cell.setCellValue(textValue);
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                } finally {
+//                    // 清理资源
+//                }
+//            }
+//        }
+//        while (p.hasNext()) {
+//            pindex++;
+//            XSSFRow row = sheet2.createRow(pindex);
+//            SingleStatisticsMajorVO t = (SingleStatisticsMajorVO) p.next();
+//            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
+//            Field[] fields = t.getClass().getDeclaredFields();
+//            for (short i = 0; i < fields.length; i++) {
+//                XSSFCell cell = row.createCell(i);
+//                Field field = fields[i];
+//                String fieldName = field.getName();
+//                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+//                try {
+//                    Class tCls = t.getClass();
+//                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
+//                    Object value = getMethod.invoke(t, new Object[]{});
+//
+//                    // 判断值的类型后进行强制类型转换
+//                    String textValue = value == null ? "" : value.toString();
+//
+//                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
+//                    if (textValue != null) {
+//                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
+//                        Matcher matcher = pa.matcher(textValue);
+//                        if (matcher.matches()) {
+//                            // 是数字当作double处理
+//                            cell.setCellValue(Double.parseDouble(textValue));
+//                        } else {
+//                            cell.setCellValue(textValue);
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                } finally {
+//                    // 清理资源
+//                }
+//            }
+//        }
+//
+//        while (c.hasNext()) {
+//            cindex++;
+//            XSSFRow row = sheet3.createRow(cindex);
+//            SingleStatisticsClassVO t = (SingleStatisticsClassVO) c.next();
+//            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
+//            Field[] fields = t.getClass().getDeclaredFields();
+//            for (short i = 0; i < fields.length; i++) {
+//                XSSFCell cell = row.createCell(i);
+//                Field field = fields[i];
+//                String fieldName = field.getName();
+//                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+//                try {
+//                    Class tCls = t.getClass();
+//                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
+//                    Object value = getMethod.invoke(t, new Object[]{});
+//
+//                    // 判断值的类型后进行强制类型转换
+//                    String textValue = value == null ? "" : value.toString();
+//
+//                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
+//                    if (textValue != null) {
+//                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
+//                        Matcher matcher = pa.matcher(textValue);
+//                        if (matcher.matches()) {
+//                            // 是数字当作double处理
+//                            cell.setCellValue(Double.parseDouble(textValue));
+//                        } else {
+//                            cell.setCellValue(textValue);
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                } finally {
+//                    // 清理资源
+//                }
+//            }
+//        }
+//
+//        while (g.hasNext()) {
+//            gindex++;
+//            XSSFRow row = sheet4.createRow(gindex);
+//            SingleStatisticsGradeVO t = (SingleStatisticsGradeVO) g.next();
+//            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
+//            Field[] fields = t.getClass().getDeclaredFields();
+//            for (short i = 0; i < fields.length; i++) {
+//                XSSFCell cell = row.createCell(i);
+//                Field field = fields[i];
+//                String fieldName = field.getName();
+//                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+//                try {
+//                    Class tCls = t.getClass();
+//                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
+//                    Object value = getMethod.invoke(t, new Object[]{});
+//
+//                    // 判断值的类型后进行强制类型转换
+//                    String textValue = value == null ? "" : value.toString();
+//
+//                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
+//                    if (textValue != null) {
+//                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
+//                        Matcher matcher = pa.matcher(textValue);
+//                        if (matcher.matches()) {
+//                            // 是数字当作double处理
+//                            cell.setCellValue(Double.parseDouble(textValue));
+//                        } else {
+//                            cell.setCellValue(textValue);
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                } finally {
+//                    // 清理资源
+//                }
+//            }
+//        }
+//    }
 
-                    // 判断值的类型后进行强制类型转换
-                    String textValue = value == null ? "" : value.toString();
-
-                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
-                    if (textValue != null) {
-                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
-                        Matcher matcher = pa.matcher(textValue);
-                        if (matcher.matches()) {
-                            // 是数字当作double处理
-                            cell.setCellValue(Double.parseDouble(textValue));
-                        } else {
-                            cell.setCellValue(textValue);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    // 清理资源
-                }
-            }
-        }
-        while (p.hasNext()) {
-            pindex++;
-            XSSFRow row = sheet2.createRow(pindex);
-            SingleStatisticsMajorVO t = (SingleStatisticsMajorVO) p.next();
-            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
-            Field[] fields = t.getClass().getDeclaredFields();
-            for (short i = 0; i < fields.length; i++) {
-                XSSFCell cell = row.createCell(i);
-                Field field = fields[i];
-                String fieldName = field.getName();
-                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-                try {
-                    Class tCls = t.getClass();
-                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
-                    Object value = getMethod.invoke(t, new Object[]{});
-
-                    // 判断值的类型后进行强制类型转换
-                    String textValue = value == null ? "" : value.toString();
-
-                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
-                    if (textValue != null) {
-                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
-                        Matcher matcher = pa.matcher(textValue);
-                        if (matcher.matches()) {
-                            // 是数字当作double处理
-                            cell.setCellValue(Double.parseDouble(textValue));
-                        } else {
-                            cell.setCellValue(textValue);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    // 清理资源
-                }
-            }
-        }
-
-        while (c.hasNext()) {
-            cindex++;
-            XSSFRow row = sheet3.createRow(cindex);
-            SingleStatisticsClassVO t = (SingleStatisticsClassVO) c.next();
-            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
-            Field[] fields = t.getClass().getDeclaredFields();
-            for (short i = 0; i < fields.length; i++) {
-                XSSFCell cell = row.createCell(i);
-                Field field = fields[i];
-                String fieldName = field.getName();
-                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-                try {
-                    Class tCls = t.getClass();
-                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
-                    Object value = getMethod.invoke(t, new Object[]{});
-
-                    // 判断值的类型后进行强制类型转换
-                    String textValue = value == null ? "" : value.toString();
-
-                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
-                    if (textValue != null) {
-                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
-                        Matcher matcher = pa.matcher(textValue);
-                        if (matcher.matches()) {
-                            // 是数字当作double处理
-                            cell.setCellValue(Double.parseDouble(textValue));
-                        } else {
-                            cell.setCellValue(textValue);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    // 清理资源
-                }
-            }
-        }
-
-        while (g.hasNext()) {
-            gindex++;
-            XSSFRow row = sheet4.createRow(gindex);
-            SingleStatisticsGradeVO t = (SingleStatisticsGradeVO) g.next();
-            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
-            Field[] fields = t.getClass().getDeclaredFields();
-            for (short i = 0; i < fields.length; i++) {
-                XSSFCell cell = row.createCell(i);
-                Field field = fields[i];
-                String fieldName = field.getName();
-                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-                try {
-                    Class tCls = t.getClass();
-                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
-                    Object value = getMethod.invoke(t, new Object[]{});
-
-                    // 判断值的类型后进行强制类型转换
-                    String textValue = value == null ? "" : value.toString();
-
-                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
-                    if (textValue != null) {
-                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
-                        Matcher matcher = pa.matcher(textValue);
-                        if (matcher.matches()) {
-                            // 是数字当作double处理
-                            cell.setCellValue(Double.parseDouble(textValue));
-                        } else {
-                            cell.setCellValue(textValue);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    // 清理资源
-                }
-            }
-        }
-    }
 
 
-
-    public ResponseEntity<byte[]> cetCurrentStatisticsExport(Long orgId, String cetType) {
-        ByteArrayOutputStream os = null;
-        FileOutputStream fos = null;
+    public  Map<String, Object> cetCurrentStatisticsExport(Long orgId, String cetType) {
+//        ByteArrayOutputStream os = null;
+//        FileOutputStream fos = null;
+        Map<String, Object> result = new HashMap<>();
         try {
             List<CurrentStatisticsCollegeVO> collegeList = new ArrayList<>();
             List<CurrentStatisticsMajorVO>  majorList = new ArrayList<>();
@@ -2392,202 +2406,213 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                     gradeList.add(gradeVO);
                 }
             }
+            Map<String,Object> data = new HashMap<>();
+            data.put("college",collegeList);
+            data.put("major",majorList);
+            data.put("class",classList);
+            data.put("grade",gradeList);
+            result.put("success",true);
+            result.put("data",data);
+            return result;
 
-            XSSFWorkbook wb = new XSSFWorkbook(resourceAsStream);
-            cetCurrentStatisticsExcel(wb, collegeList, majorList, classList, gradeList);
-            // 输出转输入
-            os = new ByteArrayOutputStream();
-            wb.write(os);
-            byte[] brollcall = os.toByteArray();
-            String fileName = cetType+"级当前累计通过情况.xlsx";
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .header("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "utf-8")).body(brollcall);
+//            XSSFWorkbook wb = new XSSFWorkbook(resourceAsStream);
+//            cetCurrentStatisticsExcel(wb, collegeList, majorList, classList, gradeList);
+//            // 输出转输入
+//            os = new ByteArrayOutputStream();
+//            wb.write(os);
+//            byte[] brollcall = os.toByteArray();
+//            String fileName = cetType+"级当前累计通过情况.xlsx";
+//            return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
+//                    .header("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, "utf-8")).body(brollcall);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new byte[]{});
-        } finally {
-            try {
-                if (fos != null) {
-                    fos.close();
-                }
-                if (os != null) {
-                    os.close();
-                }
-            } catch (IOException e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new byte[]{});
+//        } finally {
+//            try {
+//                if (fos != null) {
+//                    fos.close();
+//                }
+//                if (os != null) {
+//                    os.close();
+//                }
+//            } catch (IOException e) {
                 e.printStackTrace();
-            }
+            result.put("success",false);
+            result.put("message","导出统计当前英语英语成绩考试情况失败！");
+            return result;
+//            }
         }
     }
 
-    public void cetCurrentStatisticsExcel(XSSFWorkbook wb, List<CurrentStatisticsCollegeVO> collegeList,List<CurrentStatisticsMajorVO> majorList,List<CurrentStatisticsClassVO> classList,List<CurrentStatisticsGradeVO> gradeList) {
-        XSSFSheet sheet1 = wb.getSheet("学院");
-        XSSFSheet sheet2 = wb.getSheet("专业");
-        XSSFSheet sheet3 = wb.getSheet("班级");
-        XSSFSheet sheet4 = wb.getSheet("年级");
-        // 遍历集合数据，产生数据行
-        Iterator<CurrentStatisticsCollegeVO> d = collegeList.iterator();
-        Iterator<CurrentStatisticsMajorVO> p = majorList.iterator();
-        Iterator<CurrentStatisticsClassVO> c = classList.iterator();
-        Iterator<CurrentStatisticsGradeVO> g = gradeList.iterator();
-        int dindex = 0;
-        int pindex = 0;
-        int cindex = 0;
-        int gindex = 0;
-        XSSFRow drowTemp = sheet1.getRow(1);
-        XSSFRow prowTemp = sheet2.getRow(1);
-        XSSFRow crowTemp = sheet3.getRow(1);
-        XSSFRow growTemp = sheet4.getRow(1);
-        while (d.hasNext()) {
-            dindex++;
-            XSSFRow row = sheet1.createRow(dindex);
-            CurrentStatisticsCollegeVO t = (CurrentStatisticsCollegeVO) d.next();
-            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
-            Field[] fields = t.getClass().getDeclaredFields();
-            for (short i = 0; i < fields.length; i++) {
-                XSSFCell cell = row.createCell(i);
-                Field field = fields[i];
-                String fieldName = field.getName();
-                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-                try {
-                    Class tCls = t.getClass();
-                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
-                    Object value = getMethod.invoke(t, new Object[]{});
-
-                    // 判断值的类型后进行强制类型转换
-                    String textValue = value == null ? "" : value.toString();
-
-                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
-                    if (textValue != null) {
-                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
-                        Matcher matcher = pa.matcher(textValue);
-                        if (matcher.matches()) {
-                            // 是数字当作double处理
-                            cell.setCellValue(Double.parseDouble(textValue));
-                        } else {
-                            cell.setCellValue(textValue);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    // 清理资源
-                }
-            }
-        }
-        while (p.hasNext()) {
-            pindex++;
-            XSSFRow row = sheet2.createRow(pindex);
-            CurrentStatisticsMajorVO t = (CurrentStatisticsMajorVO) p.next();
-            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
-            Field[] fields = t.getClass().getDeclaredFields();
-            for (short i = 0; i < fields.length; i++) {
-                XSSFCell cell = row.createCell(i);
-                Field field = fields[i];
-                String fieldName = field.getName();
-                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-                try {
-                    Class tCls = t.getClass();
-                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
-                    Object value = getMethod.invoke(t, new Object[]{});
-
-                    // 判断值的类型后进行强制类型转换
-                    String textValue = value == null ? "" : value.toString();
-
-                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
-                    if (textValue != null) {
-                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
-                        Matcher matcher = pa.matcher(textValue);
-                        if (matcher.matches()) {
-                            // 是数字当作double处理
-                            cell.setCellValue(Double.parseDouble(textValue));
-                        } else {
-                            cell.setCellValue(textValue);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    // 清理资源
-                }
-            }
-        }
-
-        while (c.hasNext()) {
-            cindex++;
-            XSSFRow row = sheet3.createRow(cindex);
-            CurrentStatisticsClassVO t = (CurrentStatisticsClassVO) c.next();
-            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
-            Field[] fields = t.getClass().getDeclaredFields();
-            for (short i = 0; i < fields.length; i++) {
-                XSSFCell cell = row.createCell(i);
-                Field field = fields[i];
-                String fieldName = field.getName();
-                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-                try {
-                    Class tCls = t.getClass();
-                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
-                    Object value = getMethod.invoke(t, new Object[]{});
-
-                    // 判断值的类型后进行强制类型转换
-                    String textValue = value == null ? "" : value.toString();
-
-                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
-                    if (textValue != null) {
-                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
-                        Matcher matcher = pa.matcher(textValue);
-                        if (matcher.matches()) {
-                            // 是数字当作double处理
-                            cell.setCellValue(Double.parseDouble(textValue));
-                        } else {
-                            cell.setCellValue(textValue);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    // 清理资源
-                }
-            }
-        }
-
-        while (g.hasNext()) {
-            gindex++;
-            XSSFRow row = sheet4.createRow(gindex);
-            CurrentStatisticsGradeVO t = (CurrentStatisticsGradeVO) g.next();
-            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
-            Field[] fields = t.getClass().getDeclaredFields();
-            for (short i = 0; i < fields.length; i++) {
-                XSSFCell cell = row.createCell(i);
-                Field field = fields[i];
-                String fieldName = field.getName();
-                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-                try {
-                    Class tCls = t.getClass();
-                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
-                    Object value = getMethod.invoke(t, new Object[]{});
-
-                    // 判断值的类型后进行强制类型转换
-                    String textValue = value == null ? "" : value.toString();
-
-                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
-                    if (textValue != null) {
-                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
-                        Matcher matcher = pa.matcher(textValue);
-                        if (matcher.matches()) {
-                            // 是数字当作double处理
-                            cell.setCellValue(Double.parseDouble(textValue));
-                        } else {
-                            cell.setCellValue(textValue);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    // 清理资源
-                }
-            }
-        }
-    }
+//    public void cetCurrentStatisticsExcel(XSSFWorkbook wb, List<CurrentStatisticsCollegeVO> collegeList,List<CurrentStatisticsMajorVO> majorList,List<CurrentStatisticsClassVO> classList,List<CurrentStatisticsGradeVO> gradeList) {
+//        XSSFSheet sheet1 = wb.getSheet("学院");
+//        XSSFSheet sheet2 = wb.getSheet("专业");
+//        XSSFSheet sheet3 = wb.getSheet("班级");
+//        XSSFSheet sheet4 = wb.getSheet("年级");
+//        // 遍历集合数据，产生数据行
+//        Iterator<CurrentStatisticsCollegeVO> d = collegeList.iterator();
+//        Iterator<CurrentStatisticsMajorVO> p = majorList.iterator();
+//        Iterator<CurrentStatisticsClassVO> c = classList.iterator();
+//        Iterator<CurrentStatisticsGradeVO> g = gradeList.iterator();
+//        int dindex = 0;
+//        int pindex = 0;
+//        int cindex = 0;
+//        int gindex = 0;
+//        XSSFRow drowTemp = sheet1.getRow(1);
+//        XSSFRow prowTemp = sheet2.getRow(1);
+//        XSSFRow crowTemp = sheet3.getRow(1);
+//        XSSFRow growTemp = sheet4.getRow(1);
+//        while (d.hasNext()) {
+//            dindex++;
+//            XSSFRow row = sheet1.createRow(dindex);
+//            CurrentStatisticsCollegeVO t = (CurrentStatisticsCollegeVO) d.next();
+//            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
+//            Field[] fields = t.getClass().getDeclaredFields();
+//            for (short i = 0; i < fields.length; i++) {
+//                XSSFCell cell = row.createCell(i);
+//                Field field = fields[i];
+//                String fieldName = field.getName();
+//                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+//                try {
+//                    Class tCls = t.getClass();
+//                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
+//                    Object value = getMethod.invoke(t, new Object[]{});
+//
+//                    // 判断值的类型后进行强制类型转换
+//                    String textValue = value == null ? "" : value.toString();
+//
+//                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
+//                    if (textValue != null) {
+//                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
+//                        Matcher matcher = pa.matcher(textValue);
+//                        if (matcher.matches()) {
+//                            // 是数字当作double处理
+//                            cell.setCellValue(Double.parseDouble(textValue));
+//                        } else {
+//                            cell.setCellValue(textValue);
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                } finally {
+//                    // 清理资源
+//                }
+//            }
+//        }
+//        while (p.hasNext()) {
+//            pindex++;
+//            XSSFRow row = sheet2.createRow(pindex);
+//            CurrentStatisticsMajorVO t = (CurrentStatisticsMajorVO) p.next();
+//            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
+//            Field[] fields = t.getClass().getDeclaredFields();
+//            for (short i = 0; i < fields.length; i++) {
+//                XSSFCell cell = row.createCell(i);
+//                Field field = fields[i];
+//                String fieldName = field.getName();
+//                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+//                try {
+//                    Class tCls = t.getClass();
+//                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
+//                    Object value = getMethod.invoke(t, new Object[]{});
+//
+//                    // 判断值的类型后进行强制类型转换
+//                    String textValue = value == null ? "" : value.toString();
+//
+//                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
+//                    if (textValue != null) {
+//                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
+//                        Matcher matcher = pa.matcher(textValue);
+//                        if (matcher.matches()) {
+//                            // 是数字当作double处理
+//                            cell.setCellValue(Double.parseDouble(textValue));
+//                        } else {
+//                            cell.setCellValue(textValue);
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                } finally {
+//                    // 清理资源
+//                }
+//            }
+//        }
+//
+//        while (c.hasNext()) {
+//            cindex++;
+//            XSSFRow row = sheet3.createRow(cindex);
+//            CurrentStatisticsClassVO t = (CurrentStatisticsClassVO) c.next();
+//            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
+//            Field[] fields = t.getClass().getDeclaredFields();
+//            for (short i = 0; i < fields.length; i++) {
+//                XSSFCell cell = row.createCell(i);
+//                Field field = fields[i];
+//                String fieldName = field.getName();
+//                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+//                try {
+//                    Class tCls = t.getClass();
+//                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
+//                    Object value = getMethod.invoke(t, new Object[]{});
+//
+//                    // 判断值的类型后进行强制类型转换
+//                    String textValue = value == null ? "" : value.toString();
+//
+//                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
+//                    if (textValue != null) {
+//                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
+//                        Matcher matcher = pa.matcher(textValue);
+//                        if (matcher.matches()) {
+//                            // 是数字当作double处理
+//                            cell.setCellValue(Double.parseDouble(textValue));
+//                        } else {
+//                            cell.setCellValue(textValue);
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                } finally {
+//                    // 清理资源
+//                }
+//            }
+//        }
+//
+//        while (g.hasNext()) {
+//            gindex++;
+//            XSSFRow row = sheet4.createRow(gindex);
+//            CurrentStatisticsGradeVO t = (CurrentStatisticsGradeVO) g.next();
+//            // 利用反射，根据javabean属性的先后顺序，动态调用getXxx()方法得到属性值
+//            Field[] fields = t.getClass().getDeclaredFields();
+//            for (short i = 0; i < fields.length; i++) {
+//                XSSFCell cell = row.createCell(i);
+//                Field field = fields[i];
+//                String fieldName = field.getName();
+//                String getMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+//                try {
+//                    Class tCls = t.getClass();
+//                    Method getMethod = tCls.getMethod(getMethodName, new Class[]{});
+//                    Object value = getMethod.invoke(t, new Object[]{});
+//
+//                    // 判断值的类型后进行强制类型转换
+//                    String textValue = value == null ? "" : value.toString();
+//
+//                    // 如果不是图片数据，就利用正则表达式判断textValue是否全部由数字组成
+//                    if (textValue != null) {
+//                        Pattern pa = Pattern.compile("^//d+(//.//d+)?$");
+//                        Matcher matcher = pa.matcher(textValue);
+//                        if (matcher.matches()) {
+//                            // 是数字当作double处理
+//                            cell.setCellValue(Double.parseDouble(textValue));
+//                        } else {
+//                            cell.setCellValue(textValue);
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                } finally {
+//                    // 清理资源
+//                }
+//            }
+//        }
+//    }
 
 
 
