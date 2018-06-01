@@ -1661,13 +1661,13 @@ public class CetStatisticAnalysisService {
 
 
 
-    public  Map<String,Object>  avg(Long orgId,String collegeCode,String professionCode,String classCode, String cetType){
+    public  Map<String,Object>  avg(Long orgId,String collegeCode,String professionCode,String classCode,String className, String cetType){
         Map<String,Object> result=new HashMap<>();
         AvgInfoDomain avgInfoDomain=new AvgInfoDomain();
-        avgInfoDomain.setAvgDomains(avgInfo(orgId,collegeCode,professionCode,classCode,cetType));
-        avgInfoDomain.setAvgAgeDomains(avgAvgInfo(orgId,collegeCode,professionCode,classCode,cetType));
-        avgInfoDomain.setAvgSexDomains(avgSexInfo(orgId,collegeCode,professionCode,classCode,cetType));
-        avgInfoDomain.setAvgNjDomains(avgNjInfo(orgId,collegeCode,professionCode,classCode,cetType));
+        avgInfoDomain.setAvgDomains(avgInfo(orgId,collegeCode,professionCode,classCode,className,cetType));
+        avgInfoDomain.setAvgAgeDomains(avgAvgInfo(orgId,collegeCode,professionCode,classCode,className,cetType));
+        avgInfoDomain.setAvgSexDomains(avgSexInfo(orgId,collegeCode,professionCode,classCode,className,cetType));
+        avgInfoDomain.setAvgNjDomains(avgNjInfo(orgId,collegeCode,professionCode,classCode,className,cetType));
         result.put("data", avgInfoDomain);
         result.put("success", true);
         return result;
@@ -1761,9 +1761,9 @@ public class CetStatisticAnalysisService {
 
 
 
-    public List<AvgDomain> avgInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
+    public List<AvgDomain> avgInfo(Long orgId, String collegeCode, String professionCode, String classCode, String className, String cetType){
     List<AvgDomain> avgDomainList=new ArrayList<>();
-    List<AvgDomain> avgDomains=cetAvgStatisticalJdbc.avgInfo(orgId, collegeCode, professionCode, classCode, cetType);
+    List<AvgDomain> avgDomains=cetAvgStatisticalJdbc.avgInfo(orgId, collegeCode, professionCode, classCode, className,cetType);
     if (null!=avgDomains&&0<avgDomains.size()){
         avgDomainList.addAll(avgDomains);
     }
@@ -1771,27 +1771,27 @@ public class CetStatisticAnalysisService {
 }
 
 //性别
-    public List<AvgSexDomain> avgSexInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
+    public List<AvgSexDomain> avgSexInfo(Long orgId, String collegeCode, String professionCode, String classCode, String className, String cetType){
         List<AvgSexDomain> avgDomainList=new ArrayList<>();
-        List<AvgSexDomain> avgDomains=cetAvgStatisticalJdbc.avgXbInfo(orgId,collegeCode,professionCode,classCode,cetType);
+        List<AvgSexDomain> avgDomains=cetAvgStatisticalJdbc.avgXbInfo(orgId,collegeCode,professionCode,classCode,className,cetType);
         if (null!=avgDomains&&0<avgDomains.size()){
             avgDomainList.addAll(avgDomains);
         }
         return avgDomainList;
     }
 //年龄
-    public List<AvgAgeDomain> avgAvgInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
+    public List<AvgAgeDomain> avgAvgInfo(Long orgId, String collegeCode, String professionCode, String classCode, String className,String cetType){
         List<AvgAgeDomain> avgDomainList=new ArrayList<>();
-        List<AvgAgeDomain> avgDomains=cetAvgStatisticalJdbc.avgAgeInfo(orgId, collegeCode, professionCode, classCode, cetType);
+        List<AvgAgeDomain> avgDomains=cetAvgStatisticalJdbc.avgAgeInfo(orgId, collegeCode, professionCode, classCode, className, cetType);
         if (null!=avgDomains&&0<avgDomains.size()){
             avgDomainList.addAll(avgDomains);
         }
         return avgDomainList;
     }
 //年级
-public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
+public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String professionCode, String classCode, String className, String cetType){
     List<AvgNjDomain> avgDomainList=new ArrayList<>();
-    List<AvgNjDomain> avgDomains=cetAvgStatisticalJdbc.avgNjInfo(orgId, collegeCode, professionCode, classCode, cetType);
+    List<AvgNjDomain> avgDomains=cetAvgStatisticalJdbc.avgNjInfo(orgId, collegeCode, professionCode, classCode, className, cetType);
     if (null!=avgDomains&&0<avgDomains.size()){
         avgDomainList.addAll(avgDomains);
     }
