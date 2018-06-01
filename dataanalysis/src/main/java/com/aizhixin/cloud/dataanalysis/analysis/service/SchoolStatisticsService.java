@@ -204,7 +204,7 @@ public class SchoolStatisticsService {
         h.setTeacherlYearData(teacherlYearData);
 
         Map<String, Object> con = new HashMap<>();
-        StringBuilder ssl = new StringBuilder("SELECT count(x.XH) as count, sum(if(x.YBYNY > now() and datediff(x.YBYNY,now()) < 300,1,0)) as yby FROM t_xsjbxx x WHERE 1 = 1");
+        StringBuilder ssl = new StringBuilder("SELECT sum(if(CURDATE() BETWEEN x.RXNY AND x.YBYNY,1,0)) as count, sum(if(x.YBYNY > now() and datediff(x.YBYNY,now()) < 300,1,0)) as yby FROM t_xsjbxx x WHERE 1 = 1");
         if (null != orgId) {
             ssl.append(" AND x.XXID = :orgId");
             con.put("orgId", orgId);

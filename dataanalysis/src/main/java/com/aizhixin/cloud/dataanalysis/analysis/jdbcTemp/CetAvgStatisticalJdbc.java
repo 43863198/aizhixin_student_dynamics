@@ -23,7 +23,7 @@ public class CetAvgStatisticalJdbc {
         BigDecimal bd=new BigDecimal(number).setScale(0, BigDecimal.ROUND_HALF_UP);
         return Integer.parseInt(bd.toString());
     }
-    public List<AvgDomain> avgInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
+    public List<AvgDomain> avgInfo(Long orgId, String collegeCode, String professionCode, String classCode,String className, String cetType){
         String sql=" SELECT max(tcs.`SCORE`) as sc";
         if (StringUtils.isEmpty(collegeCode)){
             sql+=" ,ts.`YXSMC` as `name` ";
@@ -45,8 +45,9 @@ public class CetAvgStatisticalJdbc {
         if (!StringUtils.isEmpty(professionCode)){
             sql+=" AND ts.`ZYH`='"+professionCode+"'";
         }
-        if (!StringUtils.isEmpty(classCode)){
+        if (!StringUtils.isEmpty(classCode)&&!StringUtils.isEmpty(className)){
             sql+=" AND ts.`BH`='"+classCode+"'";
+            sql+=" AND ts.`BJMC`='"+className+"'";
         }
         sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%' GROUP BY tcs.`JOB_NUMBER`";
 //        if (StringUtils.isEmpty(collegeCode)){
@@ -76,7 +77,7 @@ public class CetAvgStatisticalJdbc {
     }
 
 
-    public List<AvgSexDomain> avgXbInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
+    public List<AvgSexDomain> avgXbInfo(Long orgId, String collegeCode, String professionCode, String classCode, String className, String cetType){
         String sql=" SELECT max(tcs.`SCORE`) as sc,ts.`XB` ";
         sql+= "FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND ts.`RXNY`<CURRENT_TIMESTAMP AND tcs.`SCORE`> 0";
         if (!StringUtils.isEmpty(collegeCode)){
@@ -85,8 +86,9 @@ public class CetAvgStatisticalJdbc {
         if (!StringUtils.isEmpty(professionCode)){
             sql+=" AND ts.`ZYH`='"+professionCode+"'";
         }
-        if (!StringUtils.isEmpty(classCode)){
+        if (!StringUtils.isEmpty(classCode)&&!StringUtils.isEmpty(className)){
             sql+=" AND ts.`BH`='"+classCode+"'";
+            sql+=" AND ts.`BJMC`='"+className+"'";
         }
         sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%' GROUP BY ts.`xh`";
 
@@ -102,7 +104,7 @@ public class CetAvgStatisticalJdbc {
     }
 
 
-    public List<AvgAgeDomain> avgAgeInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
+    public List<AvgAgeDomain> avgAgeInfo(Long orgId, String collegeCode, String professionCode, String classCode, String className, String cetType){
         String sql=" SELECT max(tcs.`SCORE`) as sc,ts.`nl` ";
         sql+= "FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND ts.`RXNY`<CURRENT_TIMESTAMP AND tcs.`SCORE`>0  and ts.nl is not null";
         if (!StringUtils.isEmpty(collegeCode)){
@@ -111,8 +113,9 @@ public class CetAvgStatisticalJdbc {
         if (!StringUtils.isEmpty(professionCode)){
             sql+=" AND ts.`ZYH`='"+professionCode+"'";
         }
-        if (!StringUtils.isEmpty(classCode)){
+        if (!StringUtils.isEmpty(classCode)&&!StringUtils.isEmpty(className)){
             sql+=" AND ts.`BH`='"+classCode+"'";
+            sql+=" AND ts.`BJMC`='"+className+"'";
         }
         sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%' GROUP BY ts.`xh` ";
         String sql2="SELECT c.nl,ROUND(AVG(c.sc),2) AS sc FROM ("+sql+") as c GROUP BY c.nl";
@@ -127,7 +130,7 @@ public class CetAvgStatisticalJdbc {
     }
 
 
-    public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
+    public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String professionCode, String classCode, String className, String cetType){
         String sql=" SELECT max(tcs.`SCORE`) as sc,ts.`NJ` ";
         sql+= "FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND tcs.`SCORE`>0 AND ts.`RXNY`<CURRENT_TIMESTAMP";
         if (!StringUtils.isEmpty(collegeCode)){
@@ -136,8 +139,9 @@ public class CetAvgStatisticalJdbc {
         if (!StringUtils.isEmpty(professionCode)){
             sql+=" AND ts.`ZYH`='"+professionCode+"'";
         }
-        if (!StringUtils.isEmpty(classCode)){
+        if (!StringUtils.isEmpty(classCode)&&!StringUtils.isEmpty(className)){
             sql+=" AND ts.`BH`='"+classCode+"'";
+            sql+=" AND ts.`BJMC`='"+className+"'";
         }
         sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%' GROUP BY ts.`xh`";
         String sql2="SELECT c.nj,ROUND(AVG(c.sc),2) AS sc FROM ("+sql+") as c group by c.nj";
