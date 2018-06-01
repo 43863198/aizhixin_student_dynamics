@@ -67,7 +67,6 @@ public class SchoolStatisticsService {
     private MongoTemplate mongoTemplate;
 
 
-
     public void deleteAllByOrgId(Long orgId) {
         schoolStatisticsRespository.deleteByOrgId(orgId);
     }
@@ -190,43 +189,58 @@ public class SchoolStatisticsService {
         Map currentGradeMap = new HashMap();
         try {
             currentGradeMap = jdbcTemplate.queryForMap(sql);
+            int teacherYear = Integer.valueOf(currentGradeMap.get("TEACHER_YEAR") + "");
+            int semester = Integer.valueOf(currentGradeMap.get("SEMESTER") + "");
+            PracticeStaticsDTO practiceStaticsDTO = practiceStaticsRespository.getPracticeStatics(orgId, teacherYear, semester);
+            SchoolProfileDTO schoolProfileDTO = schoolStatisticsRespository.getSchoolPersonStatistics(orgId, teacherYear);
+//        schoolProfileDTO.setOutSchoolStudent(Long.valueOf(practiceStaticsDTO.getPracticeStudentNum()));
+//        schoolProfileDTO.setInSchoolStudent(Long.valueOf(schoolProfileDTO.getAllStudent()) - Long.valueOf(schoolProfileDTO.getOutSchoolStudent()));
+            HomeData<SchoolProfileDTO> h = new HomeData();
+            TeacherlYearData teacherlYearData = new TeacherlYearData();
+            teacherlYearData.setSemester(semester);
+            teacherlYearData.setTeacherYear(teacherYear);
+            h.setTeacherlYearData(teacherlYearData);
 
-        int teacherYear = Integer.valueOf(currentGradeMap.get("TEACHER_YEAR") + "");
-        int semester = Integer.valueOf(currentGradeMap.get("SEMESTER") + "");
-        PracticeStaticsDTO practiceStaticsDTO = practiceStaticsRespository.getPracticeStatics(orgId, teacherYear, semester);
-        SchoolProfileDTO schoolProfileDTO = schoolStatisticsRespository.getSchoolPersonStatistics(orgId, teacherYear);
-        schoolProfileDTO.setOutSchoolStudent(Long.valueOf(practiceStaticsDTO.getPracticeStudentNum()));
-        schoolProfileDTO.setInSchoolStudent(Long.valueOf(schoolProfileDTO.getAllStudent()) - Long.valueOf(schoolProfileDTO.getOutSchoolStudent()));
-        HomeData<SchoolProfileDTO> h = new HomeData();
-        TeacherlYearData teacherlYearData = new TeacherlYearData();
-        teacherlYearData.setSemester(semester);
-        teacherlYearData.setTeacherYear(teacherYear);
-        h.setTeacherlYearData(teacherlYearData);
-
-        Map<String, Object> con = new HashMap<>();
-        StringBuilder ssl = new StringBuilder("SELECT sum(if(CURDATE() BETWEEN x.RXNY AND x.YBYNY,1,0)) as count, sum(if(x.YBYNY > now() and datediff(x.YBYNY,now()) < 300,1,0)) as yby FROM t_xsjbxx x WHERE 1 = 1");
-        if (null != orgId) {
-            ssl.append(" AND x.XXID = :orgId");
-            con.put("orgId", orgId);
-        }
-        Query ssq = em.createNativeQuery(ssl.toString());
-        ssq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-        for (Map.Entry<String, Object> e : con.entrySet()) {
-            ssq.setParameter(e.getKey(), e.getValue());
-        }
-        Object re = ssq.getSingleResult();
-        Map<String,Object> map = (Map) re;
-        if(null!=map){
-            if(null!=map.get("count")){
-                schoolProfileDTO.setInSchoolStudent(Long.valueOf(map.get("count").toString()));
+            Map<String, Object> con = new HashMap<>();
+            StringBuilder ssl = new StringBuilder("SELECT sum(if(CURDATE() BETWEEN x.RXNY AND x.YBYNY,1,0)) as count, sum(if(x.YBYNY > now() and datediff(x.YBYNY,now()) < 300,1,0)) as yby FROM t_xsjbxx x WHERE 1 = 1");
+            StringBuilder tsl = new StringBuilder("SELECT count(1) as count FROM t_jzgjbxx");
+            StringBuilder tcsl = new StringBuilder("SELECT count(1) as count FROM t_class_teacher");
+            if (null != orgId) {
+                ssl.append(" AND x.XXID = :orgId");
+                con.put("orgId", orgId);
             }
-            if(null!=map.get("yby")){
-                schoolProfileDTO.setReadyGraduation(Long.valueOf(map.get("yby").toString()));
+            Query ssq = em.createNativeQuery(ssl.toString());
+            Query tsq = em.createNativeQuery(tsl.toString());
+            Query tcsq = em.createNativeQuery(tcsl.toString());
+            ssq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            tsq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            tcsq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            for (Map.Entry<String, Object> e : con.entrySet()) {
+                ssq.setParameter(e.getKey(), e.getValue());
             }
-        }
-
-        h.setObjData(schoolProfileDTO);
-        return h;
+            Object re = ssq.getSingleResult();
+            Object tre = tsq.getSingleResult();
+            Object tcre = tcsq.getSingleResult();
+            Map<String, Object> map = (Map) re;
+            Map<String, Object> tmap = (Map) tre;
+            Map<String, Object> tcmap = (Map) tcre;
+            if (null != map) {
+                if (null != map.get("count")) {
+                    schoolProfileDTO.setInSchoolStudent(Long.valueOf(map.get("count").toString()));
+                    schoolProfileDTO.setAllStudent(Long.valueOf(map.get("count").toString()));
+                }
+                if (null != map.get("yby")) {
+                    schoolProfileDTO.setReadyGraduation(Long.valueOf(map.get("yby").toString()));
+                }
+            }
+            if(null!=tmap.get("count")){
+                schoolProfileDTO.setAllTeacher(Long.valueOf(tmap.get("count").toString()));
+            }
+            if(null!=tcmap.get("count")){
+                schoolProfileDTO.setAllInstructor(Long.valueOf(tcmap.get("count").toString()));
+            }
+            h.setObjData(schoolProfileDTO);
+            return h;
         } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
             return null;
         }
@@ -271,7 +285,7 @@ public class SchoolStatisticsService {
                         if (null != d[1]) {
                             trendDTO.setNewStudentsCount(Integer.valueOf(String.valueOf(d[1])));
                         }
-                        if(trendDTO.getNewStudentsCount()>0) {
+                        if (trendDTO.getNewStudentsCount() > 0) {
                             trendDTOList.add(trendDTO);
                         }
 
@@ -304,14 +318,14 @@ public class SchoolStatisticsService {
                             if (td.getYear().equals(String.valueOf(d[0]))) {
                                 if (null != d[1]) {
                                     td.setAlreadyReport(Integer.valueOf(String.valueOf(d[1])));
-                                    if(td.getNewStudentsCount()>0) {
+                                    if (td.getNewStudentsCount() > 0) {
                                         td.setReportRate(new DecimalFormat("0.00").format((double) td.getAlreadyReport() * 100 / td.getNewStudentsCount()));
 
                                     } else {
-                                        td.setReportRate(0+"");
+                                        td.setReportRate(0 + "");
                                     }
-                                }else{
-                                    td.setReportRate(0+"");
+                                } else {
+                                    td.setReportRate(0 + "");
                                 }
                                 break;
                             }
@@ -324,24 +338,24 @@ public class SchoolStatisticsService {
                     Double change1 = (Double.valueOf(trendDTOList.get(i).getNewStudentsCount()) - Double.valueOf(trendDTOList.get(i - 1).getNewStudentsCount())
                     ) / Double.valueOf(trendDTOList.get(i - 1).getNewStudentsCount());
                     if (null != change1 && !change1.isNaN() && !change1.isInfinite()) {
-                        trendDTOList.get(i).setNscChange(new DecimalFormat("0.00").format(change1*100));
-                    }else {
+                        trendDTOList.get(i).setNscChange(new DecimalFormat("0.00").format(change1 * 100));
+                    } else {
                         trendDTOList.get(i).setNscChange(0 + "");
                     }
 
                     Double change2 = (Double.valueOf(trendDTOList.get(i).getAlreadyReport()) - Double.valueOf(trendDTOList.get(i - 1).getAlreadyReport())
                     ) / Double.valueOf(trendDTOList.get(i - 1).getAlreadyReport());
                     if (null != change2 && !change2.isNaN() && !change2.isInfinite()) {
-                        trendDTOList.get(i).setArChange(new DecimalFormat("0.00").format(change2*100));
-                    }else {
+                        trendDTOList.get(i).setArChange(new DecimalFormat("0.00").format(change2 * 100));
+                    } else {
                         trendDTOList.get(i).setArChange(0 + "");
                     }
 
                     Double change3 = (Double.valueOf(trendDTOList.get(i).getReportRate()) - Double.valueOf(trendDTOList.get(i - 1).getReportRate())
                     ) / Double.valueOf(trendDTOList.get(i - 1).getReportRate());
                     if (null != change3 && !change3.isNaN() && !change3.isInfinite()) {
-                        trendDTOList.get(i).setRrChange(new DecimalFormat("0.00").format(change3*100));
-                    }else {
+                        trendDTOList.get(i).setRrChange(new DecimalFormat("0.00").format(change3 * 100));
+                    } else {
                         trendDTOList.get(i).setRrChange(0 + "");
                     }
                 }
@@ -609,14 +623,14 @@ public class SchoolStatisticsService {
         Map<String, Object> condition = new HashMap<>();
         try {
             Calendar date = Calendar.getInstance();
-            String year = String.valueOf(date.get(Calendar.YEAR)-1);
+            String year = String.valueOf(date.get(Calendar.YEAR) - 1);
 //            year = year+"00";
             StringBuilder sql = new StringBuilder("SELECT SUBSTRING(DATE_OF_COMPLETION,1,4) AS year, count(1) as count FROM t_academic_degree WHERE 1 = 1");
             if (null != orgId) {
                 sql.append(" AND ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
-            sql.append(" AND SUBSTRING(DATE_OF_COMPLETION, 1, 4) BETWEEN '2015' AND '"+ year+"' GROUP BY year");
+            sql.append(" AND SUBSTRING(DATE_OF_COMPLETION, 1, 4) BETWEEN '2015' AND '" + year + "' GROUP BY year");
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
@@ -640,9 +654,9 @@ public class SchoolStatisticsService {
                     Double change = (double) (graduateRateVOList.get(i).getNumber() - graduateRateVOList.get(i - 1).getNumber()
                     ) / graduateRateVOList.get(i - 1).getNumber();
                     if (null != change && !change.isNaN() && !change.isInfinite()) {
-                        graduateRateVOList.get(i).setChange(new DecimalFormat("0.00").format(change*100));
-                    }else {
-                        graduateRateVOList.get(i).setChange(0+"");
+                        graduateRateVOList.get(i).setChange(new DecimalFormat("0.00").format(change * 100));
+                    } else {
+                        graduateRateVOList.get(i).setChange(0 + "");
                     }
                 }
             }
@@ -761,7 +775,7 @@ public class SchoolStatisticsService {
                 } else endDayOfWeek--;
 
                 //计算相差的周数
-                weeks = endWeek - startWeek+1;
+                weeks = endWeek - startWeek + 1;
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(new Date());
                 day = calendar.get(Calendar.DAY_OF_WEEK);
@@ -774,7 +788,7 @@ public class SchoolStatisticsService {
             StringBuilder sql = new StringBuilder("SELECT cr.TEACHING_BUILDING_NUMBER as tbn, count(1) as count ");
             sql.append("FROM (SELECT DISTINCT ct.PLACE FROM (SELECT DISTINCT TEACHING_CLASS_NAME FROM t_curriculum_schedule WHERE 1 = 1");
             if (null != orgId) {
-                cql.append(" AND ORG_ID = "+orgId);
+                cql.append(" AND ORG_ID = " + orgId);
                 sql.append(" AND ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
