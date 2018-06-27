@@ -57,70 +57,13 @@ public class StudentRegisterJob {
     @Autowired
     private RuleParameterService ruleParameterService;
     //报到注册预警指标算法(RegisterEarlyWarning)
-    public ArrayList<WarningInformation> studenteRegisterJob(Long orgId, int schoolYear, int semester,  String ruleId, Date startTime) {
+    public ArrayList<WarningInformation> studenteRegisterJob(Long orgId, String schoolYear, String semester,  String ruleId, Date startTime) {
 
         ArrayList<WarningInformation> returnList = new ArrayList<>();
 
         //只在第一学期才产生迎新报到注册预警信息
-        if (semester != 2) {
+        if (!semester.equals("春")) {
             // 获取的预警类型
-//            List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
-
-//            //已经开启次预警类型的组织
-//            Set<Long> orgIdSet = new HashSet<>();
-//            for (WarningType wt : warningTypeList) {
-//                if (wt.getSetupCloseFlag() == 10) {
-//                    orgIdSet.add(wt.getOrgId());
-//                }
-//            }
-
-//            // 获取预警配置
-//            List<AlarmSettings> settingsList = alarmSettingsService
-//                    .getAlarmSettingsByType(WarningTypeConstant.Register.toString());
-
-//            if (null != settingsList && settingsList.size() > 0) {
-//                HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
-//                Set<String> ruleIdList = new HashSet<String>();
-//                Set<String> warnSettingsIdList = new HashSet<String>();
-            // 按orgId归类告警等级阀值
-//                for (AlarmSettings settings : settingsList) {
-//                    if (orgIdSet.contains(settings.getOrgId()) && settings.getSetupCloseFlag() == 10) {
-//                        warnSettingsIdList.add(settings.getId());
-//                        Long orgId = settings.getOrgId();
-//
-//                        if (StringUtils.isEmpty(settings.getRuleSet())) {
-//                            continue;
-//                        }
-//                        String[] ruleIds = settings.getRuleSet().split(",");
-//                        for (String ruleId : ruleIds) {
-//                            if (!StringUtils.isEmpty(ruleId)) {
-//                                RuleParameter rp = ruleParameterService.findById(ruleId);
-//                                if(rp.getRuleName().equals(ruleName)) {
-//                                    ruleIdList.add(ruleId);
-//                                }
-//                            }
-//                        }
-//                        if (null != alarmMap.get(orgId)) {
-//                            ArrayList<AlarmSettings> alarmList = alarmMap.get(orgId);
-//                            alarmList.add(settings);
-//                        } else {
-//                            ArrayList<AlarmSettings> alarmList = new ArrayList<AlarmSettings>();
-//                            alarmList.add(settings);
-//                            alarmMap.put(orgId, alarmList);
-//                        }
-//                    }
-//                }
-//                // 预警规则获取
-//                HashMap<String, RuleParameter> ruleParameterMap = new HashMap<String, RuleParameter>();
-//                List<RuleParameter> alarmList = ruleParameterService.getRuleParameterByIds(ruleIdList);
-//                for (RuleParameter rp : alarmList) {
-//                    if(rp.getRuleName().equals(ruleName)) {
-//                        ruleParameterMap.put(rp.getId(), rp);
-//                    }
-//                }
-//                Iterator iter = alarmMap.entrySet().iterator();
-//                while (iter.hasNext()) {
-
 
             //更新预警集合
             ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
@@ -132,15 +75,8 @@ public class StudentRegisterJob {
             HashMap<String, WarningInformation> warnDbMap = new HashMap<String, WarningInformation>();
             // 定时任务产生的新的预警数据
             HashMap<String, WarningInformation> warnMap = new HashMap<String, WarningInformation>();
-//                    Map.Entry entry = (Map.Entry) iter.next();
-//                    Long orgId = (Long) entry.getKey();
-//                    ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
-//                            .getValue();
-
-//                    WarningType warningType = warningTypeService.getWarningTypeByOrgIdAndType(orgId, WarningTypeConstant.Register
-//                            .toString());
             List<StudentRegister> stuRegisterList = stuRegisterMongoRespository
-                    .findAllBySchoolYearAndOrgIdAndActualRegisterDateIsNull(schoolYear, orgId);
+                    .findAllByTeachYearAndOrgIdAndActualRegisterDateIsNull(schoolYear, orgId);
 
             // 数据库已生成的处理中预警数据
             List<WarningInformation> warnDbList = alertWarningInformationService
@@ -165,35 +101,16 @@ public class StudentRegisterJob {
                                     String alertId = UUID.randomUUID()
                                             .toString();
                                     alertInfor.setId(alertId);
-                                    alertInfor.setDefendantId(studentRegister
-                                            .getUserId());
-                                    alertInfor.setName(studentRegister
-                                            .getUserName());
-                                    alertInfor.setJobNumber(studentRegister
-                                            .getJobNum());
-                                    alertInfor.setCollogeId(studentRegister
-                                            .getCollegeId());
-                                    alertInfor.setCollogeName(studentRegister
-                                            .getCollegeName());
-                                    alertInfor.setClassId(studentRegister
-                                            .getClassId());
-                                    alertInfor.setClassName(studentRegister
-                                            .getClassName());
-                                    alertInfor
-                                            .setProfessionalId(studentRegister
-                                                    .getProfessionalId());
-                                    alertInfor
-                                            .setProfessionalName(studentRegister
-                                                    .getProfessionalName());
+                                    alertInfor.setName(studentRegister.getUserName());
+                                    alertInfor.setJobNumber(studentRegister.getJobNum());
+                                    alertInfor.setCollogeCode(studentRegister.getCollegeCode());
+                                    alertInfor.setCollogeName(studentRegister.getCollegeName());
+                                    alertInfor.setClassCode(studentRegister.getClassCode());
+                                    alertInfor.setClassName(studentRegister.getClassName());
+                                    alertInfor.setProfessionalCode(studentRegister.getProfessionalCode());
+                                    alertInfor.setProfessionalName(studentRegister.getProfessionalName());
                                     alertInfor.setSemester(semester);
-                                    alertInfor.setTeacherYear(studentRegister.getSchoolYear());
-//                                                alertInfor.setWarningLevel(alarmSettings
-//                                                        .getWarningLevel());
-//                                    alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-//                                                alertInfor.setAlarmSettingsId(asId);
-//                                    alertInfor
-//                                            .setWarningType(WarningTypeConstant.Register
-//                                                    .toString());
+                                    alertInfor.setTeacherYear(studentRegister.getTeachYear());
                                     alertInfor.setWarningCondition("报到注册截至时间超过天数：" + result);
                                     alertInfor.setWarningTime(new Date());
                                     alertInfor.setPhone(studentRegister.getUserPhone());
@@ -201,8 +118,6 @@ public class StudentRegisterJob {
                                     alertInforList.add(alertInfor);
                                     warnMap.put(alertInfor.getJobNumber(),
                                             alertInfor);
-
-//                                    break;
                                 } else {
                                     continue;
                                 }

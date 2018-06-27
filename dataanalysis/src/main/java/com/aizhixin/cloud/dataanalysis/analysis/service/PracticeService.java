@@ -72,27 +72,26 @@ public class PracticeService {
 				for (int j = 0; j < 10; j++) {
 					Practice practice = new Practice();
 					practice.setOrgId(orgId);
-					practice.setUserId(d.getUserId());
 					practice.setUserName(d.getUserName());
 					for (Entry<String, ImportDomain> entry : map.entrySet()) {
 						if (entry.getKey().equals(d.getClassName())) {
-							practice.setClassId(entry.getValue().getId());
+							practice.setClassCode(entry.getValue().getId());
 							break;
 						}
 					}
 					practice.setClassName(d.getClassName());
 					for (Entry<String, ImportDomain> entry : map.entrySet()) {
 						if (entry.getKey().equals(d.getCollegeName())) {
-							practice.setCollegeId(entry.getValue().getId());
+							practice.setCollegeCode(entry.getValue().getId());
 							break;
 						}
 					}
 					practice.setCollegeName(d.getCollegeName());
-					practice.setSchoolYear(d.getSchoolYear());
+					practice.setTeachYear(d.getSchoolYear());
 					practice.setJobNum(d.getJobNum());
 					for (Entry<String, ImportDomain> entry : map.entrySet()) {
 						if (entry.getKey().equals(d.getProfessionalName())) {
-							practice.setProfessionalId(entry.getValue().getId());
+							practice.setProfessionalCode(entry.getValue().getId());
 							break;
 						}
 					}
@@ -107,15 +106,15 @@ public class PracticeService {
 //					}
 					practice.setTaskCreatedDate(DateUtil.randomDate("2017-10-02", "2017-10-15"));
 					// 造数据：公司名称5个，按班级id大小随机取
-					if (practice.getClassId() < 9700) {
+					if (Integer.valueOf(practice.getClassCode()) < 2) {
 						practice.setCompanyName(CompanyName.getName(1));
-					} else if (practice.getClassId() < 9800) {
+					} else if (2<=Integer.valueOf(practice.getClassCode())&&Integer.valueOf(practice.getClassCode()) < 3) {
 						practice.setCompanyName(CompanyName.getName(2));
-					} else if (practice.getClassId() < 9900) {
+					} else if (3<=Integer.valueOf(practice.getClassCode())&&Integer.valueOf(practice.getClassCode()) < 4) {
 						practice.setCompanyName(CompanyName.getName(3));
-					} else if (practice.getClassId() < 10000) {
+					} else if (4<=Integer.valueOf(practice.getClassCode())&&Integer.valueOf(practice.getClassCode()) < 5) {
 						practice.setCompanyName(CompanyName.getName(4));
-					} else if (practice.getClassId() < 11000) {
+					} else {
 						practice.setCompanyName(CompanyName.getName(5));
 					}
 // -----------------------公司名称5个，按随机1~5的数取公司名称-----------------------------------------------------------------//
@@ -156,7 +155,7 @@ public class PracticeService {
 					practice.setCompanyCity(d.getCompanyCity());
 					String uuid = UUID.randomUUID().toString().replaceAll("-", "");
 					practice.setTaskId(uuid);
-					practice.setSemester(2);
+					practice.setSemester("秋");
 					practice.setGrade(d.getGrade());
 					list.add(practice);
 				}

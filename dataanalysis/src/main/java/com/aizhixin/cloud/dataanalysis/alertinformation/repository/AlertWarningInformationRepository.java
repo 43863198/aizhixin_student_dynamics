@@ -19,8 +19,8 @@ import java.util.List;
  */
 public interface AlertWarningInformationRepository extends JpaRepository<WarningInformation, String> {
 
-    @Query("select aw from #{#entityName} aw where aw.deleteFlag = :deleteFlag and aw.warningType = :warningType and aw.orgId = :orgId and aw.defendantId = :defendantId")
-    List<WarningInformation> getawinfoByDefendantId(@Param("orgId")Long orgId, @Param("warningType")String warningType, @Param("defendantId")Long defendantId, @Param("deleteFlag")int deleteFlag);
+    @Query("select aw from #{#entityName} aw where aw.deleteFlag = :deleteFlag and aw.warningType = :warningType and aw.orgId = :orgId and aw.jobNumber = :defendantId")
+    List<WarningInformation> getawinfoByJobNumber(@Param("orgId")Long orgId, @Param("warningType")String warningType, @Param("defendantId")String jobNumber, @Param("deleteFlag")int deleteFlag);
 
     @Query("select aw from #{#entityName} aw where aw.deleteFlag = :deleteFlag and aw.warningType = :warningType and aw.orgId = :orgId")
     List<WarningInformation> getawinfoByOrgIdAndWarningType(@Param("orgId")Long orgId, @Param("warningType")String warningType, @Param("deleteFlag")int deleteFlag);
@@ -43,15 +43,13 @@ public interface AlertWarningInformationRepository extends JpaRepository<Warning
 
 	public Long countByDeleteFlagAndWarningStateAndWarningLevel(int deleteFlag,int warningState,int warningLevel);
 
-//    @Query("select aw from #{#entityName} aw where aw.deleteFlag= 0 and aw.warningLevel =:warningLevel and aw.orgId in(:orgIds)")
-//    List<WarningInformation> findWarningInfoByWarningLevel(@Param("warningState") int warningState,@Param("warningLevel") int warningLevel,@Param("orgIds") HashSet<Long> orgIds);
 
     List<WarningInformation> findByWarningStateAndWarningLevelAndOrgIdIn(int warningState, int warningLevel, HashSet<Long> orgIds);
 
 
     @Modifying
     @Query("delete from #{#entityName} a where a.orgId = :orgId and a.warningType = :warningType and a.teacherYear = :teacherYear and a.semester = :semester")
-    void deletePageDataByOrgIdAndTeacherYearAndSemester(@Param(value = "orgId") Long orgId, @Param(value = "warningType") String warningType, @Param(value = "teacherYear") Integer teacherYear, @Param(value = "semester") Integer semester);
+    void deletePageDataByOrgIdAndTeacherYearAndSemester(@Param(value = "orgId") Long orgId, @Param(value = "warningType") String warningType, @Param(value = "teacherYear") String teacherYear, @Param(value = "semester") String semester);
 
     void deleteByOrgId(Long orgId);
 

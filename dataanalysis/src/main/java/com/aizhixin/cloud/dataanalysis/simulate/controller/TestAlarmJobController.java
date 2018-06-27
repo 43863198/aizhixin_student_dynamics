@@ -54,8 +54,8 @@ public class TestAlarmJobController {
 	@RequestMapping(value = "/rollcallcountjob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "签到定统计数据时任务", response = Void.class, notes = "签到定统计数据时任务<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> rollCallCountJob(
-			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
-			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
+			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) String teacherYear,
+			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) String semester
 	) {
 		rollCallJob.rollCallCountJob(teacherYear,semester);
 
@@ -63,25 +63,28 @@ public class TestAlarmJobController {
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/totalscorecountjob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(httpMethod = "GET", value = "总评成绩统计定时任务", response = Void.class, notes = "新生报到预警定时任务<br><br><b>@author zhengning</b>")
+	@RequestMapping(value = "/failcorecountjob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "GET", value = "统计在校期间累计不及格成绩汇总到mongo里", response = Void.class, notes = "统计在校期间累计不及格成绩汇总到mongo里<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> totalScoreCountJob(
-			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
-			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
+			@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) String teacherYear,
+			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) String semester
 	) {
-		scoreJob.totalScoreCountJob(teacherYear, semester);
+		scoreJob.failScoreStatisticsJob(orgId, teacherYear, semester);
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
 
 
-	@RequestMapping(value = "/makeupscorecountjob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(httpMethod = "GET", value = "补考成绩统计定时任务", response = Void.class, notes = "补考成绩统计定时任务<br><br><b>@author zhengning</b>")
+	@RequestMapping(value = "/lastsemesterscorestatisticsjob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "GET", value = "统计上学期成绩汇总到mongo里", response = Void.class, notes = "统计上学期成绩汇总到mongo里<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> makeUpScoreCountJob(
-			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear
+			@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) String teacherYear,
+			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) String semester
 	) {
-		scoreJob.makeUpScoreCountJob(teacherYear);
+		scoreJob.LastSemesterScoreStatisticsJob(orgId, teacherYear, semester);
 		;
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
@@ -89,12 +92,13 @@ public class TestAlarmJobController {
 
 
 	@RequestMapping(value = "/scorefluctuatecountJob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(httpMethod = "GET", value = "成绩波动数据统计定时任务", response = Void.class, notes = "成绩波动数据统计定时任务<br><br><b>@author zhengning</b>")
+	@ApiOperation(httpMethod = "GET", value = "统计相邻学期绩点保存到mongo中", response = Void.class, notes = "统计相邻学期绩点保存到mongo中<br><br><b>@author zhengning</b>")
 	public ResponseEntity<Map<String, Object>> scoreFluctuateCountJob(
-			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
-			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
+			@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+			@ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) String teacherYear,
+			@ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) String semester
 	) {
-		scoreJob.scoreFluctuateCountJob(teacherYear, semester);
+		scoreJob.firstTwoSemestersScoreStatisticsJob(orgId, teacherYear, semester);
 		Map<String, Object> result = new HashMap<String, Object>();
 		return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
 	}
@@ -132,8 +136,8 @@ public class TestAlarmJobController {
 	public Map<String, Object> testGenerateData(
 			@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
 			@ApiParam(value = "warningType 预警类型", required = true) @RequestParam(value = "warningType", required = true) String warningType,
-            @ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) Integer teacherYear,
-            @ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) Integer semester
+            @ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear", required = true) String teacherYear,
+            @ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) String semester
 	) {
 		Map<String, Object> result = new HashMap<>();
 		generateWarningInfoService.warningInfo(orgId, warningType,teacherYear,semester);

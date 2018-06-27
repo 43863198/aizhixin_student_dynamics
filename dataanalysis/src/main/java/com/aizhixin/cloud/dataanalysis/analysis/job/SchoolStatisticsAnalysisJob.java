@@ -185,11 +185,6 @@ public class SchoolStatisticsAnalysisJob {
 					}
 				}
 			}
-
-
-
-
-
 			int max = 40;
 			int min = 5;
 			Random random = new Random();

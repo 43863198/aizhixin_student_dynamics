@@ -52,26 +52,11 @@
     <include file="classpath:liquibase/20180111160500_add_entity_PushMessage.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20180308104300_add_entity_OpenUpInfo.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20180329104300_add_entity_OperationPermissions.xml" relativeToChangelogFile="false"/>
-    <!--<include file="classpath:liquibase/20184143154645_add_entity_ExaminationArrangement.xml" relativeToChangelogFile="false"/>-->
-    <!--<include file="classpath:liquibase/20184143154645_add_entity_CurriculumSchedule.xml" relativeToChangelogFile="false"/>-->
-    <!--<include file="classpath:liquibase/20184143154645_add_entity_TeachingClass.xml" relativeToChangelogFile="false"/>-->
-    <!--<include file="classpath:liquibase/20184143154645_add_entity_TeachingClassStudents.xml" relativeToChangelogFile="false"/>-->
-    <!--<include file="classpath:liquibase/20184163154645_add_entity_ClassRoom.xml" relativeToChangelogFile="false"/>-->
-    <!--<include file="classpath:liquibase/20184173154645_add_entity_AcademicDegree.xml" relativeToChangelogFile="false"/>-->
-    <!--<include file="classpath:liquibase/20180417151500_update_entity_AcademicDegree.xml" relativeToChangelogFile="false"/>-->
-    <!--<include file="classpath:liquibase/20184173154645_add_entity_SchoolRecordChange.xml" relativeToChangelogFile="false"/>-->
-    <!--<include file="classpath:liquibase/20184183154645_add_entity_SchoolCalendar.xml" relativeToChangelogFile="false"/>-->
-    <!--<include file="classpath:liquibase/20184203154645_add_entity_Course.xml" relativeToChangelogFile="false"/>-->
-    <!--<include file="classpath:liquibase/20184203154645_add_entity_ChoiceCourse.xml" relativeToChangelogFile="false"/>-->
-    <!--<include file="classpath:liquibase/20184233154645_add_entity_Department.xml" relativeToChangelogFile="false"/>-->
-    <!--<include file="classpath:liquibase/20184263154645_add_entity_CourseTimetable.xml" relativeToChangelogFile="false"/>-->
-    <!--<include file="classpath:liquibase/20180507205545_add_entity_CetStatistics.xml" relativeToChangelogFile="false"/>-->
-    <!--<include file="classpath:liquibase/20180509205545_add_entity_ScoreTop.xml" relativeToChangelogFile="false"/>-->
-    <!--<include file="classpath:liquibase/20180509205545_add_entity_ScoreStatistics.xml" relativeToChangelogFile="false"/>-->
     <include file="classpath:liquibase/201805111056_add_entity_ClassTeacher.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20180517154645_add_entity_Rule.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20180517154645_add_entity_RuleParameter.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20180517134045_add_entity_AlarmReceiver.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/201712181132845_update_entity_AlarmSettings.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20180517163245_update_entity_AlarmReceiver.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/201806273163200_update_entity_WarningInformation.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

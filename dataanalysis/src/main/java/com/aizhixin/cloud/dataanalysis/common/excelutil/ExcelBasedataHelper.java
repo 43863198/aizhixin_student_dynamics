@@ -136,11 +136,11 @@ public class ExcelBasedataHelper {
 					Long userId = Long.valueOf(getCellStringValue(row, 1));
 					jobNum = getCellStringValue(row, 2);
 					String userName = getCellStringValue(row, 3);
-					Long classId = Long.valueOf(getCellStringValue(row, 5));
+					String classId = getCellStringValue(row, 5);
 					String className = getCellStringValue(row, 6);
-					Long professionalId = Long.valueOf(getCellStringValue(row, 7));
+					String professionalId = getCellStringValue(row, 7);
 					String professionalName = getCellStringValue(row, 8);
-					Long collegeId = Long.valueOf(getCellStringValue(row, 9));
+					String collegeId = getCellStringValue(row, 9);
 					String collegeName = getCellStringValue(row, 10);
 					String userPhone = getCellStringValue(row, 4);
 					list.add(new StudentInfoDomain(line, orgId, jobNum, userId, userName, classId, className,
@@ -177,19 +177,19 @@ public class ExcelBasedataHelper {
 					Long userId = Long.valueOf(getCellStringValue(row, 1));
 					jobNum = getCellStringValue(row, 2);
 					String userName = getCellStringValue(row, 3);
-					Long classId = Long.valueOf(getCellStringValue(row, 6));
+					String classCode = getCellStringValue(row, 6);
 					String className = getCellStringValue(row, 7);
-					Long professionalId = Long.valueOf(getCellStringValue(row, 9));
+					String professionalCode = getCellStringValue(row, 9);
 					String professionalName = getCellStringValue(row, 10);
-					Long collegeId = Long.valueOf(getCellStringValue(row, 11));
+					String collegeCode = getCellStringValue(row, 11);
 					String collegeName = getCellStringValue(row, 12);
-					Integer semester = null;
+					String semester = null;
 					if (!StringUtils.isEmpty(getCellStringValue(row, 15))) {
-						semester = Integer.valueOf(getCellStringValue(row, 15));
+						semester = getCellStringValue(row, 15);
 					}
-					Integer schoolYear = null;
+					String schoolYear = null;
 					if (!StringUtils.isEmpty(getCellStringValue(row, 14))) {
-						schoolYear = Integer.valueOf(getCellStringValue(row, 14));
+						schoolYear = getCellStringValue(row, 14);
 					}
 					String grade = getCellStringValue(row, 8);
 					String scheduleId = getCellStringValue(row, 17);
@@ -200,8 +200,8 @@ public class ExcelBasedataHelper {
 					float totalScore = Float.valueOf(getCellStringValue(row, 21));
 					float gradePoint = Float.valueOf(getCellStringValue(row, 22));
 					String userPhone = getCellStringValue(row, 4);
-					list.add(new ScoreDomain(line, orgId, jobNum, userId, userName, classId, className, professionalId,
-							professionalName, collegeId, collegeName, userPhone, semester, schoolYear, scheduleId, courseType,
+					list.add(new ScoreDomain(line, orgId, jobNum, userId, userName, classCode, className, professionalCode,
+							professionalName, collegeCode, collegeName, userPhone, semester, schoolYear, scheduleId, courseType,
 							usualScore, credit, gradePoint, examTime, totalScore, grade));
 				} catch (Exception e) {
 					ScoreDomain d = new ScoreDomain();
@@ -239,25 +239,25 @@ public class ExcelBasedataHelper {
 					Long userId = Long.valueOf(getCellStringValue(row, 1));
 					jobNum = getCellStringValue(row, 2);
 					String userName = getCellStringValue(row, 3);
-					Long classId = Long.valueOf(getCellStringValue(row, 5));
+					String classCode = getCellStringValue(row, 5);
 					String className = getCellStringValue(row, 6);
-					Long professionalId = Long.valueOf(getCellStringValue(row, 7));
+					String professionalCode = getCellStringValue(row, 7);
 					String professionalName = getCellStringValue(row, 8);
-					Long collegeId = Long.valueOf(getCellStringValue(row, 9));
+					String collegeCode = getCellStringValue(row, 9);
 					String collegeName = getCellStringValue(row, 10);
-					Long scheduleId = null;
+					String scheduleId = null;
 					if (getCellStringValue(row, 11).length() > 0 && !"".equals(getCellStringValue(row, 11))) {
-						scheduleId = Long.valueOf(getCellStringValue(row, 11));
+						scheduleId = getCellStringValue(row, 11);
 					}
 					String rollCallDate = getCellStringValue(row, 14);
 					String rollCallResult = getCellStringValue(row, 12);
 					String userPhone = getCellStringValue(row, 4);
-					Integer schoolYear = 2017;
+					String schoolYear = "2017";
 					if (!"".equals(getCellStringValue(row, 13)) && getCellStringValue(row, 13).length() == 4) {
-						schoolYear = Integer.valueOf(getCellStringValue(row, 13));
+						schoolYear = getCellStringValue(row, 13);
 					}
-					list.add(new RollCallDomain(line, orgId, jobNum, userId, userName, classId, className,
-							professionalId, professionalName, collegeId, collegeName,userPhone, scheduleId, rollCallDate, schoolYear,
+					list.add(new RollCallDomain(line, orgId, jobNum, userId, userName, classCode, className,
+							professionalCode, professionalName, collegeCode, collegeName,userPhone, scheduleId, rollCallDate, schoolYear,
 							rollCallResult));
 				} catch (Exception e) {
 					RollCallDomain d = new RollCallDomain();
@@ -296,21 +296,21 @@ public class ExcelBasedataHelper {
 					jobNum = getCellStringValue(row, 2);
 					String userName = getCellStringValue(row, 3);
 					String userPhone = getCellStringValue(row, 4);
-					Long classId = Long.valueOf(getCellStringValue(row, 5));
+					String classCode = getCellStringValue(row, 5);
 					String className = getCellStringValue(row, 6);
-					Long professionalId = Long.valueOf(getCellStringValue(row, 7));
+					String professionalCode = getCellStringValue(row, 7);
 					String professionalName = getCellStringValue(row, 8);
-					Long collegeId = Long.valueOf(getCellStringValue(row, 9));
+					String collegeCode = getCellStringValue(row, 9);
 					String collegeName = getCellStringValue(row, 10);
 					String companyName = getCellStringValue(row, 11);
 					String companyProvince = getCellStringValue(row, 12);
 					String companyCity = getCellStringValue(row, 13);
 					String reviewResult = getCellStringValue(row, 14);
 					Date taskCreatedDate = row.getCell(15).getDateCellValue();
-					Integer schoolYear = 2016;
+					String schoolYear = "2016";
 					String grade = "2016";
-					list.add(new PracticeDomain(line, orgId, jobNum, userId, userName, classId, className, professionalId, 
-							professionalName, collegeId, collegeName, userPhone, /*semester,*/ schoolYear, companyName,
+					list.add(new PracticeDomain(line, orgId, jobNum, userId, userName, classCode, className, professionalCode,
+							professionalName, collegeCode, collegeName, userPhone, /*semester,*/ schoolYear, companyName,
 							companyProvince, companyCity, reviewResult, taskCreatedDate, grade));
 				} catch (Exception e) {
 					PracticeDomain d = new PracticeDomain();
@@ -343,7 +343,7 @@ public class ExcelBasedataHelper {
 				}
 				try {
 					setCellStringType(row, 2);// 一行共有2个列值
-					Long id = Long.valueOf(getCellStringValue(row, 0));
+					String id = getCellStringValue(row, 0);
 					String name = getCellStringValue(row, 1);
 					list.add(new ImportDomain(id, name, line));
 				} catch (Exception e) {

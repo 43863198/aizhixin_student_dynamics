@@ -90,7 +90,7 @@ public class AlertWarningInformationService {
     }
 
 
-    public void deleteWarningInformation(Long orgId, String warningType, Integer schoolYear, Integer semester) {
+    public void deleteWarningInformation(Long orgId, String warningType, String schoolYear, String semester) {
         alertWarningInformationRepository.deletePageDataByOrgIdAndTeacherYearAndSemester(orgId, warningType, schoolYear, semester);
     }
 
@@ -1237,8 +1237,8 @@ public class AlertWarningInformationService {
         return result;
     }
 
-    public List<WarningInformation> getawinfoByDefendantId(Long orgId, String warningType, Long defendantId) {
-        return alertWarningInformationRepository.getawinfoByDefendantId(orgId, warningType, defendantId, DataValidity.VALID.getState());
+    public List<WarningInformation> getawinfoByDefendantId(Long orgId, String warningType, String jobNumber) {
+        return alertWarningInformationRepository.getawinfoByJobNumber(orgId, warningType, jobNumber, DataValidity.VALID.getState());
     }
 
 

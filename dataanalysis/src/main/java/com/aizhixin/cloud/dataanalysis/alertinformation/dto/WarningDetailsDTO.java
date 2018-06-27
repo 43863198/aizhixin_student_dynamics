@@ -45,13 +45,13 @@ public class    WarningDetailsDTO {
     private String className;
 
     @ApiModelProperty(value = "学年")
-    private Integer teacherYear;
+    private String teacherYear;
 
     @ApiModelProperty(value = "年级")
     private String nj;
     
     @ApiModelProperty(value = "学期")
-    private Integer semester;
+    private String semester;
  
     @ApiModelProperty(value = "手机号")
     private String phone;

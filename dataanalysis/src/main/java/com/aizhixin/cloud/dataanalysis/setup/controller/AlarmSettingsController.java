@@ -105,15 +105,12 @@ public class AlarmSettingsController {
 
     /**
      * 获取规则列表
-     * @param orgId
      * @return
      */
     @GetMapping(value = "/getrulelist", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "获取规则列表", response = Void.class, notes = "获取规则列表<br><br><b>@author jianwei.wu</b>")
-    public ResponseEntity<Object> getRuleList(
-            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId
-    ) {
-        return new ResponseEntity<Object>(ruleService.getRuleList(orgId),HttpStatus.OK);
+    public ResponseEntity<Object> getRuleList() {
+        return new ResponseEntity<Object>(ruleService.getRuleList(),HttpStatus.OK);
     }
 
 

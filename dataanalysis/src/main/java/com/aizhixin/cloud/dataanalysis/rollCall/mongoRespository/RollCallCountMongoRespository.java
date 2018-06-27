@@ -13,6 +13,6 @@ import org.springframework.data.mongodb.repository.Query;
 
 public interface RollCallCountMongoRespository extends MongoRepository<RollCallCount, String>{
 	
-	List<RollCallCount> findAllBySchoolYearAndSemesterAndOrgId(int schoolYear,int semester,Long orgId);
+	List<RollCallCount> findAllByTeachYearAndSemesterAndOrgId(String teachYear,String semester,Long orgId);
 
 }
