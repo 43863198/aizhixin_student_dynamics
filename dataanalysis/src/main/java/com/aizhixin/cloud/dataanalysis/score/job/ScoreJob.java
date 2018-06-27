@@ -557,14 +557,14 @@ public class ScoreJob {
         /**
          * 上学期必修课不及格课程数
         */
-        public List<WarningInformation> failScoreCountJob (Long orgId,String teachYear, String semester, String ruleId){
+        public List<WarningInformation> failScoreCountJob (Long orgId,String teachYear, String semester, String rpId){
 
             ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
             //上学期必修课不及格课程数的数据
             List<LastSemesterScoreStatistics> totalScoreCountList = lastSemesterScoreStatisticsRespository.findAllByTeachYearAndSemesterAndOrgId
                     (teachYear, semester, orgId);
-            RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
+            RuleParameter ruleParameter = ruleParameterService.findById(rpId);
             if (null != totalScoreCountList
                     && totalScoreCountList.size() > 0) {
                 for (LastSemesterScoreStatistics totalScoreCount : totalScoreCountList) {
@@ -671,7 +671,7 @@ public class ScoreJob {
        /**
          * 修读异常预警 （AttendAbnormalEarlyWarning）
          */
-        public ArrayList<WarningInformation> attendAbnormalJob (Long orgId,String schoolYear, String semester, String ruleId){
+        public ArrayList<WarningInformation> attendAbnormalJob (Long orgId,String schoolYear, String semester, String rpId){
             ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
 
@@ -776,14 +776,14 @@ public class ScoreJob {
     /**
      * 补考后上学期总评不及格课程门数
      */
-    public ArrayList<WarningInformation> makeUpScoreJob(Long orgId, String teachYear, String semester, String ruleId) {
+    public ArrayList<WarningInformation> makeUpScoreJob(Long orgId, String teachYear, String semester, String rpId) {
 
         ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
         // 补考后上学期总评不及格的学生信息
         List<LastSemesterScoreStatistics> makeUpScoreCountList = lastSemesterScoreStatisticsRespository.findAllByTeachYearAndSemesterAndOrgId(teachYear, semester, orgId);
 
-        RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
+        RuleParameter ruleParameter = ruleParameterService.findById(rpId);
         if (null != makeUpScoreCountList && makeUpScoreCountList.size() > 0) {
             for (LastSemesterScoreStatistics makeUpScoreCount : makeUpScoreCountList) {
                 if (null != ruleParameter) {
@@ -826,12 +826,12 @@ public class ScoreJob {
     /**
      * 必修课和专业选修课不及格课程累计学分
      */
-    public ArrayList<WarningInformation> dropOutJob(Long orgId, String teachYear, String semester, String ruleId) {
+    public ArrayList<WarningInformation> dropOutJob(Long orgId, String teachYear, String semester, String rpId) {
 
         ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
         List<FailScoreStatistics> makeUpScoreCountList = failScoreStatisticsRespository.findAllByOrgIdAndTeachYearAndSemester(orgId, teachYear, semester);
-            RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
+            RuleParameter ruleParameter = ruleParameterService.findById(rpId);
         if (null != makeUpScoreCountList && makeUpScoreCountList.size() > 0) {
                 for (FailScoreStatistics makeUpScoreCount : makeUpScoreCountList) {
                     if (null != ruleParameter) {
@@ -872,7 +872,7 @@ public class ScoreJob {
     /**
      * 英语四级考试成绩未通过预警
      */
-    public ArrayList<WarningInformation> cet4ScoreJob(Long orgId, String teachYear, String semester, String ruleId) {
+    public ArrayList<WarningInformation> cet4ScoreJob(Long orgId, String teachYear, String semester, String rpId) {
 
         ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
         try {
@@ -892,7 +892,7 @@ public class ScoreJob {
                 }
             }
             int year = Integer.valueOf(teachYear);
-            RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
+            RuleParameter ruleParameter = ruleParameterService.findById(rpId);
             if(null!=ruleParameter) {
                 String parm = ruleParameter.getRightParameter();
                 if(!parm.isEmpty()){

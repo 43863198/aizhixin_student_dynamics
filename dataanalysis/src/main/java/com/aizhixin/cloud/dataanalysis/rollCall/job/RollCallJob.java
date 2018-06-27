@@ -139,7 +139,7 @@ public class RollCallJob {
     /**
      * 旷课预警（AbsenteeismEarlyWarning）
      */
-    public ArrayList<WarningInformation> rollCallJob(Long orgId, String schoolYear, String semester, String ruleId) {
+    public ArrayList<WarningInformation> rollCallJob(Long orgId, String schoolYear, String semester, String rpId) {
 
         ArrayList<WarningInformation> returnList = new ArrayList<WarningInformation>();
 
@@ -165,7 +165,7 @@ public class RollCallJob {
             warnDbMap
                     .put(warningInfor.getJobNumber(), warningInfor);
         }
-        RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
+        RuleParameter ruleParameter = ruleParameterService.findById(rpId);
         if (null != rollCallCountList && rollCallCountList.size() > 0) {
             Date today = new Date();
             for (RollCallCount rollCallCount : rollCallCountList) {

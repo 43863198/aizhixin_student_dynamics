@@ -9,10 +9,25 @@
     <property name="now" value="sysdate" dbms="oracle"/>
 
     <changeSet id="201806273163200" author="jianwei.wu">
-        <addColumn
-                tableName="T_WARNING_INFORMATION">
+        <dropColumn
+                columnName="CLASS_ID"
+                tableName="T_WARNING_INFORMATION"/>
+        <dropColumn
+                columnName="PROFESSIONAL_ID"
+                tableName="T_WARNING_INFORMATION"/>
+        <dropColumn
+                columnName="COLLOGE_ID"
+                tableName="T_WARNING_INFORMATION"/>
+        <dropColumn
+                 columnName="SEMESTER_ID"
+                 tableName="T_WARNING_INFORMATION"/>
+        <addColumn tableName="T_WARNING_INFORMATION">
+            <column name="CLASS_CODE" type="VARCHAR(8)"  remarks="所属班级code"/>
+            <column name="PROFESSIONAL_CODE" type="VARCHAR(8)"  remarks="所属专业code"/>
+            <column name="COLLOGE_CODE" type="VARCHAR(8)"  remarks="所属学院code"/>
             <column name="WARNING_STANDARD" type="VARCHAR(500)"  remarks="预警标准"/>
             <column name="IS_FILE" type="INT"  remarks="是否归档"/>
+            <column name="SEMESTER" type="VARCHAR(10)"  remarks="学期"/>
         </addColumn>
     </changeSet>
 </databaseChangeLog>
