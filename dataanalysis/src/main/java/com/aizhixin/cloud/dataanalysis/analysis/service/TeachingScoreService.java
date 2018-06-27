@@ -8,26 +8,17 @@ import com.aizhixin.cloud.dataanalysis.analysis.respository.TeachingScoreDetails
 import com.aizhixin.cloud.dataanalysis.analysis.respository.TeachingScoreStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
-import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
-import com.aizhixin.cloud.dataanalysis.score.mongoEntity.ScoreFluctuateCount;
-import com.aizhixin.cloud.dataanalysis.score.mongoEntity.TotalScoreCount;
-import com.mongodb.BasicDBObject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
