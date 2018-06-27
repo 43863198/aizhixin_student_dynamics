@@ -1,11 +1,7 @@
 package com.aizhixin.cloud.dataanalysis.common.service;
 
-import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AttachmentInformation;
-import com.aizhixin.cloud.dataanalysis.alertinformation.entity.OperationRecord;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
-import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AttachmentInfoRepository;
-import com.aizhixin.cloud.dataanalysis.alertinformation.repository.OperationRecordRepository;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.*;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.*;
 import com.aizhixin.cloud.dataanalysis.common.core.DataValidity;
@@ -273,8 +269,8 @@ public class InitService {
                WarningInformation warningInformation1=new WarningInformation();
                BeanUtils.copyProperties(warningInformation,warningInformation1);
                warningInformation1.setOrgId(vId);
-               Long collegeId=mapData.get(warningInformation1.getCollogeId());
-               warningInformation1.setCollogeId(collegeId);
+//               Long collegeId=mapData.get(warningInformation1.getCollogeId());
+//               warningInformation1.setCollogeId(collegeId);
                warningInformation1.setId(UUID.randomUUID().toString());
                alertWarningInformationRepository.save(warningInformation1);
            }

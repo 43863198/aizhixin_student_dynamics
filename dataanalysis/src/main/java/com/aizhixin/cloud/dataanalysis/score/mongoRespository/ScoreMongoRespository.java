@@ -11,17 +11,17 @@ import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 
 public interface ScoreMongoRespository extends MongoRepository<Score, String>{
  
-	List<Score> findAllBySchoolYearInAndOrgIdAndExamType(Set<Integer> schoolYears,Long orgId,String examType);
+	List<Score> findAllByTeachYearInAndOrgIdAndExamType(Set<Integer> teachYears,Long orgId,String examType);
 	
 	List<Score> findAllByGradeInAndOrgIdAndExamType(String[] grades,Long orgId,String examType);
 	
-	List<Score> findAllBySchoolYearGreaterThanEqualAndOrgIdAndExamType(int beginYear,Long orgId,String examType);
+	List<Score> findAllByTeachYearGreaterThanEqualAndOrgIdAndExamType(int beginYear,Long orgId,String examType);
 	
-	List<Score> findAllByTotalScoreLessThanAndSchoolYearGreaterThanEqualAndExamTypeAndOrgId(float totalScore,int beginYear,String examType,Long orgId);
+	List<Score> findAllByTotalScoreLessThanAndTeachYearGreaterThanEqualAndExamTypeAndOrgId(float totalScore,String beginYear,String examType,Long orgId);
+
+	List<Score> findAllByTotalScoreLessThanAndTeachYearAndSemesterAndOrgIdAndExamType(float totalScore,String teachYear,String semester,Long orgId,String examType);
 	
-	List<Score> findAllByTotalScoreLessThanAndSchoolYearAndSemesterAndOrgIdAndExamType(float totalScore,int schoolYear,int semester,Long orgId,String examType);
+	List<Score> findAllByGradePointAndTeachYearAndSemesterAndOrgIdAndExamType(float gradePoint,String teachYear,String semester,Long orgId,String examType);
 	
-	List<Score> findAllByGradePointAndSchoolYearAndSemesterAndOrgIdAndExamType(float gradePoint,int schoolYear,int semester,Long orgId,String examType);
-	
-	List<Score> findAllByTotalScoreGreaterThanEqualAndSchoolYearAndSemesterAndOrgIdAndExamType(float totalScore,int schoolYear,int semester,Long orgId,String examType);
+	List<Score> findAllByTotalScoreGreaterThanEqualAndTeachYearAndSemesterAndOrgIdAndExamType(float totalScore,String teachYear,String semester,Long orgId,String examType);
 }

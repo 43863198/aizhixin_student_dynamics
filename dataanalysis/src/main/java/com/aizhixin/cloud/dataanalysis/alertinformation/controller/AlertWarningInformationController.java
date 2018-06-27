@@ -5,6 +5,7 @@ import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningDetailsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
+import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -26,6 +27,7 @@ import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInfo
 import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
 
 import java.awt.print.Pageable;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +45,19 @@ public class AlertWarningInformationController {
 
     @Autowired
     private AlertWarningInformationService alertWarningInforService;
+    @Autowired
+    private ScoreJob scoreJob;
+
+
+//    @GetMapping(value = "/gettset", produces = MediaType.APPLICATION_JSON_VALUE)
+//    @ApiOperation(httpMethod = "GET", value = "测试测试", response = Void.class, notes = "测试测试<br><br><b>@author jianwei.wu</b>")
+//    public void getTest(
+//            @RequestParam(value = "orgId", required = true) Long orgId,
+//            @RequestParam(value = "teachYear", required = false) String teachYear,
+//           @RequestParam(value = "semester", required = false) String semester) {
+//         scoreJob.scoreFluctuateCountJob(orgId, teachYear, semester);
+//    }
+
 
     /**
      * 预警信息列表

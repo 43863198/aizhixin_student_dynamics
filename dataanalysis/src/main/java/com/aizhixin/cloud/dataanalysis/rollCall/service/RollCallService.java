@@ -64,27 +64,26 @@ public class RollCallService {
 			try {
 				RollCall rollCall = new RollCall();
 				rollCall.setOrgId(orgId);
-				rollCall.setUserId(d.getUserId());
 				rollCall.setUserName(d.getUserName());
 				for (Entry<String, ImportDomain> entry : map.entrySet()) {
 					if (entry.getKey().equals(d.getClassName())) {
-						rollCall.setClassId(entry.getValue().getId());
+						rollCall.setClassCode(entry.getValue().getId());
 						break;
 					}
 				}
 				rollCall.setClassName(d.getClassName());
 				for (Entry<String, ImportDomain> entry : map.entrySet()) {
 					if (entry.getKey().equals(d.getCollegeName())) {
-						rollCall.setCollegeId(entry.getValue().getId());
+						rollCall.setCollegeCode(entry.getValue().getId());
 						break;
 					}
 				}
 				rollCall.setCollegeName(d.getCollegeName());
-				rollCall.setSchoolYear(d.getSchoolYear());
+				rollCall.setTeachYear(d.getSchoolYear());
 				rollCall.setJobNum(d.getJobNum());
 				for (Entry<String, ImportDomain> entry : map.entrySet()) {
 					if (entry.getKey().equals(d.getProfessionalName())) {
-						rollCall.setProfessionalId(entry.getValue().getId());
+						rollCall.setProfessionalCode(entry.getValue().getId());
 						break;
 					}
 				}
@@ -103,7 +102,7 @@ public class RollCallService {
     			}
 //				rollCall.setRollCallDate(d.getRollCallDate());
 				rollCall.setRollCallResult(Integer.parseInt(d.getRollCallResult()));
-				rollCall.setSemester(2);
+				rollCall.setSemester("春");
 				list.add(rollCall);
 			} catch (Exception e) {
 				LOG.info("错误信息行号：" + d.getLine() + ",  学号：" + d.getJobNum());

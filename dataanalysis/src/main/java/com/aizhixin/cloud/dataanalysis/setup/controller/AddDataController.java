@@ -1,4 +1,4 @@
-package com.aizhixin.cloud.dataanalysis.alertinformation.controller;
+package com.aizhixin.cloud.dataanalysis.setup.controller;
 
 import com.aizhixin.cloud.dataanalysis.setup.entity.Rule;
 import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
@@ -30,13 +30,12 @@ import java.util.List;
 public class AddDataController {
     private Logger logger = Logger.getLogger(this.getClass());
     @Autowired
-    private WarningTypeService warningTypeService;
+    private RuleService ruleService;
 
 
-    @GetMapping(value = "/addwaringtype", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "添加预警类型数据", response = Void.class, notes = "添加测试预警信息数据<br><br><b>@author jianwei.wu</b>")
-    public  String setWarningType(
-            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
-     return warningTypeService.setWarningType(orgId);
+    @GetMapping(value = "/addwaringRule", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "添加预警规则数据", response = Void.class, notes = "添加预警规则数据<br><br><b>@author jianwei.wu</b>")
+    public  String setWarningType() {
+     return ruleService.setWarningRule();
     }
 }

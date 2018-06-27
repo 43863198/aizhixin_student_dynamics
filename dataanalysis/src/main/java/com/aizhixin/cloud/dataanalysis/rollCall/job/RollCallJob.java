@@ -53,7 +53,7 @@ public class RollCallJob {
     /**
      * 统计mongo里的本学期考勤数据将汇总的数据存入rollCallCount里
      */
-    public void rollCallCountJob(int schoolYear, int semester) {
+    public void rollCallCountJob(String schoolYear, String semester) {
 
         // 获取预警配置
         List<AlarmSettings> settingsList = alarmSettingsService
@@ -91,23 +91,22 @@ public class RollCallJob {
                 Map.Entry entry = (Map.Entry) iter.next();
                 Long orgId = (Long) entry.getKey();
 
-                List<RollCall> rollCallList = rollCallMongoRespository.findAllBySchoolYearAndSemesterAndOrgIdAndRollCallResult(schoolYear, semester, orgId, RollCallConstant.OUT_SCHOOL);
+                List<RollCall> rollCallList = rollCallMongoRespository.findAllByTeachYearAndSemesterAndOrgIdAndRollCallResult(schoolYear, semester, orgId, RollCallConstant.OUT_SCHOOL);
                 for (RollCall rollCall : rollCallList) {
                     RollCallCount rollCallCount = rollCallCountMap.get(rollCall.getJobNum());
                     if (null == rollCallCount) {
                         rollCallCount = new RollCallCount();
-                        rollCallCount.setClassId(rollCall.getClassId());
+                        rollCallCount.setClassCode(rollCall.getClassCode());
                         rollCallCount.setClassName(rollCall.getClassName());
-                        rollCallCount.setCollegeId(rollCall.getCollegeId());
+                        rollCallCount.setCollegeCode(rollCall.getCollegeCode());
                         rollCallCount.setCollegeName(rollCall.getCollegeName());
                         rollCallCount.setGrade(rollCall.getGrade());
                         rollCallCount.setJobNum(rollCall.getJobNum());
                         rollCallCount.setOrgId(orgId);
-                        rollCallCount.setProfessionalId(rollCall.getProfessionalId());
+                        rollCallCount.setProfessionalCode(rollCall.getProfessionalCode());
                         rollCallCount.setProfessionalName(rollCall.getProfessionalName());
-                        rollCallCount.setSchoolYear(schoolYear);
+                        rollCallCount.setTeachYear(schoolYear);
                         rollCallCount.setSemester(semester);
-                        rollCallCount.setUserId(rollCall.getUserId());
                         rollCallCount.setUserPhone(rollCall.getUserPhone());
                         rollCallCount.setUserName(rollCall.getUserName());
                         if (RollCallConstant.OUT_SCHOOL == rollCall.getRollCallResult()) {
@@ -140,81 +139,9 @@ public class RollCallJob {
     /**
      * 旷课预警（AbsenteeismEarlyWarning）
      */
-    public ArrayList<WarningInformation> rollCallJob(Long orgId, int schoolYear, int semester, String ruleId) {
+    public ArrayList<WarningInformation> rollCallJob(Long orgId, String schoolYear, String semester, String ruleId) {
 
         ArrayList<WarningInformation> returnList = new ArrayList<WarningInformation>();
-
-//		// 获取的预警类型
-//		List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
-//
-//		//已经开启次预警类型的组织
-//		Set<Long> orgIdSet = new HashSet<>();
-//		for (WarningType wt : warningTypeList) {
-//			if (wt.getSetupCloseFlag() == 10) {
-//				orgIdSet.add(wt.getOrgId());
-//			}
-//		}
-
-//		// 获取预警配置
-//		List<AlarmSettings> settingsList = alarmSettingsService
-//				.getAlarmSettingsByType(WarningTypeConstant.Absenteeism.toString());
-//		if (null != settingsList && settingsList.size() > 0) {
-
-//			Calendar c = Calendar.getInstance();
-//			//当前年份
-//			int schoolYear = c.get(Calendar.YEAR);
-//			//当前月份
-//			int month = c.get(Calendar.MONTH)+1;
-//			//当前学期编号
-//			int semester = 2;
-//			if( month > 1 && month < 9){
-//				semester = 1;
-//			}
-//			if(month == 1 ){
-//				schoolYear = schoolYear - 1;
-//			}
-//			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
-//			Set<String> ruleIdList = new HashSet<String>();
-//			Set<String> warnSettingsIdList = new HashSet<String>();
-//			// 按orgId归类告警等级阀值
-//			for (AlarmSettings settings : settingsList) {
-//				if (orgIdSet.contains(settings.getOrgId())&&settings.getSetupCloseFlag()==10) {
-//					warnSettingsIdList.add(settings.getId());
-//					Long orgId = settings.getOrgId();
-//
-//					if (StringUtils.isEmpty(settings.getRuleSet())) {
-//						continue;
-//					}
-//					String[] warmRuleIds = settings.getRuleSet().split(",");
-//					for (String ruleId : warmRuleIds) {
-//						if (!StringUtils.isEmpty(ruleId)) {
-//							RuleParameter rp = ruleParameterService.findById(ruleId);
-//							if(rp.getRuleName().equals(ruleName)) {
-//								ruleIdList.add(ruleId);
-//							}
-//						}
-//					}
-//					if (null != alarmMap.get(orgId)) {
-//						ArrayList<AlarmSettings> alarmList = alarmMap.get(orgId);
-//						alarmList.add(settings);
-//					} else {
-//						ArrayList<AlarmSettings> alarmList = new ArrayList<AlarmSettings>();
-//						alarmList.add(settings);
-//						alarmMap.put(orgId, alarmList);
-//					}
-//				}
-//			}
-
-//			// 预警规则获取
-//			HashMap<String, RuleParameter> ruleParameterMap = new HashMap<String, RuleParameter>();
-//			List<RuleParameter> alarmList = ruleParameterService.getRuleParameterByIds(ruleIdList);
-//			for (RuleParameter rp : alarmList) {
-//				if(rp.getRuleName().equals(ruleName)) {
-//					ruleParameterMap.put(rp.getId(), rp);
-//				}
-//			}
-//			Iterator iter = alarmMap.entrySet().iterator();
-//			while (iter.hasNext()) {
 
         //更新预警集合
         ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
@@ -226,18 +153,7 @@ public class RollCallJob {
         HashMap<String, WarningInformation> warnDbMap = new HashMap<String, WarningInformation>();
         // 定时任务产生的新的预警数据
         HashMap<String, WarningInformation> warnMap = new HashMap<String, WarningInformation>();
-//				Map.Entry entry = (Map.Entry) iter.next();
-//				Long orgId = (Long) entry.getKey();
-//				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
-//						.getValue();
-
-        // 预警处理配置获取
-//				HashMap<String, ProcessingMode> processingModeMap = new HashMap<String, ProcessingMode>();
-//				List<ProcessingMode> processingModeList = processingModeService
-//						.getProcessingModeBywarningTypeId(orgId,
-//								WarningType.Absenteeism.toString());
-        // 按orgId查询未报到的学生信息
-        List<RollCallCount> rollCallCountList = rollCallCountMongoRespository.findAllBySchoolYearAndSemesterAndOrgId(schoolYear, semester, orgId);
+        List<RollCallCount> rollCallCountList = rollCallCountMongoRespository.findAllByTeachYearAndSemesterAndOrgId(schoolYear, semester, orgId);
 
         // 数据库已生成的处理中预警数据
         List<WarningInformation> warnDbList = alertWarningInformationService
@@ -256,41 +172,19 @@ public class RollCallJob {
                 if (null != ruleParameter) {
                     if (rollCallCount.getOutSchoolTimes() >= Float.parseFloat(ruleParameter.getRightParameter())) {
                         WarningInformation alertInfor = new WarningInformation();
-                        String alertId = UUID.randomUUID()
-                                .toString();
+                        String alertId = UUID.randomUUID().toString();
                         alertInfor.setId(alertId);
-                        alertInfor.setDefendantId(rollCallCount
-                                .getUserId());
-                        alertInfor.setName(rollCallCount
-                                .getUserName());
-                        alertInfor.setJobNumber(rollCallCount
-                                .getJobNum());
-                        alertInfor.setCollogeId(rollCallCount
-                                .getCollegeId());
-                        alertInfor.setCollogeName(rollCallCount
-                                .getCollegeName());
-                        alertInfor.setClassId(rollCallCount
-                                .getClassId());
-                        alertInfor.setClassName(rollCallCount
-                                .getClassName());
-                        alertInfor
-                                .setProfessionalId(rollCallCount
-                                        .getProfessionalId());
-                        alertInfor
-                                .setProfessionalName(rollCallCount
-                                        .getProfessionalName());
-                        alertInfor.setTeacherYear(rollCallCount
-                                .getSchoolYear());
+                        alertInfor.setName(rollCallCount.getUserName());
+                        alertInfor.setJobNumber(rollCallCount.getJobNum());
+                        alertInfor.setCollogeCode(rollCallCount.getCollegeCode());
+                        alertInfor.setCollogeName(rollCallCount.getCollegeName());
+                        alertInfor.setClassCode(rollCallCount.getClassCode());
+                        alertInfor.setClassName(rollCallCount.getClassName());
+                        alertInfor.setProfessionalCode(rollCallCount.getProfessionalCode());
+                        alertInfor.setProfessionalName(rollCallCount.getProfessionalName());
+                        alertInfor.setTeacherYear(rollCallCount.getTeachYear());
                         alertInfor.setSemester(rollCallCount.getSemester());
-//										alertInfor.setWarningLevel(alarmSettings
-//												.getWarningLevel());
-                        alertInfor
-                                .setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-//										alertInfor.setAlarmSettingsId(asId
-//												);
-//                        alertInfor
-//                                .setWarningType(WarningTypeConstant.Absenteeism
-//                                        .toString());
+                        alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
                         alertInfor.setWarningTime(new Date());
                         alertInfor.setWarningCondition("本学期累计旷课次数为:" + rollCallCount.getOutSchoolTimes());
                         alertInfor.setPhone(rollCallCount.getUserPhone());

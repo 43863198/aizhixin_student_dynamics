@@ -152,11 +152,13 @@ public class AlarmSettingsService {
                                         WarningDescparameterDTO warningDescparameterDTO = new WarningDescparameterDTO();
                                         String rpId = alarmRules[i];
                                         RuleParameter rp = ruleParameterService.findById(rpId);
-                                        List<Rule> rules = ruleService.getRuleList(rp.getOrgId(), rp.getRuleName());
-                                        if (null != rules && rules.size() > 0) {
-                                            warningDescparameterDTO.setDescribe(rules.get(0).getRuleDescribe());
-                                            warningDescparameterDTO.setParameter(rp.getRightParameter());
-                                            warningDescparameterDTO.setSerialNumber(rp.getSerialNumber());
+                                        if(null!=rp) {
+                                            List<Rule> rules = ruleService.getByName(rp.getRuleName());
+                                            if (null != rules && rules.size()>0) {
+                                                warningDescparameterDTO.setDescribe(rules.get(0).getRuleDescribe());
+                                                warningDescparameterDTO.setParameter(rp.getRightParameter());
+                                                warningDescparameterDTO.setSerialNumber(rp.getSerialNumber());
+                                            }
                                         }
                                         warningDescparameterDTOList.add(warningDescparameterDTO);
                                     }

@@ -13,10 +13,10 @@ import lombok.Setter;
 public class PracticeDomain extends StudentInfoDomain {
 	
     @ApiModelProperty(value = "semester 学期", position=1)
-    @Getter @Setter private int semester;
+    @Getter @Setter private String semester;
     
     @ApiModelProperty(value = "schoolYear 学年", position=2)
-    @Getter @Setter private int schoolYear;
+    @Getter @Setter private String schoolYear;
     
     @ApiModelProperty(value = "companyName 实践企业名称", position=3)
     @Getter @Setter private String companyName;
@@ -38,11 +38,11 @@ public class PracticeDomain extends StudentInfoDomain {
     
 	public PracticeDomain() {}
 
-	public PracticeDomain(Integer line, Long orgId, String jobNum, Long userId, String userName, Long classId,
-			String className, Long professionalId, String professionalName, Long collegeId, String collegeName,
-			String userPhone, /*int semester,*/ int schoolYear, String companyName, String companyProvince,
+	public PracticeDomain(Integer line, Long orgId, String jobNum, Long userId, String userName, String classCode,
+			String className, String professionalCode, String professionalName, String collegeCode, String collegeName,
+			String userPhone, /*int semester,*/ String schoolYear, String companyName, String companyProvince,
 			String companyCity, String reviewResult, Date taskCreatedDate, String grade) {
-		super(line, orgId, jobNum, userId, userName, classId, className, professionalId, professionalName, collegeId,
+		super(line, orgId, jobNum, userId, userName, classCode, className, professionalCode, professionalName, collegeCode,
 				collegeName, userPhone);
 //		this.semester = semester;
 		this.schoolYear = schoolYear;

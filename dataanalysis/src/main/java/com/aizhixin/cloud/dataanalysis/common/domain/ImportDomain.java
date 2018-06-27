@@ -8,7 +8,7 @@ import lombok.Setter;
 @ApiModel(description="导入新学生信息基础数据")
 public class ImportDomain {
     @ApiModelProperty(value = "Id", position=1)
-    @Getter @Setter protected Long id;
+    @Getter @Setter protected String id;
     
     @ApiModelProperty(value = "name", position=2)
     @Getter @Setter protected String name;
@@ -18,7 +18,7 @@ public class ImportDomain {
 
 	public ImportDomain() {}
 
-	public ImportDomain(Long id, String name, Integer line) {
+	public ImportDomain(String id, String name, Integer line) {
 		this.id = id;
 		this.name = name;
 		this.line = line;

@@ -116,7 +116,7 @@ public class PushMessageService {
             message.setPushTime(new Date());
             message.setDeleteFlag(DataValidity.VALID.getIntValue());
             message.setTitle(PushMessageConstants.MESSAGE_TITLE);
-            message.setUserId(warningInformation.getDefendantId());
+//            message.setUserId(warningInformation.getDefendantId());
             message.setStudentName(warningInformation.getName());
             message.setWarningLevel(WarningLevelConstant.getName(warningInformation.getWarningLevel()));
             message.setWarningType(WarningTypeChangeConstant.valueOf(warningInformation.getWarningType()).getName());

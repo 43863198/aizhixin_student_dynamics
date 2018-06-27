@@ -7,10 +7,12 @@
     <property name="now" value="now()" dbms="mysql,h2"/>
     <property name="now" value="current_timestamp" dbms="postgresql"/>
     <property name="now" value="sysdate" dbms="oracle"/>
-    <changeSet id="201712181132845" author="jianwei.wu" runOnChange="true">
-        <modifyDataType
-                columnName="RULE_SET"
-                newDataType="text"
-                tableName="T_ALARM_SETTINGS"/>
+
+    <changeSet id="201806273163200" author="jianwei.wu">
+        <addColumn
+                tableName="T_WARNING_INFORMATION">
+            <column name="WARNING_STANDARD" type="VARCHAR(500)"  remarks="预警标准"/>
+            <column name="IS_FILE" type="INT"  remarks="是否归档"/>
+        </addColumn>
     </changeSet>
 </databaseChangeLog>

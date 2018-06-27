@@ -23,19 +23,19 @@ public class StudentInfoDomain {
     @Getter @Setter private String userName;
     
     @ApiModelProperty(value = "classId 班级ID", position=6)
-    @Getter @Setter private Long classId;
+    @Getter @Setter private String classCode;
     
     @ApiModelProperty(value = "className 班级名称", position=7)
     @Getter @Setter private String className;
     
     @ApiModelProperty(value = "professionalId 专业ID", position=8)
-    @Getter @Setter private Long professionalId;
+    @Getter @Setter private String professionalCode;
     
     @ApiModelProperty(value = "professionalName 专业名称", position=9)
     @Getter @Setter private String professionalName;
     
     @ApiModelProperty(value = "collegeId 学院ID", position=10)
-    @Getter @Setter private Long collegeId;
+    @Getter @Setter private String collegeCode;
     
     @ApiModelProperty(value = "collegeName 学院名称", position=11)
     @Getter @Setter private String collegeName;
@@ -51,19 +51,19 @@ public class StudentInfoDomain {
     
 	public StudentInfoDomain() {}
 
-	public StudentInfoDomain(Integer line, Long orgId, String jobNum, Long userId, String userName, Long classId,
-			String className, Long professionalId, String professionalName, Long collegeId, String collegeName,
+	public StudentInfoDomain(Integer line, Long orgId, String jobNum, Long userId, String userName, String classCode,
+			String className, String professionalCode, String professionalName, String collegeCode, String collegeName,
 			String userPhone) {
 		this.line = line;
 		this.orgId = orgId;
 		this.jobNum = jobNum;
 		this.userId = userId;
 		this.userName = userName;
-		this.classId = classId;
+		this.classCode = classCode;
 		this.className = className;
-		this.professionalId = professionalId;
+		this.professionalCode = professionalCode;
 		this.professionalName = professionalName;
-		this.collegeId = collegeId;
+		this.collegeCode = collegeCode;
 		this.collegeName = collegeName;
 		this.userPhone = userPhone;
 	}

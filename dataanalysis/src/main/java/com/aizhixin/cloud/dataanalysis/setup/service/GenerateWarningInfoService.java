@@ -5,6 +5,7 @@ import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInfo
 import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
 import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
+import com.aizhixin.cloud.dataanalysis.setup.entity.Rule;
 import com.aizhixin.cloud.dataanalysis.setup.entity.RuleParameter;
 import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.studentRegister.job.StudentRegisterJob;
@@ -36,27 +37,30 @@ public class GenerateWarningInfoService {
     private ScoreJob scoreJob;
     @Autowired
     private AlertWarningInformationService warningInformationService;
+    @Autowired
+    private RuleService ruleService;
 
     public void warningJob() {
         Calendar c = Calendar.getInstance();
         // 当前年份
-        int schoolYear = c.get(Calendar.YEAR);
+        int year = c.get(Calendar.YEAR);
         // 当前月份
         int month = c.get(Calendar.MONTH)+1;
         // 当前学期编号
-        int semester = 2;
+        String semester = "秋";
         if (month > 1 && month < 9) {
-            semester = 1;
+            semester = "春";
         }
         if(month == 1 ){
-            schoolYear = schoolYear - 1;
+            year = year - 1;
         }
+        String teachYear = year+"";
         //获取的预警类型
         List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
         if(null!=warningTypeList&&warningTypeList.size()>0) {
             for (WarningType wt : warningTypeList) {
                 if (wt.getSetupCloseFlag() == 10) {
-                    this.warningInfo(wt.getOrgId(), wt.getType(), schoolYear, semester);
+                    this.warningInfo(wt.getOrgId(), wt.getType(), teachYear, semester);
                 }
             }
         }
@@ -65,27 +69,29 @@ public class GenerateWarningInfoService {
     public void enerateWarningInfo(Long orgId, String warningType) {
         Calendar c = Calendar.getInstance();
         // 当前年份
-        int schoolYear = c.get(Calendar.YEAR);
+        int year = c.get(Calendar.YEAR);
         // 当前月份
         int month = c.get(Calendar.MONTH)+1;
         // 当前学期编号
-        int semester = 2;
+        String semester = "秋";
         if (month > 1 && month < 9) {
-            semester = 1;
+            semester = "春";
         }
         if(month == 1 ){
-            schoolYear = schoolYear - 1;
+            year = year - 1;
         }
-        warningInfo(orgId, warningType, schoolYear, semester);
+        String teachYear = year+"";
+
+        warningInfo(orgId, warningType, teachYear, semester);
     }
 
     @Async
-    public void warningInfo(Long orgId, String type,int schoolYear,int semester ){
+    public void warningInfo(Long orgId, String type,String schoolYear,String semester ){
         List<AlarmSettings> alarmSettingsList = alarmSettingsService.getAlarmSettingsByOrgIdAndWarningType(orgId,type);
         HashMap<Integer, List<WarningInformation>> restHasMap = new HashMap<>();
         for(AlarmSettings as: alarmSettingsList) {
             if (null != as && as.getSetupCloseFlag() ==10) {
-                String[] ruleIds = as.getRuleSet().split(",");
+                String[] ruleSetIds = as.getRuleSet().split(",");
                 List<WarningInformation> gradeList = new ArrayList<>();
                 ArrayList<WarningInformation> registerList = null;
                 ArrayList<WarningInformation> absenteeismList = null;
@@ -95,35 +101,39 @@ public class GenerateWarningInfoService {
                 List<WarningInformation> leaveSchoolList = null;
                 List<WarningInformation> cetList = null;
                 List<WarningInformation> attendAbnormalList = null;
-                for (String ruleId : ruleIds) {
-                    if (!StringUtils.isEmpty(ruleId)) {
-                        RuleParameter rp = ruleParameterService.findById(ruleId);
-
-                        if (rp.getRuleName().equals("RegisterEarlyWarning")) {
-                            WarningType wt = warningTypeService.getWarningTypeByOrgIdAndType(orgId, type);
-                            Date startTime = wt.getStartTime();
-                            registerList = studentRegisterJob.studenteRegisterJob(orgId, schoolYear, semester, ruleId, startTime);
-                        }
-                        if (rp.getRuleName().equals("AbsenteeismEarlyWarning")) {
-                            absenteeismList = rollCallJob.rollCallJob(orgId, schoolYear, semester, ruleId);
-                        }
-                        if (rp.getRuleName().equals("PerformanceFluctuationEarlyWarning")) {
-                            performanceFluctuationList = scoreJob.scoreFluctuateJob(orgId, schoolYear, semester, ruleId);
-                        }
-                        if (rp.getRuleName().equals("SupplementAchievementEarlyWarning")) {
-                            supplementAchievementList = scoreJob.makeUpScoreJob(orgId, schoolYear, semester, ruleId);
-                        }
-                        if (rp.getRuleName().equals("TotalAchievementEarlyWarning")) {
-                            totalAchievementList = scoreJob.totalScoreJob(orgId, schoolYear, semester, ruleId);
-                        }
-                        if (rp.getRuleName().equals("LeaveSchoolEarlyWarning")) {
-                            leaveSchoolList = scoreJob.dropOutJob(orgId, schoolYear, semester, ruleId);
-                        }
-                        if (rp.getRuleName().equals("CetEarlyWarning")) {
-                            cetList = scoreJob.cet4ScoreJob(orgId, schoolYear, semester, ruleId);
-                        }
-                        if (rp.getRuleName().equals("AttendAbnormalEarlyWarning")) {
-                            attendAbnormalList = scoreJob.attendAbnormalJob(orgId, schoolYear, semester, ruleId);
+                for (String ruleSetId : ruleSetIds) {
+                    if (!StringUtils.isEmpty(ruleSetId)) {
+                        RuleParameter rp = ruleParameterService.findById(ruleSetId);
+                        if(null!=rp) {
+                            Rule rule = ruleService.getByName(rp.getRuleName()).get(0);
+                            if (null != rule) {
+                                if (rule.getName().equals("A")) {
+                                    WarningType wt = warningTypeService.getWarningTypeByOrgIdAndType(orgId, type);
+                                    Date startTime = wt.getStartTime();
+                                    registerList = studentRegisterJob.studenteRegisterJob(orgId, schoolYear, semester, rule.getId(), startTime);
+                                }
+                                if (rule.getName().equals("D")) {
+                                    absenteeismList = rollCallJob.rollCallJob(orgId, schoolYear, semester, rule.getId());
+                                }
+//                                if (rule.getName().equals("G")) {
+//                                    performanceFluctuationList = scoreJob.scoreFluctuateJob(orgId, schoolYear, semester, rule.getId());
+//                                }
+                                if (rule.getName().equals("F")) {
+                                    supplementAchievementList = scoreJob.makeUpScoreJob(orgId, schoolYear, semester, rule.getId());
+                                }
+                                if (rule.getName().equals("E")) {
+                                    totalAchievementList = scoreJob.failScoreCountJob(orgId, schoolYear, semester, rule.getId());
+                                }
+                                if (rule.getName().equals("B")) {
+                                    leaveSchoolList = scoreJob.dropOutJob(orgId, schoolYear, semester, rule.getId());
+                                }
+                                if (rule.getName().equals("H")) {
+                                    cetList = scoreJob.cet4ScoreJob(orgId, schoolYear, semester, rule.getId());
+                                }
+                                if (rule.getName().equals("C")) {
+                                    attendAbnormalList = scoreJob.attendAbnormalJob(orgId, schoolYear, semester, rule.getId());
+                                }
+                            }
                         }
                     }
                 }

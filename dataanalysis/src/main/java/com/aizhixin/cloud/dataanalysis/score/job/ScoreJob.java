@@ -2,1807 +2,989 @@ package com.aizhixin.cloud.dataanalysis.score.job;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import com.aizhixin.cloud.dataanalysis.common.util.TermConversion;
+import com.aizhixin.cloud.dataanalysis.analysis.dto.TeacherYearSemesterDTO;
+import com.aizhixin.cloud.dataanalysis.analysis.service.SchoolYearTermService;
+import com.aizhixin.cloud.dataanalysis.score.mongoEntity.FailScoreStatistics;
+import com.aizhixin.cloud.dataanalysis.score.mongoEntity.FirstTwoSemestersScoreStatistics;
+import com.aizhixin.cloud.dataanalysis.score.mongoEntity.LastSemesterScoreStatistics;
+import com.aizhixin.cloud.dataanalysis.score.mongoRespository.FailScoreStatisticsRespository;
+import com.aizhixin.cloud.dataanalysis.score.mongoRespository.FirstTwoSemestersScoreStatisticsRespository;
+import com.aizhixin.cloud.dataanalysis.score.mongoRespository.LastSemesterScoreStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.setup.entity.RuleParameter;
-import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.setup.service.RuleParameterService;
-import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
-import com.mongodb.BasicDBObject;
-import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
+import org.hibernate.SQLQuery;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
-import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
-import com.aizhixin.cloud.dataanalysis.analysis.entity.TeachingScoreDetails;
-import com.aizhixin.cloud.dataanalysis.analysis.service.TeachingScoreService;
 import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
-import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
-import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
-import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
-import com.aizhixin.cloud.dataanalysis.score.mongoEntity.MakeUpScoreCount;
-import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
-import com.aizhixin.cloud.dataanalysis.score.mongoEntity.ScoreFluctuateCount;
-import com.aizhixin.cloud.dataanalysis.score.mongoEntity.TotalScoreCount;
-import com.aizhixin.cloud.dataanalysis.score.mongoRespository.MakeUpScoreCountMongoRespository;
-import com.aizhixin.cloud.dataanalysis.score.mongoRespository.ScoreFluctuateCountMongoRespository;
-import com.aizhixin.cloud.dataanalysis.score.mongoRespository.ScoreMongoRespository;
-import com.aizhixin.cloud.dataanalysis.score.mongoRespository.TotalScoreCountMongoRespository;
-import com.aizhixin.cloud.dataanalysis.score.service.ScoreService;
-import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
-import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
-import com.aizhixin.cloud.dataanalysis.setup.service.ProcessingModeService;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 @Component
 public class ScoreJob {
 
-	private Logger logger = Logger.getLogger(this.getClass());
-	@Autowired
-	private ScoreService scoreService;
-	@Autowired
-	private RuleParameterService ruleParameterService;
-	@Autowired
-	@Lazy
-	private AlarmSettingsService alarmSettingsService;
-	@Autowired
-	private TotalScoreCountMongoRespository totalScoreCountMongoRespository;
-	@Autowired
-	private MakeUpScoreCountMongoRespository makeUpScoreCountMongoRespository;
-	@Autowired
-	private ScoreMongoRespository scoreMongoRespository;
-	@Autowired
-	private AlertWarningInformationService alertWarningInformationService;
-	@Autowired
-	private ProcessingModeService processingModeService;
-	@Autowired
-	private ScoreFluctuateCountMongoRespository scoreFluctuateCountMongoRespository;
-	@Autowired
-	private TeachingScoreService teachingScoreService;
-	@Autowired
-	private TermConversion termConversion;
-	@Autowired
-	private WarningTypeService warningTypeService;
+    private Logger logger = Logger.getLogger(this.getClass());
+    @Autowired
+    private RuleParameterService ruleParameterService;
+    @Autowired
+    private FirstTwoSemestersScoreStatisticsRespository firstTwoSemestersScoreStatisticsRespository;
+    @Autowired
+    private FailScoreStatisticsRespository failScoreStatisticsRespository;
+    @Autowired
+    private LastSemesterScoreStatisticsRespository lastSemesterScoreStatisticsRespository;
+    @Autowired
+    private EntityManager em;
+    @Autowired
+    private SchoolYearTermService schoolYearTermService;
+
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+    /**
+     * 统计相邻学期绩点保存到mongo中
+     */
+    public void firstTwoSemestersScoreStatisticsJob(Long orgId, String teachYear, String semester) {
+        try {
+            // 上学年学期
+            String secondSchoolYear = teachYear;
+            String secondSemester = "春";
+            if (semester == "春") {
+                secondSemester = "秋";
+                secondSchoolYear = Integer.valueOf(teachYear) - 1 + "";
+            }
+            // 上上学年学期
+            String firstSchoolYear = secondSchoolYear;
+            String firstSemester = "春";
+            if (secondSemester.equals("春")) {
+                firstSemester = "秋";
+                firstSchoolYear = Integer.valueOf(secondSchoolYear) - 1 + "";
+            }
+
+            Date start3 = null;
+            Date end3 = null;
+            if (!org.apache.commons.lang.StringUtils.isBlank(teachYear) && !org.apache.commons.lang.StringUtils.isBlank(semester)) {
+                Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, teachYear, semester);
+                if (null != schoolCalendar) {
+                    if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
+                        List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
+                        if (tysList.size() > 0) {
+                            start3 = sdf.parse(tysList.get(0).getStartTime());
+                            end3 = sdf.parse(tysList.get(0).getEndTime());
+                        }
+                    }
+                }
+            }
+
+            Date start2 = null;
+            Date end2 = null;
+            if (!org.apache.commons.lang.StringUtils.isBlank(secondSchoolYear) && !org.apache.commons.lang.StringUtils.isBlank(secondSemester)) {
+                Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, secondSchoolYear, secondSemester);
+                if (null != schoolCalendar) {
+                    if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
+                        List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
+                        if (tysList.size() > 0) {
+                            start2 = sdf.parse(tysList.get(0).getStartTime());
+                            end2 = sdf.parse(tysList.get(0).getEndTime());
+                        }
+                    }
+                }
+            }
+            Date start1 = null;
+            Date end1 = null;
+            if (!org.apache.commons.lang.StringUtils.isBlank(firstSchoolYear) && !org.apache.commons.lang.StringUtils.isBlank(firstSchoolYear)) {
+                Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, firstSchoolYear, firstSemester);
+                if (null != schoolCalendar) {
+                    if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
+                        List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
+                        if (tysList.size() > 0) {
+                            start1 = sdf.parse(tysList.get(0).getStartTime());
+                            end1 = sdf.parse(tysList.get(0).getEndTime());
+                        }
+                    }
+                }
+            }
+            // 清除之前统计数据
+            List<FirstTwoSemestersScoreStatistics> scoreFluctuateList = firstTwoSemestersScoreStatisticsRespository
+                    .findAllByOrgIdAndTeachYearAndSemester(orgId, teachYear, semester);
+            firstTwoSemestersScoreStatisticsRespository.delete(scoreFluctuateList);
+
+            if (null != start1 && null != start2 && null != end1 && null != end2 && null != end3) {
+                StringBuilder aql = new StringBuilder("SELECT XH as xh, XM as xm, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc FROM t_xsjbxx  WHERE 1 = 1");
+                aql.append(" AND RXNY <= :start1");
+                aql.append(" AND YBYNY >= :end3");
+                Query aq = em.createNativeQuery(aql.toString());
+                aq.setParameter("start1", start1);
+                aq.setParameter("end3", end3);
+                aq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+                List<Map<String, Object>> res = aq.getResultList();
+
+                StringBuilder sql = new StringBuilder("SELECT c.COURSE_NUMBER as kch, c.COURSE_NAME as kcmc, cj.XH as xh, MAX(cj.KCCJ) as cj, cj.JD as jd, c.CREDIT as xf FROM t_xscjxx cj" +
+                        " LEFT JOIN t_xsjbxx xs ON cj.XH = xs.XH" +
+                        " LEFT JOIN t_course c ON cj.KCH = c.COURSE_NUMBER WHERE 1 = 1");
+
+                StringBuilder sql2 = new StringBuilder("");
+                sql2.append(sql);
+                sql2.append(" AND cj.KSRQ BETWEEN :start2 AND :end2");
+                sql2.append(" AND cj.XKSX = '必修'");
+                sql2.append(" GROUP BY cj.KCH, cj.XH");
+                Query sq2 = em.createNativeQuery(sql2.toString());
+                sq2.setParameter("start2", start2);
+                sq2.setParameter("end2", end2);
+                sq2.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+                List<Map<String, Object>> res2 = sq2.getResultList();
+
+                StringBuilder sql1 = new StringBuilder("");
+                sql1.append(sql);
+                sql1.append(" AND cj.KSRQ BETWEEN :start1 AND :end1");
+                sql1.append(" AND cj.XKSX = '必修'");
+                sql1.append(" GROUP BY cj.KCH, cj.XH");
+                Query sq1 = em.createNativeQuery(sql1.toString());
+                sq1.setParameter("start1", start1);
+                sq1.setParameter("end1", end1);
+                sq1.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+                List<Map<String, Object>> res1 = sq1.getResultList();
+                List<FirstTwoSemestersScoreStatistics> sfcList = new ArrayList<>();
+                for (Map d : res) {
+                    FirstTwoSemestersScoreStatistics sfc = new FirstTwoSemestersScoreStatistics();
+                    sfc.setOrgId(orgId);
+                    if (null != d.get("xh")) {
+                        sfc.setJobNum(d.get("xh").toString());
+                    }
+                    if (null != d.get("xm")) {
+                        sfc.setUserName(d.get("xm").toString());
+                    }
+                    if (null != d.get("bh")) {
+                        sfc.setClassCode(d.get("bh").toString());
+                    }
+                    if (null != d.get("bjmc")) {
+                        sfc.setClassName(d.get("bjmc").toString());
+                    }
+                    if (null != d.get("zyh")) {
+                        sfc.setProfessionalCode(d.get("zyh").toString());
+                    }
+                    if (null != d.get("zymc")) {
+                        sfc.setProfessionalName(d.get("zymc").toString());
+                    }
+                    if (null != d.get("yxsh")) {
+                        sfc.setCollegeCode(d.get("yxsh").toString());
+                    }
+                    if (null != d.get("yxsmc")) {
+                        sfc.setCollegeName(d.get("yxsmc").toString());
+                    }
+                    sfc.setTeachYear(teachYear);
+                    sfc.setSemester(semester);
+                    sfc.setFirstSchoolYear(firstSchoolYear);
+                    sfc.setFirstSemester(firstSemester);
+                    sfc.setSecondSchoolYear(secondSchoolYear);
+                    sfc.setSecondSemester(secondSemester);
+                    int count2 = 0;
+                    float totalCJ2 = 0;
+                    float totalXFJD2 = 0;
+                    float totalXF2 = 0;
+                    StringBuilder source2 = new StringBuilder("");
+                    for (Map d2 : res2) {
+                        if (null != d2.get("xh") && sfc.getJobNum().equals(d2.get("xh").toString())) {
+                            count2++;
+                            if (null != d2.get("kch") && null != d2.get("kcmc") && null != d2.get("xf")) {
+                                source2.append("【KCH:" + d2.get("kch") + ";");
+                                source2.append("KCMC:" + d2.get("kcmc") + ";");
+                                source2.append("XF:" + d2.get("xf") + "】 ");
+                            }
+                            if (null != d2.get("cj")) {
+                                totalCJ2 = totalCJ2 + Float.valueOf(d2.get("cj").toString());
+                            }
+                            if (null != d2.get("jd") && null != d2.get("xf")) {
+                                totalXFJD2 = totalXFJD2 + Float.valueOf(d2.get("jd").toString()) * Float.valueOf(d2.get("xf").toString());
+                                totalXF2 = totalXF2 + Float.valueOf(d2.get("xf").toString());
+                            }
+                        }
+                    }
+                    sfc.setSecondTotalScores(totalCJ2);
+                    sfc.setSecondTotalCourseNums(count2);
+                    sfc.setSecondTotalGradePoint(totalXFJD2);
+                    sfc.setSecondAvgradePoint(totalXFJD2 / totalXF2);
+
+                    int count1 = 0;
+                    float totalCJ1 = 0;
+                    float totalXFJD1 = 0;
+                    float totalXF1 = 0;
+                    StringBuilder source1 = new StringBuilder("");
+                    for (Map d1 : res1) {
+                        if (null != d1.get("xh") && sfc.getJobNum().equals(d1.get("xh").toString())) {
+                            count1++;
+                            if (null != d1.get("kch") && null != d1.get("kcmc") && null != d1.get("xf")) {
+                                source1.append("【KCH:" + d1.get("kch") + ";");
+                                source1.append("KCMC:" + d1.get("kcmc") + ";");
+                                source1.append("XF:" + d1.get("xf") + "】 ");
+                            }
+                            if (null != d1.get("cj")) {
+                                totalCJ1 = totalCJ1 + Float.valueOf(d1.get("cj").toString());
+                            }
+                            if (null != d1.get("jd") && null != d1.get("xf")) {
+                                totalXFJD1 = totalXFJD1 + Float.valueOf(d1.get("jd").toString()) * Float.valueOf(d1.get("xf").toString());
+                                totalXF1 = totalXF1 + Float.valueOf(d1.get("xf").toString());
+                            }
+                        }
+                    }
+                    sfc.setFirstTotalScores(totalCJ1);
+                    sfc.setFirstTotalCourseNums(count1);
+                    sfc.setFirstTotalGradePoint(totalXFJD1);
+                    sfc.setFirstAvgradePoint(totalXFJD1 / totalXF1);
+                    sfc.setDataSource(source1 + ";" + source2);
+                    sfcList.add(sfc);
+                }
+                firstTwoSemestersScoreStatisticsRespository.save(sfcList);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info(e.getMessage());
+        }
+    }
+
+    /**
+     * 统计在校期间累计不及格成绩汇总到mongo里
+     */
+    public void failScoreStatisticsJob(Long orgId, String teachYear, String semester) {
+        try {
+
+            Date start = null;
+            Date end = null;
+            if (!org.apache.commons.lang.StringUtils.isBlank(teachYear) && !org.apache.commons.lang.StringUtils.isBlank(semester)) {
+                Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, teachYear, semester);
+                if (null != schoolCalendar) {
+                    if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
+                        List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
+                        if (tysList.size() > 0) {
+                            start = sdf.parse(tysList.get(0).getStartTime());
+                            end = sdf.parse(tysList.get(0).getEndTime());
+                        }
+                    }
+                }
+            }
+
+            // 清除之前总评成绩不及格统计数据
+            List<FailScoreStatistics> fsList = failScoreStatisticsRespository.findAllByOrgIdAndTeachYearAndSemester(orgId, teachYear, semester);
+            failScoreStatisticsRespository.delete(fsList);
+
+            if (null != start && null != end) {
+                StringBuilder aql = new StringBuilder("SELECT XH as xh, XM as xm, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc FROM t_xsjbxx  WHERE 1 = 1");
+                aql.append(" AND RXNY <= :start");
+                aql.append(" AND YBYNY >= :end");
+                Query aq = em.createNativeQuery(aql.toString());
+                aq.setParameter("start",start);
+                aq.setParameter("end", end);
+                aq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+                List<Map<String, Object>> res = aq.getResultList();
+
+                StringBuilder sql = new StringBuilder("SELECT c.COURSE_NUMBER as kch, c.COURSE_NAME as kcmc, cj.XH as xh, MAX(cj.KCCJ) as cj, c.CREDIT as xf FROM t_xscjxx cj" +
+                        " LEFT JOIN t_course c ON cj.KCH = c.COURSE_NUMBER WHERE 1 = 1");
+
+                StringBuilder sql1 = new StringBuilder("");
+                sql1.append(sql);
+                sql1.append(" AND cj.KSRQ <= :end");
+                sql1.append(" AND cj.XKSX = '必修'");
+                sql1.append(" GROUP BY cj.KCH, cj.XH");
+                Query sq1 = em.createNativeQuery(sql1.toString());
+                sq1.setParameter("end", end);
+                sq1.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+                List<Map<String, Object>> res1 = sq1.getResultList();
+                List<FailScoreStatistics> sfcList = new ArrayList<>();
+                for (Map d : res) {
+                    FailScoreStatistics sfc = new FailScoreStatistics();
+                    sfc.setOrgId(orgId);
+                    if (null != d.get("xh")) {
+                        sfc.setJobNum(d.get("xh").toString());
+                    }
+                    if (null != d.get("xm")) {
+                        sfc.setUserName(d.get("xm").toString());
+                    }
+                    if (null != d.get("bh")) {
+                        sfc.setClassCode(d.get("bh").toString());
+                    }
+                    if (null != d.get("bjmc")) {
+                        sfc.setClassName(d.get("bjmc").toString());
+                    }
+                    if (null != d.get("zyh")) {
+                        sfc.setProfessionalCode(d.get("zyh").toString());
+                    }
+                    if (null != d.get("zymc")) {
+                        sfc.setProfessionalName(d.get("zymc").toString());
+                    }
+                    if (null != d.get("yxsh")) {
+                        sfc.setCollegeCode(d.get("yxsh").toString());
+                    }
+                    if (null != d.get("yxsmc")) {
+                        sfc.setCollegeName(d.get("yxsmc").toString());
+                    }
+                    sfc.setTeachYear(teachYear);
+                    sfc.setSemester(semester);
+                    int count = 0;
+                    float totalXF = 0;
+                    StringBuilder source = new StringBuilder("");
+                    for (Map d1 : res1) {
+                        if (null != d1.get("xh") && sfc.getJobNum().equals(d1.get("xh").toString())) {
+                            if (null != d1.get("kch") && null != d1.get("kcmc") && null != d1.get("xf")) {
+                                source.append("【KCH:" + d1.get("kch") + ";");
+                                source.append("KCMC:" + d1.get("kcmc") + ";");
+                                source.append("XF:" + d1.get("xf") + "】 ");
+                            }
+                            if (null != d1.get("cj")) {
+                                if (Float.valueOf(d1.get("cj").toString()) < 60) {
+                                    count++;
+                                    if (null != d1.get("xf")) {
+                                        totalXF = totalXF + Float.valueOf(d1.get("xf").toString());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    sfc.setFailCourseCredit(totalXF);
+                    sfc.setFailCourseNum(count);
+                    sfc.setDataSource(source.toString());
+                    sfcList.add(sfc);
+                }
+                failScoreStatisticsRespository.save(sfcList);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            logger.info(e.getMessage());
+        }
+    }
 
 
-	/**
-	 * 统计mongo里的相邻学期平均绩点
-	 */
-	public void scoreFluctuateCountJob(int schoolYear,int semester) {
+    /**
+     * 统计上学期成绩汇总到mongo里
+     */
+    public void LastSemesterScoreStatisticsJob(Long orgId, String teachYear, String semester) {
+        try {
+            // 上学年学期
+            String lastSchoolYear = teachYear;
+            String lastSemester = "春";
+            if (semester == "春") {
+                lastSemester = "秋";
+                lastSchoolYear = Integer.valueOf(teachYear) - 1 + "";
+            }
 
-		// 获取预警配置
-		List<AlarmSettings> settingsList = alarmSettingsService
-				.getAlarmSettingsByType(WarningTypeConstant.PerformanceFluctuation
-						.toString());
-		if (null != settingsList && settingsList.size() > 0) {
+            Date start = null;
+            Date end = null;
+            if (!org.apache.commons.lang.StringUtils.isBlank(lastSchoolYear) && !org.apache.commons.lang.StringUtils.isBlank(lastSemester)) {
+                Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, lastSchoolYear, lastSemester);
+                if (null != schoolCalendar) {
+                    if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
+                        List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
+                        if (tysList.size() > 0) {
+                            start = sdf.parse(tysList.get(0).getStartTime());
+                            end = sdf.parse(tysList.get(0).getEndTime());
+                        }
+                    }
+                }
+            }
 
-//			Calendar c = Calendar.getInstance();
-//			// 当前年份
-//			int schoolYear = c.get(Calendar.YEAR);
-//			// 当前月份
-//			int month = c.get(Calendar.MONTH)+1;
-//			// 当前学期编号
-//			int semester = 2;
-//			if (month > 1 && month < 9) {
-//				semester = 1;
-//			}
-//			if(month == 1 ){
-//				schoolYear = schoolYear - 1;
-//			}
-			// 上学期编号
-			int secondSchoolYear = schoolYear;
-			int secondSemester = 1;
-			if (semester == 1) {
-				secondSemester = 2;
-				secondSchoolYear = schoolYear - 1;
-			}
+            // 清除之前总评成绩不及格统计数据
+            List<LastSemesterScoreStatistics> fsList = lastSemesterScoreStatisticsRespository.findAllByTeachYearAndSemesterAndOrgId(teachYear, semester, orgId);
+            lastSemesterScoreStatisticsRespository.delete(fsList);
 
-			// 上上学期编号
-			int firstSchoolYear = secondSchoolYear;
-			int firstSemester = 1;
-			if (secondSemester == 1) {
-				firstSemester = 2;
-				firstSchoolYear = secondSchoolYear - 1;
-			}
+            if (null != start && null != end) {
+                StringBuilder aql = new StringBuilder("SELECT XH as xh, XM as xm, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc, NJ as nj FROM t_xsjbxx  WHERE 1 = 1");
+                aql.append(" AND RXNY <= :start");
+                aql.append(" AND YBYNY >= :end");
+                Query aq = em.createNativeQuery(aql.toString());
+                aq.setParameter("start", start);
+                aq.setParameter("end", end);
+                aq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+                List<Map<String, Object>> res = aq.getResultList();
 
-			HashMap<Long, Long> alarmMap = new HashMap<Long, Long>();
-			// 按orgId归类告警等级阀值
-			for (AlarmSettings settings : settingsList) {
-				Long orgId = settings.getOrgId();
-				alarmMap.put(orgId, orgId);
-			}
+                StringBuilder sql = new StringBuilder("SELECT c.COURSE_NUMBER as kch, c.COURSE_NAME as kcmc, cj.XH as xh, MAX(cj.KCCJ) as cj, c.CREDIT as xf, count(1) as count FROM t_xscjxx cj" +
+                        " LEFT JOIN t_course c ON cj.KCH = c.COURSE_NUMBER WHERE 1 = 1");
+                StringBuilder sql1 = new StringBuilder("");
+                sql1.append(sql);
+                sql1.append(" AND cj.KSRQ <= :end");
+                sql1.append(" AND cj.XKSX = '必修'");
+                sql1.append(" AND cj.KCCJ < 60");
+                sql1.append(" GROUP BY cj.KCH, cj.XH");
+                Query sq1 = em.createNativeQuery(sql1.toString());
+                sq1.setParameter("end", end);
+                sq1.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+                List<Map<String, Object>> res1 = sq1.getResultList();
 
-			// 清除之前总评成绩不及格统计数据
-			scoreFluctuateCountMongoRespository.deleteAll();
-			Iterator iter = alarmMap.entrySet().iterator();
-			while (iter.hasNext()) {
+                List<LastSemesterScoreStatistics> sfcList = new ArrayList<>();
+                for (Map d : res) {
+                    LastSemesterScoreStatistics sfc = new LastSemesterScoreStatistics();
+                    sfc.setOrgId(orgId);
+                    if (null != d.get("xh")) {
+                        sfc.setJobNum(d.get("xh").toString());
+                    }
+                    if (null != d.get("xm")) {
+                        sfc.setUserName(d.get("xm").toString());
+                    }
+                    if (null != d.get("bh")) {
+                        sfc.setClassCode(d.get("bh").toString());
+                    }
+                    if (null != d.get("bjmc")) {
+                        sfc.setClassName(d.get("bjmc").toString());
+                    }
+                    if (null != d.get("zyh")) {
+                        sfc.setProfessionalCode(d.get("zyh").toString());
+                    }
+                    if (null != d.get("zymc")) {
+                        sfc.setProfessionalName(d.get("zymc").toString());
+                    }
+                    if (null != d.get("yxsh")) {
+                        sfc.setCollegeCode(d.get("yxsh").toString());
+                    }
+                    if (null != d.get("yxsmc")) {
+                        sfc.setCollegeName(d.get("yxsmc").toString());
+                    }
+                    if (null != d.get("nj")) {
+                        sfc.setGrade(d.get("nj").toString());
+                    }
+                    sfc.setTeachYear(teachYear);
+                    sfc.setSemester(semester);
+                    sfc.setLastSchoolYear(lastSchoolYear);
+                    sfc.setLastSemester(lastSemester);
+                    int count = 0;
+                    int bkcount = 0;
+                    float totalXF = 0;
+                    Set<String> kchs = new HashSet<>();
+                    StringBuilder source = new StringBuilder("");
+                    for (Map d1 : res1) {
+                        if (null != d1.get("xh") && sfc.getJobNum().equals(d1.get("xh").toString())) {
+                            if (null != d1.get("kch") && null != d1.get("kcmc") && null != d1.get("xf")) {
+                                source.append("【KCH:" + d1.get("kch") + ";");
+                                source.append("KCMC:" + d1.get("kcmc") + ";");
+                                source.append("XF:" + d1.get("xf") + "】 ");
+                                if (null != d1.get("cj")) {
+                                    count++;
+                                    kchs.add(d1.get("kch").toString());
+                                }
+                                if (null != d1.get("xf")) {
+                                    totalXF = totalXF + Float.valueOf(d1.get("xf").toString());
+                                }
+                                if(null!= d1.get("count")&&Integer.valueOf(d1.get("count").toString())>1){
+                                   bkcount++;
+                                }
+                            }
+                        }
+                    }
+                    sfc.setRequireCreditCount(totalXF);
+                    sfc.setFailRequiredCourseNum(count);
+                    sfc.setMakeUpFailRequiredCourseNum(bkcount);
+                    sfc.setDataSource(source.toString());
+                    sfc.setScheduleCodeList(kchs);
+                    sfcList.add(sfc);
+                }
+                lastSemesterScoreStatisticsRespository.save(sfcList);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            logger.info(e.getMessage());
+        }
+    }
 
-				List<ScoreFluctuateCount> scoreFluctuateCountList = new ArrayList<ScoreFluctuateCount>();
-				HashMap<String, ScoreFluctuateCount> scoreFluctuateCountMap = new HashMap<String, ScoreFluctuateCount>();
-				Map.Entry entry = (Map.Entry) iter.next();
-				Long orgId = (Long) entry.getKey();
+    /**
+     * 相邻两个学期(上上个学期平均学分绩点与上学期平均学分绩点)下降情况-----成绩波动
+     */
+    public List<WarningInformation> scoreFluctuateJob (Long orgId, String teachYear, String semester, String ruleId)
+        {
+            ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
-				List<Score> secondScoreList = scoreMongoRespository
-						.findAllByTotalScoreGreaterThanEqualAndSchoolYearAndSemesterAndOrgIdAndExamType(
-								ScoreConstant.PASS_SCORE_LINE,
-								secondSchoolYear, secondSemester, orgId,
-								ScoreConstant.EXAM_TYPE_COURSE);
-				List<Score> firstScoreList = scoreMongoRespository
-						.findAllByTotalScoreGreaterThanEqualAndSchoolYearAndSemesterAndOrgIdAndExamType(
-								ScoreConstant.PASS_SCORE_LINE, firstSchoolYear,
-								firstSemester, orgId,
-								ScoreConstant.EXAM_TYPE_COURSE);
-				HashMap<String, List<Score>> secondUserScoreMap = new HashMap<String, List<Score>>();
-				HashMap<String, List<Score>> firstUserScoreMap = new HashMap<String, List<Score>>();
-				// 按学号分组学生上学期成绩信息
-				for (Score score : secondScoreList) {
-					List<Score> scoreList = secondUserScoreMap.get(score
-							.getJobNum());
-					if (null == scoreList) {
-						scoreList = new ArrayList<Score>();
-						scoreList.add(score);
-							secondUserScoreMap.put(score.getJobNum(), scoreList);
-					} else {
-						scoreList.add(score);
-						secondUserScoreMap.put(score.getJobNum(), scoreList);
-					}
-				}
-				// 按学号分组学生上上学期成绩信息
-				for (Score score : firstScoreList) {
-					List<Score> scoreList = firstUserScoreMap.get(score
-							.getJobNum());
+//        //删除已生成的预警信息
+//        alertWarningInformationService.deleteWarningInformation(orgId, WarningTypeConstant.PerformanceFluctuation.toString(), schoolYear, semester);
+            // 上上个学期平均学分绩点与上学期平均学分绩点数据
+            List<FirstTwoSemestersScoreStatistics> scoreFluctuateList = firstTwoSemestersScoreStatisticsRespository
+                    .findAllByOrgIdAndTeachYearAndSemester(orgId, teachYear, semester);
+            RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
+            if (null != scoreFluctuateList
+                    && scoreFluctuateList.size() > 0) {
+                for (FirstTwoSemestersScoreStatistics scoreFluctuateCount : scoreFluctuateList) {
+                    if (null != ruleParameter) {
+                        float result = 0;
+                        result = scoreFluctuateCount.getSecondAvgradePoint() - scoreFluctuateCount.getFirstAvgradePoint();
+                        // 上学期平均绩点小于上上学期平均绩点时
+                        if (result < 0) {
+                            result = Math.abs(result);
+                            if (result >= Float.parseFloat(String.valueOf(ruleParameter.getRightParameter()))) {
+                                WarningInformation alertInfor = new WarningInformation();
+                                String alertId = UUID.randomUUID().toString();
+                                alertInfor.setId(alertId);
+                                alertInfor.setName(scoreFluctuateCount.getUserName());
+                                alertInfor.setJobNumber(scoreFluctuateCount.getJobNum());
+                                alertInfor.setCollogeCode(scoreFluctuateCount.getCollegeCode());
+                                alertInfor.setCollogeName(scoreFluctuateCount.getCollegeName());
+                                alertInfor.setClassCode(scoreFluctuateCount.getClassCode());
+                                alertInfor.setClassName(scoreFluctuateCount.getClassName());
+                                alertInfor.setProfessionalCode(scoreFluctuateCount.getProfessionalCode());
+                                alertInfor.setProfessionalName(scoreFluctuateCount.getProfessionalName());
+                                alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+                                alertInfor.setSemester(scoreFluctuateCount.getSemester());
+                                alertInfor.setTeacherYear(scoreFluctuateCount.getTeachYear());
+                                alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
+                                alertInfor.setWarningCondition(scoreFluctuateCount.getFirstSchoolYear() + "年" + scoreFluctuateCount.getFirstSemester() + "平均学分绩点为："
+                                        + scoreFluctuateCount.getFirstAvgradePoint() +
+                                        "," + scoreFluctuateCount.getSecondSchoolYear() + "年" + scoreFluctuateCount.getSecondSemester() + "平均学分绩点为："
+                                        + scoreFluctuateCount.getSecondAvgradePoint()
+                                        + ",平均学分绩点下降："
+                                        + new BigDecimal(result).setScale(2, RoundingMode.HALF_UP).toString());
+                                alertInfor.setWarningTime(new Date());
+                                alertInfor.setPhone(scoreFluctuateCount.getUserPhone());
+                                alertInfor.setWarningSource(scoreFluctuateCount.getDataSource());
+                                alertInfor.setOrgId(orgId);
+                                alertInforList.add(alertInfor);
+                            } else {
+                                continue;
+                            }
+                        }
+                    }
+                }
+            }
 
-					if (null == scoreList) {
-						scoreList = new ArrayList<Score>();
-						scoreList.add(score);
-						firstUserScoreMap.put(score.getJobNum(), scoreList);
-					} else {
-						scoreList.add(score);
-						firstUserScoreMap.put(score.getJobNum(), scoreList);
-					}
-				}
+            return alertInforList;
+        }
 
-				Iterator secondIter = secondUserScoreMap.entrySet().iterator();
-				while (secondIter.hasNext()) {
-					Map.Entry secondEntry = (Map.Entry) secondIter.next();
-					String jobNum = (String) secondEntry.getKey();
-					List<Score> userScoreList = (List<Score>) secondEntry
-							.getValue();
-					ScoreFluctuateCount scoreDomain = setSecondScoreDomainInfor(
-							userScoreList, orgId, secondSchoolYear,
-							secondSemester);
-					if (null != scoreDomain) {
-						scoreFluctuateCountMap.put(jobNum, scoreDomain);
-					}
-				}
+        /**
+         * 上学期必修课不及格课程数
+        */
+        public List<WarningInformation> failScoreCountJob (Long orgId,String teachYear, String semester, String ruleId){
 
-				Iterator firstIter = firstUserScoreMap.entrySet().iterator();
-				while (firstIter.hasNext()) {
-					Map.Entry firstEntry = (Map.Entry) firstIter.next();
-					String jobNum = (String) firstEntry.getKey();
-					List<Score> userScoreList = (List<Score>) firstEntry
-							.getValue();
-					ScoreFluctuateCount scoreDomain = scoreFluctuateCountMap
-							.get(jobNum);
-					if (null != scoreDomain) {
-						scoreDomain = setFirstScoreDomainInfor(userScoreList,
-								orgId, firstSchoolYear, firstSemester,
-								scoreDomain);
-						if (!StringUtils.isEmpty(scoreDomain
-								.getSecondAvgradePoint())
-								&& !StringUtils.isEmpty(scoreDomain
-										.getFirstAvgradePoint())) {
-							scoreFluctuateCountMap.put(jobNum, scoreDomain);
-						} else {
-							scoreFluctuateCountMap.remove(jobNum);
-						}
-					}
-				}
+            ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
-				Iterator fluctuateCountIter = scoreFluctuateCountMap.entrySet()
-						.iterator();
-				while (fluctuateCountIter.hasNext()) {
-					Map.Entry fluctuateCountEntry = (Map.Entry) fluctuateCountIter
-							.next();
-					ScoreFluctuateCount scoreFluctuateCount = (ScoreFluctuateCount) fluctuateCountEntry
-							.getValue();
-					scoreFluctuateCountList.add(scoreFluctuateCount);
-				}
-				scoreFluctuateCountMongoRespository
-						.save(scoreFluctuateCountList);
-			}
-		}
-	}
+            //上学期必修课不及格课程数的数据
+            List<LastSemesterScoreStatistics> totalScoreCountList = lastSemesterScoreStatisticsRespository.findAllByTeachYearAndSemesterAndOrgId
+                    (teachYear, semester, orgId);
+            RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
+            if (null != totalScoreCountList
+                    && totalScoreCountList.size() > 0) {
+                for (LastSemesterScoreStatistics totalScoreCount : totalScoreCountList) {
+                    if (null != ruleParameter) {
+                        if (">=".equals(ruleParameter.getRightRelationship())) {
+                            if (totalScoreCount.getFailRequiredCourseNum() >= Float.parseFloat(ruleParameter.getRightParameter())) {
+                                WarningInformation alertInfor = new WarningInformation();
+                                String alertId = UUID.randomUUID()
+                                        .toString();
+                                alertInfor.setId(alertId);
+                                alertInfor.setName(totalScoreCount
+                                        .getUserName());
+                                alertInfor.setJobNumber(totalScoreCount
+                                        .getJobNum());
+                                alertInfor.setCollogeCode(totalScoreCount.getCollegeCode());
+                                alertInfor.setCollogeName(totalScoreCount.getCollegeName());
+                                alertInfor.setClassCode(totalScoreCount.getClassCode());
+                                alertInfor.setClassName(totalScoreCount.getClassName());
+                                alertInfor.setProfessionalCode(totalScoreCount.getProfessionalCode());
+                                alertInfor.setProfessionalName(totalScoreCount.getProfessionalName());
+                                alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+                                alertInfor.setWarningTime(new Date());
+                                alertInfor.setSemester(semester);
+                                alertInfor.setTeacherYear(teachYear);
+                                if (null != totalScoreCount.getDataSource() && totalScoreCount.getDataSource().length() > 0) {
+                                    alertInfor.setWarningSource(totalScoreCount.getDataSource().substring(0, totalScoreCount.getDataSource().length() - 1));
+                                }
+                                alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
+                                alertInfor.setWarningCondition(totalScoreCount.getLastSchoolYear() + "年第" + totalScoreCount.getLastSemester() + "必修课不及格课程数:"
+                                        + totalScoreCount.getFailRequiredCourseNum());
+                                alertInfor.setPhone(totalScoreCount
+                                        .getUserPhone());
+                                alertInfor.setOrgId(ruleParameter
+                                        .getOrgId());
+                                alertInforList.add(alertInfor);
+                            } else {
+                                continue;
+                            }
+                        }
 
-	private ScoreFluctuateCount setSecondScoreDomainInfor(List<Score> userScoreList, Long orgId, int secondSchoolYear,
-			int secondSemester) {
+                    }
+                }
+            }
+            return alertInforList;
+        }
 
-		ScoreFluctuateCount scoreDomain = new ScoreFluctuateCount();
+    /**
+     * 上学期不合格的必修课程（含集中性实践教学环节）学分
+     */
+    public List<WarningInformation> failScoreCreditJob (Long orgId,String teachYear, String semester, String ruleId){
 
-		// 保存不重复的考试课程编号
-		HashMap<String, String> courseMap = new HashMap<String, String>();
-		BigDecimal totalScores = new BigDecimal(0);
-		BigDecimal totalGradePoint = new BigDecimal(0);
-		for (Score score : userScoreList) {
+        ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
-			if (StringUtils.isEmpty(scoreDomain.getJobNum())) {
-				// 复制用户基本信息
-				scoreDomain.setClassId(score.getClassId());
-				scoreDomain.setClassName(score.getClassName());
-				scoreDomain.setCollegeId(score.getCollegeId());
-				scoreDomain.setCollegeName(score.getCollegeName());
-				scoreDomain.setJobNum(score.getJobNum());
-				scoreDomain.setOrgId(orgId);
-				scoreDomain.setProfessionalId(score.getProfessionalId());
-				scoreDomain.setProfessionalName(score.getProfessionalName());
-				scoreDomain.setUserId(score.getUserId());
-				scoreDomain.setUserName(score.getUserName());
-				scoreDomain.setUserPhoto(score.getUserPhoto());
-				scoreDomain.setUserPhone(score.getUserPhone());
-				StringBuilder  dataSource = new StringBuilder("");
-				dataSource.append("【KCH:" + score.getScheduleId() + ";");
-				dataSource.append("KCMC:" + score.getCourseName() + ";");
-				dataSource.append("XF:" + score.getCredit() + "】 ");
-				scoreDomain.setDataSource(dataSource.toString());
-			}
-			courseMap.put(score.getScheduleId(), score.getScheduleId());
-			if (!StringUtils.isEmpty(score.getTotalScore())) {
-				totalScores = totalScores.add(new BigDecimal(score
-						.getTotalScore()));
-				if (!StringUtils.isEmpty(score.getGradePoint())) {
-					totalGradePoint = totalGradePoint.add(new BigDecimal(score
-							.getGradePoint()));
-				}
-			}
-		}
-		if (courseMap.size() > 0) {
-			BigDecimal avgradePoint = new BigDecimal(
-					totalGradePoint.doubleValue() / courseMap.size());
-			scoreDomain.setSecondAvgradePoint(avgradePoint.setScale(2,
-					RoundingMode.HALF_UP).toString());
-			scoreDomain.setSecondSchoolYear(secondSchoolYear);
-			scoreDomain.setSecondSemester(secondSemester);
-			scoreDomain.setSecondTotalCourseNums(courseMap.size());
-			scoreDomain.setSecondTotalGradePoint(totalGradePoint.toString());
-			scoreDomain.setSecondTotalScores(totalScores.toString());
-		} else {
-			return null;
-		}
+        //上学期必修课不及格课程数的数据
+        List<LastSemesterScoreStatistics> totalScoreCountList = lastSemesterScoreStatisticsRespository.findAllByTeachYearAndSemesterAndOrgId
+                (teachYear, semester, orgId);
+        RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
+        if (null != totalScoreCountList
+                && totalScoreCountList.size() > 0) {
+            for (LastSemesterScoreStatistics totalScoreCount : totalScoreCountList) {
+                if (null != ruleParameter) {
+                    if (">=".equals(ruleParameter.getRightRelationship())) {
+                        if (totalScoreCount.getRequireCreditCount() >= Float.parseFloat(ruleParameter.getRightParameter())) {
+                            WarningInformation alertInfor = new WarningInformation();
+                            String alertId = UUID.randomUUID()
+                                    .toString();
+                            alertInfor.setId(alertId);
+                            alertInfor.setName(totalScoreCount
+                                    .getUserName());
+                            alertInfor.setJobNumber(totalScoreCount
+                                    .getJobNum());
+                            alertInfor.setCollogeCode(totalScoreCount.getCollegeCode());
+                            alertInfor.setCollogeName(totalScoreCount.getCollegeName());
+                            alertInfor.setClassCode(totalScoreCount.getClassCode());
+                            alertInfor.setClassName(totalScoreCount.getClassName());
+                            alertInfor.setProfessionalCode(totalScoreCount.getProfessionalCode());
+                            alertInfor.setProfessionalName(totalScoreCount.getProfessionalName());
+                            alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+                            alertInfor.setWarningTime(new Date());
+                            alertInfor.setSemester(semester);
+                            alertInfor.setTeacherYear(teachYear);
+                            if (null != totalScoreCount.getDataSource() && totalScoreCount.getDataSource().length() > 0) {
+                                alertInfor.setWarningSource(totalScoreCount.getDataSource().substring(0, totalScoreCount.getDataSource().length() - 1));
+                            }
+                            alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
+                            alertInfor.setWarningCondition(totalScoreCount.getLastSchoolYear() + "年第" + totalScoreCount.getLastSemester() + "必修课不及格课程数:"
+                                    + totalScoreCount.getRequireCreditCount());
+                            alertInfor.setPhone(totalScoreCount
+                                    .getUserPhone());
+                            alertInfor.setOrgId(ruleParameter
+                                    .getOrgId());
+                            alertInforList.add(alertInfor);
+                        } else {
+                            continue;
+                        }
+                    }
 
-		return scoreDomain;
-	}
+                }
+            }
+        }
+        return alertInforList;
+    }
 
-	/**
-	 * 最近学期的相邻学期成绩信息获取
-	 *
-	 */
-	private ScoreFluctuateCount setFirstScoreDomainInfor(
-			List<Score> userScoreList, Long orgId, int firstSchoolYear,
-			int firstSemester, ScoreFluctuateCount scoreDomain) {
-
-		// 保存不重复的考试课程编号
-		HashMap<String, String> courseMap = new HashMap<String, String>();
-		BigDecimal totalScores = new BigDecimal(0);
-		BigDecimal totalGradePoint = new BigDecimal(0);
-		for (Score score : userScoreList) {
-			courseMap.put(score.getScheduleId(), score.getScheduleId());
-
-			if (!StringUtils.isEmpty(score.getTotalScore())) {
-				totalScores = totalScores.add(new BigDecimal(score
-						.getTotalScore()));
-				if (!StringUtils.isEmpty(score.getGradePoint())) {
-					totalGradePoint = totalGradePoint.add(new BigDecimal(score
-							.getGradePoint()));
-				}
-			}
-		}
-		if (courseMap.size() > 0) {
-			BigDecimal avgradePoint = new BigDecimal(
-					totalGradePoint.doubleValue() / courseMap.size());
-			scoreDomain.setFirstAvgradePoint(avgradePoint.setScale(2,
-					RoundingMode.HALF_UP).toString());
-			scoreDomain.setFirstSchoolYear(firstSchoolYear);
-			scoreDomain.setFirstSemester(firstSemester);
-			scoreDomain.setFirstTotalCourseNums(courseMap.size());
-			scoreDomain.setFirstTotalGradePoint(totalGradePoint.toString());
-			scoreDomain.setFirstTotalScores(totalScores.toString());
-		}
-
-		return scoreDomain;
-	}
+       /**
+         * 修读异常预警 （AttendAbnormalEarlyWarning）
+         */
+        public ArrayList<WarningInformation> attendAbnormalJob (Long orgId,String schoolYear, String semester, String ruleId){
+            ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
 
 
-	/**
-	 * 上上个学期平均学分绩点与上学期平均学分绩点的差 -------成绩波动预警定时任务(PerformanceFluctuationEarlyWarning)-------
-	 */
-	public List<WarningInformation> scoreFluctuateJob(Long orgId,int schoolYear,int semester,String ruleId) {
-
-		ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
-
-//		// 获取的预警类型
-//		List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
+//            int lastSchoolYear = schoolYear;
+//            // 上学期编号
+//            int lastSemester = 1;
+//            if (semester == 1) {
+//                lastSemester = 2;
+//                lastSchoolYear = schoolYear - 1;
 //
-//		//已经开启次预警类型的组织
-//		Set<Long> orgIdSet = new HashSet<>();
-//		for (WarningType wt : warningTypeList) {
-//			if (wt.getSetupCloseFlag() == 10) {
-//				orgIdSet.add(wt.getOrgId());
-//			}
-//		}
-
-//		// 获取成绩波动预警配置
-//		List<AlarmSettings> settingsList = alarmSettingsService
-//				.getAlarmSettingsByType(WarningTypeConstant.PerformanceFluctuation
-//						.toString());
-//		if (null != settingsList && settingsList.size() > 0) {
 //
-//			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
-//			Set<String> ruleIdList = new HashSet<String>();
-//			Set<String> warnSettingsIdList = new HashSet<String>();
-			// 按orgId归类告警等级阀值
-//			for (AlarmSettings settings : settingsList) {
-//				if (orgIdSet.contains(settings.getOrgId())&&settings.getSetupCloseFlag()==10) {
-//					warnSettingsIdList.add(settings.getId());
-//					Long orgId = settings.getOrgId();
-
-//					if (StringUtils.isEmpty(settings.getRuleSet())) {
-//						continue;
-//					}
-//					String[] ruleIds = settings.getRuleSet().split(",");
-//					for (String ruleId : ruleIds) {
-//						if (!StringUtils.isEmpty(ruleId)) {
-//							RuleParameter rp = ruleParameterService.findById(ruleId);
-//							if(rp.getRuleName().equals(ruleName)) {
-//								ruleIdList.add(ruleId);
-//							}
-//						}
-//					}
-//					if (null != alarmMap.get(orgId)) {
-//						ArrayList<AlarmSettings> alarmList = alarmMap.get(orgId);
-//						alarmList.add(settings);
-//					} else {
-//						ArrayList<AlarmSettings> alarmList = new ArrayList<AlarmSettings>();
-//						alarmList.add(settings);
-//						alarmMap.put(orgId, alarmList);
-//					}
-//				}
-//			}
+//                HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
+//                Set<String> warnRuleIdList = new HashSet<String>();
+//                Set<String> warnSettingsIdList = new HashSet<String>();
 //
-//			// 预警规则获取
-//			HashMap<String, RuleParameter> ruleParameterMap = new HashMap<String, RuleParameter>();
-//			List<RuleParameter> alarmList = ruleParameterService.getRuleParameterByIds(ruleIdList);
-//			for (RuleParameter rp : alarmList) {
-//				if(rp.getRuleName().equals(ruleName)) {
-//					ruleParameterMap.put(rp.getId(), rp);
-//				}
-//			}
+//                // 定时任务产生的新的预警数据
+//                HashMap<String, WarningInformation> warnMap = new HashMap<String, WarningInformation>();
 //
-//			Iterator iter = alarmMap.entrySet().iterator();
-//			while (iter.hasNext()) {
-//				Map.Entry entry = (Map.Entry) iter.next();
-//				Long orgId = (Long) entry.getKey();
-//				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
-//						.getValue();
-
-				//删除已生成的预警信息
-				alertWarningInformationService.deleteWarningInformation(orgId,WarningTypeConstant.PerformanceFluctuation.toString(),schoolYear,semester);
-				HashMap<String, WarningInformation> warnMap = new HashMap<String, WarningInformation>();
-				// 获取成绩波动数据
-				List<ScoreFluctuateCount> scoreFluctuateCountList = scoreFluctuateCountMongoRespository
-						.findAllByOrgId(orgId);
-		        RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
-				if (null != scoreFluctuateCountList
-						&& scoreFluctuateCountList.size() > 0) {
-					for (ScoreFluctuateCount scoreFluctuateCount : scoreFluctuateCountList) {
-
-						if(null != warnMap.get(scoreFluctuateCount
-								.getJobNum())){
-							break;
-						}
-//						for (AlarmSettings alarmSettings : val) {
-
-							if (null != ruleParameter) {
-								if (null != warnMap.get(scoreFluctuateCount
-										.getJobNum())) {
-									break;
-								}
-
-								float result = 0L;
-								if (!StringUtils
-										.isEmpty(scoreFluctuateCount
-												.getSecondAvgradePoint())
-										&& !StringUtils
-										.isEmpty(scoreFluctuateCount
-												.getFirstAvgradePoint())) {
-									result = Float
-											.parseFloat(scoreFluctuateCount
-													.getSecondAvgradePoint())
-											- Float.parseFloat(scoreFluctuateCount
-											.getFirstAvgradePoint());
-								}
-								// 上学期平均绩点小于上上学期平均绩点时
-								if (result < 0) {
-									result = Math.abs(result);
-									if (result >= Float.parseFloat(String
-											.valueOf(ruleParameter
-													.getRightParameter()))) {
-										WarningInformation alertInfor = new WarningInformation();
-										String alertId = UUID.randomUUID()
-												.toString();
-										alertInfor.setId(alertId);
-										alertInfor
-												.setDefendantId(scoreFluctuateCount
-														.getUserId());
-										alertInfor
-												.setName(scoreFluctuateCount
-														.getUserName());
-										alertInfor
-												.setJobNumber(scoreFluctuateCount
-														.getJobNum());
-										alertInfor
-												.setCollogeId(scoreFluctuateCount
-														.getCollegeId());
-										alertInfor
-												.setCollogeName(scoreFluctuateCount
-														.getCollegeName());
-										alertInfor
-												.setClassId(scoreFluctuateCount
-														.getClassId());
-										alertInfor
-												.setClassName(scoreFluctuateCount
-														.getClassName());
-										alertInfor
-												.setProfessionalId(scoreFluctuateCount
-														.getProfessionalId());
-										alertInfor
-												.setProfessionalName(scoreFluctuateCount
-														.getProfessionalName());
-//										alertInfor
-//												.setWarningLevel(alarmSettings
-//														.getWarningLevel());
-										alertInfor
-												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-//										alertInfor
-//												.setAlarmSettingsId(asId
-//														);
-										alertInfor.setSemester(semester);
-										alertInfor
-												.setTeacherYear(schoolYear);
-//										alertInfor
-//												.setWarningType(WarningTypeConstant.PerformanceFluctuation
-//														.toString());
-										alertInfor
-												.setWarningCondition(
-														termConversion.getSemester(schoolYear, semester, 2).get("schoolYear") + "年" + termConversion.getSemester(schoolYear, semester, 2).get("semester") + "学期平均绩点为："
-																+ scoreFluctuateCount.getFirstAvgradePoint() +
-																"," +
-																termConversion.getSemester(schoolYear, semester, 1).get("schoolYear") + "年" + termConversion.getSemester(schoolYear, semester, 1).get("semester") + "学期平均绩点为："
-																+ scoreFluctuateCount.getSecondAvgradePoint()
-																+ ",平均绩点下降："
-																+ new BigDecimal(result).setScale(2, RoundingMode.HALF_UP).toString());
-										alertInfor
-												.setWarningTime(new Date());
-										alertInfor
-												.setPhone(scoreFluctuateCount
-														.getUserPhone());
-										alertInfor.setOrgId(ruleParameter
-												.getOrgId());
-										alertInforList.add(alertInfor);
-										warnMap.put(scoreFluctuateCount
-												.getJobNum(), alertInfor);
-//										break;
-									} else {
-										continue;
-									}
-								}
-							}
-						}
-				}
-
-		return alertInforList;
-	}
-
-	/**
-	 * 统计mongo里的上学期不及格成绩汇总到
-	 */
-	public void totalScoreCountJob(int schoolYear,int semester) {
-
-
-		// 获取预警配置
-		List<AlarmSettings> settingsList = alarmSettingsService
-				.getAlarmSettingsByType(WarningTypeConstant.TotalAchievement
-						.toString());
-		if (null != settingsList && settingsList.size() > 0) {
-
-//			Calendar c = Calendar.getInstance();
-//			// 当前年份
-//			int schoolYear = c.get(Calendar.YEAR);
-//			// 当前月份
-//			int month = c.get(Calendar.MONTH)+1;
-//			// 当前学期编号
-//			int semester = 2;
-//			if (month > 1 && month < 9) {
-//				semester = 1;
-//			}
-//			if(month == 1 ){
-//				schoolYear = schoolYear - 1;
-//			}
-			// 上学期编号
-			int lastSemester = 1;
-			if (semester == 1) {
-				lastSemester = 2;
-				schoolYear = schoolYear - 1;
-			}
-
-			HashMap<Long, Long> alarmMap = new HashMap<Long, Long>();
-			// 按orgId归类告警等级阀值
-			for (AlarmSettings settings : settingsList) {
-
-				Long orgId = settings.getOrgId();
-				alarmMap.put(orgId, orgId);
-			}
-
-			// 清除之前总评成绩不及格统计数据
-			totalScoreCountMongoRespository.deleteAll();
-			Iterator iter = alarmMap.entrySet().iterator();
-			while (iter.hasNext()) {
-
-				List<TotalScoreCount> totalScoreCountList = new ArrayList<TotalScoreCount>();
-				HashMap<String, TotalScoreCount> totalScoreCountMap = new HashMap<String, TotalScoreCount>();
-				Map.Entry entry = (Map.Entry) iter.next();
-				Long orgId = (Long) entry.getKey();
-
-				List<Score> scoreList = scoreMongoRespository
-						.findAllByGradePointAndSchoolYearAndSemesterAndOrgIdAndExamType(
-								0, schoolYear, lastSemester, orgId,
-								ScoreConstant.EXAM_TYPE_COURSE);
-				for (Score score : scoreList) {
-					TotalScoreCount totalScoreCount = totalScoreCountMap
-							.get(score.getJobNum());
-					if (null == totalScoreCount) {
-						totalScoreCount = new TotalScoreCount();
-						StringBuilder  dataSource = new StringBuilder("");
-						dataSource.append("【KCH:" + score.getScheduleId() + ";");
-						dataSource.append("KCMC:" + score.getCourseName() + ";");
-						dataSource.append("XF:" + score.getCredit() + "】 ");
-						totalScoreCount.setDataSource(dataSource.toString());
-						Set<String> scheduleIdSet = new HashSet<>();
-						scheduleIdSet.add(score.getScheduleId());
-						totalScoreCount.setScheduleIdList(scheduleIdSet);
-						totalScoreCount.setClassId(score.getClassId());
-						totalScoreCount.setClassName(score.getClassName());
-						totalScoreCount.setCollegeId(score.getCollegeId());
-						totalScoreCount.setCollegeName(score.getCollegeName());
-						totalScoreCount.setGrade(score.getGrade());
-						totalScoreCount.setJobNum(score.getJobNum());
-						totalScoreCount.setOrgId(orgId);
-						totalScoreCount.setProfessionalId(score
-								.getProfessionalId());
-						totalScoreCount.setProfessionalName(score
-								.getProfessionalName());
-						totalScoreCount.setSchoolYear(schoolYear);
-						totalScoreCount.setSemester(lastSemester);
-						totalScoreCount.setUserName(score.getUserName());
-						totalScoreCount.setUserId(score.getUserId());
-						totalScoreCount.setUserPhone(score.getUserPhone());
-						totalScoreCount.setFailCourseNum(1);
-						if (!StringUtils.isEmpty(score.getCourseType())
-								&& ScoreConstant.REQUIRED_COURSE.equals(score
-										.getCourseType())) {
-							totalScoreCount.setFailRequiredCourseNum(1);
-							totalScoreCount.setRequireCreditCount(score
-									.getCredit());
-						}
-						totalScoreCountMap.put(score.getJobNum(),
-								totalScoreCount);
-					} else {
-						if (!totalScoreCount.getScheduleIdList().contains(score.getScheduleId())) {
-							totalScoreCount.getScheduleIdList().add(score.getScheduleId());
-							StringBuilder dataSource = new StringBuilder("");
-							dataSource.append("【KCH:" + score.getScheduleId() + ";");
-							dataSource.append("KCMC:" + score.getCourseName() + ";");
-							dataSource.append("XF:" + score.getCredit() + "】 ");
-							totalScoreCount.setDataSource(totalScoreCount.getDataSource() + dataSource);
-							if (!StringUtils.isEmpty(score.getCourseType())
-									&& ScoreConstant.REQUIRED_COURSE.equals(score
-									.getCourseType())) {
-								totalScoreCount
-										.setFailRequiredCourseNum(totalScoreCount
-												.getFailRequiredCourseNum() + 1);
-								if (StringUtils.isEmpty(totalScoreCount
-										.getRequireCreditCount())) {
-									totalScoreCount.setRequireCreditCount(score
-											.getCredit());
-								} else {
-									BigDecimal totalCredits = new BigDecimal(
-											totalScoreCount.getRequireCreditCount());
-									totalCredits = totalCredits.add(new BigDecimal(
-											score.getCredit()));
-									totalScoreCount.setRequireCreditCount(Float
-											.valueOf(totalCredits.setScale(2,
-													RoundingMode.HALF_UP)
-													.toString()));
-								}
-							}
-							totalScoreCount.setFailCourseNum(totalScoreCount
-									.getFailCourseNum() + 1);
-							totalScoreCountMap.put(score.getJobNum(),
-									totalScoreCount);
-						}
-					}
-				}
-
-				Iterator totalScoreiter = totalScoreCountMap.entrySet()
-						.iterator();
-				while (totalScoreiter.hasNext()) {
-					Map.Entry totalScoreEntry = (Map.Entry) totalScoreiter
-							.next();
-					TotalScoreCount totalScoreCount = (TotalScoreCount) totalScoreEntry
-							.getValue();
-					if (totalScoreCount.getFailCourseNum() > 0) {
-						totalScoreCountList.add(totalScoreCount);
-					}
-				}
-
-				totalScoreCountMongoRespository.save(totalScoreCountList);
-			}
-		}
-	}
-
-	/**
-	 * 总评成绩指标(TotalAchievementEarlyWarning)
-	 */
-	public List<WarningInformation> totalScoreJob(Long orgId, int schoolYear,int semester,String ruleId) {
-
-		ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
-
-//		// 获取的预警类型
-//		List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
+//                //删除已生成的预警信息
+//                alertWarningInformationService.deleteWarningInformation(orgId, WarningTypeConstant.AttendAbnormal.toString(), schoolYear, semester);
 //
-//		//已经开启次预警类型的组织
-//		Set<Long> orgIdSet = new HashSet<>();
-//		for(WarningType wt : warningTypeList){
-//			if(wt.getSetupCloseFlag()==10){
-//				orgIdSet.add(wt.getOrgId());
-//			}
-//		}
+//                List<TotalScoreCount> totalScoreCountList = totalScoreCountMongoRespository
+//                        .findAllBySchoolYearAndSemesterAndOrgId(lastSchoolYear,
+//                                lastSemester, orgId);
 //
-//		// 获取预警配置
-//		List<AlarmSettings> settingsList = alarmSettingsService
-//				.getAlarmSettingsByType(WarningTypeConstant.TotalAchievement
-//						.toString());
-//		if (null != settingsList && settingsList.size() > 0) {
-			int lastSchoolYear = schoolYear;
-			// 上学期编号
-			int lastSemester = 1;
-			if (semester == 1) {
-				lastSemester = 2;
-				lastSchoolYear = schoolYear - 1;
-			}
+//                if (null != totalScoreCountList
+//                        && totalScoreCountList.size() > 0) {
+//                    Date today = new Date();
+//                    RuleParameter alarmRule = ruleParameterService.findById(ruleId);
+//                    for (TotalScoreCount totalScoreCount : totalScoreCountList) {
+//                        if (null != warnMap.get(totalScoreCount
+//                                .getJobNum())) {
+//                            break;
+//                        }
+//                        if (null != alarmRule) {
+//                            if (StringUtils.isEmpty(totalScoreCount
+//                                    .getRequireCreditCount())) {
+//                                continue;
+//                            }
+//                            if (totalScoreCount.getRequireCreditCount() >= Float
+//                                    .parseFloat(String.valueOf(alarmRule
+//                                            .getRightParameter()))) {
+//                                WarningInformation alertInfor = new WarningInformation();
+//                                String alertId = UUID.randomUUID()
+//                                        .toString();
+//                                alertInfor.setId(alertId);
+//                                alertInfor.setDefendantId(totalScoreCount
+//                                        .getUserId());
+//                                alertInfor.setName(totalScoreCount
+//                                        .getUserName());
+//                                alertInfor.setJobNumber(totalScoreCount
+//                                        .getJobNum());
+//                                alertInfor.setCollogeId(totalScoreCount
+//                                        .getCollegeId());
+//                                alertInfor.setCollogeName(totalScoreCount
+//                                        .getCollegeName());
+//                                alertInfor.setClassId(totalScoreCount
+//                                        .getClassId());
+//                                alertInfor.setClassName(totalScoreCount
+//                                        .getClassName());
+//                                alertInfor
+//                                        .setProfessionalId(totalScoreCount
+//                                                .getProfessionalId());
+//                                alertInfor
+//                                        .setProfessionalName(totalScoreCount
+//                                                .getProfessionalName());
+//                                alertInfor.setTeacherYear(totalScoreCount
+//                                        .getSchoolYear());
+//                                alertInfor
+//                                        .setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+//                                alertInfor.setWarningTime(new Date());
+//                                alertInfor
+//                                        .setWarningCondition(termConversion.getSemester(schoolYear, semester, 1).get("schoolYear") + "年第" + termConversion.getSemester(schoolYear, semester, 1).get("semester") + "学期不及格必修课程学分为："
+//                                                + totalScoreCount
+//                                                .getRequireCreditCount());
+//                                alertInfor.setPhone(totalScoreCount
+//                                        .getUserPhone());
+//                                alertInfor.setSemester(semester);
+//                                alertInfor.setTeacherYear(schoolYear);
+//                                alertInfor.setOrgId(alarmRule.getOrgId());
+//                                alertInforList.add(alertInfor);
+//                                if (null != totalScoreCount.getDataSource() && totalScoreCount.getDataSource().length() > 0) {
+//                                    alertInfor.setWarningSource(totalScoreCount.getDataSource().substring(0, totalScoreCount.getDataSource().length() - 1));
+//                                }
 //
-//			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
-//			Set<String> ruleIdList = new HashSet<String>();
-//			Set<String> warnSettingsIdList = new HashSet<String>();
-//			// 按orgId归类告警等级阀值
-//			for (AlarmSettings settings : settingsList) {
-//				if(orgIdSet.contains(settings.getOrgId())&&settings.getSetupCloseFlag()==10) {
-//					warnSettingsIdList.add(settings.getId());
-//					Long orgId = settings.getOrgId();
+//                                warnMap.put(totalScoreCount
+//                                        .getJobNum(), alertInfor);
+//                            } else {
+//                                continue;
+//                            }
 //
-//					if (StringUtils.isEmpty(settings.getRuleSet())) {
-//						continue;
-//					}
-//					String[] warmRuleIds = settings.getRuleSet().split(",");
-//					for (String ruleId : warmRuleIds) {
-//						if (!StringUtils.isEmpty(ruleId)) {
-//							RuleParameter rp = ruleParameterService.findById(ruleId);
-//							if(rp.getRuleName().equals(ruleName)) {
-//								ruleIdList.add(ruleId);
-//							}
-//						}
-//					}
-//					if (null != alarmMap.get(orgId)) {
-//						ArrayList<AlarmSettings> alarmList = alarmMap.get(orgId);
-//						alarmList.add(settings);
-//					} else {
-//						ArrayList<AlarmSettings> alarmList = new ArrayList<AlarmSettings>();
-//						alarmList.add(settings);
-//						alarmMap.put(orgId, alarmList);
-//					}
-//				}
-//			}
-//			// 预警规则获取
-//			HashMap<String, RuleParameter> ruleParameterMap = new HashMap<String, RuleParameter>();
-//			List<RuleParameter> alarmList = ruleParameterService.getRuleParameterByIds(ruleIdList);
-//			for (RuleParameter rp : alarmList) {
-//				if(rp.getRuleName().equals(ruleName)) {
-//					ruleParameterMap.put(rp.getId(), rp);
-//				}
-//			}
-//
-//			Iterator iter = alarmMap.entrySet().iterator();
-//			while (iter.hasNext()) {
-
-				// 更新预警集合
-				HashMap<String, WarningInformation> warnMap = new HashMap<String, WarningInformation>();
-//				Map.Entry entry = (Map.Entry) iter.next();
-//				Long orgId = (Long) entry.getKey();
-//				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
-//						.getValue();
-
-				//删除已生成的预警信息
-				alertWarningInformationService.deleteWarningInformation(orgId,WarningTypeConstant.TotalAchievement.toString(),schoolYear,semester);
-
-				// 按orgId查询未报到的学生信息
-				List<TotalScoreCount> totalScoreCountList = totalScoreCountMongoRespository
-						.findAllBySchoolYearAndSemesterAndOrgId(lastSchoolYear,
-								lastSemester, orgId);
-		        RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
-				if (null != totalScoreCountList
-						&& totalScoreCountList.size() > 0) {
-					for (TotalScoreCount totalScoreCount : totalScoreCountList) {
-//						for (AlarmSettings alarmSettings : val) {
-							if (null != warnMap.get(totalScoreCount
-									.getJobNum())) {
-								break;
-							}
-
-							if (null != ruleParameter) {
-								if (null != warnMap.get(totalScoreCount
-										.getJobNum())) {
-									break;
-								}
-
-								if (">=".equals(ruleParameter.getRightRelationship())) {
-									if (totalScoreCount.getFailCourseNum() >= Float
-											.parseFloat(ruleParameter
-													.getRightParameter())) {
-										WarningInformation alertInfor = new WarningInformation();
-										String alertId = UUID.randomUUID()
-												.toString();
-										alertInfor.setId(alertId);
-										alertInfor
-												.setDefendantId(totalScoreCount
-														.getUserId());
-										alertInfor.setName(totalScoreCount
-												.getUserName());
-										alertInfor.setJobNumber(totalScoreCount
-												.getJobNum());
-										alertInfor.setCollogeId(totalScoreCount
-												.getCollegeId());
-										alertInfor
-												.setCollogeName(totalScoreCount
-														.getCollegeName());
-										alertInfor.setClassId(totalScoreCount
-												.getClassId());
-										alertInfor.setClassName(totalScoreCount
-												.getClassName());
-										alertInfor
-												.setProfessionalId(totalScoreCount
-														.getProfessionalId());
-										alertInfor
-												.setProfessionalName(totalScoreCount
-														.getProfessionalName());
-										alertInfor
-												.setTeacherYear(totalScoreCount
-														.getSchoolYear());
-//										alertInfor
-//												.setWarningLevel(alarmSettings
-//														.getWarningLevel());
-										alertInfor
-												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-//										alertInfor
-//												.setAlarmSettingsId(asId
-//														);
-//										alertInfor
-//												.setWarningType(WarningTypeConstant.TotalAchievement
-//														.toString());
-										alertInfor.setWarningTime(new Date());
-										alertInfor.setSemester(semester);
-										alertInfor.setTeacherYear(schoolYear);
-										if (null != totalScoreCount.getDataSource() && totalScoreCount.getDataSource().length() > 0) {
-											alertInfor.setWarningSource(totalScoreCount.getDataSource().substring(0, totalScoreCount.getDataSource().length() - 1));
-										}
-										alertInfor
-												.setWarningCondition(termConversion.getSemester(schoolYear, semester, 1).get("schoolYear") + "年第" + termConversion.getSemester(schoolYear, semester, 1).get("semester") + "学期必修课不及格课程数:"
-														+ totalScoreCount
-														.getFailCourseNum());
-										alertInfor.setPhone(totalScoreCount
-												.getUserPhone());
-										alertInfor.setOrgId(ruleParameter
-												.getOrgId());
-										alertInforList.add(alertInfor);
-										warnMap.put(totalScoreCount
-												.getJobNum(), alertInfor);
-//										break;
-									} else {
-										continue;
-									}
-								}
-
-							}
-						}
-					}
-//				}
-
-//				//上学期每个学生的成绩数据明细
-//				List<TeachingScoreDetails> scoreDetailsList = teachingScoreService.findAllByTeacherYearAndSemesterAndDeleteFlagAndOrgId(lastSchoolYear, lastSemester, DataValidity.VALID.getState(), orgId);
-//				if(null != scoreDetailsList && !scoreDetailsList.isEmpty()){
-//					for(TeachingScoreDetails scoreDetails :scoreDetailsList){
-//						for (AlarmSettings alarmSettings : val) {
-//								RuleParameter ruleParameter = ruleParameterMap
-//										.get(alarmSettings.getId());
-//								if (null != ruleParameter) {
-//
-//									for (AlarmRule alarmRule : alarmRuleList) {
-//
-//										if (alarmRule.getSerialNumber() != 2) {
-//											continue;
-//										}
-//										if (scoreDetails.getAvgGPA() <= Float
-//												.parseFloat(alarmRule
-//														.getRightParameter())) {
-//											WarningInformation alertInfor = new WarningInformation();
-//											String alertId = UUID.randomUUID()
-//													.toString();
-//											alertInfor.setId(alertId);
-//											alertInfor
-//													.setDefendantId(scoreDetails
-//															.getUserId());
-//											alertInfor.setName(scoreDetails
-//													.getUserName());
-//											alertInfor.setJobNumber(scoreDetails
-//													.getJobNum());
-//											alertInfor.setCollogeId(scoreDetails
-//													.getCollegeId());
-//											alertInfor
-//													.setCollogeName(scoreDetails
-//															.getCollegeName());
-//											alertInfor.setClassId(scoreDetails
-//													.getClassId());
-//											alertInfor.setClassName(scoreDetails
-//													.getClassName());
-//											alertInfor
-//													.setProfessionalId(scoreDetails
-//															.getProfessionalId());
-//											alertInfor
-//													.setProfessionalName(scoreDetails
-//															.getProfessionalName());
-//											alertInfor
-//													.setTeacherYear(scoreDetails
-//															.getTeacherYear());
-//											alertInfor
-//													.setWarningLevel(alarmSettings
-//															.getWarningLevel());
-//											alertInfor
-//													.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-//											alertInfor
-//													.setAlarmSettingsId(alarmSettings
-//															.getId());
-//											alertInfor
-//													.setWarningType(WarningTypeConstant.TotalAchievement
-//															.toString());
-//											alertInfor.setWarningTime(new Date());
-//											alertInfor.setSemester(semester);
-//											alertInfor.setTeacherYear(schoolYear);
-//											alertInfor
-//													.setWarningCondition(termConversion.getSemester(schoolYear, semester, 1).get("schoolYear") + "年第" + termConversion.getSemester(schoolYear, semester, 1).get("semester") + "学期平均学分绩点:"
-//															+ scoreDetails
-//															.getAvgGPA());
-//											alertInfor.setOrgId(alarmRule
-//													.getOrgId());
-//
-//											if (null != warnMap.get(scoreDetails
-//													.getJobNum())) {
-//												WarningInformation alertInfor2 = warnMap.get(scoreDetails
-//														.getJobNum());
-//												if (alertInfor2.getWarningLevel() > alertInfor.getWarningLevel()) {
-//													continue;
-//												}
-//												if (alertInfor2.getWarningLevel() == alertInfor.getWarningLevel()) {
-//													alertInfor.setWarningCondition(alertInfor.getWarningCondition() + "; " + alertInfor2.getWarningCondition());
-//													alertInforList.remove(alertInfor2);
-//													alertInforList.add(alertInfor);
-//												}
-//												if (alertInfor2.getWarningLevel() < alertInfor.getWarningLevel()) {
-//													alertInforList.remove(alertInfor2);
-//													alertInforList.add(alertInfor);
-//												}
-//											} else {
-//												alertInforList.add(alertInfor);
-//											}
-//
-//											break;
-//										} else {
-//											continue;
-//										}
-//								}
-//							}
-//						}
-//					}
-//				}
-
-//				if (!alertInforList.isEmpty()) {
-//					alertWarningInformationService.save(alertInforList);
-//				}
-//			}
-//		}
-		return alertInforList;
-	}
-
-	/**
-	 * 修读异常预警 （AttendAbnormalEarlyWarning）
-	 */
-	public ArrayList<WarningInformation> attendAbnormalJob(Long orgId,int schoolYear,int semester,String ruleId) {
-		ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
-
-//		// 获取的预警类型
-//		List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
-//
-//		//已经开启次预警类型的组织
-//		Set<Long> orgIdSet = new HashSet<>();
-//		for(WarningType wt : warningTypeList){
-//			if(wt.getSetupCloseFlag()==10){
-//				orgIdSet.add(wt.getOrgId());
-//			}
-//		}
-//
-//		// 获取预警配置
-//		List<AlarmSettings> settingsList = alarmSettingsService
-//				.getAlarmSettingsByType(WarningTypeConstant.AttendAbnormal
-//						.toString());
-//		if (null != settingsList && settingsList.size() > 0) {
-
-			int lastSchoolYear = schoolYear;
-			// 上学期编号
-			int lastSemester = 1;
-			if (semester == 1) {
-				lastSemester = 2;
-				lastSchoolYear = schoolYear - 1;
-//			}
-
-			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
-			Set<String> warnRuleIdList = new HashSet<String>();
-			Set<String> warnSettingsIdList = new HashSet<String>();
-			// 按orgId归类告警等级阀值
-//			for (AlarmSettings settings : settingsList) {
-//				if(orgIdSet.contains(settings.getOrgId())&&settings.getSetupCloseFlag()==10) {
-//					warnSettingsIdList.add(settings.getId());
-//					Long orgId = settings.getOrgId();
-//
-//					if (StringUtils.isEmpty(settings.getRuleSet())) {
-//						continue;
-//					}
-//					String[] warmRuleIds = settings.getRuleSet().split(",");
-//					for (String warmRuleId : warmRuleIds) {
-//						if (!StringUtils.isEmpty(warmRuleId)) {
-//							warnRuleIdList.add(warmRuleId);
-//						}
-//					}
-//					if (null != alarmMap.get(orgId)) {
-//						ArrayList<AlarmSettings> alarmList = alarmMap.get(orgId);
-//						alarmList.add(settings);
-//					} else {
-//						ArrayList<AlarmSettings> alarmList = new ArrayList<AlarmSettings>();
-//						alarmList.add(settings);
-//						alarmMap.put(orgId, alarmList);
-//					}
-//				}
-//			}
-//			// 预警规则获取
-//			HashMap<String, AlarmRule> alarmRuleMap = new HashMap<String, AlarmRule>();
-//			List<AlarmRule> alarmList = alarmRuleService
-//					.getAlarmRuleByIds(warnRuleIdList);
-//			for (AlarmRule alarmRule : alarmList) {
-//				alarmRuleMap.put(alarmRule.getId(), alarmRule);
-//			}
-//
-//			Iterator iter = alarmMap.entrySet().iterator();
-//			while (iter.hasNext()) {
-				// 定时任务产生的新的预警数据
-				HashMap<String, WarningInformation> warnMap = new HashMap<String, WarningInformation>();
-//				Map.Entry entry = (Map.Entry) iter.next();
-//				Long orgId = (Long) entry.getKey();
-//				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
-//						.getValue();
-
-				//删除已生成的预警信息
-				alertWarningInformationService.deleteWarningInformation(orgId,WarningTypeConstant.AttendAbnormal.toString(),schoolYear,semester);
-
-				List<TotalScoreCount> totalScoreCountList = totalScoreCountMongoRespository
-						.findAllBySchoolYearAndSemesterAndOrgId(lastSchoolYear,
-								lastSemester, orgId);
-
-				if (null != totalScoreCountList
-						&& totalScoreCountList.size() > 0) {
-					Date today = new Date();
-					RuleParameter alarmRule = ruleParameterService.findById(ruleId);
-					for (TotalScoreCount totalScoreCount : totalScoreCountList) {
-								if(null != warnMap.get(totalScoreCount
-										.getJobNum())){
-									break;
-								}
-						if (null != alarmRule) {
-									if (StringUtils.isEmpty(totalScoreCount
-											.getRequireCreditCount())) {
-										continue;
-									}
-									if (totalScoreCount.getRequireCreditCount() >= Float
-											.parseFloat(String.valueOf(alarmRule
-													.getRightParameter()))) {
-										WarningInformation alertInfor = new WarningInformation();
-										String alertId = UUID.randomUUID()
-												.toString();
-										alertInfor.setId(alertId);
-										alertInfor.setDefendantId(totalScoreCount
-												.getUserId());
-										alertInfor.setName(totalScoreCount
-												.getUserName());
-										alertInfor.setJobNumber(totalScoreCount
-												.getJobNum());
-										alertInfor.setCollogeId(totalScoreCount
-												.getCollegeId());
-										alertInfor.setCollogeName(totalScoreCount
-												.getCollegeName());
-										alertInfor.setClassId(totalScoreCount
-												.getClassId());
-										alertInfor.setClassName(totalScoreCount
-												.getClassName());
-										alertInfor
-												.setProfessionalId(totalScoreCount
-														.getProfessionalId());
-										alertInfor
-												.setProfessionalName(totalScoreCount
-														.getProfessionalName());
-										alertInfor.setTeacherYear(totalScoreCount
-												.getSchoolYear());
-//										alertInfor.setWarningLevel(alarmSettings
-//												.getWarningLevel());
-										alertInfor
-												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-//										alertInfor.setAlarmSettingsId(alarmSettings
-//												.getId());
-//										alertInfor
-//												.setWarningType(WarningTypeConstant.AttendAbnormal
-//														.toString());
-										alertInfor.setWarningTime(new Date());
-										alertInfor
-												.setWarningCondition(termConversion.getSemester(schoolYear, semester, 1).get("schoolYear") + "年第" + termConversion.getSemester(schoolYear, semester, 1).get("semester") + "学期不及格必修课程学分为："
-														+ totalScoreCount
-														.getRequireCreditCount());
-										alertInfor.setPhone(totalScoreCount
-												.getUserPhone());
-										alertInfor.setSemester(semester);
-										alertInfor.setTeacherYear(schoolYear);
-										alertInfor.setOrgId(alarmRule.getOrgId());
-										alertInforList.add(alertInfor);
-										if (null != totalScoreCount.getDataSource() && totalScoreCount.getDataSource().length() > 0) {
-											alertInfor.setWarningSource(totalScoreCount.getDataSource().substring(0, totalScoreCount.getDataSource().length() - 1));
-										}
-
-										warnMap.put(totalScoreCount
-												.getJobNum(),alertInfor);
-//										break;
-									} else {
-										continue;
-									}
-
-							}
-						}
-					}
-//				}
-//				if (!alertInforList.isEmpty()) {
-//					alertWarningInformationService.save(alertInforList);
-//				}
-//			}
-		}
-		return alertInforList;
-	}
-
-	/**
-	 * 统计mongo里的补考不及格成绩汇总到
-	 */
-	public void makeUpScoreCountJob(int schoolYear) {
-
-		// 获取预警配置
-		List<AlarmSettings> settingsList = alarmSettingsService
-				.getAlarmSettingsByType(WarningTypeConstant.SupplementAchievement
-						.toString());
-		if (null != settingsList && settingsList.size() > 0) {
-
-//			Calendar c = Calendar.getInstance();
-//			// 当前年份
-//			int endYear = c.get(Calendar.YEAR);
-			// 前三年
-//			int beginYear = endYear - 3;
-			int beginYear = schoolYear - 3;
-			HashMap<Long, Long> alarmMap = new HashMap<Long, Long>();
-			// 按orgId归类告警等级阀值
-			for (AlarmSettings settings : settingsList) {
-				Long orgId = settings.getOrgId();
-				alarmMap.put(orgId, orgId);
-			}
-
-			// 清除之前补考统计数据
-			makeUpScoreCountMongoRespository.deleteAll();
-			Iterator iter = alarmMap.entrySet().iterator();
-			while (iter.hasNext()) {
-
-				List<MakeUpScoreCount> makeUpScoreCountList = new ArrayList<MakeUpScoreCount>();
-				HashMap<String, MakeUpScoreCount> makeUpScoreCountMap = new HashMap<String, MakeUpScoreCount>();
-				Map.Entry entry = (Map.Entry) iter.next();
-				Long orgId = (Long) entry.getKey();
-
-				HashMap<String, HashMap<String, ArrayList<Score>>> scoreMap = new HashMap<String, HashMap<String, ArrayList<Score>>>();
-				List<Score> scoreList = scoreMongoRespository
-						.findAllBySchoolYearGreaterThanEqualAndOrgIdAndExamType(
-								beginYear, orgId,
-								ScoreConstant.EXAM_TYPE_COURSE);
-				List<String> sourceList = new ArrayList<>();
-				for (Score score : scoreList) {
-					HashMap<String, ArrayList<Score>> userScoreMap = scoreMap
-							.get(score.getJobNum());
-					if (null == userScoreMap) {
-						ArrayList<Score> userScoreList = new ArrayList<Score>();
-						userScoreList.add(score);
-						userScoreMap = new HashMap<String, ArrayList<Score>>();
-						userScoreMap.put(score.getScheduleId(), userScoreList);
-						scoreMap.put(score.getJobNum(), userScoreMap);
-					} else {
-						ArrayList<Score> userScoreList = userScoreMap.get(score
-								.getScheduleId());
-						if (null == userScoreList) {
-							userScoreList = new ArrayList<Score>();
-							userScoreList.add(score);
-							userScoreMap.put(score.getScheduleId(),
-									userScoreList);
-							scoreMap.put(score.getJobNum(), userScoreMap);
-						} else {
-							userScoreList.add(score);
-							userScoreMap.put(score.getScheduleId(),
-									userScoreList);
-							scoreMap.put(score.getJobNum(), userScoreMap);
-						}
-					}
-				}
-
-				Iterator scoreiter = scoreMap.entrySet().iterator();
-				while (scoreiter.hasNext()) {
-					Map.Entry scoreEntry = (Map.Entry) scoreiter.next();
-					HashMap<String, ArrayList<Score>> courseScoreMap = (HashMap<String, ArrayList<Score>>) scoreEntry
-							.getValue();
-					Iterator courseScoreiter = courseScoreMap.entrySet()
-							.iterator();
-					while (courseScoreiter.hasNext()) {
-						Map.Entry courseScoreEntry = (Map.Entry) courseScoreiter
-								.next();
-						ArrayList<Score> courseScoreList = (ArrayList<Score>) courseScoreEntry
-								.getValue();
-						float totalGradePoint = 0.0f;
-						for (Score score : courseScoreList) {
-							if (!StringUtils.isEmpty(score.getGradePoint())) {
-								totalGradePoint += score.getGradePoint();
-							}
-						}
-						if (totalGradePoint < 1.0f) {
-							Score score = courseScoreList.get(0);
-							MakeUpScoreCount makeUpScoreCount = makeUpScoreCountMap
-									.get(score.getJobNum());
-							if (null == makeUpScoreCount) {
-								makeUpScoreCount = new MakeUpScoreCount();
-								StringBuilder  dataSource = new StringBuilder("");
-								dataSource.append("【KCH:" + score.getScheduleId() + ";");
-								dataSource.append("KCMC:" + score.getCourseName() + ";");
-								dataSource.append("XF:" + score.getCredit() + "】 ");
-								makeUpScoreCount.setDataSource(dataSource.toString());
-								makeUpScoreCount.setUserId(score.getUserId());
-								makeUpScoreCount.setUserName(score.getUserName());
-								makeUpScoreCount.setClassId(score.getClassId());
-								makeUpScoreCount.setClassName(score
-										.getClassName());
-								makeUpScoreCount.setCollegeId(score
-										.getCollegeId());
-								makeUpScoreCount.setCollegeName(score
-										.getCollegeName());
-								makeUpScoreCount.setJobNum(score.getJobNum());
-								makeUpScoreCount.setOrgId(orgId);
-								makeUpScoreCount.setProfessionalId(score
-										.getProfessionalId());
-								makeUpScoreCount.setProfessionalName(score
-										.getProfessionalName());
-								makeUpScoreCount.setUserName(score
-										.getUserName());
-								makeUpScoreCount.setUserPhone(score
-										.getUserPhone());
-								makeUpScoreCount.setFailCourseNum(1);
-								makeUpScoreCount.setFailCourseCredit(score
-										.getCredit());
-								makeUpScoreCount.setDataSource(dataSource.substring(0,dataSource.length()-1));
-								makeUpScoreCountMap.put(score.getJobNum(),
-										makeUpScoreCount);
-							} else {
-								StringBuilder  dataSource = new StringBuilder("");
-								dataSource.append("【KCH:" + score.getScheduleId() + ";");
-								dataSource.append("KCMC:" + score.getCourseName() + ";");
-								dataSource.append("XF:" + score.getCredit() + "】 ");
-								makeUpScoreCount.setDataSource(makeUpScoreCount.getDataSource()+dataSource);
-								makeUpScoreCount
-										.setFailCourseNum(makeUpScoreCount
-												.getFailCourseNum() + 1);
-								float totalCredit = score.getCredit()
-										+ makeUpScoreCount
-												.getFailCourseCredit();
-								makeUpScoreCount
-										.setFailCourseCredit(totalCredit);
-								makeUpScoreCountMap.put(score.getJobNum(),
-										makeUpScoreCount);
-							}
-
-						}
-					}
-				}
-
-				Iterator makeUpScoreCountiter = makeUpScoreCountMap.entrySet()
-						.iterator();
-				while (makeUpScoreCountiter.hasNext()) {
-					Map.Entry makeUpScoreCountEntry = (Map.Entry) makeUpScoreCountiter
-							.next();
-					MakeUpScoreCount makeUpScoreCount = (MakeUpScoreCount) makeUpScoreCountEntry
-							.getValue();
-					if (makeUpScoreCount.getFailCourseNum() > 0) {
-						makeUpScoreCountList.add(makeUpScoreCount);
-					}
-				}
-
-				makeUpScoreCountMongoRespository.save(makeUpScoreCountList);
-			}
-		}
-	}
+//                        }
+//                    }
+//                }
+//            }
+            return alertInforList;
+        }
 
 
-    //补考成绩预警定时任务（SupplementAchievementEarlyWarning）
-	public ArrayList<WarningInformation> makeUpScoreJob(Long orgId,int schoolYear,int semester, String ruleId) {
 
+    /**
+     * 补考后上学期总评不及格课程门数
+     */
+    public ArrayList<WarningInformation> makeUpScoreJob(Long orgId, String teachYear, String semester, String ruleId) {
 
-		ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
+        ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
-//		// 获取的预警类型
-//		List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
-//
-//		//已经开启次预警类型的组织
-//		Set<Long> orgIdSet = new HashSet<>();
-//		for(WarningType wt : warningTypeList){
-//			if(wt.getSetupCloseFlag()==10){
-//				orgIdSet.add(wt.getOrgId());
-//			}
-//		}
-//
-//		// 获取预警配置
-//		List<AlarmSettings> settingsList = alarmSettingsService
-//				.getAlarmSettingsByType(WarningTypeConstant.SupplementAchievement
-//						.toString());
-//		if (null != settingsList && settingsList.size() > 0) {
-//			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
-//			Set<String> ruleIdList = new HashSet<String>();
-//			Set<String> warnSettingsIdList = new HashSet<String>();
-//			// 按orgId归类告警等级阀值
-//			for (AlarmSettings settings : settingsList) {
-//				if(orgIdSet.contains(settings.getOrgId())&&settings.getSetupCloseFlag()==10) {
-//					warnSettingsIdList.add(settings.getId());
-//					Long orgId = settings.getOrgId();
-//
-//					if (StringUtils.isEmpty(settings.getRuleSet())) {
-//						continue;
-//					}
-//					String[] warmRuleIds = settings.getRuleSet().split(",");
-//					for (String ruleId : warmRuleIds) {
-//						if (!StringUtils.isEmpty(ruleId)) {
-//							RuleParameter rp = ruleParameterService.findById(ruleId);
-//							if(rp.getRuleName().equals(ruleName)) {
-//								ruleIdList.add(ruleId);
-//							}
-//						}
-//					}
-//					if (null != alarmMap.get(orgId)) {
-//						ArrayList<AlarmSettings> alarmList = alarmMap.get(orgId);
-//						alarmList.add(settings);
-//					} else {
-//						ArrayList<AlarmSettings> alarmList = new ArrayList<AlarmSettings>();
-//						alarmList.add(settings);
-//						alarmMap.put(orgId, alarmList);
-//					}
-//				}
-//			}
-//			// 预警规则获取
-//			HashMap<String, RuleParameter> ruleParameterMap = new HashMap<String, RuleParameter>();
-//			List<RuleParameter> alarmList = ruleParameterService.getRuleParameterByIds(ruleIdList);
-//			for (RuleParameter rp : alarmList) {
-//				if(rp.getRuleName().equals(ruleName)) {
-//					ruleParameterMap.put(rp.getId(), rp);
-//				}
-//			}
-//
-//			Iterator iter = alarmMap.entrySet().iterator();
-//			while (iter.hasNext()) {
-				// 定时任务产生的新的预警数据
-				HashMap<String, WarningInformation> warnMap = new HashMap<String, WarningInformation>();
-//				Map.Entry entry = (Map.Entry) iter.next();
-//				Long orgId = (Long) entry.getKey();
-//				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
-//						.getValue();
+        // 补考后上学期总评不及格的学生信息
+        List<LastSemesterScoreStatistics> makeUpScoreCountList = lastSemesterScoreStatisticsRespository.findAllByTeachYearAndSemesterAndOrgId(teachYear, semester, orgId);
 
-				//删除已生成的预警信息
-				alertWarningInformationService.deleteWarningInformation(orgId,WarningTypeConstant.SupplementAchievement.toString(),schoolYear,semester);
+        RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
+        if (null != makeUpScoreCountList && makeUpScoreCountList.size() > 0) {
+            for (LastSemesterScoreStatistics makeUpScoreCount : makeUpScoreCountList) {
+                if (null != ruleParameter) {
+                    if (makeUpScoreCount.getMakeUpFailRequiredCourseNum() >= Float
+                            .parseFloat(ruleParameter
+                                    .getRightParameter())) {
+                        WarningInformation alertInfor = new WarningInformation();
+                        String alertId = UUID.randomUUID().toString();
+                        alertInfor.setId(alertId);
+                        alertInfor.setName(makeUpScoreCount.getUserName());
+                        alertInfor.setJobNumber(makeUpScoreCount.getJobNum());
+                        alertInfor.setCollogeCode(makeUpScoreCount.getCollegeCode());
+                        alertInfor.setCollogeName(makeUpScoreCount.getCollegeName());
+                        alertInfor.setClassCode(makeUpScoreCount.getClassCode());
+                        alertInfor.setClassName(makeUpScoreCount.getClassName());
+                        alertInfor.setProfessionalCode(makeUpScoreCount.getProfessionalCode());
+                        alertInfor.setProfessionalName(makeUpScoreCount.getProfessionalName());
+                        alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+                        alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
+                        alertInfor.setWarningCondition("补考后" + makeUpScoreCount.getLastSchoolYear() + "年" + makeUpScoreCount.getLastSemester() + "总评成绩不及格课程数:"
+                                        + makeUpScoreCount.getMakeUpFailRequiredCourseNum());
+                        alertInfor.setSemester(semester);
+                        alertInfor.setTeacherYear(teachYear);
+                        alertInfor.setWarningTime(new Date());
+                        alertInfor.setPhone(makeUpScoreCount.getUserPhone());
+                        alertInfor.setOrgId(ruleParameter.getOrgId());
+                        if (null != makeUpScoreCount.getDataSource() && makeUpScoreCount.getDataSource().length() > 0) {
+                            alertInfor.setWarningSource(makeUpScoreCount.getDataSource().substring(0, makeUpScoreCount.getDataSource().length() - 1));
+                        }
+                        alertInforList.add(alertInfor);
+                    } else {
+                        continue;
+                    }
+                }
+            }
+        }
+        return alertInforList;
+    }
 
-				// 预警处理配置获取
-				// HashMap<String, ProcessingMode> processingModeMap = new
-				// HashMap<String, ProcessingMode>();
-				// List<ProcessingMode> processingModeList =
-				// processingModeService
-				// .getProcessingModeBywarningTypeId(orgId,
-				// WarningType.TotalAchievement.toString());
-				// 按orgId查询未报到的学生信息
-				List<MakeUpScoreCount> makeUpScoreCountList = makeUpScoreCountMongoRespository
-						.findAllByOrgId(orgId);
-		        RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
-				if (null != makeUpScoreCountList
-						&& makeUpScoreCountList.size() > 0) {
-					for (MakeUpScoreCount makeUpScoreCount : makeUpScoreCountList) {
-//						for (AlarmSettings alarmSettings : val) {
-								if (null != ruleParameter) {
-									if (makeUpScoreCount.getFailCourseNum() >= Float
-											.parseFloat(ruleParameter
-													.getRightParameter())) {
-										WarningInformation alertInfor = new WarningInformation();
-										String alertId = UUID.randomUUID()
-												.toString();
-										alertInfor.setId(alertId);
-										alertInfor.setDefendantId(makeUpScoreCount
-												.getUserId());
-										alertInfor.setName(makeUpScoreCount
-												.getUserName());
-										alertInfor.setJobNumber(makeUpScoreCount
-												.getJobNum());
-										alertInfor.setCollogeId(makeUpScoreCount
-												.getCollegeId());
-										alertInfor.setCollogeName(makeUpScoreCount
-												.getCollegeName());
-										alertInfor.setClassId(makeUpScoreCount
-												.getClassId());
-										alertInfor.setClassName(makeUpScoreCount
-												.getClassName());
-										alertInfor
-												.setProfessionalId(makeUpScoreCount
-														.getProfessionalId());
-										alertInfor
-												.setProfessionalName(makeUpScoreCount
-														.getProfessionalName());
-//										alertInfor.setWarningLevel(alarmSettings
-//												.getWarningLevel());
-										alertInfor
-												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-//										alertInfor.setAlarmSettingsId(asId
-//												);
-//										alertInfor
-//												.setWarningType(WarningTypeConstant.SupplementAchievement
-//														.toString());
-										alertInfor
-												.setWarningCondition("补考后" + termConversion.getSemester(schoolYear, semester, 1).get("schoolYear") + "年第" + termConversion.getSemester(schoolYear, semester, 1).get("semester") + "学期总评成绩不及格课程数:"
-														+ makeUpScoreCount
-														.getFailCourseNum());
-										alertInfor.setSemester(semester);
-										alertInfor.setTeacherYear(schoolYear);
-										alertInfor.setWarningTime(new Date());
-										alertInfor.setPhone(makeUpScoreCount
-												.getUserPhone());
-										alertInfor.setOrgId(ruleParameter.getOrgId());
-										alertInforList.add(alertInfor);
-										if (null != makeUpScoreCount.getDataSource() && makeUpScoreCount.getDataSource().length() > 0) {
-											alertInfor.setWarningSource(makeUpScoreCount.getDataSource().substring(0, makeUpScoreCount.getDataSource().length() - 1));
-										}
+    /**
+     * 必修课和专业选修课不及格课程累计学分
+     */
+    public ArrayList<WarningInformation> dropOutJob(Long orgId, String teachYear, String semester, String ruleId) {
 
-//										break;
-									} else {
-										continue;
-									}
-							}
-						}
-					}
-		return alertInforList;
-	}
+        ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
-	/**
-	 * 英语四级考试成绩未通过预警（CetEarlyWarning）
-	 */
-	public ArrayList<WarningInformation> cet4ScoreJob(Long orgId,int schoolYear,int semester,String ruleId) {
+        List<FailScoreStatistics> makeUpScoreCountList = failScoreStatisticsRespository.findAllByOrgIdAndTeachYearAndSemester(orgId, teachYear, semester);
+            RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
+        if (null != makeUpScoreCountList && makeUpScoreCountList.size() > 0) {
+                for (FailScoreStatistics makeUpScoreCount : makeUpScoreCountList) {
+                    if (null != ruleParameter) {
+                        if (makeUpScoreCount.getFailCourseCredit() >= Float.parseFloat(ruleParameter.getRightParameter())) {
+                            WarningInformation alertInfor = new WarningInformation();
+                            String alertId = UUID.randomUUID().toString();
+                            alertInfor.setId(alertId);
+                            alertInfor.setName(makeUpScoreCount.getUserName());
+                            alertInfor.setJobNumber(makeUpScoreCount.getJobNum());
+                            alertInfor.setCollogeCode(makeUpScoreCount.getCollegeCode());
+                            alertInfor.setCollogeName(makeUpScoreCount.getCollegeName());
+                            alertInfor.setClassCode(makeUpScoreCount.getClassCode());
+                            alertInfor.setClassName(makeUpScoreCount.getClassName());
+                            alertInfor.setProfessionalCode(makeUpScoreCount.getProfessionalCode());
+                            alertInfor.setProfessionalName(makeUpScoreCount.getProfessionalName());
+                            alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+                            BigDecimal failCourseCredit = new BigDecimal(makeUpScoreCount.getFailCourseCredit());
+                            alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
+                            alertInfor.setWarningCondition("不及格必修课和选修课累计学分:" + failCourseCredit.setScale(2, RoundingMode.HALF_UP).toString());
+                            alertInfor.setWarningTime(new Date());
+                            alertInfor.setPhone(makeUpScoreCount.getUserPhone());
+                            alertInfor.setSemester(semester);
+                            alertInfor.setTeacherYear(teachYear);
+                            alertInfor.setOrgId(ruleParameter.getOrgId());
+                            if (null != makeUpScoreCount.getDataSource() && makeUpScoreCount.getDataSource().length() > 0) {
+                                alertInfor.setWarningSource(makeUpScoreCount.getDataSource().substring(0, makeUpScoreCount.getDataSource().length() - 1));
+                            }
+                            alertInforList.add(alertInfor);
+                        } else {
+                            continue;
+                        }
+                    }
+                }
+        }
+        return alertInforList;
+    }
 
-		ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
+    /**
+     * 英语四级考试成绩未通过预警
+     */
+    public ArrayList<WarningInformation> cet4ScoreJob(Long orgId, String teachYear, String semester, String ruleId) {
 
-//		// 获取的预警类型
-//		List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
-//
-//		//已经开启次预警类型的组织
-//		Set<Long> orgIdSet = new HashSet<>();
-//		for(WarningType wt : warningTypeList){
-//			if(wt.getSetupCloseFlag()==10){
-//				orgIdSet.add(wt.getOrgId());
-//			}
-//		}
-//
-//		// 获取预警配置
-//		List<AlarmSettings> settingsList = alarmSettingsService
-//				.getAlarmSettingsByType(WarningTypeConstant.Cet.toString());
-//		if (null != settingsList && settingsList.size() > 0) {
+        ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
+        try {
 
-			Calendar c = Calendar.getInstance();
-			int nowYear = c.get(Calendar.YEAR);
-			String grade2 = String.valueOf(nowYear - 1);
-			String grade3 = String.valueOf(nowYear - 2);
-			String grade4 = String.valueOf(nowYear - 3);
-			String[] grades = new String[] { grade2, grade3, grade4 };
-			HashMap<String, Integer> gradeMap = new HashMap<String, Integer>();
-			gradeMap.put(grade2, 2);
-			gradeMap.put(grade3, 3);
-			gradeMap.put(grade4, 4);
+            Date start = null;
+            Date end = null;
+            if (!org.apache.commons.lang.StringUtils.isBlank(teachYear) && !org.apache.commons.lang.StringUtils.isBlank(semester)) {
+                Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, teachYear, semester);
+                if (null != schoolCalendar) {
+                    if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
+                        List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
+                        if (tysList.size() > 0) {
+                            start = sdf.parse(tysList.get(0).getStartTime());
+                            end = sdf.parse(tysList.get(0).getEndTime());
+                        }
+                    }
+                }
+            }
+            int year = Integer.valueOf(teachYear);
+            RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
+            if(null!=ruleParameter) {
+                String parm = ruleParameter.getRightParameter();
+                if(!parm.isEmpty()){
+                   year = year-Integer.valueOf(parm);
+                }
+            }
+            Date start1 = null;
+            if (!org.apache.commons.lang.StringUtils.isBlank(year+"") && !org.apache.commons.lang.StringUtils.isBlank(semester)) {
+                Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, year + "", semester);
+                if (null != schoolCalendar) {
+                    if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
+                        List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
+                        if (tysList.size() > 0) {
+                            start1 = sdf.parse(tysList.get(0).getStartTime());
+                        }
+                    }
+                }
+            }
 
-//			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
-//			Set<String> ruleIdList = new HashSet<String>();
-//			Set<String> warnSettingsIdList = new HashSet<String>();
-//			// 按orgId归类告警等级阀值
-//			for (AlarmSettings settings : settingsList) {
-//				if(orgIdSet.contains(settings.getOrgId())&&settings.getSetupCloseFlag()==10) {
-//					warnSettingsIdList.add(settings.getId());
-//					Long orgId = settings.getOrgId();
-//
-//					if (StringUtils.isEmpty(settings.getRuleSet())) {
-//						continue;
-//					}
-//					String[] ruleIds = settings.getRuleSet().split(",");
-//					for (String ruleId : ruleIds) {
-//						if (!StringUtils.isEmpty(ruleId)) {
-//							RuleParameter rp = ruleParameterService.findById(ruleId);
-//							if(rp.getRuleName().equals(ruleName)) {
-//								ruleIdList.add(ruleId);
-//							}
-//						}
-//					}
-//					if (null != alarmMap.get(orgId)) {
-//						ArrayList<AlarmSettings> alarmList = alarmMap.get(orgId);
-//						alarmList.add(settings);
-//					} else {
-//						ArrayList<AlarmSettings> alarmList = new ArrayList<AlarmSettings>();
-//						alarmList.add(settings);
-//						alarmMap.put(orgId, alarmList);
-//					}
-//				}
-//			}
-//			// 预警规则获取
-//			HashMap<String, RuleParameter> ruleParameterMap = new HashMap<String, RuleParameter>();
-//			List<RuleParameter> alarmList = ruleParameterService.getRuleParameterByIds(ruleIdList);
-//			if (null != alarmList) {
-//				logger.debug("alarmList.size()----------" + alarmList.size());
-//			}
-//			for (RuleParameter rp : alarmList) {
-//				if(rp.getRuleName().equals(ruleName)) {
-//					ruleParameterMap.put(rp.getId(), rp);
-//				}
-//			}
-//			Iterator iter = alarmMap.entrySet().iterator();
-//			while (iter.hasNext()) {
-//				Map.Entry entry = (Map.Entry) iter.next();
-//				Long orgId = (Long) entry.getKey();
-//				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
-//						.getValue();
+            if (null != start && null != end) {
+                StringBuilder aql = new StringBuilder("SELECT XH as xh, XM as xm, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc, NJ as nj FROM t_xsjbxx  WHERE 1 = 1");
+                aql.append(" AND RXNY <= :start");
+                aql.append(" AND YBYNY >= :end");
+                Query aq = em.createNativeQuery(aql.toString());
+                aq.setParameter("start",start);
+                aq.setParameter("end", end);
+                aq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+                List<Map<String, Object>> res = aq.getResultList();
 
-				//删除已生成的预警信息
-				alertWarningInformationService.deleteWarningInformation(orgId,WarningTypeConstant.Cet.toString(),schoolYear,semester);
+                StringBuilder sql = new StringBuilder("SELECT JOB_NUMBER as xh, MAX(SCORE) as score  FROM t_cet_score WHERE score < 425 AND TYPE = '大学英语四级考试'");
+                sql.append(" AND EXAMINATION_DATE BETWEEN :start AND ：end");
+                sql.append(" GROUP BY JOB_NUMBER");
+                Query sq = em.createNativeQuery(sql.toString());
+                sq.setParameter("start", start1);
+                sq.setParameter("end", end);
+                sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+                List<Map<String, Object>> res1 = sq.getResultList();
+                Set<String> xhSet = new HashSet<>();
+                for(Map cd : res1) {
+                    if(null!=cd.get("xh")){
+                        xhSet.add(cd.get("xh").toString());
+                }
+                for(Map d : res){
+                    if(null!=d.get("xh")&&xhSet.contains(d.get("xh").toString())){
+                        WarningInformation alertInfor = new WarningInformation();
+                        String alertId = UUID.randomUUID().toString();
+                        alertInfor.setId(alertId);
+                        if (null != d.get("xh")) {
+                            alertInfor.setJobNumber(d.get("xh").toString());
+                        }
+                        if (null != d.get("xm")) {
+                            alertInfor.setName(d.get("xm").toString());
+                        }
+                        if (null != d.get("bh")) {
+                            alertInfor.setClassCode(d.get("bh").toString());
+                        }
+                        if (null != d.get("bjmc")) {
+                            alertInfor.setClassName(d.get("bjmc").toString());
+                        }
+                        if (null != d.get("zyh")) {
+                            alertInfor.setProfessionalCode(d.get("zyh").toString());
+                        }
+                        if (null != d.get("zymc")) {
+                            alertInfor.setProfessionalName(d.get("zymc").toString());
+                        }
+                        if (null != d.get("yxsh")) {
+                            alertInfor.setCollogeCode(d.get("yxsh").toString());
+                        }
+                        if (null != d.get("yxsmc")) {
+                            alertInfor.setCollogeName(d.get("yxsmc").toString());
+                        }
+                        alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+                        alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
+                        alertInfor.setWarningCondition("在校学年已大于等于"+ruleParameter.getRightParameter()
+                                + "年仍未通过英语四级考试");
+                        alertInfor.setSemester(semester);
+                        alertInfor.setTeacherYear(teachYear);
+                        alertInfor.setWarningTime(new Date());
+                        alertInfor.setOrgId(ruleParameter.getOrgId());
+                        alertInforList.add(alertInfor);
+                        } else {
+                            continue;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info(e.getMessage());
+        }
+        return alertInforList;
+    }
 
-
-				// 预警处理配置获取
-				// HashMap<String, ProcessingMode> processingModeMap = new
-				// HashMap<String, ProcessingMode>();
-				// List<ProcessingMode> processingModeList =
-				// processingModeService
-				// .getProcessingModeBywarningTypeId(orgId,
-				// WarningType.TotalAchievement.toString());
-				// 按orgId查询成绩信息
-				List<Score> scoreList = scoreMongoRespository
-						.findAllByGradeInAndOrgIdAndExamType(grades, orgId,
-								ScoreConstant.EXAM_TYPE_CET4);
-				if (null != scoreList) {
-					logger.debug("scoreList.size()---------" + scoreList.size());
-				}
-				HashMap<String, Score> userScoreMap = new HashMap<String, Score>();
-				// 去重后的英语四级不合格成绩集合
-				List<Score> alarmScoreList = new ArrayList<Score>();
-
-				for (Score score : scoreList) {
-					if (StringUtils.isEmpty(score.getTotalScore())) {
-						continue;
-					}
-					Score tmpScore = userScoreMap.get(score.getJobNum());
-					if (null != tmpScore) {
-						if (score.getTotalScore() > tmpScore.getTotalScore()) {
-							userScoreMap.put(score.getJobNum(), score);
-						}
-					} else {
-						userScoreMap.put(score.getJobNum(), score);
-					}
-				}
-
-				Iterator userScoreMapIter = userScoreMap.entrySet().iterator();
-				while (userScoreMapIter.hasNext()) {
-					Map.Entry userScoreEntry = (Map.Entry) userScoreMapIter
-							.next();
-					Score score = (Score) userScoreEntry.getValue();
-
-					if (score.getTotalScore() < ScoreConstant.CET_PASS_SCORE_LINE) {
-						alarmScoreList.add(score);
-					}
-				}
-		RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
-				if (null != alarmScoreList && alarmScoreList.size() > 0) {
-					for (Score score : alarmScoreList) {
-//						for (AlarmSettings alarmSettings : val) {
-
-								if (null != ruleParameter) {
-									int grade = 0;
-									if (null != gradeMap.get(score.getGrade())) {
-										grade = gradeMap.get(score.getGrade())
-												.intValue();
-									}
-									if (grade >= Float.parseFloat(ruleParameter
-											.getRightParameter())) {
-										WarningInformation alertInfor = new WarningInformation();
-										String alertId = UUID.randomUUID()
-												.toString();
-										alertInfor.setId(alertId);
-										alertInfor
-												.setDefendantId(score.getUserId());
-										alertInfor.setName(score.getUserName());
-										alertInfor.setJobNumber(score.getJobNum());
-										alertInfor.setCollogeId(score
-												.getCollegeId());
-										alertInfor.setCollogeName(score
-												.getCollegeName());
-										alertInfor.setClassId(score.getClassId());
-										alertInfor.setClassName(score
-												.getClassName());
-										alertInfor.setProfessionalId(score
-												.getProfessionalId());
-										alertInfor.setProfessionalName(score
-												.getProfessionalName());
-//										alertInfor.setWarningLevel(alarmSettings
-//												.getWarningLevel());
-										alertInfor
-												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-//										alertInfor.setAlarmSettingsId(asId
-//												);
-//										alertInfor
-//												.setWarningType(WarningTypeConstant.Cet
-//														.toString());
-										alertInfor.setWarningCondition("第" + grade
-												+ "学年仍未通过英语四级考试");
-										alertInfor.setSemester(semester);
-										alertInfor.setTeacherYear(schoolYear);
-										alertInfor.setWarningTime(new Date());
-										alertInfor.setPhone(score.getUserPhone());
-										alertInfor.setOrgId(ruleParameter.getOrgId());
-										alertInforList.add(alertInfor);
-
-//										break;
-									} else {
-										continue;
-									}
-							}
-						}
-					}
-//				}
-//			}
-//		}
-		return alertInforList;
-	}
-
-	/**
-	 * 退学预警（LeaveSchoolEarlyWarning）
-	 */
-	public ArrayList<WarningInformation> dropOutJob(Long orgId,int schoolYear,int semester,String ruleId) {
-
-		ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
-
-		// 获取的预警类型
-		List<WarningType> warningTypeList = warningTypeService.getAllWarningTypeList();
-
-		//已经开启次预警类型的组织
-		Set<Long> orgIdSet = new HashSet<>();
-		for(WarningType wt : warningTypeList){
-			if(wt.getSetupCloseFlag()==10){
-				orgIdSet.add(wt.getOrgId());
-			}
-		}
-
-		// 获取预警配置
-		List<AlarmSettings> settingsList = alarmSettingsService
-				.getAlarmSettingsByType(WarningTypeConstant.LeaveSchool
-						.toString());
-		if (null != settingsList && settingsList.size() > 0) {
-
-//			Calendar c = Calendar.getInstance();
-//			int month = c.get(Calendar.MONTH)+1;
-//			// 当前学期编号
-//			int semester = 2;
-//			if (month > 1 && month < 9) {
-//				semester = 1;
-//			}
-//			// 当前年份
-//			int endYear = c.get(Calendar.YEAR);
-//			// 前三年
-//			int beginYear = endYear - 3;
-
-
-//			Calendar c = Calendar.getInstance();
-//			// 当前年份
-//			int schoolYear = c.get(Calendar.YEAR);
-//			// 当前月份
-//			int month = c.get(Calendar.MONTH)+1;
-//			// 当前学期编号
-//			int semester = 2;
-//			if (month > 1 && month < 9) {
-//				semester = 1;
-//			}
-//			if(month == 1 ){
-//				schoolYear = schoolYear - 1;
-//			}
-
-//
-//			HashMap<Long, ArrayList<AlarmSettings>> alarmMap = new HashMap<Long, ArrayList<AlarmSettings>>();
-//			Set<String> ruleIdList = new HashSet<String>();
-//			Set<String> warnSettingsIdList = new HashSet<String>();
-//			// 按orgId归类告警等级阀值
-//			for (AlarmSettings settings : settingsList) {
-//				if(orgIdSet.contains(settings.getOrgId())&&settings.getSetupCloseFlag()==10) {
-//					warnSettingsIdList.add(settings.getId());
-//					Long orgId = settings.getOrgId();
-//
-//					if (StringUtils.isEmpty(settings.getRuleSet())) {
-//						continue;
-//					}
-//					String[] ruleIds = settings.getRuleSet().split(",");
-//					for (String ruleId : ruleIds) {
-//						if (!StringUtils.isEmpty(ruleId)) {
-//							RuleParameter rp = ruleParameterService.findById(ruleId);
-//							if(rp.getRuleName().equals(ruleName)) {
-//								ruleIdList.add(ruleId);
-//							}
-//						}
-//					}
-//					if (null != alarmMap.get(orgId)) {
-//						ArrayList<AlarmSettings> alarmList = alarmMap.get(orgId);
-//						alarmList.add(settings);
-//					} else {
-//						ArrayList<AlarmSettings> alarmList = new ArrayList<AlarmSettings>();
-//						alarmList.add(settings);
-//						alarmMap.put(orgId, alarmList);
-//					}
-//				}
-//			}
-//			// 预警规则获取
-//			HashMap<String, RuleParameter> ruleParameterMap = new HashMap<String, RuleParameter>();
-//			List<RuleParameter> alarmList = ruleParameterService.getRuleParameterByIds(ruleIdList);
-//			for (RuleParameter rp : alarmList) {
-//				if(rp.getRuleName().equals(ruleName)) {
-//					ruleParameterMap.put(rp.getId(), rp);
-//				}
-//			}
-//
-//			Iterator iter = alarmMap.entrySet().iterator();
-//			while (iter.hasNext()) {
-//				Map.Entry entry = (Map.Entry) iter.next();
-//				Long orgId = (Long) entry.getKey();
-//				ArrayList<AlarmSettings> val = (ArrayList<AlarmSettings>) entry
-//						.getValue();
-
-				//删除已生成的预警信息
-				alertWarningInformationService.deleteWarningInformation(orgId,WarningTypeConstant.LeaveSchool.toString(),schoolYear,semester);
-
-				List<MakeUpScoreCount> makeUpScoreCountList = makeUpScoreCountMongoRespository
-						.findAllByOrgId(orgId);
-			RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
-				if (null != makeUpScoreCountList
-						&& makeUpScoreCountList.size() > 0) {
-					for (MakeUpScoreCount makeUpScoreCount : makeUpScoreCountList) {
-//						for (AlarmSettings alarmSettings : val) {
-
-								if (null != ruleParameter) {
-									if (makeUpScoreCount.getFailCourseCredit() >= Float
-											.parseFloat(ruleParameter
-													.getRightParameter())) {
-										WarningInformation alertInfor = new WarningInformation();
-										String alertId = UUID.randomUUID()
-												.toString();
-										alertInfor.setId(alertId);
-										alertInfor.setDefendantId(makeUpScoreCount
-												.getUserId());
-										alertInfor.setName(makeUpScoreCount
-												.getUserName());
-										alertInfor.setJobNumber(makeUpScoreCount
-												.getJobNum());
-										alertInfor.setCollogeId(makeUpScoreCount
-												.getCollegeId());
-										alertInfor.setCollogeName(makeUpScoreCount
-												.getCollegeName());
-										alertInfor.setClassId(makeUpScoreCount
-												.getClassId());
-										alertInfor.setClassName(makeUpScoreCount
-												.getClassName());
-										alertInfor
-												.setProfessionalId(makeUpScoreCount
-														.getProfessionalId());
-										alertInfor
-												.setProfessionalName(makeUpScoreCount
-														.getProfessionalName());
-//										alertInfor.setWarningLevel(alarmSettings
-//												.getWarningLevel());
-										alertInfor
-												.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-//										alertInfor.setAlarmSettingsId(asId
-//											);
-//										alertInfor
-//												.setWarningType(WarningTypeConstant.LeaveSchool
-//														.toString());
-										BigDecimal failCourseCredit = new BigDecimal(
-												makeUpScoreCount
-														.getFailCourseCredit());
-										alertInfor
-												.setWarningCondition("不及格必修课和选修课累计学分:"
-														+ failCourseCredit
-														.setScale(
-																2,
-																RoundingMode.HALF_UP)
-														.toString());
-										alertInfor.setWarningTime(new Date());
-										alertInfor.setPhone(makeUpScoreCount
-												.getUserPhone());
-										alertInfor.setSemester(semester);
-										alertInfor.setTeacherYear(schoolYear);
-										alertInfor.setOrgId(ruleParameter.getOrgId());
-										alertInforList.add(alertInfor);
-
-										if (null != makeUpScoreCount.getDataSource() && makeUpScoreCount.getDataSource().length() > 0) {
-											alertInfor.setWarningSource(makeUpScoreCount.getDataSource().substring(0, makeUpScoreCount.getDataSource().length() - 1));
-										}
-
-//										break;
-									} else {
-										continue;
-									}
-							}
-						}
-					}
-//				}
-//			}
-		}
-		return alertInforList;
-	}
 
 }

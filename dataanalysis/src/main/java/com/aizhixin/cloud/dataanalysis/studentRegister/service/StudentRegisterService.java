@@ -106,7 +106,7 @@ public class StudentRegisterService {
 						studentRegister.setIsRegister(entry.getValue().getIsRegister());
 						for (Entry<String, ImportDomain> entry2 : map2.entrySet()) {
 							if (entry2.getKey().equals(entry1.getValue().getClassName())) {
-								studentRegister.setClassId(entry2.getValue().getId());
+								studentRegister.setClassCode(entry2.getValue().getId());
 								break;
 							}
 						}
@@ -114,20 +114,19 @@ public class StudentRegisterService {
 						studentRegister.setGrade(entry.getValue().getGrade());
 						for (Entry<String, ImportDomain> entry2 : map2.entrySet()) {
 							if (entry2.getKey().equals(entry1.getValue().getCollegeName())) {
-								studentRegister.setCollegeId(entry2.getValue().getId());
+								studentRegister.setCollegeCode(entry2.getValue().getId());
 								break;
 							}
 						}
 						studentRegister.setCollegeName(entry1.getValue().getCollegeName());
 						for (Entry<String, ImportDomain> entry2 : map2.entrySet()) {
 							if (entry2.getKey().equals(entry1.getValue().getProfessionalName())) {
-								studentRegister.setProfessionalId(entry2.getValue().getId());
+								studentRegister.setProfessionalCode(entry2.getValue().getId());
 								break;
 							}
 						}
 						studentRegister.setProfessionalName(entry1.getValue().getProfessionalName());
-						studentRegister.setSchoolYear(Integer.parseInt(entry.getValue().getSchoolYear()));
-						studentRegister.setUserId(entry1.getValue().getUserId());
+						studentRegister.setTeachYear(entry.getValue().getSchoolYear());
 						studentRegister.setUserName(entry1.getValue().getUserName());
 						SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 						String str = "2014-09-01";

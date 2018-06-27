@@ -65,19 +65,18 @@ public class ScoreService {
 		for (ScoreDomain d : dataBases) {
 			try {
 				Score score = new Score();
-				score.setUserId(d.getUserId());
 				score.setUserName(d.getUserName());
 				score.setOrgId(orgId);
 				for (Entry<String, ImportDomain> entry : map.entrySet()) {
 					if (entry.getKey().equals(d.getClassName())) {
-						score.setClassId(entry.getValue().getId());
+						score.setClassCode(entry.getValue().getId());
 						break;
 					}
 				}
 				score.setClassName(d.getClassName());
 				for (Entry<String, ImportDomain> entry : map.entrySet()) {
 					if (entry.getKey().equals(d.getCollegeName())) {
-						score.setCollegeId(entry.getValue().getId());
+						score.setCollegeCode(entry.getValue().getId());
 						break;
 					}
 				}
@@ -86,7 +85,7 @@ public class ScoreService {
 				score.setJobNum(d.getJobNum());
 				for (Entry<String, ImportDomain> entry : map.entrySet()) {
 					if (entry.getKey().equals(d.getProfessionalName())) {
-						score.setProfessionalId(entry.getValue().getId());
+						score.setProfessionalCode(entry.getValue().getId());
 						break;
 					}
 				}
@@ -96,7 +95,7 @@ public class ScoreService {
 				score.setUsualScore(d.getUsualScore());
 				score.setCredit(d.getCredit());
 				score.setGradePoint(d.getGradePoint());
-				score.setSchoolYear(d.getSchoolYear());
+				score.setTeachYear(d.getSchoolYear());
 				score.setTotalScore(d.getTotalScore());
 				score.setUserPhone(d.getUserPhone());
 				if (d.getExamTime() != null) {
@@ -148,19 +147,18 @@ public class ScoreService {
 					&& !"2017".equals(d.getGrade())) {
 				try {
 					Score score = new Score();
-					score.setUserId(d.getUserId());
 					score.setUserName(d.getUserName());
 					score.setOrgId(orgId);
 					for (Entry<String, ImportDomain> entry : map.entrySet()) {
 						if (entry.getKey().equals(d.getClassName())) {
-							score.setClassId(entry.getValue().getId());
+							score.setClassCode(entry.getValue().getId());
 							break;
 						}
 					}
 					score.setClassName(d.getClassName());
 					for (Entry<String, ImportDomain> entry : map.entrySet()) {
 						if (entry.getKey().equals(d.getCollegeName())) {
-							score.setCollegeId(entry.getValue().getId());
+							score.setCollegeCode(entry.getValue().getId());
 							break;
 						}
 					}
@@ -169,7 +167,7 @@ public class ScoreService {
 					score.setJobNum(d.getJobNum());
 					for (Entry<String, ImportDomain> entry : map.entrySet()) {
 						if (entry.getKey().equals(d.getProfessionalName())) {
-							score.setProfessionalId(entry.getValue().getId());
+							score.setProfessionalCode(entry.getValue().getId());
 							break;
 						}
 					}
@@ -180,7 +178,7 @@ public class ScoreService {
 					score.setCredit(d.getCredit());
 					score.setGradePoint(d.getGradePoint());
 					score.setGrade(d.getGrade());
-					score.setSchoolYear(d.getSchoolYear());
+					score.setTeachYear(d.getSchoolYear());
 					score.setTotalScore(Float.valueOf(d.getTotalScore() + 345));
 					score.setUserPhone(d.getUserPhone());
 					score.setExamType(ScoreConstant.EXAM_TYPE_CET4);

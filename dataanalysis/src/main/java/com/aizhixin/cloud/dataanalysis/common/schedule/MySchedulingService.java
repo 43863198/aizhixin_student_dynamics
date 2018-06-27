@@ -50,18 +50,19 @@ public class MySchedulingService {
             LOG.info("开始启动旷课信息统计定时任务");
             Calendar c = Calendar.getInstance();
 			//当前年份
-			int schoolYear = c.get(Calendar.YEAR);
+			int year = c.get(Calendar.YEAR);
 			//当前月份
 			int month = c.get(Calendar.MONTH)+1;
 			//当前学期编号
-			int semester = 2;
+			String semester = "秋";
 			if( month > 1 && month < 9){
-				semester = 1;
+				semester = "春";
 			}
 			if(month == 1 ){
-				schoolYear = schoolYear - 1;
+                year = year - 1;
 			}
-            rollCallJob.rollCallCountJob(schoolYear,semester);
+            String teachYear = year+"";
+            rollCallJob.rollCallCountJob(teachYear,semester);
         } else {
             LOG.info("启动旷课信息统计任务，获取锁失败");
         }
@@ -69,40 +70,40 @@ public class MySchedulingService {
 
 
 //    @Scheduled(cron = "0 0/1 * * * ?")
-    public void totalScoreCountJob() {
-        if (distributeLock.getTotalScoreCountLock()) {
-            LOG.info("开始启动总评不及格成绩信息统计定时任务");
-            Calendar c = Calendar.getInstance();
-            // 当前年份
-            int schoolYear = c.get(Calendar.YEAR);
-            // 当前月份
-            int month = c.get(Calendar.MONTH)+1;
-            // 当前学期编号
-            int semester = 2;
-            if (month > 1 && month < 9) {
-                semester = 1;
-            }
-            if(month == 1 ){
-                schoolYear = schoolYear - 1;
-            }
-            scoreJob.totalScoreCountJob(schoolYear, semester);;
-        } else {
-            LOG.info("启动总评不及格成绩统计任务，获取锁失败");
-        }
-    }
-
+//    public void totalScoreCountJob() {
+//        if (distributeLock.getTotalScoreCountLock()) {
+//            LOG.info("开始启动总评不及格成绩信息统计定时任务");
+//            Calendar c = Calendar.getInstance();
+//            // 当前年份
+//            int schoolYear = c.get(Calendar.YEAR);
+//            // 当前月份
+//            int month = c.get(Calendar.MONTH)+1;
+//            // 当前学期编号
+//            int semester = 2;
+//            if (month > 1 && month < 9) {
+//                semester = 1;
+//            }
+//            if(month == 1 ){
+//                schoolYear = schoolYear - 1;
+//            }
+//            scoreJob.totalScoreCountJob(schoolYear, semester);;
+//        } else {
+//            LOG.info("启动总评不及格成绩统计任务，获取锁失败");
+//        }
+//    }
+//
 //    @Scheduled(cron = "0 0/1 * * * ?")
-    public void makeUpScoreCountJob() {
-        if (distributeLock.getMakeUpScoreCountLock()) {
-            LOG.info("开始启动补考不及格成绩信息统计定时任务");
-            Calendar c = Calendar.getInstance();
-            // 当前年份
-            int schoolYear = c.get(Calendar.YEAR);
-            scoreJob.makeUpScoreCountJob(schoolYear);;
-        } else {
-            LOG.info("启动总评不及格成绩统计任务，获取锁失败");
-        }
-    }
+//    public void makeUpScoreCountJob() {
+//        if (distributeLock.getMakeUpScoreCountLock()) {
+//            LOG.info("开始启动补考不及格成绩信息统计定时任务");
+//            Calendar c = Calendar.getInstance();
+//            // 当前年份
+//            int schoolYear = c.get(Calendar.YEAR);
+//            scoreJob.makeUpScoreCountJob(schoolYear);;
+//        } else {
+//            LOG.info("启动总评不及格成绩统计任务，获取锁失败");
+//        }
+//    }
 
 //    @Scheduled(cron = "0 0/1 * * * ?")
     public void scoreFluctuateCountJob() {
@@ -121,7 +122,7 @@ public class MySchedulingService {
             if(month == 1 ){
                 schoolYear = schoolYear - 1;
             }
-            scoreJob.scoreFluctuateCountJob(schoolYear, semester);
+//            scoreJob.scoreFluctuateCountJob(schoolYear, semester);
         } else {
             LOG.info("启动之前两学期成绩统计任务，获取锁失败");
         }

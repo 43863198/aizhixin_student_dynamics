@@ -27,14 +27,6 @@ import java.util.Date;
 public class WarningInformation extends AbstractStringIdEntity {
 
     /*
-   *  告警人id
-   */
-    @Column(name = "DEFENDANT_ID")
-    @Getter
-    @Setter
-    private Long defendantId;
-
-    /*
     *  告警人姓名
     */
     @Column(name = "NAME")
@@ -55,10 +47,10 @@ public class WarningInformation extends AbstractStringIdEntity {
     @Column(name = "ORG_ID")
     @Getter @Setter private Long orgId;
     /*
-     * 所属学院id
+     * 所属学院code
      */
-    @Column(name = "COLLOGE_ID")
-    @Getter @Setter private Long collogeId;
+    @Column(name = "COLLOGE_CODE")
+    @Getter @Setter private String collogeCode;
 
     /*
      * 所属学院
@@ -68,10 +60,10 @@ public class WarningInformation extends AbstractStringIdEntity {
 
 
     /*
-   * 所属专业id
+   * 所属专业code
    */
-    @Column(name = "PROFESSIONAL_ID")
-    @Getter @Setter private Long professionalId;
+    @Column(name = "PROFESSIONAL_CODE")
+    @Getter @Setter private String professionalCode;
 
     /*
      * 所属专业
@@ -80,10 +72,10 @@ public class WarningInformation extends AbstractStringIdEntity {
     @Getter @Setter private String professionalName;
 
     /*
-   * 所属班级id
+   * 所属班级code
    */
-    @Column(name = "CLASS_ID")
-    @Getter @Setter private Long classId;
+    @Column(name = "CLASS_CODE")
+    @Getter @Setter private String classCode;
 
     /*
      * 所属班级
@@ -152,12 +144,22 @@ public class WarningInformation extends AbstractStringIdEntity {
      */
     @Column(name = "ALARMSETTINGS_ID")
     @Getter @Setter private String alarmSettingsId;
+    /*
+     * 预警标准
+     */
+     @Column(name = "WARNING_STANDARD")
+     @Getter @Setter private String warningStandard;
 
     /*
      * 产生预警条件
      */
     @Column(name = "WARNING_CONDITION")
     @Getter @Setter private String warningCondition;
+    /*
+     * 是否归档
+     */
+    @Column(name = "IS_FILE")
+    @Getter @Setter private int isFile;
 
     /*
      * 预警产生源数据
@@ -169,10 +171,10 @@ public class WarningInformation extends AbstractStringIdEntity {
     * 学期
     */
     @Column(name = "SEMESTER")
-    @Getter @Setter private Integer semester;
+    @Getter @Setter private String semester;
     /*
      * 学年
      */
     @Column(name = "TEACHER_YEAR")
-    @Getter @Setter private Integer teacherYear;
+    @Getter @Setter private String teacherYear;
 }

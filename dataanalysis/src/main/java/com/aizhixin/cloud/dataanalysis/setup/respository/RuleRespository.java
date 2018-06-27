@@ -12,8 +12,8 @@ import java.util.List;
  */
 public interface RuleRespository  extends PagingAndSortingRepository<Rule, String> {
 
-     List<Rule> findByOrgIdAndDeleteFlag(Long orgId,Integer deleteFlag);
+     List<Rule> findByDeleteFlag(Integer deleteFlag);
 
-     List<Rule> findByOrgIdAndName(Long orgId,String name);
+     List<Rule> findByNameAndDeleteFlag(String name,Integer deleteFlag);
 
 }
