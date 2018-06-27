@@ -175,6 +175,6 @@ public class WarningInformation extends AbstractStringIdEntity {
     /*
      * 学年
      */
-    @Column(name = "TEACHER_YEAR")
+    @Column(name = "TEACHING_YEAR")
     @Getter @Setter private String teacherYear;
 }

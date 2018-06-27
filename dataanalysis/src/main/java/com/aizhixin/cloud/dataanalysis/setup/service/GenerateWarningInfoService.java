@@ -85,13 +85,19 @@ public class GenerateWarningInfoService {
         warningInfo(orgId, warningType, teachYear, semester);
     }
 
-    @Async
+//    @Async
     public void warningInfo(Long orgId, String type,String schoolYear,String semester ){
         List<AlarmSettings> alarmSettingsList = alarmSettingsService.getAlarmSettingsByOrgIdAndWarningType(orgId,type);
         HashMap<Integer, List<WarningInformation>> restHasMap = new HashMap<>();
         for(AlarmSettings as: alarmSettingsList) {
             if (null != as && as.getSetupCloseFlag() ==10) {
-                String[] ruleSetIds = as.getRuleSet().split(",");
+                String rules = as.getRuleSet();
+                String[] ruleSetIds;
+                if(rules.indexOf(",")!=-1) {
+                    ruleSetIds = rules.split(",");
+                }else {
+                    ruleSetIds = new String[]{rules};
+                }
                 List<WarningInformation> gradeList = new ArrayList<>();
                 ArrayList<WarningInformation> registerList = null;
                 ArrayList<WarningInformation> absenteeismList = null;
@@ -105,33 +111,37 @@ public class GenerateWarningInfoService {
                     if (!StringUtils.isEmpty(ruleSetId)) {
                         RuleParameter rp = ruleParameterService.findById(ruleSetId);
                         if(null!=rp) {
-                            Rule rule = ruleService.getByName(rp.getRuleName()).get(0);
+                            Rule rule = null;
+                            List<Rule> ruleList = ruleService.getByName(rp.getRuleName());
+                            if(null!=ruleList&&ruleList.size()>0){
+                               rule = ruleList.get(0);
+                            }
                             if (null != rule) {
                                 if (rule.getName().equals("A")) {
                                     WarningType wt = warningTypeService.getWarningTypeByOrgIdAndType(orgId, type);
                                     Date startTime = wt.getStartTime();
-                                    registerList = studentRegisterJob.studenteRegisterJob(orgId, schoolYear, semester, rule.getId(), startTime);
+                                    registerList = studentRegisterJob.studenteRegisterJob(orgId, schoolYear, semester, rp.getId(), startTime);
                                 }
                                 if (rule.getName().equals("D")) {
-                                    absenteeismList = rollCallJob.rollCallJob(orgId, schoolYear, semester, rule.getId());
+                                    absenteeismList = rollCallJob.rollCallJob(orgId, schoolYear, semester, rp.getId());
                                 }
 //                                if (rule.getName().equals("G")) {
-//                                    performanceFluctuationList = scoreJob.scoreFluctuateJob(orgId, schoolYear, semester, rule.getId());
+//                                    performanceFluctuationList = scoreJob.scoreFluctuateJob(orgId, schoolYear, semester, rp.getId());
 //                                }
                                 if (rule.getName().equals("F")) {
-                                    supplementAchievementList = scoreJob.makeUpScoreJob(orgId, schoolYear, semester, rule.getId());
+                                    supplementAchievementList = scoreJob.makeUpScoreJob(orgId, schoolYear, semester, rp.getId());
                                 }
                                 if (rule.getName().equals("E")) {
-                                    totalAchievementList = scoreJob.failScoreCountJob(orgId, schoolYear, semester, rule.getId());
+                                    totalAchievementList = scoreJob.failScoreCountJob(orgId, schoolYear, semester, rp.getId());
                                 }
                                 if (rule.getName().equals("B")) {
-                                    leaveSchoolList = scoreJob.dropOutJob(orgId, schoolYear, semester, rule.getId());
+                                    leaveSchoolList = scoreJob.dropOutJob(orgId, schoolYear, semester, rp.getId());
                                 }
                                 if (rule.getName().equals("H")) {
-                                    cetList = scoreJob.cet4ScoreJob(orgId, schoolYear, semester, rule.getId());
+                                    cetList = scoreJob.cet4ScoreJob(orgId, schoolYear, semester, rp.getId());
                                 }
                                 if (rule.getName().equals("C")) {
-                                    attendAbnormalList = scoreJob.attendAbnormalJob(orgId, schoolYear, semester, rule.getId());
+                                    attendAbnormalList = scoreJob.attendAbnormalJob(orgId, schoolYear, semester, rp.getId());
                                 }
                             }
                         }

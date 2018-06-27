@@ -57,7 +57,7 @@ public class StudentRegisterJob {
     @Autowired
     private RuleParameterService ruleParameterService;
     //报到注册预警指标算法(RegisterEarlyWarning)
-    public ArrayList<WarningInformation> studenteRegisterJob(Long orgId, String schoolYear, String semester,  String ruleId, Date startTime) {
+    public ArrayList<WarningInformation> studenteRegisterJob(Long orgId, String schoolYear, String semester,  String rpId, Date startTime) {
 
         ArrayList<WarningInformation> returnList = new ArrayList<>();
 
@@ -87,7 +87,7 @@ public class StudentRegisterJob {
             for (WarningInformation warningInfor : warnDbList) {
                 warnDbMap.put(warningInfor.getJobNumber(), warningInfor);
             }
-            RuleParameter alarmRule = ruleParameterService.findById(ruleId);
+            RuleParameter alarmRule = ruleParameterService.findById(rpId);
             if (null != stuRegisterList && stuRegisterList.size() > 0) {
                 Date today = new Date();
                 for (StudentRegister studentRegister : stuRegisterList) {
