@@ -506,8 +506,6 @@ public class ScoreJob {
         {
             ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
-//        //删除已生成的预警信息
-//        alertWarningInformationService.deleteWarningInformation(orgId, WarningTypeConstant.PerformanceFluctuation.toString(), schoolYear, semester);
             // 上上个学期平均学分绩点与上学期平均学分绩点数据
             List<FirstTwoSemestersScoreStatistics> scoreFluctuateList = firstTwoSemestersScoreStatisticsRespository
                     .findAllByOrgIdAndTeachYearAndSemester(orgId, teachYear, semester);
