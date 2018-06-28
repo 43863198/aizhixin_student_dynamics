@@ -236,22 +236,22 @@ public class AlertWarningInformationService {
         }
 
 
-        if (!StringUtils.isEmpty(domain.getCollogeIds())) {
-            String[] collogeIdArr = domain.getCollogeIds().split(",");
-            String collogeIds = "";
-            for (String collogeId : collogeIdArr) {
-                if (!StringUtils.isEmpty(collogeId)) {
-                    if (StringUtils.isEmpty(collogeIds)) {
-                        collogeIds = collogeId;
+        if (!StringUtils.isEmpty(domain.getCollogeCodes())) {
+            String[] collogeIdArr = domain.getCollogeCodes().split(",");
+            String collogeCodes = "";
+            for (String collogeCode : collogeIdArr) {
+                if (!StringUtils.isEmpty(collogeCode)) {
+                    if (StringUtils.isEmpty(collogeCodes)) {
+                        collogeCodes = collogeCode;
                     } else {
-                        collogeIds += "," + collogeId;
+                        collogeCodes += "," + collogeCode;
                     }
                 }
             }
 
-            querySql += " and COLLOGE_ID in (" + collogeIds
+            querySql += " and COLLOGE_ID in (" + collogeCodes
                     + ")";
-            countSql += " and COLLOGE_ID in (" + collogeIds
+            countSql += " and COLLOGE_ID in (" + collogeCodes
                     + ")";
         }
 
@@ -444,20 +444,20 @@ public class AlertWarningInformationService {
             querySql += " and ( NAME like '%" + domain.getKeywords() + "%' or JOB_NUMBER like '%" + domain.getKeywords() + "%') ";
         }
 
-        if (!StringUtils.isEmpty(domain.getCollogeIds())) {
-            String[] collogeIdArr = domain.getCollogeIds().split(",");
-            String collogeIds = "";
-            for (String collogeId : collogeIdArr) {
-                if (!StringUtils.isEmpty(collogeId)) {
-                    if (StringUtils.isEmpty(collogeIds)) {
-                        collogeIds = collogeId;
+        if (!StringUtils.isEmpty(domain.getCollogeCodes())) {
+            String[] collogeIdArr = domain.getCollogeCodes().split(",");
+            String collogeCodes = "";
+            for (String collogeCode : collogeIdArr) {
+                if (!StringUtils.isEmpty(collogeCode)) {
+                    if (StringUtils.isEmpty(collogeCodes)) {
+                        collogeCodes = collogeCode;
                     } else {
-                        collogeIds += "," + collogeId;
+                        collogeCodes += "," + collogeCode;
                     }
                 }
             }
 
-            querySql += " and COLLOGE_ID in (" + collogeIds
+            querySql += " and COLLOGE_CODE in (" + collogeCodes
                     + ")";
         }
 
@@ -669,31 +669,12 @@ public class AlertWarningInformationService {
      * 学生预警 组装按条件查询的预警信息和按预警等级统计的数量
      *
      * @param orgId
-     * @param userId
      * @param jobNum
      * @param pageNumber
      * @param pageSize
      * @return
      */
-    public Map<String, Object> getStuAlertInforPage(Long orgId, Long userId, String jobNum, Integer pageNumber, Integer pageSize) {
-        if (StringUtils.isEmpty(jobNum)) {
-            if (userId == null || userId < 1) {
-                Map<String, Object> result = new HashMap<>();
-                result.put("success", false);
-                result.put("message", "userId不能为空!");
-                return result;
-            } else {
-                Map user = orgManagerFeignService.getUser(userId);
-                if (user != null && user.get("jobNumber") != null) {
-                    jobNum = user.get("jobNumber").toString();
-                } else {
-                    Map<String, Object> result = new HashMap<>();
-                    result.put("success", false);
-                    result.put("message", "无用户信息!");
-                    return result;
-                }
-            }
-        }
+    public Map<String, Object> getStuAlertInforPage(Long orgId, String jobNum, Integer pageNumber, Integer pageSize) {
         Map<String, Object> pageInfor = this.queryStuAlertInforPage(orgId, jobNum, pageNumber, pageSize);
         List<RegisterAlertCountDomain> countList = this.alertStuCountInfor(orgId, jobNum);
         LevelAlertCountDomain countDomain = new LevelAlertCountDomain();
@@ -808,7 +789,7 @@ public class AlertWarningInformationService {
         return result;
     }
 
-    public Map<String, Object> getStatistical(Long orgId, Integer teacherYear, Integer semester) {
+    public Map<String, Object> getStatistical(Long orgId, String teacherYear, String semester) {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> condition = new HashMap<>();
         Map<String, Object> data = new HashMap<>();
@@ -952,7 +933,7 @@ public class AlertWarningInformationService {
     }
 
 
-    public Map<String, Object> getCollegeProcessedRatio(Long orgId, Integer teacherYear, Integer semester) {
+    public Map<String, Object> getCollegeProcessedRatio(Long orgId, String teacherYear, String semester) {
         Map<String, Object> result = new HashMap<>();
         List<CollegeAlreadyProcessedRatioDTO> collegeAlreadyProcessedRatioDTOArrayList = new ArrayList<>();
         Map<String, Object> condition = new HashMap<>();
@@ -962,7 +943,7 @@ public class AlertWarningInformationService {
             condition.put("orgId", orgId);
         }
         if (null != teacherYear) {
-            sql.append(" and TEACHER_YEAR = :teacherYear");
+            sql.append(" and TEACHING_YEAR = :teacherYear");
             condition.put("teacherYear", teacherYear);
         }
         if (null != semester) {
@@ -1011,7 +992,7 @@ public class AlertWarningInformationService {
     }
 
 
-    public Map<String, Object> getStatisticalType(Long orgId, Integer teacherYear, Integer semester) {
+    public Map<String, Object> getStatisticalType(Long orgId, String teacherYear, String semester) {
         Map<String, Object> result = new HashMap<>();
         List<TypeStatisticsDTO> typeStatisticsDTOList = new ArrayList<>();
         List<TypeStatisticsDTO> typeList = new ArrayList<>();
@@ -1027,7 +1008,7 @@ public class AlertWarningInformationService {
             condition.put("orgId", orgId);
         }
         if (null != teacherYear) {
-            sql.append(" and TEACHER_YEAR = :teacherYear");
+            sql.append(" and TEACHING_YEAR = :teacherYear");
             condition.put("teacherYear", teacherYear);
         }
         if (null != semester) {
@@ -1255,7 +1236,7 @@ public class AlertWarningInformationService {
     /**
      * ************************************************************
      */
-    public Map<String, Object> getStatisticsByCollege(Pageable pageable, Long orgId, String type, Integer teacherYear, Integer semester) {
+    public Map<String, Object> getStatisticsByCollege(Pageable pageable, Long orgId, String type, String teacherYear, String semester) {
         Map<String, Object> result = new HashMap<>();
         //学院预警统计数量
         List<CollegeStatisticsDTO> collegeStatisticsDTOList = new ArrayList<>();
@@ -1270,9 +1251,9 @@ public class AlertWarningInformationService {
             iql.append(" and ORG_ID = :orgId");
         }
         if (null != teacherYear) {
-            sql.append(" and TEACHER_YEAR = :teacherYear");
-            cql.append(" and TEACHER_YEAR = :teacherYear");
-            iql.append(" and TEACHER_YEAR = :teacherYear");
+            sql.append(" and TEACHING_YEAR = :teacherYear");
+            cql.append(" and TEACHING_YEAR = :teacherYear");
+            iql.append(" and TEACHING_YEAR = :teacherYear");
         }
         if (null != semester) {
             sql.append(" and SEMESTER = :semester");

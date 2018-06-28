@@ -105,7 +105,15 @@ public class MonitorController {
 	@ApiOperation(httpMethod = "GET", value = "大屏监控预警处理情况", response = Void.class, notes = "大屏监控预警处理情况<br><br><b>@author 王俊</b>")
 	public Map<String,Object> getAlarm(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId){
 		Map<String,Integer> schoolYearSemester = alertWarningInforService.getschoolYearAndSemester();
-		return alertWarningInforService.getStatistical(orgId,schoolYearSemester.get("schoolYear"),schoolYearSemester.get("semester"));//getAlarm(orgId)
+		int s = schoolYearSemester.get("semester");
+		String year = schoolYearSemester.get("schoolYear")+"";
+		String semester;
+		if(s==1){
+			semester = "春";
+		}else {
+			semester = "秋";
+		}
+		return alertWarningInforService.getStatistical(orgId,year,semester);//getAlarm(orgId)
 	}
 	/**
 	 * 大屏监控人数统计

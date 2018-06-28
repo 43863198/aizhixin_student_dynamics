@@ -52,7 +52,7 @@ public class AlertWarningInformationController {
      * 预警信息列表
      *
      * @param orgId
-     * @param collegeId
+     * @param collegeCode
      * @param type
      * @param warningLevel
      * @param pageNumber
@@ -63,12 +63,12 @@ public class AlertWarningInformationController {
     @ApiOperation(httpMethod = "GET", value = "预警信息列表", response = Void.class, notes = "预警信息列表<br><br><b>@author jianwei.wu</b>")
     public PageData<WarningDetailsDTO> getWarningInforList(
             @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "collegeId 学院code") @RequestParam(value = "collegeCode", required = false) String collegecode,
+            @ApiParam(value = "collegeCode 学院code") @RequestParam(value = "collegeCode", required = false) String collegeCode,
             @ApiParam(value = "type 预警类型") @RequestParam(value = "type", required = false) String type,
             @ApiParam(value = "warningLevel 预警等级") @RequestParam(value = "warningLevel", required = false) String warningLevel,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return alertWarningInforService.findPageWarningInfor(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId, collegecode, type, warningLevel);
+        return alertWarningInforService.findPageWarningInfor(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId, collegeCode, type, warningLevel);
     }
 
     /**
@@ -86,7 +86,6 @@ public class AlertWarningInformationController {
 
     /**
      * 预警汇总
-     *
      * @param orgId
      * @return
      */
@@ -95,7 +94,15 @@ public class AlertWarningInformationController {
     public Map<String, Object> getStatistical(
             @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
         Map<String, Integer> schoolYearSemester = alertWarningInforService.getschoolYearAndSemester();
-        return alertWarningInforService.getStatistical(orgId, schoolYearSemester.get("schoolYear"), schoolYearSemester.get("semester"));
+        int s = schoolYearSemester.get("semester");
+        String year = schoolYearSemester.get("schoolYear")+"";
+        String semester;
+        if(s==1){
+            semester = "春";
+        }else {
+            semester = "秋";
+        }
+        return alertWarningInforService.getStatistical(orgId,year, semester);
     }
 
 
@@ -133,7 +140,15 @@ public class AlertWarningInformationController {
             @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId
     ) {
         Map<String, Integer> schoolYearSemester = alertWarningInforService.getschoolYearAndSemester();
-        return alertWarningInforService.getCollegeProcessedRatio(orgId, schoolYearSemester.get("schoolYear"), schoolYearSemester.get("semester"));
+        int s = schoolYearSemester.get("semester");
+        String year = schoolYearSemester.get("schoolYear")+"";
+        String semester;
+        if(s==1){
+            semester = "春";
+        }else {
+            semester = "秋";
+        }
+        return alertWarningInforService.getCollegeProcessedRatio(orgId, year,semester);
     }
 
 
@@ -148,7 +163,15 @@ public class AlertWarningInformationController {
     public Map<String, Object> getStatisticalType(
             @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
         Map<String, Integer> schoolYearSemester = alertWarningInforService.getschoolYearAndSemester();
-        return alertWarningInforService.getStatisticalType(orgId, schoolYearSemester.get("schoolYear"), schoolYearSemester.get("semester"));
+        int s = schoolYearSemester.get("semester");
+        String year = schoolYearSemester.get("schoolYear")+"";
+        String semester;
+        if(s==1){
+            semester = "春";
+        }else {
+            semester = "秋";
+        }
+        return alertWarningInforService.getStatisticalType(orgId, year, semester);
     }
 
 
@@ -203,8 +226,8 @@ public class AlertWarningInformationController {
     @ApiOperation(httpMethod = "GET", value = "预警统计", response = Void.class, notes = "预警统计<br><br><b>@author jianwei.wu</b>")
     public Map<String, Object> getStatisticsByCollege(
             @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "teacherYear 学年", required = false) @RequestParam(value = "teacherYear", required = false) Integer teacherYear,
-            @ApiParam(value = "semester 学期", required = false) @RequestParam(value = "semester", required = false) Integer semester,
+            @ApiParam(value = "teacherYear 学年", required = false) @RequestParam(value = "teacherYear", required = false) String teacherYear,
+            @ApiParam(value = "semester 学期", required = false) @RequestParam(value = "semester", required = false) String semester,
             @ApiParam(value = "type 类型", required = false) @RequestParam(value = "type", required = false) String type,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
@@ -256,12 +279,11 @@ public class AlertWarningInformationController {
     @ApiOperation(httpMethod = "GET", value = "学生按条件分页查询预警信息", response = Void.class, notes = "学生按条件分页查询预警信息<br><br><b>@author hsh</b>")
     public ResponseEntity<Map<String, Object>> getStudentAlertPage(
             @ApiParam(value = "机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "userId") @RequestParam(value = "userId", required = false) Long userId,
             @ApiParam(value = "学号") @RequestParam(value = "jobNum", required = false) String jobNum,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         Map<String, Object> result = new HashMap<String, Object>();
-        result.put(ApiReturnConstants.DATA, alertWarningInforService.getStuAlertInforPage(orgId, userId, jobNum, pageNumber, pageSize));
+        result.put(ApiReturnConstants.DATA, alertWarningInforService.getStuAlertInforPage(orgId, jobNum, pageNumber, pageSize));
         return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
     }
 
