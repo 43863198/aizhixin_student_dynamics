@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
@@ -56,6 +57,7 @@ public class ScoreJob {
     /**
      * 统计相邻学期绩点保存到mongo中
      */
+    @Async
     public void firstTwoSemestersScoreStatisticsJob(Long orgId, String teachYear, String semester) {
         try {
             // 上学年学期
@@ -257,6 +259,7 @@ public class ScoreJob {
     /**
      * 统计在校期间累计不及格成绩汇总到mongo里
      */
+    @Async
     public void failScoreStatisticsJob(Long orgId, String teachYear, String semester) {
         try {
 
@@ -368,6 +371,7 @@ public class ScoreJob {
     /**
      * 统计上学期成绩汇总到mongo里
      */
+    @Async
     public void LastSemesterScoreStatisticsJob(Long orgId, String teachYear, String semester) {
         try {
             // 上学年学期
