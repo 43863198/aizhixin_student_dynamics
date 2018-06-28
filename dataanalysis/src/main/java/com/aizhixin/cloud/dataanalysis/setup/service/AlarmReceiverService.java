@@ -181,7 +181,7 @@ public class AlarmReceiverService {
     }
 
     @Transactional (readOnly = true)
-    public void sendMsg (Long orgId, Integer teacherYear, Integer semester, String type) {
+    public void sendMsg (Long orgId, String teacherYear, String semester, String type) {
         Map<String, Object> map = alertWarningInformationService.getStatisticsByCollege(PageUtil.createNoErrorPageRequest(1, Integer.MAX_VALUE), orgId, type, teacherYear, semester);
         List<AlarmReceiver> receiverList = alarmReceiverManager.findByOrgAll(orgId);
         if (null != map && (null != receiverList && receiverList.size() > 0)) {//接收人有数据，并且预警有数据
@@ -210,11 +210,12 @@ public class AlarmReceiverService {
                         }
                         sb.append(teacherYear).append("年");
                         if (null != semester) {
-                            if (1 == semester.intValue()) {
-                                sb.append("春季");
-                            } else {
-                                sb.append("秋季");
-                            }
+//                            if (1 == semester.intValue()) {
+//                                sb.append("春季");
+//                            } else {
+//                                sb.append("秋季");
+//                            }
+                            sb.append(semester);
                             sb.append("学期");
                         }
                         sb.append(dto.getCollegeName());

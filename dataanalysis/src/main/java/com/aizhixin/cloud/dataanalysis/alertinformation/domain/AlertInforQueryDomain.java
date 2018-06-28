@@ -20,13 +20,13 @@ import javax.validation.constraints.NotNull;
 public class AlertInforQueryDomain {
 
 	@ApiModelProperty(value = "学年", required = false)
-	private Integer teacherYear;
+	private String teacherYear;
 
 	@ApiModelProperty(value = "学期", required = false)
-	private Integer semester;
+	private String semester;
 
 	@ApiModelProperty(value = "学院id（多个以,分割）", required = false)
-	private String collogeIds;
+	private String collogeCodes;
 
 	@ApiModelProperty(value = "预警类型（多个以,分割）", required = false)
 	private String warningTypes;
