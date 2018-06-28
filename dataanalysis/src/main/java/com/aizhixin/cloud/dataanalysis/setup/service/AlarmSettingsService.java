@@ -189,43 +189,45 @@ public class AlarmSettingsService {
             warningType.setSetupCloseFlag(alarmSettingDomain.getSetupCloseFlag());
             List<AlarmSettings> alarmSettingsList = new ArrayList<>();
             for (WarningGradeDomain wg : alarmSettingDomain.getWarningGradeDomainList()) {
-                AlarmSettings alarmSettings = null;
-                if (!StringUtils.isBlank(wg.getAlarmSettingsId())) {
-                    alarmSettings = alarmSettingsRepository.findOne(wg.getAlarmSettingsId());
-                    if(null==alarmSettings){
-                        alarmSettings = new AlarmSettings();
-                    }
-                }else {
-                    alarmSettings = new AlarmSettings();
-                }
-                alarmSettings.setSetupCloseFlag(wg.getSetupCloseFlag());
-                alarmSettings.setWarningLevel(wg.getGrade());
-                alarmSettings.setOrgId(warningType.getOrgId());
-                alarmSettings.setStartTime(wg.getStartTime());
-                alarmSettings.setWarningType(warningType.getType());
-                alarmSettings.setRelationship(wg.getRelationship());
-                String ruids = "";
-                for (WaringParameterDomain wp : wg.getWaringParameterDomainList()) {
-                    RuleParameter rp = null;
-                    if (!StringUtils.isBlank(wp.getId())) {
-                        rp = ruleParameterService.findById(wp.getId());
-                        if(null==rp){
-                            rp = new RuleParameter();
+                if(wg.getSetupCloseFlag()==10) {
+                    AlarmSettings alarmSettings = null;
+                    if (!StringUtils.isBlank(wg.getAlarmSettingsId())) {
+                        alarmSettings = alarmSettingsRepository.findOne(wg.getAlarmSettingsId());
+                        if (null == alarmSettings) {
+                            alarmSettings = new AlarmSettings();
                         }
                     } else {
-                        rp = new RuleParameter();
+                        alarmSettings = new AlarmSettings();
                     }
-                    rp.setSerialNumber(wp.getSerialNumber());
-                    rp.setRightParameter(wp.getParameter());
-                    rp.setOrgId(warningType.getOrgId());
-                    rp.setRuleName(wp.getRuleName());
-                    rp.setRuledescribe(wp.getRuledescribe());
-                    ruids = ruids + ruleParameterService.save(rp) + ",";
+                    alarmSettings.setSetupCloseFlag(wg.getSetupCloseFlag());
+                    alarmSettings.setWarningLevel(wg.getGrade());
+                    alarmSettings.setOrgId(warningType.getOrgId());
+                    alarmSettings.setStartTime(wg.getStartTime());
+                    alarmSettings.setWarningType(warningType.getType());
+                    alarmSettings.setRelationship(wg.getRelationship());
+                    String ruids = "";
+                    for (WaringParameterDomain wp : wg.getWaringParameterDomainList()) {
+                        RuleParameter rp = null;
+                        if (!StringUtils.isBlank(wp.getId())) {
+                            rp = ruleParameterService.findById(wp.getId());
+                            if (null == rp) {
+                                rp = new RuleParameter();
+                            }
+                        } else {
+                            rp = new RuleParameter();
+                        }
+                        rp.setSerialNumber(wp.getSerialNumber());
+                        rp.setRightParameter(wp.getParameter());
+                        rp.setOrgId(warningType.getOrgId());
+                        rp.setRuleName(wp.getRuleName());
+                        rp.setRuledescribe(wp.getRuledescribe());
+                        ruids = ruids + ruleParameterService.save(rp) + ",";
+                    }
+                    if (!StringUtils.isBlank(ruids)) {
+                        alarmSettings.setRuleSet(ruids.substring(0, ruids.length() - 1));
+                    }
+                    alarmSettingsList.add(alarmSettings);
                 }
-                if (!StringUtils.isBlank(ruids)) {
-                    alarmSettings.setRuleSet(ruids.substring(0, ruids.length() - 1));
-                }
-                alarmSettingsList.add(alarmSettings);
             }
             alarmSettingsRepository.save(alarmSettingsList);
         } catch (Exception e) {

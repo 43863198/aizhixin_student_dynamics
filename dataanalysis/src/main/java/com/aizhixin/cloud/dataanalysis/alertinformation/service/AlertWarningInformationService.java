@@ -111,7 +111,7 @@ public class AlertWarningInformationService {
                 throws SQLException {
             // TODO Auto-generated method stub
             RegisterAlertCountDomain domain = new RegisterAlertCountDomain();
-            domain.setCollogeId(rs.getLong("COLLOGE_ID"));
+            domain.setCollogeCode(rs.getString("COLLOGE_CODE"));
             domain.setCollogeName(rs.getString("COLLOGE_NAME"));
             domain.setCountNum(rs.getLong("countNum"));
             domain.setWarningLevel(rs.getInt("WARNING_LEVEL"));
@@ -126,7 +126,7 @@ public class AlertWarningInformationService {
 
     public List<RegisterAlertCountDomain> findRegisterCountInfor(Long orgId) {
 
-        String querySql = " SELECT COUNT(1) as countNum,COLLOGE_ID,COLLOGE_NAME,WARNING_LEVEL FROM `t_warning_information` where DELETE_FLAG = " + DataValidity.VALID.getState() + " and ORG_ID =" + orgId + " and WARNING_TYPE ='Register' GROUP BY COLLOGE_ID,WARNING_LEVEL ORDER BY COLLOGE_ID,WARNING_LEVEL ;";
+        String querySql = " SELECT COUNT(1) as countNum,COLLOGE_CODE,COLLOGE_NAME,WARNING_LEVEL FROM `t_warning_information` where DELETE_FLAG = " + DataValidity.VALID.getState() + " and ORG_ID =" + orgId + " and WARNING_TYPE ='Register' GROUP BY COLLOGE_CODE,WARNING_LEVEL ORDER BY COLLOGE_CODE,WARNING_LEVEL ;";
 
         return pageJdbcUtil.getInfo(querySql, registerCountRm);
     }
@@ -144,7 +144,7 @@ public class AlertWarningInformationService {
         if (!StringUtils.isBlank(collegeCode)) {
             cql.append(" and aw.COLLOGE_CODE = :collegeId");
             sql.append(" and aw.COLLOGE_CODE = :collegeId");
-            condition.put("COLLOGE_ID", collegeCode);
+            condition.put("COLLOGE_CODE", collegeCode);
         }
         if (!StringUtils.isBlank(type)) {
             cql.append(" and aw.WARNING_TYPE = :type");
@@ -249,9 +249,9 @@ public class AlertWarningInformationService {
                 }
             }
 
-            querySql += " and COLLOGE_ID in (" + collogeCodes
+            querySql += " and COLLOGE_CODE in (" + collogeCodes
                     + ")";
-            countSql += " and COLLOGE_ID in (" + collogeCodes
+            countSql += " and COLLOGE_CODE in (" + collogeCodes
                     + ")";
         }
 
@@ -519,7 +519,7 @@ public class AlertWarningInformationService {
             querySql += " and SEMESTER = " + domain.getSemester();
         }
 
-        querySql += " and ORG_ID =" + domain.getOrgId() + " GROUP BY COLLOGE_ID,WARNING_LEVEL ORDER BY COLLOGE_ID,WARNING_LEVEL ;";
+        querySql += " and ORG_ID =" + domain.getOrgId() + " GROUP BY COLLOGE_CODE,WARNING_LEVEL ORDER BY COLLOGE_CODE,WARNING_LEVEL ;";
 
         return pageJdbcUtil.getInfo(querySql, AlertInforCountRm);
     }
@@ -588,14 +588,14 @@ public class AlertWarningInformationService {
             querySql += " and SEMESTER = " + domain.getSemester();
         }
 
-        querySql += " and ORG_ID =" + domain.getOrgId() + " and class_name in (select tct.classes_name from t_class_teacher tct where tct.teacher_id='" + domain.getUserId() + "') GROUP BY COLLOGE_ID,WARNING_LEVEL ORDER BY COLLOGE_ID,WARNING_LEVEL ;";
+        querySql += " and ORG_ID =" + domain.getOrgId() + " and class_name in (select tct.classes_name from t_class_teacher tct where tct.teacher_id='" + domain.getUserId() + "') GROUP BY COLLOGE_CODE,WARNING_LEVEL ORDER BY COLLOGE_CODE,WARNING_LEVEL ;";
 
         return pageJdbcUtil.getInfo(querySql, AlertInforCountRm);
     }
 
     public List<RegisterAlertCountDomain> alertStuCountInfor(Long orgId, String jobNum) {
         String querySql = " SELECT COUNT(1) as countNum, WARNING_LEVEL FROM `t_warning_information` where DELETE_FLAG = " + DataValidity.VALID.getState() + " ";
-        querySql += " and ORG_ID =" + orgId + " and job_number='" + jobNum + "' GROUP BY COLLOGE_ID,WARNING_LEVEL ORDER BY COLLOGE_ID,WARNING_LEVEL ;";
+        querySql += " and ORG_ID =" + orgId + " and job_number='" + jobNum + "' GROUP BY COLLOGE_CODE,WARNING_LEVEL ORDER BY COLLOGE_CODE,WARNING_LEVEL ;";
         return pageJdbcUtil.getInfo(querySql, AlertInforCountRm);
     }
 
@@ -721,7 +721,7 @@ public class AlertWarningInformationService {
 
         cql.append(" and DELETE_FLAG = 0");
         sql.append(" and DELETE_FLAG = 0");
-        sql.append(" GROUP BY COLLOGE_ID");
+        sql.append(" GROUP BY COLLOGE_CODE");
 
         try {
             Query cq = em.createNativeQuery(cql.toString());
@@ -903,7 +903,7 @@ public class AlertWarningInformationService {
             sql.append(" and SEMESTER = :semester");
             condition.put("semester", semester);
         }
-        sql.append(" and DELETE_FLAG = 0 GROUP BY COLLOGE_ID");
+        sql.append(" and DELETE_FLAG = 0 GROUP BY COLLOGE_CODE");
         try {
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
@@ -950,7 +950,7 @@ public class AlertWarningInformationService {
             sql.append(" and SEMESTER = :semester");
             condition.put("semester", semester);
         }
-        sql.append(" and DELETE_FLAG = 0 GROUP BY COLLOGE_ID");
+        sql.append(" and DELETE_FLAG = 0 GROUP BY COLLOGE_CODE");
         try {
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
@@ -1100,7 +1100,7 @@ public class AlertWarningInformationService {
             condition.put("type", type);
         }
         sql.append(" and DELETE_FLAG = 0");
-        sql.append(" GROUP BY COLLOGE_ID");
+        sql.append(" GROUP BY COLLOGE_CODE");
         try {
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
@@ -1243,7 +1243,7 @@ public class AlertWarningInformationService {
         StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, count(1) as count FROM t_warning_information  WHERE 1 = 1");
         //学院预警信息
         PageData<CollegeWarningInfoDTO> p = new PageData<>();
-        StringBuilder cql = new StringBuilder("SELECT count(sub.COLLOGE_ID) FROM (SELECT COLLOGE_ID FROM t_warning_information WHERE 1 = 1 ");
+        StringBuilder cql = new StringBuilder("SELECT count(sub.COLLOGE_CODE) FROM (SELECT COLLOGE_CODE FROM t_warning_information WHERE 1 = 1 ");
         StringBuilder iql = new StringBuilder("SELECT COLLOGE_NAME, count(1) as count, SUM(IF(WARNING_STATE = 20 OR WARNING_STATE = 40, 1, 0)) as sum, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, SUM(IF(WARNING_LEVEL = 1 and (WARNING_STATE = 20 OR WARNING_STATE = 40), 1, 0)) as asum1, SUM(IF(WARNING_LEVEL = 2 and (WARNING_STATE = 20 OR WARNING_STATE = 40), 1, 0)) as asum2, SUM(IF(WARNING_LEVEL = 3 and (WARNING_STATE = 20 OR WARNING_STATE = 40), 1, 0)) as asum3 FROM t_warning_information  WHERE 1 = 1");
         if (null != orgId) {
             sql.append(" and ORG_ID = :orgId");
@@ -1269,9 +1269,9 @@ public class AlertWarningInformationService {
         cql.append(" and DELETE_FLAG = 0");
         iql.append(" and DELETE_FLAG = 0");
 
-        sql.append(" GROUP BY COLLOGE_ID");
-        cql.append(" GROUP BY COLLOGE_ID) sub");
-        iql.append(" GROUP BY COLLOGE_ID");
+        sql.append(" GROUP BY COLLOGE_CODE");
+        cql.append(" GROUP BY COLLOGE_CODE) sub");
+        iql.append(" GROUP BY COLLOGE_CODE");
 
         try {
             Query sq = em.createNativeQuery(sql.toString());

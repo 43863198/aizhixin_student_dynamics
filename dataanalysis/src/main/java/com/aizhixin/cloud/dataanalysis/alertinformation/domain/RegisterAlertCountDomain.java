@@ -17,8 +17,8 @@ import javax.validation.constraints.NotNull;
 @Data
 public class RegisterAlertCountDomain {
 
-	@ApiModelProperty(value = "学院id", required = false)
-	protected Long collogeId;
+	@ApiModelProperty(value = "学院code", required = false)
+	protected String collogeCode;
 	
 	@ApiModelProperty(value = "学院名称", required = false)
 	protected String collogeName;
