@@ -413,7 +413,6 @@ public class ScoreJob {
                 sql1.append(sql);
                 sql1.append(" AND cj.KSRQ <= :end");
                 sql1.append(" AND cj.XKSX = '必修'");
-                sql1.append(" AND cj.KCCJ < 60");
                 sql1.append(" GROUP BY cj.KCH, cj.XH");
                 Query sq1 = em.createNativeQuery(sql1.toString());
                 sq1.setParameter("end", end);
@@ -462,19 +461,21 @@ public class ScoreJob {
                     StringBuilder source = new StringBuilder("");
                     for (Map d1 : res1) {
                         if (null != d1.get("xh") && sfc.getJobNum().equals(d1.get("xh").toString())) {
-                            if (null != d1.get("kch") && null != d1.get("kcmc") && null != d1.get("xf")) {
-                                source.append("【KCH:" + d1.get("kch") + ";");
-                                source.append("KCMC:" + d1.get("kcmc") + ";");
-                                source.append("XF:" + d1.get("xf") + "】 ");
-                                if (null != d1.get("cj")) {
-                                    count++;
-                                    kchs.add(d1.get("kch").toString());
-                                }
-                                if (null != d1.get("xf")) {
-                                    totalXF = totalXF + Float.valueOf(d1.get("xf").toString());
-                                }
-                                if(null!= d1.get("count")&&Integer.valueOf(d1.get("count").toString())>1){
-                                   bkcount++;
+                            if(null!=d.get("cj")&&Float.valueOf(d.get("cj").toString())<60) {
+                                if (null != d1.get("kch") && null != d1.get("kcmc") && null != d1.get("xf")) {
+                                    source.append("【KCH:" + d1.get("kch") + ";");
+                                    source.append("KCMC:" + d1.get("kcmc") + ";");
+                                    source.append("XF:" + d1.get("xf") + "】 ");
+                                    if (null != d1.get("cj")) {
+                                        count++;
+                                        kchs.add(d1.get("kch").toString());
+                                    }
+                                    if (null != d1.get("xf")) {
+                                        totalXF = totalXF + Float.valueOf(d1.get("xf").toString());
+                                    }
+                                    if (null != d1.get("count") && Integer.valueOf(d1.get("count").toString()) > 1) {
+                                        bkcount++;
+                                    }
                                 }
                             }
                         }
