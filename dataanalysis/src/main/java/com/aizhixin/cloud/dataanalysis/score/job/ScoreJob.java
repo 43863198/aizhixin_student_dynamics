@@ -217,7 +217,11 @@ public class ScoreJob {
                     sfc.setSecondTotalScores(totalCJ2);
                     sfc.setSecondTotalCourseNums(count2);
                     sfc.setSecondTotalGradePoint(totalXFJD2);
-                    sfc.setSecondAvgradePoint(totalXFJD2 / totalXF2);
+                    if(totalXF2!=0) {
+                        sfc.setSecondAvgradePoint(totalXFJD2 / totalXF2);
+                    }else{
+                        sfc.setSecondAvgradePoint(0);
+                    }
 
                     int count1 = 0;
                     float totalCJ1 = 0;
@@ -503,14 +507,14 @@ public class ScoreJob {
     /**
      * 相邻两个学期(上上个学期平均学分绩点与上学期平均学分绩点)下降情况-----成绩波动
      */
-    public List<WarningInformation> scoreFluctuateJob (Long orgId, String teachYear, String semester, String ruleId)
+    public List<WarningInformation> scoreFluctuateJob (Long orgId, String teachYear, String semester, String rpId)
         {
             ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
             // 上上个学期平均学分绩点与上学期平均学分绩点数据
             List<FirstTwoSemestersScoreStatistics> scoreFluctuateList = firstTwoSemestersScoreStatisticsRespository
                     .findAllByOrgIdAndTeachYearAndSemester(orgId, teachYear, semester);
-            RuleParameter ruleParameter = ruleParameterService.findById(ruleId);
+            RuleParameter ruleParameter = ruleParameterService.findById(rpId);
             if (null != scoreFluctuateList
                     && scoreFluctuateList.size() > 0) {
                 for (FirstTwoSemestersScoreStatistics scoreFluctuateCount : scoreFluctuateList) {
