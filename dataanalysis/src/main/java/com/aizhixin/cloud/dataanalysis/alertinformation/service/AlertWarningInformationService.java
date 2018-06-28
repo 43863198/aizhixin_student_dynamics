@@ -385,8 +385,8 @@ public class AlertWarningInformationService {
             countSql += " and WARNING_STATE in (" + warnStates + ")";
         }
         if (null != domain.getTeacherYear()) {
-            querySql += " and TEACHER_YEAR = " + domain.getTeacherYear();
-            countSql += " and TEACHER_YEAR = " + domain.getTeacherYear();
+            querySql += " and TEACHING_YEAR = " + domain.getTeacherYear();
+            countSql += " and TEACHING_YEAR = " + domain.getTeacherYear();
         }
         if (null != domain.getSemester()) {
             querySql += " and SEMESTER = " + domain.getSemester();
@@ -513,7 +513,7 @@ public class AlertWarningInformationService {
         }
 
         if (null != domain.getTeacherYear()) {
-            querySql += " and TEACHER_YEAR = " + domain.getTeacherYear();
+            querySql += " and TEACHING_YEAR = " + domain.getTeacherYear();
         }
         if (null != domain.getSemester()) {
             querySql += " and SEMESTER = " + domain.getSemester();
@@ -582,7 +582,7 @@ public class AlertWarningInformationService {
         }
 
         if (null != domain.getTeacherYear()) {
-            querySql += " and TEACHER_YEAR = " + domain.getTeacherYear();
+            querySql += " and TEACHING_YEAR = " + domain.getTeacherYear();
         }
         if (null != domain.getSemester()) {
             querySql += " and SEMESTER = " + domain.getSemester();
@@ -803,7 +803,7 @@ public class AlertWarningInformationService {
                 condition.put("orgId", orgId);
             }
             if (null != teacherYear) {
-                sql.append(" and TEACHER_YEAR = :teacherYear");
+                sql.append(" and TEACHING_YEAR = :teacherYear");
                 condition.put("teacherYear", teacherYear);
             }
             if (null != semester) {
