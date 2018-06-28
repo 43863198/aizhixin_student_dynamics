@@ -131,7 +131,7 @@ public class AlertWarningInformationService {
         return pageJdbcUtil.getInfo(querySql, registerCountRm);
     }
 
-    public PageData<WarningDetailsDTO> findPageWarningInfor(Pageable pageable, Long orgId, Long collegeId, String type, String warningLevel) {
+    public PageData<WarningDetailsDTO> findPageWarningInfor(Pageable pageable, Long orgId, String collegeCode, String type, String warningLevel) {
         PageData<WarningDetailsDTO> p = new PageData<>();
         Map<String, Object> condition = new HashMap<>();
         StringBuilder cql = new StringBuilder("SELECT count(1) FROM t_warning_information aw WHERE 1 = 1");
@@ -141,10 +141,10 @@ public class AlertWarningInformationService {
             sql.append(" and aw.ORG_ID = :orgId");
             condition.put("orgId", orgId);
         }
-        if (null != collegeId) {
-            cql.append(" and aw.ORG_ID = :collegeId");
-            sql.append(" and aw.ORG_ID = :collegeId");
-            condition.put("COLLOGE_ID", collegeId);
+        if (!StringUtils.isBlank(collegeCode)) {
+            cql.append(" and aw.COLLOGE_CODE = :collegeId");
+            sql.append(" and aw.COLLOGE_CODE = :collegeId");
+            condition.put("COLLOGE_ID", collegeCode);
         }
         if (!StringUtils.isBlank(type)) {
             cql.append(" and aw.WARNING_TYPE = :type");
@@ -308,8 +308,8 @@ public class AlertWarningInformationService {
             countSql += " and WARNING_STATE in (" + warnStates + ")";
         }
         if (null != domain.getTeacherYear()) {
-            querySql += " and TEACHER_YEAR = " + domain.getTeacherYear();
-            countSql += " and TEACHER_YEAR = " + domain.getTeacherYear();
+            querySql += " and TEACHING_YEAR = " + domain.getTeacherYear();
+            countSql += " and TEACHING_YEAR = " + domain.getTeacherYear();
         }
         if (null != domain.getSemester()) {
             querySql += " and SEMESTER = " + domain.getSemester();
@@ -905,7 +905,7 @@ public class AlertWarningInformationService {
         return result;
     }
 
-    public Map<String, Object> getStatisticalCollege(Long orgId, Integer teacherYear, Integer semester) {
+    public Map<String, Object> getStatisticalCollege(Long orgId, String teacherYear, String semester) {
         Map<String, Object> result = new HashMap<>();
         List<CollegeStatisticsDTO> collegeStatisticsDTOList = new ArrayList<>();
         Map<String, Object> condition = new HashMap<>();
@@ -915,7 +915,7 @@ public class AlertWarningInformationService {
             condition.put("orgId", orgId);
         }
         if (null != teacherYear) {
-            sql.append(" and TEACHER_YEAR = :teacherYear");
+            sql.append(" and TEACHING_YEAR = :teacherYear");
             condition.put("teacherYear", teacherYear);
         }
         if (null != semester) {
