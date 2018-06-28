@@ -296,14 +296,15 @@ public class ScoreJob {
                 aq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
                 List<Map<String, Object>> res = aq.getResultList();
 
-                StringBuilder sql = new StringBuilder("SELECT c.COURSE_NUMBER as kch, c.COURSE_NAME as kcmc, cj.XH as xh, MAX(cj.KCCJ) as cj, c.CREDIT as xf FROM t_xscjxx cj" +
+                StringBuilder sql = new StringBuilder("SELECT r.kch as kch, r.kcmc as kcmc, r.xh as xh, r.cj as cj, r.xf as xf FROM (SELECT c.COURSE_NUMBER as kch, c.COURSE_NAME as kcmc, cj.XH as xh, MAX(cj.KCCJ) as cj, c.CREDIT as xf FROM t_xscjxx cj" +
                         " LEFT JOIN t_course c ON cj.KCH = c.COURSE_NUMBER WHERE 1 = 1");
 
                 StringBuilder sql1 = new StringBuilder("");
                 sql1.append(sql);
                 sql1.append(" AND cj.KSRQ <= :end");
                 sql1.append(" AND cj.XKSX = '必修'");
-                sql1.append(" GROUP BY cj.KCH, cj.XH");
+                sql1.append(" GROUP BY cj.KCH, cj.XH) r");
+                sql1.append(" WHERE r.cj < 60");
                 Query sq1 = em.createNativeQuery(sql1.toString());
                 sq1.setParameter("end", end);
                 sq1.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
@@ -344,7 +345,7 @@ public class ScoreJob {
                     for (Map d1 : res1) {
                         if (null != d1.get("xh") && sfc.getJobNum().equals(d1.get("xh").toString())) {
                             if (null != d1.get("cj")) {
-                                if (Float.valueOf(d1.get("cj").toString()) < 60) {
+//                                if (Float.valueOf(d1.get("cj").toString()) < 60) {
                                     count++;
                                     if (null != d1.get("kch") && null != d1.get("kcmc") && null != d1.get("xf")) {
                                         source.append("【KCH:" + d1.get("kch") + ";");
@@ -358,7 +359,7 @@ public class ScoreJob {
                                     sfc.setFailCourseNum(count);
                                     sfc.setDataSource(source.toString());
                                     sfcList.add(sfc);
-                                }
+//                                }
                             }
                         }
                     }
