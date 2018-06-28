@@ -48,17 +48,6 @@ public class AlertWarningInformationController {
     @Autowired
     private ScoreJob scoreJob;
 
-
-//    @GetMapping(value = "/gettset", produces = MediaType.APPLICATION_JSON_VALUE)
-//    @ApiOperation(httpMethod = "GET", value = "测试测试", response = Void.class, notes = "测试测试<br><br><b>@author jianwei.wu</b>")
-//    public void getTest(
-//            @RequestParam(value = "orgId", required = true) Long orgId,
-//            @RequestParam(value = "teachYear", required = false) String teachYear,
-//           @RequestParam(value = "semester", required = false) String semester) {
-//         scoreJob.scoreFluctuateCountJob(orgId, teachYear, semester);
-//    }
-
-
     /**
      * 预警信息列表
      *
@@ -74,12 +63,12 @@ public class AlertWarningInformationController {
     @ApiOperation(httpMethod = "GET", value = "预警信息列表", response = Void.class, notes = "预警信息列表<br><br><b>@author jianwei.wu</b>")
     public PageData<WarningDetailsDTO> getWarningInforList(
             @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "collegeId 学院id") @RequestParam(value = "collegeId", required = false) Long collegeId,
+            @ApiParam(value = "collegeId 学院code") @RequestParam(value = "collegeCode", required = false) String collegecode,
             @ApiParam(value = "type 预警类型") @RequestParam(value = "type", required = false) String type,
             @ApiParam(value = "warningLevel 预警等级") @RequestParam(value = "warningLevel", required = false) String warningLevel,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return alertWarningInforService.findPageWarningInfor(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId, collegeId, type, warningLevel);
+        return alertWarningInforService.findPageWarningInfor(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId, collegecode, type, warningLevel);
     }
 
     /**
@@ -121,7 +110,15 @@ public class AlertWarningInformationController {
     public Map<String, Object> getStatisticalCollege(
             @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
         Map<String, Integer> schoolYearSemester = alertWarningInforService.getschoolYearAndSemester();
-        return alertWarningInforService.getStatisticalCollege(orgId, schoolYearSemester.get("schoolYear"), schoolYearSemester.get("semester"));
+        int s = schoolYearSemester.get("semester");
+        String year = schoolYearSemester.get("schoolYear")+"";
+        String semester;
+        if(s==1){
+            semester = "春";
+        }else {
+            semester = "秋";
+        }
+        return alertWarningInforService.getStatisticalCollege(orgId, year, semester);
     }
 
     /**

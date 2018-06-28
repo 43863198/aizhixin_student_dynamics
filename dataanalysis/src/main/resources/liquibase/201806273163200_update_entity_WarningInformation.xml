@@ -25,9 +25,25 @@
             <column name="CLASS_CODE" type="VARCHAR(8)"  remarks="所属班级code"/>
             <column name="PROFESSIONAL_CODE" type="VARCHAR(8)"  remarks="所属专业code"/>
             <column name="COLLOGE_CODE" type="VARCHAR(8)"  remarks="所属学院code"/>
-            <column name="WARNING_STANDARD" type="VARCHAR(500)"  remarks="预警标准"/>
+            <column name="WARNING_STANDARD" type="text"  remarks="预警标准"/>
             <column name="IS_FILE" type="INT"  remarks="是否归档"/>
             <column name="SEMESTER" type="VARCHAR(10)"  remarks="学期"/>
         </addColumn>
+        <modifyDataType
+                columnName="WARNING_SOURCE"
+                newDataType="text"
+                tableName="T_WARNING_INFORMATION"/>
+        <modifyDataType
+                columnName="COLLOGE_NAME"
+                newDataType="VARCHAR(100)"
+                tableName="T_WARNING_INFORMATION"/>
+        <modifyDataType
+                columnName="PROFESSIONAL_NAME"
+                newDataType="VARCHAR(100)"
+                tableName="T_WARNING_INFORMATION"/>
+        <modifyDataType
+                columnName="CLASS_NAME"
+                newDataType="VARCHAR(100)"
+                tableName="T_WARNING_INFORMATION"/>
     </changeSet>
 </databaseChangeLog>
