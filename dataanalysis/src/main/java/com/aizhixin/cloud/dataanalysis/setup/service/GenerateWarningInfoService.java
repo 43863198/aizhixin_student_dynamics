@@ -85,7 +85,7 @@ public class GenerateWarningInfoService {
         warningInfo(orgId, warningType, teachYear, semester);
     }
 
-//    @Async
+    @Async
     public void warningInfo(Long orgId, String type,String schoolYear,String semester ){
         List<AlarmSettings> alarmSettingsList = alarmSettingsService.getAlarmSettingsByOrgIdAndWarningType(orgId,type);
         HashMap<Integer, List<WarningInformation>> restHasMap = new HashMap<>();
@@ -125,9 +125,9 @@ public class GenerateWarningInfoService {
                                 if (rule.getName().equals("D")) {
                                     absenteeismList = rollCallJob.rollCallJob(orgId, schoolYear, semester, rp.getId());
                                 }
-//                                if (rule.getName().equals("G")) {
-//                                    performanceFluctuationList = scoreJob.scoreFluctuateJob(orgId, schoolYear, semester, rp.getId());
-//                                }
+                                if (rule.getName().equals("G")) {
+                                    performanceFluctuationList = scoreJob.scoreFluctuateJob(orgId, schoolYear, semester, rp.getId());
+                                }
                                 if (rule.getName().equals("F")) {
                                     supplementAchievementList = scoreJob.makeUpScoreJob(orgId, schoolYear, semester, rp.getId());
                                 }
