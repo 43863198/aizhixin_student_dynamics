@@ -6,3 +6,18 @@ spring:
       profile: ${spring.profiles.active}
       label: master
       uri: ${configServerIp}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

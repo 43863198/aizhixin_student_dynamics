@@ -339,25 +339,26 @@ public class ScoreJob {
                     StringBuilder source = new StringBuilder("");
                     for (Map d1 : res1) {
                         if (null != d1.get("xh") && sfc.getJobNum().equals(d1.get("xh").toString())) {
-                            if (null != d1.get("kch") && null != d1.get("kcmc") && null != d1.get("xf")) {
-                                source.append("【KCH:" + d1.get("kch") + ";");
-                                source.append("KCMC:" + d1.get("kcmc") + ";");
-                                source.append("XF:" + d1.get("xf") + "】 ");
-                            }
                             if (null != d1.get("cj")) {
                                 if (Float.valueOf(d1.get("cj").toString()) < 60) {
                                     count++;
+                                    if (null != d1.get("kch") && null != d1.get("kcmc") && null != d1.get("xf")) {
+                                        source.append("【KCH:" + d1.get("kch") + ";");
+                                        source.append("KCMC:" + d1.get("kcmc") + ";");
+                                        source.append("XF:" + d1.get("xf") + "】 ");
+                                    }
                                     if (null != d1.get("xf")) {
                                         totalXF = totalXF + Float.valueOf(d1.get("xf").toString());
                                     }
+                                    sfc.setFailCourseCredit(totalXF);
+                                    sfc.setFailCourseNum(count);
+                                    sfc.setDataSource(source.toString());
+                                    sfcList.add(sfc);
                                 }
                             }
                         }
                     }
-                    sfc.setFailCourseCredit(totalXF);
-                    sfc.setFailCourseNum(count);
-                    sfc.setDataSource(source.toString());
-                    sfcList.add(sfc);
+
                 }
                 failScoreStatisticsRespository.save(sfcList);
             }
