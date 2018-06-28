@@ -259,7 +259,7 @@ public class ScoreJob {
     /**
      * 统计在校期间累计不及格成绩汇总到mongo里
      */
-//    @Async
+    @Async
     public void failScoreStatisticsJob(Long orgId, String teachYear, String semester) {
         try {
 
