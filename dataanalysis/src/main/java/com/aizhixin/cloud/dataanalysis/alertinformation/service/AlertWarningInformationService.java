@@ -318,8 +318,8 @@ public class AlertWarningInformationService {
             if(domain.getSemester().equals("1")){
                 domain.setSemester("春");
             }
-            querySql += " and SEMESTER = " + domain.getSemester();
-            countSql += " and SEMESTER = " + domain.getSemester();
+            querySql += " and SEMESTER = '" + domain.getSemester()+"'";
+            countSql += " and SEMESTER = '" + domain.getSemester()+"'";
         }
 
         querySql += " and ORG_ID =" + domain.getOrgId();
@@ -401,8 +401,8 @@ public class AlertWarningInformationService {
             if(domain.getSemester().equals("1")){
                 domain.setSemester("春");
             }
-            querySql += " and SEMESTER = " + domain.getSemester();
-            countSql += " and SEMESTER = " + domain.getSemester();
+            querySql += " and SEMESTER = '" + domain.getSemester()+"'";
+            countSql += " and SEMESTER = '" + domain.getSemester()+"'";
         }
 
         querySql += " and ORG_ID =" + domain.getOrgId();
@@ -534,7 +534,7 @@ public class AlertWarningInformationService {
             if(domain.getSemester().equals("1")){
                 domain.setSemester("春");
             }
-            querySql += " and SEMESTER = " + domain.getSemester();
+            querySql += " and SEMESTER = '" + domain.getSemester()+"'";
         }
 
         querySql += " and ORG_ID =" + domain.getOrgId() + " GROUP BY COLLOGE_CODE,WARNING_LEVEL ORDER BY COLLOGE_CODE,WARNING_LEVEL ;";
@@ -609,7 +609,7 @@ public class AlertWarningInformationService {
             if(domain.getSemester().equals("1")){
                 domain.setSemester("春");
             }
-            querySql += " and SEMESTER = " + domain.getSemester();
+            querySql += " and SEMESTER = '" + domain.getSemester()+"'";
         }
 
         querySql += " and ORG_ID =" + domain.getOrgId() + " and class_name in (select tct.classes_name from t_class_teacher tct where tct.teacher_id='" + domain.getUserId() + "') GROUP BY COLLOGE_CODE,WARNING_LEVEL ORDER BY COLLOGE_CODE,WARNING_LEVEL ;";
