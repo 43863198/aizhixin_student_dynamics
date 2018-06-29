@@ -162,21 +162,21 @@ public class ScoreJob {
                 StringBuilder sql1 = new StringBuilder("");
                 sql1.append(sql);
 //                sql1.append(" AND cj.KSRQ BETWEEN :start1 AND :end1");
-                sql2.append(" AND cj.XN = :xn");
-                sql2.append(" AND cj.XQM = :xqm");
+                sql1.append(" AND cj.XN = :xn");
+                sql1.append(" AND cj.XQM = :xqm");
                 sql1.append(" AND cj.XKSX = '必修'");
                 sql1.append(" GROUP BY cj.KCH, cj.XH");
                 Query sq1 = em.createNativeQuery(sql1.toString());
 //                sq1.setParameter("start1", start1);
 //                sq1.setParameter("end1", end1);
-                sq2.setParameter("xn",firstSchoolYear);
+                sq1.setParameter("xn",firstSchoolYear);
                 String xqm1 = "";
                 if(firstSemester.equals("春")){
                     xqm1= "1";
                 }else {
                     xqm1="2";
                 }
-                sq2.setParameter("xqm",xqm1);
+                sq1.setParameter("xqm",xqm1);
                 sq1.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
                 List<Map<String, Object>> res1 = sq1.getResultList();
                 List<FirstTwoSemestersScoreStatistics> sfcList = new ArrayList<>();
