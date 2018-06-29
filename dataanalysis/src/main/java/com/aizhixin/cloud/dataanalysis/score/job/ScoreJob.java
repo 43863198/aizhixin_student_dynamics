@@ -263,7 +263,7 @@ public class ScoreJob {
     /**
      * 统计在校期间累计不及格成绩汇总到mongo里
      */
-    @Async
+//    @Async
     public void failScoreStatisticsJob(Long orgId, String teachYear, String semester) {
         try {
 
@@ -345,7 +345,6 @@ public class ScoreJob {
                     for (Map d1 : res1) {
                         if (null != d1.get("xh") && sfc.getJobNum().equals(d1.get("xh").toString())) {
                             if (null != d1.get("cj")) {
-//                                if (Float.valueOf(d1.get("cj").toString()) < 60) {
                                     count++;
                                     if (null != d1.get("kch") && null != d1.get("kcmc") && null != d1.get("xf")) {
                                         source.append("【KCH:" + d1.get("kch") + ";");
@@ -359,7 +358,6 @@ public class ScoreJob {
                                     sfc.setFailCourseNum(count);
                                     sfc.setDataSource(source.toString());
                                     sfcList.add(sfc);
-//                                }
                             }
                         }
                     }
@@ -541,11 +539,11 @@ public class ScoreJob {
                                 alertInfor.setSemester(scoreFluctuateCount.getSemester());
                                 alertInfor.setTeacherYear(scoreFluctuateCount.getTeachYear());
                                 alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
-                                alertInfor.setWarningCondition(scoreFluctuateCount.getFirstSchoolYear() + "年" + scoreFluctuateCount.getFirstSemester() + "平均学分绩点为："
+                                alertInfor.setWarningCondition(scoreFluctuateCount.getFirstSchoolYear() + "年" + scoreFluctuateCount.getFirstSemester() + "平均学分绩点为:"
                                         + scoreFluctuateCount.getFirstAvgradePoint() +
-                                        "," + scoreFluctuateCount.getSecondSchoolYear() + "年" + scoreFluctuateCount.getSecondSemester() + "平均学分绩点为："
+                                        ";" + scoreFluctuateCount.getSecondSchoolYear() + "年" + scoreFluctuateCount.getSecondSemester() + "平均学分绩点为:"
                                         + scoreFluctuateCount.getSecondAvgradePoint()
-                                        + ",平均学分绩点下降："
+                                        + ",平均学分绩点下降:"
                                         + new BigDecimal(result).setScale(2, RoundingMode.HALF_UP).toString());
                                 alertInfor.setWarningTime(new Date());
                                 alertInfor.setPhone(scoreFluctuateCount.getUserPhone());
