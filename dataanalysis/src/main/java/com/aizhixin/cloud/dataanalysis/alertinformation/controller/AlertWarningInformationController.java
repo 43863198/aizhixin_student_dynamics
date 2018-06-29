@@ -250,11 +250,10 @@ public class AlertWarningInformationController {
     @RequestMapping(value = "/alertpage", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "POST", value = "按条件分页查询预警信息", response = Void.class, notes = "按条件分页查询预警信息<br><br><b>@author 郑宁</b>")
     public ResponseEntity<Map<String, Object>> alertPage(
-//            @RequestHeader("Authorization") String token,
             @ApiParam(value = "<b>必填:、</b><br>orgId:机构id<br>" +
                     "<br>teacherYear:学年<br>" +
                     "<br>semester:学期<br>" +
-                    "<b>选填:、</b><br>collogeIds:学院id(字符串多个以,分隔);warningTypes:预警类型(字符串多个以,分隔);warningLevels:预警等级(字符串多个以,分隔);<br>collegeId:院系id、<br>") @RequestBody AlertInforQueryDomain domain
+                    "<b>选填:、</b><br>collogeCodes:学院code(字符串多个以,分隔);warningTypes:预警类型(字符串多个以,分隔);warningLevels:预警等级(字符串多个以,分隔);<br>collegeId:院系id、<br>") @RequestBody AlertInforQueryDomain domain
     ) {
         Map<String, Object> result = new HashMap<String, Object>();
 

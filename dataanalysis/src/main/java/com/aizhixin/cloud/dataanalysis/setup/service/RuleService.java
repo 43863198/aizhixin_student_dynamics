@@ -50,7 +50,7 @@ public class RuleService {
             rule1.setName("A");
             ruleList.add(rule1);
             Rule rule2 = new Rule();
-            rule2.setRuleDescribe("必修课和专业选修课不及格课程累计学分≥");
+            rule2.setRuleDescribe("在校学习期间，考核不合格的必修课程（含集中性实践教学环节）学分≥");
             rule2.setName("B");
             ruleList.add(rule2);
             Rule  rule3 = new Rule();

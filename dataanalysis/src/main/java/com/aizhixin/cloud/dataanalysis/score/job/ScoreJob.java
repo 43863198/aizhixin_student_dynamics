@@ -841,7 +841,7 @@ public class ScoreJob {
 
         List<FailScoreStatistics> makeUpScoreCountList = failScoreStatisticsRespository.findAllByOrgIdAndTeachYearAndSemester(orgId, teachYear, semester);
             RuleParameter ruleParameter = ruleParameterService.findById(rpId);
-        if (null != makeUpScoreCountList && makeUpScoreCountList.size() > 0) {
+              if (null != makeUpScoreCountList && makeUpScoreCountList.size() > 0) {
                 for (FailScoreStatistics makeUpScoreCount : makeUpScoreCountList) {
                     if (null != ruleParameter) {
                         if (makeUpScoreCount.getFailCourseCredit() >= Float.parseFloat(ruleParameter.getRightParameter())) {
