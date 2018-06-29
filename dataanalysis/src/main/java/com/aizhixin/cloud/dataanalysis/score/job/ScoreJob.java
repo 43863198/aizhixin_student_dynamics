@@ -63,7 +63,7 @@ public class ScoreJob {
             // 上学年学期
             String secondSchoolYear = teachYear;
             String secondSemester = "春";
-            if (semester == "春") {
+            if (semester.equals("春")) {
                 secondSemester = "秋";
                 secondSchoolYear = Integer.valueOf(teachYear) - 1 + "";
             }
@@ -214,9 +214,9 @@ public class ScoreJob {
                             }
                         }
                     }
-                    sfc.setSecondTotalScores(totalCJ2);
+                    sfc.setSecondTotalScores((float) (Math.round(totalCJ2 * 100) / 100));
                     sfc.setSecondTotalCourseNums(count2);
-                    sfc.setSecondTotalGradePoint(totalXFJD2);
+                    sfc.setSecondTotalGradePoint((float)(Math.round(totalXFJD2*100)/100));
                     if(totalXF2!=0) {
                         sfc.setSecondAvgradePoint((float)(Math.round((totalXFJD2 / totalXF2)*100)/100));
                     }else{
@@ -245,9 +245,9 @@ public class ScoreJob {
                             }
                         }
                     }
-                    sfc.setFirstTotalScores(totalCJ1);
+                    sfc.setFirstTotalScores((float)(Math.round(totalCJ1*100)/100));
                     sfc.setFirstTotalCourseNums(count1);
-                    sfc.setFirstTotalGradePoint(totalXFJD1);
+                    sfc.setFirstTotalGradePoint((float)(Math.round(totalXFJD1*100)/100));
                     sfc.setFirstAvgradePoint((float)(Math.round((totalXFJD1 / totalXF1)*100)/100));
 //                    sfc.setDataSource(source1 + ";" + source2);
                     sfcList.add(sfc);
@@ -355,7 +355,7 @@ public class ScoreJob {
                                     if (null != d1.get("xf")) {
                                         totalXF = totalXF + Float.valueOf(d1.get("xf").toString());
                                     }
-                                    sfc.setFailCourseCredit(totalXF);
+                                    sfc.setFailCourseCredit((float)(Math.round(totalXF*100)/100));
                                     sfc.setFailCourseNum(count);
                                     sfc.setDataSource(source.toString());
                                     sfcList.add(sfc);
@@ -490,7 +490,7 @@ public class ScoreJob {
                             }
                         }
                     }
-                    sfc.setRequireCreditCount(totalXF);
+                    sfc.setRequireCreditCount((float)(Math.round(totalXF*100)/100));
                     sfc.setFailRequiredCourseNum(count);
                     sfc.setMakeUpFailRequiredCourseNum(bkcount);
                     sfc.setDataSource(source.toString());
