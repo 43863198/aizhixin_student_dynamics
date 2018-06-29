@@ -354,7 +354,7 @@ public class ScoreJob {
                                     if (null != d1.get("xf")) {
                                         totalXF = totalXF + Float.valueOf(d1.get("xf").toString());
                                     }
-                                    sfc.setFailCourseCredit((float)(Math.round(totalXF*100)/100));
+                                    sfc.setFailCourseCredit(totalXF);
                                     sfc.setFailCourseNum(count);
                                     sfc.setDataSource(source.toString());
                                     sfcList.add(sfc);
