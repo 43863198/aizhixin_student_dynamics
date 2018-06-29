@@ -74,14 +74,12 @@ public class GenerateWarningInfoService {
         int month = c.get(Calendar.MONTH)+1;
         // 当前学期编号
         String semester = "秋";
-        if (month > 1 && month < 9) {
+        if (month > 3 && month < 9) {
             semester = "春";
-        }
-        if(month == 1 ){
+        }else {
             year = year - 1;
         }
         String teachYear = year+"";
-
         warningInfo(orgId, warningType, teachYear, semester);
     }
 

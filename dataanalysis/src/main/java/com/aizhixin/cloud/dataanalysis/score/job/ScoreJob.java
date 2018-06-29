@@ -196,15 +196,15 @@ public class ScoreJob {
                     float totalCJ2 = 0;
                     float totalXFJD2 = 0;
                     float totalXF2 = 0;
-                    StringBuilder source2 = new StringBuilder("");
+//                    StringBuilder source2 = new StringBuilder("");
                     for (Map d2 : res2) {
                         if (null != d2.get("xh") && sfc.getJobNum().equals(d2.get("xh").toString())) {
                             count2++;
-                            if (null != d2.get("kch") && null != d2.get("kcmc") && null != d2.get("xf")) {
-                                source2.append("【KCH:" + d2.get("kch") + ";");
-                                source2.append("KCMC:" + d2.get("kcmc") + ";");
-                                source2.append("XF:" + d2.get("xf") + "】 ");
-                            }
+//                            if (null != d2.get("kch") && null != d2.get("kcmc") && null != d2.get("xf")) {
+//                                source2.append("【KCH:" + d2.get("kch") + ";");
+//                                source2.append("KCMC:" + d2.get("kcmc") + ";");
+//                                source2.append("XF:" + d2.get("xf") + "】 ");
+//                            }
                             if (null != d2.get("cj")) {
                                 totalCJ2 = totalCJ2 + Float.valueOf(d2.get("cj").toString());
                             }
@@ -218,7 +218,7 @@ public class ScoreJob {
                     sfc.setSecondTotalCourseNums(count2);
                     sfc.setSecondTotalGradePoint(totalXFJD2);
                     if(totalXF2!=0) {
-                        sfc.setSecondAvgradePoint(totalXFJD2 / totalXF2);
+                        sfc.setSecondAvgradePoint((float)(Math.round((totalXFJD2 / totalXF2)*100)/100));
                     }else{
                         sfc.setSecondAvgradePoint(0);
                     }
@@ -227,15 +227,15 @@ public class ScoreJob {
                     float totalCJ1 = 0;
                     float totalXFJD1 = 0;
                     float totalXF1 = 0;
-                    StringBuilder source1 = new StringBuilder("");
+//                    StringBuilder source1 = new StringBuilder("");
                     for (Map d1 : res1) {
                         if (null != d1.get("xh") && sfc.getJobNum().equals(d1.get("xh").toString())) {
                             count1++;
-                            if (null != d1.get("kch") && null != d1.get("kcmc") && null != d1.get("xf")) {
-                                source1.append("【KCH:" + d1.get("kch") + ";");
-                                source1.append("KCMC:" + d1.get("kcmc") + ";");
-                                source1.append("XF:" + d1.get("xf") + "】 ");
-                            }
+//                            if (null != d1.get("kch") && null != d1.get("kcmc") && null != d1.get("xf")) {
+//                                source1.append("【KCH:" + d1.get("kch") + ";");
+//                                source1.append("KCMC:" + d1.get("kcmc") + ";");
+//                                source1.append("XF:" + d1.get("xf") + "】 ");
+//                            }
                             if (null != d1.get("cj")) {
                                 totalCJ1 = totalCJ1 + Float.valueOf(d1.get("cj").toString());
                             }
@@ -248,8 +248,8 @@ public class ScoreJob {
                     sfc.setFirstTotalScores(totalCJ1);
                     sfc.setFirstTotalCourseNums(count1);
                     sfc.setFirstTotalGradePoint(totalXFJD1);
-                    sfc.setFirstAvgradePoint(totalXFJD1 / totalXF1);
-                    sfc.setDataSource(source1 + ";" + source2);
+                    sfc.setFirstAvgradePoint((float)(Math.round((totalXFJD1 / totalXF1)*100)/100));
+//                    sfc.setDataSource(source1 + ";" + source2);
                     sfcList.add(sfc);
                 }
                 firstTwoSemestersScoreStatisticsRespository.save(sfcList);
@@ -549,7 +549,7 @@ public class ScoreJob {
                                         + new BigDecimal(result).setScale(2, RoundingMode.HALF_UP).toString());
                                 alertInfor.setWarningTime(new Date());
                                 alertInfor.setPhone(scoreFluctuateCount.getUserPhone());
-                                alertInfor.setWarningSource(scoreFluctuateCount.getDataSource());
+//                                alertInfor.setWarningSource(scoreFluctuateCount.getDataSource());
                                 alertInfor.setOrgId(orgId);
                                 alertInforList.add(alertInfor);
                             } else {
