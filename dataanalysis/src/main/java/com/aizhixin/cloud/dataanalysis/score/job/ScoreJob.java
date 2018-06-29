@@ -31,11 +31,12 @@ import org.springframework.stereotype.Component;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
+import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-@Component
+@Service
 public class ScoreJob {
 
     private Logger logger = Logger.getLogger(this.getClass());
