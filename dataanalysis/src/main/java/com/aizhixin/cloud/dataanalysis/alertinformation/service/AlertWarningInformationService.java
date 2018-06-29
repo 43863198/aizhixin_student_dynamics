@@ -312,6 +312,12 @@ public class AlertWarningInformationService {
             countSql += " and TEACHING_YEAR = " + domain.getTeacherYear();
         }
         if (null != domain.getSemester()) {
+            if(domain.getSemester().equals("2")){
+                domain.setSemester("秋");
+            }
+            if(domain.getSemester().equals("1")){
+                domain.setSemester("春");
+            }
             querySql += " and SEMESTER = " + domain.getSemester();
             countSql += " and SEMESTER = " + domain.getSemester();
         }
@@ -389,6 +395,12 @@ public class AlertWarningInformationService {
             countSql += " and TEACHING_YEAR = " + domain.getTeacherYear();
         }
         if (null != domain.getSemester()) {
+            if(domain.getSemester().equals("2")){
+                domain.setSemester("秋");
+            }
+            if(domain.getSemester().equals("1")){
+                domain.setSemester("春");
+            }
             querySql += " and SEMESTER = " + domain.getSemester();
             countSql += " and SEMESTER = " + domain.getSemester();
         }
@@ -516,6 +528,12 @@ public class AlertWarningInformationService {
             querySql += " and TEACHING_YEAR = " + domain.getTeacherYear();
         }
         if (null != domain.getSemester()) {
+            if(domain.getSemester().equals("2")){
+                domain.setSemester("秋");
+            }
+            if(domain.getSemester().equals("1")){
+                domain.setSemester("春");
+            }
             querySql += " and SEMESTER = " + domain.getSemester();
         }
 
@@ -585,6 +603,12 @@ public class AlertWarningInformationService {
             querySql += " and TEACHING_YEAR = " + domain.getTeacherYear();
         }
         if (null != domain.getSemester()) {
+            if(domain.getSemester().equals("2")){
+                domain.setSemester("秋");
+            }
+            if(domain.getSemester().equals("1")){
+                domain.setSemester("春");
+            }
             querySql += " and SEMESTER = " + domain.getSemester();
         }
 
@@ -807,6 +831,12 @@ public class AlertWarningInformationService {
                 condition.put("teacherYear", teacherYear);
             }
             if (null != semester) {
+                if(semester.equals("2")){
+                    semester="秋";
+                }
+                if(semester.equals("1")){
+                    semester="春";
+                }
                 sql.append(" and SEMESTER = :semester");
                 condition.put("semester", semester);
             }
@@ -900,6 +930,12 @@ public class AlertWarningInformationService {
             condition.put("teacherYear", teacherYear);
         }
         if (null != semester) {
+            if(semester.equals("2")){
+                semester="秋";
+            }
+            if(semester.equals("1")){
+                semester="春";
+            }
             sql.append(" and SEMESTER = :semester");
             condition.put("semester", semester);
         }
@@ -947,6 +983,12 @@ public class AlertWarningInformationService {
             condition.put("teacherYear", teacherYear);
         }
         if (null != semester) {
+            if(semester.equals("2")){
+                semester="秋";
+            }
+            if(semester.equals("1")){
+                semester="春";
+            }
             sql.append(" and SEMESTER = :semester");
             condition.put("semester", semester);
         }
@@ -1012,6 +1054,12 @@ public class AlertWarningInformationService {
             condition.put("teacherYear", teacherYear);
         }
         if (null != semester) {
+            if(semester.equals("2")){
+                semester="秋";
+            }
+            if(semester.equals("1")){
+                semester="春";
+            }
             sql.append(" and SEMESTER = :semester");
             condition.put("semester", semester);
         }
@@ -1256,6 +1304,12 @@ public class AlertWarningInformationService {
             iql.append(" and TEACHING_YEAR = :teacherYear");
         }
         if (null != semester) {
+            if(semester.equals("2")){
+                semester="秋";
+            }
+            if(semester.equals("1")){
+                semester="春";
+            }
             sql.append(" and SEMESTER = :semester");
             cql.append(" and SEMESTER = :semester");
             iql.append(" and SEMESTER = :semester");
@@ -1288,6 +1342,12 @@ public class AlertWarningInformationService {
                 iq.setParameter("teacherYear", teacherYear);
             }
             if (null != semester) {
+                if(semester.equals("2")){
+                    semester="秋";
+                }
+                if(semester.equals("1")){
+                    semester="春";
+                }
                 cq.setParameter("semester", semester);
                 sq.setParameter("semester", semester);
                 iq.setParameter("semester", semester);
