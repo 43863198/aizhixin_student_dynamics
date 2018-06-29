@@ -214,11 +214,11 @@ public class ScoreJob {
                             }
                         }
                     }
-                    sfc.setSecondTotalScores((float) (Math.round(totalCJ2 * 100) / 100));
+                    sfc.setSecondTotalScores(totalCJ2);
                     sfc.setSecondTotalCourseNums(count2);
-                    sfc.setSecondTotalGradePoint((float)(Math.round(totalXFJD2*100)/100));
+                    sfc.setSecondTotalGradePoint(totalXFJD2);
                     if(totalXF2!=0) {
-                        sfc.setSecondAvgradePoint((float)(Math.round((totalXFJD2 / totalXF2)*100)/100));
+                        sfc.setSecondAvgradePoint(totalXFJD2 / totalXF2);
                     }else{
                         sfc.setSecondAvgradePoint(0);
                     }
@@ -245,10 +245,10 @@ public class ScoreJob {
                             }
                         }
                     }
-                    sfc.setFirstTotalScores((float)(Math.round(totalCJ1*100)/100));
+                    sfc.setFirstTotalScores(totalCJ1);
                     sfc.setFirstTotalCourseNums(count1);
-                    sfc.setFirstTotalGradePoint((float)(Math.round(totalXFJD1*100)/100));
-                    sfc.setFirstAvgradePoint((float)(Math.round((totalXFJD1 / totalXF1)*100)/100));
+                    sfc.setFirstTotalGradePoint(totalXFJD1);
+                    sfc.setFirstAvgradePoint(totalXFJD1 / totalXF1);
 //                    sfc.setDataSource(source1 + ";" + source2);
                     sfcList.add(sfc);
                 }
@@ -263,7 +263,7 @@ public class ScoreJob {
     /**
      * 统计在校期间累计不及格成绩汇总到mongo里
      */
-//    @Async
+    @Async
     public void failScoreStatisticsJob(Long orgId, String teachYear, String semester) {
         try {
 
@@ -488,7 +488,7 @@ public class ScoreJob {
                             }
                         }
                     }
-                    sfc.setRequireCreditCount((float)(Math.round(totalXF*100)/100));
+                    sfc.setRequireCreditCount(totalXF);
                     sfc.setFailRequiredCourseNum(count);
                     sfc.setMakeUpFailRequiredCourseNum(bkcount);
                     sfc.setDataSource(source.toString());
@@ -540,9 +540,9 @@ public class ScoreJob {
                                 alertInfor.setTeacherYear(scoreFluctuateCount.getTeachYear());
                                 alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
                                 alertInfor.setWarningCondition(scoreFluctuateCount.getFirstSchoolYear() + "年" + scoreFluctuateCount.getFirstSemester() + "平均学分绩点为:"
-                                        + scoreFluctuateCount.getFirstAvgradePoint() +
+                                        + new BigDecimal(scoreFluctuateCount.getFirstAvgradePoint()).setScale(2, RoundingMode.HALF_UP).toString() +
                                         ";" + scoreFluctuateCount.getSecondSchoolYear() + "年" + scoreFluctuateCount.getSecondSemester() + "平均学分绩点为:"
-                                        + scoreFluctuateCount.getSecondAvgradePoint()
+                                        +  new BigDecimal(scoreFluctuateCount.getSecondAvgradePoint()).setScale(2, RoundingMode.HALF_UP).toString()
                                         + ",平均学分绩点下降:"
                                         + new BigDecimal(result).setScale(2, RoundingMode.HALF_UP).toString());
                                 alertInfor.setWarningTime(new Date());
@@ -600,7 +600,7 @@ public class ScoreJob {
                                     alertInfor.setWarningSource(totalScoreCount.getDataSource().substring(0, totalScoreCount.getDataSource().length() - 1));
                                 }
                                 alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
-                                alertInfor.setWarningCondition(totalScoreCount.getLastSchoolYear() + "年第" + totalScoreCount.getLastSemester() + "必修课不及格课程数:"
+                                alertInfor.setWarningCondition(totalScoreCount.getLastSchoolYear() + "年第" + totalScoreCount.getLastSemester() + ruleParameter.getRuledescribe()
                                         + totalScoreCount.getFailRequiredCourseNum());
                                 alertInfor.setPhone(totalScoreCount
                                         .getUserPhone());
@@ -657,7 +657,7 @@ public class ScoreJob {
                                 alertInfor.setWarningSource(totalScoreCount.getDataSource().substring(0, totalScoreCount.getDataSource().length() - 1));
                             }
                             alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
-                            alertInfor.setWarningCondition(totalScoreCount.getLastSchoolYear() + "年第" + totalScoreCount.getLastSemester() + "必修课不及格课程数:"
+                            alertInfor.setWarningCondition(totalScoreCount.getLastSchoolYear() + "年第" + totalScoreCount.getLastSemester() + ruleParameter.getRuledescribe()
                                     + totalScoreCount.getRequireCreditCount());
                             alertInfor.setPhone(totalScoreCount
                                     .getUserPhone());
@@ -810,8 +810,8 @@ public class ScoreJob {
                         alertInfor.setProfessionalName(makeUpScoreCount.getProfessionalName());
                         alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
                         alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
-                        alertInfor.setWarningCondition("补考后" + makeUpScoreCount.getLastSchoolYear() + "年" + makeUpScoreCount.getLastSemester() + "总评成绩不及格课程数:"
-                                        + makeUpScoreCount.getMakeUpFailRequiredCourseNum());
+                        alertInfor.setWarningCondition("补考后" + makeUpScoreCount.getLastSchoolYear() + "年" + makeUpScoreCount.getLastSemester() + ruleParameter.getRuledescribe()
+                                + makeUpScoreCount.getMakeUpFailRequiredCourseNum());
                         alertInfor.setSemester(semester);
                         alertInfor.setTeacherYear(teachYear);
                         alertInfor.setWarningTime(new Date());
@@ -857,7 +857,7 @@ public class ScoreJob {
                             alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
                             BigDecimal failCourseCredit = new BigDecimal(makeUpScoreCount.getFailCourseCredit());
                             alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
-                            alertInfor.setWarningCondition("不及格必修课和选修课累计学分:" + failCourseCredit.setScale(2, RoundingMode.HALF_UP).toString());
+                            alertInfor.setWarningCondition(ruleParameter.getRuledescribe() + failCourseCredit.setScale(2, RoundingMode.HALF_UP).toString());
                             alertInfor.setWarningTime(new Date());
                             alertInfor.setPhone(makeUpScoreCount.getUserPhone());
                             alertInfor.setSemester(semester);
