@@ -139,23 +139,43 @@ public class ScoreJob {
 
                 StringBuilder sql2 = new StringBuilder("");
                 sql2.append(sql);
-                sql2.append(" AND cj.KSRQ BETWEEN :start2 AND :end2");
+//                sql2.append(" AND cj.KSRQ BETWEEN :start2 AND :end2");
+                sql2.append(" AND cj.XN :xn");
+                sql2.append(" AND cj.XQM :xqm");
                 sql2.append(" AND cj.XKSX = '必修'");
                 sql2.append(" GROUP BY cj.KCH, cj.XH");
                 Query sq2 = em.createNativeQuery(sql2.toString());
-                sq2.setParameter("start2", start2);
-                sq2.setParameter("end2", end2);
+//                sq2.setParameter("start2", start2);
+//                sq2.setParameter("end2", end2);
+                sq2.setParameter("xn",secondSchoolYear);
+                String xqm2 = "";
+                if(secondSemester.equals("春")){
+                    xqm2= "1";
+                }else {
+                    xqm2="2";
+                }
+                sq2.setParameter("xqm",xqm2);
                 sq2.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
                 List<Map<String, Object>> res2 = sq2.getResultList();
 
                 StringBuilder sql1 = new StringBuilder("");
                 sql1.append(sql);
-                sql1.append(" AND cj.KSRQ BETWEEN :start1 AND :end1");
+//                sql1.append(" AND cj.KSRQ BETWEEN :start1 AND :end1");
+                sql2.append(" AND cj.XN :xn");
+                sql2.append(" AND cj.XQM :xqm");
                 sql1.append(" AND cj.XKSX = '必修'");
                 sql1.append(" GROUP BY cj.KCH, cj.XH");
                 Query sq1 = em.createNativeQuery(sql1.toString());
-                sq1.setParameter("start1", start1);
-                sq1.setParameter("end1", end1);
+//                sq1.setParameter("start1", start1);
+//                sq1.setParameter("end1", end1);
+                sq2.setParameter("xn",firstSchoolYear);
+                String xqm1 = "";
+                if(firstSemester.equals("春")){
+                    xqm1= "1";
+                }else {
+                    xqm1="2";
+                }
+                sq2.setParameter("xqm",xqm1);
                 sq1.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
                 List<Map<String, Object>> res1 = sq1.getResultList();
                 List<FirstTwoSemestersScoreStatistics> sfcList = new ArrayList<>();
@@ -857,7 +877,7 @@ public class ScoreJob {
                             alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
                             BigDecimal failCourseCredit = new BigDecimal(makeUpScoreCount.getFailCourseCredit());
                             alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
-                            alertInfor.setWarningCondition(ruleParameter.getRuledescribe() + failCourseCredit.setScale(2, RoundingMode.HALF_UP).toString());
+                            alertInfor.setWarningCondition("在校学习期间，考核不合格的必修课程（含集中性实践教学环节）学分:" + failCourseCredit.setScale(2, RoundingMode.HALF_UP).toString());
                             alertInfor.setWarningTime(new Date());
                             alertInfor.setPhone(makeUpScoreCount.getUserPhone());
                             alertInfor.setSemester(semester);
