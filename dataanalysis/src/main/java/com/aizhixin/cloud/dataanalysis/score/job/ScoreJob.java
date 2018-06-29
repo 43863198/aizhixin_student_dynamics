@@ -31,11 +31,12 @@ import org.springframework.stereotype.Component;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
+import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-@Component
+@Service
 public class ScoreJob {
 
     private Logger logger = Logger.getLogger(this.getClass());
@@ -140,8 +141,8 @@ public class ScoreJob {
                 StringBuilder sql2 = new StringBuilder("");
                 sql2.append(sql);
 //                sql2.append(" AND cj.KSRQ BETWEEN :start2 AND :end2");
-                sql2.append(" AND cj.XN :xn");
-                sql2.append(" AND cj.XQM :xqm");
+                sql2.append(" AND cj.XN = :xn");
+                sql2.append(" AND cj.XQM = :xqm");
                 sql2.append(" AND cj.XKSX = '必修'");
                 sql2.append(" GROUP BY cj.KCH, cj.XH");
                 Query sq2 = em.createNativeQuery(sql2.toString());
@@ -161,8 +162,8 @@ public class ScoreJob {
                 StringBuilder sql1 = new StringBuilder("");
                 sql1.append(sql);
 //                sql1.append(" AND cj.KSRQ BETWEEN :start1 AND :end1");
-                sql2.append(" AND cj.XN :xn");
-                sql2.append(" AND cj.XQM :xqm");
+                sql2.append(" AND cj.XN = :xn");
+                sql2.append(" AND cj.XQM = :xqm");
                 sql1.append(" AND cj.XKSX = '必修'");
                 sql1.append(" GROUP BY cj.KCH, cj.XH");
                 Query sq1 = em.createNativeQuery(sql1.toString());
