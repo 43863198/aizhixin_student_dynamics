@@ -236,8 +236,8 @@ public class AlertWarningInformationService {
         }
 
 
-        if (!StringUtils.isEmpty(domain.getCollogeCodes())) {
-            String[] collogeIdArr = domain.getCollogeCodes().split(",");
+        if (!StringUtils.isEmpty(domain.getCollegeCodes())) {
+            String[] collogeIdArr = domain.getCollegeCodes().split(",");
             String collogeCodes = "";
             for (String collogeCode : collogeIdArr) {
                 if (!StringUtils.isEmpty(collogeCode)) {
@@ -456,8 +456,8 @@ public class AlertWarningInformationService {
             querySql += " and ( NAME like '%" + domain.getKeywords() + "%' or JOB_NUMBER like '%" + domain.getKeywords() + "%') ";
         }
 
-        if (!StringUtils.isEmpty(domain.getCollogeCodes())) {
-            String[] collogeIdArr = domain.getCollogeCodes().split(",");
+        if (!StringUtils.isEmpty(domain.getCollegeCodes())) {
+            String[] collogeIdArr = domain.getCollegeCodes().split(",");
             String collogeCodes = "";
             for (String collogeCode : collogeIdArr) {
                 if (!StringUtils.isEmpty(collogeCode)) {

@@ -2,6 +2,7 @@ package com.aizhixin.cloud.dataanalysis.setup.service;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
+import com.aizhixin.cloud.dataanalysis.common.service.DistributeLock;
 import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
 import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
@@ -81,6 +82,7 @@ public class GenerateWarningInfoService {
         }
         String teachYear = year+"";
         warningInfo(orgId, warningType, teachYear, semester);
+
     }
 
     @Async

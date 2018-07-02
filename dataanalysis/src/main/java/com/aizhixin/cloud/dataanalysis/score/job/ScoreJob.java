@@ -126,6 +126,7 @@ public class ScoreJob {
 
             if (null != start1 && null != start2 && null != end1 && null != end2 && null != end3) {
                 StringBuilder aql = new StringBuilder("SELECT XH as xh, XM as xm, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc FROM t_xsjbxx  WHERE 1 = 1");
+                aql.append(" AND RXFS NOT IN ('12','14')");
                 aql.append(" AND RXNY <= :start1");
                 aql.append(" AND YBYNY >= :end3");
                 Query aq = em.createNativeQuery(aql.toString());
@@ -309,6 +310,7 @@ public class ScoreJob {
 
             if (null != start && null != end) {
                 StringBuilder aql = new StringBuilder("SELECT XH as xh, XM as xm, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc FROM t_xsjbxx  WHERE 1 = 1");
+                aql.append(" AND RXFS NOT IN ('12','14')");
                 aql.append(" AND RXNY <= :start");
                 aql.append(" AND YBYNY >= :end");
                 Query aq = em.createNativeQuery(aql.toString());
@@ -428,6 +430,7 @@ public class ScoreJob {
 
             if (null != start && null != end) {
                 StringBuilder aql = new StringBuilder("SELECT XH as xh, XM as xm, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc, NJ as nj FROM t_xsjbxx  WHERE 1 = 1");
+                aql.append(" AND RXFS NOT IN ('12','14')");
                 aql.append(" AND RXNY <= :start");
                 aql.append(" AND YBYNY >= :end");
                 Query aq = em.createNativeQuery(aql.toString());
