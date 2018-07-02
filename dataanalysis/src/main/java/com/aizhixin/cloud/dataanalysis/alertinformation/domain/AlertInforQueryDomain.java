@@ -26,7 +26,7 @@ public class AlertInforQueryDomain {
 	private String semester;
 
 	@ApiModelProperty(value = "学院code（多个以,分割）", required = false)
-	private String collogeCodes;
+	private String collegeCodes;
 
 	@ApiModelProperty(value = "预警类型（多个以,分割）", required = false)
 	private String warningTypes;
