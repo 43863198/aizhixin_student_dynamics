@@ -126,9 +126,10 @@ public class ScoreJob {
                     }
                 }
                 // 清除之前统计数据
-                List<FirstTwoSemestersScoreStatistics> scoreFluctuateList = firstTwoSemestersScoreStatisticsRespository
-                        .findAllByOrgIdAndTeachYearAndSemester(orgId, teachYear, semester);
-                firstTwoSemestersScoreStatisticsRespository.delete(scoreFluctuateList);
+//                List<FirstTwoSemestersScoreStatistics> scoreFluctuateList = firstTwoSemestersScoreStatisticsRespository
+//                        .findAllByOrgIdAndTeachYearAndSemester(orgId, teachYear, semester);
+//                firstTwoSemestersScoreStatisticsRespository.delete(scoreFluctuateList);
+                firstTwoSemestersScoreStatisticsRespository.deleteAll();
 
                 if (null != start1 && null != start2 && null != end1 && null != end2 && null != end3) {
                     StringBuilder aql = new StringBuilder("SELECT XH as xh, XM as xm, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc FROM t_xsjbxx  WHERE 1 = 1");
@@ -310,8 +311,9 @@ public class ScoreJob {
             }
 
             // 清除之前总评成绩不及格统计数据
-            List<FailScoreStatistics> fsList = failScoreStatisticsRespository.findAllByOrgIdAndTeachYearAndSemester(orgId, teachYear, semester);
-            failScoreStatisticsRespository.delete(fsList);
+//            List<FailScoreStatistics> fsList = failScoreStatisticsRespository.findAllByOrgIdAndTeachYearAndSemester(orgId, teachYear, semester);
+//            failScoreStatisticsRespository.delete(fsList);
+            failScoreStatisticsRespository.deleteAll();
 
             if (null != start && null != end) {
                 StringBuilder aql = new StringBuilder("SELECT XH as xh, XM as xm, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc FROM t_xsjbxx  WHERE 1 = 1");
@@ -436,8 +438,9 @@ public class ScoreJob {
                 }
 
                 // 清除之前总评成绩不及格统计数据
-                List<LastSemesterScoreStatistics> fsList = lastSemesterScoreStatisticsRespository.findAllByTeachYearAndSemesterAndOrgId(teachYear, semester, orgId);
-                lastSemesterScoreStatisticsRespository.delete(fsList);
+//                List<LastSemesterScoreStatistics> fsList = lastSemesterScoreStatisticsRespository.findAllByTeachYearAndSemesterAndOrgId(teachYear, semester, orgId);
+//                lastSemesterScoreStatisticsRespository.delete(fsList);
+                lastSemesterScoreStatisticsRespository.deleteAll();
 
                 if (null != start && null != end) {
                     StringBuilder aql = new StringBuilder("SELECT XH as xh, XM as xm, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc, NJ as nj FROM t_xsjbxx  WHERE 1 = 1");
