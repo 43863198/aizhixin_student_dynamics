@@ -384,14 +384,13 @@ public class ScoreJob {
                                 if (null != d1.get("xf")) {
                                     totalXF = totalXF + Float.valueOf(d1.get("xf").toString());
                                 }
-                                sfc.setFailCourseCredit(totalXF);
-                                sfc.setFailCourseNum(count);
-                                sfc.setDataSource(source.toString());
                             }
                         }
                     }
+                    sfc.setFailCourseCredit(totalXF);
+                    sfc.setFailCourseNum(count);
+                    sfc.setDataSource(source.toString());
                     sfcList.add(sfc);
-
                 }
                 failScoreStatisticsRespository.save(sfcList);
             }
