@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import com.aizhixin.cloud.dataanalysis.common.service.DistributeLock;
 import com.aizhixin.cloud.dataanalysis.setup.service.GenerateWarningInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,8 @@ public class TestAlarmJobController {
 	private AlertWarningInformationService alertWarningInformationService;
 	@Autowired
 	private GenerateWarningInfoService generateWarningInfoService;
-
+	@Autowired
+	private DistributeLock distributeLock;
 
 	@RequestMapping(value = "/rollcallcountjob", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(httpMethod = "GET", value = "签到定统计数据时任务", response = Void.class, notes = "签到定统计数据时任务<br><br><b>@author zhengning</b>")
@@ -143,6 +145,24 @@ public class TestAlarmJobController {
 		generateWarningInfoService.warningInfo(orgId, warningType,teacherYear,semester);
 		result.put("success", true);
 		result.put("message", "手动生成数据成功!");
+		return result;
+	}
+
+	/**
+	 * 手动删除生成数据锁
+	 * @return
+	 */
+	@GetMapping(value = "/delelock", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(httpMethod = "GET", value = "手动删除生成数据锁", response = Void.class, notes = "手动删除生成数据锁<br><br><b>@author jianwei.wu</b>")
+	public Map<String, Object> deleLock(
+			@ApiParam(value = "warningType 预警类型", required = true) @RequestParam(value = "warningType", required = true) String warningType
+	) {
+		Map<String, Object> result = new HashMap<>();
+		StringBuilder path = new StringBuilder("/warningInfo");
+		path.append("/").append(warningType);
+		distributeLock.delete(path);
+		result.put("success", true);
+		result.put("message", "手动删除生成数据锁成功!");
 		return result;
 	}
 

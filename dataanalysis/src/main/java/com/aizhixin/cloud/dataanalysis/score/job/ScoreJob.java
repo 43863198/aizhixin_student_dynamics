@@ -53,8 +53,7 @@ public class ScoreJob {
     private EntityManager em;
     @Autowired
     private SchoolYearTermService schoolYearTermService;
-    @Autowired
-    private DistributeLock distributeLock;
+
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
