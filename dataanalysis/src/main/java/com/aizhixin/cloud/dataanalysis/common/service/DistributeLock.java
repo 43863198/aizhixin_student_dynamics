@@ -344,21 +344,6 @@ public class DistributeLock {
         return getLock(lockPath.toString(), taskPath.toString());
     }
 
-
-    /**
-     * 生成数据的幂等锁
-     * @return  是否获取到锁
-     */
-    public boolean getWarningInfoLock(StringBuilder path) {
-        StringBuilder lockPath = new StringBuilder(zkLockPath);
-        StringBuilder taskPath = new StringBuilder(zkTaskPath);
-        lockPath.append(path);
-        taskPath.append(path);
-        return getLock(lockPath.toString(), taskPath.toString());
-    }
-
-
-
     public void cleanZookeeperTaskData() {
         delete();
     }
