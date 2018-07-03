@@ -14,6 +14,7 @@ import java.util.UUID;
 
 import com.aizhixin.cloud.dataanalysis.analysis.dto.TeacherYearSemesterDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.service.SchoolYearTermService;
+import com.aizhixin.cloud.dataanalysis.common.service.DistributeLock;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.FailScoreStatistics;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.FirstTwoSemestersScoreStatistics;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.LastSemesterScoreStatistics;
@@ -52,6 +53,8 @@ public class ScoreJob {
     private EntityManager em;
     @Autowired
     private SchoolYearTermService schoolYearTermService;
+    @Autowired
+    private DistributeLock distributeLock;
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -60,219 +63,226 @@ public class ScoreJob {
      */
     @Async
     public void firstTwoSemestersScoreStatisticsJob(Long orgId, String teachYear, String semester) {
-        try {
-            // 上学年学期
-            String secondSchoolYear = teachYear;
-            String secondSemester = "春";
-            if (semester.equals("春")) {
-                secondSemester = "秋";
-                secondSchoolYear = Integer.valueOf(teachYear) - 1 + "";
-            }
-            // 上上学年学期
-            String firstSchoolYear = secondSchoolYear;
-            String firstSemester = "春";
-            if (secondSemester.equals("春")) {
-                firstSemester = "秋";
-                firstSchoolYear = Integer.valueOf(secondSchoolYear) - 1 + "";
-            }
-
-            Date start3 = null;
-            Date end3 = null;
-            if (!org.apache.commons.lang.StringUtils.isBlank(teachYear) && !org.apache.commons.lang.StringUtils.isBlank(semester)) {
-                Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, teachYear, semester);
-                if (null != schoolCalendar) {
-                    if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
-                        List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
-                        if (tysList.size() > 0) {
-                            start3 = sdf.parse(tysList.get(0).getStartTime());
-                            end3 = sdf.parse(tysList.get(0).getEndTime());
-                        }
-                    }
+        StringBuilder path = new StringBuilder("/WarningStatistics");
+        path.append("/").append("FirstTwoSemestersScore");
+        if(distributeLock.getLock(path)) {
+            try {
+                // 上学年学期
+                String secondSchoolYear = teachYear;
+                String secondSemester = "春";
+                if (semester.equals("春")) {
+                    secondSemester = "秋";
+                    secondSchoolYear = Integer.valueOf(teachYear) - 1 + "";
                 }
-            }
-
-            Date start2 = null;
-            Date end2 = null;
-            if (!org.apache.commons.lang.StringUtils.isBlank(secondSchoolYear) && !org.apache.commons.lang.StringUtils.isBlank(secondSemester)) {
-                Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, secondSchoolYear, secondSemester);
-                if (null != schoolCalendar) {
-                    if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
-                        List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
-                        if (tysList.size() > 0) {
-                            start2 = sdf.parse(tysList.get(0).getStartTime());
-                            end2 = sdf.parse(tysList.get(0).getEndTime());
-                        }
-                    }
-                }
-            }
-            Date start1 = null;
-            Date end1 = null;
-            if (!org.apache.commons.lang.StringUtils.isBlank(firstSchoolYear) && !org.apache.commons.lang.StringUtils.isBlank(firstSchoolYear)) {
-                Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, firstSchoolYear, firstSemester);
-                if (null != schoolCalendar) {
-                    if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
-                        List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
-                        if (tysList.size() > 0) {
-                            start1 = sdf.parse(tysList.get(0).getStartTime());
-                            end1 = sdf.parse(tysList.get(0).getEndTime());
-                        }
-                    }
-                }
-            }
-            // 清除之前统计数据
-            List<FirstTwoSemestersScoreStatistics> scoreFluctuateList = firstTwoSemestersScoreStatisticsRespository
-                    .findAllByOrgIdAndTeachYearAndSemester(orgId, teachYear, semester);
-            firstTwoSemestersScoreStatisticsRespository.delete(scoreFluctuateList);
-
-            if (null != start1 && null != start2 && null != end1 && null != end2 && null != end3) {
-                StringBuilder aql = new StringBuilder("SELECT XH as xh, XM as xm, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc FROM t_xsjbxx  WHERE 1 = 1");
-                aql.append(" AND RXFS NOT IN ('12','14')");
-                aql.append(" AND RXNY <= :start1");
-                aql.append(" AND YBYNY >= :end3");
-                Query aq = em.createNativeQuery(aql.toString());
-                aq.setParameter("start1", start1);
-                aq.setParameter("end3", end3);
-                aq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-                List<Map<String, Object>> res = aq.getResultList();
-
-                StringBuilder sql = new StringBuilder("SELECT c.COURSE_NUMBER as kch, c.COURSE_NAME as kcmc, cj.XH as xh, MAX(cj.KCCJ) as cj, cj.JD as jd, c.CREDIT as xf FROM t_xscjxx cj" +
-                        " LEFT JOIN t_xsjbxx xs ON cj.XH = xs.XH" +
-                        " LEFT JOIN t_course c ON cj.KCH = c.COURSE_NUMBER WHERE 1 = 1");
-
-                StringBuilder sql2 = new StringBuilder("");
-                sql2.append(sql);
-                sql2.append(" AND cj.XN = :xn");
-                sql2.append(" AND cj.XQM = :xqm");
-                sql2.append(" AND cj.XKSX = '必修'");
-                sql2.append(" GROUP BY cj.KCH, cj.XH");
-                Query sq2 = em.createNativeQuery(sql2.toString());
-                sq2.setParameter("xn", secondSchoolYear);
-                String xqm2 = "";
+                // 上上学年学期
+                String firstSchoolYear = secondSchoolYear;
+                String firstSemester = "春";
                 if (secondSemester.equals("春")) {
-                    xqm2 = "1";
-                } else {
-                    xqm2 = "2";
+                    firstSemester = "秋";
+                    firstSchoolYear = Integer.valueOf(secondSchoolYear) - 1 + "";
                 }
-                sq2.setParameter("xqm", xqm2);
-                sq2.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-                List<Map<String, Object>> res2 = sq2.getResultList();
 
-                StringBuilder sql1 = new StringBuilder("");
-                sql1.append(sql);
-                sql1.append(" AND cj.XN = :xn");
-                sql1.append(" AND cj.XQM = :xqm");
-                sql1.append(" AND cj.XKSX = '必修'");
-                sql1.append(" GROUP BY cj.KCH, cj.XH");
-                Query sq1 = em.createNativeQuery(sql1.toString());
-                sq1.setParameter("xn", firstSchoolYear);
-                String xqm1 = "";
-                if (firstSemester.equals("春")) {
-                    xqm1 = "1";
-                } else {
-                    xqm1 = "2";
+                Date start3 = null;
+                Date end3 = null;
+                if (!org.apache.commons.lang.StringUtils.isBlank(teachYear) && !org.apache.commons.lang.StringUtils.isBlank(semester)) {
+                    Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, teachYear, semester);
+                    if (null != schoolCalendar) {
+                        if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
+                            List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
+                            if (tysList.size() > 0) {
+                                start3 = sdf.parse(tysList.get(0).getStartTime());
+                                end3 = sdf.parse(tysList.get(0).getEndTime());
+                            }
+                        }
+                    }
                 }
-                sq1.setParameter("xqm", xqm1);
-                sq1.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-                List<Map<String, Object>> res1 = sq1.getResultList();
-                List<FirstTwoSemestersScoreStatistics> sfcList = new ArrayList<>();
-                for (Map d : res) {
-                    FirstTwoSemestersScoreStatistics sfc = new FirstTwoSemestersScoreStatistics();
-                    sfc.setOrgId(orgId);
-                    if (null != d.get("xh")) {
-                        sfc.setJobNum(d.get("xh").toString());
+
+                Date start2 = null;
+                Date end2 = null;
+                if (!org.apache.commons.lang.StringUtils.isBlank(secondSchoolYear) && !org.apache.commons.lang.StringUtils.isBlank(secondSemester)) {
+                    Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, secondSchoolYear, secondSemester);
+                    if (null != schoolCalendar) {
+                        if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
+                            List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
+                            if (tysList.size() > 0) {
+                                start2 = sdf.parse(tysList.get(0).getStartTime());
+                                end2 = sdf.parse(tysList.get(0).getEndTime());
+                            }
+                        }
                     }
-                    if (null != d.get("xm")) {
-                        sfc.setUserName(d.get("xm").toString());
+                }
+                Date start1 = null;
+                Date end1 = null;
+                if (!org.apache.commons.lang.StringUtils.isBlank(firstSchoolYear) && !org.apache.commons.lang.StringUtils.isBlank(firstSchoolYear)) {
+                    Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, firstSchoolYear, firstSemester);
+                    if (null != schoolCalendar) {
+                        if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
+                            List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
+                            if (tysList.size() > 0) {
+                                start1 = sdf.parse(tysList.get(0).getStartTime());
+                                end1 = sdf.parse(tysList.get(0).getEndTime());
+                            }
+                        }
                     }
-                    if (null != d.get("bh")) {
-                        sfc.setClassCode(d.get("bh").toString());
+                }
+                // 清除之前统计数据
+                List<FirstTwoSemestersScoreStatistics> scoreFluctuateList = firstTwoSemestersScoreStatisticsRespository
+                        .findAllByOrgIdAndTeachYearAndSemester(orgId, teachYear, semester);
+                firstTwoSemestersScoreStatisticsRespository.delete(scoreFluctuateList);
+
+                if (null != start1 && null != start2 && null != end1 && null != end2 && null != end3) {
+                    StringBuilder aql = new StringBuilder("SELECT XH as xh, XM as xm, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc FROM t_xsjbxx  WHERE 1 = 1");
+                    aql.append(" AND RXFS NOT IN ('12','14')");
+                    aql.append(" AND RXNY <= :start1");
+                    aql.append(" AND YBYNY >= :end3");
+                    Query aq = em.createNativeQuery(aql.toString());
+                    aq.setParameter("start1", start1);
+                    aq.setParameter("end3", end3);
+                    aq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+                    List<Map<String, Object>> res = aq.getResultList();
+
+                    StringBuilder sql = new StringBuilder("SELECT c.COURSE_NUMBER as kch, c.COURSE_NAME as kcmc, cj.XH as xh, MAX(cj.KCCJ) as cj, cj.JD as jd, c.CREDIT as xf FROM t_xscjxx cj" +
+                            " LEFT JOIN t_xsjbxx xs ON cj.XH = xs.XH" +
+                            " LEFT JOIN t_course c ON cj.KCH = c.COURSE_NUMBER WHERE 1 = 1");
+
+                    StringBuilder sql2 = new StringBuilder("");
+                    sql2.append(sql);
+                    sql2.append(" AND cj.XN = :xn");
+                    sql2.append(" AND cj.XQM = :xqm");
+                    sql2.append(" AND cj.XKSX = '必修'");
+                    sql2.append(" GROUP BY cj.KCH, cj.XH");
+                    Query sq2 = em.createNativeQuery(sql2.toString());
+                    sq2.setParameter("xn", secondSchoolYear);
+                    String xqm2 = "";
+                    if (secondSemester.equals("春")) {
+                        xqm2 = "1";
+                    } else {
+                        xqm2 = "2";
                     }
-                    if (null != d.get("bjmc")) {
-                        sfc.setClassName(d.get("bjmc").toString());
+                    sq2.setParameter("xqm", xqm2);
+                    sq2.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+                    List<Map<String, Object>> res2 = sq2.getResultList();
+
+                    StringBuilder sql1 = new StringBuilder("");
+                    sql1.append(sql);
+                    sql1.append(" AND cj.XN = :xn");
+                    sql1.append(" AND cj.XQM = :xqm");
+                    sql1.append(" AND cj.XKSX = '必修'");
+                    sql1.append(" GROUP BY cj.KCH, cj.XH");
+                    Query sq1 = em.createNativeQuery(sql1.toString());
+                    sq1.setParameter("xn", firstSchoolYear);
+                    String xqm1 = "";
+                    if (firstSemester.equals("春")) {
+                        xqm1 = "1";
+                    } else {
+                        xqm1 = "2";
                     }
-                    if (null != d.get("zyh")) {
-                        sfc.setProfessionalCode(d.get("zyh").toString());
-                    }
-                    if (null != d.get("zymc")) {
-                        sfc.setProfessionalName(d.get("zymc").toString());
-                    }
-                    if (null != d.get("yxsh")) {
-                        sfc.setCollegeCode(d.get("yxsh").toString());
-                    }
-                    if (null != d.get("yxsmc")) {
-                        sfc.setCollegeName(d.get("yxsmc").toString());
-                    }
-                    sfc.setTeachYear(teachYear);
-                    sfc.setSemester(semester);
-                    sfc.setFirstSchoolYear(firstSchoolYear);
-                    sfc.setFirstSemester(firstSemester);
-                    sfc.setSecondSchoolYear(secondSchoolYear);
-                    sfc.setSecondSemester(secondSemester);
-                    int count2 = 0;
-                    float totalCJ2 = 0;
-                    float totalXFJD2 = 0;
-                    float totalXF2 = 0;
-                    for (Map d2 : res2) {
-                        if (null != d2.get("xh") && sfc.getJobNum().equals(d2.get("xh").toString())) {
-                            count2++;
+                    sq1.setParameter("xqm", xqm1);
+                    sq1.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+                    List<Map<String, Object>> res1 = sq1.getResultList();
+                    List<FirstTwoSemestersScoreStatistics> sfcList = new ArrayList<>();
+                    for (Map d : res) {
+                        FirstTwoSemestersScoreStatistics sfc = new FirstTwoSemestersScoreStatistics();
+                        sfc.setOrgId(orgId);
+                        if (null != d.get("xh")) {
+                            sfc.setJobNum(d.get("xh").toString());
+                        }
+                        if (null != d.get("xm")) {
+                            sfc.setUserName(d.get("xm").toString());
+                        }
+                        if (null != d.get("bh")) {
+                            sfc.setClassCode(d.get("bh").toString());
+                        }
+                        if (null != d.get("bjmc")) {
+                            sfc.setClassName(d.get("bjmc").toString());
+                        }
+                        if (null != d.get("zyh")) {
+                            sfc.setProfessionalCode(d.get("zyh").toString());
+                        }
+                        if (null != d.get("zymc")) {
+                            sfc.setProfessionalName(d.get("zymc").toString());
+                        }
+                        if (null != d.get("yxsh")) {
+                            sfc.setCollegeCode(d.get("yxsh").toString());
+                        }
+                        if (null != d.get("yxsmc")) {
+                            sfc.setCollegeName(d.get("yxsmc").toString());
+                        }
+                        sfc.setTeachYear(teachYear);
+                        sfc.setSemester(semester);
+                        sfc.setFirstSchoolYear(firstSchoolYear);
+                        sfc.setFirstSemester(firstSemester);
+                        sfc.setSecondSchoolYear(secondSchoolYear);
+                        sfc.setSecondSemester(secondSemester);
+                        int count2 = 0;
+                        float totalCJ2 = 0;
+                        float totalXFJD2 = 0;
+                        float totalXF2 = 0;
+                        for (Map d2 : res2) {
+                            if (null != d2.get("xh") && sfc.getJobNum().equals(d2.get("xh").toString())) {
+                                count2++;
 //                            if (null != d2.get("kch") && null != d2.get("kcmc") && null != d2.get("xf")) {
 //                                source2.append("【KCH:" + d2.get("kch") + ";");
 //                                source2.append("KCMC:" + d2.get("kcmc") + ";");
 //                                source2.append("XF:" + d2.get("xf") + "】 ");
 //                            }
-                            if (null != d2.get("cj")) {
-                                totalCJ2 = totalCJ2 + Float.valueOf(d2.get("cj").toString());
-                            }
-                            if (null != d2.get("jd") && null != d2.get("xf")) {
-                                totalXFJD2 = totalXFJD2 + Float.valueOf(d2.get("jd").toString()) * Float.valueOf(d2.get("xf").toString());
-                                totalXF2 = totalXF2 + Float.valueOf(d2.get("xf").toString());
+                                if (null != d2.get("cj")) {
+                                    totalCJ2 = totalCJ2 + Float.valueOf(d2.get("cj").toString());
+                                }
+                                if (null != d2.get("jd") && null != d2.get("xf")) {
+                                    totalXFJD2 = totalXFJD2 + Float.valueOf(d2.get("jd").toString()) * Float.valueOf(d2.get("xf").toString());
+                                    totalXF2 = totalXF2 + Float.valueOf(d2.get("xf").toString());
+                                }
                             }
                         }
-                    }
-                    sfc.setSecondTotalScores(totalCJ2);
-                    sfc.setSecondTotalCourseNums(count2);
-                    sfc.setSecondTotalGradePoint(totalXFJD2);
-                    if (totalXF2 != 0) {
-                        sfc.setSecondAvgradePoint(totalXFJD2 / totalXF2);
-                    } else {
-                        sfc.setSecondAvgradePoint(0);
-                    }
+                        sfc.setSecondTotalScores(totalCJ2);
+                        sfc.setSecondTotalCourseNums(count2);
+                        sfc.setSecondTotalGradePoint(totalXFJD2);
+                        if (totalXF2 != 0) {
+                            sfc.setSecondAvgradePoint(totalXFJD2 / totalXF2);
+                        } else {
+                            sfc.setSecondAvgradePoint(0);
+                        }
 
-                    int count1 = 0;
-                    float totalCJ1 = 0;
-                    float totalXFJD1 = 0;
-                    float totalXF1 = 0;
+                        int count1 = 0;
+                        float totalCJ1 = 0;
+                        float totalXFJD1 = 0;
+                        float totalXF1 = 0;
 //                    StringBuilder source1 = new StringBuilder("");
-                    for (Map d1 : res1) {
-                        if (null != d1.get("xh") && sfc.getJobNum().equals(d1.get("xh").toString())) {
-                            count1++;
+                        for (Map d1 : res1) {
+                            if (null != d1.get("xh") && sfc.getJobNum().equals(d1.get("xh").toString())) {
+                                count1++;
 //                            if (null != d1.get("kch") && null != d1.get("kcmc") && null != d1.get("xf")) {
 //                                source1.append("【KCH:" + d1.get("kch") + ";");
 //                                source1.append("KCMC:" + d1.get("kcmc") + ";");
 //                                source1.append("XF:" + d1.get("xf") + "】 ");
 //                            }
-                            if (null != d1.get("cj")) {
-                                totalCJ1 = totalCJ1 + Float.valueOf(d1.get("cj").toString());
-                            }
-                            if (null != d1.get("jd") && null != d1.get("xf")) {
-                                totalXFJD1 = totalXFJD1 + Float.valueOf(d1.get("jd").toString()) * Float.valueOf(d1.get("xf").toString());
-                                totalXF1 = totalXF1 + Float.valueOf(d1.get("xf").toString());
+                                if (null != d1.get("cj")) {
+                                    totalCJ1 = totalCJ1 + Float.valueOf(d1.get("cj").toString());
+                                }
+                                if (null != d1.get("jd") && null != d1.get("xf")) {
+                                    totalXFJD1 = totalXFJD1 + Float.valueOf(d1.get("jd").toString()) * Float.valueOf(d1.get("xf").toString());
+                                    totalXF1 = totalXF1 + Float.valueOf(d1.get("xf").toString());
+                                }
                             }
                         }
-                    }
-                    sfc.setFirstTotalScores(totalCJ1);
-                    sfc.setFirstTotalCourseNums(count1);
-                    sfc.setFirstTotalGradePoint(totalXFJD1);
-                    sfc.setFirstAvgradePoint(totalXFJD1 / totalXF1);
+                        sfc.setFirstTotalScores(totalCJ1);
+                        sfc.setFirstTotalCourseNums(count1);
+                        sfc.setFirstTotalGradePoint(totalXFJD1);
+                        sfc.setFirstAvgradePoint(totalXFJD1 / totalXF1);
 //                    sfc.setDataSource(source1 + ";" + source2);
-                    sfcList.add(sfc);
+                        sfcList.add(sfc);
+                    }
+                    firstTwoSemestersScoreStatisticsRespository.save(sfcList);
                 }
-                firstTwoSemestersScoreStatisticsRespository.save(sfcList);
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.info(e.getMessage());
+            }finally {
+                distributeLock.delete(path);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.info(e.getMessage());
         }
+
     }
 
     /**
@@ -280,8 +290,10 @@ public class ScoreJob {
      */
     @Async
     public void failScoreStatisticsJob(Long orgId, String teachYear, String semester) {
+        StringBuilder path = new StringBuilder("/WarningStatistics");
+        path.append("/").append("FailScore");
+        if(distributeLock.getLock(path)) {
         try {
-
             Date start = null;
             Date end = null;
             if (!org.apache.commons.lang.StringUtils.isBlank(teachYear) && !org.apache.commons.lang.StringUtils.isBlank(semester)) {
@@ -373,10 +385,10 @@ public class ScoreJob {
                                 sfc.setFailCourseCredit(totalXF);
                                 sfc.setFailCourseNum(count);
                                 sfc.setDataSource(source.toString());
-                                sfcList.add(sfc);
                             }
                         }
                     }
+                    sfcList.add(sfc);
 
                 }
                 failScoreStatisticsRespository.save(sfcList);
@@ -384,6 +396,9 @@ public class ScoreJob {
         } catch (ParseException e) {
             e.printStackTrace();
             logger.info(e.getMessage());
+        }finally {
+            distributeLock.delete(path);
+        }
         }
     }
 
@@ -393,130 +408,136 @@ public class ScoreJob {
      */
     @Async
     public void LastSemesterScoreStatisticsJob(Long orgId, String teachYear, String semester) {
-        try {
-            // 上学年学期
-            String lastSchoolYear = teachYear;
-            String lastSemester = "春";
-            if (semester == "春") {
-                lastSemester = "秋";
-                lastSchoolYear = Integer.valueOf(teachYear) - 1 + "";
-            }
+        StringBuilder path = new StringBuilder("/WarningStatistics");
+        path.append("/").append("LastSemesterScore");
+        if(distributeLock.getLock(path)) {
+            try {
+                // 上学年学期
+                String lastSchoolYear = teachYear;
+                String lastSemester = "春";
+                if (semester == "春") {
+                    lastSemester = "秋";
+                    lastSchoolYear = Integer.valueOf(teachYear) - 1 + "";
+                }
 
-            Date start = null;
-            Date end = null;
-            if (!org.apache.commons.lang.StringUtils.isBlank(lastSchoolYear) && !org.apache.commons.lang.StringUtils.isBlank(lastSemester)) {
-                Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, lastSchoolYear, lastSemester);
-                if (null != schoolCalendar) {
-                    if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
-                        List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
-                        if (tysList.size() > 0) {
-                            start = sdf.parse(tysList.get(0).getStartTime());
-                            end = sdf.parse(tysList.get(0).getEndTime());
+                Date start = null;
+                Date end = null;
+                if (!org.apache.commons.lang.StringUtils.isBlank(lastSchoolYear) && !org.apache.commons.lang.StringUtils.isBlank(lastSemester)) {
+                    Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, lastSchoolYear, lastSemester);
+                    if (null != schoolCalendar) {
+                        if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
+                            List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
+                            if (tysList.size() > 0) {
+                                start = sdf.parse(tysList.get(0).getStartTime());
+                                end = sdf.parse(tysList.get(0).getEndTime());
+                            }
                         }
                     }
                 }
-            }
 
-            // 清除之前总评成绩不及格统计数据
-            List<LastSemesterScoreStatistics> fsList = lastSemesterScoreStatisticsRespository.findAllByTeachYearAndSemesterAndOrgId(teachYear, semester, orgId);
-            lastSemesterScoreStatisticsRespository.delete(fsList);
+                // 清除之前总评成绩不及格统计数据
+                List<LastSemesterScoreStatistics> fsList = lastSemesterScoreStatisticsRespository.findAllByTeachYearAndSemesterAndOrgId(teachYear, semester, orgId);
+                lastSemesterScoreStatisticsRespository.delete(fsList);
 
-            if (null != start && null != end) {
-                StringBuilder aql = new StringBuilder("SELECT XH as xh, XM as xm, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc, NJ as nj FROM t_xsjbxx  WHERE 1 = 1");
-                aql.append(" AND RXFS NOT IN ('12','14')");
-                aql.append(" AND RXNY <= :start");
-                aql.append(" AND YBYNY >= :end");
-                Query aq = em.createNativeQuery(aql.toString());
-                aq.setParameter("start", start);
-                aq.setParameter("end", end);
-                aq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-                List<Map<String, Object>> res = aq.getResultList();
+                if (null != start && null != end) {
+                    StringBuilder aql = new StringBuilder("SELECT XH as xh, XM as xm, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc, NJ as nj FROM t_xsjbxx  WHERE 1 = 1");
+                    aql.append(" AND RXFS NOT IN ('12','14')");
+                    aql.append(" AND RXNY <= :start");
+                    aql.append(" AND YBYNY >= :end");
+                    Query aq = em.createNativeQuery(aql.toString());
+                    aq.setParameter("start", start);
+                    aq.setParameter("end", end);
+                    aq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+                    List<Map<String, Object>> res = aq.getResultList();
 
-                StringBuilder sql = new StringBuilder("SELECT c.COURSE_NUMBER as kch, c.COURSE_NAME as kcmc, cj.XH as xh, MAX(cj.KCCJ) as cj, c.CREDIT as xf, count(1) as count FROM t_xscjxx cj" +
-                        " LEFT JOIN t_course c ON cj.KCH = c.COURSE_NUMBER WHERE 1 = 1");
-                StringBuilder sql1 = new StringBuilder("");
-                sql1.append(sql);
-                sql1.append(" AND cj.KSRQ <= :end");
-                sql1.append(" AND cj.XKSX = '必修'");
-                sql1.append(" GROUP BY cj.KCH, cj.XH");
-                Query sq1 = em.createNativeQuery(sql1.toString());
-                sq1.setParameter("end", end);
-                sq1.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-                List<Map<String, Object>> res1 = sq1.getResultList();
+                    StringBuilder sql = new StringBuilder("SELECT c.COURSE_NUMBER as kch, c.COURSE_NAME as kcmc, cj.XH as xh, MAX(cj.KCCJ) as cj, c.CREDIT as xf, count(1) as count FROM t_xscjxx cj" +
+                            " LEFT JOIN t_course c ON cj.KCH = c.COURSE_NUMBER WHERE 1 = 1");
+                    StringBuilder sql1 = new StringBuilder("");
+                    sql1.append(sql);
+                    sql1.append(" AND cj.KSRQ <= :end");
+                    sql1.append(" AND cj.XKSX = '必修'");
+                    sql1.append(" GROUP BY cj.KCH, cj.XH");
+                    Query sq1 = em.createNativeQuery(sql1.toString());
+                    sq1.setParameter("end", end);
+                    sq1.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+                    List<Map<String, Object>> res1 = sq1.getResultList();
 
-                List<LastSemesterScoreStatistics> sfcList = new ArrayList<>();
-                for (Map d : res) {
-                    LastSemesterScoreStatistics sfc = new LastSemesterScoreStatistics();
-                    sfc.setOrgId(orgId);
-                    if (null != d.get("xh")) {
-                        sfc.setJobNum(d.get("xh").toString());
-                    }
-                    if (null != d.get("xm")) {
-                        sfc.setUserName(d.get("xm").toString());
-                    }
-                    if (null != d.get("bh")) {
-                        sfc.setClassCode(d.get("bh").toString());
-                    }
-                    if (null != d.get("bjmc")) {
-                        sfc.setClassName(d.get("bjmc").toString());
-                    }
-                    if (null != d.get("zyh")) {
-                        sfc.setProfessionalCode(d.get("zyh").toString());
-                    }
-                    if (null != d.get("zymc")) {
-                        sfc.setProfessionalName(d.get("zymc").toString());
-                    }
-                    if (null != d.get("yxsh")) {
-                        sfc.setCollegeCode(d.get("yxsh").toString());
-                    }
-                    if (null != d.get("yxsmc")) {
-                        sfc.setCollegeName(d.get("yxsmc").toString());
-                    }
-                    if (null != d.get("nj")) {
-                        sfc.setGrade(d.get("nj").toString());
-                    }
-                    sfc.setTeachYear(teachYear);
-                    sfc.setSemester(semester);
-                    sfc.setLastSchoolYear(lastSchoolYear);
-                    sfc.setLastSemester(lastSemester);
-                    int count = 0;
-                    int bkcount = 0;
-                    float totalXF = 0;
-                    Set<String> kchs = new HashSet<>();
-                    StringBuilder source = new StringBuilder("");
-                    for (Map d1 : res1) {
-                        if (null != d1.get("xh") && sfc.getJobNum().equals(d1.get("xh").toString())) {
-                            if (null != d.get("cj") && Float.valueOf(d.get("cj").toString()) < 60) {
-                                if (null != d1.get("kch") && null != d1.get("kcmc") && null != d1.get("xf")) {
-                                    source.append("【KCH:" + d1.get("kch") + ";");
-                                    source.append("KCMC:" + d1.get("kcmc") + ";");
-                                    source.append("XF:" + d1.get("xf") + "】 ");
-                                    if (null != d1.get("cj")) {
-                                        count++;
-                                        kchs.add(d1.get("kch").toString());
-                                    }
-                                    if (null != d1.get("xf")) {
-                                        totalXF = totalXF + Float.valueOf(d1.get("xf").toString());
-                                    }
-                                    if (null != d1.get("count") && Integer.valueOf(d1.get("count").toString()) > 1) {
-                                        bkcount++;
+                    List<LastSemesterScoreStatistics> sfcList = new ArrayList<>();
+                    for (Map d : res) {
+                        LastSemesterScoreStatistics sfc = new LastSemesterScoreStatistics();
+                        sfc.setOrgId(orgId);
+                        if (null != d.get("xh")) {
+                            sfc.setJobNum(d.get("xh").toString());
+                        }
+                        if (null != d.get("xm")) {
+                            sfc.setUserName(d.get("xm").toString());
+                        }
+                        if (null != d.get("bh")) {
+                            sfc.setClassCode(d.get("bh").toString());
+                        }
+                        if (null != d.get("bjmc")) {
+                            sfc.setClassName(d.get("bjmc").toString());
+                        }
+                        if (null != d.get("zyh")) {
+                            sfc.setProfessionalCode(d.get("zyh").toString());
+                        }
+                        if (null != d.get("zymc")) {
+                            sfc.setProfessionalName(d.get("zymc").toString());
+                        }
+                        if (null != d.get("yxsh")) {
+                            sfc.setCollegeCode(d.get("yxsh").toString());
+                        }
+                        if (null != d.get("yxsmc")) {
+                            sfc.setCollegeName(d.get("yxsmc").toString());
+                        }
+                        if (null != d.get("nj")) {
+                            sfc.setGrade(d.get("nj").toString());
+                        }
+                        sfc.setTeachYear(teachYear);
+                        sfc.setSemester(semester);
+                        sfc.setLastSchoolYear(lastSchoolYear);
+                        sfc.setLastSemester(lastSemester);
+                        int count = 0;
+                        int bkcount = 0;
+                        float totalXF = 0;
+                        Set<String> kchs = new HashSet<>();
+                        StringBuilder source = new StringBuilder("");
+                        for (Map d1 : res1) {
+                            if (null != d1.get("xh") && sfc.getJobNum().equals(d1.get("xh").toString())) {
+                                if (null != d.get("cj") && Float.valueOf(d.get("cj").toString()) < 60) {
+                                    if (null != d1.get("kch") && null != d1.get("kcmc") && null != d1.get("xf")) {
+                                        source.append("【KCH:" + d1.get("kch") + ";");
+                                        source.append("KCMC:" + d1.get("kcmc") + ";");
+                                        source.append("XF:" + d1.get("xf") + "】 ");
+                                        if (null != d1.get("cj")) {
+                                            count++;
+                                            kchs.add(d1.get("kch").toString());
+                                        }
+                                        if (null != d1.get("xf")) {
+                                            totalXF = totalXF + Float.valueOf(d1.get("xf").toString());
+                                        }
+                                        if (null != d1.get("count") && Integer.valueOf(d1.get("count").toString()) > 1) {
+                                            bkcount++;
+                                        }
                                     }
                                 }
                             }
                         }
+                        sfc.setRequireCreditCount(totalXF);
+                        sfc.setFailRequiredCourseNum(count);
+                        sfc.setMakeUpFailRequiredCourseNum(bkcount);
+                        sfc.setDataSource(source.toString());
+                        sfc.setScheduleCodeList(kchs);
+                        sfcList.add(sfc);
                     }
-                    sfc.setRequireCreditCount(totalXF);
-                    sfc.setFailRequiredCourseNum(count);
-                    sfc.setMakeUpFailRequiredCourseNum(bkcount);
-                    sfc.setDataSource(source.toString());
-                    sfc.setScheduleCodeList(kchs);
-                    sfcList.add(sfc);
+                    lastSemesterScoreStatisticsRespository.save(sfcList);
                 }
-                lastSemesterScoreStatisticsRespository.save(sfcList);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                logger.info(e.getMessage());
+            }finally {
+                distributeLock.delete(path);
             }
-        } catch (ParseException e) {
-            e.printStackTrace();
-            logger.info(e.getMessage());
         }
     }
 
