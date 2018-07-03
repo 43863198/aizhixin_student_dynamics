@@ -141,43 +141,37 @@ public class ScoreJob {
 
                 StringBuilder sql2 = new StringBuilder("");
                 sql2.append(sql);
-//                sql2.append(" AND cj.KSRQ BETWEEN :start2 AND :end2");
                 sql2.append(" AND cj.XN = :xn");
                 sql2.append(" AND cj.XQM = :xqm");
                 sql2.append(" AND cj.XKSX = '必修'");
                 sql2.append(" GROUP BY cj.KCH, cj.XH");
                 Query sq2 = em.createNativeQuery(sql2.toString());
-//                sq2.setParameter("start2", start2);
-//                sq2.setParameter("end2", end2);
-                sq2.setParameter("xn",secondSchoolYear);
+                sq2.setParameter("xn", secondSchoolYear);
                 String xqm2 = "";
-                if(secondSemester.equals("春")){
-                    xqm2= "1";
-                }else {
-                    xqm2="2";
+                if (secondSemester.equals("春")) {
+                    xqm2 = "1";
+                } else {
+                    xqm2 = "2";
                 }
-                sq2.setParameter("xqm",xqm2);
+                sq2.setParameter("xqm", xqm2);
                 sq2.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
                 List<Map<String, Object>> res2 = sq2.getResultList();
 
                 StringBuilder sql1 = new StringBuilder("");
                 sql1.append(sql);
-//                sql1.append(" AND cj.KSRQ BETWEEN :start1 AND :end1");
                 sql1.append(" AND cj.XN = :xn");
                 sql1.append(" AND cj.XQM = :xqm");
                 sql1.append(" AND cj.XKSX = '必修'");
                 sql1.append(" GROUP BY cj.KCH, cj.XH");
                 Query sq1 = em.createNativeQuery(sql1.toString());
-//                sq1.setParameter("start1", start1);
-//                sq1.setParameter("end1", end1);
-                sq1.setParameter("xn",firstSchoolYear);
+                sq1.setParameter("xn", firstSchoolYear);
                 String xqm1 = "";
-                if(firstSemester.equals("春")){
-                    xqm1= "1";
-                }else {
-                    xqm1="2";
+                if (firstSemester.equals("春")) {
+                    xqm1 = "1";
+                } else {
+                    xqm1 = "2";
                 }
-                sq1.setParameter("xqm",xqm1);
+                sq1.setParameter("xqm", xqm1);
                 sq1.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
                 List<Map<String, Object>> res1 = sq1.getResultList();
                 List<FirstTwoSemestersScoreStatistics> sfcList = new ArrayList<>();
@@ -218,7 +212,6 @@ public class ScoreJob {
                     float totalCJ2 = 0;
                     float totalXFJD2 = 0;
                     float totalXF2 = 0;
-//                    StringBuilder source2 = new StringBuilder("");
                     for (Map d2 : res2) {
                         if (null != d2.get("xh") && sfc.getJobNum().equals(d2.get("xh").toString())) {
                             count2++;
@@ -239,9 +232,9 @@ public class ScoreJob {
                     sfc.setSecondTotalScores(totalCJ2);
                     sfc.setSecondTotalCourseNums(count2);
                     sfc.setSecondTotalGradePoint(totalXFJD2);
-                    if(totalXF2!=0) {
+                    if (totalXF2 != 0) {
                         sfc.setSecondAvgradePoint(totalXFJD2 / totalXF2);
-                    }else{
+                    } else {
                         sfc.setSecondAvgradePoint(0);
                     }
 
@@ -314,7 +307,7 @@ public class ScoreJob {
                 aql.append(" AND RXNY <= :start");
                 aql.append(" AND YBYNY >= :end");
                 Query aq = em.createNativeQuery(aql.toString());
-                aq.setParameter("start",start);
+                aq.setParameter("start", start);
                 aq.setParameter("end", end);
                 aq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
                 List<Map<String, Object>> res = aq.getResultList();
@@ -368,19 +361,19 @@ public class ScoreJob {
                     for (Map d1 : res1) {
                         if (null != d1.get("xh") && sfc.getJobNum().equals(d1.get("xh").toString())) {
                             if (null != d1.get("cj")) {
-                                    count++;
-                                    if (null != d1.get("kch") && null != d1.get("kcmc") && null != d1.get("xf")) {
-                                        source.append("【KCH:" + d1.get("kch") + ";");
-                                        source.append("KCMC:" + d1.get("kcmc") + ";");
-                                        source.append("XF:" + d1.get("xf") + "】 ");
-                                    }
-                                    if (null != d1.get("xf")) {
-                                        totalXF = totalXF + Float.valueOf(d1.get("xf").toString());
-                                    }
-                                    sfc.setFailCourseCredit(totalXF);
-                                    sfc.setFailCourseNum(count);
-                                    sfc.setDataSource(source.toString());
-                                    sfcList.add(sfc);
+                                count++;
+                                if (null != d1.get("kch") && null != d1.get("kcmc") && null != d1.get("xf")) {
+                                    source.append("【KCH:" + d1.get("kch") + ";");
+                                    source.append("KCMC:" + d1.get("kcmc") + ";");
+                                    source.append("XF:" + d1.get("xf") + "】 ");
+                                }
+                                if (null != d1.get("xf")) {
+                                    totalXF = totalXF + Float.valueOf(d1.get("xf").toString());
+                                }
+                                sfc.setFailCourseCredit(totalXF);
+                                sfc.setFailCourseNum(count);
+                                sfc.setDataSource(source.toString());
+                                sfcList.add(sfc);
                             }
                         }
                     }
@@ -493,7 +486,7 @@ public class ScoreJob {
                     StringBuilder source = new StringBuilder("");
                     for (Map d1 : res1) {
                         if (null != d1.get("xh") && sfc.getJobNum().equals(d1.get("xh").toString())) {
-                            if(null!=d.get("cj")&&Float.valueOf(d.get("cj").toString())<60) {
+                            if (null != d.get("cj") && Float.valueOf(d.get("cj").toString()) < 60) {
                                 if (null != d1.get("kch") && null != d1.get("kcmc") && null != d1.get("xf")) {
                                     source.append("【KCH:" + d1.get("kch") + ";");
                                     source.append("KCMC:" + d1.get("kcmc") + ";");
@@ -530,122 +523,121 @@ public class ScoreJob {
     /**
      * 相邻两个学期(上上个学期平均学分绩点与上学期平均学分绩点)下降情况-----成绩波动
      */
-    public List<WarningInformation> scoreFluctuateJob (Long orgId, String teachYear, String semester, String rpId)
-        {
-            ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
+    public List<WarningInformation> scoreFluctuateJob(Long orgId, String teachYear, String semester, String rpId) {
+        ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
-            // 上上个学期平均学分绩点与上学期平均学分绩点数据
-            List<FirstTwoSemestersScoreStatistics> scoreFluctuateList = firstTwoSemestersScoreStatisticsRespository
-                    .findAllByOrgIdAndTeachYearAndSemester(orgId, teachYear, semester);
-            RuleParameter ruleParameter = ruleParameterService.findById(rpId);
-            if (null != scoreFluctuateList
-                    && scoreFluctuateList.size() > 0) {
-                for (FirstTwoSemestersScoreStatistics scoreFluctuateCount : scoreFluctuateList) {
-                    if (null != ruleParameter) {
-                        float result = 0;
-                        result = scoreFluctuateCount.getSecondAvgradePoint() - scoreFluctuateCount.getFirstAvgradePoint();
-                        // 上学期平均绩点小于上上学期平均绩点时
-                        if (result < 0) {
-                            result = Math.abs(result);
-                            if (result >= Float.parseFloat(String.valueOf(ruleParameter.getRightParameter()))) {
-                                WarningInformation alertInfor = new WarningInformation();
-                                String alertId = UUID.randomUUID().toString();
-                                alertInfor.setId(alertId);
-                                alertInfor.setName(scoreFluctuateCount.getUserName());
-                                alertInfor.setJobNumber(scoreFluctuateCount.getJobNum());
-                                alertInfor.setCollogeCode(scoreFluctuateCount.getCollegeCode());
-                                alertInfor.setCollogeName(scoreFluctuateCount.getCollegeName());
-                                alertInfor.setClassCode(scoreFluctuateCount.getClassCode());
-                                alertInfor.setClassName(scoreFluctuateCount.getClassName());
-                                alertInfor.setProfessionalCode(scoreFluctuateCount.getProfessionalCode());
-                                alertInfor.setProfessionalName(scoreFluctuateCount.getProfessionalName());
-                                alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-                                alertInfor.setSemester(scoreFluctuateCount.getSemester());
-                                alertInfor.setTeacherYear(scoreFluctuateCount.getTeachYear());
-                                alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
-                                alertInfor.setWarningCondition(scoreFluctuateCount.getFirstSchoolYear() + "年" + scoreFluctuateCount.getFirstSemester() + "平均学分绩点为:"
-                                        + new BigDecimal(scoreFluctuateCount.getFirstAvgradePoint()).setScale(2, RoundingMode.HALF_UP).toString() +
-                                        ";" + scoreFluctuateCount.getSecondSchoolYear() + "年" + scoreFluctuateCount.getSecondSemester() + "平均学分绩点为:"
-                                        +  new BigDecimal(scoreFluctuateCount.getSecondAvgradePoint()).setScale(2, RoundingMode.HALF_UP).toString()
-                                        + ",平均学分绩点下降:"
-                                        + new BigDecimal(result).setScale(2, RoundingMode.HALF_UP).toString());
-                                alertInfor.setWarningTime(new Date());
-                                alertInfor.setPhone(scoreFluctuateCount.getUserPhone());
+        // 上上个学期平均学分绩点与上学期平均学分绩点数据
+        List<FirstTwoSemestersScoreStatistics> scoreFluctuateList = firstTwoSemestersScoreStatisticsRespository
+                .findAllByOrgIdAndTeachYearAndSemester(orgId, teachYear, semester);
+        RuleParameter ruleParameter = ruleParameterService.findById(rpId);
+        if (null != scoreFluctuateList
+                && scoreFluctuateList.size() > 0) {
+            for (FirstTwoSemestersScoreStatistics scoreFluctuateCount : scoreFluctuateList) {
+                if (null != ruleParameter) {
+                    float result = 0;
+                    result = scoreFluctuateCount.getSecondAvgradePoint() - scoreFluctuateCount.getFirstAvgradePoint();
+                    // 上学期平均绩点小于上上学期平均绩点时
+                    if (result < 0) {
+                        result = Math.abs(result);
+                        if (result >= Float.parseFloat(String.valueOf(ruleParameter.getRightParameter()))) {
+                            WarningInformation alertInfor = new WarningInformation();
+                            String alertId = UUID.randomUUID().toString();
+                            alertInfor.setId(alertId);
+                            alertInfor.setName(scoreFluctuateCount.getUserName());
+                            alertInfor.setJobNumber(scoreFluctuateCount.getJobNum());
+                            alertInfor.setCollogeCode(scoreFluctuateCount.getCollegeCode());
+                            alertInfor.setCollogeName(scoreFluctuateCount.getCollegeName());
+                            alertInfor.setClassCode(scoreFluctuateCount.getClassCode());
+                            alertInfor.setClassName(scoreFluctuateCount.getClassName());
+                            alertInfor.setProfessionalCode(scoreFluctuateCount.getProfessionalCode());
+                            alertInfor.setProfessionalName(scoreFluctuateCount.getProfessionalName());
+                            alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+                            alertInfor.setSemester(scoreFluctuateCount.getSemester());
+                            alertInfor.setTeacherYear(scoreFluctuateCount.getTeachYear());
+                            alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
+                            alertInfor.setWarningCondition(scoreFluctuateCount.getFirstSchoolYear() + "年" + scoreFluctuateCount.getFirstSemester() + "平均学分绩点为:"
+                                    + new BigDecimal(scoreFluctuateCount.getFirstAvgradePoint()).setScale(2, RoundingMode.HALF_UP).toString() +
+                                    ";" + scoreFluctuateCount.getSecondSchoolYear() + "年" + scoreFluctuateCount.getSecondSemester() + "平均学分绩点为:"
+                                    + new BigDecimal(scoreFluctuateCount.getSecondAvgradePoint()).setScale(2, RoundingMode.HALF_UP).toString()
+                                    + ",平均学分绩点下降:"
+                                    + new BigDecimal(result).setScale(2, RoundingMode.HALF_UP).toString());
+                            alertInfor.setWarningTime(new Date());
+                            alertInfor.setPhone(scoreFluctuateCount.getUserPhone());
 //                                alertInfor.setWarningSource(scoreFluctuateCount.getDataSource());
-                                alertInfor.setOrgId(orgId);
-                                alertInforList.add(alertInfor);
-                            } else {
-                                continue;
-                            }
+                            alertInfor.setOrgId(orgId);
+                            alertInforList.add(alertInfor);
+                        } else {
+                            continue;
                         }
                     }
                 }
             }
-
-            return alertInforList;
         }
 
-        /**
-         * 上学期必修课不及格课程数
-        */
-        public List<WarningInformation> failScoreCountJob (Long orgId,String teachYear, String semester, String rpId){
+        return alertInforList;
+    }
 
-            ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
+    /**
+     * 上学期必修课不及格课程数
+     */
+    public List<WarningInformation> failScoreCountJob(Long orgId, String teachYear, String semester, String rpId) {
 
-            //上学期必修课不及格课程数的数据
-            List<LastSemesterScoreStatistics> totalScoreCountList = lastSemesterScoreStatisticsRespository.findAllByTeachYearAndSemesterAndOrgId
-                    (teachYear, semester, orgId);
-            RuleParameter ruleParameter = ruleParameterService.findById(rpId);
-            if (null != totalScoreCountList
-                    && totalScoreCountList.size() > 0) {
-                for (LastSemesterScoreStatistics totalScoreCount : totalScoreCountList) {
-                    if (null != ruleParameter) {
-                        if (">=".equals(ruleParameter.getRightRelationship())) {
-                            if (totalScoreCount.getFailRequiredCourseNum() >= Float.parseFloat(ruleParameter.getRightParameter())) {
-                                WarningInformation alertInfor = new WarningInformation();
-                                String alertId = UUID.randomUUID()
-                                        .toString();
-                                alertInfor.setId(alertId);
-                                alertInfor.setName(totalScoreCount
-                                        .getUserName());
-                                alertInfor.setJobNumber(totalScoreCount
-                                        .getJobNum());
-                                alertInfor.setCollogeCode(totalScoreCount.getCollegeCode());
-                                alertInfor.setCollogeName(totalScoreCount.getCollegeName());
-                                alertInfor.setClassCode(totalScoreCount.getClassCode());
-                                alertInfor.setClassName(totalScoreCount.getClassName());
-                                alertInfor.setProfessionalCode(totalScoreCount.getProfessionalCode());
-                                alertInfor.setProfessionalName(totalScoreCount.getProfessionalName());
-                                alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-                                alertInfor.setWarningTime(new Date());
-                                alertInfor.setSemester(semester);
-                                alertInfor.setTeacherYear(teachYear);
-                                if (null != totalScoreCount.getDataSource() && totalScoreCount.getDataSource().length() > 0) {
-                                    alertInfor.setWarningSource(totalScoreCount.getDataSource().substring(0, totalScoreCount.getDataSource().length() - 1));
-                                }
-                                alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
-                                alertInfor.setWarningCondition(totalScoreCount.getLastSchoolYear() + "年第" + totalScoreCount.getLastSemester() + ruleParameter.getRuledescribe()
-                                        + totalScoreCount.getFailRequiredCourseNum());
-                                alertInfor.setPhone(totalScoreCount
-                                        .getUserPhone());
-                                alertInfor.setOrgId(ruleParameter
-                                        .getOrgId());
-                                alertInforList.add(alertInfor);
-                            } else {
-                                continue;
+        ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
+
+        //上学期必修课不及格课程数的数据
+        List<LastSemesterScoreStatistics> totalScoreCountList = lastSemesterScoreStatisticsRespository.findAllByTeachYearAndSemesterAndOrgId
+                (teachYear, semester, orgId);
+        RuleParameter ruleParameter = ruleParameterService.findById(rpId);
+        if (null != totalScoreCountList
+                && totalScoreCountList.size() > 0) {
+            for (LastSemesterScoreStatistics totalScoreCount : totalScoreCountList) {
+                if (null != ruleParameter) {
+                    if (">=".equals(ruleParameter.getRightRelationship())) {
+                        if (totalScoreCount.getFailRequiredCourseNum() >= Float.parseFloat(ruleParameter.getRightParameter())) {
+                            WarningInformation alertInfor = new WarningInformation();
+                            String alertId = UUID.randomUUID()
+                                    .toString();
+                            alertInfor.setId(alertId);
+                            alertInfor.setName(totalScoreCount
+                                    .getUserName());
+                            alertInfor.setJobNumber(totalScoreCount
+                                    .getJobNum());
+                            alertInfor.setCollogeCode(totalScoreCount.getCollegeCode());
+                            alertInfor.setCollogeName(totalScoreCount.getCollegeName());
+                            alertInfor.setClassCode(totalScoreCount.getClassCode());
+                            alertInfor.setClassName(totalScoreCount.getClassName());
+                            alertInfor.setProfessionalCode(totalScoreCount.getProfessionalCode());
+                            alertInfor.setProfessionalName(totalScoreCount.getProfessionalName());
+                            alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+                            alertInfor.setWarningTime(new Date());
+                            alertInfor.setSemester(semester);
+                            alertInfor.setTeacherYear(teachYear);
+                            if (null != totalScoreCount.getDataSource() && totalScoreCount.getDataSource().length() > 0) {
+                                alertInfor.setWarningSource(totalScoreCount.getDataSource().substring(0, totalScoreCount.getDataSource().length() - 1));
                             }
+                            alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
+                            alertInfor.setWarningCondition(totalScoreCount.getLastSchoolYear() + "年第" + totalScoreCount.getLastSemester() + ruleParameter.getRuledescribe()
+                                    + totalScoreCount.getFailRequiredCourseNum());
+                            alertInfor.setPhone(totalScoreCount
+                                    .getUserPhone());
+                            alertInfor.setOrgId(ruleParameter
+                                    .getOrgId());
+                            alertInforList.add(alertInfor);
+                        } else {
+                            continue;
                         }
-
                     }
+
                 }
             }
-            return alertInforList;
         }
+        return alertInforList;
+    }
 
     /**
      * 上学期不合格的必修课程（含集中性实践教学环节）学分
      */
-    public List<WarningInformation> failScoreCreditJob (Long orgId,String teachYear, String semester, String ruleId){
+    public List<WarningInformation> failScoreCreditJob(Long orgId, String teachYear, String semester, String ruleId) {
 
         ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
@@ -699,12 +691,11 @@ public class ScoreJob {
         return alertInforList;
     }
 
-       /**
-         * 修读异常预警 （AttendAbnormalEarlyWarning）
-         */
-        public ArrayList<WarningInformation> attendAbnormalJob (Long orgId,String schoolYear, String semester, String rpId){
-            ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
-
+    /**
+     * 修读异常预警 （AttendAbnormalEarlyWarning）
+     */
+    public ArrayList<WarningInformation> attendAbnormalJob(Long orgId, String schoolYear, String semester, String rpId) {
+        ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
 
 //            int lastSchoolYear = schoolYear;
@@ -799,9 +790,8 @@ public class ScoreJob {
 //                    }
 //                }
 //            }
-            return alertInforList;
-        }
-
+        return alertInforList;
+    }
 
 
     /**
@@ -862,40 +852,40 @@ public class ScoreJob {
         ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
 
         List<FailScoreStatistics> makeUpScoreCountList = failScoreStatisticsRespository.findAllByOrgIdAndTeachYearAndSemester(orgId, teachYear, semester);
-            RuleParameter ruleParameter = ruleParameterService.findById(rpId);
-              if (null != makeUpScoreCountList && makeUpScoreCountList.size() > 0) {
-                for (FailScoreStatistics makeUpScoreCount : makeUpScoreCountList) {
-                    if (null != ruleParameter) {
-                        if (makeUpScoreCount.getFailCourseCredit() >= Float.parseFloat(ruleParameter.getRightParameter())) {
-                            WarningInformation alertInfor = new WarningInformation();
-                            String alertId = UUID.randomUUID().toString();
-                            alertInfor.setId(alertId);
-                            alertInfor.setName(makeUpScoreCount.getUserName());
-                            alertInfor.setJobNumber(makeUpScoreCount.getJobNum());
-                            alertInfor.setCollogeCode(makeUpScoreCount.getCollegeCode());
-                            alertInfor.setCollogeName(makeUpScoreCount.getCollegeName());
-                            alertInfor.setClassCode(makeUpScoreCount.getClassCode());
-                            alertInfor.setClassName(makeUpScoreCount.getClassName());
-                            alertInfor.setProfessionalCode(makeUpScoreCount.getProfessionalCode());
-                            alertInfor.setProfessionalName(makeUpScoreCount.getProfessionalName());
-                            alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-                            BigDecimal failCourseCredit = new BigDecimal(makeUpScoreCount.getFailCourseCredit());
-                            alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
-                            alertInfor.setWarningCondition("在校学习期间，考核不合格的必修课程（含集中性实践教学环节）学分:" + failCourseCredit.setScale(2, RoundingMode.HALF_UP).toString());
-                            alertInfor.setWarningTime(new Date());
-                            alertInfor.setPhone(makeUpScoreCount.getUserPhone());
-                            alertInfor.setSemester(semester);
-                            alertInfor.setTeacherYear(teachYear);
-                            alertInfor.setOrgId(ruleParameter.getOrgId());
-                            if (null != makeUpScoreCount.getDataSource() && makeUpScoreCount.getDataSource().length() > 0) {
-                                alertInfor.setWarningSource(makeUpScoreCount.getDataSource().substring(0, makeUpScoreCount.getDataSource().length() - 1));
-                            }
-                            alertInforList.add(alertInfor);
-                        } else {
-                            continue;
+        RuleParameter ruleParameter = ruleParameterService.findById(rpId);
+        if (null != makeUpScoreCountList && makeUpScoreCountList.size() > 0) {
+            for (FailScoreStatistics makeUpScoreCount : makeUpScoreCountList) {
+                if (null != ruleParameter) {
+                    if (makeUpScoreCount.getFailCourseCredit() >= Float.parseFloat(ruleParameter.getRightParameter())) {
+                        WarningInformation alertInfor = new WarningInformation();
+                        String alertId = UUID.randomUUID().toString();
+                        alertInfor.setId(alertId);
+                        alertInfor.setName(makeUpScoreCount.getUserName());
+                        alertInfor.setJobNumber(makeUpScoreCount.getJobNum());
+                        alertInfor.setCollogeCode(makeUpScoreCount.getCollegeCode());
+                        alertInfor.setCollogeName(makeUpScoreCount.getCollegeName());
+                        alertInfor.setClassCode(makeUpScoreCount.getClassCode());
+                        alertInfor.setClassName(makeUpScoreCount.getClassName());
+                        alertInfor.setProfessionalCode(makeUpScoreCount.getProfessionalCode());
+                        alertInfor.setProfessionalName(makeUpScoreCount.getProfessionalName());
+                        alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+                        BigDecimal failCourseCredit = new BigDecimal(makeUpScoreCount.getFailCourseCredit());
+                        alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
+                        alertInfor.setWarningCondition("在校学习期间，考核不合格的必修课程（含集中性实践教学环节）学分:" + failCourseCredit.setScale(2, RoundingMode.HALF_UP).toString());
+                        alertInfor.setWarningTime(new Date());
+                        alertInfor.setPhone(makeUpScoreCount.getUserPhone());
+                        alertInfor.setSemester(semester);
+                        alertInfor.setTeacherYear(teachYear);
+                        alertInfor.setOrgId(ruleParameter.getOrgId());
+                        if (null != makeUpScoreCount.getDataSource() && makeUpScoreCount.getDataSource().length() > 0) {
+                            alertInfor.setWarningSource(makeUpScoreCount.getDataSource().substring(0, makeUpScoreCount.getDataSource().length() - 1));
                         }
+                        alertInforList.add(alertInfor);
+                    } else {
+                        continue;
                     }
                 }
+            }
         }
         return alertInforList;
     }
@@ -907,7 +897,6 @@ public class ScoreJob {
 
         ArrayList<WarningInformation> alertInforList = new ArrayList<WarningInformation>();
         try {
-
             Date start = null;
             Date end = null;
             if (!org.apache.commons.lang.StringUtils.isBlank(teachYear) && !org.apache.commons.lang.StringUtils.isBlank(semester)) {
@@ -924,14 +913,14 @@ public class ScoreJob {
             }
             int year = Integer.valueOf(teachYear);
             RuleParameter ruleParameter = ruleParameterService.findById(rpId);
-            if(null!=ruleParameter) {
+            if (null != ruleParameter) {
                 String parm = ruleParameter.getRightParameter();
-                if(!parm.isEmpty()){
-                   year = year-Integer.valueOf(parm);
+                if (!parm.isEmpty()) {
+                    year = year - Integer.valueOf(parm);
                 }
             }
             Date start1 = null;
-            if (!org.apache.commons.lang.StringUtils.isBlank(year+"") && !org.apache.commons.lang.StringUtils.isBlank(semester)) {
+            if (!org.apache.commons.lang.StringUtils.isBlank(year + "") && !org.apache.commons.lang.StringUtils.isBlank(semester)) {
                 Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, year + "", semester);
                 if (null != schoolCalendar) {
                     if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
@@ -945,67 +934,65 @@ public class ScoreJob {
 
             if (null != start && null != end) {
                 StringBuilder aql = new StringBuilder("SELECT XH as xh, XM as xm, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc, NJ as nj FROM t_xsjbxx  WHERE 1 = 1");
+                aql.append(" AND RXFS NOT IN ('12','14')");
                 aql.append(" AND RXNY <= :start");
                 aql.append(" AND YBYNY >= :end");
                 Query aq = em.createNativeQuery(aql.toString());
-                aq.setParameter("start",start);
+                aq.setParameter("start", start);
                 aq.setParameter("end", end);
                 aq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
                 List<Map<String, Object>> res = aq.getResultList();
 
                 StringBuilder sql = new StringBuilder("SELECT JOB_NUMBER as xh, MAX(SCORE) as score  FROM t_cet_score WHERE score < 425 AND TYPE = '大学英语四级考试'");
-                sql.append(" AND EXAMINATION_DATE BETWEEN :start AND ：end");
+                sql.append(" AND EXAMINATION_DATE BETWEEN :start AND :end");
                 sql.append(" GROUP BY JOB_NUMBER");
                 Query sq = em.createNativeQuery(sql.toString());
                 sq.setParameter("start", start1);
                 sq.setParameter("end", end);
                 sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
                 List<Map<String, Object>> res1 = sq.getResultList();
-                Set<String> xhSet = new HashSet<>();
-                for(Map cd : res1) {
-                    if(null!=cd.get("xh")){
-                        xhSet.add(cd.get("xh").toString());
-                }
-                for(Map d : res){
-                    if(null!=d.get("xh")&&xhSet.contains(d.get("xh").toString())){
-                        WarningInformation alertInfor = new WarningInformation();
-                        String alertId = UUID.randomUUID().toString();
-                        alertInfor.setId(alertId);
-                        if (null != d.get("xh")) {
-                            alertInfor.setJobNumber(d.get("xh").toString());
-                        }
-                        if (null != d.get("xm")) {
-                            alertInfor.setName(d.get("xm").toString());
-                        }
-                        if (null != d.get("bh")) {
-                            alertInfor.setClassCode(d.get("bh").toString());
-                        }
-                        if (null != d.get("bjmc")) {
-                            alertInfor.setClassName(d.get("bjmc").toString());
-                        }
-                        if (null != d.get("zyh")) {
-                            alertInfor.setProfessionalCode(d.get("zyh").toString());
-                        }
-                        if (null != d.get("zymc")) {
-                            alertInfor.setProfessionalName(d.get("zymc").toString());
-                        }
-                        if (null != d.get("yxsh")) {
-                            alertInfor.setCollogeCode(d.get("yxsh").toString());
-                        }
-                        if (null != d.get("yxsmc")) {
-                            alertInfor.setCollogeName(d.get("yxsmc").toString());
-                        }
-                        alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
-                        alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
-                        alertInfor.setWarningCondition("在校学年已大于等于"+ruleParameter.getRightParameter()
-                                + "年仍未通过英语四级考试");
-                        alertInfor.setSemester(semester);
-                        alertInfor.setTeacherYear(teachYear);
-                        alertInfor.setWarningTime(new Date());
-                        alertInfor.setOrgId(ruleParameter.getOrgId());
-                        alertInforList.add(alertInfor);
-                        } else {
-                            continue;
+                for (Map cd : res1) {
+                    if (null != cd.get("xh")) {
+                        for (Map d : res) {
+                            if (null != d.get("xh") && cd.get("xh").equals(d.get("xh"))) {
+                                WarningInformation alertInfor = new WarningInformation();
+                                String alertId = UUID.randomUUID().toString();
+                                alertInfor.setId(alertId);
+                                if (null != d.get("xh")) {
+                                    alertInfor.setJobNumber(d.get("xh").toString());
+                                }
+                                if (null != d.get("xm")) {
+                                    alertInfor.setName(d.get("xm").toString());
+                                }
+                                if (null != d.get("bh")) {
+                                    alertInfor.setClassCode(d.get("bh").toString());
+                                }
+                                if (null != d.get("bjmc")) {
+                                    alertInfor.setClassName(d.get("bjmc").toString());
+                                }
+                                if (null != d.get("zyh")) {
+                                    alertInfor.setProfessionalCode(d.get("zyh").toString());
+                                }
+                                if (null != d.get("zymc")) {
+                                    alertInfor.setProfessionalName(d.get("zymc").toString());
+                                }
+                                if (null != d.get("yxsh")) {
+                                    alertInfor.setCollogeCode(d.get("yxsh").toString());
+                                }
+                                if (null != d.get("yxsmc")) {
+                                    alertInfor.setCollogeName(d.get("yxsmc").toString());
+                                }
+                                alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+                                alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
+                                alertInfor.setWarningCondition("在校学年已大于等于" + ruleParameter.getRightParameter()
+                                        + "年仍未通过英语四级考试");
+                                alertInfor.setSemester(semester);
+                                alertInfor.setTeacherYear(teachYear);
+                                alertInfor.setWarningTime(new Date());
+                                alertInfor.setOrgId(ruleParameter.getOrgId());
+                                alertInforList.add(alertInfor);
+                            }
+
                         }
                     }
                 }
