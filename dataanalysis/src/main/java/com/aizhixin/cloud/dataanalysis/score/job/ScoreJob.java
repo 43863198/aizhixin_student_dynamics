@@ -303,7 +303,7 @@ public class ScoreJob {
             // 清除之前总评成绩不及格统计数据
 //            List<FailScoreStatistics> fsList = failScoreStatisticsRespository.findAllByOrgIdAndTeachYearAndSemester(orgId, teachYear, semester);
 //            failScoreStatisticsRespository.delete(fsList);
-//            failScoreStatisticsRespository.deleteAll();
+            failScoreStatisticsRespository.deleteAll();
             Set<FailScoreStatistics> sfcList = new HashSet<>();
             if (null != start && null != end) {
                 StringBuilder aql = new StringBuilder("SELECT XH as xh, XM as xm, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc FROM t_xsjbxx  WHERE 1 = 1");
