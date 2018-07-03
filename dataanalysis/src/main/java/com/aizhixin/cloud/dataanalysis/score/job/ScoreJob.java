@@ -181,7 +181,7 @@ public class ScoreJob {
                     sq1.setParameter("xqm", xqm1);
                     sq1.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
                     List<Map<String, Object>> res1 = sq1.getResultList();
-                    List<FirstTwoSemestersScoreStatistics> sfcList = new ArrayList<>();
+                    Set<FirstTwoSemestersScoreStatistics> sfcList = new HashSet<>();
                     for (Map d : res) {
                         FirstTwoSemestersScoreStatistics sfc = new FirstTwoSemestersScoreStatistics();
                         sfc.setOrgId(orgId);
@@ -314,7 +314,7 @@ public class ScoreJob {
 //            List<FailScoreStatistics> fsList = failScoreStatisticsRespository.findAllByOrgIdAndTeachYearAndSemester(orgId, teachYear, semester);
 //            failScoreStatisticsRespository.delete(fsList);
             failScoreStatisticsRespository.deleteAll();
-
+            Set<FailScoreStatistics> sfcList = new HashSet<>();
             if (null != start && null != end) {
                 StringBuilder aql = new StringBuilder("SELECT XH as xh, XM as xm, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc FROM t_xsjbxx  WHERE 1 = 1");
                 aql.append(" AND RXFS NOT IN ('12','14')");
@@ -339,7 +339,6 @@ public class ScoreJob {
                 sq1.setParameter("end", end);
                 sq1.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
                 List<Map<String, Object>> res1 = sq1.getResultList();
-                List<FailScoreStatistics> sfcList = new ArrayList<>();
                 for (Map d : res) {
                     FailScoreStatistics sfc = new FailScoreStatistics();
                     sfc.setOrgId(orgId);
@@ -373,7 +372,7 @@ public class ScoreJob {
                     float totalXF = 0;
                     StringBuilder source = new StringBuilder("");
                     for (Map d1 : res1) {
-                        if (null != d1.get("xh") && sfc.getJobNum().equals(d1.get("xh").toString())) {
+                        if (null != d1.get("xh") && null!= sfc.getJobNum() && sfc.getJobNum().equals(d1.get("xh").toString())) {
                             if (null != d1.get("cj")) {
                                 count++;
                                 if (null != d1.get("kch") && null != d1.get("kcmc") && null != d1.get("xf")) {
@@ -392,8 +391,8 @@ public class ScoreJob {
                     sfc.setDataSource(source.toString());
                     sfcList.add(sfc);
                 }
-                failScoreStatisticsRespository.save(sfcList);
             }
+            failScoreStatisticsRespository.save(sfcList);
         } catch (ParseException e) {
             e.printStackTrace();
             logger.info(e.getMessage());
@@ -463,8 +462,7 @@ public class ScoreJob {
                     sq1.setParameter("end", end);
                     sq1.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
                     List<Map<String, Object>> res1 = sq1.getResultList();
-
-                    List<LastSemesterScoreStatistics> sfcList = new ArrayList<>();
+                    Set<LastSemesterScoreStatistics> sfcList = new HashSet<>();
                     for (Map d : res) {
                         LastSemesterScoreStatistics sfc = new LastSemesterScoreStatistics();
                         sfc.setOrgId(orgId);
