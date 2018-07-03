@@ -63,9 +63,6 @@ public class ScoreJob {
      */
     @Async
     public void firstTwoSemestersScoreStatisticsJob(Long orgId, String teachYear, String semester) {
-        StringBuilder path = new StringBuilder("/WarningStatistics");
-        path.append("/").append("FirstTwoSemestersScore");
-        if(distributeLock.getLock(path)) {
             try {
                 // 上学年学期
                 String secondSchoolYear = teachYear;
@@ -279,10 +276,7 @@ public class ScoreJob {
             } catch (Exception e) {
                 e.printStackTrace();
                 logger.info(e.getMessage());
-            }finally {
-                distributeLock.delete(path);
             }
-        }
 
     }
 
@@ -291,9 +285,6 @@ public class ScoreJob {
      */
     @Async
     public void failScoreStatisticsJob(Long orgId, String teachYear, String semester) {
-        StringBuilder path = new StringBuilder("/WarningStatistics");
-        path.append("/").append("FailScore");
-        if(distributeLock.getLock(path)) {
         try {
             Date start = null;
             Date end = null;
@@ -396,9 +387,6 @@ public class ScoreJob {
         } catch (ParseException e) {
             e.printStackTrace();
             logger.info(e.getMessage());
-        }finally {
-            distributeLock.delete(path);
-        }
         }
     }
 
@@ -408,9 +396,6 @@ public class ScoreJob {
      */
     @Async
     public void LastSemesterScoreStatisticsJob(Long orgId, String teachYear, String semester) {
-        StringBuilder path = new StringBuilder("/WarningStatistics");
-        path.append("/").append("LastSemesterScore");
-        if(distributeLock.getLock(path)) {
             try {
                 // 上学年学期
                 String lastSchoolYear = teachYear;
@@ -535,10 +520,7 @@ public class ScoreJob {
             } catch (ParseException e) {
                 e.printStackTrace();
                 logger.info(e.getMessage());
-            }finally {
-                distributeLock.delete(path);
             }
-        }
     }
 
     /**
