@@ -271,6 +271,7 @@ public class ScoreJob {
                         sfcList.add(sfc);
                     }
                     firstTwoSemestersScoreStatisticsRespository.save(sfcList);
+                    logger.info("统计相邻学期绩点保存到mongo中完成！");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -383,6 +384,7 @@ public class ScoreJob {
                 }
             }
             failScoreStatisticsRespository.save(sfcList);
+            logger.info("统计在校期间累计不及格成绩汇总到mongo里完成！");
         } catch (ParseException e) {
             e.printStackTrace();
             logger.info(e.getMessage());
@@ -515,6 +517,7 @@ public class ScoreJob {
                         sfcList.add(sfc);
                     }
                     lastSemesterScoreStatisticsRespository.save(sfcList);
+                    logger.info("统计上学期成绩汇总到mongo里完成！");
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
