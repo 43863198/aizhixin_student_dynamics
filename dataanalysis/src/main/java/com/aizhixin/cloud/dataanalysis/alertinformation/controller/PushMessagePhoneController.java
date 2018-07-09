@@ -29,8 +29,7 @@ import java.util.*;
 @Api(value = "消息API", description = "针对消息操作API")
 public class PushMessagePhoneController {
 
-    private final Logger log = LoggerFactory
-            .getLogger(PushMessagePhoneController.class);
+    private final Logger log = LoggerFactory.getLogger(PushMessagePhoneController.class);
 
     @Autowired
     private PushMessageService pushMessageService;

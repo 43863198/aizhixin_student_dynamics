@@ -1,6 +1,6 @@
-<!--注：对于任何一个后台系统用户，都具有各个列表的查看权限，权限控制仅仅控制：查看、编辑、操作三项功能-->
+
 <privileges>
-	<!--运营系统管理模块-->
+	<!--系统管理模块-->
 	<privilege>
 		<!--必选-->
 		<opid>okfor.oms.user.edit</opid>
@@ -12,93 +12,4 @@
 			<opid>okfor.oms.user.detail</opid>
 		</include>
 	</privilege>
-
-	<privilege>
-		<!--必选-->
-		<opid>okfor.oms.user.detail</opid>
-		<!--必选-->
-		<name>系统用户详情查看</name>
-		<!--可选-->
-		<des>查看系统用户详情</des>
-	</privilege>
-
-	<privilege>
-		<!--必选-->
-		<opid>okfor.oms.user.pwd</opid>
-		<!--必选-->
-		<name>系统用户密码重置</name>
-		<!--可选-->
-		<des>重置非admin、当前用户的密码</des>
-		<include>
-			<opid>okfor.oms.user.detail</opid>
-		</include>
-	</privilege>
-
-	<privilege>
-		<!--必选-->
-		<opid>okfor.oms.role.detail</opid>
-		<!--必选-->
-		<name>系统角色详情查看</name>
-		<!--可选-->
-		<des>系统角色详情查看</des>
-	</privilege>
-	
-	
-	<privilege>
-		<!--必选-->
-		<opid>okfor.oms.role.edit</opid>
-		<!--必选-->
-		<name>系统角色编辑</name>
-		<!--可选-->
-		<des>系统角色编辑</des>
-		<include>
-			<opid>okfor.oms.role.detail</opid>
-		</include>
-	</privilege>
-	
-	
-	<privilege>
-		<!--必选-->
-		<opid>okfor.oms.role.chg</opid>
-		<!--必选-->
-		<name>系统角色分配</name>
-		<!--可选-->
-		<des>为系统用户分配相应的角色</des>
-		<include>
-			<opid>okfor.oms.user.detail</opid>
-		</include>
-	</privilege>
-	<!--**********************************消息通知管理模块***************************-->
-	<privilege>
-		<opid>okfor.message.add</opid>
-		<name>消息通知新增</name>
-	</privilege>
-	<privilege>
-		<opid>okfor.message.detail</opid>
-		<name>消息通知详情查看</name>
-	</privilege>
-	<privilege>
-		<opid>okfor.message.audit</opid>
-		<name>消息通知审核</name>
-		<include>
-			<opid>okfor.message.detail</opid>
-		</include>
-	</privilege>
-	<privilege>
-		<opid>okfor.message.edit</opid>
-		<name>消息通知编辑</name>
-		<include>
-			<opid>okfor.message.detail</opid>
-		</include>
-	</privilege>
-	<privilege>
-		<opid>okfor.message.delte</opid>
-		<name>消息通知删除</name>
-		<include>
-			<opid>okfor.message.detail</opid>
-		</include>
-	</privilege>
-
-
-
 </privileges>
