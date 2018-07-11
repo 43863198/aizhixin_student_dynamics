@@ -1,5 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.analysis.service;
 
+import com.aizhixin.cloud.dataanalysis.alertinformation.domain.RegisterAlertCountDomain;
 import com.aizhixin.cloud.dataanalysis.analysis.constant.TrendType;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.*;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.PracticeStatistics;
@@ -16,9 +17,11 @@ import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
 import com.mongodb.BasicDBObject;
+import liquibase.executor.jvm.RowMapper;
 import liquibase.util.StringUtils;
 
 import org.hibernate.SQLQuery;
+import org.hibernate.mapping.*;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -27,6 +30,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -38,10 +42,15 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author: Created by jianwei.wu
@@ -65,6 +74,10 @@ public class SchoolStatisticsService {
     private JdbcTemplate jdbcTemplate;
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private SchoolYearTermService schoolYearTermService;
+
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
 
     public void deleteAllByOrgId(Long orgId) {
@@ -233,10 +246,10 @@ public class SchoolStatisticsService {
                     schoolProfileDTO.setReadyGraduation(Long.valueOf(map.get("yby").toString()));
                 }
             }
-            if(null!=tmap.get("count")){
+            if (null != tmap.get("count")) {
                 schoolProfileDTO.setAllTeacher(Long.valueOf(tmap.get("count").toString()));
             }
-            if(null!=tcmap.get("count")){
+            if (null != tcmap.get("count")) {
                 schoolProfileDTO.setAllInstructor(Long.valueOf(tcmap.get("count").toString()));
             }
             h.setObjData(schoolProfileDTO);
@@ -397,6 +410,7 @@ public class SchoolStatisticsService {
         return h;
     }
 
+
     /**
      * 四六级学情首页统计查询
      *
@@ -404,26 +418,110 @@ public class SchoolStatisticsService {
      * @return
      */
     public HomeData<CetScoreStatisticsDTO> getEctStatics(Long orgId) {
-        String sql = "SELECT SEMESTER ,TEACHER_YEAR  FROM `t_cet_statistics`  where ORG_ID=" + orgId + " ORDER BY TEACHER_YEAR DESC,SEMESTER DESC LIMIT 1";
-        Map currentGradeMap = new HashMap();
-        try {
-            currentGradeMap = jdbcTemplate.queryForMap(sql);
-        } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
-            return null;
-        }
-        int teacherYear = Integer.valueOf(currentGradeMap.get("TEACHER_YEAR") + "");
-        int semester = Integer.valueOf(currentGradeMap.get("SEMESTER") + "");
-        CetScoreStatisticsDTO cetScoreStatisticsDTO = cetScoreStatisticsRespository.getEctStatics(orgId, teacherYear, semester);
-        HomeData<CetScoreStatisticsDTO> h = new HomeData();
         TeacherlYearData teacherlYearData = new TeacherlYearData();
-        teacherlYearData.setSemester(semester);
-        teacherlYearData.setTeacherYear(teacherYear);
-        h.setTeacherlYearData(teacherlYearData);
-        h.setObjData(cetScoreStatisticsDTO);
+        HomeData<CetScoreStatisticsDTO> h = new HomeData();
+        try {
+            Date start = null;
+            Date end = null;
+            String teacherYear = null;
+            String semester = null;
+            Map<String, Object> schoolCalendar = schoolYearTermService.getCurrentSchoolCalendar(orgId);
+            if (null != schoolCalendar) {
+                if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
+                    List<TeacherYearSemesterDTO> tysList = (List<TeacherYearSemesterDTO>) schoolCalendar.get("data");
+                    if (tysList.size() > 0) {
+                        teacherYear = tysList.get(0).getTeacherYear();
+                        semester = tysList.get(0).getSemester();
+                    }
+                }
+            }
+            if (null != teacherYear && null != semester) {
+                // 上学年学期
+                String secondSchoolYear = teacherYear;
+                String secondSemester = "春";
+                if (semester.equals("春")) {
+                    secondSemester = "秋";
+                    secondSchoolYear = Integer.valueOf(teacherYear) - 1 + "";
+                }
+                Map<String, Object> secondschoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, secondSchoolYear, secondSemester);
+                if (null != secondschoolCalendar) {
+                    if (null != secondschoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
+                        List<TeacherYearSemesterDTO> secondtysList = (List<TeacherYearSemesterDTO>) secondschoolCalendar.get("data");
+                        if (secondtysList.size() > 0) {
+                            start = sdf.parse(secondtysList.get(0).getStartTime());
+                            end = sdf.parse(secondtysList.get(0).getEndTime());
+                        }
+                    }
+                }
+                /*********************这个以后统一学年学期后修改*****************/
+                if (semester.equals("春")) {
+                    teacherlYearData.setSemester(1);
+                } else {
+                    teacherlYearData.setSemester(2);
+                }
+                teacherlYearData.setTeacherYear(Integer.valueOf(teacherYear));
+                /***************************************************************/
+            }
+            StringBuilder sql = new StringBuilder("SELECT ss.SCORE_TYPE as type, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss WHERE 1=1");
+            if (null != start && null != end) {
+                sql.append(" AND ss.EXAMINATION_DATE BETWEEN :start AND :end");
+            }
+            if (null!= orgId) {
+                sql.append(" AND ss.ORG_ID = :orgId");
+            }
+            sql.append(" AND (SCORE_TYPE ='大学英语四级考试' OR SCORE_TYPE ='大学英语六级考试') AND STATISTICS_TYPE = '000'");
+            sql.append(" GROUP BY type");
+
+            Query sq = em.createNativeQuery(sql.toString());
+            if (null != start && null != end) {
+                sq.setParameter("start", start);
+                sq.setParameter("end", end);
+            }
+            if(null!=orgId){
+                sq.setParameter("orgId", orgId);
+            }
+        sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            List<Map<String, Object>> res = sq.getResultList();
+            CetScoreStatisticsDTO cetScoreStatisticsDTO = new CetScoreStatisticsDTO();
+            int total = 0;
+            int pass = 0;
+            for(Map<String, Object> d: res){
+                if(null!=d.get("type")){
+                    if(String.valueOf(d.get("type")).equals("大学英语四级考试")){
+                        if(null!=d.get("total")) {
+                            cetScoreStatisticsDTO.setCetForeJoinNum(Long.valueOf(d.get("total").toString()));
+                            total = total + Integer.valueOf(d.get("total").toString());
+                        }
+                        if(null!=d.get("pass")) {
+                            cetScoreStatisticsDTO.setCetForePassNum(Long.valueOf(d.get("pass").toString()));
+                            pass = pass + Integer.valueOf(d.get("pass").toString());
+                        }
+
+                    }
+                    if(String.valueOf(d.get("type")).equals("大学英语六级考试")){
+                        if(null!=d.get("total")) {
+                            cetScoreStatisticsDTO.setCetSixJoinNum(Long.valueOf(d.get("total").toString()));
+                            total = total + Integer.valueOf(d.get("total").toString());
+                        }
+                        if(null!=d.get("pass")) {
+                            cetScoreStatisticsDTO.setCetSixPassNum(Long.valueOf(d.get("pass").toString()));
+                            pass = pass + Integer.valueOf(d.get("pass").toString());
+                        }
+                    }
+                }
+            }
+            cetScoreStatisticsDTO.setCetJoinNum(new Long(total));
+            cetScoreStatisticsDTO.setCetPassNum(new Long(pass));
+            h.setTeacherlYearData(teacherlYearData);
+            h.setObjData(cetScoreStatisticsDTO);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         return h;
     }
 
-    /**
+        /**
      * 教学成绩首页统计查询
      *
      * @param orgId
@@ -680,17 +778,14 @@ public class SchoolStatisticsService {
             Date date = new Date();
             String year = sdf.format(date);
             StringBuilder sql = new StringBuilder("SELECT count(ss.JOB_NUMBER) as count FROM t_student_status ss WHERE 1 = 1");
-            StringBuilder cql = new StringBuilder("SELECT count(ts.STRUDENT_JOB_NUMBER) AS count FROM (SELECT DISTINCT STRUDENT_JOB_NUMBER FROM " +
-                    "t_teachingclass_students WHERE 1=1");
+            StringBuilder cql = new StringBuilder("SELECT count(ss.JOB_NUMBER) AS count FROM t_student_status ss WHERE 1 = 1 ");
             if (null != orgId) {
                 sql.append(" AND ORG_ID = :orgId");
                 cql.append(" AND ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
             sql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
-            cql.append(" ) ts INNER JOIN t_school_record_change src ON src.STRUDENT_JOB_NUMBER = ts.STRUDENT_JOB_NUMBER " +
-                    "WHERE src.DATE_OF_CHANGE > '" + year + "-00-00'" +
-                    " AND src.CHANGE_DESCRIPTION LIKE '%离校%' OR src.CHANGE_DESCRIPTION LIKE '%退学%'");
+            cql.append(" AND ss.STATE NOT IN ('02','04','16') AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
 
             Query sq = em.createNativeQuery(sql.toString());
             Query cq = em.createNativeQuery(cql.toString());
@@ -802,6 +897,7 @@ public class SchoolStatisticsService {
                 sql.append(" AND DAY_OF_THE_WEEK = :day");
                 condition.put("day", day);
             }
+
             cql.append(" AND TEACHING_BUILDING_NUMBER is not null GROUP BY TEACHING_BUILDING_NUMBER");
             sql.append(" ) cs LEFT JOIN t_course_timetable ct ON cs.TEACHING_CLASS_NAME = ct.TEACHING_CLASS_NAME) p");
             sql.append(" LEFT JOIN t_class_room cr ON cr.CLASSROOM_NAME = p.PLACE");
