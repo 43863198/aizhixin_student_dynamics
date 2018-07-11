@@ -12,8 +12,7 @@ import java.util.List;
 @ToString
 public class HomeData <T> {
     @ApiModelProperty(value = "学年学期数据")
-    @Getter
-    @Setter
+    @Getter @Setter
     private TeacherlYearData teacherlYearData = new TeacherlYearData();
     @ApiModelProperty(value = "list数据内容")
     @Getter @Setter private List<T> data = new ArrayList<>();
