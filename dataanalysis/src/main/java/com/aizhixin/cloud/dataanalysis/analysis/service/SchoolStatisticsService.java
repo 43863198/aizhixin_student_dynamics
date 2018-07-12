@@ -51,6 +51,8 @@ import java.util.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author: Created by jianwei.wu
@@ -879,6 +881,22 @@ public class SchoolStatisticsService {
                     day = 7;
                 }
             }
+            StringBuilder oql = new StringBuilder("SELECT JC AS jc FROM t_glut_dc_xjxx WHERE 1=1 ");
+            SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+            String time = format.format(new Date());
+            oql.append(" AND :time BETWEEN KSSJ AND JSSJ");
+            Query oq = em.createNativeQuery(oql.toString());
+            oq.setParameter("time",time);
+            List<Object> jcList = oq.getResultList();
+            int jc = 0;
+            if(null!=jcList&&jcList.size()>0){
+                Pattern pattern = Pattern.compile("^[0-9]*$");
+                Matcher matcher = pattern.matcher(jcList.get(0).toString());
+                if(matcher.matches()){
+                    jc = Integer.parseInt(jcList.get(0).toString());
+                }
+            }
+
             StringBuilder cql = new StringBuilder("SELECT TEACHING_BUILDING_NUMBER as tbn, count(1) as count FROM t_class_room WHERE NORMAL = 0 ");
             StringBuilder sql = new StringBuilder("SELECT cr.TEACHING_BUILDING_NUMBER as tbn, count(1) as count ");
             sql.append("FROM (SELECT DISTINCT ct.PLACE FROM (SELECT DISTINCT TEACHING_CLASS_NAME FROM t_curriculum_schedule WHERE 1 = 1");
@@ -897,7 +915,12 @@ public class SchoolStatisticsService {
                 sql.append(" AND DAY_OF_THE_WEEK = :day");
                 condition.put("day", day);
             }
-
+            if(jc!=0){
+                sql.append(" AND START_PERIOD <= :sjc");
+                sql.append(" AND (START_PERIOD + PERIOD_NUM ) >= :ejc");
+                condition.put("sjc", jc);
+                condition.put("ejc", jc);
+            }
             cql.append(" AND TEACHING_BUILDING_NUMBER is not null GROUP BY TEACHING_BUILDING_NUMBER");
             sql.append(" ) cs LEFT JOIN t_course_timetable ct ON cs.TEACHING_CLASS_NAME = ct.TEACHING_CLASS_NAME) p");
             sql.append(" LEFT JOIN t_class_room cr ON cr.CLASSROOM_NAME = p.PLACE");
