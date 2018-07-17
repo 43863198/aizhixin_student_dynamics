@@ -20,6 +20,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
@@ -31,6 +32,8 @@ public class SchoolYearTermService {
     private JdbcTemplate jdbcTemplate;
     @Autowired
     private EntityManager em;
+
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     public void initSchoolYearTerm(Long orgId) {
         schoolYearTermResposotory.deleteByOrgId(orgId);
@@ -236,16 +239,34 @@ public class SchoolYearTermService {
 
     public Map<String, Object> getYearSemesterWeek(Long orgId) {
         Map<String, Object> result = new HashMap<>();
-        List<TeacherYearSemesterDTO> tysList = new ArrayList<>();
+        String dateTime = "";
         try {
             Map<String, Object> current = this.getCurrentSchoolCalendar(orgId);
             if(null!=current){
                 if(Boolean.valueOf(current.get("success").toString())){
-
+                    List<TeacherYearSemesterDTO> time = (List<TeacherYearSemesterDTO>)current.get("data");
+                    String[] weekDaysName = { "星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六" };
+                    String[] weekDaysCode = { "0", "1", "2", "3", "4", "5", "6" };
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(new Date());
+                    int intWeek = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+                    String day =  weekDaysName[intWeek];
+                    if(time.size()>0){
+                        TeacherYearSemesterDTO  currentTime = time.get(0);
+                        String year = currentTime.getTeacherYear();
+                        String semester = currentTime.getSemester();
+                        int week = currentTime.getWeek();
+                        dateTime = year+"年"+semester+"季学期第"+week+"周 "+day;
+                    }else {
+                        int year = calendar.get(Calendar.YEAR);
+                        int month = calendar.get(Calendar.MONTH);
+                        int da = calendar.get(Calendar.DAY_OF_MONTH);
+                        dateTime = year+"年"+month+"月"+da+"日 "+day;
+                    }
                 }
             }
             result.put("success", true);
-            result.put("data", tysList);
+            result.put("data", dateTime);
             return result;
         } catch (Exception e) {
             result.put("success", false);
