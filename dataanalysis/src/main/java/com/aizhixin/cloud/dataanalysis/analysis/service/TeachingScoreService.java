@@ -9,10 +9,14 @@ import com.aizhixin.cloud.dataanalysis.analysis.respository.TeachingScoreStatist
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.SQLQuery;
+import org.hibernate.transform.Transformers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.querydsl.QuerydslRepositoryInvokerAdapter;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,8 +42,8 @@ public class TeachingScoreService {
     @Autowired
     private TeachingScoreDetailsRespository teachingScoreDetailsRespository;
 
-    public List<TeachingScoreDetails> findAllByTeacherYearAndSemesterAndDeleteFlagAndOrgId(int teacherYear,int semester,int deleteFlag,Long orgId){
-        return  teachingScoreDetailsRespository.findAllByTeacherYearAndSemesterAndDeleteFlagAndOrgId( teacherYear, semester, deleteFlag, orgId);
+    public List<TeachingScoreDetails> findAllByTeacherYearAndSemesterAndDeleteFlagAndOrgId(int teacherYear, int semester, int deleteFlag, Long orgId) {
+        return teachingScoreDetailsRespository.findAllByTeacherYearAndSemesterAndDeleteFlagAndOrgId(teacherYear, semester, deleteFlag, orgId);
     }
 
     public void saveStatistics(TeachingScoreStatistics teachingScoreStatistics) {
@@ -53,14 +57,16 @@ public class TeachingScoreService {
     public void saveDetails(TeachingScoreDetails teachingScoreDetails) {
         teachingScoreDetailsRespository.save(teachingScoreDetails);
     }
-    public void deleteScoreStatistics(Long orgId,Integer teacherYear, Integer semester) {
+
+    public void deleteScoreStatistics(Long orgId, Integer teacherYear, Integer semester) {
         teachingScoreStatisticsRespository.deleteByOrgIdAndTeacherAndSemester(orgId, teacherYear, semester);
     }
+
     public void deleteScoreStatistics(Long orgId) {
         teachingScoreStatisticsRespository.deleteByOrgId(orgId);
     }
 
-    public void deleteScoreDeatail(Long orgId,Integer teacherYear, Integer semester) {
+    public void deleteScoreDeatail(Long orgId, Integer teacherYear, Integer semester) {
         teachingScoreDetailsRespository.deleteByOrgIdAndTeacherAndSemester(orgId, teacherYear, semester);
     }
 
@@ -73,90 +79,128 @@ public class TeachingScoreService {
         teachingScoreDetailsRespository.save(tsdList);
     }
 
-    public Map<String, Object> getStatistic(Long orgId, Integer teacherYear, Integer semester) {
+    public Map<String, Object> getStatistic(Long orgId, String collegeCode, String teacherYear, String semester) {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> condition = new HashMap<>();
         TeachingAchievementDTO teachingAchievementDTO = new TeachingAchievementDTO();
         List<CollegeTeachingAchievementDTO> collegeTeachingAchievementDTOList = new ArrayList<>();
         try {
-            StringBuilder cql = new StringBuilder("SELECT STUDENT_NUM,AVG_GPA,FAIL_PASS_STU_NUM,CURRICULUM_NUM,AVG_SCORE, max(CREATED_DATE) FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
-            StringBuilder sql = new StringBuilder("SELECT COLLEGE_NAME,COLLEGE_ID,STUDENT_NUM,AVG_GPA,FAIL_PASS_STU_NUM,CURRICULUM_NUM,AVG_SCORE FROM T_TEACHING_SCORE_STATISTICS  WHERE 1 = 1");
+            StringBuilder sql = new StringBuilder("");
             if (null != orgId) {
-                cql.append(" and ORG_ID = :orgId");
-                sql.append(" and ORG_ID = :orgId");
+                sql.append(" and s.XXID = :orgId");
                 condition.put("orgId", orgId);
             }
             if (null != teacherYear) {
-                cql.append(" and TEACHER_YEAR = :teacherYear");
-                sql.append(" and TEACHER_YEAR = :teacherYear");
+                sql.append(" and c.XN = :teacherYear");
                 condition.put("teacherYear", teacherYear);
             }
             if (null != semester) {
-                cql.append(" and SEMESTER = :semester");
-                sql.append(" and SEMESTER = :semester");
+                sql.append(" and c.XQM = :semester");
                 condition.put("semester", semester);
             }
-            cql.append(" and STATISTICS_TYPE = 1 and DELETE_FLAG = 0");
-            sql.append(" and STATISTICS_TYPE = 2 and DELETE_FLAG = 0");
-            Query cq = em.createNativeQuery(cql.toString());
-            Query sq = em.createNativeQuery(sql.toString());
+
+            StringBuilder cql = new StringBuilder();
+            StringBuilder cpl = new StringBuilder();
+            if (!StringUtils.isBlank(collegeCode)) {
+                cql.append("SELECT s.ZYH as code, s.ZYMC as name, COUNT(DISTINCT c.XH) as cks ,AVG(c.JD) as pjjd,COUNT(DISTINCT c.KCH) as kcs,AVG(c.KCCJ) as pjcj, MAX(c.KCCJ) as zgcj FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE 1 = 1");
+                cpl.append("SELECT s.ZYH as code, COUNT(DISTINCT c.XH) as pass FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE 1 = 1 AND c.KCCJ >= 60");
+                cql.append(" AND s.YXSH = '" + collegeCode + "'");
+                cpl.append(" AND s.YXSH = '" + collegeCode + "'");
+                cql.append(sql);
+                cpl.append(sql);
+                cql.append(" GROUP BY s.ZYH");
+                cpl.append(" GROUP BY s.ZYH");
+            } else {
+                cql.append("SELECT s.YXSH as code, s.YXSMC as name, COUNT(DISTINCT c.XH) as cks ,AVG(c.JD) as pjjd,COUNT(DISTINCT c.KCH) as kcs,AVG(c.KCCJ) as pjcj, MAX(c.KCCJ) as zgcj FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE 1 = 1");
+                cpl.append("SELECT s.YXSH as code, COUNT(DISTINCT c.XH) as pass FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE 1 = 1 AND c.KCCJ >= 60");
+                cql.append(sql);
+                cpl.append(sql);
+                cql.append(" GROUP BY s.YXSH");
+                cpl.append(" GROUP BY s.YXSH");
+            }
+
+            StringBuilder oql = new StringBuilder("SELECT COUNT(DISTINCT c.XH) as cks ,AVG(c.JD) as pjjd,COUNT(DISTINCT c.KCH) as kcs,AVG(c.KCCJ) as pjcj, MAX(c.KCCJ) as zgcj FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE 1 = 1");
+            StringBuilder opl = new StringBuilder("SELECT COUNT(DISTINCT c.XH) as pass FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE 1 = 1 AND c.KCCJ >= 60");
+            oql.append(sql);
+            opl.append(sql);
+
+            Query cq = em.createNamedQuery(cql.toString());
+            Query cp = em.createNamedQuery(cpl.toString());
+            Query oq = em.createNamedQuery(oql.toString());
+            Query op = em.createNamedQuery(opl.toString());
+            cq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            cp.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            oq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            op.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 cq.setParameter(e.getKey(), e.getValue());
-                sq.setParameter(e.getKey(), e.getValue());
+                cp.setParameter(e.getKey(), e.getValue());
+                oq.setParameter(e.getKey(), e.getValue());
+                op.setParameter(e.getKey(), e.getValue());
             }
-            List<Object> res = sq.getResultList();
-            if (null != res && res.size() > 0) {
-                for (Object obj : res) {
-                    Object[] d = (Object[]) obj;
+            List<Map<String, Object>> rcq = cq.getResultList();
+            List<Map<String, Object>> rcp = cq.getResultList();
+            List<Map<String, Object>> roq = cq.getResultList();
+            List<Map<String, Object>> rop = cq.getResultList();
+
+            if (null != rcq && rcq.size() > 0) {
+                for (Map<String, Object> q : rcq) {
                     CollegeTeachingAchievementDTO collegeTeachingAchievementDTO = new CollegeTeachingAchievementDTO();
-                    if (null != d[0]) {
-                        collegeTeachingAchievementDTO.setCollegeName(String.valueOf(d[0]));
+                    if (null != q.get("name")) {
+                        collegeTeachingAchievementDTO.setName(q.get("name").toString());
                     }
-                    if (null != d[1]) {
-                        collegeTeachingAchievementDTO.setCollegeId(Long.valueOf(String.valueOf(d[1])));
+                    if (null != q.get("code")) {
+                        collegeTeachingAchievementDTO.setCode(q.get("code").toString());
                     }
-                    if (null != d[2]) {
-                        collegeTeachingAchievementDTO.setStudentsNum(Integer.valueOf(String.valueOf(d[2])));
+                    if (null != q.get("cks")) {
+                        collegeTeachingAchievementDTO.setStudentsNum(Integer.valueOf(q.get("cks").toString()));
                     }
-                    if (null != d[3]) {
-                        collegeTeachingAchievementDTO.setAverageGPA(new BigDecimal(Double.valueOf(String.valueOf(d[3]))).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                    if (null != q.get("pjjd")) {
+                        collegeTeachingAchievementDTO.setAverageGPA(new BigDecimal(Double.valueOf(q.get("pjjd").toString())).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                     }
-                    if (null != d[4]) {
-                        collegeTeachingAchievementDTO.setFailNum(Integer.valueOf(String.valueOf(d[4])));
+                    if (null != q.get("kcs")) {
+                        collegeTeachingAchievementDTO.setCoursesNum(Integer.valueOf(q.get("kcs").toString()));
                     }
-                    if (null != d[5]) {
-                        collegeTeachingAchievementDTO.setCoursesNum(Integer.valueOf(String.valueOf(d[5])));
+                    if (null != q.get("pjcj")) {
+                        collegeTeachingAchievementDTO.setCoursesAVGScore(new BigDecimal(Double.valueOf(q.get("pjcj").toString())).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                     }
-                    if (null != d[6]) {
-                        collegeTeachingAchievementDTO.setCoursesAVGScore(new BigDecimal(Double.valueOf(String.valueOf(d[6]))).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                    for (Map<String, Object> p : rcp) {
+                        if (null != p.get("code") && collegeTeachingAchievementDTO.getCode().equals(p.get("code").toString())) {
+                            if (null != p.get("pass")) {
+                                int pass = Integer.valueOf(p.get("pass").toString());
+                                collegeTeachingAchievementDTO.setFailNum(collegeTeachingAchievementDTO.getStudentsNum() - pass);
+                                break;
+                            }
+                        }
                     }
                     collegeTeachingAchievementDTOList.add(collegeTeachingAchievementDTO);
                 }
             }
-            List<Object> rc = cq.getResultList();
-            if (null != rc && rc.size() > 0) {
-                Date time = new Date();
-                Object[] rd = (Object[]) rc.get(0);
-                if (null != rd[0]) {
-                    teachingAchievementDTO.setStudentsNum(Integer.valueOf(String.valueOf(rd[0])));
+            if (null != roq && roq.size() > 0) {
+                Map<String, Object> o = roq.get(0);
+                if (null != o.get("cks")) {
+                    teachingAchievementDTO.setStudentsNum(Integer.valueOf(o.get("cks").toString()));
                 }
-                if (null != rd[1]) {
-                    teachingAchievementDTO.setAverageGPA(new BigDecimal(Double.valueOf(String.valueOf(rd[1]))).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                if (null != o.get("pjjd")) {
+                    teachingAchievementDTO.setAverageGPA(new BigDecimal(Double.valueOf(o.get("pjjd").toString())).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                 }
-                if (null != rd[2]) {
-                    teachingAchievementDTO.setFailNum(Integer.valueOf(String.valueOf(rd[2])));
+//                if (null != rd[2]) {
+//                    teachingAchievementDTO.setFailNum(Integer.valueOf(String.valueOf(rd[2])));
+//                }
+                if (null != o.get("kcs")) {
+                    teachingAchievementDTO.setCoursesNum(Integer.valueOf(o.get("kcs").toString()));
                 }
-                if (null != rd[3]) {
-                    teachingAchievementDTO.setCoursesNum(Integer.valueOf(String.valueOf(rd[3])));
+                if (null != o.get("pjcj")) {
+                    teachingAchievementDTO.setCoursesAVGScore(new BigDecimal(Double.valueOf(o.get("pjcj").toString())).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                 }
-                if (null != rd[4]) {
-                    teachingAchievementDTO.setCoursesAVGScore(new BigDecimal(Double.valueOf(String.valueOf(rd[4]))).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                if (null != rop && rop.size() > 0) {
+                    Map<String, Object> ps = rop.get(0);
+                    if(null!=ps.get("pass")){
+                        teachingAchievementDTO.setFailNum(teachingAchievementDTO.getStudentsNum()-Integer.parseInt(ps.get("pass").toString()));
+                    }
                 }
-                if (null != rd[5]) {
-                    time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(String.valueOf(rd[5]));
-                }
-                teachingAchievementDTO.setStatisticalTime(time);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
@@ -176,7 +220,7 @@ public class TeachingScoreService {
         Map<String, Object> condition = new HashMap<>();
         try {
             String trend = "";
-            if(null!=type) {
+            if (null != type) {
                 if (type == 1 || type == 3) {
                     trend = " SUM(" + TeachingScoreTrendType.getType(type) + ")";
                 } else {
@@ -188,10 +232,10 @@ public class TeachingScoreService {
                 sql.append(" and ORG_ID =:orgId ");
                 condition.put("orgId", orgId);
             }
-            if(null!=collegeId){
+            if (null != collegeId) {
                 sql.append(" and COLLEGE_ID =:collegeId ");
-                condition.put("collegeId",collegeId);
-            }else {
+                condition.put("collegeId", collegeId);
+            } else {
                 sql.append(" and STATISTICS_TYPE = 1");
             }
             sql.append(" and DELETE_FLAG = 0 GROUP BY TEACHER_YEAR,SEMESTER");
@@ -350,31 +394,31 @@ public class TeachingScoreService {
     }
 
 
-    public Map<String, Object> modifyTeachingScoreDetail(String id,Integer teacherYear,Integer semester,Integer grade,
-                                                         Double averageGPA,Integer referenceSubjects,Integer failedSubjects,Double failingGradeCredits){
+    public Map<String, Object> modifyTeachingScoreDetail(String id, Integer teacherYear, Integer semester, Integer grade,
+                                                         Double averageGPA, Integer referenceSubjects, Integer failedSubjects, Double failingGradeCredits) {
         Map<String, Object> result = new HashMap<>();
         try {
             TeachingScoreDetails teachingScoreDetails = teachingScoreDetailsRespository.findOne(id);
-            if(null!=teachingScoreDetails){
-                if(null!=teacherYear){
+            if (null != teachingScoreDetails) {
+                if (null != teacherYear) {
                     teachingScoreDetails.setTeacherYear(teacherYear);
                 }
-                if(null!=semester){
+                if (null != semester) {
                     teachingScoreDetails.setSemester(semester);
                 }
-                if(null!=grade){
+                if (null != grade) {
                     teachingScoreDetails.setGrade(grade);
                 }
-                if(null!=averageGPA){
+                if (null != averageGPA) {
                     teachingScoreDetails.setAvgGPA(averageGPA);
                 }
-                if(null!=referenceSubjects){
+                if (null != referenceSubjects) {
                     teachingScoreDetails.setReferenceSubjects(referenceSubjects);
                 }
-                if(null!=failedSubjects){
+                if (null != failedSubjects) {
                     teachingScoreDetails.setFailedSubjects(failedSubjects);
                 }
-                if(null!=failingGradeCredits){
+                if (null != failingGradeCredits) {
                     teachingScoreDetails.setFailingGradeCredits(failingGradeCredits);
                 }
                 teachingScoreDetailsRespository.save(teachingScoreDetails);

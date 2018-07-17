@@ -724,13 +724,13 @@ public class SchoolStatisticsService {
         try {
             Calendar date = Calendar.getInstance();
             String year = String.valueOf(date.get(Calendar.YEAR) - 1);
-//            year = year+"00";
-            StringBuilder sql = new StringBuilder("SELECT SUBSTRING(DATE_OF_COMPLETION,1,4) AS year, count(1) as count FROM t_academic_degree WHERE 1 = 1");
+            StringBuilder sql = new StringBuilder("SELECT SUBSTRING(DIPLOMA_NUMBER,7,4) AS year, count(1) as count FROM t_academic_degree WHERE 1 = 1");
             if (null != orgId) {
                 sql.append(" AND ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
-            sql.append(" AND SUBSTRING(DATE_OF_COMPLETION, 1, 4) BETWEEN '2015' AND '" + year + "' GROUP BY year");
+            //因数据问题计算的是2015年开始统计到当前
+            sql.append(" AND SUBSTRING(DIPLOMA_NUMBER, 7, 4) BETWEEN '2015' AND '" + year + "' GROUP BY year");
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());

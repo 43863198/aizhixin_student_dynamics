@@ -12,8 +12,8 @@ import lombok.Data;
 @ApiModel(description="学院的教学成绩")
 @Data
 public class CollegeTeachingAchievementDTO extends TeachingAchievementDTO{
-    @ApiModelProperty(value = "学院名称", required = false)
-    private String collegeName;
-    @ApiModelProperty(value = "学院id", required = false)
-    private Long collegeId;
+    @ApiModelProperty(value = "名称", required = false)
+    private String name;
+    @ApiModelProperty(value = "代码", required = false)
+    private String code;
 }

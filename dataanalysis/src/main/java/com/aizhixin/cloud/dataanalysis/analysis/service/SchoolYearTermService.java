@@ -234,4 +234,27 @@ public class SchoolYearTermService {
         }
     }
 
+    public Map<String, Object> getYearSemesterWeek(Long orgId) {
+        Map<String, Object> result = new HashMap<>();
+        List<TeacherYearSemesterDTO> tysList = new ArrayList<>();
+        try {
+            Map<String, Object> current = this.getCurrentSchoolCalendar(orgId);
+            if(null!=current){
+                if(Boolean.valueOf(current.get("success").toString())){
+
+                }
+            }
+            result.put("success", true);
+            result.put("data", tysList);
+            return result;
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", "获取学当前年学期失败！");
+            return result;
+        }
+    }
+
+
+
+
 }

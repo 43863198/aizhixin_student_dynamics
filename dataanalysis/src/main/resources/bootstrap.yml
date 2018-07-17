@@ -2,10 +2,10 @@ spring:
   application:
     name: data-analysis
   cloud:
+      uri: ${configServerIp}
     config:
       profile: ${spring.profiles.active}
       label: master
-      uri: ${configServerIp}
 
 
 
