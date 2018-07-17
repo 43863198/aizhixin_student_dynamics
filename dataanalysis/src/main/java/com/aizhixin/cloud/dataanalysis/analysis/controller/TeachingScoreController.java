@@ -38,9 +38,10 @@ public class TeachingScoreController {
     @ApiOperation(httpMethod = "GET", value = "教学成绩———统计", response = Void.class, notes = "教学成绩———统计<br><br><b>@author jianwei.wu</b>")
     public Map<String,Object> getStatisticTeachingScore(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "teacherYear 学年" , required = false) @RequestParam(value = "teacherYear", required = false) Integer teacherYear,
-            @ApiParam(value = "semester 学期" , required = false) @RequestParam(value = "semester", required = false) Integer semester) {
-        return teachingScoreService.getStatistic(orgId, teacherYear, semester);
+            @ApiParam(value = "collegeCode 学院code", required = false) @RequestParam(value = "collegeCode", required = false) String collegeCode,
+            @ApiParam(value = "teacherYear 学年" , required = false) @RequestParam(value = "teacherYear", required = false) String teacherYear,
+            @ApiParam(value = "semester 学期" , required = false) @RequestParam(value = "semester", required = false) String semester) {
+        return teachingScoreService.getStatistic(orgId, collegeCode, teacherYear, semester);
     }
 
     /**
