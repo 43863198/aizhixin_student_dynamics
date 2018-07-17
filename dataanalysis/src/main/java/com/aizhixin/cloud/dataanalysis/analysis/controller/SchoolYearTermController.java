@@ -71,7 +71,7 @@ public class SchoolYearTermController {
      * @param orgId
      * @return
      */
-    @GetMapping(value = "/getteacheryearsemester", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/getyearsemesterweek", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = " 获取当前学年学期周", response = Void.class, notes = "获取当前学年学期周")
     public ResponseEntity<Map<String,Object>> getYearSemesterWeek(@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = true) Long orgId){
         return new ResponseEntity<Map<String, Object>>(schoolYearTermService.getYearSemesterWeek(orgId),HttpStatus.OK);
