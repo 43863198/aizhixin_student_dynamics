@@ -730,7 +730,7 @@ public class SchoolStatisticsService {
                 condition.put("orgId", orgId);
             }
             //因数据问题计算的是2015年开始统计到当前
-            sql.append(" AND SUBSTRING(DIPLOMA_NUMBER, 7, 4) BETWEEN '2015' AND '" + year + "' GROUP BY year");
+            sql.append(" AND DIPLOMA_NUMBER <> '' AND SUBSTRING(DIPLOMA_NUMBER, 7, 4) BETWEEN '2015' AND '" + year + "' GROUP BY year");
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
