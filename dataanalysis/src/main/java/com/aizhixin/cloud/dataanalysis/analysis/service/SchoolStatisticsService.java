@@ -898,33 +898,35 @@ public class SchoolStatisticsService {
             }
             if(jc!=0) {
                 StringBuilder cql = new StringBuilder("SELECT TEACHING_BUILDING_NUMBER as tbn, count(1) as count FROM t_class_room WHERE NORMAL = 0 ");
-                StringBuilder sql = new StringBuilder("SELECT cr.TEACHING_BUILDING_NUMBER as tbn, count(DISTINCT CLASSROOM_NAME) as count ");
-                sql.append("FROM (SELECT DISTINCT ct.PLACE FROM (SELECT DISTINCT TEACHING_CLASS_NAME FROM t_curriculum_schedule WHERE 1 = 1");
+                StringBuilder sql = new StringBuilder("SELECT cr.TEACHING_BUILDING_NUMBER AS tbn, count(DISTINCT cr.CLASSROOM_NAME) as count ");
+                sql.append("FROM(SELECT cs.START_PERIOD,cs.PERIOD_NUM,ct.TEACHER_NAME,ct.TEACHING_CLASS_NAME, ct.PLACE,ct.SET_UP_UNIT FROM " +
+                        "t_curriculum_schedule cs LEFT JOIN (SELECT TEACHING_CLASS_NAME,TEACHER_NAME,PLACE,SET_UP_UNIT FROM t_course_timetable WHERE PLACE IS NOT NULL) ct  ON cs.TEACHING_CLASS_NAME = ct.TEACHING_CLASS_NAME WHERE 1 = 1");
+
+
                 if (null != orgId) {
                     cql.append(" AND ORG_ID = " + orgId);
-                    sql.append(" AND ORG_ID = :orgId");
+                    sql.append(" AND cs.ORG_ID = :orgId");
                     condition.put("orgId", orgId);
                 }
                 if (weeks != 0) {
-                    sql.append(" AND START_WEEK <= :startweeks");
-                    sql.append(" AND END_WEEK >= :endweeks");
+                    sql.append(" AND cs.START_WEEK <= :startweeks");
+                    sql.append(" AND cs.END_WEEK >= :endweeks");
                     condition.put("startweeks", weeks);
                     condition.put("endweeks", weeks);
                 }
                 if (day != 0) {
-                    sql.append(" AND DAY_OF_THE_WEEK = :day");
+                    sql.append(" AND cs.DAY_OF_THE_WEEK = :day");
                     condition.put("day", day);
                 }
 //                if (jc != 0) {
-                    sql.append(" AND START_PERIOD <= :sjc");
-                    sql.append(" AND (START_PERIOD + PERIOD_NUM ) >= :ejc");
-                    condition.put("sjc", jc);
-                    condition.put("ejc", jc);
+                    sql.append(" AND cs.START_PERIOD <= :sjc");
+                    sql.append(" AND (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)) > :ejc");
+                condition.put("sjc", jc);
+                condition.put("ejc", jc);
 //                }
-                cql.append(" AND TEACHING_BUILDING_NUMBER is not null GROUP BY TEACHING_BUILDING_NUMBER");
-                sql.append(" ) cs LEFT JOIN t_course_timetable ct ON cs.TEACHING_CLASS_NAME = ct.TEACHING_CLASS_NAME) p");
-                sql.append(" LEFT JOIN t_class_room cr ON cr.CLASSROOM_NAME = p.PLACE");
-                sql.append(" WHERE cr.TEACHING_BUILDING_NUMBER IS NOT NULL GROUP BY cr.TEACHING_BUILDING_NUMBER");
+                cql.append(" AND TEACHING_BUILDING_NUMBER is not null  GROUP BY TEACHING_BUILDING_NUMBER");
+                sql.append("  AND cs.TEACHING_CLASS_NAME IS NOT NULL GROUP BY cs.TEACHING_CLASS_NAME) m");
+                sql.append(" LEFT JOIN t_class_room cr ON cr.CLASSROOM_NAME = m.PLACE GROUP BY cr.TEACHING_BUILDING_NUMBER");
                 Query cq = em.createNativeQuery(cql.toString());
                 Query sq = em.createNativeQuery(sql.toString());
                 for (Map.Entry<String, Object> e : condition.entrySet()) {

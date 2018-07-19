@@ -315,7 +315,7 @@ public class CourseStatisticsService {
             StringBuilder sql = new StringBuilder("SELECT m.START_PERIOD AS sp,m.PERIOD_NUM AS pn, m.TEACHER_NAME AS tn,m.TEACHING_CLASS_NAME AS tcn," +
                     "cr.TEACHING_BUILDING_NUMBER AS tbn,cr.CLASSROOM_NAME AS crn,d.COMPANY_NAME AS cn ");
             sql.append("FROM(SELECT cs.START_PERIOD,cs.PERIOD_NUM,ct.TEACHER_NAME,ct.TEACHING_CLASS_NAME, ct.PLACE,ct.SET_UP_UNIT FROM " +
-                    "t_curriculum_schedule cs LEFT JOIN (SELECT TEACHING_CLASS_NAME,TEACHER_NAME,PLACE,SET_UP_UNIT FROM t_course_timetable) ct  ON cs.TEACHING_CLASS_NAME = ct.TEACHING_CLASS_NAME WHERE 1 = 1");
+                    "t_curriculum_schedule cs LEFT JOIN (SELECT TEACHING_CLASS_NAME,TEACHER_NAME,PLACE,SET_UP_UNIT FROM t_course_timetable WHERE PLACE IS NOT NULL) ct  ON cs.TEACHING_CLASS_NAME = ct.TEACHING_CLASS_NAME WHERE 1 = 1");
             StringBuilder cql = new StringBuilder("SELECT  count(cs.TEACHING_CLASS_NAME) as count FROM (SELECT DISTINCT TEACHING_CLASS_NAME FROM t_curriculum_schedule cs WHERE 1 = 1 ");
             if(null!=orgId){
                 sql.append(" AND cs.ORG_ID = :orgId");
@@ -342,8 +342,8 @@ public class CourseStatisticsService {
                 condition.put("startPeriod", period);
             }
             sql.append("  AND cs.TEACHING_CLASS_NAME IS NOT NULL GROUP BY cs.TEACHING_CLASS_NAME) m");
-            sql.append(" LEFT JOIN t_class_room cr ON cr.CLASSROOM_NAME = m.PLACE LEFT " +
-                    "JOIN t_department d ON m.SET_UP_UNIT = d.COMPANY_NUMBER");
+            sql.append(" LEFT JOIN t_class_room cr ON cr.CLASSROOM_NAME = m.PLACE" +
+                    " LEFT JOIN t_department d ON m.SET_UP_UNIT = d.COMPANY_NUMBER");
             cql.append(" AND cs.TEACHING_CLASS_NAME IS NOT NULL) cs");
             Query sq = em.createNativeQuery(sql.toString());
             Query cq = em.createNativeQuery(cql.toString());
