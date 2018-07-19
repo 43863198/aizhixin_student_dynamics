@@ -896,66 +896,67 @@ public class SchoolStatisticsService {
                     jc = Integer.parseInt(jcList.get(0).toString());
                 }
             }
-
-            StringBuilder cql = new StringBuilder("SELECT TEACHING_BUILDING_NUMBER as tbn, count(1) as count FROM t_class_room WHERE NORMAL = 0 ");
-            StringBuilder sql = new StringBuilder("SELECT cr.TEACHING_BUILDING_NUMBER as tbn, count(1) as count ");
-            sql.append("FROM (SELECT DISTINCT ct.PLACE FROM (SELECT DISTINCT TEACHING_CLASS_NAME FROM t_curriculum_schedule WHERE 1 = 1");
-            if (null != orgId) {
-                cql.append(" AND ORG_ID = " + orgId);
-                sql.append(" AND ORG_ID = :orgId");
-                condition.put("orgId", orgId);
-            }
-            if (weeks != 0) {
-                sql.append(" AND START_WEEK <= :startweeks");
-                sql.append(" AND END_WEEK >= :endweeks");
-                condition.put("startweeks", weeks);
-                condition.put("endweeks", weeks);
-            }
-            if (day != 0) {
-                sql.append(" AND DAY_OF_THE_WEEK = :day");
-                condition.put("day", day);
-            }
-            if(jc!=0){
-                sql.append(" AND START_PERIOD <= :sjc");
-                sql.append(" AND (START_PERIOD + PERIOD_NUM ) >= :ejc");
-                condition.put("sjc", jc);
-                condition.put("ejc", jc);
-            }
-            cql.append(" AND TEACHING_BUILDING_NUMBER is not null GROUP BY TEACHING_BUILDING_NUMBER");
-            sql.append(" ) cs LEFT JOIN t_course_timetable ct ON cs.TEACHING_CLASS_NAME = ct.TEACHING_CLASS_NAME) p");
-            sql.append(" LEFT JOIN t_class_room cr ON cr.CLASSROOM_NAME = p.PLACE");
-            sql.append(" WHERE cr.TEACHING_BUILDING_NUMBER IS NOT NULL GROUP BY cr.TEACHING_BUILDING_NUMBER");
-            Query cq = em.createNativeQuery(cql.toString());
-            Query sq = em.createNativeQuery(sql.toString());
-            for (Map.Entry<String, Object> e : condition.entrySet()) {
-                sq.setParameter(e.getKey(), e.getValue());
-            }
-            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-            cq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-            List<Object> cres = cq.getResultList();
-            List<Object> res = sq.getResultList();
-            for (Object obj : cres) {
-                Map r = (Map) obj;
-                TeachingBuildingsUsegeVO tb = new TeachingBuildingsUsegeVO();
-                if (null != r.get("tbn")) {
-                    tb.setTeachingBuilding(r.get("tbn").toString());
+            if(jc!=0) {
+                StringBuilder cql = new StringBuilder("SELECT TEACHING_BUILDING_NUMBER as tbn, count(1) as count FROM t_class_room WHERE NORMAL = 0 ");
+                StringBuilder sql = new StringBuilder("SELECT cr.TEACHING_BUILDING_NUMBER as tbn, count(DISTINCT CLASSROOM_NAME) as count ");
+                sql.append("FROM (SELECT DISTINCT ct.PLACE FROM (SELECT DISTINCT TEACHING_CLASS_NAME FROM t_curriculum_schedule WHERE 1 = 1");
+                if (null != orgId) {
+                    cql.append(" AND ORG_ID = " + orgId);
+                    sql.append(" AND ORG_ID = :orgId");
+                    condition.put("orgId", orgId);
                 }
-                if (null != r.get("count")) {
-                    tb.setToal(Integer.valueOf(r.get("count").toString()));
+                if (weeks != 0) {
+                    sql.append(" AND START_WEEK <= :startweeks");
+                    sql.append(" AND END_WEEK >= :endweeks");
+                    condition.put("startweeks", weeks);
+                    condition.put("endweeks", weeks);
                 }
-                dataList.add(tb);
-            }
-            for (TeachingBuildingsUsegeVO tbList : dataList) {
-                for (Object obj : res) {
-                    Map row = (Map) obj;
-                    if (null != row.get("tbn")) {
-                        if (tbList.getTeachingBuilding().equals(row.get("tbn").toString())) {
-                            if (null != row.get("count")) {
-                                tbList.setUsingNumber(Integer.valueOf(row.get("count").toString()));
+                if (day != 0) {
+                    sql.append(" AND DAY_OF_THE_WEEK = :day");
+                    condition.put("day", day);
+                }
+//                if (jc != 0) {
+                    sql.append(" AND START_PERIOD <= :sjc");
+                    sql.append(" AND (START_PERIOD + PERIOD_NUM ) >= :ejc");
+                    condition.put("sjc", jc);
+                    condition.put("ejc", jc);
+//                }
+                cql.append(" AND TEACHING_BUILDING_NUMBER is not null GROUP BY TEACHING_BUILDING_NUMBER");
+                sql.append(" ) cs LEFT JOIN t_course_timetable ct ON cs.TEACHING_CLASS_NAME = ct.TEACHING_CLASS_NAME) p");
+                sql.append(" LEFT JOIN t_class_room cr ON cr.CLASSROOM_NAME = p.PLACE");
+                sql.append(" WHERE cr.TEACHING_BUILDING_NUMBER IS NOT NULL GROUP BY cr.TEACHING_BUILDING_NUMBER");
+                Query cq = em.createNativeQuery(cql.toString());
+                Query sq = em.createNativeQuery(sql.toString());
+                for (Map.Entry<String, Object> e : condition.entrySet()) {
+                    sq.setParameter(e.getKey(), e.getValue());
+                }
+                sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+                cq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+                List<Object> cres = cq.getResultList();
+                List<Object> res = sq.getResultList();
+                for (Object obj : cres) {
+                    Map r = (Map) obj;
+                    TeachingBuildingsUsegeVO tb = new TeachingBuildingsUsegeVO();
+                    if (null != r.get("tbn")) {
+                        tb.setTeachingBuilding(r.get("tbn").toString());
+                    }
+                    if (null != r.get("count")) {
+                        tb.setToal(Integer.valueOf(r.get("count").toString()));
+                    }
+                    dataList.add(tb);
+                }
+                for (TeachingBuildingsUsegeVO tbList : dataList) {
+                    for (Object obj : res) {
+                        Map row = (Map) obj;
+                        if (null != row.get("tbn")) {
+                            if (tbList.getTeachingBuilding().equals(row.get("tbn").toString())) {
+                                if (null != row.get("count")) {
+                                    tbList.setUsingNumber(Integer.valueOf(row.get("count").toString()));
+                                }
+                                break;
                             }
-                            break;
-                        }
 
+                        }
                     }
                 }
             }

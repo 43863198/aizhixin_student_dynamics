@@ -52,49 +52,7 @@ public class CetStatisticsAnalysisJob {
     private ScoreTopService scoreTopService;
     @Autowired
     private ScoreStatisticsService scoreStatisticsService;
-//    @Autowired
-//    private SchoolYearTermService schoolYearTermService;
 
-    //    @Transactional
-//    public Map<String, Object>  cetScoreStatistics() {
-//        Map<String, Object> result = new HashMap<>();
-//        Set<SchoolYearTerm> sytList = new HashSet<>();
-//        try {
-//        Criteria cet = Criteria.where("examType").in(ScoreConstant.EXAM_TYPE_CET4, ScoreConstant.EXAM_TYPE_CET6);
-//        AggregationResults<BasicDBObject> ytGroup = mongoTemplate.aggregate(
-//                Aggregation.newAggregation(
-//                        Aggregation.match(cet),
-//                        Aggregation.group("orgId", "schoolYear", "semester").first("orgId").as("orgId").first("schoolYear").as("schoolYear")
-//                                .first("semester").as("semester")
-//                ), Score.class, BasicDBObject.class);
-//
-//        if (null != ytGroup) {
-//            for (int x = 0; x < ytGroup.getMappedResults().size(); x++) {
-//                SchoolYearTerm syt = new SchoolYearTerm();
-//                syt.setOrgId(ytGroup.getMappedResults().get(x).getLong("orgId"));
-//                syt.setTeacherYear(ytGroup.getMappedResults().get(x).getInt("schoolYear"));
-//                syt.setSemester(ytGroup.getMappedResults().get(x).getInt("semester"));
-//                sytList.add(syt);
-//            }
-//        }
-//        if(sytList.size()>1){
-//            for(SchoolYearTerm yt: sytList){
-//                this.cetScoreStatistics(yt.getOrgId(), yt.getTeacherYear(), yt.getSemester());
-////                yt.setDataType(DataType.t_cet_statistics.getIndex() + "");
-////                schoolYearTermService.deleteSchoolYearTerm(yt.getOrgId(), yt.getDataType());
-//            }
-//        }
-////        schoolYearTermService.saveSchoolYearTerm(sytList);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            result.put("success", false);
-//            result.put("message", "定时统计英语cet成绩失败！");
-//            return result;
-//        }
-//        result.put("success", true);
-//        result.put("message", "定时统计英语cet成绩成功!");
-//        return result;
-//    }
     @Async
     public void cetScoreStatistics(Set<SchoolYearTerm> sytList) {
         try {
@@ -287,122 +245,90 @@ public class CetStatisticsAnalysisJob {
     public void cetScoreStatistics() {
         List<ScoreStatistics> ssList = new ArrayList<>();
         try {
-//            StringBuilder soql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId, cs.EXAMINATION_DATE as date, " +
-//                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass, AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max " +
-//                    "FROM t_cet_score cs " +
-//                    "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
-//                    "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
-//                    "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
-//                    "GROUP BY ss.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE");
-//            StringBuilder sdql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId, cs.EXAMINATION_DATE as date,ss.ORG_ID as persion, " +
-//                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass, AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max " +
-//                    "FROM t_cet_score cs " +
-//                    "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
-//                    "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
-//                    "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
-//                    "GROUP BY ss.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE,ss.COLLEGE_CODE");
-//            StringBuilder spql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId, cs.EXAMINATION_DATE as date,ss.COLLEGE_CODE as persion, " +
-//                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass, AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max " +
-//                    "FROM t_cet_score cs " +
-//                    "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
-//                    "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
-//                    "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
-//                    "GROUP BY ss.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE,ss.COLLEGE_CODE,ss.PROFESSION_CODE");
-//            StringBuilder scql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId, cs.EXAMINATION_DATE as date,ss.PROFESSION_CODE as persion, " +
-//                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass, AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max " +
-//                    "FROM t_cet_score cs " +
-//                    "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
-//                    "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
-//                    "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
-//                    "GROUP BY ss.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE,ss.COLLEGE_CODE,ss.PROFESSION_CODE,ss.CLASS_CODE");
             StringBuilder avgoql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,cs.ORG_ID as persion,cs.EXAMINATION_DATE as date,ss.ORG_ID as code, " +
-                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count, sum(if(SCORE >= (if(TYPE = '大学英语三级考试',60,425 )),1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max " +
                     "FROM t_cet_score cs " +
                     "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
                     "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
                     "GROUP BY ss.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE");
             StringBuilder avgdql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,cs.ORG_ID as persion,cs.EXAMINATION_DATE as date,ss.COLLEGE_CODE as code, " +
-                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(SCORE >= (if(TYPE = '大学英语三级考试',60,425 )),1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max " +
                     "FROM t_cet_score cs " +
                     "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
                     "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
                     "GROUP BY ss.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE,ss.COLLEGE_CODE");
             StringBuilder avgpql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,ss.COLLEGE_CODE as persion,cs.EXAMINATION_DATE as date,ss.PROFESSION_CODE as code, " +
-                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(SCORE >= (if(TYPE = '大学英语三级考试',60,425 )),1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max " +
                     "FROM t_cet_score cs " +
                     "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
                     "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
                     "GROUP BY ss.ORG_ID,ss.COLLEGE_CODE,cs.EXAMINATION_DATE,cs.TYPE,ss.PROFESSION_CODE");
             StringBuilder avgcql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,ss.PROFESSION_CODE as persion,cs.EXAMINATION_DATE as date,ss.CLASS_CODE as code,ss.CLASS_NAME as className, " +
-                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(SCORE >= (if(TYPE = '大学英语三级考试',60,425 )),1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max " +
                     "FROM t_cet_score cs " +
                     "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
                     "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
                     "GROUP BY ss.ORG_ID,ss.COLLEGE_CODE,ss.PROFESSION_CODE,cs.EXAMINATION_DATE,cs.TYPE,ss.CLASS_NAME");
             StringBuilder gradeoql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,cs.ORG_ID as persion,cs.EXAMINATION_DATE as date,cs.ORG_ID as code, " +
-                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,ss.GRADE as grade " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(SCORE >= (if(TYPE = '大学英语三级考试',60,425 )),1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,ss.GRADE as grade " +
                     "FROM t_cet_score cs " +
                     "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
                     "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
                     "GROUP BY ss.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE,ss.GRADE");
             StringBuilder gradedql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,cs.ORG_ID as persion,cs.EXAMINATION_DATE as date,ss.COLLEGE_CODE as code, " +
-                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,ss.GRADE as grade " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(SCORE >= (if(TYPE = '大学英语三级考试',60,425 )),1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,ss.GRADE as grade " +
                     "FROM t_cet_score cs " +
                     "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
                     "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
                     "GROUP BY ss.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE,ss.COLLEGE_CODE,ss.GRADE");
             StringBuilder gradepql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,ss.COLLEGE_CODE as persion,cs.EXAMINATION_DATE as date,ss.PROFESSION_CODE as code, " +
-                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,ss.GRADE as grade " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(SCORE >= (if(TYPE = '大学英语三级考试',60,425 )),1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,ss.GRADE as grade " +
                     "FROM t_cet_score cs " +
                     "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
                     "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
                     "GROUP BY ss.ORG_ID,ss.COLLEGE_CODE,cs.EXAMINATION_DATE,cs.TYPE,ss.PROFESSION_CODE,ss.GRADE");
             StringBuilder gradecql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,ss.PROFESSION_CODE as persion,cs.EXAMINATION_DATE as date,ss.CLASS_CODE as code,ss.CLASS_NAME as className, " +
-                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,ss.GRADE as grade " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(SCORE >= (if(TYPE = '大学英语三级考试',60,425 )),1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,ss.GRADE as grade " +
                     "FROM t_cet_score cs " +
                     "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
                     "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
                     "GROUP BY ss.ORG_ID,ss.COLLEGE_CODE,ss.PROFESSION_CODE,cs.EXAMINATION_DATE,cs.TYPE,ss.CLASS_NAME,ss.GRADE");
             StringBuilder sexoql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,cs.ORG_ID as persion,cs.EXAMINATION_DATE as date,cs.ORG_ID as code, " +
-                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,s.SEX as sex " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(SCORE >= (if(TYPE = '大学英语三级考试',60,425 )),1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,s.SEX as sex " +
                     "FROM t_cet_score cs " +
                     "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
                     "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
                     "GROUP BY ss.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE,s.SEX");
             StringBuilder sexdql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,cs.ORG_ID as persion,cs.EXAMINATION_DATE as date,ss.COLLEGE_CODE as code, " +
-                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,s.SEX as sex " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(SCORE >= (if(TYPE = '大学英语三级考试',60,425 )),1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,s.SEX as sex " +
                     "FROM t_cet_score cs " +
                     "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
                     "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
                     "GROUP BY ss.ORG_ID,cs.EXAMINATION_DATE,cs.TYPE,ss.COLLEGE_CODE,s.SEX");
             StringBuilder sexpql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,ss.COLLEGE_CODE as persion,cs.EXAMINATION_DATE as date,ss.PROFESSION_CODE as code, " +
-                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,s.SEX as sex " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(SCORE >= (if(TYPE = '大学英语三级考试',60,425 )),1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,s.SEX as sex " +
                     "FROM t_cet_score cs " +
                     "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
                     "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
                     "GROUP BY ss.ORG_ID,ss.COLLEGE_CODE,cs.EXAMINATION_DATE,cs.TYPE,ss.PROFESSION_CODE,s.SEX");
             StringBuilder sexclql = new StringBuilder("SELECT cs.TYPE as type,cs.ORG_ID as orgId,ss.PROFESSION_CODE as persion,cs.EXAMINATION_DATE as date,ss.CLASS_CODE as code,ss.CLASS_NAME as className, " +
-                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(cs.SCORE >= 425,1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,s.SEX as sex " +
+                    "sum(if(cs.SCORE > 0,1,0)) as count,sum(if(SCORE >= (if(TYPE = '大学英语三级考试',60,425 )),1,0)) as pass,AVG(cs.SCORE) as avg,MAX(cs.SCORE) as max,s.SEX as sex " +
                     "FROM t_cet_score cs " +
                     "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER " +
                     "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 " +
                     "GROUP BY ss.ORG_ID,ss.COLLEGE_CODE,ss.PROFESSION_CODE,cs.EXAMINATION_DATE,cs.TYPE,ss.CLASS_NAME,s.SEX");
-//            Query soq = em.createNativeQuery(soql.toString());
-//            Query sdq = em.createNativeQuery(sdql.toString());
-//            Query spq = em.createNativeQuery(spql.toString());
-//            Query scq = em.createNativeQuery(scql.toString());
             Query avgoq = em.createNativeQuery(avgoql.toString());
             Query avgdq = em.createNativeQuery(avgdql.toString());
             Query avgpq = em.createNativeQuery(avgpql.toString());
@@ -415,10 +341,6 @@ public class CetStatisticsAnalysisJob {
             Query sexdq = em.createNativeQuery(sexdql.toString());
             Query sexpq = em.createNativeQuery(sexpql.toString());
             Query sexclq = em.createNativeQuery(sexclql.toString());
-//            soq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-//            sdq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-//            spq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-//            scq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             avgoq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             avgdq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             avgpq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
@@ -431,10 +353,6 @@ public class CetStatisticsAnalysisJob {
             sexdq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             sexpq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             sexclq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-//            List<Object> sores = soq.getResultList();
-//            List<Object> sdres = sdq.getResultList();
-//            List<Object> spres = spq.getResultList();
-//            List<Object> scres = scq.getResultList();
             List<Object> avgores = avgoq.getResultList();
             List<Object> avgdres = avgdq.getResultList();
             List<Object> avgpres = avgpq.getResultList();
@@ -447,131 +365,6 @@ public class CetStatisticsAnalysisJob {
             List<Object> sexdres = sexdq.getResultList();
             List<Object> sexpres = sexpq.getResultList();
             List<Object> sexclres = sexclq.getResultList();
-//            if (null != sores && sores.size() > 0) {
-//                for (Object obj : sores) {
-//                    Map row = (Map) obj;
-//                    ScoreStatistics ss = new ScoreStatistics();
-//                    ss.setStatisticsType("0");
-//                    if (null != row.get("type")) {
-//                        ss.setScoreType(row.get("type").toString());
-//                    }
-//                    if (null != row.get("orgId")) {
-//                        ss.setOrgId(Long.valueOf(row.get("orgId").toString()));
-//                    }
-//                    if (null != row.get("date")) {
-//                        ss.setExamDate(new SimpleDateFormat("yyyy-MM-dd").parse(row.get("date").toString()));
-//                    }
-//                    if (null != row.get("count")) {
-//                        ss.setJoinNumber(Integer.valueOf(row.get("count").toString()));
-//                    }
-//                    if (null != row.get("pass")) {
-//                        ss.setPassNumber(Integer.valueOf(row.get("pass").toString()));
-//                    }
-//                    if (null != row.get("avg")) {
-//                        ss.setAvgScoure(Double.valueOf(row.get("avg").toString()));
-//                    }
-//                    if (null != row.get("max")) {
-//                        ss.setMaxScore(Double.valueOf(row.get("max").toString()));
-//                    }
-//                    ssList.add(ss);
-//                }
-//            }
-//            if (null != sdres && sdres.size() > 0) {
-//                for (Object obj : sdres) {
-//                    Map row = (Map) obj;
-//                    ScoreStatistics ss = new ScoreStatistics();
-//                    ss.setStatisticsType("1");
-//                    if (null != row.get("type")) {
-//                        ss.setScoreType(row.get("type").toString());
-//                    }
-//                    if (null != row.get("persion")) {
-//                        ss.setParentCode(row.get("persion").toString());
-//                    }
-//                    if (null != row.get("orgId")) {
-//                        ss.setOrgId(Long.valueOf(row.get("orgId").toString()));
-//                    }
-//                    if (null != row.get("date")) {
-//                        ss.setExamDate(new SimpleDateFormat("yyyy-MM-dd").parse(row.get("date").toString()));
-//                    }
-//                    if (null != row.get("count")) {
-//                        ss.setJoinNumber(Integer.valueOf(row.get("count").toString()));
-//                    }
-//                    if (null != row.get("pass")) {
-//                        ss.setPassNumber(Integer.valueOf(row.get("pass").toString()));
-//                    }
-//                    if (null != row.get("avg")) {
-//                        ss.setAvgScoure(Double.valueOf(row.get("avg").toString()));
-//                    }
-//                    if (null != row.get("max")) {
-//                        ss.setMaxScore(Double.valueOf(row.get("max").toString()));
-//                    }
-//                    ssList.add(ss);
-//                }
-//            }
-//            if (null != spres && spres.size() > 0) {
-//                for (Object obj : spres) {
-//                    Map row = (Map) obj;
-//                    ScoreStatistics ss = new ScoreStatistics();
-//                    ss.setStatisticsType("2");
-//                    if (null != row.get("type")) {
-//                        ss.setScoreType(row.get("type").toString());
-//                    }
-//                    if (null != row.get("persion")) {
-//                        ss.setParentCode(row.get("persion").toString());
-//                    }
-//                    if (null != row.get("orgId")) {
-//                        ss.setOrgId(Long.valueOf(row.get("orgId").toString()));
-//                    }
-//                    if (null != row.get("date")) {
-//                        ss.setExamDate(new SimpleDateFormat("yyyy-MM-dd").parse(row.get("date").toString()));
-//                    }
-//                    if (null != row.get("count")) {
-//                        ss.setJoinNumber(Integer.valueOf(row.get("count").toString()));
-//                    }
-//                    if (null != row.get("pass")) {
-//                        ss.setPassNumber(Integer.valueOf(row.get("pass").toString()));
-//                    }
-//                    if (null != row.get("avg")) {
-//                        ss.setAvgScoure(Double.valueOf(row.get("avg").toString()));
-//                    }
-//                    if (null != row.get("max")) {
-//                        ss.setMaxScore(Double.valueOf(row.get("max").toString()));
-//                    }
-//                    ssList.add(ss);
-//                }
-//            }
-//            if (null != scres && scres.size() > 0) {
-//                for (Object obj : scres) {
-//                    Map row = (Map) obj;
-//                    ScoreStatistics ss = new ScoreStatistics();
-//                    ss.setStatisticsType("3");
-//                    if (null != row.get("type")) {
-//                        ss.setScoreType(row.get("type").toString());
-//                    }
-//                    if (null != row.get("persion")) {
-//                        ss.setParentCode(row.get("persion").toString());
-//                    }
-//                    if (null != row.get("orgId")) {
-//                        ss.setOrgId(Long.valueOf(row.get("orgId").toString()));
-//                    }
-//                    if (null != row.get("date")) {
-//                        ss.setExamDate(new SimpleDateFormat("yyyy-MM-dd").parse(row.get("date").toString()));
-//                    }
-//                    if (null != row.get("count")) {
-//                        ss.setJoinNumber(Integer.valueOf(row.get("count").toString()));
-//                    }
-//                    if (null != row.get("pass")) {
-//                        ss.setPassNumber(Integer.valueOf(row.get("pass").toString()));
-//                    }
-//                    if (null != row.get("avg")) {
-//                        ss.setAvgScoure(Double.valueOf(row.get("avg").toString()));
-//                    }
-//                    if (null != row.get("max")) {
-//                        ss.setMaxScore(Double.valueOf(row.get("max").toString()));
-//                    }
-//                    ssList.add(ss);
-//                }
-//            }
             if (null != avgores && avgores.size() > 0) {
                 for (Object obj : avgores) {
                     Map row = (Map) obj;
