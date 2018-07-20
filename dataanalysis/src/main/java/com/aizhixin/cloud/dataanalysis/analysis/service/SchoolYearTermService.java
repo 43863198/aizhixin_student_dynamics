@@ -259,7 +259,7 @@ public class SchoolYearTermService {
                         dateTime = year+"年"+semester+"季学期第"+week+"周 "+day;
                     }else {
                         int year = calendar.get(Calendar.YEAR);
-                        int month = calendar.get(Calendar.MONTH);
+                        int month = calendar.get(Calendar.MONTH)+1;
                         int da = calendar.get(Calendar.DAY_OF_MONTH);
                         dateTime = year+"年"+month+"月"+da+"日 "+day;
                     }

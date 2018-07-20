@@ -61,8 +61,6 @@ public class CetStatisticAnalysisController {
     public ResponseEntity<Map<String, Object>> getCetTrendAnalysis(
             @ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "collegeId 机构id", required = false) @RequestParam(value = "collegeId", required = false) Long collegeId
-//            @ApiParam(value = "type 分析指标：4:四级通过率，6:六级通过率" , required = true
-//            @RequestParam(value = "type", required = true) Integer type
     ) {
         return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.getCetTrendAnalysis(orgId, collegeId), HttpStatus.OK);
     }
