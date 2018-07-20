@@ -920,7 +920,7 @@ public class SchoolStatisticsService {
                 }
 //                if (jc != 0) {
                     sql.append(" AND cs.START_PERIOD <= :sjc");
-                    sql.append(" AND (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)) > :ejc");
+                    sql.append(" AND (IFNULL(cs.START_PERIOD,0) + IFNULL(cs.PERIOD_NUM,0)-1) >= :ejc");
                 condition.put("sjc", jc);
                 condition.put("ejc", jc);
 //                }
