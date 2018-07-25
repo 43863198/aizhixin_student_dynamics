@@ -96,15 +96,15 @@ public class TeachingScoreService {
         try {
             StringBuilder sql = new StringBuilder("");
             if (null != orgId) {
-                sql.append(" and s.XXID = :orgId");
+                sql.append(" and s.XXID = :orgId ");
                 condition.put("orgId", orgId);
             }
             if (null != teacherYear) {
-                sql.append(" and c.XN = :teacherYear");
+                sql.append(" and c.XN = :teacherYear ");
                 condition.put("teacherYear", teacherYear);
             }
             if (null != semester) {
-                sql.append(" and c.XQM = :semester");
+                sql.append(" and c.XQM = :semester ");
                 condition.put("semester", semester);
             }
 
@@ -115,21 +115,30 @@ public class TeachingScoreService {
                 cql.append("SELECT s.ZYH as code, s.ZYMC as name, COUNT(DISTINCT c.XH) as cks , COUNT(c.XH) as ckc, AVG(c.JD) as pjjd,COUNT(DISTINCT c.KCH) as kcs,AVG(c.KCCJ) as pjcj, MAX(c.KCCJ) as zgcj FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE ");
                 mustSql.append("SELECT s.ZYH as code, COUNT(c.XH) as musts FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE c.XKSX='必修' ");//必修课参考人次
                 mustPassSQL.append("SELECT s.ZYH as code, COUNT(c.XH) as pass FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE c.KCCJ >= 60 and c.XKSX='必修' ");//必修课通过人次
+
                 cql.append(" s.YXSH = '" + collegeCode + "'");
                 mustSql.append(" and s.YXSH = '" + collegeCode + "'");
+                mustPassSQL.append(" and s.YXSH = '" + collegeCode + "'");
+
                 cql.append(sql);
                 mustSql.append(sql);
                 mustPassSQL.append(sql);
+
                 cql.append(" GROUP BY s.ZYH, s.ZYMC");
                 mustSql.append(" GROUP BY s.ZYH");
                 mustPassSQL.append(" GROUP BY s.ZYH");
             } else {
                 cql.append("SELECT s.YXSH as code, s.YXSMC as name, COUNT(DISTINCT c.XH) as cks, COUNT(c.XH) as ckc, AVG(c.JD) as pjjd,COUNT(DISTINCT c.KCH) as kcs,AVG(c.KCCJ) as pjcj, MAX(c.KCCJ) as zgcj FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE 1=1 ");
-                mustSql.append("SELECT s.YXSH as code, COUNT(c.XH) as pass FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE c.KCCJ >= 60");
+                mustSql.append("SELECT s.YXSH as code, COUNT(c.XH) as musts FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE c.XKSX='必修' ");//必修课参考人次
+                mustPassSQL.append("SELECT s.YXSH as code, COUNT(c.XH) as pass FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE c.KCCJ >= 60 and c.XKSX='必修' ");//必修课通过人次
+
                 cql.append(sql);
                 mustSql.append(sql);
+                mustPassSQL.append(sql);
+
                 cql.append(" GROUP BY s.YXSH, s.YXSMC");
                 mustSql.append(" GROUP BY s.YXSH");
+                mustPassSQL.append(" GROUP BY s.YXSH");
             }
 
             StringBuilder oql = new StringBuilder("SELECT AVG(c.JD) as pjjd,  AVG(c.KCCJ) as pjcj, MAX(c.KCCJ) as zgcj FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE 1=1 ");
@@ -139,10 +148,12 @@ public class TeachingScoreService {
             Query must = em.createNativeQuery(mustSql.toString());
             Query mustPass = em.createNativeQuery(mustPassSQL.toString());
             Query oq = em.createNativeQuery(oql.toString());
+
             cq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             must.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             mustPass.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             oq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 cq.setParameter(e.getKey(), e.getValue());
                 must.setParameter(e.getKey(), e.getValue());
