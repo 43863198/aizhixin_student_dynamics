@@ -1,14 +1,15 @@
 package com.aizhixin.cloud.dataanalysis.analysis.service;
 
 import com.aizhixin.cloud.dataanalysis.analysis.constant.TeachingScoreTrendType;
-import com.aizhixin.cloud.dataanalysis.analysis.dto.*;
+import com.aizhixin.cloud.dataanalysis.analysis.dto.CollegeTeachingAchievementDTO;
+import com.aizhixin.cloud.dataanalysis.analysis.dto.TeachingAchievementDTO;
+import com.aizhixin.cloud.dataanalysis.analysis.dto.TrendDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.TeachingScoreDetails;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.TeachingScoreStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.TeachingScoreDetailsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.TeachingScoreStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
-
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
@@ -16,15 +17,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.querydsl.QuerydslRepositoryInvokerAdapter;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.*;
-
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author: Created by jianwei.wu
@@ -83,6 +85,13 @@ public class TeachingScoreService {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> condition = new HashMap<>();
         TeachingAchievementDTO teachingAchievementDTO = new TeachingAchievementDTO();
+
+        teachingAchievementDTO.setCoursesNum(0);
+        teachingAchievementDTO.setStudentsNum(0);
+        teachingAchievementDTO.setScoreNum(0);
+        teachingAchievementDTO.setMustFailNum(0);
+        teachingAchievementDTO.setMustNum(0);
+
         List<CollegeTeachingAchievementDTO> collegeTeachingAchievementDTOList = new ArrayList<>();
         try {
             StringBuilder sql = new StringBuilder("");
@@ -100,50 +109,54 @@ public class TeachingScoreService {
             }
 
             StringBuilder cql = new StringBuilder();
-            StringBuilder cpl = new StringBuilder();
+            StringBuilder mustSql = new StringBuilder();
+            StringBuilder mustPassSQL = new StringBuilder();
             if (!StringUtils.isBlank(collegeCode)) {
-                cql.append("SELECT s.ZYH as code, s.ZYMC as name, COUNT(DISTINCT c.XH) as cks ,AVG(c.JD) as pjjd,COUNT(DISTINCT c.KCH) as kcs,AVG(c.KCCJ) as pjcj, MAX(c.KCCJ) as zgcj FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE 1 = 1");
-                cpl.append("SELECT s.ZYH as code, COUNT(DISTINCT c.XH) as pass FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE 1 = 1 AND c.KCCJ >= 60");
-                cql.append(" AND s.YXSH = '" + collegeCode + "'");
-                cpl.append(" AND s.YXSH = '" + collegeCode + "'");
+                cql.append("SELECT s.ZYH as code, s.ZYMC as name, COUNT(DISTINCT c.XH) as cks , COUNT(c.XH) as ckc, AVG(c.JD) as pjjd,COUNT(DISTINCT c.KCH) as kcs,AVG(c.KCCJ) as pjcj, MAX(c.KCCJ) as zgcj FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE ");
+                mustSql.append("SELECT s.ZYH as code, COUNT(c.XH) as musts FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE c.XKSX='必修' ");//必修课参考人次
+                mustPassSQL.append("SELECT s.ZYH as code, COUNT(c.XH) as pass FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE c.KCCJ >= 60 and c.XKSX='必修' ");//必修课通过人次
+                cql.append(" s.YXSH = '" + collegeCode + "'");
+                mustSql.append(" and s.YXSH = '" + collegeCode + "'");
                 cql.append(sql);
-                cpl.append(sql);
-                cql.append(" GROUP BY s.ZYH");
-                cpl.append(" GROUP BY s.ZYH");
+                mustSql.append(sql);
+                mustPassSQL.append(sql);
+                cql.append(" GROUP BY s.ZYH, s.ZYMC");
+                mustSql.append(" GROUP BY s.ZYH");
+                mustPassSQL.append(" GROUP BY s.ZYH");
             } else {
-                cql.append("SELECT s.YXSH as code, s.YXSMC as name, COUNT(DISTINCT c.XH) as cks ,AVG(c.JD) as pjjd,COUNT(DISTINCT c.KCH) as kcs,AVG(c.KCCJ) as pjcj, MAX(c.KCCJ) as zgcj FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE 1 = 1");
-                cpl.append("SELECT s.YXSH as code, COUNT(DISTINCT c.XH) as pass FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE 1 = 1 AND c.KCCJ >= 60");
+                cql.append("SELECT s.YXSH as code, s.YXSMC as name, COUNT(DISTINCT c.XH) as cks, COUNT(c.XH) as ckc, AVG(c.JD) as pjjd,COUNT(DISTINCT c.KCH) as kcs,AVG(c.KCCJ) as pjcj, MAX(c.KCCJ) as zgcj FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE 1=1 ");
+                mustSql.append("SELECT s.YXSH as code, COUNT(c.XH) as pass FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE c.KCCJ >= 60");
                 cql.append(sql);
-                cpl.append(sql);
-                cql.append(" GROUP BY s.YXSH");
-                cpl.append(" GROUP BY s.YXSH");
+                mustSql.append(sql);
+                cql.append(" GROUP BY s.YXSH, s.YXSMC");
+                mustSql.append(" GROUP BY s.YXSH");
             }
 
-            StringBuilder oql = new StringBuilder("SELECT COUNT(DISTINCT c.XH) as cks ,AVG(c.JD) as pjjd,COUNT(DISTINCT c.KCH) as kcs,AVG(c.KCCJ) as pjcj, MAX(c.KCCJ) as zgcj FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE 1 = 1");
-            StringBuilder opl = new StringBuilder("SELECT COUNT(DISTINCT c.XH) as pass FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE 1 = 1 AND c.KCCJ >= 60");
+            StringBuilder oql = new StringBuilder("SELECT AVG(c.JD) as pjjd,  AVG(c.KCCJ) as pjcj, MAX(c.KCCJ) as zgcj FROM t_xscjxx c LEFT JOIN t_xsjbxx s ON c.XH = s.XH WHERE 1=1 ");
             oql.append(sql);
-            opl.append(sql);
 
-            Query cq = em.createNamedQuery(cql.toString());
-            Query cp = em.createNamedQuery(cpl.toString());
-            Query oq = em.createNamedQuery(oql.toString());
-            Query op = em.createNamedQuery(opl.toString());
+            Query cq = em.createNativeQuery(cql.toString());
+            Query must = em.createNativeQuery(mustSql.toString());
+            Query mustPass = em.createNativeQuery(mustPassSQL.toString());
+            Query oq = em.createNativeQuery(oql.toString());
             cq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-            cp.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            must.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            mustPass.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             oq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-            op.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 cq.setParameter(e.getKey(), e.getValue());
-                cp.setParameter(e.getKey(), e.getValue());
+                must.setParameter(e.getKey(), e.getValue());
+                mustPass.setParameter(e.getKey(), e.getValue());
                 oq.setParameter(e.getKey(), e.getValue());
-                op.setParameter(e.getKey(), e.getValue());
             }
+
             List<Map<String, Object>> rcq = cq.getResultList();
-            List<Map<String, Object>> rcp = cq.getResultList();
-            List<Map<String, Object>> roq = cq.getResultList();
-            List<Map<String, Object>> rop = cq.getResultList();
+            List<Map<String, Object>> rmust = must.getResultList();
+            List<Map<String, Object>> rmustPass = mustPass.getResultList();
+            List<Map<String, Object>> roq = oq.getResultList();
 
             if (null != rcq && rcq.size() > 0) {
+                Map<String, CollegeTeachingAchievementDTO> cache = new HashMap<>();
                 for (Map<String, Object> q : rcq) {
                     CollegeTeachingAchievementDTO collegeTeachingAchievementDTO = new CollegeTeachingAchievementDTO();
                     if (null != q.get("name")) {
@@ -154,50 +167,56 @@ public class TeachingScoreService {
                     }
                     if (null != q.get("cks")) {
                         collegeTeachingAchievementDTO.setStudentsNum(Integer.valueOf(q.get("cks").toString()));
+                        teachingAchievementDTO.setStudentsNum(teachingAchievementDTO.getStudentsNum() + collegeTeachingAchievementDTO.getStudentsNum());
+                    }
+                    if (null != q.get("ckc")) {
+                        collegeTeachingAchievementDTO.setScoreNum(Integer.valueOf(q.get("ckc").toString()));
+                        teachingAchievementDTO.setScoreNum(teachingAchievementDTO.getScoreNum() + collegeTeachingAchievementDTO.getScoreNum());
                     }
                     if (null != q.get("pjjd")) {
                         collegeTeachingAchievementDTO.setAverageGPA(new BigDecimal(Double.valueOf(q.get("pjjd").toString())).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                     }
                     if (null != q.get("kcs")) {
                         collegeTeachingAchievementDTO.setCoursesNum(Integer.valueOf(q.get("kcs").toString()));
+                        teachingAchievementDTO.setCoursesNum(teachingAchievementDTO.getCoursesNum() + collegeTeachingAchievementDTO.getCoursesNum());
                     }
                     if (null != q.get("pjcj")) {
                         collegeTeachingAchievementDTO.setCoursesAVGScore(new BigDecimal(Double.valueOf(q.get("pjcj").toString())).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                     }
-                    for (Map<String, Object> p : rcp) {
-                        if (null != p.get("code") && collegeTeachingAchievementDTO.getCode().equals(p.get("code").toString())) {
-                            if (null != p.get("pass")) {
-                                int pass = Integer.valueOf(p.get("pass").toString());
-                                collegeTeachingAchievementDTO.setFailNum(collegeTeachingAchievementDTO.getStudentsNum() - pass);
-                                break;
-                            }
+                    cache.put(collegeTeachingAchievementDTO.getCode(), collegeTeachingAchievementDTO);
+                    collegeTeachingAchievementDTOList.add(collegeTeachingAchievementDTO);
+                }
+
+                for (Map<String, Object> p : rmust) {
+                    String code = (String)p.get("code");
+                    if (null != code) {
+                        CollegeTeachingAchievementDTO collegeTeachingAchievementDTO = cache.get(code);
+                        if (null != collegeTeachingAchievementDTO && null != p.get("musts")) {
+                            int musts = Integer.valueOf(p.get("musts").toString());
+                            collegeTeachingAchievementDTO.setMustNum(musts);
+                            teachingAchievementDTO.setMustNum(teachingAchievementDTO.getMustNum() + collegeTeachingAchievementDTO.getMustNum());
                         }
                     }
-                    collegeTeachingAchievementDTOList.add(collegeTeachingAchievementDTO);
+                }
+                for (Map<String, Object> p : rmustPass) {
+                    String code = (String)p.get("code");
+                    if (null != code) {
+                        CollegeTeachingAchievementDTO collegeTeachingAchievementDTO = cache.get(code);
+                        if (null != collegeTeachingAchievementDTO && null != p.get("pass")) {
+                            int pass = Integer.valueOf(p.get("pass").toString());
+                            collegeTeachingAchievementDTO.setMustFailNum(collegeTeachingAchievementDTO.getMustNum() - pass);
+                            teachingAchievementDTO.setMustFailNum(teachingAchievementDTO.getMustFailNum() + collegeTeachingAchievementDTO.getMustFailNum());
+                        }
+                    }
                 }
             }
             if (null != roq && roq.size() > 0) {
                 Map<String, Object> o = roq.get(0);
-                if (null != o.get("cks")) {
-                    teachingAchievementDTO.setStudentsNum(Integer.valueOf(o.get("cks").toString()));
-                }
                 if (null != o.get("pjjd")) {
                     teachingAchievementDTO.setAverageGPA(new BigDecimal(Double.valueOf(o.get("pjjd").toString())).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                 }
-//                if (null != rd[2]) {
-//                    teachingAchievementDTO.setFailNum(Integer.valueOf(String.valueOf(rd[2])));
-//                }
-                if (null != o.get("kcs")) {
-                    teachingAchievementDTO.setCoursesNum(Integer.valueOf(o.get("kcs").toString()));
-                }
                 if (null != o.get("pjcj")) {
                     teachingAchievementDTO.setCoursesAVGScore(new BigDecimal(Double.valueOf(o.get("pjcj").toString())).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-                }
-                if (null != rop && rop.size() > 0) {
-                    Map<String, Object> ps = rop.get(0);
-                    if(null!=ps.get("pass")){
-                        teachingAchievementDTO.setFailNum(teachingAchievementDTO.getStudentsNum()-Integer.parseInt(ps.get("pass").toString()));
-                    }
                 }
             }
 
