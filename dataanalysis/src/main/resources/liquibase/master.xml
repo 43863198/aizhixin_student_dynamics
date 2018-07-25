@@ -5,6 +5,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <!--
     <include file="classpath:liquibase/20171113154645_add_entity_AlarmSettings.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171113154645_add_entity_WarningInformation.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20171113154645_add_entity_WarningType.xml" relativeToChangelogFile="false"/>
@@ -59,4 +60,5 @@
     <include file="classpath:liquibase/201712181132845_update_entity_AlarmSettings.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20180517163245_update_entity_AlarmReceiver.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/201806273163200_update_entity_WarningInformation.xml" relativeToChangelogFile="false"/>
+    -->
 </databaseChangeLog>
