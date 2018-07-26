@@ -29,7 +29,7 @@ public class OrganizationService {
         Map<String,Object> result = new HashMap<>();
         List<OrganizationDTO> orgList = new ArrayList<>();
         try {
-            StringBuilder sql = new StringBuilder("SELECT  COMPANY_NUMBER as code, COMPANY_NAME as name FROM t_department WHERE 1=1");
+            StringBuilder sql = new StringBuilder("SELECT  COMPANY_NUMBER as code, COMPANY_NAME as name, SIMPLE_NAME as simple FROM t_department WHERE 1=1");
             if (null != orgId) {
                 sql.append(" AND ORG_ID = " + orgId + "");
             }
@@ -44,6 +44,9 @@ public class OrganizationService {
                     org.setCode(row.get("code").toString());
                     if (null != row.get("name")) {
                         org.setName(row.get("name").toString());
+                    }
+                    if (null != row.get("simple")) {
+                        org.setSimple(row.get("simple").toString());
                     }
                     orgList.add(org);
                 }
