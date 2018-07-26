@@ -9,6 +9,7 @@ import lombok.Data;
  */
 @Data
 public class OrganizationDTO {
+    private String simple;
     private String name;
     private String code;
 
