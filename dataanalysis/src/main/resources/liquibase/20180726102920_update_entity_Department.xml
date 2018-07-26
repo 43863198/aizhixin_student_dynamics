@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+
+    <changeSet id="20180726102920" author="zhen.pan">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="T_DEPARTMENT" columnName="SIMPLE_NAME"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="T_DEPARTMENT">
+            <column name="SIMPLE_NAME" type="VARCHAR(60)"  remarks="院系所部门单位名称简称"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>
