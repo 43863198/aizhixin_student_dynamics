@@ -1344,6 +1344,7 @@ public class CetStatisticAnalysisService {
         try {
             //在校人数
             Map<String, Object> condition = new HashMap<>();
+
             StringBuilder sql = new StringBuilder("SELECT SUM(IF(c.max > 0, 1, 0)) AS total," );
             if ("三级".equals(cetType)) {
                 sql.append(" SUM(IF(c.max >= 60, 1, 0)) AS pass ");
@@ -1384,8 +1385,8 @@ public class CetStatisticAnalysisService {
                 condition.put("classCode", classCode);
                 condition.put("className", className);
             }
-            sql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
-            avgsql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
+            sql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE AND ss.STATE NOT IN ('02','04','16')");
+            avgsql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE AND ss.STATE NOT IN ('02','04','16')");
             Query sq = em.createNativeQuery(sql.toString());
             Query aq = em.createNativeQuery(avgsql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
