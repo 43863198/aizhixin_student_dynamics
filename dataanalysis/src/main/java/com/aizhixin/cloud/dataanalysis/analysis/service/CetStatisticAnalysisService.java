@@ -1344,11 +1344,23 @@ public class CetStatisticAnalysisService {
         try {
             //在校人数
             Map<String, Object> condition = new HashMap<>();
-            StringBuilder sql = new StringBuilder("SELECT SUM(IF(c.max > 0, 1, 0)) AS total,SUM(IF(c.max >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
-                    "WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" +
-                      " GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1");
-            StringBuilder avgsql = new StringBuilder("SELECT AVG(cs.SCORE) as avg FROM t_cet_score cs LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
-                    "WHERE cs.SCORE >= 425 and cs.TYPE LIKE " + "'%大学英语" + cetType + "%' ");
+            StringBuilder sql = new StringBuilder("SELECT SUM(IF(c.max > 0, 1, 0)) AS total," );
+            if ("三级".equals(cetType)) {
+                sql.append(" SUM(IF(c.max >= 60, 1, 0)) AS pass ");
+            } else {
+                sql.append(" SUM(IF(c.max >= 425, 1, 0)) AS pass ");
+            }
+            sql.append(" FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs ");
+            sql.append(" WHERE cs.TYPE LIKE "+"'%大学英语" + cetType + "%'");
+            sql.append(" GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1");
+
+            StringBuilder avgsql = new StringBuilder("SELECT AVG(cs.SCORE) as avg FROM t_cet_score cs LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER WHERE ");
+            if ("三级".equals(cetType)) {
+                avgsql.append(" cs.SCORE >= 60 ");
+            } else {
+                avgsql.append(" cs.SCORE >= 425 ");
+            }
+            avgsql.append(" and cs.TYPE LIKE " + "'%大学英语" + cetType + "%' ");
             if (null != orgId) {
                 sql.append(" and ss.ORG_ID = :orgId");
                 avgsql.append(" and ss.ORG_ID = :orgId");
