@@ -33,7 +33,11 @@ public class CetSexStatisticalJdbc {
             sql+=" AND ts.`BH`='"+classCode+"'";
         }
         if (!isAll){
-            sql+=" AND tcs.`SCORE`>=425 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
+            if ("三级".equals(cetType)) {
+                sql += " AND tcs.`SCORE`>=60 AND tcs.`TYPE` LIKE '%大学英语" + cetType + "%'";
+            } else {
+                sql += " AND tcs.`SCORE`>=425 AND tcs.`TYPE` LIKE '%大学英语" + cetType + "%'";
+            }
         }else{
             sql+=" AND tcs.`SCORE`>0 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
         }
