@@ -1362,7 +1362,7 @@ public class CetStatisticAnalysisService {
         try {
             //在校人数
             Map<String, Object> condition = new HashMap<>();
-            StringBuilder sql = new StringBuilder("SELECT SUM(IF(c.max > 0, 1, 0)) AS total,SUM(IF(c.max >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
+            StringBuilder sql = new StringBuilder("SELECT count(ID) AS total,SUM(IF(c.max >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
                     "WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" +
                       " GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1");
             StringBuilder avgsql = new StringBuilder("SELECT AVG(cs.SCORE) as avg FROM t_cet_score cs LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
@@ -1390,8 +1390,8 @@ public class CetStatisticAnalysisService {
                 condition.put("classCode", classCode);
                 condition.put("className", className);
             }
-            sql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
-            avgsql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
+            sql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE AND ss.STATE NOT IN ('02','04','16')");
+            avgsql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE AND ss.STATE NOT IN ('02','04','16')");
             Query sq = em.createNativeQuery(sql.toString());
             Query aq = em.createNativeQuery(avgsql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
