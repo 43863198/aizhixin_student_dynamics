@@ -16,13 +16,8 @@ import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
-
 import com.mongodb.BasicDBObject;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,28 +28,15 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author: Created by jianwei.wu
@@ -1430,7 +1412,7 @@ public class CetStatisticAnalysisService {
         Map<String, Object> condition = new HashMap<>();
         List<CetScoreNumberOfPeopleVO> csnpList = new ArrayList<>();
         try {
-            String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+//            String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
             StringBuilder ql = new StringBuilder("");
             if (null != orgId) {
                 ql.append(" and ss.ORG_ID = :orgId");
@@ -1440,42 +1422,68 @@ public class CetStatisticAnalysisService {
             if (!StringUtils.isBlank(collegeCode)) {
                 if (!StringUtils.isBlank(professionCode)) {
                     if (!StringUtils.isBlank(classCode)&&!StringUtils.isBlank(className)) {
-                        sql.append("SELECT ss.CLASS_NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total,SUM(IF(c.max >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
-                                " WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" +
-                                " GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
+                        sql.append("SELECT ss.CLASS_NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total, ");
+                        if ("三级".equals(cetType)) {
+                            sql.append(" SUM(IF(c.max >= 60, 1, 0)) AS pass ");
+                        } else {
+                            sql.append(" SUM(IF(c.max >= 425, 1, 0)) AS pass ");
+                        }
+                        sql.append(" FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs ");
+                        sql.append(" WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" );
+                        sql.append(" GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE ");
                         sql.append(ql);
-                        sql.append(" and ss.CLASS_CODE = :classCode");
-                        sql.append(" and ss.CLASS_NAME = :className");
-                        sql.append(" and ss.PROFESSION_CODE = :professionCode");
+                        sql.append(" and ss.CLASS_CODE = :classCode ");
+                        sql.append(" and ss.CLASS_NAME = :className ");
+                        sql.append(" and ss.PROFESSION_CODE = :professionCode ");
+
                         condition.put("classCode", classCode);
                         condition.put("className", className);
                         condition.put("professionCode", professionCode);
                     }else {
-                        sql.append("SELECT ss.CLASS_NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total,SUM(IF(c.max >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
-                                " WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" +
-                                " GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
+                        sql.append("SELECT ss.CLASS_NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total, ");
+                        if ("三级".equals(cetType)) {
+                            sql.append(" SUM(IF(c.max >= 60, 1, 0)) AS pass ");
+                        } else {
+                            sql.append(" SUM(IF(c.max >= 425, 1, 0)) AS pass ");
+                        }
+                        sql.append(" FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs ");
+                        sql.append(" WHERE cs.TYPE LIKE "+"'%大学英语" + cetType + "%' " );
+                        sql.append(" GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE ");
                         sql.append(ql);
-                        sql.append(" and ss.PROFESSION_CODE = :professionCode");
+                        sql.append(" and ss.PROFESSION_CODE = :professionCode ");
+
                         condition.put("professionCode", professionCode);
                         sql.append(" group by ss.CLASS_NAME");
                     }
                 } else {
-                    sql.append("SELECT p.NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total,SUM(IF(c.max >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
-                            "WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" +
-                            " GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh LEFT JOIN t_profession P ON P.CODE = ss.PROFESSION_CODE " +
-                            " WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
+                    sql.append("SELECT p.NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total, ");
+                    if ("三级".equals(cetType)) {
+                        sql.append(" SUM(IF(c.max >= 60, 1, 0)) AS pass ");
+                    } else {
+                        sql.append(" SUM(IF(c.max >= 425, 1, 0)) AS pass ");
+                    }
+                    sql.append(" FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs ");
+                    sql.append(" WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%' ");
+                    sql.append(" GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh LEFT JOIN t_profession P ON P.CODE = ss.PROFESSION_CODE ");
+                    sql.append(" WHERE CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE ");
                     sql.append(ql);
-                    sql.append(" and ss.COLLEGE_CODE = :collegeCode");
+                    sql.append(" and ss.COLLEGE_CODE = :collegeCode ");
                     condition.put("collegeCode", collegeCode);
                     sql.append(" group by ss.PROFESSION_CODE");
                 }
             } else {
-                sql.append("SELECT d.COMPANY_NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total,SUM(IF(c.max >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
-                        "WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" +
-                        " GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh LEFT JOIN t_department d ON d.COMPANY_NUMBER = ss.COLLEGE_CODE" +
-                        " WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
+                sql.append(" SELECT d.COMPANY_NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total, " );
+                if ("三级".equals(cetType)) {
+                    sql.append(" SUM(IF(c.max >= 60, 1, 0)) AS pass ");
+                } else {
+                    sql.append(" SUM(IF(c.max >= 425, 1, 0)) AS pass ");
+                }
+                sql.append(" FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs ");
+                sql.append(" WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%' ");
+                sql.append(" GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh LEFT JOIN t_department d ON d.COMPANY_NUMBER = ss.COLLEGE_CODE ");
+                sql.append(" WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE ");
                 sql.append(ql);
-                sql.append(" group by ss.COLLEGE_CODE");
+                sql.append(" group by ss.COLLEGE_CODE ");
             }
             Query sq = em.createNativeQuery(sql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
