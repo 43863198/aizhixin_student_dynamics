@@ -1624,6 +1624,9 @@ public class CetStatisticAnalysisService {
                         sql.append(" and cs.SCORE >= 60");
                         cql.append(" and cs.SCORE >= 60");
                     }
+                } else {
+                    sql.append(" and cs.SCORE > 0");
+                    cql.append(" and cs.SCORE > 0");
                 }
             } else if (null != scoreSeg && scoreSeg >= 1 && scoreSeg <= 4) {
                 switch (scoreSeg) {
@@ -1644,6 +1647,9 @@ public class CetStatisticAnalysisService {
                         cql.append(" and cs.SCORE > 550");
                         break;
                 }
+            } else {
+                sql.append(" and cs.SCORE > 0");
+                cql.append(" and cs.SCORE > 0");
             }
             sql.append(" ORDER BY cs.JOB_NUMBER");
             cql.append(" ORDER BY cs.JOB_NUMBER");
