@@ -1461,7 +1461,7 @@ public class CetStatisticAnalysisService {
                         }
                         sql.append(" FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs ");
                         sql.append(" WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" );
-                        sql.append(" GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE ");
+                        sql.append(" GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE having total>0");
                         sql.append(ql);
                         sql.append(" and ss.CLASS_CODE = :classCode ");
                         sql.append(" and ss.CLASS_NAME = :className ");
@@ -1484,7 +1484,7 @@ public class CetStatisticAnalysisService {
                         sql.append(" and ss.PROFESSION_CODE = :professionCode ");
 
                         condition.put("professionCode", professionCode);
-                        sql.append(" group by ss.CLASS_NAME");
+                        sql.append(" group by ss.CLASS_NAME having total>0");
                     }
                 } else {
                     sql.append("SELECT p.NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total, ");
@@ -1500,7 +1500,7 @@ public class CetStatisticAnalysisService {
                     sql.append(ql);
                     sql.append(" and ss.COLLEGE_CODE = :collegeCode ");
                     condition.put("collegeCode", collegeCode);
-                    sql.append(" group by ss.PROFESSION_CODE");
+                    sql.append(" group by ss.PROFESSION_CODE having total>0");
                 }
             } else {
                 sql.append(" SELECT d.COMPANY_NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total, " );
@@ -1514,7 +1514,7 @@ public class CetStatisticAnalysisService {
                 sql.append(" GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh LEFT JOIN t_department d ON d.COMPANY_NUMBER = ss.COLLEGE_CODE ");
                 sql.append(" WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE ");
                 sql.append(ql);
-                sql.append(" group by ss.COLLEGE_CODE ");
+                sql.append(" group by ss.COLLEGE_CODE having total>0");
             }
             Query sq = em.createNativeQuery(sql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+    <!-- 通知记录表结构-->
+    <changeSet id="20180730170945" author="zhen.pan">
+		<preConditions onFail="MARK_RAN">
+	        <not>
+	            <tableExists tableName="T_NOTIFICATION_RECORD"/>
+	        </not>
+	    </preConditions>
+        <createTable tableName="T_NOTIFICATION_RECORD" remarks="通知记录表">
+            <column name="ID" type="VARCHAR(60)" autoIncrement="false">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ALERT_TYPE" type="VARCHAR(60)" remarks="告警类型"/>
+            <column name="ORG_ID" type="BIGINT" remarks="学校id"/>
+            <column name="COLLEGE_CODE" type="VARCHAR(60)" remarks="学院编码"/>
+            <column name="COLLEGE_NAME" type="VARCHAR(200)" remarks="学院名称"/>
+            <column name="RECEIVER_NAME" type="VARCHAR(80)" remarks="接收人姓名"/>
+            <column name="RECEIVER_CODE" type="VARCHAR(60)" remarks="接收人工号"/>
+            <column name="RECEIVER_PHONE" type="VARCHAR(60)" remarks="接收人姓名"/>
+            <column name="RS" type="INT(4)" remarks="发送结果（10 成功，20 失败)"/>
+            <column name="FAIL_MSG" type="VARCHAR(120)" remarks="失败消息"/>
+            <column name="CONTENT" type="VARCHAR(1200)" remarks="消息内容"/>
+            <column name="SEND_TIME" type="DATETIME" remarks="发送时间"/>
+            <column name="LAST_ACCESS_TIME" type="DATETIME" remarks="最后一次访问时间"/>
+        </createTable>
+        <createIndex indexName="idx_notification_record_org_id" tableName="T_NOTIFICATION_RECORD" unique="false">
+            <column name="ORG_ID" type="BIGINT"/>
+        </createIndex>
+        <createIndex indexName="idx_notification_record_college_code" tableName="T_NOTIFICATION_RECORD" unique="false">
+            <column name="COLLEGE_CODE" type="VARCHAR(60)"/>
+        </createIndex>
+        <createIndex indexName="idx__notification_record_rs" tableName="T_NOTIFICATION_RECORD" unique="false">
+            <column name="RS" type="INT(4)"/>
+        </createIndex>
+        <createIndex indexName="idx__notification_record_send_time" tableName="T_NOTIFICATION_RECORD" unique="false">
+            <column name="SEND_TIME" type="DATETIME"/>
+        </createIndex>
+        <createIndex indexName="idx_notification_record_receiver_name" tableName="T_NOTIFICATION_RECORD" unique="false">
+            <column name="RECEIVER_NAME" type="VARCHAR(80)"/>
+        </createIndex>
+        <createIndex indexName="idx_notification_record_receiver_code" tableName="T_NOTIFICATION_RECORD" unique="false">
+            <column name="RECEIVER_CODE" type="VARCHAR(60)"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
