@@ -1558,7 +1558,7 @@ public class CetStatisticAnalysisService {
         }
     }
 
-    public PageData<CetDetailVO> getDetailList(Long orgId,String collegeCode,String professionCode,String classCode,String cetType,String nj,String teacherYear,String semester, String isPass, Integer scoreSeg,Integer pageNumber, Integer pageSize) {
+    public PageData<CetDetailVO> getDetailList(Long orgId,String collegeCode,String professionCode,String className,String cetType,String nj,String teacherYear,String semester, String isPass, Integer scoreSeg,Integer pageNumber, Integer pageSize) {
         PageData<CetDetailVO> p = new PageData<>();
         try {
             Date start = null;
@@ -1602,10 +1602,10 @@ public class CetStatisticAnalysisService {
                 cql.append(" and x.ZYH = :professionCode");
                 condition.put("professionCode", professionCode);
             }
-            if (!StringUtils.isBlank(classCode)) {
-                sql.append(" and x.BH = :classCode");
-                cql.append(" and x.BH = :classCode");
-                condition.put("classCode", classCode);
+            if (!StringUtils.isBlank(className)) {
+                sql.append(" and x.BJMC = :className");
+                cql.append(" and x.BJMC = :className");
+                condition.put("className", className);
             }
             if (!StringUtils.isBlank(nj)) {
                 sql.append(" and (x.XM LIKE :xm");
