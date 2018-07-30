@@ -1847,10 +1847,10 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             String type = null;
             if(cetType.equals("四级")){
                 type = "大学英语四级考试";
-            }else {
-                if(cetType.equals("六级")){
-                    type = "大学英语六级考试";
-                }
+            }else if(cetType.equals("六级")){
+                type = "大学英语六级考试";
+            } else{
+                type = "大学英语三级考试";
             }
             StringBuilder  ql = new StringBuilder("");
             if(null!=type&&!type.equals("")){
@@ -1872,6 +1872,8 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             dql.append(" and ss.PARENT_CODE = " + orgId);
             dql.append(ql);
             dql.append(" AND d.COMPANY_NAME IS NOT NULL");
+//            String sql = dql.toString();
+//            System.out.println("signExport 001:" + sql);
             Query dq = em.createNativeQuery(dql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 dq.setParameter(e.getKey(), e.getValue());
@@ -1911,6 +1913,8 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             pql.append(" AND ss.STATISTICS_TYPE = '002'");
             pql.append(ql);
             pql.append(" AND p.NAME IS NOT NULL");
+//            sql = pql.toString();
+//            System.out.println("signExport 002:" + sql);
             Query pq = em.createNativeQuery(pql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 pq.setParameter(e.getKey(), e.getValue());
@@ -1953,6 +1957,8 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             cql.append(" AND ss.STATISTICS_TYPE = '003'");
             cql.append(ql);
             cql.append(" AND d.COMPANY_NAME IS NOT NULL");
+//            sql = cql.toString();
+//            System.out.println("signExport 003:" + sql);
             Query cq = em.createNativeQuery(cql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 cq.setParameter(e.getKey(), e.getValue());
@@ -1999,7 +2005,9 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             gql.append(ql);
             gql.append(" AND ss.NAME_CODE IS NOT NULL");
             gql.append(" order by grade ASC");
-            Query gq = em.createNativeQuery(gql.toString());
+//            sql = dql.toString();
+//            System.out.println("signExport 021:" + gql);
+            Query gq = em.createNativeQuery(dql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 gq.setParameter(e.getKey(), e.getValue());
             }
