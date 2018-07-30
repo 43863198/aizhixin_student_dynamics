@@ -26,6 +26,7 @@
             <column name="RECEIVER_CODE" type="VARCHAR(60)" remarks="接收人工号"/>
             <column name="RECEIVER_PHONE" type="VARCHAR(60)" remarks="接收人姓名"/>
             <column name="RS" type="INT(4)" remarks="发送结果（10 成功，20 失败)"/>
+            <column name="FAIL_MSG" type="VARCHAR(120)" remarks="失败消息"/>
             <column name="CONTENT" type="VARCHAR(1200)" remarks="消息内容"/>
             <column name="SEND_TIME" type="DATETIME" remarks="发送时间"/>
             <column name="LAST_ACCESS_TIME" type="DATETIME" remarks="最后一次访问时间"/>
