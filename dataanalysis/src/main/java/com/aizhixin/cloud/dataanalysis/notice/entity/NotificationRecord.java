@@ -41,7 +41,7 @@ public class NotificationRecord {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
-    @Getter @Setter private Date lastAccessTime = new Date();
+    @Getter @Setter private Date lastAccessTime;
     @ApiModelProperty(value = "告警类型")
     @Column(name = "ALERT_TYPE")
     @Getter @Setter private String alertType;
