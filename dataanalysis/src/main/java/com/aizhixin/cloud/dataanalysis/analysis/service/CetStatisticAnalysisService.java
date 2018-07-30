@@ -1544,7 +1544,7 @@ public class CetStatisticAnalysisService {
         }
     }
 
-    public PageData<CetDetailVO> getDetailList(Long orgId,String collegeCode,String professionCode,String classCode,String cetType,String nj,String teacherYear,String semester,String isPass,Integer pageNumber, Integer pageSize) {
+    public PageData<CetDetailVO> getDetailList(Long orgId,String collegeCode,String professionCode,String classCode,String cetType,String nj,String teacherYear,String semester,String isPass, Integer scoreSeg,Integer pageNumber, Integer pageSize) {
         PageData<CetDetailVO> p = new PageData<>();
         try {
             Date start = null;
@@ -1601,17 +1601,37 @@ public class CetStatisticAnalysisService {
                 condition.put("xm", "%" + nj + "%");
                 condition.put("xh", "%"+nj+"%");
             }
-
-            if(null!=isPass&&isPass.equals("1")){
-                sql.append(" and cs.SCORE >= 425");
-                cql.append(" and cs.SCORE >= 425");
-            }else {
-                if (null!=isPass&&isPass.equals("0")) {
-                    sql.append(" and cs.SCORE < 425 and cs.SCORE > 0");
-                    cql.append(" and cs.SCORE < 425 and cs.SCORE > 0");
-                } else {
-                    sql.append(" and cs.SCORE > 0");
-                    cql.append(" and cs.SCORE > 0");
+            if (null != scoreSeg && scoreSeg >= 1 && scoreSeg <= 4) {
+                switch (scoreSeg) {
+                    case 1:
+                        sql.append(" and cs.SCORE < 390 and cs.SCORE > 0");
+                        cql.append(" and cs.SCORE < 390 and cs.SCORE > 0");
+                        break;
+                    case 2:
+                        sql.append(" and cs.SCORE < 425 and cs.SCORE >= 390");
+                        cql.append(" and cs.SCORE < 425 and cs.SCORE >= 390");
+                        break;
+                    case 3:
+                        sql.append(" and cs.SCORE <= 550 and cs.SCORE >= 425");
+                        cql.append(" and cs.SCORE <= 550 and cs.SCORE >= 425");
+                        break;
+                    case 4:
+                        sql.append(" and cs.SCORE > 550");
+                        cql.append(" and cs.SCORE > 550");
+                        break;
+                }
+            } else {
+                if(null!=isPass&&isPass.equals("1")){
+                    sql.append(" and cs.SCORE >= 425");
+                    cql.append(" and cs.SCORE >= 425");
+                }else {
+                    if (null!=isPass&&isPass.equals("0")) {
+                        sql.append(" and cs.SCORE < 425 and cs.SCORE > 0");
+                        cql.append(" and cs.SCORE < 425 and cs.SCORE > 0");
+                    } else {
+                        sql.append(" and cs.SCORE > 0");
+                        cql.append(" and cs.SCORE > 0");
+                    }
                 }
             }
             sql.append(" ORDER BY cs.JOB_NUMBER");
