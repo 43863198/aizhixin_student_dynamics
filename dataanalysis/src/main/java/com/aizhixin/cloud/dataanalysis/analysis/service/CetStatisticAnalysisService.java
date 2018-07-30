@@ -1344,7 +1344,7 @@ public class CetStatisticAnalysisService {
         try {
             //在校人数
             Map<String, Object> condition = new HashMap<>();
-
+            StringBuilder cql = new StringBuilder("SELECT count(ss.JOB_NUMBER) AS currentTotal FROM t_student_status ss WHERE 1 = 1 ");
             StringBuilder sql = new StringBuilder("SELECT SUM(IF(c.max > 0, 1, 0)) AS total," );
             if ("三级".equals(cetType)) {
                 sql.append(" SUM(IF(c.max >= 60, 1, 0)) AS pass ");
@@ -1362,41 +1362,52 @@ public class CetStatisticAnalysisService {
                 avgsql.append(" cs.SCORE >= 425 ");
             }
             avgsql.append(" and cs.TYPE LIKE " + "'%大学英语" + cetType + "%' ");
+
             if (null != orgId) {
                 sql.append(" and ss.ORG_ID = :orgId");
                 avgsql.append(" and ss.ORG_ID = :orgId");
+                cql.append(" and ss.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
             if (!StringUtils.isBlank(collegeCode)) {
                 sql.append(" and ss.COLLEGE_CODE = :collegeCode");
                 avgsql.append(" and ss.COLLEGE_CODE = :collegeCode");
+                cql.append(" and ss.COLLEGE_CODE = :collegeCode");
                 condition.put("collegeCode", collegeCode);
             }
             if (!StringUtils.isBlank(professionCode)) {
                 sql.append(" and ss.PROFESSION_CODE = :professionCode");
                 avgsql.append(" and ss.PROFESSION_CODE = :professionCode");
+                cql.append(" and ss.PROFESSION_CODE = :professionCode");
                 condition.put("professionCode", professionCode);
             }
             if (!StringUtils.isBlank(classCode)&&!StringUtils.isBlank(className)) {
                 sql.append(" and ss.CLASS_CODE = :classCode");
                 sql.append(" and ss.CLASS_NAME = :className");
+                cql.append(" and ss.CLASS_NAME = :className");
                 avgsql.append(" and ss.CLASS_CODE = :classCode");
                 avgsql.append(" and ss.CLASS_NAME = :className");
+                cql.append(" and ss.CLASS_NAME = :className");
                 condition.put("classCode", classCode);
                 condition.put("className", className);
             }
-            sql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE AND ss.STATE NOT IN ('02','04','16')");
-            avgsql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE AND ss.STATE NOT IN ('02','04','16')");
+            sql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
+            avgsql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
+            cql.append(" AND ss.STATE NOT IN ('02','04','16') AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
             Query sq = em.createNativeQuery(sql.toString());
             Query aq = em.createNativeQuery(avgsql.toString());
+            Query cq = em.createNativeQuery(cql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             aq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            cq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
                 aq.setParameter(e.getKey(), e.getValue());
+                cq.setParameter(e.getKey(), e.getValue());
             }
             Map res = (Map)sq.getSingleResult();
             Map ares = (Map)aq.getSingleResult();
+            Map cres = (Map)cq.getSingleResult();
             ScoreStatisticsVO data = new ScoreStatisticsVO();
             if(null!=res.get("total")){
                 data.setTotal(Integer.valueOf(res.get("total").toString()));
@@ -1406,6 +1417,9 @@ public class CetStatisticAnalysisService {
             }
             if(null!=ares.get("avg")){
                 data.setAvg(Math.round(Float.valueOf(ares.get("avg").toString())) + "");
+            }
+            if(null!=cres.get("currentTotal")){
+                data.setCurrentTotal(Integer.valueOf(cres.get("currentTotal").toString()));
             }
             if(data.getTotal()>0){
                 data.setRate(new DecimalFormat("0.00").format((double) data.getPass() * 100 / data.getTotal()));
