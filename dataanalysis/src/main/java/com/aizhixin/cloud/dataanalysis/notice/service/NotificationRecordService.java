@@ -67,7 +67,7 @@ public class NotificationRecordService {
                             sb.append("未知类型预警");
                         }
                         sb.append("，其中红色预警");
-                        sb.append(dto.getSum1()).append("条，橙色预警").append(dto.getSum2()).append("条，黄色预警").append(dto.getSum3()).append("条。");
+                        sb.append(dto.getSum1()).append("条，橙色预警").append(dto.getSum2()).append("条，黄色预警").append(dto.getSum3()).append("条");
                         String msg = sb.toString();
                         alertContentMap.put(dto.getCollegeName(), msg);
                     }
