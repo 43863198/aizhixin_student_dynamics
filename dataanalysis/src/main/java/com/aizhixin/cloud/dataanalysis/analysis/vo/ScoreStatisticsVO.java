@@ -14,6 +14,7 @@ import lombok.ToString;
 @ToString
 public class ScoreStatisticsVO {
     private int total;
+    private int currentTotal;
     private int pass;
     private String avg;
     private String max;
