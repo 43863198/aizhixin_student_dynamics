@@ -154,15 +154,14 @@ public class NotificationRecordService {
     @Transactional(readOnly = true)
     public AlertContentVO getCollegeAlertMsg (Long orgId, String teacherYear, String semester, String type, String collegeName) {
         AlertContentVO rs = new AlertContentVO();
+        List<AlertTeacherVO> collegeReceiverList = new ArrayList<>();
+        rs.setReceiver(collegeReceiverList);
         Map<String, String> alertContentMap = getAlertContent(orgId, teacherYear, semester, type);
         if (!alertContentMap.keySet().contains(collegeName)) {
             return rs;
         }
-
-        List<AlertTeacherVO> collegeReceiverList = new ArrayList<>();
         rs.setAlertType(type);
         rs.setCollegeName(collegeName);
-        rs.setReceiver(collegeReceiverList);
         rs.setAlertContent(alertContentMap.get(rs.getCollegeName()));
         return rs;
     }
