@@ -1558,7 +1558,7 @@ public class CetStatisticAnalysisService {
         }
     }
 
-    public PageData<CetDetailVO> getDetailList(Long orgId,String collegeCode,String professionCode,String classCode,String cetType,String nj,String teacherYear,String semester, Integer scoreSeg,Integer pageNumber, Integer pageSize) {
+    public PageData<CetDetailVO> getDetailList(Long orgId,String collegeCode,String professionCode,String classCode,String cetType,String nj,String teacherYear,String semester, String isPass, Integer scoreSeg,Integer pageNumber, Integer pageSize) {
         PageData<CetDetailVO> p = new PageData<>();
         try {
             Date start = null;
@@ -1615,7 +1615,17 @@ public class CetStatisticAnalysisService {
                 condition.put("xm", "%" + nj + "%");
                 condition.put("xh", "%"+nj+"%");
             }
-            if (null != scoreSeg && scoreSeg >= 1 && scoreSeg <= 4) {
+            if (null != cetType && "三级".equals(cetType)) {
+                if (null != isPass) {
+                    if ("0".equals(isPass)) {
+                        sql.append(" and cs.SCORE < 60 and cs.SCORE > 0");
+                        cql.append(" and cs.SCORE < 60 and cs.SCORE > 0");
+                    } else {
+                        sql.append(" and cs.SCORE >= 60");
+                        cql.append(" and cs.SCORE >= 60");
+                    }
+                }
+            } else if (null != scoreSeg && scoreSeg >= 1 && scoreSeg <= 4) {
                 switch (scoreSeg) {
                     case 1:
                         sql.append(" and cs.SCORE < 390 and cs.SCORE > 0");
