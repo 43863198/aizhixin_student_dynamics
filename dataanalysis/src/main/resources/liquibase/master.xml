@@ -63,4 +63,5 @@
     -->
 
     <include file="classpath:liquibase/20180726102920_update_entity_Department.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20180730170945_add_entity_NodificationRecord.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
