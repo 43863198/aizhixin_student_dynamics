@@ -2268,10 +2268,10 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             String type = "";
             if(cetType.equals("四级")){
                 type = "大学英语四级考试";
-            }else {
-                if(cetType.equals("六级")){
-                    type = "大学英语六级考试";
-                }
+            } else if(cetType.equals("六级")){
+                type = "大学英语六级考试";
+            } else {
+                type = "大学英语三级考试";
             }
             StringBuilder  dql = new StringBuilder("SELECT x.YXSMC as college, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE >= 425,1,0)) as pass, AVG(cs.SCORE) as avg, MAX(cs.SCORE) as max");
             dql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER");
