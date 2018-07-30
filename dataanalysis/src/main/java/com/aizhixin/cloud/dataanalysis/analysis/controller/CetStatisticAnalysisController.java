@@ -370,7 +370,7 @@ public class CetStatisticAnalysisController {
      * @param cetType
      * @param collegeNumber
      * @param professionNumber
-     * @param className
+     * @param classNumber
      * @return
      */
 

@@ -302,7 +302,7 @@ public class TeachingScoreService {
     }
 
 
-    public Map<String, Object> getTeachingScoreDetail(Integer teacherYear, Integer semester, Long orgId, String collegeIds, String grade, String nj, Pageable pageable) {
+    public Map<String, Object> getTeachingScoreDetail(Integer teacherYear, Integer semester, Long orgId, String collegeIds, String grade, String nj,  String professionCode, Pageable pageable) {
         Map<String, Object> result = new HashMap<>();
         PageData<TeachingScoreDetails> p = new PageData<>();
         List<TeachingScoreDetails> teachingScoreDetailsList = new ArrayList<>();
@@ -359,6 +359,13 @@ public class TeachingScoreService {
                 sql.append(" and (USER_NAME LIKE :nj OR JOB_NUM LIKE :nj)");
                 condition.put("nj", "%" + nj + "%");
             }
+
+            if(!StringUtils.isBlank(professionCode)){
+                cql.append(" and PROFESSIONAL_ID = :professionCode");
+                sql.append(" and PROFESSIONAL_ID = :professionCode");
+                condition.put("professionCode", professionCode);
+            }
+
             cql.append(" and DELETE_FLAG = 0");
             sql.append(" and DELETE_FLAG = 0");
             Query cq = em.createNativeQuery(cql.toString());
