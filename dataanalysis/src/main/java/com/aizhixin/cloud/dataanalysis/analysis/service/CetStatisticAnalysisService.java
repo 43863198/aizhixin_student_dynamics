@@ -16,13 +16,8 @@ import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
-
 import com.mongodb.BasicDBObject;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,28 +28,15 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author: Created by jianwei.wu
@@ -1362,46 +1344,70 @@ public class CetStatisticAnalysisService {
         try {
             //在校人数
             Map<String, Object> condition = new HashMap<>();
-            StringBuilder sql = new StringBuilder("SELECT SUM(IF(c.max > 0, 1, 0)) AS total,SUM(IF(c.max >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
-                    "WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" +
-                      " GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1");
-            StringBuilder avgsql = new StringBuilder("SELECT AVG(cs.SCORE) as avg FROM t_cet_score cs LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
-                    "WHERE cs.SCORE >= 425 and cs.TYPE LIKE " + "'%大学英语" + cetType + "%' ");
+            StringBuilder cql = new StringBuilder("SELECT count(ss.JOB_NUMBER) AS currentTotal FROM t_student_status ss WHERE 1 = 1 ");
+            StringBuilder sql = new StringBuilder("SELECT SUM(IF(c.max > 0, 1, 0)) AS total," );
+            if ("三级".equals(cetType)) {
+                sql.append(" SUM(IF(c.max >= 60, 1, 0)) AS pass ");
+            } else {
+                sql.append(" SUM(IF(c.max >= 425, 1, 0)) AS pass ");
+            }
+            sql.append(" FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs ");
+            sql.append(" WHERE cs.TYPE LIKE "+"'%大学英语" + cetType + "%'");
+            sql.append(" GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1");
+
+            StringBuilder avgsql = new StringBuilder("SELECT AVG(cs.SCORE) as avg FROM t_cet_score cs LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER WHERE ");
+            if ("三级".equals(cetType)) {
+                avgsql.append(" cs.SCORE >= 60 ");
+            } else {
+                avgsql.append(" cs.SCORE >= 425 ");
+            }
+            avgsql.append(" and cs.TYPE LIKE " + "'%大学英语" + cetType + "%' ");
+
             if (null != orgId) {
                 sql.append(" and ss.ORG_ID = :orgId");
                 avgsql.append(" and ss.ORG_ID = :orgId");
+                cql.append(" and ss.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
             if (!StringUtils.isBlank(collegeCode)) {
                 sql.append(" and ss.COLLEGE_CODE = :collegeCode");
                 avgsql.append(" and ss.COLLEGE_CODE = :collegeCode");
+                cql.append(" and ss.COLLEGE_CODE = :collegeCode");
                 condition.put("collegeCode", collegeCode);
             }
             if (!StringUtils.isBlank(professionCode)) {
                 sql.append(" and ss.PROFESSION_CODE = :professionCode");
                 avgsql.append(" and ss.PROFESSION_CODE = :professionCode");
+                cql.append(" and ss.PROFESSION_CODE = :professionCode");
                 condition.put("professionCode", professionCode);
             }
             if (!StringUtils.isBlank(classCode)&&!StringUtils.isBlank(className)) {
                 sql.append(" and ss.CLASS_CODE = :classCode");
                 sql.append(" and ss.CLASS_NAME = :className");
+                cql.append(" and ss.CLASS_NAME = :className");
                 avgsql.append(" and ss.CLASS_CODE = :classCode");
                 avgsql.append(" and ss.CLASS_NAME = :className");
+                cql.append(" and ss.CLASS_NAME = :className");
                 condition.put("classCode", classCode);
                 condition.put("className", className);
             }
             sql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
             avgsql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
+            cql.append(" AND ss.STATE NOT IN ('02','04','16') AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
             Query sq = em.createNativeQuery(sql.toString());
             Query aq = em.createNativeQuery(avgsql.toString());
+            Query cq = em.createNativeQuery(cql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             aq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            cq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
                 aq.setParameter(e.getKey(), e.getValue());
+                cq.setParameter(e.getKey(), e.getValue());
             }
             Map res = (Map)sq.getSingleResult();
             Map ares = (Map)aq.getSingleResult();
+            Map cres = (Map)cq.getSingleResult();
             ScoreStatisticsVO data = new ScoreStatisticsVO();
             if(null!=res.get("total")){
                 data.setTotal(Integer.valueOf(res.get("total").toString()));
@@ -1411,6 +1417,9 @@ public class CetStatisticAnalysisService {
             }
             if(null!=ares.get("avg")){
                 data.setAvg(Math.round(Float.valueOf(ares.get("avg").toString())) + "");
+            }
+            if(null!=cres.get("currentTotal")){
+                data.setCurrentTotal(Integer.valueOf(cres.get("currentTotal").toString()));
             }
             if(data.getTotal()>0){
                 data.setRate(new DecimalFormat("0.00").format((double) data.getPass() * 100 / data.getTotal()));
@@ -1430,7 +1439,7 @@ public class CetStatisticAnalysisService {
         Map<String, Object> condition = new HashMap<>();
         List<CetScoreNumberOfPeopleVO> csnpList = new ArrayList<>();
         try {
-            String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+//            String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
             StringBuilder ql = new StringBuilder("");
             if (null != orgId) {
                 ql.append(" and ss.ORG_ID = :orgId");
@@ -1440,42 +1449,68 @@ public class CetStatisticAnalysisService {
             if (!StringUtils.isBlank(collegeCode)) {
                 if (!StringUtils.isBlank(professionCode)) {
                     if (!StringUtils.isBlank(classCode)&&!StringUtils.isBlank(className)) {
-                        sql.append("SELECT ss.CLASS_NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total,SUM(IF(c.max >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
-                                " WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" +
-                                " GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
+                        sql.append("SELECT ss.CLASS_NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total, ");
+                        if ("三级".equals(cetType)) {
+                            sql.append(" SUM(IF(c.max >= 60, 1, 0)) AS pass ");
+                        } else {
+                            sql.append(" SUM(IF(c.max >= 425, 1, 0)) AS pass ");
+                        }
+                        sql.append(" FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs ");
+                        sql.append(" WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" );
+                        sql.append(" GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE ");
                         sql.append(ql);
-                        sql.append(" and ss.CLASS_CODE = :classCode");
-                        sql.append(" and ss.CLASS_NAME = :className");
-                        sql.append(" and ss.PROFESSION_CODE = :professionCode");
+                        sql.append(" and ss.CLASS_CODE = :classCode ");
+                        sql.append(" and ss.CLASS_NAME = :className ");
+                        sql.append(" and ss.PROFESSION_CODE = :professionCode ");
+
                         condition.put("classCode", classCode);
                         condition.put("className", className);
                         condition.put("professionCode", professionCode);
                     }else {
-                        sql.append("SELECT ss.CLASS_NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total,SUM(IF(c.max >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
-                                " WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" +
-                                " GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
+                        sql.append("SELECT ss.CLASS_NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total, ");
+                        if ("三级".equals(cetType)) {
+                            sql.append(" SUM(IF(c.max >= 60, 1, 0)) AS pass ");
+                        } else {
+                            sql.append(" SUM(IF(c.max >= 425, 1, 0)) AS pass ");
+                        }
+                        sql.append(" FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs ");
+                        sql.append(" WHERE cs.TYPE LIKE "+"'%大学英语" + cetType + "%' " );
+                        sql.append(" GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE ");
                         sql.append(ql);
-                        sql.append(" and ss.PROFESSION_CODE = :professionCode");
+                        sql.append(" and ss.PROFESSION_CODE = :professionCode ");
+
                         condition.put("professionCode", professionCode);
                         sql.append(" group by ss.CLASS_NAME");
                     }
                 } else {
-                    sql.append("SELECT p.NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total,SUM(IF(c.max >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
-                            "WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" +
-                            " GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh LEFT JOIN t_profession P ON P.CODE = ss.PROFESSION_CODE " +
-                            " WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
+                    sql.append("SELECT p.NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total, ");
+                    if ("三级".equals(cetType)) {
+                        sql.append(" SUM(IF(c.max >= 60, 1, 0)) AS pass ");
+                    } else {
+                        sql.append(" SUM(IF(c.max >= 425, 1, 0)) AS pass ");
+                    }
+                    sql.append(" FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs ");
+                    sql.append(" WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%' ");
+                    sql.append(" GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh LEFT JOIN t_profession P ON P.CODE = ss.PROFESSION_CODE ");
+                    sql.append(" WHERE CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE ");
                     sql.append(ql);
-                    sql.append(" and ss.COLLEGE_CODE = :collegeCode");
+                    sql.append(" and ss.COLLEGE_CODE = :collegeCode ");
                     condition.put("collegeCode", collegeCode);
                     sql.append(" group by ss.PROFESSION_CODE");
                 }
             } else {
-                sql.append("SELECT d.COMPANY_NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total,SUM(IF(c.max >= 425, 1, 0)) AS pass FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs " +
-                        "WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" +
-                        " GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh LEFT JOIN t_department d ON d.COMPANY_NUMBER = ss.COLLEGE_CODE" +
-                        " WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
+                sql.append(" SELECT d.COMPANY_NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total, " );
+                if ("三级".equals(cetType)) {
+                    sql.append(" SUM(IF(c.max >= 60, 1, 0)) AS pass ");
+                } else {
+                    sql.append(" SUM(IF(c.max >= 425, 1, 0)) AS pass ");
+                }
+                sql.append(" FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs ");
+                sql.append(" WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%' ");
+                sql.append(" GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh LEFT JOIN t_department d ON d.COMPANY_NUMBER = ss.COLLEGE_CODE ");
+                sql.append(" WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE ");
                 sql.append(ql);
-                sql.append(" group by ss.COLLEGE_CODE");
+                sql.append(" group by ss.COLLEGE_CODE ");
             }
             Query sq = em.createNativeQuery(sql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
@@ -1523,7 +1558,7 @@ public class CetStatisticAnalysisService {
         }
     }
 
-    public PageData<CetDetailVO> getDetailList(Long orgId,String collegeCode,String professionCode,String classCode,String cetType,String nj,String teacherYear,String semester,String isPass,Integer pageNumber, Integer pageSize) {
+    public PageData<CetDetailVO> getDetailList(Long orgId,String collegeCode,String professionCode,String classCode,String cetType,String nj,String teacherYear,String semester,String isPass, Integer scoreSeg,Integer pageNumber, Integer pageSize) {
         PageData<CetDetailVO> p = new PageData<>();
         try {
             Date start = null;
@@ -1580,17 +1615,37 @@ public class CetStatisticAnalysisService {
                 condition.put("xm", "%" + nj + "%");
                 condition.put("xh", "%"+nj+"%");
             }
-
-            if(null!=isPass&&isPass.equals("1")){
-                sql.append(" and cs.SCORE >= 425");
-                cql.append(" and cs.SCORE >= 425");
-            }else {
-                if (null!=isPass&&isPass.equals("0")) {
-                    sql.append(" and cs.SCORE < 425 and cs.SCORE > 0");
-                    cql.append(" and cs.SCORE < 425 and cs.SCORE > 0");
-                } else {
-                    sql.append(" and cs.SCORE > 0");
-                    cql.append(" and cs.SCORE > 0");
+            if (null != scoreSeg && scoreSeg >= 1 && scoreSeg <= 4) {
+                switch (scoreSeg) {
+                    case 1:
+                        sql.append(" and cs.SCORE < 390 and cs.SCORE > 0");
+                        cql.append(" and cs.SCORE < 390 and cs.SCORE > 0");
+                        break;
+                    case 2:
+                        sql.append(" and cs.SCORE < 425 and cs.SCORE >= 390");
+                        cql.append(" and cs.SCORE < 425 and cs.SCORE >= 390");
+                        break;
+                    case 3:
+                        sql.append(" and cs.SCORE <= 550 and cs.SCORE >= 425");
+                        cql.append(" and cs.SCORE <= 550 and cs.SCORE >= 425");
+                        break;
+                    case 4:
+                        sql.append(" and cs.SCORE > 550");
+                        cql.append(" and cs.SCORE > 550");
+                        break;
+                }
+            } else {
+                if(null!=isPass&&isPass.equals("1")){
+                    sql.append(" and cs.SCORE >= 425");
+                    cql.append(" and cs.SCORE >= 425");
+                }else {
+                    if (null!=isPass&&isPass.equals("0")) {
+                        sql.append(" and cs.SCORE < 425 and cs.SCORE > 0");
+                        cql.append(" and cs.SCORE < 425 and cs.SCORE > 0");
+                    } else {
+                        sql.append(" and cs.SCORE > 0");
+                        cql.append(" and cs.SCORE > 0");
+                    }
                 }
             }
             sql.append(" ORDER BY cs.JOB_NUMBER");
@@ -1826,10 +1881,10 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             String type = null;
             if(cetType.equals("四级")){
                 type = "大学英语四级考试";
-            }else {
-                if(cetType.equals("六级")){
-                    type = "大学英语六级考试";
-                }
+            }else if(cetType.equals("六级")){
+                type = "大学英语六级考试";
+            } else{
+                type = "大学英语三级考试";
             }
             StringBuilder  ql = new StringBuilder("");
             if(null!=type&&!type.equals("")){
@@ -1851,6 +1906,8 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             dql.append(" and ss.PARENT_CODE = " + orgId);
             dql.append(ql);
             dql.append(" AND d.COMPANY_NAME IS NOT NULL");
+//            String sql = dql.toString();
+//            System.out.println("signExport 001:" + sql);
             Query dq = em.createNativeQuery(dql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 dq.setParameter(e.getKey(), e.getValue());
@@ -1890,6 +1947,8 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             pql.append(" AND ss.STATISTICS_TYPE = '002'");
             pql.append(ql);
             pql.append(" AND p.NAME IS NOT NULL");
+//            sql = pql.toString();
+//            System.out.println("signExport 002:" + sql);
             Query pq = em.createNativeQuery(pql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 pq.setParameter(e.getKey(), e.getValue());
@@ -1932,6 +1991,8 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             cql.append(" AND ss.STATISTICS_TYPE = '003'");
             cql.append(ql);
             cql.append(" AND d.COMPANY_NAME IS NOT NULL");
+//            sql = cql.toString();
+//            System.out.println("signExport 003:" + sql);
             Query cq = em.createNativeQuery(cql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 cq.setParameter(e.getKey(), e.getValue());
@@ -1978,7 +2039,9 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             gql.append(ql);
             gql.append(" AND ss.NAME_CODE IS NOT NULL");
             gql.append(" order by grade ASC");
-            Query gq = em.createNativeQuery(gql.toString());
+//            sql = dql.toString();
+//            System.out.println("signExport 021:" + gql);
+            Query gq = em.createNativeQuery(dql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 gq.setParameter(e.getKey(), e.getValue());
             }
@@ -2239,10 +2302,10 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             String type = "";
             if(cetType.equals("四级")){
                 type = "大学英语四级考试";
-            }else {
-                if(cetType.equals("六级")){
-                    type = "大学英语六级考试";
-                }
+            } else if(cetType.equals("六级")){
+                type = "大学英语六级考试";
+            } else {
+                type = "大学英语三级考试";
             }
             StringBuilder  dql = new StringBuilder("SELECT x.YXSMC as college, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE >= 425,1,0)) as pass, AVG(cs.SCORE) as avg, MAX(cs.SCORE) as max");
             dql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER");
