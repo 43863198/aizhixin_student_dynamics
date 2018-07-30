@@ -33,6 +33,7 @@ public class OverYearTestStatisticsJdbc {
 
     public Integer countPassTotal(Long orgId,String type, String collegeCode, String professionCode, String classCode,String startDate,String endDate){
         String sql="SELECT MAX(tcs.score) AS sc FROM `t_xsjbxx` AS tx LEFT JOIN `t_cet_score` AS tcs  ON tcs.JOB_NUMBER=tx.XH WHERE tcs.org_id="+orgId+" and tx.RXNY<='"+startDate+"' AND tx.YBYNY>='"+startDate+"' and tcs.EXAMINATION_DATE<='"+endDate+"'  AND  tcs.`TYPE` LIKE '%大学英语"+type+"%'";
+        int passScore = 0;
         if (!StringUtils.isEmpty(collegeCode)){
             sql+=" AND tx.`YXSH`='"+collegeCode+"'";
         }
@@ -42,7 +43,12 @@ public class OverYearTestStatisticsJdbc {
         if (!StringUtils.isEmpty(classCode)){
             sql+=" AND tx.`BH`='"+classCode+"'";
         }
-        sql+=" GROUP BY tx.xh HAVING MAX(tcs.score)>=425";
+        if("三级".equals(type)){
+            passScore = 60;
+        }else{
+            passScore = 425;
+        }
+        sql+=" GROUP BY tx.xh HAVING MAX(tcs.score)>= '" + passScore + "'";
 
         String sql2="SELECT COUNT(cc.sc) FROM ("+sql+") AS cc";
         return jdbcTemplate.queryForObject(sql2,Integer.class);
