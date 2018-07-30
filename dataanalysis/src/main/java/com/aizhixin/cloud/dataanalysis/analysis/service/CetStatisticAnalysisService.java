@@ -2308,14 +2308,16 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
             List<CurrentStatisticsGradeVO> gradeList = new ArrayList<>();
             InputStream resourceAsStream = this.getClass().getResourceAsStream("/template/currentStatistics.xlsx");
             String type = "";
+            int theScore = 425;
             if(cetType.equals("四级")){
                 type = "大学英语四级考试";
             } else if(cetType.equals("六级")){
                 type = "大学英语六级考试";
             } else {
                 type = "大学英语三级考试";
+                theScore = 60;
             }
-            StringBuilder  dql = new StringBuilder("SELECT x.YXSMC as college, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE >= 425,1,0)) as pass, AVG(cs.SCORE) as avg, MAX(cs.SCORE) as max");
+            StringBuilder  dql = new StringBuilder("SELECT x.YXSMC as college, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE >= '" + theScore +"',1,0)) as pass, AVG(cs.SCORE) as avg, MAX(cs.SCORE) as max");
             dql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER");
             dql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY ");
             dql.append(" and x.XXID = " + orgId);
@@ -2356,7 +2358,7 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                 }
             }
 
-            StringBuilder  pql = new StringBuilder("SELECT x.YXSMC as dname, x.ZYMC as pname, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>=425,1,0)) as pass, AVG(cs.SCORE) as avg, MAX(cs.SCORE) as max ");
+            StringBuilder  pql = new StringBuilder("SELECT x.YXSMC as dname, x.ZYMC as pname, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>='" + theScore +"',1,0)) as pass, AVG(cs.SCORE) as avg, MAX(cs.SCORE) as max ");
             pql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER");
             pql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY");
             pql.append(" and x.XXID = " + orgId);
@@ -2399,7 +2401,7 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                 }
             }
 
-            StringBuilder  cql = new StringBuilder("SELECT x.YXSMC as dname, x.ZYMC as pname, x.BJMC as cname, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>=425,1,0)) as pass, AVG(cs.SCORE) as avg, MAX(cs.SCORE) as max ");
+            StringBuilder  cql = new StringBuilder("SELECT x.YXSMC as dname, x.ZYMC as pname, x.BJMC as cname, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>='" + theScore +"',1,0)) as pass, AVG(cs.SCORE) as avg, MAX(cs.SCORE) as max ");
             cql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER");
             cql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY");
             cql.append(" and x.XXID = " + orgId);
@@ -2445,7 +2447,7 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
                 }
             }
 
-            StringBuilder  gql = new StringBuilder("SELECT x.YXSMC as dname, x.NJ as nj, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE >= 425,1,0)) as pass, AVG(cs.SCORE) as avg, MAX(cs.SCORE) as max ");
+            StringBuilder  gql = new StringBuilder("SELECT x.YXSMC as dname, x.NJ as nj, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE >= '" + theScore +"',1,0)) as pass, AVG(cs.SCORE) as avg, MAX(cs.SCORE) as max ");
             gql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER,  MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER");
             gql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY");
             gql.append(" and x.XXID = " + orgId);
