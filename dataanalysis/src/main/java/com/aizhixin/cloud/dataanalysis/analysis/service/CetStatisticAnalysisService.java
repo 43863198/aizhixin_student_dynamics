@@ -1384,9 +1384,13 @@ public class CetStatisticAnalysisService {
             if (!StringUtils.isBlank(className)) {
 //                sql.append(" and ss.CLASS_CODE = :classCode");
                 sql.append(" and ss.CLASS_NAME = :className");
+
+                avgsql.append(" and ss.CLASS_CODE = :classCode");
+
                 cql.append(" and ss.CLASS_NAME = :className");
 //                avgsql.append(" and ss.CLASS_CODE = :classCode");
                 avgsql.append(" and ss.CLASS_NAME = :className");
+               // cql.append(" and ss.CLASS_CODE = :classCode");
                 cql.append(" and ss.CLASS_NAME = :className");
 //                condition.put("classCode", classCode);
                 condition.put("className", className);

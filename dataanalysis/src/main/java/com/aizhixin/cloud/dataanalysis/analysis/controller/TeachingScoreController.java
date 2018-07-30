@@ -76,9 +76,10 @@ public class TeachingScoreController {
             @ApiParam(value = "collegeId 学院id 注:多个时候用“，”隔开", required = false) @RequestParam(value = "collegeId", required = false) String collegeId,
             @ApiParam(value = "grade 年级 注:多个时候用“，”隔开", required = false) @RequestParam(value = "grade", required = false) String grade,
             @ApiParam(value = "nj 姓名/学号" , required = false) @RequestParam(value = "nj", required = false) String nj,
+            @ApiParam(value = "professionId 专业码", required = false) @RequestParam(value = "professionId", required = false) String professionId,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return teachingScoreService.getTeachingScoreDetail(teacherYear,semester,orgId, collegeId, grade, nj, PageUtil.createNoErrorPageRequest(pageNumber, pageSize));
+        return teachingScoreService.getTeachingScoreDetail(teacherYear,semester,orgId, collegeId, grade, nj,professionId, PageUtil.createNoErrorPageRequest(pageNumber, pageSize));
     }
 
 
