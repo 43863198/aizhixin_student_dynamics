@@ -1385,13 +1385,13 @@ public class CetStatisticAnalysisService {
 //                sql.append(" and ss.CLASS_CODE = :classCode");
                 sql.append(" and ss.CLASS_NAME = :className");
 
-                avgsql.append(" and ss.CLASS_CODE = :classCode");
+//                avgsql.append(" and ss.CLASS_CODE = :classCode");
 
                 cql.append(" and ss.CLASS_NAME = :className");
 //                avgsql.append(" and ss.CLASS_CODE = :classCode");
                 avgsql.append(" and ss.CLASS_NAME = :className");
                // cql.append(" and ss.CLASS_CODE = :classCode");
-                cql.append(" and ss.CLASS_NAME = :className");
+//                cql.append(" and ss.CLASS_NAME = :className");
 //                condition.put("classCode", classCode);
                 condition.put("className", className);
             }
@@ -1432,6 +1432,7 @@ public class CetStatisticAnalysisService {
             result.put("data", data);
             return result;
         } catch (Exception e) {
+            e.printStackTrace();
             result.put("success", false);
             result.put("message", "英语考试当前状况---数据统计统计失败！");
             return result;
