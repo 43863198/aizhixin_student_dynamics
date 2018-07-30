@@ -81,6 +81,7 @@ public class CetStatisticAnalysisController {
             @ApiParam(value = "grade 年级 注:多个时候用“，”隔开", required = false) @RequestParam(value = "grade", required = false) String grade,
             @ApiParam(value = "type 成绩类型;4:四级,6:六级" , required = false) @RequestParam(value = "type", required = false) Integer type,
             @ApiParam(value = "nj 姓名/学号" , required = false) @RequestParam(value = "nj", required = false) String nj,
+//            @ApiParam(value = "scoreSeg 成绩段 1(0-390) 2(390-424) 3(424,550), 4(550及以上)" , required = false) @RequestParam(value = "scoreSeg", required = false) Integer scoreSeg,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         return cetStatisticAnalysisService.getCetDetail(orgId, collegeId,teacherYear,semester, grade, type, nj, PageUtil.createNoErrorPageRequest(pageNumber, pageSize));
@@ -385,9 +386,10 @@ public class CetStatisticAnalysisController {
             @ApiParam(value = "teacherYear 学年" , required = true ) @RequestParam(value = "teacherYear" , required = true) String teacherYear,
             @ApiParam(value = "semester 学期 (春;秋;)" , required = true) @RequestParam(value = "semester" , required = true) String semester,
             @ApiParam(value = "isPass 是否通过（1:通过;0:未通过）", required = false) @RequestParam(value = "isPass", required = false) String isPass,
+            @ApiParam(value = "scoreSeg 成绩段 1(0-390) 2(390-424) 3(424,550), 4(550及以上)" , required = false) @RequestParam(value = "scoreSeg", required = false) Integer scoreSeg,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
             @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize){
-        return new ResponseEntity<Object>(cetStatisticAnalysisService.getDetailList(orgId, collegeNumber, professionNumber, classNumber, cetType, nj, teacherYear, semester, isPass, pageNumber, pageSize), HttpStatus.OK);
+        return new ResponseEntity<Object>(cetStatisticAnalysisService.getDetailList(orgId, collegeNumber, professionNumber, classNumber, cetType, nj, teacherYear, semester, isPass, scoreSeg, pageNumber, pageSize), HttpStatus.OK);
     }
 
 
