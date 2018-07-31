@@ -1426,7 +1426,7 @@ public class CetStatisticAnalysisService {
                 data.setCurrentTotal(Integer.valueOf(cres.get("currentTotal").toString()));
             }
             if(data.getTotal()>0){
-                data.setRate(new DecimalFormat("0.00").format((double) data.getPass() * 100 / data.getTotal()));
+                data.setRate(new DecimalFormat("0.00").format((double) data.getPass() * 100 / data.getCurrentTotal()));
             }
             result.put("success", true);
             result.put("data", data);
