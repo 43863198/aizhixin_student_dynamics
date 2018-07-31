@@ -23,6 +23,18 @@ public class CetSexStatisticalJdbc {
 
     public List<CetSexStatisticalInfoDomain> sexStatisticalInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType, final boolean isAll){
         String sql="SELECT ts.`xb`,COUNT(DISTINCT ts.`xh`) as total FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND ts.`RXNY`<CURRENT_TIMESTAMP";
+
+        if (!isAll){
+            if ("三级".equals(cetType)) {
+                sql += " AND tcs.`SCORE`>=60 AND tcs.`TYPE` LIKE '%大学英语" + cetType + "%'";
+            } else {
+                sql += " AND tcs.`SCORE`>=425 AND tcs.`TYPE` LIKE '%大学英语" + cetType + "%'";
+            }
+        }else{
+            //sql+=" AND tcs.`SCORE`>0 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
+            sql = "SELECT ts.xb,COUNT(DISTINCT ts.xh) as total FROM t_xsjbxx AS ts WHERE ts.XXID='" +orgId+"' AND  ts.YBYNY>CURRENT_TIMESTAMP AND ts.RXNY<CURRENT_TIMESTAMP AND ts.DQZT NOT IN ('02','04','16')";
+        }
+
         if (!StringUtils.isEmpty(collegeCode)){
             sql+=" AND ts.`YXSH`='"+collegeCode+"'";
         }
@@ -31,15 +43,6 @@ public class CetSexStatisticalJdbc {
         }
         if (!StringUtils.isEmpty(classCode)){
             sql+=" AND ts.`BH`='"+classCode+"'";
-        }
-        if (!isAll){
-            if ("三级".equals(cetType)) {
-                sql += " AND tcs.`SCORE`>=60 AND tcs.`TYPE` LIKE '%大学英语" + cetType + "%'";
-            } else {
-                sql += " AND tcs.`SCORE`>=425 AND tcs.`TYPE` LIKE '%大学英语" + cetType + "%'";
-            }
-        }else{
-            sql+=" AND tcs.`SCORE`>0 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
         }
         sql+="  GROUP BY ts.`xb`";
 
@@ -96,6 +99,18 @@ public class CetSexStatisticalJdbc {
 
     public List<NjStatisticalInfoDomain> njStatisticalInfo(Long orgId, String collegeCode, String professionCode, String classCode, String cetType, final boolean isAll){
         String sql="SELECT ts.`nj`,COUNT(DISTINCT ts.`xh`) as total FROM `t_xsjbxx` AS ts  LEFT JOIN `t_cet_score` AS tcs ON ts.`xh`=tcs.`JOB_NUMBER` WHERE ts.`XXID`="+orgId+" AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND ts.`RXNY`<CURRENT_TIMESTAMP";
+
+        if (!isAll){
+            if ("三级".equals(cetType)) {
+                sql += " AND tcs.`SCORE`>=60 AND tcs.`TYPE` LIKE '%大学英语" + cetType + "%'";
+            } else {
+                sql += " AND tcs.`SCORE`>=425 AND tcs.`TYPE` LIKE '%大学英语" + cetType + "%'";
+            }
+        }else{
+            //sql+=" AND tcs.`SCORE`>0 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
+            sql = "SELECT ts.`nj`,COUNT(DISTINCT ts.`xh`) as total FROM `t_xsjbxx` AS ts WHERE ts.`XXID`='" +orgId+"' AND  ts.`YBYNY`>CURRENT_TIMESTAMP AND ts.`RXNY`<CURRENT_TIMESTAMP AND ts.DQZT NOT IN ('02','04','16')";
+        }
+
         if (!StringUtils.isEmpty(collegeCode)){
             sql+=" AND ts.`YXSH`='"+collegeCode+"'";
         }
@@ -105,15 +120,8 @@ public class CetSexStatisticalJdbc {
         if (!StringUtils.isEmpty(classCode)){
             sql+=" AND ts.`BH`='"+classCode+"'";
         }
-        if (!isAll){
-            if ("三级".equals(cetType)) {
-                sql += " AND tcs.`SCORE`>=60 AND tcs.`TYPE` LIKE '%大学英语" + cetType + "%'";
-            } else {
-                sql += " AND tcs.`SCORE`>=425 AND tcs.`TYPE` LIKE '%大学英语" + cetType + "%'";
-            }
-        }else{
-            sql+=" AND tcs.`SCORE`>0 AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%'";
-        }
+
+
         sql+="  GROUP BY ts.`nj`";
 
         logger.info("sql 语句>>>>>> "+sql);
