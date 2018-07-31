@@ -48,6 +48,9 @@ public class OrganizationService {
                     if (null != row.get("simple")) {
                         org.setSimple(row.get("simple").toString());
                     }
+                    if(null != org.getSimple() && org.getSimple().length() > 0) {
+                        org.setName(org.getSimple());
+                    }
                     orgList.add(org);
                 }
             }
