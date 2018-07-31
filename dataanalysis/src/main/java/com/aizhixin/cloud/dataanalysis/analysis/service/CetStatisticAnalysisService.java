@@ -740,16 +740,16 @@ public class CetStatisticAnalysisService {
             if (!StringUtils.isBlank(collegeCode)) {
                 if (!StringUtils.isBlank(professionCode)) {
                     if (!StringUtils.isBlank(classCode)) {
-                            sql.append("SELECT ss.NAME_CODE as sex, ss.AVG_SCORE as avg FROM t_score_statistics ss  WHERE 1=1");
-                            sql.append(ql);
-                            sql.append(" AND ss.STATISTICS_TYPE = '013'");
-                            sql.append(" and ss.CODE = :classCode");
-                            condition.put("classCode", classCode);
-                            sql.append(" and ss.CLASS_NAME = :className");
-                            condition.put("className", className);
-                            sql.append(" and ss.PARENT_CODE = :pCode");
-                            condition.put("pCode", professionCode);
-                            sql.append(" AND ss.NAME_CODE IS NOT NULL");
+                        sql.append("SELECT ss.NAME_CODE as sex, ss.AVG_SCORE as avg FROM t_score_statistics ss  WHERE 1=1");
+                        sql.append(ql);
+                        sql.append(" AND ss.STATISTICS_TYPE = '013'");
+                        sql.append(" and ss.CODE = :classCode");
+                        condition.put("classCode", classCode);
+                        sql.append(" and ss.CLASS_NAME = :className");
+                        condition.put("className", className);
+                        sql.append(" and ss.PARENT_CODE = :pCode");
+                        condition.put("pCode", professionCode);
+                        sql.append(" AND ss.NAME_CODE IS NOT NULL");
                     } else {
                         sql.append("SELECT ss.NAME_CODE as sex, ss.AVG_SCORE as avg FROM t_score_statistics ss WHERE 1=1");
                         sql.append(ql);
@@ -981,7 +981,7 @@ public class CetStatisticAnalysisService {
                         sql.append(" and ss.PARENT_CODE = :pCode");
                         condition.put("pCode", professionCode);
                         sql.append(" AND ss.CLASS_NAME IS NOT NULL");
-                }
+                    }
                 } else {
                     sql.append("SELECT p.NAME as name, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_profession p ON ss.CODE = p.CODE WHERE 1=1");
                     sql.append(ql);
@@ -998,7 +998,7 @@ public class CetStatisticAnalysisService {
                 condition.put("pCode", orgId);
                 sql.append(" AND d.COMPANY_NAME IS NOT NULL");
             }
-             Query sq = em.createNativeQuery(sql.toString());
+            Query sq = em.createNativeQuery(sql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
@@ -1390,7 +1390,7 @@ public class CetStatisticAnalysisService {
                 cql.append(" and ss.CLASS_NAME = :className");
 //                avgsql.append(" and ss.CLASS_CODE = :classCode");
                 avgsql.append(" and ss.CLASS_NAME = :className");
-               // cql.append(" and ss.CLASS_CODE = :classCode");
+                // cql.append(" and ss.CLASS_CODE = :classCode");
 //                cql.append(" and ss.CLASS_NAME = :className");
 //                condition.put("classCode", classCode);
                 condition.put("className", className);
@@ -1450,79 +1450,91 @@ public class CetStatisticAnalysisService {
                 ql.append(" and ss.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
+
+            int theScore= 425;
+            if ("三级".equals(cetType)) {
+                theScore = 60;
+            }
+
             StringBuilder sql = new StringBuilder("");
+            StringBuilder cql = new StringBuilder("");
             if (!StringUtils.isBlank(collegeCode)) {
                 if (!StringUtils.isBlank(professionCode)) {
                     if (!StringUtils.isBlank(classCode)&&!StringUtils.isBlank(className)) {
                         sql.append("SELECT ss.CLASS_NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total, ");
-                        if ("三级".equals(cetType)) {
-                            sql.append(" SUM(IF(c.max >= 60, 1, 0)) AS pass ");
-                        } else {
-                            sql.append(" SUM(IF(c.max >= 425, 1, 0)) AS pass ");
-                        }
+                        cql.append("SELECT ss.CLASS_NAME as name,count(ss.JOB_NUMBER) AS total  FROM t_student_status ss WHERE 1 = 1 ");
+                        sql.append(" SUM(IF(c.max >= '" + theScore +"', 1, 0)) AS pass ");
                         sql.append(" FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs ");
                         sql.append(" WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" );
                         sql.append(" GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE having total>0");
                         sql.append(ql);
+                        cql.append(ql);
+
                         sql.append(" and ss.CLASS_CODE = :classCode ");
+                        cql.append(" and ss.CLASS_CODE = :classCode ");
                         sql.append(" and ss.CLASS_NAME = :className ");
+                        cql.append(" and ss.CLASS_NAME = :className ");
                         sql.append(" and ss.PROFESSION_CODE = :professionCode ");
+                        cql.append(" and ss.PROFESSION_CODE = :professionCode ");
 
                         condition.put("classCode", classCode);
                         condition.put("className", className);
                         condition.put("professionCode", professionCode);
                     }else {
                         sql.append("SELECT ss.CLASS_NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total, ");
-                        if ("三级".equals(cetType)) {
-                            sql.append(" SUM(IF(c.max >= 60, 1, 0)) AS pass ");
-                        } else {
-                            sql.append(" SUM(IF(c.max >= 425, 1, 0)) AS pass ");
-                        }
+                        cql.append("SELECT ss.CLASS_NAME as name,count(ss.JOB_NUMBER) AS total  FROM t_student_status ss WHERE 1 = 1 ");
+                        sql.append(" SUM(IF(c.max >= '" + theScore +"', 1, 0)) AS pass ");
                         sql.append(" FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs ");
                         sql.append(" WHERE cs.TYPE LIKE "+"'%大学英语" + cetType + "%' " );
                         sql.append(" GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE ");
                         sql.append(ql);
+                        cql.append(ql);
                         sql.append(" and ss.PROFESSION_CODE = :professionCode ");
+                        cql.append(" and ss.PROFESSION_CODE = :professionCode ");
 
                         condition.put("professionCode", professionCode);
                         sql.append(" group by ss.CLASS_NAME having total>0");
                     }
                 } else {
+                    cql.append("SELECT p.NAME as name ,count(ss.JOB_NUMBER) AS total  FROM t_student_status ss  LEFT JOIN t_profession P ON P.CODE = ss.PROFESSION_CODE ");
+
                     sql.append("SELECT p.NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total, ");
-                    if ("三级".equals(cetType)) {
-                        sql.append(" SUM(IF(c.max >= 60, 1, 0)) AS pass ");
-                    } else {
-                        sql.append(" SUM(IF(c.max >= 425, 1, 0)) AS pass ");
-                    }
+                    sql.append(" SUM(IF(c.max >= '" + theScore +"', 1, 0)) AS pass ");
                     sql.append(" FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs ");
                     sql.append(" WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%' ");
                     sql.append(" GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh LEFT JOIN t_profession P ON P.CODE = ss.PROFESSION_CODE ");
                     sql.append(" WHERE CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE ");
                     sql.append(ql);
+                    cql.append(ql);
                     sql.append(" and ss.COLLEGE_CODE = :collegeCode ");
+                    cql.append(" and ss.COLLEGE_CODE = :collegeCode ");
                     condition.put("collegeCode", collegeCode);
                     sql.append(" group by ss.PROFESSION_CODE having total>0");
                 }
             } else {
+                cql.append(" SELECT d.COMPANY_NAME as name, count(ss.JOB_NUMBER) AS total  FROM t_student_status ss LEFT JOIN t_department d ON d.COMPANY_NUMBER = ss.COLLEGE_CODE " );
+
                 sql.append(" SELECT d.COMPANY_NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total, " );
-                if ("三级".equals(cetType)) {
-                    sql.append(" SUM(IF(c.max >= 60, 1, 0)) AS pass ");
-                } else {
-                    sql.append(" SUM(IF(c.max >= 425, 1, 0)) AS pass ");
-                }
+                sql.append(" SUM(IF(c.max >= '" + theScore +"', 1, 0)) AS pass ");
                 sql.append(" FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs ");
                 sql.append(" WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%' ");
                 sql.append(" GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh LEFT JOIN t_department d ON d.COMPANY_NUMBER = ss.COLLEGE_CODE ");
                 sql.append(" WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE ");
                 sql.append(ql);
+                cql.append(ql);
                 sql.append(" group by ss.COLLEGE_CODE having total>0");
             }
+            cql.append("  AND ss.STATE NOT IN ('02','04','16') AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE group by name");
             Query sq = em.createNativeQuery(sql.toString());
+            Query cq = em.createNativeQuery(cql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            cq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
+                cq.setParameter(e.getKey(), e.getValue());
             }
             List<Object> res = sq.getResultList();
+            List<Map> cres = cq.getResultList();
             if (null != res) {
                 for (Object row : res) {
                     Map d = (Map) row;
@@ -1530,7 +1542,7 @@ public class CetStatisticAnalysisService {
                         CetScoreNumberOfPeopleVO csnp = new CetScoreNumberOfPeopleVO();
                         csnp.setName(d.get("name").toString());
                         if (null != d.get("total")) {
-                            csnp.setJoinNumber(Integer.valueOf(d.get("total").toString()));
+                            csnp.setJoinNumber(Integer.valueOf(getTotal(d.get("name"),cres)));
                         }
                         if (null != d.get("pass")) {
                             csnp.setPassNumber(Integer.valueOf(d.get("pass").toString()));
@@ -1561,6 +1573,14 @@ public class CetStatisticAnalysisService {
             result.put("message", "英语考试当前状况---人数分布---按行政班统计失败！");
             return result;
         }
+    }
+
+    public String getTotal (Object name,List<Map> list){
+        for (int i = 0 ;i < list.size();i++)
+            if(name.equals((list.get(i)).get("name"))){
+            return list.get(i).get("total").toString();
+            }
+        return null;
     }
 
     public PageData<CetDetailVO> getDetailList(Long orgId,String collegeCode,String professionCode,String className,String cetType,String nj,String teacherYear,String semester, String isPass, Integer scoreSeg,Integer pageNumber, Integer pageSize) {
@@ -1739,27 +1759,27 @@ public class CetStatisticAnalysisService {
 
 
     public  Map<String,CetSexStatisticalInfoDomain>  sexTotal(Long orgId,String collegeCode,String professionCode,String classCode, String cetType){
-         List<CetSexStatisticalInfoDomain> cetSexStatisticalInfoDomainListAll=cetSexStatisticalJdbc.sexStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,true);
-         List<CetSexStatisticalInfoDomain> cetSexStatisticalInfoDomainList=cetSexStatisticalJdbc.sexStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,false);
-         Map<String,CetSexStatisticalInfoDomain> m=new HashMap<>();
-         if (null!=cetSexStatisticalInfoDomainListAll&&0<cetSexStatisticalInfoDomainListAll.size()&&null!=cetSexStatisticalInfoDomainList&&0<cetSexStatisticalInfoDomainList.size()){
-             for (CetSexStatisticalInfoDomain cetSexStatisticalInfoDomain:cetSexStatisticalInfoDomainListAll) {
-                 for (CetSexStatisticalInfoDomain statisticalInfoDomain:cetSexStatisticalInfoDomainList) {
-                      if (cetSexStatisticalInfoDomain.getSex().equals(statisticalInfoDomain.getSex())){
-                          CetSexStatisticalInfoDomain c=new CetSexStatisticalInfoDomain();
-                          c.setSex(cetSexStatisticalInfoDomain.getSex());
-                          c.setAllTotal(cetSexStatisticalInfoDomain.getAllTotal());
-                          c.setPassTotal(statisticalInfoDomain.getPassTotal());
-                          if (cetSexStatisticalInfoDomain.getSex().equals("男")){
-                              m.put("man",c);
-                          }else{
-                              m.put("woman",c);
-                          }
-                      }
-                 }
-             }
-         }
-         return m;
+        List<CetSexStatisticalInfoDomain> cetSexStatisticalInfoDomainListAll=cetSexStatisticalJdbc.sexStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,true);
+        List<CetSexStatisticalInfoDomain> cetSexStatisticalInfoDomainList=cetSexStatisticalJdbc.sexStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,false);
+        Map<String,CetSexStatisticalInfoDomain> m=new HashMap<>();
+        if (null!=cetSexStatisticalInfoDomainListAll&&0<cetSexStatisticalInfoDomainListAll.size()&&null!=cetSexStatisticalInfoDomainList&&0<cetSexStatisticalInfoDomainList.size()){
+            for (CetSexStatisticalInfoDomain cetSexStatisticalInfoDomain:cetSexStatisticalInfoDomainListAll) {
+                for (CetSexStatisticalInfoDomain statisticalInfoDomain:cetSexStatisticalInfoDomainList) {
+                    if (cetSexStatisticalInfoDomain.getSex().equals(statisticalInfoDomain.getSex())){
+                        CetSexStatisticalInfoDomain c=new CetSexStatisticalInfoDomain();
+                        c.setSex(cetSexStatisticalInfoDomain.getSex());
+                        c.setAllTotal(cetSexStatisticalInfoDomain.getAllTotal());
+                        c.setPassTotal(statisticalInfoDomain.getPassTotal());
+                        if (cetSexStatisticalInfoDomain.getSex().equals("男")){
+                            m.put("man",c);
+                        }else{
+                            m.put("woman",c);
+                        }
+                    }
+                }
+            }
+        }
+        return m;
     }
 
 
@@ -1807,33 +1827,33 @@ public class CetStatisticAnalysisService {
     }
 
 
-  public List<ScoreScaleDomain> scoreScaleTotal(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
-      List<ScoreScaleDomain> scoreScaleDomainList=new ArrayList<>();
+    public List<ScoreScaleDomain> scoreScaleTotal(Long orgId, String collegeCode, String professionCode, String classCode, String cetType){
+        List<ScoreScaleDomain> scoreScaleDomainList=new ArrayList<>();
 //      ScoreScaleDomain scoreScaleDomain= cetSexStatisticalJdbc.scoreStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType);
 //      scoreScaleDomainList.add(scoreScaleDomain);
-      scoreScaleDomainList.add(cetSexStatisticalJdbc.scoreScaleStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,0,390));
-      scoreScaleDomainList.add(cetSexStatisticalJdbc.scoreScaleStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,391,424));
-      scoreScaleDomainList.add(cetSexStatisticalJdbc.scoreScaleStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,425,480));
-      scoreScaleDomainList.add(cetSexStatisticalJdbc.scoreScaleStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,481,550));
-      scoreScaleDomainList.add(cetSexStatisticalJdbc.scoreScaleStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,551,600));
-      scoreScaleDomainList.add(cetSexStatisticalJdbc.scoreScaleStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,601,710));
-      return scoreScaleDomainList;
-  }
+        scoreScaleDomainList.add(cetSexStatisticalJdbc.scoreScaleStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,0,390));
+        scoreScaleDomainList.add(cetSexStatisticalJdbc.scoreScaleStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,391,424));
+        scoreScaleDomainList.add(cetSexStatisticalJdbc.scoreScaleStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,425,480));
+        scoreScaleDomainList.add(cetSexStatisticalJdbc.scoreScaleStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,481,550));
+        scoreScaleDomainList.add(cetSexStatisticalJdbc.scoreScaleStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,551,600));
+        scoreScaleDomainList.add(cetSexStatisticalJdbc.scoreScaleStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,601,710));
+        return scoreScaleDomainList;
+    }
 
-/**------------------------------------------------均值---------------------------------------**/
+    /**------------------------------------------------均值---------------------------------------**/
 
 
 
     public List<AvgDomain> avgInfo(Long orgId, String collegeCode, String professionCode, String classCode, String className, String cetType){
-    List<AvgDomain> avgDomainList=new ArrayList<>();
-    List<AvgDomain> avgDomains=cetAvgStatisticalJdbc.avgInfo(orgId, collegeCode, professionCode, classCode, className,cetType);
-    if (null!=avgDomains&&0<avgDomains.size()){
-        avgDomainList.addAll(avgDomains);
+        List<AvgDomain> avgDomainList=new ArrayList<>();
+        List<AvgDomain> avgDomains=cetAvgStatisticalJdbc.avgInfo(orgId, collegeCode, professionCode, classCode, className,cetType);
+        if (null!=avgDomains&&0<avgDomains.size()){
+            avgDomainList.addAll(avgDomains);
+        }
+        return avgDomainList;
     }
-    return avgDomainList;
-}
 
-//性别
+    //性别
     public List<AvgSexDomain> avgSexInfo(Long orgId, String collegeCode, String professionCode, String classCode, String className, String cetType){
         List<AvgSexDomain> avgDomainList=new ArrayList<>();
         List<AvgSexDomain> avgDomains=cetAvgStatisticalJdbc.avgXbInfo(orgId,collegeCode,professionCode,classCode,className,cetType);
@@ -1842,7 +1862,7 @@ public class CetStatisticAnalysisService {
         }
         return avgDomainList;
     }
-//年龄
+    //年龄
     public List<AvgAgeDomain> avgAvgInfo(Long orgId, String collegeCode, String professionCode, String classCode, String className,String cetType){
         List<AvgAgeDomain> avgDomainList=new ArrayList<>();
         List<AvgAgeDomain> avgDomains=cetAvgStatisticalJdbc.avgAgeInfo(orgId, collegeCode, professionCode, classCode, className, cetType);
@@ -1851,15 +1871,15 @@ public class CetStatisticAnalysisService {
         }
         return avgDomainList;
     }
-//年级
-public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String professionCode, String classCode, String className, String cetType){
-    List<AvgNjDomain> avgDomainList=new ArrayList<>();
-    List<AvgNjDomain> avgDomains=cetAvgStatisticalJdbc.avgNjInfo(orgId, collegeCode, professionCode, classCode, className, cetType);
-    if (null!=avgDomains&&0<avgDomains.size()){
-        avgDomainList.addAll(avgDomains);
+    //年级
+    public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String professionCode, String classCode, String className, String cetType){
+        List<AvgNjDomain> avgDomainList=new ArrayList<>();
+        List<AvgNjDomain> avgDomains=cetAvgStatisticalJdbc.avgNjInfo(orgId, collegeCode, professionCode, classCode, className, cetType);
+        if (null!=avgDomains&&0<avgDomains.size()){
+            avgDomainList.addAll(avgDomains);
+        }
+        return avgDomainList;
     }
-    return avgDomainList;
-}
 
 
     public Map<String, Object> cetSingleStatisticsExport(Long orgId, String cetType, String teacherYear, String semester) {
@@ -2532,7 +2552,7 @@ public List<AvgNjDomain> avgNjInfo(Long orgId, String collegeCode, String profes
 //                    os.close();
 //                }
 //            } catch (IOException e) {
-                e.printStackTrace();
+            e.printStackTrace();
             result.put("success",false);
             result.put("message","导出统计当前英语英语成绩考试情况失败！");
             return result;
