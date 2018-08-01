@@ -38,6 +38,31 @@ public class NotificationRecordService {
     @Value("${dl.dledu.back.host}")
     private String zhixinUrl;
 
+    private String getZeroAlerContent (String collegeName, String teacherYear, String semester, String type) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(teacherYear).append("年");
+        if (null != semester) {
+            sb.append(semester);
+            sb.append("学期");
+        }
+        sb.append(collegeName);
+        sb.append("的学生共产生").append(0).append("条");
+        if (!StringUtils.isEmpty(type)) {
+            if ("LeaveSchool".equalsIgnoreCase(type)) {
+                sb.append("退学预警");
+            } else if ("Absenteeism".equalsIgnoreCase(type)) {
+                sb.append("旷课预警");
+            } else {
+                sb.append("不识别预警");
+            }
+        } else {
+            sb.append("未知类型预警");
+        }
+        sb.append("，其中红色预警");
+        sb.append(0).append("条，橙色预警").append(0).append("条，黄色预警").append(0).append("条");
+        return sb.toString();
+    }
+
     private Map<String, String> getAlertContent(Long orgId, String teacherYear, String semester, String type) {
         Map<String, String> alertContentMap = new HashMap<>();
         Map<String, Object> map = alertWarningInformationService.getStatisticsByCollege(PageUtil.createNoErrorPageRequest(1, Integer.MAX_VALUE), orgId, type, teacherYear, semester);
@@ -156,12 +181,13 @@ public class NotificationRecordService {
         AlertContentVO rs = new AlertContentVO();
         List<AlertTeacherVO> collegeReceiverList = new ArrayList<>();
         rs.setReceiver(collegeReceiverList);
-        Map<String, String> alertContentMap = getAlertContent(orgId, teacherYear, semester, type);
-        if (!alertContentMap.keySet().contains(collegeName)) {
-            return rs;
-        }
         rs.setAlertType(type);
         rs.setCollegeName(collegeName);
+        Map<String, String> alertContentMap = getAlertContent(orgId, teacherYear, semester, type);
+        if (!alertContentMap.keySet().contains(collegeName)) {
+            rs.setAlertContent(getZeroAlerContent(collegeName, teacherYear, semester, type));
+            return rs;
+        }
         rs.setAlertContent(alertContentMap.get(rs.getCollegeName()));
         return rs;
     }
