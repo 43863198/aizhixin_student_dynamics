@@ -1346,6 +1346,7 @@ public class CetStatisticAnalysisService {
             Map<String, Object> condition = new HashMap<>();
             StringBuilder cql = new StringBuilder("SELECT count(ss.JOB_NUMBER) AS currentTotal FROM t_student_status ss WHERE 1 = 1 ");
             StringBuilder sql = new StringBuilder("SELECT SUM(IF(c.max > 0, 1, 0)) AS total," );
+
             if ("三级".equals(cetType)) {
                 sql.append(" SUM(IF(c.max >= 60, 1, 0)) AS pass ");
             } else {
@@ -1394,6 +1395,9 @@ public class CetStatisticAnalysisService {
 //                cql.append(" and ss.CLASS_NAME = :className");
 //                condition.put("classCode", classCode);
                 condition.put("className", className);
+            }
+            if ("三级".equals(cetType)) {
+                cql.append(" and ss.COLLEGE_CODE = 215");
             }
             sql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
             avgsql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
@@ -1454,6 +1458,7 @@ public class CetStatisticAnalysisService {
             int theScore= 425;
             if ("三级".equals(cetType)) {
                 theScore = 60;
+                ql.append(" and ss.COLLEGE_CODE = 215");
             }
 
             StringBuilder sql = new StringBuilder("");
@@ -1582,7 +1587,7 @@ public class CetStatisticAnalysisService {
     public String getTotal (Object name,List<Map> list){
         for (int i = 0 ;i < list.size();i++)
             if(name.equals((list.get(i)).get("name"))){
-            return list.get(i).get("total").toString();
+                return list.get(i).get("total").toString();
             }
         return null;
     }
