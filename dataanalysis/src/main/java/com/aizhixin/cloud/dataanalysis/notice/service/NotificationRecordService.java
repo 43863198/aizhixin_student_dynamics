@@ -50,7 +50,7 @@ public class NotificationRecordService {
         if (!StringUtils.isEmpty(type)) {
             if ("LeaveSchool".equalsIgnoreCase(type)) {
                 sb.append("退学预警");
-            } else if ("Absenteeism".equalsIgnoreCase(type)) {
+            } else if ("Absenteeism".equalsIgnoreCase(type) || "Register".equalsIgnoreCase(type) ) {
                 sb.append("旷课预警");
             } else {
                 sb.append("不识别预警");
