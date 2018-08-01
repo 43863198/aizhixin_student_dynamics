@@ -1592,12 +1592,12 @@ public class CetStatisticAnalysisService {
         return null;
     }
 
-    public PageData<CetDetailVO> getDetailList(Long orgId,String collegeCode,String professionCode,String className,String cetType,String nj,String teacherYear,String semester, String isPass, Integer scoreSeg,Integer pageNumber, Integer pageSize) {
+    public PageData<CetDetailVO> getDetailList(Long orgId,String collegeCode,String professionCode,String className,String cetType,String nj,String isPass, Integer scoreSeg,Integer pageNumber, Integer pageSize) {
         PageData<CetDetailVO> p = new PageData<>();
         try {
             Date start = null;
             Date end = null;
-            if (!StringUtils.isBlank(teacherYear)&&!StringUtils.isBlank(semester)) {
+           /* if (!StringUtils.isBlank(teacherYear)&&!StringUtils.isBlank(semester)) {
                 Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, teacherYear, semester);
                 if (null != schoolCalendar) {
                     if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
@@ -1608,13 +1608,14 @@ public class CetStatisticAnalysisService {
                         }
                     }
                 }
-            }
+            }*/
             Map<String, Object> condition = new HashMap<>();
-            StringBuilder sql = new StringBuilder("SELECT cs.JOB_NUMBER as xh,x.XM as xm,x.BJMC as bj,x.ZYMC as zy,x.YXSMC xy,x.NJ nj,cs.EXAMINATION_DATE as date,cs.SCORE as score " +
-                    "FROM t_cet_score cs,t_xsjbxx x  WHERE x.XH = cs.JOB_NUMBER and cs.EXAMINATION_DATE BETWEEN :start AND :end  ");
-            StringBuilder cql = new StringBuilder("SELECT count(1) FROM t_cet_score cs,t_xsjbxx x  WHERE x.XH = cs.JOB_NUMBER and cs.EXAMINATION_DATE BETWEEN :start AND :end");
-            condition.put("start", start);
-            condition.put("end", end);
+            StringBuilder sql = new StringBuilder("SELECT cs.JOB_NUMBER as xh,x.XM as xm,x.BJMC as bj,x.ZYMC as zy,x.YXSMC xy,x.NJ nj,cs.SCORE as score  " +
+                    "FROM t_xsjbxx x,(select JOB_NUMBER ,max(c.SCORE) as SCORE,ORG_ID,TYPE from t_cet_score as c where c.SCORE > 0  group by c.JOB_NUMBER) cs  WHERE x.XH = cs.JOB_NUMBER  " +
+                    "and x.DQZT NOT IN ('02','04','16')  ");
+            StringBuilder cql = new StringBuilder("SELECT    count(1) FROM t_cet_score cs,t_xsjbxx x  WHERE x.XH = cs.JOB_NUMBER and x.DQZT NOT IN ('02','04','16')  ");
+            /*condition.put("start", start);
+            condition.put("end", end);*/
             if (null != orgId) {
                 sql.append(" and cs.ORG_ID = :orgId");
                 cql.append(" and cs.ORG_ID = :orgId");
@@ -1732,9 +1733,9 @@ public class CetStatisticAnalysisService {
                         s.setScore(0 + "");
                     }
                 }
-                if (null != row.get("date")) {
+                /*if (null != row.get("date")) {
                     s.setDate(row.get("date").toString());
-                }
+                }*/
                 sList.add(s);
             }
             p.setData(sList);
