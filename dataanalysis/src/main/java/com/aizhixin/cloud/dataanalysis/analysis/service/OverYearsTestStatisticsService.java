@@ -108,6 +108,9 @@ public class OverYearsTestStatisticsService {
            if (null!=map){
                String s =map.get("start_time").toString();
                String e =map.get("end_time").toString();
+               if ("三级".equals(cetType)){
+                   collegeCode = "215";
+               }
               Integer a= overYearTestStatisticsJdbc.countTotal(orgId,s,collegeCode,professionCode,classCode);
               Integer b=overYearTestStatisticsJdbc.countPassTotal(orgId,cetType,collegeCode,professionCode,classCode,s,e);
                SemesterLeiJiRateDomain  semesterLeiJiRateDomain=new SemesterLeiJiRateDomain();
