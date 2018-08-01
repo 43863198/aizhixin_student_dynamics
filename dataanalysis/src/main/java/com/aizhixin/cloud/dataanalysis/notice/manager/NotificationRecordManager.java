@@ -2,6 +2,7 @@ package com.aizhixin.cloud.dataanalysis.notice.manager;
 
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
+import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.notice.entity.NotificationRecord;
 import com.aizhixin.cloud.dataanalysis.notice.repository.NotificationRecordRepository;
 import com.aizhixin.cloud.dataanalysis.notice.vo.NotificationRecordVO;
@@ -74,11 +75,12 @@ public class NotificationRecordManager {
             condition.put("receiver", "%" + receiver + "%");
         }
         if (null != startDate) {
-            hql.append(" and t.sendTime < :startDate");
-            chql.append(" and t.sendTime < :startDate");
+            hql.append(" and t.sendTime >= :startDate");
+            chql.append(" and t.sendTime >= :startDate");
             condition.put("startDate", startDate);
         }
         if (null != endDate) {
+            endDate = DateUtil.nextDate(endDate);
             hql.append(" and t.sendTime < :endDate");
             chql.append(" and t.sendTime < :endDate");
             condition.put("endDate", endDate);
