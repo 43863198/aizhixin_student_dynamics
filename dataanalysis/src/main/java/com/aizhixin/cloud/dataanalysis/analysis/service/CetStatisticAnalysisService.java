@@ -1556,9 +1556,9 @@ public class CetStatisticAnalysisService {
             TotalInfoDomain totalInfoDomain=new TotalInfoDomain();
             totalInfoDomain.setCsnpList(csnpList);
             totalInfoDomain.setMapSex(sexTotal(orgId,collegeCode,professionCode,classCode,cetType));
-//            totalInfoDomain.setAgeSexStatisticalInfoDomains(ageTotal(orgId,collegeCode,professionCode,classCode,cetType));
-//            totalInfoDomain.setNjStatisticalInfoDomains(njTotal(orgId,collegeCode,professionCode,classCode,cetType));
-//            totalInfoDomain.setScoreScaleDomains(scoreScaleTotal(orgId, collegeCode, professionCode, classCode, cetType));
+            totalInfoDomain.setAgeSexStatisticalInfoDomains(ageTotal(orgId,collegeCode,professionCode,classCode,cetType));
+            totalInfoDomain.setNjStatisticalInfoDomains(njTotal(orgId,collegeCode,professionCode,classCode,cetType));
+//            totalInfoDomain.setScoreScaleDomains(scoreScaleTotscoreScaleDomainsal(orgId, collegeCode, professionCode, classCode, cetType));
 //            sd.setTotalInfoDomain(totalInfoDomain);
 //            AvgInfoDomain avgInfoDomain=new AvgInfoDomain();
 //            avgInfoDomain.setAvgDomains(avgInfo(orgId,collegeCode,professionCode,classCode,cetType));
@@ -1602,9 +1602,8 @@ public class CetStatisticAnalysisService {
             }
             Map<String, Object> condition = new HashMap<>();
             StringBuilder sql = new StringBuilder("SELECT cs.JOB_NUMBER as xh,x.XM as xm,x.BJMC as bj,x.ZYMC as zy,x.YXSMC xy,x.NJ nj,cs.EXAMINATION_DATE as date,cs.SCORE as score " +
-                    "FROM t_cet_score cs LEFT JOIN t_xsjbxx x  ON x.XH = cs.JOB_NUMBER WHERE cs.EXAMINATION_DATE BETWEEN :start AND :end ");
-            StringBuilder cql = new StringBuilder("SELECT count(1) " +
-                    "FROM t_cet_score cs LEFT JOIN t_xsjbxx x  ON x.XH = cs.JOB_NUMBER WHERE cs.EXAMINATION_DATE BETWEEN :start AND :end ");
+                    "FROM t_cet_score cs,t_xsjbxx x  WHERE x.XH = cs.JOB_NUMBER and cs.EXAMINATION_DATE BETWEEN :start AND :end  ");
+            StringBuilder cql = new StringBuilder("SELECT count(1) FROM t_cet_score cs,t_xsjbxx x  WHERE x.XH = cs.JOB_NUMBER and cs.EXAMINATION_DATE BETWEEN :start AND :end");
             condition.put("start", start);
             condition.put("end", end);
             if (null != orgId) {
