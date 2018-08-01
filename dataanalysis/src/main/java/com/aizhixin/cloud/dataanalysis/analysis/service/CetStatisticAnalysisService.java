@@ -1556,9 +1556,9 @@ public class CetStatisticAnalysisService {
             TotalInfoDomain totalInfoDomain=new TotalInfoDomain();
             totalInfoDomain.setCsnpList(csnpList);
             totalInfoDomain.setMapSex(sexTotal(orgId,collegeCode,professionCode,classCode,cetType));
-            totalInfoDomain.setAgeSexStatisticalInfoDomains(ageTotal(orgId,collegeCode,professionCode,classCode,cetType));
-            totalInfoDomain.setNjStatisticalInfoDomains(njTotal(orgId,collegeCode,professionCode,classCode,cetType));
-            totalInfoDomain.setScoreScaleDomains(scoreScaleTotal(orgId, collegeCode, professionCode, classCode, cetType));
+//            totalInfoDomain.setAgeSexStatisticalInfoDomains(ageTotal(orgId,collegeCode,professionCode,classCode,cetType));
+//            totalInfoDomain.setNjStatisticalInfoDomains(njTotal(orgId,collegeCode,professionCode,classCode,cetType));
+//            totalInfoDomain.setScoreScaleDomains(scoreScaleTotal(orgId, collegeCode, professionCode, classCode, cetType));
 //            sd.setTotalInfoDomain(totalInfoDomain);
 //            AvgInfoDomain avgInfoDomain=new AvgInfoDomain();
 //            avgInfoDomain.setAvgDomains(avgInfo(orgId,collegeCode,professionCode,classCode,cetType));
@@ -1748,7 +1748,7 @@ public class CetStatisticAnalysisService {
         Map<String,Object> result=new HashMap<>();
         AvgInfoDomain avgInfoDomain=new AvgInfoDomain();
         avgInfoDomain.setAvgDomains(avgInfo(orgId,collegeCode,professionCode,classCode,className,cetType));
-        avgInfoDomain.setAvgAgeDomains(avgAvgInfo(orgId,collegeCode,professionCode,classCode,className,cetType));
+//        avgInfoDomain.setAvgAgeDomains(avgAvgInfo(orgId,collegeCode,professionCode,classCode,className,cetType));
         avgInfoDomain.setAvgSexDomains(avgSexInfo(orgId,collegeCode,professionCode,classCode,className,cetType));
         avgInfoDomain.setAvgNjDomains(avgNjInfo(orgId,collegeCode,professionCode,classCode,className,cetType));
         result.put("data", avgInfoDomain);
