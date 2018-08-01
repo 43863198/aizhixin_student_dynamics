@@ -309,21 +309,21 @@ public class TeachingScoreService {
         Long total = 0L;
         try {
             Map<String, Object> condition = new HashMap<>();
-            StringBuilder cql = new StringBuilder("SELECT count(1) FROM T_TEACHING_SCORE_DETAILS  WHERE 1 = 1");
-            StringBuilder sql = new StringBuilder("SELECT JOB_NUM,USER_NAME,CLASS_NAME,GRADE,COLLEGE_NAME,AVERAGE_GPA,REFERENCE_SUBJECTS,FAILED_SUBJECTS,FAILING_GRADE_CREDITS FROM T_TEACHING_SCORE_DETAILS  WHERE 1 = 1");
+            StringBuilder cql = new StringBuilder("SELECT count(1) FROM T_TEACHING_SCORE_DETAILS  as  tt ,  t_xsjbxx as tx WHERE 1 = 1 and tx.XH= tt.JOB_NUM  ");
+            StringBuilder sql = new StringBuilder("SELECT JOB_NUM,USER_NAME,CLASS_NAME,GRADE,COLLEGE_NAME,AVERAGE_GPA,REFERENCE_SUBJECTS,FAILED_SUBJECTS,FAILING_GRADE_CREDITS FROM T_TEACHING_SCORE_DETAILS   as tt ,  t_xsjbxx as tx WHERE 1 = 1 and tx.XH= tt.JOB_NUM  ");
             if (null != teacherYear) {
-                cql.append(" and TEACHER_YEAR = :teacherYear");
-                sql.append(" and TEACHER_YEAR = :teacherYear");
+                cql.append(" and tt.TEACHER_YEAR = :teacherYear");
+                sql.append(" and tt.TEACHER_YEAR = :teacherYear");
                 condition.put("teacherYear", teacherYear);
             }
             if (null != semester) {
-                cql.append(" and SEMESTER = :semester");
-                sql.append(" and SEMESTER = :semester");
+                cql.append(" and tt.SEMESTER = :semester");
+                sql.append(" and tt.SEMESTER = :semester");
                 condition.put("semester", semester);
             }
             if (null != orgId) {
-                cql.append(" and ORG_ID = :orgId");
-                sql.append(" and ORG_ID = :orgId");
+                cql.append(" and tt.ORG_ID = :orgId");
+                sql.append(" and tt.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
             if (null != collegeIds) {
@@ -336,8 +336,8 @@ public class TeachingScoreService {
                 } else {
                     cc.add(Long.valueOf(collegeIds));
                 }
-                cql.append(" and COLLEGE_ID IN :collegeIds");
-                sql.append(" and COLLEGE_ID IN :collegeIds");
+                cql.append(" and tx.YXSH IN :collegeIds");
+                sql.append(" and tx.YXSH IN :collegeIds");
                 condition.put("collegeIds", cc);
             }
             if (null != grade) {
@@ -350,24 +350,24 @@ public class TeachingScoreService {
                 } else {
                     tds.add(Integer.valueOf(grade));
                 }
-                cql.append(" and GRADE IN :grades");
-                sql.append(" and GRADE IN :grades");
+                cql.append(" and tt.GRADE IN :grades");
+                sql.append(" and tt.GRADE IN :grades");
                 condition.put("grades", tds);
             }
             if (!org.apache.commons.lang.StringUtils.isBlank(nj)) {
-                cql.append(" and (USER_NAME LIKE :nj OR JOB_NUM LIKE :nj)");
-                sql.append(" and (USER_NAME LIKE :nj OR JOB_NUM LIKE :nj)");
+                cql.append(" and (tt.USER_NAME LIKE :nj OR tt.JOB_NUM LIKE :nj)");
+                sql.append(" and (tt.USER_NAME LIKE :nj OR tt.JOB_NUM LIKE :nj)");
                 condition.put("nj", "%" + nj + "%");
             }
 
             if(!StringUtils.isBlank(professionCode)){
-                cql.append(" and PROFESSIONAL_ID = :professionCode");
-                sql.append(" and PROFESSIONAL_ID = :professionCode");
+                cql.append(" and tt.PROFESSIONAL_ID = :professionCode");
+                sql.append(" and tt.PROFESSIONAL_ID = :professionCode");
                 condition.put("professionCode", professionCode);
             }
 
-            cql.append(" and DELETE_FLAG = 0");
-            sql.append(" and DELETE_FLAG = 0");
+            cql.append(" and tt.DELETE_FLAG = 0");
+            sql.append(" and tt.DELETE_FLAG = 0");
             Query cq = em.createNativeQuery(cql.toString());
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
