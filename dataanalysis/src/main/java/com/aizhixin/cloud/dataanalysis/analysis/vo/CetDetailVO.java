@@ -28,8 +28,6 @@ public class CetDetailVO {
     private String grade;
     @ApiModelProperty(value = "成绩")
     private String score;
-    @ApiModelProperty(value = "考试时间")
-    private String date;
 
 
 
