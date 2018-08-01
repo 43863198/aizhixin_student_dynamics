@@ -368,7 +368,7 @@ public class CetStatisticAnalysisController {
      * 查看数据详情---数据列表
      * @param orgId
      * @param cetType
-     * @param collegeNumberXXXXXXXXXXXXXXXXXXXX
+     * @param collegeNumber
      * @param professionNumber
      * @param className
      * @return
