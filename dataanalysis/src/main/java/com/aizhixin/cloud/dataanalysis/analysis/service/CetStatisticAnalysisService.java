@@ -1348,6 +1348,12 @@ public class CetStatisticAnalysisService {
             StringBuilder sql = new StringBuilder("SELECT SUM(IF(c.max > 0, 1, 0)) AS total," );
 
             if ("三级".equals(cetType)) {
+                if (StringUtils.isBlank(collegeCode)){
+                    collegeCode = "215";
+                }
+            }
+
+            if ("三级".equals(cetType)) {
                 sql.append(" SUM(IF(c.max >= 60, 1, 0)) AS pass ");
             } else {
                 sql.append(" SUM(IF(c.max >= 425, 1, 0)) AS pass ");
@@ -1396,9 +1402,7 @@ public class CetStatisticAnalysisService {
 //                condition.put("classCode", classCode);
                 condition.put("className", className);
             }
-            if ("三级".equals(cetType)) {
-                cql.append(" and ss.COLLEGE_CODE = 215");
-            }
+
             sql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
             avgsql.append(" AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
             cql.append(" AND ss.STATE NOT IN ('02','04','16') AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
@@ -1458,7 +1462,6 @@ public class CetStatisticAnalysisService {
             int theScore= 425;
             if ("三级".equals(cetType)) {
                 theScore = 60;
-                ql.append(" and ss.COLLEGE_CODE = 215");
             }
 
             StringBuilder sql = new StringBuilder("");
@@ -1557,16 +1560,22 @@ public class CetStatisticAnalysisService {
                 }
             }
             result.put("success", true);
-//            StatisticalDomain sd=new StatisticalDomain();
+            if ("三级".equals(cetType)) {
+                if (StringUtils.isBlank(collegeCode)){
+                    collegeCode = "215";
+                }
+            }
+
+//         StatisticalDomain sd=new StatisticalDomain();
             TotalInfoDomain totalInfoDomain=new TotalInfoDomain();
             totalInfoDomain.setCsnpList(csnpList);
             totalInfoDomain.setMapSex(sexTotal(orgId,collegeCode,professionCode,classCode,cetType));
             totalInfoDomain.setAgeSexStatisticalInfoDomains(ageTotal(orgId,collegeCode,professionCode,classCode,cetType));
             totalInfoDomain.setNjStatisticalInfoDomains(njTotal(orgId,collegeCode,professionCode,classCode,cetType));
-//            totalInfoDomain.setScoreScaleDomains(scoreScaleTotscoreScaleDomainsal(orgId, collegeCode, professionCode, classCode, cetType));
-//            totalInfoDomain.setAgeSexStatisticalInfoDomains(ageTotal(orgId,collegeCode,professionCode,classCode,cetType));
+//         totalInfoDomain.setScoreScaleDomains(scoreScaleTotscoreScaleDomainsal(orgId, collegeCode, professionCode, classCode, cetType));
+//         totalInfoDomain.setAgeSexStatisticalInfoDomains(ageTotal(orgId,collegeCode,professionCode,classCode,cetType));
             totalInfoDomain.setNjStatisticalInfoDomains(njTotal(orgId,collegeCode,professionCode,classCode,cetType));
-           totalInfoDomain.setScoreScaleDomains(scoreScaleTotal(orgId, collegeCode, professionCode, classCode, cetType));
+            totalInfoDomain.setScoreScaleDomains(scoreScaleTotal(orgId, collegeCode, professionCode, classCode, cetType));
 
 //            sd.setTotalInfoDomain(totalInfoDomain);
 //            AvgInfoDomain avgInfoDomain=new AvgInfoDomain();
