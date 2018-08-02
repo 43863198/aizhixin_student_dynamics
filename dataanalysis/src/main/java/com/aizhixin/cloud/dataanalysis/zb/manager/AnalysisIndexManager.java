@@ -155,7 +155,7 @@ public class AnalysisIndexManager {
     private JdbcTemplate jdbcTemplate;
 
     @Transactional(readOnly = true)
-    public List<AnalysisBasezbDTO> queryJczb(String sql, Long orgId) {
+    public List<AnalysisBasezbDTO> queryDcJczb(String sql, Long orgId) {
         return jdbcTemplate.query(sql.toString(), new Object[]{orgId}, new int [] {Types.BIGINT}, new RowMapper<AnalysisBasezbDTO>() {
             public AnalysisBasezbDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return new AnalysisBasezbDTO (rs.getString("XN"), rs.getString("XQ"),
@@ -201,7 +201,7 @@ public class AnalysisIndexManager {
     @Transactional(readOnly = true)
     public List<ZxrsDTO> querySubZxrs(String sql, Long orgId, Date date) {
         String start = DateUtil.formatYearMonth(date);
-        return jdbcTemplate.query(sql.toString(), new Object[]{orgId, start, date}, new int [] {Types.BIGINT, Types.DATE}, new RowMapper<ZxrsDTO>() {
+        return jdbcTemplate.query(sql.toString(), new Object[]{orgId, start, date}, new int [] {Types.BIGINT, Types.VARCHAR, Types.DATE}, new RowMapper<ZxrsDTO>() {
             public ZxrsDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return new ZxrsDTO (rs.getString("BH"), rs.getLong("ZXRS"));
             }

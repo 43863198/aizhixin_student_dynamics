@@ -37,7 +37,7 @@ public class AnalysisIndexService {
             long zxrs = analysisIndexManager.queryAllZxrs(AnalysisIndexManager.SQL_SCHOOL_RS, orgId, c.getJsrq());
             yearAllRs.put(c.getXn() + "-" + c.getXq(), zxrs);
         }
-        List<AnalysisBasezbDTO> list = analysisIndexManager.queryJczb(AnalysisIndexManager.SQL_DC_SCHOOL, orgId);//总指标
+        List<AnalysisBasezbDTO> list = analysisIndexManager.queryDcJczb(AnalysisIndexManager.SQL_DC_SCHOOL, orgId);//总指标
         for (AnalysisBasezbDTO d : list) {
             d.setXxdm(orgId.toString());
             d.setDhlj("1");
@@ -95,7 +95,7 @@ public class AnalysisIndexService {
                 rsMap.put(c.getXn() + "-" + c.getXq() + "-" + rs.getBh(), rs.getZxrs());
             }
         }
-        List<AnalysisBasezbDTO> list = analysisIndexManager.queryJczb(sbSQL, orgId);//基础指标
+        List<AnalysisBasezbDTO> list = analysisIndexManager.queryDcJczb(sbSQL, orgId);//基础指标
         for (AnalysisBasezbDTO d : list) {
             d.setXxdm(orgId.toString());
             d.setDhlj("1");
