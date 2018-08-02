@@ -1,5 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.zb.manager;
 
+import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.zb.dto.AnalysisBasezbDTO;
 import com.aizhixin.cloud.dataanalysis.zb.dto.SchoolCalendarDTO;
 import com.aizhixin.cloud.dataanalysis.zb.dto.ZxrsDTO;
@@ -60,10 +61,10 @@ public class AnalysisIndexManager {
             "WHERE cs.TYPE LIKE '%大学英语%' AND cs.SCORE > 0 AND cs.JOB_NUMBER = x.XH AND cs.EXAMINATION_DATE BETWEEN d.start_time and d.end_time and  cs.ORG_ID=? " +
             "GROUP BY cs.ORG_ID,cs.TYPE,d.teacher_year, d.semester, x.YXSH, x.ZYH, x.BJMC ORDER BY cs.EXAMINATION_DATE";
 
-    public static String SQL_SCHOOL_RS = "SELECT count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ? BETWEEN ss.RXNY AND ss.YBYNY";
-    public static String SQL_COLLEGE_RS = "SELECT ss.YXSH AS BH, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ? BETWEEN ss.RXNY AND ss.YBYNY GROUP BY ss.YXSH";
-    public static String SQL_PROFESSIONAL_RS = "SELECT ss.ZYH AS BH, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ? BETWEEN ss.RXNY AND ss.YBYNY GROUP BY ss.ZYH";
-    public static String SQL_CLASSES_RS = "SELECT ss.BJMC AS BH, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ? BETWEEN ss.RXNY AND ss.YBYNY GROUP BY ss.BJMC";
+    public static String SQL_SCHOOL_RS = "SELECT count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=?";
+    public static String SQL_COLLEGE_RS = "SELECT ss.YXSH AS BH, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.YXSH";
+    public static String SQL_PROFESSIONAL_RS = "SELECT ss.ZYH AS BH, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.ZYH";
+    public static String SQL_CLASSES_RS = "SELECT ss.BJMC AS BH, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.BJMC";
 
     public static String SQL_LJ_SCHOOL = "SELECT d.teacher_year AS XN, d.semester AS XQ, null AS P_BH, x.XXID AS BH, c.TYPE AS KSLX, " +
             "SUM(IF(c.max > 0, 1, 0)) AS CKRC, " +
@@ -83,7 +84,7 @@ public class AnalysisIndexManager {
              "GROUP BY cs.TYPE, cs.JOB_NUMBER ) c, t_school_calendar d " +
              "WHERE  x.XXID = ? AND x.XH = c.xh " +
              "AND ? BETWEEN d.start_time and d.end_time " +
-             "AND ? BETWEEN x.RXNY AND x.YBYNY " +
+             "AND x.RXNY >= ? AND x.YBYNY <=? " +
              "GROUP BY x.XXID, d.TEACHER_YEAR, d.SEMESTER, c.TYPE ";
 
     public static String SQL_LJ_COLLEGE = "SELECT d.teacher_year AS XN, d.semester AS XQ, x.XXID AS P_BH, x.YXSH AS BH, c.TYPE AS KSLX, " +
@@ -104,7 +105,7 @@ public class AnalysisIndexManager {
             "GROUP BY cs.TYPE, cs.JOB_NUMBER ) c, t_school_calendar d " +
             "WHERE  x.XXID = ? AND x.XH = c.xh " +
             "AND ? BETWEEN d.start_time and d.end_time " +
-            "AND ? BETWEEN x.RXNY AND x.YBYNY " +
+            "AND x.RXNY >= ? AND x.YBYNY <=? " +
             "GROUP BY x.XXID, d.TEACHER_YEAR, d.SEMESTER, c.TYPE, x.YXSH ";
 
     public static String SQL_LJ_PROFESSIONAL = "SELECT d.teacher_year AS XN, d.semester AS XQ, x.YXSH AS P_BH, x.ZYH AS BH, c.TYPE AS KSLX, " +
@@ -125,8 +126,8 @@ public class AnalysisIndexManager {
             "GROUP BY cs.TYPE, cs.JOB_NUMBER ) c, t_school_calendar d " +
             "WHERE  x.XXID = ? AND x.XH = c.xh " +
             "AND ? BETWEEN d.start_time and d.end_time " +
-            "AND ? BETWEEN x.RXNY AND x.YBYNY " +
-            "GROUP BY x.XXID, d.TEACHER_YEAR, d.SEMESTER, c.TYPE, x.ZYH ";
+            "AND x.RXNY >= ? AND x.YBYNY <=? " +
+            "GROUP BY x.XXID, d.TEACHER_YEAR, d.SEMESTER, c.TYPE, x.YXSH, x.ZYH ";
 
     public static String SQL_LJ_CLASSES = "SELECT d.teacher_year AS XN, d.semester AS XQ, x.ZYH AS P_BH, x.BJMC AS BH, c.TYPE AS KSLX, " +
             "SUM(IF(c.max > 0, 1, 0)) AS CKRC, " +
@@ -146,8 +147,8 @@ public class AnalysisIndexManager {
             "GROUP BY cs.TYPE, cs.JOB_NUMBER ) c, t_school_calendar d " +
             "WHERE  x.XXID = ? AND x.XH = c.xh " +
             "AND ? BETWEEN d.start_time and d.end_time " +
-            "AND ? BETWEEN x.RXNY AND x.YBYNY " +
-            "GROUP BY x.XXID, d.TEACHER_YEAR, d.SEMESTER, c.TYPE, x.BJMC ";
+            "AND  x.RXNY >= ? AND x.YBYNY <=? " +
+            "GROUP BY x.XXID, d.TEACHER_YEAR, d.SEMESTER, c.TYPE, x.ZYH, x.BJMC ";
 
     public static String SQL_INSERT_JCZB = "INSERT INTO t_zb_djksjc (XN, XQM, XXDM, KSLX, DHLJ, P_BH, BH, ZXRS, CKRC, ZF, GF, TGZF, TGRC, NRC, NZF, VRC, VZF, NTGRC, VTGRC) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     @Autowired
@@ -169,7 +170,8 @@ public class AnalysisIndexManager {
 
     @Transactional(readOnly = true)
     public List<AnalysisBasezbDTO> queryLjJczb(String sql, Long orgId, Date date) {
-        return jdbcTemplate.query(sql.toString(), new Object[]{orgId, date, date}, new int [] {Types.BIGINT, Types.DATE, Types.DATE}, new RowMapper<AnalysisBasezbDTO>() {
+        String start = DateUtil.formatYearMonth(date);
+        return jdbcTemplate.query(sql.toString(), new Object[]{orgId, date, start, date}, new int [] {Types.BIGINT, Types.DATE, Types.VARCHAR, Types.DATE}, new RowMapper<AnalysisBasezbDTO>() {
             public AnalysisBasezbDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return new AnalysisBasezbDTO (rs.getString("XN"), rs.getString("XQ"),
                         rs.getString("KSLX"), rs.getString("P_BH"),rs.getString("BH"),
@@ -193,12 +195,13 @@ public class AnalysisIndexManager {
 
     @Transactional(readOnly = true)
     public Long queryAllZxrs(String sql, Long orgId, Date date) {
-        return jdbcTemplate.queryForObject(sql, new Object[]{orgId, date}, new int [] {Types.BIGINT, Types.DATE}, Long.class);
+        return jdbcTemplate.queryForObject(sql, new Object[]{orgId, date}, new int [] {Types.BIGINT, Types.VARCHAR, Types.DATE}, Long.class);
     }
 
     @Transactional(readOnly = true)
     public List<ZxrsDTO> querySubZxrs(String sql, Long orgId, Date date) {
-        return jdbcTemplate.query(sql.toString(), new Object[]{orgId, date}, new int [] {Types.BIGINT, Types.DATE}, new RowMapper<ZxrsDTO>() {
+        String start = DateUtil.formatYearMonth(date);
+        return jdbcTemplate.query(sql.toString(), new Object[]{orgId, start, date}, new int [] {Types.BIGINT, Types.DATE}, new RowMapper<ZxrsDTO>() {
             public ZxrsDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return new ZxrsDTO (rs.getString("BH"), rs.getLong("ZXRS"));
             }
