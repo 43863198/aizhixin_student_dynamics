@@ -73,6 +73,11 @@ public class StudentRegister {
 	private String teachYear;
 
 	/**
+	 * 学年学期
+	 */
+	private int schoolYear;
+
+	/**
 	 * 年级
 	 */
 	private String grade;
