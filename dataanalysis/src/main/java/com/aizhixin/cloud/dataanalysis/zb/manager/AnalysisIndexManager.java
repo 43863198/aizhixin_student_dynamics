@@ -201,7 +201,7 @@ public class AnalysisIndexManager {
     @Transactional(readOnly = true)
     public List<ZxrsDTO> querySubZxrs(String sql, Long orgId, Date date) {
         String start = DateUtil.formatYearMonth(date);
-        return jdbcTemplate.query(sql.toString(), new Object[]{orgId, start, date}, new int [] {Types.BIGINT, Types.DATE}, new RowMapper<ZxrsDTO>() {
+        return jdbcTemplate.query(sql.toString(), new Object[]{orgId, start, date}, new int [] {Types.BIGINT, Types.VARCHAR, Types.DATE}, new RowMapper<ZxrsDTO>() {
             public ZxrsDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return new ZxrsDTO (rs.getString("BH"), rs.getLong("ZXRS"));
             }
