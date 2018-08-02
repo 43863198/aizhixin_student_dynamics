@@ -48,14 +48,14 @@ public class AnalysisIndexService {
         }
 
 
-//        //学院人数
-//        indexAndZxrs(cache, schoolCalendarList, AnalysisIndexManager.SQL_DC_COLLEGE, AnalysisIndexManager.SQL_COLLEGE_RS, orgId);
-//
-//        //专业人数
-//        indexAndZxrs(cache, schoolCalendarList, AnalysisIndexManager.SQL_DC_PROFESSIONAL, AnalysisIndexManager.SQL_PROFESSIONAL_RS, orgId);
-//
-//        //班级人数
-//        indexAndZxrs(cache, schoolCalendarList, AnalysisIndexManager.SQL_DC_CLASSES, AnalysisIndexManager.SQL_CLASSES_RS, orgId);
+        //学院人数
+        indexAndZxrs(cache, schoolCalendarList, AnalysisIndexManager.SQL_DC_COLLEGE, AnalysisIndexManager.SQL_COLLEGE_RS, orgId);
+
+        //专业人数
+        indexAndZxrs(cache, schoolCalendarList, AnalysisIndexManager.SQL_DC_PROFESSIONAL, AnalysisIndexManager.SQL_PROFESSIONAL_RS, orgId);
+
+        //班级人数
+        indexAndZxrs(cache, schoolCalendarList, AnalysisIndexManager.SQL_DC_CLASSES, AnalysisIndexManager.SQL_CLASSES_RS, orgId);
 
         /*********************************************************************累计************************************************************************************/
         //总人数
@@ -74,12 +74,12 @@ public class AnalysisIndexService {
                 cache.add(d);
             }
         }
-//        //学院
-//        ljIndexAndZxrs(cache, schoolCalendarList, AnalysisIndexManager.SQL_LJ_COLLEGE, AnalysisIndexManager.SQL_COLLEGE_RS, orgId);
-//        //专业
-//        ljIndexAndZxrs(cache, schoolCalendarList, AnalysisIndexManager.SQL_LJ_PROFESSIONAL, AnalysisIndexManager.SQL_PROFESSIONAL_RS, orgId);
-//        //班级
-//        ljIndexAndZxrs(cache, schoolCalendarList, AnalysisIndexManager.SQL_LJ_CLASSES, AnalysisIndexManager.SQL_CLASSES_RS, orgId);
+        //学院
+        ljIndexAndZxrs(cache, schoolCalendarList, AnalysisIndexManager.SQL_LJ_COLLEGE, AnalysisIndexManager.SQL_COLLEGE_RS, orgId);
+        //专业
+        ljIndexAndZxrs(cache, schoolCalendarList, AnalysisIndexManager.SQL_LJ_PROFESSIONAL, AnalysisIndexManager.SQL_PROFESSIONAL_RS, orgId);
+        //班级
+        ljIndexAndZxrs(cache, schoolCalendarList, AnalysisIndexManager.SQL_LJ_CLASSES, AnalysisIndexManager.SQL_CLASSES_RS, orgId);
 
         log.info("start save data.count:{}", cache.size());
         System.out.println("---------------------------------------------------------------------------------------------------");
