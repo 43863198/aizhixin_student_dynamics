@@ -195,7 +195,8 @@ public class AnalysisIndexManager {
 
     @Transactional(readOnly = true)
     public Long queryAllZxrs(String sql, Long orgId, Date date) {
-        return jdbcTemplate.queryForObject(sql, new Object[]{orgId, date}, new int [] {Types.BIGINT, Types.VARCHAR, Types.DATE}, Long.class);
+        String start = DateUtil.formatYearMonth(date);
+        return jdbcTemplate.queryForObject(sql, new Object[]{orgId, start, date}, new int [] {Types.BIGINT, Types.VARCHAR, Types.DATE}, Long.class);
     }
 
     @Transactional(readOnly = true)
