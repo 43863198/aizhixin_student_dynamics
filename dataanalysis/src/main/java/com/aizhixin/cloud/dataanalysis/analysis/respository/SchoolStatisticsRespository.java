@@ -27,7 +27,7 @@ public interface SchoolStatisticsRespository extends JpaRepository<SchoolStatist
     @Query("select new com.aizhixin.cloud.dataanalysis.analysis.dto.NewStudentProfileDTO(sum(a.newStudentsCount),sum(a.alreadyReport),max(a.teacherYear)) from #{#entityName} a where a.orgId = :orgId and  a.deleteFlag=0 and a.teacherYear =(select max(b.teacherYear) FROM #{#entityName} b where b.orgId = :orgId)")
     NewStudentProfileDTO getNewStudentStatistics(@Param(value = "orgId")Long orgId);
 
-    @Query("select a from #{#entityName} a where a.orgId = :orgId and a.teacherYear = :teacherYear and a.deleteFlag = :deleteFlag order by a.statisticalTime desc")
+    @Query("select a from #{#entityName} a where a.orgId = :orgId and a.teacherYear = :teacherYear and a.deleteFlag = :deleteFlag GROUP BY a.collegeName order by a.statisticalTime desc")
     List<SchoolStatistics> findDataByOrgIdAndTeacherYear(@Param(value = "orgId") Long orgId, @Param(value = "teacherYear") Integer teacherYear, @Param(value = "deleteFlag") int deleteFlag);
 
     void deleteByOrgId(Long orgId);
