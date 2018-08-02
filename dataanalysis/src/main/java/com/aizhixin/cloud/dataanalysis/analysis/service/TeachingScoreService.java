@@ -414,13 +414,11 @@ public class TeachingScoreService {
                     teachingScoreDetailsList.add(teachingScoreDetails);
                 }
             }
-
             p.setData(teachingScoreDetailsList);
             p.getPage().setTotalElements(total);
             p.getPage().setPageNumber(pageable.getPageNumber());
             p.getPage().setPageSize(pageable.getPageSize());
             p.getPage().setTotalPages(PageUtil.cacalatePagesize(total, p.getPage().getPageSize()));
-
         } catch (Exception e) {
             result.put("success", false);
             result.put("message", "获取教学成绩详情数据异常！");
