@@ -138,7 +138,7 @@ public class OverYearsTestStatisticsService {
                     Double d=Double.parseDouble(b+"")/Double.parseDouble(a+"");
                     semesterLeiJiRateDomain.setLeijiRate(new DecimalFormat("0.0000").format(d));
                 }else if (a!=0){
-                    semesterLeiJiRateDomain.setLeijiRate("0");
+                    semesterLeiJiRateDomain.setLeijiRate(null);
                 }else{
                     semesterLeiJiRateDomain.setLeijiRate(null);
                 }
