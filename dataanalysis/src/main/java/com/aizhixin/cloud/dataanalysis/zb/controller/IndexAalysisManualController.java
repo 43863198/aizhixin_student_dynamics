@@ -22,11 +22,18 @@ public class IndexAalysisManualController {
     private AnalysisIndexService analysisIndexService;
 
     /**
+     *
      */
     @GetMapping(value = "/cet", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "英语等级考试基础指标统计", response = Void.class, notes = "英语等级考试基础指标统计<br><br><b>@author zhen.pan</b>")
     public void cet(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId") Long orgId) {
-        analysisIndexService.schoolAllIndex(orgId);
+        analysisIndexService.schoolBaseIndex(orgId);
+    }
+
+    @GetMapping(value = "/cet/grade", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "英语等级考试基础指标年级分布统计", response = Void.class, notes = "英语等级考试基础指标年级分布统计<br><br><b>@author zhen.pan</b>")
+    public void cetGrade(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId") Long orgId) {
+        analysisIndexService.schoolNjIndex(orgId);
     }
 
 }

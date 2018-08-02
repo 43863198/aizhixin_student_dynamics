@@ -15,11 +15,15 @@ public class DateUtil {
 	private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 	public static String FORMAT_LONG = "yyyy-MM-dd HH:mm:ss";
 	public static String FORMAT_SHORT = "yyyy-MM-dd";
+	public static String YEAR_HOMTH = "yyyyMM";
 	private static long ONE_DAY_SEC = 86400000L;
 
 	public static String format(Date date) {
         return format(date, FORMAT_LONG);
     }
+	public static String formatYearMonth(Date date) {
+		return format(date, YEAR_HOMTH);
+	}
 	
 	 /**
      * 使用用户格式格式化日期
