@@ -155,7 +155,7 @@ public class AnalysisIndexManager {
     private JdbcTemplate jdbcTemplate;
 
     @Transactional(readOnly = true)
-    public List<AnalysisBasezbDTO> queryJczb(String sql, Long orgId) {
+    public List<AnalysisBasezbDTO> queryDcJczb(String sql, Long orgId) {
         return jdbcTemplate.query(sql.toString(), new Object[]{orgId}, new int [] {Types.BIGINT}, new RowMapper<AnalysisBasezbDTO>() {
             public AnalysisBasezbDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return new AnalysisBasezbDTO (rs.getString("XN"), rs.getString("XQ"),
