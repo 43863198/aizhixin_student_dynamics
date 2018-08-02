@@ -1574,8 +1574,8 @@ public class CetStatisticAnalysisService {
             totalInfoDomain.setNjStatisticalInfoDomains(njTotal(orgId,collegeCode,professionCode,classCode,cetType));
 //         totalInfoDomain.setScoreScaleDomains(scoreScaleTotscoreScaleDomainsal(orgId, collegeCode, professionCode, classCode, cetType));
 //         totalInfoDomain.setAgeSexStatisticalInfoDomains(ageTotal(orgId,collegeCode,professionCode,classCode,cetType));
-            totalInfoDomain.setNjStatisticalInfoDomains(njTotal(orgId,collegeCode,professionCode,classCode,cetType));
-            totalInfoDomain.setScoreScaleDomains(scoreScaleTotal(orgId, collegeCode, professionCode, classCode, cetType));
+//         totalInfoDomain.setNjStatisticalInfoDomains(njTotal(orgId,collegeCode,professionCode,classCode,cetType));
+             totalInfoDomain.setScoreScaleDomains(scoreScaleTotal(orgId, collegeCode, professionCode, classCode, cetType));
 
 //            sd.setTotalInfoDomain(totalInfoDomain);
 //            AvgInfoDomain avgInfoDomain=new AvgInfoDomain();
@@ -1828,18 +1828,25 @@ public class CetStatisticAnalysisService {
         List<NjStatisticalInfoDomain> njStatisticalInfoDomainListAll = cetSexStatisticalJdbc.njStatisticalInfo(orgId, collegeCode, professionCode, classCode, cetType, true);
         List<NjStatisticalInfoDomain> njStatisticalInfoDomainList = cetSexStatisticalJdbc.njStatisticalInfo(orgId, collegeCode, professionCode, classCode, cetType, false);
         if (null != njStatisticalInfoDomainListAll && 0 < njStatisticalInfoDomainListAll.size() && null != njStatisticalInfoDomainList && 0 < njStatisticalInfoDomainList.size()) {
-            for (NjStatisticalInfoDomain njStatisticalInfoDomain : njStatisticalInfoDomainListAll) {
-                for (NjStatisticalInfoDomain statisticalInfoDomain : njStatisticalInfoDomainList) {
-                    if (njStatisticalInfoDomain.getNj().equals(statisticalInfoDomain.getNj())) {
+                for(int i = 0 ; i< njStatisticalInfoDomainListAll.size();i++){
+                    for(int j = 0 ; j< njStatisticalInfoDomainList.size();j++){
+                        if (njStatisticalInfoDomainListAll.get(i).getNj().equals(njStatisticalInfoDomainList.get(j).getNj())) {
+                            NjStatisticalInfoDomain c = new NjStatisticalInfoDomain();
+                            c.setNj(njStatisticalInfoDomainListAll.get(i).getNj());
+                            c.setAllTotal(njStatisticalInfoDomainListAll.get(i).getAllTotal());
+                            c.setPassTotal(njStatisticalInfoDomainList.get(i).getPassTotal());
+                            njStatisticalInfoDomains.add(c);
+                            break;
+                        }
+                    }
+                    if(njStatisticalInfoDomainList.size() <= i){
                         NjStatisticalInfoDomain c = new NjStatisticalInfoDomain();
-                        c.setNj(njStatisticalInfoDomain.getNj());
-                        c.setAllTotal(njStatisticalInfoDomain.getAllTotal());
-                        c.setPassTotal(statisticalInfoDomain.getPassTotal());
+                        c.setNj(njStatisticalInfoDomainListAll.get(i).getNj());
+                        c.setAllTotal(njStatisticalInfoDomainListAll.get(i).getAllTotal());
+                        c.setPassTotal(0L);
                         njStatisticalInfoDomains.add(c);
-                        break;
                     }
                 }
-            }
         }
         return njStatisticalInfoDomains;
     }
