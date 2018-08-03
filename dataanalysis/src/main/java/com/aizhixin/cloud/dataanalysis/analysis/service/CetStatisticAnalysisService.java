@@ -663,7 +663,7 @@ public class CetStatisticAnalysisService {
                     sql.append(" AND p.NAME IS NOT NULL");
                 }
             } else {
-                sql.append("SELECT d.COMPANY_NAME as name, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1");
+                sql.append("SELECT d.COMPANY_NAME as name, d.SIMPLE_NAME as simple_name, ss.AVG_SCORE as avg FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1");
                 sql.append(ql);
                 sql.append(" AND ss.STATISTICS_TYPE = '001'");
                 sql.append(" and ss.PARENT_CODE = :pCode");
@@ -680,9 +680,13 @@ public class CetStatisticAnalysisService {
                 for (Object row : res) {
                     Map d = (Map) row;
                     CetScoreAnalysisVO csa = new CetScoreAnalysisVO();
-                    if (null != d.get("name")) {
+                    if(null != d.get("simple_name")){
+                        csa.setName(d.get("simple_name").toString());
+                    }
+                    if (null != d.get("name") && null == d.get("simple_name")) {
                         csa.setName(d.get("name").toString());
                     }
+
                     if (null != d.get("avg")) {
                         csa.setValue(Math.round(Float.valueOf(d.get("avg").toString())) + "");
                     }
@@ -991,7 +995,7 @@ public class CetStatisticAnalysisService {
                     sql.append(" AND P.NAME IS NOT NULL");
                 }
             } else {
-                sql.append("SELECT d.COMPANY_NAME as name, ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1");
+                sql.append("SELECT d.COMPANY_NAME as name, d.SIMPLE_NAME as simple_name,  ss.JOIN_NUMBER as total, ss.PASS_NUMBER as pass FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1");
                 sql.append(ql);
                 sql.append(" AND ss.STATISTICS_TYPE = '001'");
                 sql.append(" and ss.PARENT_CODE = :pCode");
@@ -1008,7 +1012,10 @@ public class CetStatisticAnalysisService {
                 for (Object row : res) {
                     Map d = (Map) row;
                     CetScoreNumberOfPeopleVO csnp = new CetScoreNumberOfPeopleVO();
-                    if (null != d.get("name")) {
+                    if (null != d.get("simple_name")) {
+                        csnp.setName(d.get("simple_name").toString());
+                    }
+                    if (null != d.get("name") && null == d.get("simple_name")) {
                         csnp.setName(d.get("name").toString());
                     }
                     if (null != d.get("total")) {
@@ -1275,7 +1282,7 @@ public class CetStatisticAnalysisService {
                     }
                 }
             }
-            StringBuilder sql = new StringBuilder("SELECT cs.JOB_NUMBER AS xh,s.NAME AS name,d.COMPANY_NAME AS dName,p.NAME AS pName,ss.CLASS_NAME AS cName,ss.GRADE AS grade,cs.SCORE AS score " +
+            StringBuilder sql = new StringBuilder("SELECT cs.JOB_NUMBER AS xh,s.NAME AS name,d.COMPANY_NAME AS dName,d.SIMPLE_NAME AS simple_name,p.NAME AS pName,ss.CLASS_NAME AS cName,ss.GRADE AS grade,cs.SCORE AS score " +
                     "FROM t_cet_score cs LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER  "+
                     "LEFT JOIN t_student s ON cs.JOB_NUMBER = s.JOB_NUMBER LEFT JOIN t_department d ON d.COMPANY_NUMBER = ss.COLLEGE_CODE LEFT JOIN t_profession p ON p. CODE = ss.PROFESSION_CODE "+
                     "WHERE 1=1");
@@ -1306,7 +1313,11 @@ public class CetStatisticAnalysisService {
                     if (null != d.get("xh")) {
                         st.setJobNumber(d.get("xh").toString());
                     }
-                    if (null != d.get("name")) {
+                    if(null != d.get("simple_name")){
+                        st.setName(d.get("simple_name").toString());
+                    }
+
+                    if (null != d.get("name") && null == d.get("simple_name")) {
                         st.setName(d.get("name").toString());
                     }
                     if (null != d.get("dName")) {
@@ -1520,9 +1531,9 @@ public class CetStatisticAnalysisService {
                     sql.append(" group by ss.PROFESSION_CODE having total>0");
                 }
             } else {
-                cql.append(" SELECT d.COMPANY_NAME as name, count(ss.JOB_NUMBER) AS total  FROM t_student_status ss LEFT JOIN t_department d ON d.COMPANY_NUMBER = ss.COLLEGE_CODE " );
+                cql.append(" SELECT d.COMPANY_NAME as name,d.SIMPLE_NAME as simple_name, count(ss.JOB_NUMBER) AS total  FROM t_student_status ss LEFT JOIN t_department d ON d.COMPANY_NUMBER = ss.COLLEGE_CODE " );
 
-                sql.append(" SELECT d.COMPANY_NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total, " );
+                sql.append(" SELECT d.COMPANY_NAME as name, d.SIMPLE_NAME as simple_name,SUM(IF(c.max > 0, 1, 0)) AS total, " );
                 sql.append(" SUM(IF(c.max >= '" + theScore +"', 1, 0)) AS pass ");
                 sql.append(" FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs ");
                 sql.append(" WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%' ");
@@ -1546,9 +1557,17 @@ public class CetStatisticAnalysisService {
             if (null != res) {
                 for (Object row : res) {
                     Map d = (Map) row;
-                    if (null != d.get("name")) {
+                    String name = "";
+                    if(null != d.get("simple_name")){
+                        name = d.get("simple_name").toString();
+                    }
+                    if(null != d.get("name") && null == d.get("simple_name")){
+                        name = d.get("name").toString();
+                    }
+
+                    if (null != d.get("name") ) {
                         CetScoreNumberOfPeopleVO csnp = new CetScoreNumberOfPeopleVO();
-                        csnp.setName(d.get("name").toString());
+                        csnp.setName(name);
                         if (null != d.get("total")) {
                             csnp.setJoinNumber(Integer.valueOf(getTotal(d.get("name"),cres)));
                         }
@@ -1954,7 +1973,7 @@ public class CetStatisticAnalysisService {
                 condition.put("end",end);
             }
             InputStream resourceAsStream = this.getClass().getResourceAsStream("/template/singleStatistics.xlsx");
-            StringBuilder  dql = new StringBuilder("SELECT d.COMPANY_NAME as name, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1");
+            StringBuilder  dql = new StringBuilder("SELECT d.COMPANY_NAME as name,d.SIMPLE_NAME AS simple_name, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1");
             dql.append(" AND ss.STATISTICS_TYPE = '001'");
             dql.append(" and ss.PARENT_CODE = " + orgId);
             dql.append(ql);
@@ -1971,7 +1990,10 @@ public class CetStatisticAnalysisService {
                 for(Object obj: dres) {
                     Map d = (Map) obj;
                     SingleStatisticsCollegeVO collegeVO = new SingleStatisticsCollegeVO();
-                    if (null != d.get("name")) {
+                    if(null != d.get("simple_name")){
+                        collegeVO.setCollegeName(d.get("simple_name").toString());
+                    }
+                    if (null != d.get("name") && null == d.get("simple_name")) {
                         collegeVO.setCollegeName(d.get("name").toString());
                     }
                     if (null != d.get("cj")) {
@@ -1996,7 +2018,7 @@ public class CetStatisticAnalysisService {
                     collegeList.add(collegeVO);
                 }
             }
-            StringBuilder  pql = new StringBuilder("SELECT d.COMPANY_NAME as dname, p.NAME as pname, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_profession p ON ss.CODE = p.CODE LEFT JOIN t_department d ON p.COMPANY_NUMBER = d.COMPANY_NUMBER WHERE 1=1");
+            StringBuilder  pql = new StringBuilder("SELECT d.COMPANY_NAME as dname, d.SIMPLE_NAME as simple_name, p.NAME as pname, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_profession p ON ss.CODE = p.CODE LEFT JOIN t_department d ON p.COMPANY_NUMBER = d.COMPANY_NUMBER WHERE 1=1");
             pql.append(" AND ss.STATISTICS_TYPE = '002'");
             pql.append(ql);
             pql.append(" AND p.NAME IS NOT NULL");
@@ -2012,7 +2034,10 @@ public class CetStatisticAnalysisService {
                 for(Object obj: pres) {
                     Map d = (Map) obj;
                     SingleStatisticsMajorVO majorVO = new SingleStatisticsMajorVO();
-                    if (null != d.get("dname")) {
+                    if(null != d.get("simple_name")){
+                        majorVO.setCollegeName(d.get("simple_name").toString());
+                    }
+                    if (null != d.get("dname") && null == d.get("simple_name")) {
                         majorVO.setCollegeName(d.get("dname").toString());
                     }
                     if (null != d.get("pname")) {
@@ -2040,7 +2065,7 @@ public class CetStatisticAnalysisService {
                     majorList.add(majorVO);
                 }
             }
-            StringBuilder  cql = new StringBuilder("SELECT d.COMPANY_NAME as dname, p.NAME as pname, ss.CLASS_NAME as cname, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_profession p ON ss.PARENT_CODE = p.CODE LEFT JOIN t_department d ON p.COMPANY_NUMBER = d.COMPANY_NUMBER WHERE 1=1");
+            StringBuilder  cql = new StringBuilder("SELECT d.COMPANY_NAME as dname, d.SIMPLE_NAME as simple_name,p.NAME as pname, ss.CLASS_NAME as cname, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_profession p ON ss.PARENT_CODE = p.CODE LEFT JOIN t_department d ON p.COMPANY_NUMBER = d.COMPANY_NUMBER WHERE 1=1");
             cql.append(" AND ss.STATISTICS_TYPE = '003'");
             cql.append(ql);
             cql.append(" AND d.COMPANY_NAME IS NOT NULL");
@@ -2056,7 +2081,10 @@ public class CetStatisticAnalysisService {
                 for(Object obj: cres) {
                     Map d = (Map) obj;
                     SingleStatisticsClassVO classVO = new SingleStatisticsClassVO();
-                    if (null != d.get("dname")) {
+                    if (null != d.get("simple_name")){
+                        classVO.setCollegeName(d.get("simple_name").toString());
+                    }
+                    if (null != d.get("dname") && null == d.get("simple_name")) {
                         classVO.setCollegeName(d.get("dname").toString());
                     }
                     if (null != d.get("pname")) {
@@ -2087,7 +2115,7 @@ public class CetStatisticAnalysisService {
                     classList.add(classVO);
                 }
             }
-            StringBuilder  gql = new StringBuilder("SELECT d.COMPANY_NAME as dname, ss.NAME_CODE as grade, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1");
+            StringBuilder  gql = new StringBuilder("SELECT d.COMPANY_NAME as dname, d.SIMPLE_NAME as simple_name,ss.NAME_CODE as grade, ss.JOIN_NUMBER as cj, ss.PASS_NUMBER pass, ss.AVG_SCORE as avg, ss.MAX_SCORE as max FROM t_score_statistics ss LEFT JOIN t_department d ON ss.CODE = d.COMPANY_NUMBER WHERE 1=1");
             gql.append(" AND ss.STATISTICS_TYPE = '021'");
             gql.append(ql);
             gql.append(" AND ss.NAME_CODE IS NOT NULL");
@@ -2104,7 +2132,10 @@ public class CetStatisticAnalysisService {
                 for(Object obj: gres) {
                     Map d = (Map) obj;
                     SingleStatisticsGradeVO gradeVO = new SingleStatisticsGradeVO();
-                    if (null != d.get("dname")) {
+                    if (null != d.get("simple_name")){
+                        gradeVO.setCollegeName(d.get("simple_name").toString());
+                    }
+                    if (null != d.get("dname") && null == d.get("simple_name")) {
                         gradeVO.setCollegeName(d.get("dname").toString());
                     }
                     if (null != d.get("grade")) {
