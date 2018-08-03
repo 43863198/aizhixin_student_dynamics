@@ -138,7 +138,7 @@ public class TestAnalysisDataController {
 			practiceStatistics1.setId(UUID.randomUUID().toString());
 			practiceStatistics1.setOrgId(orgId);
 			practiceStatistics1.setTeacherYear((teacherYear-i));
-			practiceStatistics1.setCollegeName("机械与控制工程学院");
+			practiceStatistics1.setCollegeName("机控学院");
 			practiceStatistics1.setCollegeId(1722L);
 			practiceStatistics1.setProfessionId(2492L);
 			practiceStatistics1.setProfessionName("机械设计制造及其自动化");
@@ -162,7 +162,7 @@ public class TestAnalysisDataController {
 			practiceStatistics1a.setId(UUID.randomUUID().toString());
 			practiceStatistics1a.setOrgId(orgId);
 			practiceStatistics1a.setTeacherYear((teacherYear-i));
-			practiceStatistics1a.setCollegeName("机械与控制工程学院");
+			practiceStatistics1a.setCollegeName("机控学院");
 			practiceStatistics1a.setCollegeId(1722L);
 			practiceStatistics1a.setProfessionId(2492L);
 			practiceStatistics1a.setProfessionName("机械设计制造及其自动化");
@@ -182,7 +182,7 @@ public class TestAnalysisDataController {
 			practiceStatistics2a.setId(UUID.randomUUID().toString());
 			practiceStatistics2a.setOrgId(orgId);
 			practiceStatistics2a.setTeacherYear(teacherYear-i);
-			practiceStatistics2a.setCollegeName("外国语学院");
+			practiceStatistics2a.setCollegeName("外语学院");
 			practiceStatistics2a.setCollegeId(1758L);
 			practiceStatistics2a.setProfessionId(2502L);
 			practiceStatistics2a.setProfessionName("日语");
@@ -202,7 +202,7 @@ public class TestAnalysisDataController {
 			practiceStatistics2.setId(UUID.randomUUID().toString());
 			practiceStatistics2.setOrgId(orgId);
 			practiceStatistics2.setTeacherYear(teacherYear-i);
-			practiceStatistics2.setCollegeName("外国语学院");
+			practiceStatistics2.setCollegeName("外语学院");
 			practiceStatistics2.setCollegeId(1758L);
 			practiceStatistics2.setProfessionId(2502L);
 			practiceStatistics2.setProfessionName("日语");
@@ -221,7 +221,7 @@ public class TestAnalysisDataController {
 			practiceStatistics3.setId(UUID.randomUUID().toString());
 			practiceStatistics3.setOrgId(orgId);
 			practiceStatistics3.setTeacherYear(teacherYear - i);
-			practiceStatistics3.setCollegeName("测绘地理信息学院");
+			practiceStatistics3.setCollegeName("测绘学院");
 			practiceStatistics3.setCollegeId(1724L);
 			practiceStatistics3.setProfessionId(2576L);
 			practiceStatistics3.setProfessionName("测绘类");
@@ -241,7 +241,7 @@ public class TestAnalysisDataController {
 			practiceStatistics3a.setId(UUID.randomUUID().toString());
 			practiceStatistics3a.setOrgId(orgId);
 			practiceStatistics3a.setTeacherYear(teacherYear - i);
-			practiceStatistics3a.setCollegeName("测绘地理信息学院");
+			practiceStatistics3a.setCollegeName("测绘学院");
 			practiceStatistics3a.setCollegeId(1724L);
 			practiceStatistics3a.setProfessionId(2576L);
 			practiceStatistics3a.setProfessionName("测绘类");
@@ -260,7 +260,7 @@ public class TestAnalysisDataController {
 			practiceStatistics4.setId(UUID.randomUUID().toString());
 			practiceStatistics4.setOrgId(orgId);
 			practiceStatistics4.setTeacherYear(teacherYear - i);
-			practiceStatistics4.setCollegeName("人文社会科学学院");
+			practiceStatistics4.setCollegeName("管媒学院");
 			practiceStatistics4.setCollegeId(1754L);
 			practiceStatistics4.setProfessionId(2530L);
 			practiceStatistics4.setProfessionName("广告学");
@@ -279,7 +279,7 @@ public class TestAnalysisDataController {
 			practiceStatistics4a.setId(UUID.randomUUID().toString());
 			practiceStatistics4a.setOrgId(orgId);
 			practiceStatistics4a.setTeacherYear(teacherYear - i);
-			practiceStatistics4a.setCollegeName("人文社会科学学院");
+			practiceStatistics4a.setCollegeName("管媒学院");
 			practiceStatistics4a.setCollegeId(1754L);
 			practiceStatistics4a.setProfessionId(2530L);
 			practiceStatistics4a.setProfessionName("广告学");
@@ -298,7 +298,7 @@ public class TestAnalysisDataController {
 			practiceStatistics5.setId(UUID.randomUUID().toString());
 			practiceStatistics5.setOrgId(orgId);
 			practiceStatistics5.setTeacherYear(teacherYear - i);
-			practiceStatistics5.setCollegeName("化学与生物工程学院");
+			practiceStatistics5.setCollegeName("化生学院");
 			practiceStatistics5.setCollegeId(1720L);
 			practiceStatistics5.setProfessionId(2480L);
 			practiceStatistics5.setProfessionName("生物工程");
@@ -317,7 +317,7 @@ public class TestAnalysisDataController {
 			practiceStatistics5a.setId(UUID.randomUUID().toString());
 			practiceStatistics5a.setOrgId(orgId);
 			practiceStatistics5a.setTeacherYear(teacherYear - i);
-			practiceStatistics5a.setCollegeName("化学与生物工程学院");
+			practiceStatistics5a.setCollegeName("化生学院");
 			practiceStatistics5a.setCollegeId(1720L);
 			practiceStatistics5a.setProfessionId(2480L);
 			practiceStatistics5a.setProfessionName("生物工程");
@@ -374,7 +374,7 @@ public class TestAnalysisDataController {
 			practiceStatistics7a.setId(UUID.randomUUID().toString());
 			practiceStatistics7a.setOrgId(orgId);
 			practiceStatistics7a.setTeacherYear(teacherYear - i);
-			practiceStatistics7a.setCollegeName("信息科学与工程学院");
+			practiceStatistics7a.setCollegeName("信息学院");
 			practiceStatistics7a.setCollegeId(1718L);
 			practiceStatistics7a.setProfessionId(2380L);
 			practiceStatistics7a.setProfessionName("电子信息类");
@@ -393,7 +393,7 @@ public class TestAnalysisDataController {
 			practiceStatistics7.setId(UUID.randomUUID().toString());
 			practiceStatistics7.setOrgId(orgId);
 			practiceStatistics7.setTeacherYear(teacherYear - i);
-			practiceStatistics7.setCollegeName("信息科学与工程学院");
+			practiceStatistics7.setCollegeName("信息学院");
 			practiceStatistics7.setCollegeId(1718L);
 			practiceStatistics7.setProfessionId(2380L);
 			practiceStatistics7.setProfessionName("电子信息类");
@@ -450,7 +450,7 @@ public class TestAnalysisDataController {
 			practiceStatistics9a.setId(UUID.randomUUID().toString());
 			practiceStatistics9a.setOrgId(orgId);
 			practiceStatistics9a.setTeacherYear(teacherYear - i);
-			practiceStatistics9a.setCollegeName("材料科学与工程学院");
+			practiceStatistics9a.setCollegeName("材料学院");
 			practiceStatistics9a.setCollegeId(1716L);
 			practiceStatistics9a.setProfessionId(2404L);
 			practiceStatistics9a.setProfessionName("材料类（创新班）");
@@ -469,7 +469,7 @@ public class TestAnalysisDataController {
 			practiceStatistics9.setId(UUID.randomUUID().toString());
 			practiceStatistics9.setOrgId(orgId);
 			practiceStatistics9.setTeacherYear(teacherYear - i);
-			practiceStatistics9.setCollegeName("材料科学与工程学院");
+			practiceStatistics9.setCollegeName("材料学院");
 			practiceStatistics9.setCollegeId(1716L);
 			practiceStatistics9.setProfessionId(2404L);
 			practiceStatistics9.setProfessionName("材料类（创新班）");
@@ -526,7 +526,7 @@ public class TestAnalysisDataController {
 			practiceStatistics11a.setId(UUID.randomUUID().toString());
 			practiceStatistics11a.setOrgId(orgId);
 			practiceStatistics11a.setTeacherYear(teacherYear - i);
-			practiceStatistics11a.setCollegeName("土木与建筑工程学院");
+			practiceStatistics11a.setCollegeName("土建学院");
 			practiceStatistics11a.setCollegeId(1714L);
 			practiceStatistics11a.setProfessionId(2378L);
 			practiceStatistics11a.setProfessionName("土木类");
@@ -546,7 +546,7 @@ public class TestAnalysisDataController {
 			practiceStatistics11.setId(UUID.randomUUID().toString());
 			practiceStatistics11.setOrgId(orgId);
 			practiceStatistics11.setTeacherYear(teacherYear - i);
-			practiceStatistics11.setCollegeName("土木与建筑工程学院");
+			practiceStatistics11.setCollegeName("土建学院");
 			practiceStatistics11.setCollegeId(1714L);
 			practiceStatistics11.setProfessionId(2378L);
 			practiceStatistics11.setProfessionName("土木类");
@@ -565,7 +565,7 @@ public class TestAnalysisDataController {
 			practiceStatistics12.setId(UUID.randomUUID().toString());
 			practiceStatistics12.setOrgId(orgId);
 			practiceStatistics12.setTeacherYear(teacherYear - i);
-			practiceStatistics12.setCollegeName("环境科学与工程学院");
+			practiceStatistics12.setCollegeName("环境学院");
 			practiceStatistics12.setCollegeId(1712L);
 			practiceStatistics12.setProfessionId(2406L);
 			practiceStatistics12.setProfessionName("给排水科学与工程");
@@ -584,7 +584,7 @@ public class TestAnalysisDataController {
 			practiceStatistics12a.setId(UUID.randomUUID().toString());
 			practiceStatistics12a.setOrgId(orgId);
 			practiceStatistics12a.setTeacherYear(teacherYear - i);
-			practiceStatistics12a.setCollegeName("环境科学与工程学院");
+			practiceStatistics12a.setCollegeName("环境学院");
 			practiceStatistics12a.setCollegeId(1712L);
 			practiceStatistics12a.setProfessionId(2406L);
 			practiceStatistics12a.setProfessionName("给排水科学与工程");
@@ -603,7 +603,7 @@ public class TestAnalysisDataController {
 			practiceStatistics13a.setId(UUID.randomUUID().toString());
 			practiceStatistics13a.setOrgId(orgId);
 			practiceStatistics13a.setTeacherYear(teacherYear - i);
-			practiceStatistics13a.setCollegeName("地球科学学院");
+			practiceStatistics13a.setCollegeName("地学院");
 			practiceStatistics13a.setCollegeId(1710L);
 			practiceStatistics13a.setProfessionId(2564L);
 			practiceStatistics13a.setProfessionName("地质类");
@@ -622,7 +622,7 @@ public class TestAnalysisDataController {
 			practiceStatistics13.setId(UUID.randomUUID().toString());
 			practiceStatistics13.setOrgId(orgId);
 			practiceStatistics13.setTeacherYear(teacherYear - i);
-			practiceStatistics13.setCollegeName("地球科学学院");
+			practiceStatistics13.setCollegeName("地学院");
 			practiceStatistics13.setCollegeId(1710L);
 			practiceStatistics13.setProfessionId(2564L);
 			practiceStatistics13.setProfessionName("地质类");
