@@ -102,8 +102,8 @@ public class CetEtlService {
                 c.setCk(1);
             }
             pn++;
-            pn *= pz;
-            log.info("Load data page {}.", pn);
+            int start = pz * pn;
+            log.info("Load data page {}.", start);
             srcDataList = cetETLFromDBManager.queryDcJczb(CetETLFromDBManager.SQL_ETL_DB_SRC, orgId, pn, pz);
         }
         if (!cache.isEmpty()) {
