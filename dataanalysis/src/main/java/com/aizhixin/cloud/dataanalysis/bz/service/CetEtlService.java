@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,14 +28,15 @@ public class CetEtlService {
     private CetStandardScoreManager cetStandardScoreManager;
 
     @Async
+    @Transactional
     public void etlDB2DB(Long orgId) {
         List<SchoolCalendarDTO> schoolCalendarList = analysisIndexManager.querySchoolCalendar(AnalysisIndexManager.SQL_SCHOOL_CALENDAR, orgId);
         int pn = 0;
         int pz = 1000;
-        List<CetStandardScore> cache = new ArrayList<>();
         log.info("Load data page {}.", pn);
         List<CetEtlDTO> srcDataList = cetETLFromDBManager.queryDcJczb(CetETLFromDBManager.SQL_ETL_DB_SRC, orgId, pn, pz);
         while (null != srcDataList && !srcDataList.isEmpty()) {
+            List<CetStandardScore> cache = new ArrayList<>();
             for (CetEtlDTO s : srcDataList) {
                 CetStandardScore c = new CetStandardScore();
                 cache.add(c);
@@ -101,14 +103,15 @@ public class CetEtlService {
                 }
                 c.setCk(1);
             }
+
+            if (!cache.isEmpty()) {
+                log.info("start save {} data", cache.size());
+                cetStandardScoreManager.save(cache);
+            }
             pn++;
             int start = pz * pn;
             log.info("Load data page {}.", start);
-            srcDataList = cetETLFromDBManager.queryDcJczb(CetETLFromDBManager.SQL_ETL_DB_SRC, orgId, pn, pz);
-        }
-        if (!cache.isEmpty()) {
-            log.info("start save {} data", cache.size());
-            cetStandardScoreManager.save(cache);
+            srcDataList = cetETLFromDBManager.queryDcJczb(CetETLFromDBManager.SQL_ETL_DB_SRC, orgId, start, pz);
         }
     }
 }
