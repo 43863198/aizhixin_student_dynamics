@@ -171,7 +171,7 @@ public class CetStatisticsAnalysisJob {
     public void cetScoreStatisticsTop() {
         List<ScoreTop> stList = new ArrayList<>();
         try {
-            StringBuilder topql = new StringBuilder("SELECT cs.JOB_NUMBER as xh, s.NAME as name, cs.TYPE as type,cs.ORG_ID as orgId,cs.EXAMINATION_DATE as date,d.COMPANY_NAME AS dName,ss.COLLEGE_CODE AS collegeCode, " +
+            StringBuilder topql = new StringBuilder("SELECT cs.JOB_NUMBER as xh, s.NAME as name, cs.TYPE as type,cs.ORG_ID as orgId,cs.EXAMINATION_DATE as date,d.COMPANY_NAME AS dName,d.SIMPLE_NAME as simple_name,ss.COLLEGE_CODE AS collegeCode, " +
                     "p.NAME AS pName, ss.PROFESSION_CODE as professionCode ,ss.CLASS_CODE as classCode, ss.CLASS_NAME AS cName,ss.GRADE as grade, MAX(cs.SCORE) as max " +
                     "FROM t_cet_score cs " +
                     "LEFT JOIN t_student_status ss ON cs.JOB_NUMBER = ss.JOB_NUMBER " +
@@ -199,7 +199,10 @@ public class CetStatisticsAnalysisJob {
                     if (null != row.get("collegeCode")) {
                         st.setCollegeCode(row.get("collegeCode").toString());
                     }
-                    if (null != row.get("dName")) {
+                    if(null != row.get("simple_name")){
+                        st.setCollegeName(row.get("simple_name").toString());
+                    }
+                    if (null != row.get("name") && null == row.get("simple_name")){
                         st.setCollegeName(row.get("dName").toString());
                     }
                     if (null != row.get("professionCode")) {
