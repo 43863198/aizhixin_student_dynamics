@@ -1,5 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.zb.controller;
 
+import com.aizhixin.cloud.dataanalysis.bz.service.CetEtlService;
 import com.aizhixin.cloud.dataanalysis.zb.service.AnalysisIndexService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,10 +21,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class IndexAalysisManualController {
     @Autowired
     private AnalysisIndexService analysisIndexService;
+    @Autowired
+    private CetEtlService cetEtlService;
 
-    /**
-     *
-     */
+    @GetMapping(value = "/cet/etl", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "英语等级考试标准数据清洗ETL", response = Void.class, notes = "英语等级考试标准数据清洗ETL<br><br><b>@author zhen.pan</b>")
+    public void etlCet(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId") Long orgId) {
+        cetEtlService.etlDB2DB(orgId);
+    }
+
     @GetMapping(value = "/cet", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "英语等级考试基础指标统计", response = Void.class, notes = "英语等级考试基础指标统计<br><br><b>@author zhen.pan</b>")
     public void cet(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId") Long orgId) {

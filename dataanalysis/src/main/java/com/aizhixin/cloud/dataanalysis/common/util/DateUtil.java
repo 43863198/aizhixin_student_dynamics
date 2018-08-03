@@ -17,6 +17,7 @@ public class DateUtil {
 	public static String FORMAT_SHORT = "yyyy-MM-dd";
 	public static String YEAR_HOMTH = "yyyyMM";
 	private static long ONE_DAY_SEC = 86400000L;
+	private static SimpleDateFormat shorFormat = new SimpleDateFormat(FORMAT_SHORT);
 
 	public static String format(Date date) {
         return format(date, FORMAT_LONG);
@@ -417,4 +418,12 @@ public class DateUtil {
 ////		d = new Date ();
 //		System.out.println(getDayOfWeek(d));
 //	}
+
+	public static Date parseShortDate(String yyyy_MM_dd) {
+		try {
+			return shorFormat.parse(yyyy_MM_dd);
+		} catch (Exception e) {
+			return null;
+		}
+	}
 }
