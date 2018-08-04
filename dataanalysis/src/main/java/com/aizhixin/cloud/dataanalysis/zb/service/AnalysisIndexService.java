@@ -3,6 +3,7 @@ package com.aizhixin.cloud.dataanalysis.zb.service;
 import com.aizhixin.cloud.dataanalysis.zb.dto.*;
 import com.aizhixin.cloud.dataanalysis.zb.manager.AnalysisIndexManager;
 import com.aizhixin.cloud.dataanalysis.zb.manager.IndexAnalysisGradeManager;
+import com.aizhixin.cloud.dataanalysis.zb.manager.StudentScoreIndexManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -23,6 +24,8 @@ public class AnalysisIndexService {
     private AnalysisIndexManager analysisIndexManager;
     @Autowired
     private IndexAnalysisGradeManager indexAnalysisGradeManager;
+    @Autowired
+    private StudentScoreIndexManager studentScoreIndexManager;
 
     @Async
     public void schoolBaseIndex(Long orgId) {
@@ -237,6 +240,25 @@ public class AnalysisIndexService {
                 }
                 cache.add(d);
             }
+        }
+    }
+
+    @Async
+    public void schoolStudentScoreIndex(Long orgId) {
+        List<StudentScorezbDTO> cache = new ArrayList<>();
+        List<XnXqDTO> xnList = studentScoreIndexManager.queryStudentScoreXnXq(StudentScoreIndexManager.SQL_DC_XN_XQ, orgId.toString());
+        for (XnXqDTO d : xnList) {
+            List<StudentScorezbDTO> rs = studentScoreIndexManager.queryDczb(StudentScoreIndexManager.SQL_DC_COLLEGE, orgId.toString(), d.getXn(), d.getXq());
+            if (null != rs && !rs.isEmpty()) {
+                cache.addAll(rs);
+            }
+            rs = studentScoreIndexManager.queryDczb(StudentScoreIndexManager.SQL_DC_PROFESSIONAL, orgId.toString(), d.getXn(), d.getXq());
+            if (null != rs && !rs.isEmpty()) {
+                cache.addAll(rs);
+            }
+        }
+        if (!cache.isEmpty()) {
+            studentScoreIndexManager.saveStudentScoreIndex(cache, orgId.toString());
         }
     }
 }
