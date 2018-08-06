@@ -1,9 +1,11 @@
 package com.aizhixin.cloud.dataanalysis.analysis.controller;
 
-import com.aizhixin.cloud.dataanalysis.analysis.domain.NewStudentReportDomain;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.*;
 import com.aizhixin.cloud.dataanalysis.analysis.service.CourseEvaluateService;
 import com.aizhixin.cloud.dataanalysis.analysis.service.SchoolStatisticsService;
+import com.aizhixin.cloud.dataanalysis.alertinformation.domain.DealDomain;
+import com.aizhixin.cloud.dataanalysis.analysis.service.SchoolStatisticsService;
+import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.studentRegister.service.StudentRegisterService;
 import io.swagger.annotations.Api;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -182,7 +185,7 @@ public class SchoolConditionStatisticsController {
     @GetMapping(value = "/graduate", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "学生毕业情况", response = Void.class, notes = "学生毕业情况<br><br><b>@author wangjun</b>")
     public ResponseEntity<Map<String, Object>>  graduateSituation(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
-        return new ResponseEntity<>(schoolStatisticsService.graduateSituation(orgId),HttpStatus.OK);
+        return new ResponseEntity<Map<String, Object>>(schoolStatisticsService.graduateSituation(orgId),HttpStatus.OK);
     }
 
     /**
@@ -193,7 +196,7 @@ public class SchoolConditionStatisticsController {
     @GetMapping(value = "/studentstatistics", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "学生情况", response = Void.class, notes = "学生情况<br><br><b>@author wangjun</b>")
     public ResponseEntity<Map<String, Object>>  studentStatistics(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
-        return new ResponseEntity<>(schoolStatisticsService.studentStatistics(orgId),HttpStatus.OK);
+        return new ResponseEntity<Map<String, Object>>(schoolStatisticsService.studentStatistics(orgId),HttpStatus.OK);
     }
 
     /**
@@ -204,12 +207,9 @@ public class SchoolConditionStatisticsController {
     @GetMapping(value = "/teachingbuildingusage", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "今日教学楼使用情况", response = Void.class, notes = "今日教学楼使用情况<br><br><b>@author wangjun</b>")
     public ResponseEntity<Map<String, Object>>  teachingBuildingUsage(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
-        return new ResponseEntity<>(schoolStatisticsService.teachingBuildingUsage(orgId),HttpStatus.OK);
+        return new ResponseEntity<Map<String, Object>>(schoolStatisticsService.teachingBuildingUsage(orgId),HttpStatus.OK);
     }
 
-    @GetMapping(value = "/newstudentreporttop10", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "新生报到top10", notes = "新生报到top10，最新数据<br><br><b>@author panzhen</b>")
-    public ResponseEntity<List<NewStudentReportDomain>> newstudentReportTop10(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId) {
-        return new ResponseEntity<>(schoolStatisticsService.findNewReportTop10(orgId), HttpStatus.OK);
-    }
+
+
 }

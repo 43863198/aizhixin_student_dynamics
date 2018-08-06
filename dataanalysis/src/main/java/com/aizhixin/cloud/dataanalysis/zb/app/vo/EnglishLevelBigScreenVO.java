@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@ApiModel(description = "最近一天英语等级考试通过率")
+@ApiModel
 @NoArgsConstructor
 @ToString
 public class EnglishLevelBigScreenVO {

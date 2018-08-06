@@ -1,47 +1,56 @@
 package com.aizhixin.cloud.dataanalysis.analysis.service;
 
+import com.aizhixin.cloud.dataanalysis.alertinformation.domain.RegisterAlertCountDomain;
 import com.aizhixin.cloud.dataanalysis.analysis.constant.TrendType;
-import com.aizhixin.cloud.dataanalysis.analysis.domain.NewStudentReportDomain;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.*;
+import com.aizhixin.cloud.dataanalysis.analysis.entity.PracticeStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.CetScoreStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.PracticeStaticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.SchoolStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.TeachingScoreStatisticsRespository;
-import com.aizhixin.cloud.dataanalysis.analysis.vo.GraduateRateVO;
-import com.aizhixin.cloud.dataanalysis.analysis.vo.ReportRateVO;
-import com.aizhixin.cloud.dataanalysis.analysis.vo.StudentStatisticsVO;
-import com.aizhixin.cloud.dataanalysis.analysis.vo.TeachingBuildingsUsegeVO;
+import com.aizhixin.cloud.dataanalysis.analysis.vo.*;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
+
+import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
 import com.mongodb.BasicDBObject;
+import liquibase.executor.jvm.RowMapper;
+import liquibase.util.StringUtils;
+
 import org.hibernate.SQLQuery;
+import org.hibernate.mapping.*;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -964,23 +973,5 @@ public class SchoolStatisticsService {
         }
     }
 
-    @Transactional(readOnly = true)
-    public List<NewStudentReportDomain> findNewReportTop10(Long orgId) {
-        List<NewStudentReportDomain> list = new ArrayList<>();
-        if (null == orgId || orgId <= 0) {
-            return list;
-        }
-        String sql = "SELECT ss.TEACHER_YEAR, ss.SEMESTER, ss.COLLEGE_NAME, SUM(ss.NEW_STUDENTS_COUNT) as NSN, SUM(ss.ALREADY_REPORT) as RN " +
-                "FROM T_SCHOOL_STATISTICS ss " +
-                "WHERE ss.ORG_ID=? AND ss.TEACHER_YEAR=(SELECT MAX(TEACHER_YEAR) FROM T_SCHOOL_STATISTICS WHERE ORG_ID=?) " +
-                "GROUP BY ss.COLLEGE_NAME " +
-                "ORDER BY SUM(ss.ALREADY_REPORT)/SUM(ss.NEW_STUDENTS_COUNT) DESC LIMIT 10";
-        return jdbcTemplate.query(sql, new Object[]{orgId, orgId}, new int [] {Types.BIGINT, Types.BIGINT}, new RowMapper<NewStudentReportDomain>() {
-            public NewStudentReportDomain mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return new NewStudentReportDomain (rs.getString("TEACHER_YEAR"), rs.getString("SEMESTER"),
-                        rs.getString("COLLEGE_NAME"), rs.getLong("NSN"),rs.getLong("RN"));
-            }
-        });
-    }
 
 }
