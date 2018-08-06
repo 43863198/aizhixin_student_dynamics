@@ -27,6 +27,7 @@ public class CetIndexController {
     private CetLevelTestService cetLevelTestService;
 
     @GetMapping(value = "/pass", produces = MediaType.APPLICATION_JSON_VALUE)
+
     @ApiOperation(httpMethod = "GET", value = "三、四、六级英语等级考试大屏通过率", response = Void.class, notes = "三、四、六级英语等级考试大屏通过率<br><br><b>@author zhen.pan</b>")
     public List<EnglishLevelBigScreenVO> cet(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId) {
         return cetLevelTestService.getCetLevelBigScreenPass(orgId);
