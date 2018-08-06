@@ -1,56 +1,50 @@
 package com.aizhixin.cloud.dataanalysis.analysis.service;
 
-import com.aizhixin.cloud.dataanalysis.alertinformation.domain.RegisterAlertCountDomain;
 import com.aizhixin.cloud.dataanalysis.analysis.constant.TrendType;
+import com.aizhixin.cloud.dataanalysis.analysis.domain.MapResultDomain;
+import com.aizhixin.cloud.dataanalysis.analysis.domain.NewStudentReportDomain;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.*;
-import com.aizhixin.cloud.dataanalysis.analysis.entity.PracticeStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.CetScoreStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.PracticeStaticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.SchoolStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.TeachingScoreStatisticsRespository;
-import com.aizhixin.cloud.dataanalysis.analysis.vo.*;
+import com.aizhixin.cloud.dataanalysis.analysis.vo.GraduateRateVO;
+import com.aizhixin.cloud.dataanalysis.analysis.vo.ReportRateVO;
+import com.aizhixin.cloud.dataanalysis.analysis.vo.StudentStatisticsVO;
+import com.aizhixin.cloud.dataanalysis.analysis.vo.TeachingBuildingsUsegeVO;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
-
-import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
 import com.mongodb.BasicDBObject;
-import liquibase.executor.jvm.RowMapper;
-import liquibase.util.StringUtils;
-
 import org.hibernate.SQLQuery;
-import org.hibernate.mapping.*;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.mapreduce.MapReduceOptions;
+import org.springframework.data.mongodb.core.mapreduce.MapReduceResults;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -681,21 +675,34 @@ public class SchoolStatisticsService {
         Map<String, Object> result = new HashMap<>();
         List<ReportRateVO> reportRateVOList = new ArrayList<>();
         try {
-            //条件
             Criteria criteria = Criteria.where("orgId").is(orgId);
             criteria.and("isRegister").is(1);
-            AggregationResults<BasicDBObject> register = mongoTemplate.aggregate(
-                    Aggregation.newAggregation(
-                            Aggregation.match(criteria),
-                            Aggregation.group("schoolYear").count().as("count").first("schoolYear").as("schoolYear")
-                    ), StudentRegister.class, BasicDBObject.class);
+            org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
+            query.addCriteria(criteria);
+            //条件
 
-            for (int i = 0; i < register.getMappedResults().size(); i++) {
+//            AggregationResults<BasicDBObject> register = mongoTemplate.aggregate(
+//                    Aggregation.newAggregation(
+//                            Aggregation.match(criteria),
+//                            Aggregation.group("schoolYear").count().as("count").first("schoolYear").as("schoolYear")
+//                    ), StudentRegister.class, BasicDBObject.class);
+            String map="function(){emit(this.schoolYear, 1);}";
+            String reduce="function(k, v){return Array.sum(v)}";
+            MapReduceResults<MapResultDomain> resultDomains = mongoTemplate.mapReduce(query,"StudentRegister",map,reduce,MapResultDomain.class);
+            for (MapResultDomain mapResultDomain : resultDomains) {
                 ReportRateVO rr = new ReportRateVO();
-                rr.setYear(register.getMappedResults().get(i).getString("schoolYear"));
-                rr.setReportNumber(register.getMappedResults().get(i).getInt("count"));
+                rr.setYear(mapResultDomain.get_id());
+                rr.setReportNumber(mapResultDomain.getValue().intValue());
                 reportRateVOList.add(rr);
+                /*System.out.print(mapResultDomain.get_id());
+                System.out.print(mapResultDomain.getValue());*/
             }
+//            for (int i = 0; i < register.getMappedResults().size(); i++) {
+//                ReportRateVO rr = new ReportRateVO();
+//                rr.setYear(register.getMappedResults().get(i).getString("schoolYear"));
+//                rr.setReportNumber(register.getMappedResults().get(i).getInt("count"));
+//                reportRateVOList.add(rr);
+//            }
             if (reportRateVOList.size() > 1) {
                 for (int j = 1; j < reportRateVOList.size(); j++) {
                     Double change = (Double.valueOf(reportRateVOList.get(j).getReportNumber() - Double.valueOf(reportRateVOList.get(j - 1).getReportNumber())
@@ -973,5 +980,23 @@ public class SchoolStatisticsService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public List<NewStudentReportDomain> findNewReportTop10(Long orgId) {
+        List<NewStudentReportDomain> list = new ArrayList<>();
+        if (null == orgId || orgId <= 0) {
+            return list;
+        }
+        String sql = "SELECT ss.TEACHER_YEAR, ss.SEMESTER, ss.COLLEGE_NAME, SUM(ss.NEW_STUDENTS_COUNT) as NSN, SUM(ss.ALREADY_REPORT) as RN " +
+                "FROM T_SCHOOL_STATISTICS ss " +
+                "WHERE ss.ORG_ID=? AND ss.TEACHER_YEAR=(SELECT MAX(TEACHER_YEAR) FROM T_SCHOOL_STATISTICS WHERE ORG_ID=?) " +
+                "GROUP BY ss.COLLEGE_NAME " +
+                "ORDER BY SUM(ss.ALREADY_REPORT)/SUM(ss.NEW_STUDENTS_COUNT) DESC LIMIT 10";
+        return jdbcTemplate.query(sql, new Object[]{orgId, orgId}, new int [] {Types.BIGINT, Types.BIGINT}, new RowMapper<NewStudentReportDomain>() {
+            public NewStudentReportDomain mapRow(ResultSet rs, int rowNum) throws SQLException {
+                return new NewStudentReportDomain (rs.getString("TEACHER_YEAR"), rs.getString("SEMESTER"),
+                        rs.getString("COLLEGE_NAME"), rs.getLong("NSN"),rs.getLong("RN"));
+            }
+        });
+    }
 
 }
