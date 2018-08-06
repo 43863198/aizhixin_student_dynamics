@@ -964,6 +964,7 @@ public class SchoolStatisticsService {
         }
     }
 
+    @Transactional(readOnly = true)
     public List<NewStudentReportDomain> findNewReportTop10(Long orgId) {
         List<NewStudentReportDomain> list = new ArrayList<>();
         if (null == orgId || orgId <= 0) {
@@ -973,8 +974,8 @@ public class SchoolStatisticsService {
                 "FROM T_SCHOOL_STATISTICS ss " +
                 "WHERE ss.ORG_ID=? AND ss.TEACHER_YEAR=(SELECT MAX(TEACHER_YEAR) FROM T_SCHOOL_STATISTICS WHERE ORG_ID=?) " +
                 "GROUP BY ss.COLLEGE_NAME " +
-                "ORDER BY SUM(ss.ALREADY_REPORT)/SUM(ss.NEW_STUDENTS_COUNT) desc LIMIT 10";
-        return jdbcTemplate.query(sql.toString(), new Object[]{orgId, orgId}, new int [] {Types.BIGINT, Types.BIGINT}, new RowMapper<NewStudentReportDomain>() {
+                "ORDER BY SUM(ss.ALREADY_REPORT)/SUM(ss.NEW_STUDENTS_COUNT) DESC LIMIT 10";
+        return jdbcTemplate.query(sql, new Object[]{orgId, orgId}, new int [] {Types.BIGINT, Types.BIGINT}, new RowMapper<NewStudentReportDomain>() {
             public NewStudentReportDomain mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return new NewStudentReportDomain (rs.getString("TEACHER_YEAR"), rs.getString("SEMESTER"),
                         rs.getString("COLLEGE_NAME"), rs.getLong("NSN"),rs.getLong("RN"));
