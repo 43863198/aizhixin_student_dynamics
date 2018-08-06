@@ -20,16 +20,16 @@ public class StandardScoreService {
 
     @Async
     public void etlDB2DB(Long orgId) {
-        List<StandardScore> list = scoreETLFromDBManager.queryDBData(ScoreETLFromDBManager.SQL_ETL_DB_SRC, orgId, 0, 5000);
         int pn = 0;
-        int pz = 1000;
+        int pz = 5000;
+        List<StandardScore> list = scoreETLFromDBManager.queryDBData(ScoreETLFromDBManager.SQL_ETL_DB_SRC, orgId, pn, 5000);
         log.info("Load data page {}.", pn);
         while (null != list && !list.isEmpty()) {
             standardScoreManager.save(list);
             pn++;
             int start = pz * pn;
             log.info("Load data page {}.", start);
-            list = scoreETLFromDBManager.queryDBData(ScoreETLFromDBManager.SQL_ETL_DB_SRC, orgId, start, 5000);
+            list = scoreETLFromDBManager.queryDBData(ScoreETLFromDBManager.SQL_ETL_DB_SRC, orgId, start, pz);
         }
     }
 }

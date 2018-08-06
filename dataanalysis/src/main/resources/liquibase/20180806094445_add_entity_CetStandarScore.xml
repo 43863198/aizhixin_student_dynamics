@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+    <!-- 标准等级考试成绩日志-->
+    <changeSet id="20180806094445" author="zhen.pan">
+		<preConditions onFail="MARK_RAN">
+	        <not>
+	            <tableExists tableName="T_B_DJKSXX"/>
+	        </not>
+	    </preConditions>
+        <createTable tableName="T_B_DJKSXX" remarks="通知记录表">
+            <column name="ID" type="VARCHAR(60)" autoIncrement="false">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="XN" type="VARCHAR(20)" remarks="XN学年"/>
+            <column name="XQM" type="VARCHAR(10)" remarks="XQM学期"/>
+            <column name="XXDM" type="VARCHAR(20)" remarks="XXDM学校代码"/>
+            <column name="YXSH" type="VARCHAR(20)" remarks="YXSH院系所号"/>
+            <column name="ZYH" type="VARCHAR(20)" remarks="ZYH专业号"/>
+            <column name="BH" type="VARCHAR(120)" remarks="BH班级编码"/>
+            <column name="XH" type="VARCHAR(50)" remarks="XH学号"/>
+            <column name="XM" type="VARCHAR(80)" remarks="XM姓名"/>
+            <column name="XBM" type="VARCHAR(10)" remarks="XBM性别码"/>
+            <column name="NJ" type="VARCHAR(10)" remarks="NJ年级"/>
+            <column name="LYQXM" type="VARCHAR(10)" remarks="LYQXM来源区县码"/>
+            <column name="LYDQM" type="VARCHAR(10)" remarks="LYDQM来源地区码"/>
+            <column name="LYGBM" type="VARCHAR(10)" remarks="LYGBM来源国别码"/>
+            <column name="LYZBM" type="VARCHAR(10)" remarks="LYZBM来源洲别码"/>
+            <column name="CSRQ" type="DATE" remarks="CSRQ出生日期"/>
+            <column name="KSLX" type="VARCHAR(10)" remarks="KSLX考试类型"/>
+            <column name="ZKZH" type="VARCHAR(20)" remarks="ZKZH准考证号"/>
+            <column name="KSRQ" type="DATE" remarks="KSRQ考试日期"/>
+            <column name="BMRQ" type="DATE" remarks="BMRQ报名日期"/>
+            <column name="KSSC" type="INT" remarks="KSSC考试时长"/>
+            <column name="CJ" type="DECIMAL(8,2)" remarks="CJ综合成绩"/>
+            <column name="TLCJ" type="DECIMAL(8,2)" remarks="TLCJ听力成绩"/>
+            <column name="YDCJ" type="DECIMAL(8,2)" remarks="YDCJ阅读成绩"/>
+            <column name="KSSC" type="DECIMAL(8,2)" remarks="XZCJ写作成绩"/>
+            <column name="TG" type="INT(4)" remarks="TG是否通过"/>
+            <column name="CK" type="INT(4)" remarks="CK是否参考"/>
+        </createTable>
+        <createIndex indexName="idx_djksxx_xn" tableName="T_B_DJKSXX" unique="false">
+            <column name="XN" type="VARCHAR(20)"/>
+        </createIndex>
+        <createIndex indexName="idx_djksxx_xqm" tableName="T_B_DJKSXX" unique="false">
+            <column name="XQM" type="VARCHAR(10)"/>
+        </createIndex>
+        <createIndex indexName="idx__djksxx_xxdm" tableName="T_B_DJKSXX" unique="false">
+            <column name="XXDM" type="VARCHAR(20)"/>
+        </createIndex>
+        <createIndex indexName="idx__djksxx_yxsh" tableName="T_B_DJKSXX" unique="false">
+            <column name="YXSH" type="VARCHAR(20)"/>
+        </createIndex>
+        <createIndex indexName="idx_djksxx_zyh" tableName="T_B_DJKSXX" unique="false">
+            <column name="ZYH" type="VARCHAR(20)"/>
+        </createIndex>
+        <createIndex indexName="idx_djksxx_bh" tableName="T_B_DJKSXX" unique="false">
+            <column name="BH" type="VARCHAR(120)"/>
+        </createIndex>
+        <createIndex indexName="idx_djksxx_xh" tableName="T_B_DJKSXX" unique="false">
+            <column name="XH" type="VARCHAR(50)"/>
+        </createIndex>
+        <createIndex indexName="idx_djksxx_nj" tableName="T_B_DJKSXX" unique="false">
+            <column name="NJ" type="VARCHAR(10)"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
