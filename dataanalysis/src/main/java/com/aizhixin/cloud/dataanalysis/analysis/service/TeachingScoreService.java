@@ -322,8 +322,8 @@ public class TeachingScoreService {
                 condition.put("semester", semester);
             }
             if (null != orgId) {
-                cql.append(" and tt.ORG_ID = :orgId");
-                sql.append(" and tt.ORG_ID = :orgId");
+                cql.append(" and tx.XXID = :orgId");
+                sql.append(" and tx.XXID = :orgId");
                 condition.put("orgId", orgId);
             }
             if (null != collegeIds) {
@@ -350,19 +350,19 @@ public class TeachingScoreService {
                 } else {
                     tds.add(Integer.valueOf(grade));
                 }
-                cql.append(" and tt.GRADE IN :grades");
-                sql.append(" and tt.GRADE IN :grades");
+                cql.append(" and tx.NJ IN :grades");
+                sql.append(" and tx.NJ IN :grades");
                 condition.put("grades", tds);
             }
             if (!org.apache.commons.lang.StringUtils.isBlank(nj)) {
-                cql.append(" and (tt.USER_NAME LIKE :nj OR tt.JOB_NUM LIKE :nj)");
-                sql.append(" and (tt.USER_NAME LIKE :nj OR tt.JOB_NUM LIKE :nj)");
+                cql.append(" and (tx.XM LIKE :nj OR tx.XH LIKE :nj)");
+                sql.append(" and (tx.XM LIKE :nj OR tx.XH LIKE :nj)");
                 condition.put("nj", "%" + nj + "%");
             }
 
             if(!StringUtils.isBlank(professionCode)){
-                cql.append(" and tt.PROFESSIONAL_ID = :professionCode");
-                sql.append(" and tt.PROFESSIONAL_ID = :professionCode");
+                cql.append(" and tx.ZYH = :professionCode");
+                sql.append(" and tx.ZYH = :professionCode");
                 condition.put("professionCode", professionCode);
             }
 
