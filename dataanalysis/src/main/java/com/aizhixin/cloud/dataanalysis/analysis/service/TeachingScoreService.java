@@ -309,8 +309,8 @@ public class TeachingScoreService {
         Long total = 0L;
         try {
             Map<String, Object> condition = new HashMap<>();
-            StringBuilder cql = new StringBuilder("SELECT count(1) FROM T_TEACHING_SCORE_DETAILS  as  tt ,  t_xsjbxx as tx WHERE 1 = 1 and tx.XH= tt.JOB_NUM  ");
-            StringBuilder sql = new StringBuilder("SELECT JOB_NUM,USER_NAME,CLASS_NAME,GRADE,COLLEGE_NAME,AVERAGE_GPA,REFERENCE_SUBJECTS,FAILED_SUBJECTS,FAILING_GRADE_CREDITS FROM T_TEACHING_SCORE_DETAILS   as tt ,  t_xsjbxx as tx WHERE 1 = 1 and tx.XH= tt.JOB_NUM  ");
+            StringBuilder cql = new StringBuilder("SELECT count(1) FROM T_TEACHING_SCORE_DETAILS  as  tt  WHERE   1 = 1 ");
+            StringBuilder sql = new StringBuilder("SELECT JOB_NUM,USER_NAME,CLASS_NAME,GRADE,COLLEGE_NAME,AVERAGE_GPA,REFERENCE_SUBJECTS,FAILED_SUBJECTS,FAILING_GRADE_CREDITS FROM T_TEACHING_SCORE_DETAILS   as tt  WHERE 1 = 1  ");
             if (null != teacherYear) {
                 cql.append(" and tt.TEACHER_YEAR = :teacherYear");
                 sql.append(" and tt.TEACHER_YEAR = :teacherYear");
@@ -322,8 +322,8 @@ public class TeachingScoreService {
                 condition.put("semester", semester);
             }
             if (null != orgId) {
-                cql.append(" and tx.XXID = :orgId");
-                sql.append(" and tx.XXID = :orgId");
+                cql.append(" and tt.ORG_ID = :orgId");
+                sql.append(" and tt.ORG_ID = :orgId");
                 condition.put("orgId", orgId);
             }
             if (null != collegeIds) {
@@ -336,8 +336,8 @@ public class TeachingScoreService {
                 } else {
                     cc.add(Long.valueOf(collegeIds));
                 }
-                cql.append(" and tx.YXSH IN :collegeIds");
-                sql.append(" and tx.YXSH IN :collegeIds");
+                cql.append(" and tt.COLLEGE_CODE IN :collegeIds");
+                sql.append(" and tt.COLLEGE_CODE IN :collegeIds");
                 condition.put("collegeIds", cc);
             }
             if (null != grade) {
@@ -350,19 +350,19 @@ public class TeachingScoreService {
                 } else {
                     tds.add(Integer.valueOf(grade));
                 }
-                cql.append(" and tx.NJ IN :grades");
-                sql.append(" and tx.NJ IN :grades");
+                cql.append(" and tt.TEACHER_YEAR IN :grades");
+                sql.append(" and tt.TEACHER_YEAR IN :grades");
                 condition.put("grades", tds);
             }
             if (!org.apache.commons.lang.StringUtils.isBlank(nj)) {
-                cql.append(" and (tx.XM LIKE :nj OR tx.XH LIKE :nj)");
-                sql.append(" and (tx.XM LIKE :nj OR tx.XH LIKE :nj)");
+                cql.append(" and (tt.USER_NAME LIKE :nj OR tt.JOB_NUM LIKE :nj)");
+                sql.append(" and (tt.USER_NAME LIKE :nj OR tt.JOB_NUM LIKE :nj)");
                 condition.put("nj", "%" + nj + "%");
             }
 
             if(!StringUtils.isBlank(professionCode)){
-                cql.append(" and tx.ZYH = :professionCode");
-                sql.append(" and tx.ZYH = :professionCode");
+                cql.append(" and tt.PROFESSIONAL_CODE = :professionCode");
+                sql.append(" and tt.PROFESSIONAL_CODE = :professionCode");
                 condition.put("professionCode", professionCode);
             }
 
