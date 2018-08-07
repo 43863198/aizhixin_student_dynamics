@@ -691,7 +691,16 @@ public class SchoolStatisticsService {
             MapReduceResults<MapResultDomain> resultDomains = mongoTemplate.mapReduce(query,"StudentRegister",map,reduce,MapResultDomain.class);
             for (MapResultDomain mapResultDomain : resultDomains) {
                 ReportRateVO rr = new ReportRateVO();
-                rr.setYear(mapResultDomain.get_id());
+                String tmp = mapResultDomain.get_id();
+                if (null != tmp) {
+                    int p = tmp.indexOf(".");
+                    if (p > 0) {
+                        rr.setYear(tmp.substring(0, p));
+                    } else {
+                        rr.setYear(tmp);
+                    }
+                }
+//                rr.setYear(Integer.valueOf(mapResultDomain.get_id()).toString());
                 rr.setReportNumber(mapResultDomain.getValue().intValue());
                 reportRateVOList.add(rr);
                 /*System.out.print(mapResultDomain.get_id());

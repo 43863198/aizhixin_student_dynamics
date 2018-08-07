@@ -1644,8 +1644,8 @@ public class CetStatisticAnalysisService {
             Map<String, Object> condition = new HashMap<>();
             StringBuilder sql = new StringBuilder("SELECT cs.JOB_NUMBER as xh,x.XM as xm,x.BJMC as bj,x.ZYMC as zy,x.YXSMC xy,x.NJ nj,cs.SCORE as score  " +
                     "FROM t_xsjbxx x,(select JOB_NUMBER ,max(c.SCORE) as SCORE,ORG_ID,TYPE from t_cet_score as c where c.SCORE > 0 and c.TYPE Like '%大学英语" + cetType + "%' group by c.JOB_NUMBER) cs  WHERE x.XH = cs.JOB_NUMBER  " +
-                    "and x.DQZT NOT IN ('02','04','16')  ");
-            StringBuilder cql = new StringBuilder("SELECT    count(1) FROM t_cet_score cs,t_xsjbxx x  WHERE x.XH = cs.JOB_NUMBER and x.DQZT NOT IN ('02','04','16')  ");
+                    "and x.DQZT NOT IN ('02','04','16')  and x.RXNY <= CURDATE() and x.YBYNY >= CURDATE()");
+            StringBuilder cql = new StringBuilder("SELECT  count(1) FROM t_cet_score cs,t_xsjbxx x  WHERE x.XH = cs.JOB_NUMBER and x.DQZT NOT IN ('02','04','16') and x.RXNY <= CURDATE() and x.YBYNY >= CURDATE() ");
             /*condition.put("start", start);
             condition.put("end", end);*/
             if (null != orgId) {
