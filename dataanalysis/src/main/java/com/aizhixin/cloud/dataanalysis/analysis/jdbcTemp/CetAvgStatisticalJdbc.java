@@ -29,11 +29,7 @@ public class CetAvgStatisticalJdbc {
             sql+=" ,ts.`YXSMC` as `name` ";
         }else{
             if (!StringUtils.isEmpty(professionCode)){
-                if (!StringUtils.isEmpty(classCode)){
-                    sql+=" ,ts.`BJMC` as `name` ";
-                }else{
-                    sql+=" ,ts.`ZYMC` as `name` ";
-                }
+                sql+=" ,ts.`BJMC` as `name` ";
             }else{
                 sql+=" ,ts.`ZYMC` as `name` ";
             }
@@ -45,8 +41,8 @@ public class CetAvgStatisticalJdbc {
         if (!StringUtils.isEmpty(professionCode)){
             sql+=" AND ts.`ZYH`='"+professionCode+"'";
         }
-        if (!StringUtils.isEmpty(classCode)&&!StringUtils.isEmpty(className)){
-            sql+=" AND ts.`BH`='"+classCode+"'";
+        if (!StringUtils.isEmpty(className)){
+//            sql+=" AND ts.`BH`='"+classCode+"'";
             sql+=" AND ts.`BJMC`='"+className+"'";
         }
         sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%' GROUP BY tcs.`JOB_NUMBER`";
@@ -54,13 +50,11 @@ public class CetAvgStatisticalJdbc {
 //            sql+=" GROUP BY ts.`YXSH`";
 //        }else{
 //            if (!StringUtils.isEmpty(professionCode)){
-//                if (!StringUtils.isEmpty(classCode)){
-//                    sql+=" GROUP BY ts.`ZYH`";
+//                if (!StringUtils.isEmpty(className)){
+//                    sql+=" GROUP BY  ts.`YXSH`, ts.`ZYH`, ts.`BJMC`";
 //                }else{
-//                    sql+=" GROUP BY ts.`BH`";
+//                    sql+=" GROUP BY ts.`YXSH`, ts.`ZYH`";
 //                }
-//            }else{
-//                sql+=" GROUP BY ts.`ZYH`";
 //            }
 //        }
 
