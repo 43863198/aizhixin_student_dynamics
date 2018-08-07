@@ -3,6 +3,7 @@ package com.aizhixin.cloud.dataanalysis.zb.controller;
 import com.aizhixin.cloud.dataanalysis.bz.service.CetEtlService;
 import com.aizhixin.cloud.dataanalysis.bz.service.StandardScoreService;
 import com.aizhixin.cloud.dataanalysis.zb.service.AnalysisIndexService;
+import com.aizhixin.cloud.dataanalysis.zb.service.CetLjIndexAnalysisService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -26,6 +27,8 @@ public class IndexAalysisManualController {
     private CetEtlService cetEtlService;
     @Autowired
     private StandardScoreService standardScoreService;
+    @Autowired
+    private CetLjIndexAnalysisService cetLjIndexAnalysisService;
 
     @GetMapping(value = "/cet/etl", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "英语等级考试数据库对数据库标准数据清洗ETL", response = Void.class, notes = "英语等级考试数据库对数据库标准数据清洗ETL<br><br><b>@author zhen.pan</b>")
@@ -55,5 +58,13 @@ public class IndexAalysisManualController {
     @ApiOperation(httpMethod = "GET", value = "学生成绩指标的计算", response = Void.class, notes = "学生成绩指标的计算<br><br><b>@author zhen.pan</b>")
     public void score(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId") Long orgId) {
         analysisIndexService.schoolStudentScoreIndex(orgId);
+    }
+
+
+
+    @GetMapping(value = "/cetlj", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "英语等级考试基础指标统计", response = Void.class, notes = "英语等级考试基础指标统计<br><br><b>@author zhen.pan</b>")
+    public void cetlj(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId") Long orgId) {
+        cetLjIndexAnalysisService.schoolBaseIndex(orgId);
     }
 }

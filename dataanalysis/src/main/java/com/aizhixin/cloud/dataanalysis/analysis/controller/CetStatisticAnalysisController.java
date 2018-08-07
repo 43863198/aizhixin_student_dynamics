@@ -312,12 +312,11 @@ public class CetStatisticAnalysisController {
     @GetMapping(value = "/top", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "英语考试单次数据分析---top10", response = Void.class, notes = "英语考试单次数据分析---top10<br><br><b>@author jianwei.wu</b>")
     public ResponseEntity<Map<String, Object>> getTop(
-            @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "cetType 成绩类型： (三级;四级;六级;)" , required = true ) @RequestParam(value = "cetType" , required = true) String cetType,
-            @ApiParam(value = "teacherYear 学年" , required = true ) @RequestParam(value = "teacherYear" , required = true) String teacherYear,
-            @ApiParam(value = "semester 学期 (春;秋;)" , required = true) @RequestParam(value = "semester" , required = true) String semester
-    ) {
-        return new ResponseEntity<Map<String, Object>>(cetStatisticAnalysisService.getTop(orgId, teacherYear, semester, cetType), HttpStatus.OK);
+            @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId") Long orgId,
+            @ApiParam(value = "cetType 成绩类型： (三级;四级;六级;)" , required = true ) @RequestParam(value = "cetType") String cetType,
+            @ApiParam(value = "teacherYear 学年" , required = true ) @RequestParam(value = "teacherYear") String teacherYear,
+            @ApiParam(value = "semester 学期 (春;秋;)" , required = true) @RequestParam(value = "semester") String semester ) {
+        return new ResponseEntity<>(cetStatisticAnalysisService.getTop(orgId, teacherYear, semester, cetType), HttpStatus.OK);
     }
 
     /**
