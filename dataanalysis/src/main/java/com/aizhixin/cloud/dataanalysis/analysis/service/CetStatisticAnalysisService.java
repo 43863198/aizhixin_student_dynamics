@@ -1458,6 +1458,7 @@ public class CetStatisticAnalysisService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Map<String, Object> organizationStatistics(Long orgId,String collegeCode,String professionCode,String classCode, String className, String cetType) {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> condition = new HashMap<>();
@@ -1479,24 +1480,25 @@ public class CetStatisticAnalysisService {
             StringBuilder cql = new StringBuilder("");
             if (!StringUtils.isBlank(collegeCode)) {
                 if (!StringUtils.isBlank(professionCode)) {
-                    if (!StringUtils.isBlank(classCode)&&!StringUtils.isBlank(className)) {
+                    if (!StringUtils.isBlank(className)) {
                         sql.append("SELECT ss.CLASS_NAME as name, SUM(IF(c.max > 0, 1, 0)) AS total, ");
                         cql.append("SELECT ss.CLASS_NAME as name,count(ss.JOB_NUMBER) AS total  FROM t_student_status ss WHERE 1 = 1 ");
-                        sql.append(" SUM(IF(c.max >= '" + theScore +"', 1, 0)) AS pass ");
+                        sql.append(" SUM(IF(c.max >= " + theScore +", 1, 0)) AS pass ");
                         sql.append(" FROM t_student_status ss LEFT JOIN  (SELECT cs.JOB_NUMBER as xh, MAX(cs.SCORE) as max FROM t_cet_score cs ");
                         sql.append(" WHERE 1=1 AND cs.TYPE LIKE "+"'%大学英语" + cetType + "%'" );
-                        sql.append(" GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE having total>0");
+                        sql.append(" GROUP BY xh ) c ON ss.JOB_NUMBER = c.xh WHERE 1 = 1 AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE");
                         sql.append(ql);
                         cql.append(ql);
 
-                        sql.append(" and ss.CLASS_CODE = :classCode ");
-                        cql.append(" and ss.CLASS_CODE = :classCode ");
+//                        sql.append(" and ss.CLASS_CODE = :classCode ");
+//                        cql.append(" and ss.CLASS_CODE = :classCode ");
                         sql.append(" and ss.CLASS_NAME = :className ");
                         cql.append(" and ss.CLASS_NAME = :className ");
                         sql.append(" and ss.PROFESSION_CODE = :professionCode ");
                         cql.append(" and ss.PROFESSION_CODE = :professionCode ");
 
-                        condition.put("classCode", classCode);
+                        sql.append("  having total>0");
+//                        condition.put("classCode", classCode);
                         condition.put("className", className);
                         condition.put("professionCode", professionCode);
                     }else {
@@ -1543,7 +1545,7 @@ public class CetStatisticAnalysisService {
                 cql.append(ql);
                 sql.append(" group by ss.COLLEGE_CODE having total>0");
             }
-            cql.append("  AND ss.STATE NOT IN ('02','04','16') AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE group by name");
+            cql.append("  AND ss.STATE NOT IN ('02','04','16') AND CURDATE() BETWEEN ss.ENROL_YEAR AND ss.GRADUATION_DATE group by name ");
             Query sq = em.createNativeQuery(sql.toString());
             Query cq = em.createNativeQuery(cql.toString());
             sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
@@ -1606,6 +1608,7 @@ public class CetStatisticAnalysisService {
             result.put("data", totalInfoDomain);
             return result;
         } catch (Exception e) {
+            e.printStackTrace();
             result.put("success", false);
             result.put("message", "英语考试当前状况---人数分布---按行政班统计失败！");
             return result;
@@ -1799,6 +1802,7 @@ public class CetStatisticAnalysisService {
 
 
 
+    @Transactional(readOnly = true)
     public  Map<String,CetSexStatisticalInfoDomain>  sexTotal(Long orgId,String collegeCode,String professionCode,String classCode, String cetType){
         List<CetSexStatisticalInfoDomain> cetSexStatisticalInfoDomainListAll=cetSexStatisticalJdbc.sexStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,true);
         List<CetSexStatisticalInfoDomain> cetSexStatisticalInfoDomainList=cetSexStatisticalJdbc.sexStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,false);
@@ -1824,6 +1828,7 @@ public class CetStatisticAnalysisService {
     }
 
 
+    @Transactional(readOnly = true)
     public List<AgeSexStatisticalInfoDomain>  ageTotal(Long orgId, String collegeCode, String professionCode, String classCode, String cetType) {
         List<AgeSexStatisticalInfoDomain> ageSexStatisticalInfoDomains = new ArrayList<>();
         List<AgeSexStatisticalInfoDomain> ageSexStatisticalInfoDomainListAll = cetSexStatisticalJdbc.ageStatisticalInfo(orgId, collegeCode, professionCode, classCode, cetType, true);
@@ -1846,6 +1851,7 @@ public class CetStatisticAnalysisService {
     }
 
 
+    @Transactional(readOnly = true)
     public List<NjStatisticalInfoDomain>  njTotal(Long orgId, String collegeCode, String professionCode, String classCode, String cetType) {
         List<NjStatisticalInfoDomain> njStatisticalInfoDomains = new ArrayList<>();
         List<NjStatisticalInfoDomain> njStatisticalInfoDomainListAll = cetSexStatisticalJdbc.njStatisticalInfo(orgId, collegeCode, professionCode, classCode, cetType, true);
@@ -1857,7 +1863,7 @@ public class CetStatisticAnalysisService {
                             NjStatisticalInfoDomain c = new NjStatisticalInfoDomain();
                             c.setNj(njStatisticalInfoDomainListAll.get(i).getNj());
                             c.setAllTotal(njStatisticalInfoDomainListAll.get(i).getAllTotal());
-                            c.setPassTotal(njStatisticalInfoDomainList.get(i).getPassTotal());
+                            c.setPassTotal(njStatisticalInfoDomainList.get(j).getPassTotal());
                             njStatisticalInfoDomains.add(c);
                             break;
                         }
