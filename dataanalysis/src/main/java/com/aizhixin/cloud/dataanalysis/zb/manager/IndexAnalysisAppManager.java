@@ -4,10 +4,12 @@ import com.aizhixin.cloud.dataanalysis.analysis.vo.CetDetailVO;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.zb.app.domain.NjStatisticalInfoDomain;
 import com.aizhixin.cloud.dataanalysis.zb.app.domain.TotalInfoDomain;
+import com.aizhixin.cloud.dataanalysis.zb.app.vo.AvgVo;
 import com.aizhixin.cloud.dataanalysis.zb.app.vo.CurrentStatisticsVO;
 import com.aizhixin.cloud.dataanalysis.zb.app.vo.EnglishLevelBigScreenVO;
 import com.aizhixin.cloud.dataanalysis.zb.app.vo.OrganizationStatisticsVO;
 import org.hibernate.SQLQuery;
+import org.hibernate.id.IncrementGenerator;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -122,6 +124,7 @@ public class IndexAnalysisAppManager {
             if (null != res.get("passTotal")) {
                 data.setPass(Integer.valueOf(res.get("passTotal").toString()));
             }
+            //通过人员的成绩均值为 总分/通过人数
             if (null != res.get("totalScore") && null != res.get("joinTotal")) {
                 data.setAvg(new BigDecimal(res.get("totalScore").toString()).divide((new BigDecimal(res.get("joinTotal").toString())), 2, BigDecimal.ROUND_HALF_DOWN) + "");
             }
@@ -150,7 +153,6 @@ public class IndexAnalysisAppManager {
             StringBuilder sexSql = new StringBuilder("select SUM(tzbj.NRC) as manTotal,SUM(tzbj.VRC) as womanTotal, SUM(tzbj.NTGRC) as manPass,SUM(tzbj.VTGRC) as womanPass");
             StringBuilder njSql = new StringBuilder("select tzbj.NJ as nj,SUM(tzbj.ZXRS) as total,SUM(tzbj.CKRC ) as joinTotal,SUM(tzbj.TGRC) as passTotal");
 
-            //from t_zb_djksnj as tzbj,
             if (null == collegeCode && null == professionCode && null == className) {
                 sql.append(",tt.COMPANY_NAME as name,tt.SIMPLE_NAME as simple_name from t_zb_djksjc as tzbj, t_department as tt where 1=1");
                 sexSql.append(" from t_zb_djksjc as tzbj, t_department as tt where 1=1");
@@ -309,7 +311,7 @@ public class IndexAnalysisAppManager {
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
-            result.put("message", "英语考试当前状况---人数分布---按行政班统计失败！");
+            result.put("message", "英语考试人数分布--数据分析失败！");
             return result;
         }
         return result;
@@ -352,16 +354,211 @@ public class IndexAnalysisAppManager {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> condition = new HashMap<>();
         try {
+            StringBuilder sql = new StringBuilder("SELECT ZXRS as total,CKRC as joinTotal,TGRC as passTotal,ZF as totalScore");
+            StringBuilder sexSql = new StringBuilder("SELECT SUM(NRC) as manTotal,SUM(NZF) as manScore,SUM(VRC) as womanTotal,SUM(VZF) as womanScore,SUM(NTGRC) as manPass,SUM(VTGRC) as womanPass");
+            StringBuilder njSql = new StringBuilder("select tzbj.NJ as nj,SUM(tzbj.ZXRS) as total,SUM(tzbj.CKRC ) as joinTotal,SUM(tzbj.TGRC) as passTotal,tzbj.ZF as totalScore");
 
+
+            if (null == collegeCode && null == professionCode && null == className) {
+                sql.append(",tt.COMPANY_NAME as name,tt.SIMPLE_NAME as simple_name from t_zb_djksjc as tzbj, t_department as tt where 1=1");
+                sql.append(" and tzbj.P_BH = :orgId");
+                sql.append(" and tzbj.BH = tt.COMPANY_NUMBER");
+
+                sexSql.append(" from t_zb_djksjc as tzbj, t_department as tt where 1=1");
+                sexSql.append(" and tzbj.P_BH = :orgId");
+                sexSql.append(" and tzbj.BH = tt.COMPANY_NUMBER");
+
+                njSql.append(" from t_zb_djksnj as tzbj, t_department as tt where 1=1");
+                njSql.append(" and tzbj.P_BH = :orgId");
+                njSql.append(" and tzbj.BH = tt.COMPANY_NUMBER");
+                condition.put("orgId", orgId);
+            } else if (null == professionCode && null == className) {
+                sql.append(", tt.NAME as name from t_zb_djksjc as tzbj, t_profession as tt where 1=1");
+                sql.append(" and tzbj.BH = :collegeCode");
+                sql.append(" and tzbj.P_BH = :orgId ");
+                sql.append(" and tzbj.BH = tt.COMPANY_NUMBER");
+
+                sexSql.append(" from t_zb_djksjc as tzbj, t_profession as tt where 1=1");
+                sexSql.append(" and tzbj.BH = :collegeCode");
+                sexSql.append(" and tzbj.P_BH = :orgId ");
+                sexSql.append(" and tzbj.BH = tt.COMPANY_NUMBER");
+
+                njSql.append(" from t_zb_djksnj as tzbj, t_profession as tt where 1=1");
+                njSql.append(" and tzbj.BH = :collegeCode");
+                njSql.append(" and tzbj.P_BH = :orgId ");
+                njSql.append(" and tzbj.BH = tt.COMPANY_NUMBER");
+
+                condition.put("collegeCode", collegeCode);
+                condition.put("orgId", orgId);
+            } else if (null == className) {
+                sql.append(", tt.NAME as name from t_zb_djksjc as tzbj, t_class as tt where 1=1");
+                sql.append(" and tzbj.BH = :professionCode");
+                sql.append(" and tzbj.P_BH = :collegeCode");
+                sql.append(" and tzbj.BH = tt.PROFESSION_CODE");
+
+                sexSql.append(" from t_zb_djksjc as tzbj, t_class as tt where 1=1");
+                sexSql.append(" and tzbj.BH = :professionCode");
+                sexSql.append(" and tzbj.P_BH = :collegeCode");
+                sexSql.append(" and tzbj.BH = tt.PROFESSION_CODE");
+
+                njSql.append(" from t_zb_djksnj as tzbj, t_class as tt where 1=1");
+                njSql.append(" and tzbj.BH = :professionCode");
+                njSql.append(" and tzbj.P_BH = :collegeCode");
+                njSql.append(" and tzbj.BH = tt.PROFESSION_CODE");
+
+                condition.put("professionCode", professionCode);
+                condition.put("collegeCode", collegeCode);
+            } else {
+                sql.append(", tt.NAME as name from t_zb_djksjc as tzbj, t_class as tt where 1=1");
+                sql.append(" and tzbj.BH = :className");
+                sql.append(" and tzbj.P_BH = :professionCode");
+                sql.append(" and tzbj.BH = tt.NAME");
+
+                sexSql.append(" from t_zb_djksjc as tzbj, t_class as tt where 1=1");
+                sexSql.append(" and tzbj.BH = :className");
+                sexSql.append(" and tzbj.P_BH = :professionCode");
+                sexSql.append(" and tzbj.BH = tt.NAME");
+
+                njSql.append(" from t_zb_djksnj as tzbj, t_class as tt where 1=1");
+                njSql.append(" and tzbj.BH = :className");
+                njSql.append(" and tzbj.P_BH = :professionCode");
+                njSql.append(" and tzbj.BH = tt.NAME");
+
+                condition.put("className", className);
+                condition.put("professionCode", professionCode);
+            }
+
+            sql.append(" and DHLJ = '1' and KSLX='" + cetType + "'");
+            sql.append(" and XN = (SELECT max(XN) FROM t_zb_djksjc WHERE KSLX='" + cetType + "') and tzbj.DHLJ = '1' and tzbj.KSLX='" + cetType + "'");
+
+            sexSql.append(" and DHLJ = '1' and KSLX='" + cetType + "'");
+            sexSql.append(" and XN = (SELECT max(XN) FROM t_zb_djksjc WHERE KSLX='" + cetType + "') and tzbj.DHLJ = '1' and tzbj.KSLX='" + cetType + "'");
+
+            njSql.append(" and DHLJ = '1' and KSLX='" + cetType + "'");
+            njSql.append(" and XN = (SELECT max(XN) FROM t_zb_djksjc WHERE KSLX='" + cetType + "') and tzbj.DHLJ = '1' and tzbj.KSLX='" + cetType + "' GROUP BY nj ORDER BY nj");
+
+
+            Query sq = em.createNativeQuery(sql.toString());
+            Query sexSq = em.createNativeQuery(sexSql.toString());
+            Query njSq = em.createNativeQuery(njSql.toString());
+            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            sexSq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            njSq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            for (Map.Entry<String, Object> e : condition.entrySet()) {
+                sq.setParameter(e.getKey(), e.getValue());
+                sexSq.setParameter(e.getKey(), e.getValue());
+                njSq.setParameter(e.getKey(), e.getValue());
+            }
+            List<Object> res = sq.getResultList();
+            List<Object> avgDomains = new ArrayList<>();
+            if (null != res) {
+                for (Object row : res) {
+                    Map d = (Map) row;
+                    String name = "";
+                    if (null != d.get("simple_name")) {
+                        name = d.get("simple_name").toString();
+                    }
+                    if (null != d.get("name") && null == d.get("simple_name")) {
+                        name = d.get("name").toString();
+                    }
+
+                    if (null != d.get("name")) {
+                        AvgVo csnp = new AvgVo();
+                        csnp.setName(name);
+                        if (null != d.get("joinTotal")) {
+                            csnp.setJoinTotal(Long.valueOf(d.get("joinTotal").toString()));
+                        }
+                        if (null != d.get("total")) {
+                            csnp.setTotal(Long.valueOf(d.get("total").toString()));
+                        }
+                        if (null != d.get("passTotal")) {
+                            csnp.setPassTotal(Long.valueOf(d.get("passTotal").toString()));
+                        }
+                        if (null != d.get("totalScore")) {
+                            csnp.setTotalScore(new BigDecimal(d.get("totalScore").toString()));
+                        }
+                        if (null != d.get("totalScore") && null != d.get("joinTotal") && Integer.valueOf(d.get("joinTotal").toString()) != 0) {
+                            csnp.setAvgScore(new BigDecimal(d.get("totalScore").toString()).divide(new BigDecimal(d.get("joinTotal").toString()), 0, BigDecimal.ROUND_HALF_DOWN));
+                        }
+
+                        avgDomains.add(csnp);
+                    }
+                }
+            }
+
+            Map sexRes = (Map) sexSq.getSingleResult();
+            Map sexDomain = new HashMap();
+            if (null != sexRes) {
+                if (null != sexRes.get("manTotal")) {
+                    sexDomain.put("manJoin", Integer.valueOf(sexRes.get("manTotal").toString()));
+                }
+                if (null != sexRes.get("manPass")) {
+                    sexDomain.put("manPass", Integer.valueOf(sexRes.get("manPass").toString()));
+                }
+                if (null != sexRes.get("manScore")) {
+                    sexDomain.put("manScore", new BigDecimal(sexRes.get("manScore").toString()));
+                }
+                if (null != sexRes.get("womanTotal")) {
+                    sexDomain.put("womanJoin", Integer.valueOf(sexRes.get("womanTotal").toString()));
+                }
+                if (null != sexRes.get("womanPass")) {
+                    sexDomain.put("womanPass", Integer.valueOf(sexRes.get("womanPass").toString()));
+                }
+                if (null != sexRes.get("womanScore")) {
+                    sexDomain.put("womanScore", new BigDecimal(sexRes.get("womanScore").toString()));
+                }
+
+                //均值为 总分/总人次
+                if (null != sexRes.get("manTotal") && Integer.valueOf(sexRes.get("manTotal").toString()) != 0) {
+                    sexDomain.put("manAvg", new BigDecimal(sexRes.get("manScore").toString()).divide(new BigDecimal(sexRes.get("manTotal").toString()),0,BigDecimal.ROUND_DOWN));
+                }
+                if (null != sexRes.get("womanTotal") && Integer.valueOf(sexRes.get("womanTotal").toString()) != 0) {
+                    sexDomain.put("womanAvg", new BigDecimal(sexRes.get("womanScore").toString()).divide(new BigDecimal(sexRes.get("womanTotal").toString()),0,BigDecimal.ROUND_HALF_DOWN));
+                }
+            }
+
+            List<Object> njRes = njSq.getResultList();
+            List<Object> njDomain = new ArrayList<>();
+            for (Object row : njRes) {
+                Map njMap = new HashMap();
+                Map d = (Map) row;
+                if (null != d.get("nj")) {
+                    njMap.put("nj", d.get("nj"));
+                }
+                if (null != d.get("total")) {
+                    njMap.put("total", d.get("total"));
+                }
+                if (null != d.get("joinTotal")) {
+                    njMap.put("joinTotal", d.get("joinTotal"));
+                }
+                if (null != d.get("passTotal")) {
+                    njMap.put("passTotal", d.get("passTotal"));
+                }
+                if (null != d.get("totalScore")) {
+                    njMap.put("totalScore", d.get("totalScore"));
+                }
+
+                if (null != d.get("joinTotal") && Integer.valueOf(d.get("joinTotal").toString()) != 0) {
+                    njMap.put("avgScore", new BigDecimal(d.get("totalScore").toString()).divide(new BigDecimal(d.get("joinTotal").toString()), 0, BigDecimal.ROUND_HALF_DOWN));
+                }
+                njDomain.add(njMap);
+            }
+
+            Map<String,Object> data = new HashMap<>();
+            data.put("avgDomains",avgDomains);
+            data.put("sexDomain",sexDomain);
+            data.put("njDomain",njDomain);
+
+            result.put("success", true);
+            result.put("data", data);
+            return result;
 
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
-            result.put("message", "成绩均值分析---数据统计失败！");
+            result.put("message", "成绩均值分布---数据统计失败！");
             return result;
         }
-
-        return result;
     }
 
     @Transactional(readOnly = true)
