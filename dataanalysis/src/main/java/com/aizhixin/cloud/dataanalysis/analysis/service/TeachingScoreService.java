@@ -350,8 +350,8 @@ public class TeachingScoreService {
                 } else {
                     tds.add(Integer.valueOf(grade));
                 }
-                cql.append(" and tt.TEACHER_YEAR IN :grades");
-                sql.append(" and tt.TEACHER_YEAR IN :grades");
+                cql.append(" and tt.GRADE IN :grades");
+                sql.append(" and tt.GRADE IN :grades");
                 condition.put("grades", tds);
             }
             if (!org.apache.commons.lang.StringUtils.isBlank(nj)) {
