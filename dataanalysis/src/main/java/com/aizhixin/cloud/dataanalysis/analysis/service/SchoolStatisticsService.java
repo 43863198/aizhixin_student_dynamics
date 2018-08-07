@@ -17,7 +17,6 @@ import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
-import com.mongodb.BasicDBObject;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +25,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.mapreduce.MapReduceOptions;
 import org.springframework.data.mongodb.core.mapreduce.MapReduceResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -571,14 +567,14 @@ public class SchoolStatisticsService {
                 criteria.and("schoolYear").is(teacherYear);
             }
             if (null != collegeId) {
-                Set<Long> collegeIds = new HashSet<>();
+                Set<String> collegeIds = new HashSet<>();
                 if (collegeId.indexOf(",") != -1) {
                     String[] cid = collegeId.split(",");
                     for (String d : cid) {
-                        collegeIds.add(Long.valueOf(d));
+                        collegeIds.add(d);
                     }
                 } else {
-                    collegeIds.add(Long.valueOf(collegeId));
+                    collegeIds.add(collegeId);
                 }
                 criteria.and("collegeId").in(collegeIds);
             }
