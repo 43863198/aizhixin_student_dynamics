@@ -21,4 +21,6 @@ public interface AlarmReceiverRespository extends JpaRepository<AlarmReceiver, S
     long countByTeacherIdAndCollegeIdAndDeleteFlag(Long teacherId, Long collegeId, Integer deleteFlag);
 
     long countByTeacherIdAndCollegeIdAndIdNotAndDeleteFlag(Long teacherId, Long collegeId, String id, Integer deleteFlag);
+
+    List<AlarmReceiver> findByOrgIdAndTeacherJobNumberAndDeleteFlagAndLastModifiedDateIsNull(Long orgId, String teacherJobNumber, Integer deleteFlag);
 }

@@ -22,6 +22,9 @@ public class AlarmReceiverManager {
     public AlarmReceiver save (AlarmReceiver entity) {
         return alarmReceiverRespository.save(entity);
     }
+    public List<AlarmReceiver> save (List<AlarmReceiver> entitys) {
+        return alarmReceiverRespository.save(entitys);
+    }
     @Transactional (readOnly = true)
     public AlarmReceiver findById(String id) {
         return alarmReceiverRespository.findOne(id);
@@ -45,5 +48,9 @@ public class AlarmReceiverManager {
     @Transactional (readOnly = true)
     public long countByTeacherIdAndCollegeAndIdNot(Long teacherId, Long collegeId, String id) {
         return alarmReceiverRespository.countByTeacherIdAndCollegeIdAndIdNotAndDeleteFlag(teacherId, collegeId, id, DataValidity.VALID.getIntValue());
+    }
+    @Transactional (readOnly = true)
+    public List<AlarmReceiver> findNotLastAccessByJobNumber(Long orgId, String jobNumber) {
+        return alarmReceiverRespository.findByOrgIdAndTeacherJobNumberAndDeleteFlagAndLastModifiedDateIsNull(orgId, toString(), DataValidity.VALID.getIntValue());
     }
 }
