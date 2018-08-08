@@ -9,7 +9,7 @@ import java.util.Map;
 @Data
 public class TotalInfoDomain {
     private List<OrganizationStatisticsVO> list;
-    private Map<String,Integer> map;
+    private Map<String,Integer> sexMap;
     private List<NjStatisticalInfoDomain> njList;
 
 }
