@@ -54,9 +54,8 @@ public class AlertWarningInformationController {
             @ApiParam(value = "type 预警类型") @RequestParam(value = "type", required = false) String type,
             @ApiParam(value = "warningLevel 预警等级") @RequestParam(value = "warningLevel", required = false) String warningLevel,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
-            @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize,
-            @ApiParam(value = "workNo 登录用户工号") @RequestParam(value = "workNo", required = false) String workNo) {
-        return alertWarningInforService.findPageWarningInfor(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId, collegeCode, type, warningLevel, workNo);
+            @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+        return alertWarningInforService.findPageWarningInfor(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId, collegeCode, type, warningLevel);
     }
 
     /**
