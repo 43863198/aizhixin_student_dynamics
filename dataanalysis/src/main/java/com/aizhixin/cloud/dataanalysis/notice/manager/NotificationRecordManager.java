@@ -47,6 +47,7 @@ public class NotificationRecordManager {
         return repository.save(entityList);
     }
 
+    @Transactional(readOnly = true)
     public PageData<NotificationRecordVO> list (Pageable pageable, Long orgId, String collegeName, Integer rs, String receiver, Date startDate, Date endDate) {
         PageData<NotificationRecordVO> page = new PageData<>();
         page.getPage().setPageNumber(pageable.getPageNumber() + 1);
@@ -106,5 +107,10 @@ public class NotificationRecordManager {
         page.getPage().setTotalElements(count);
         page.getPage().setTotalPages(PageUtil.cacalatePagesize(count, page.getPage().getPageSize()));
         return page;
+    }
+
+    @Transactional(readOnly = true)
+    public List<NotificationRecord> findSendSuccesByReceiverCode(Long orgId, String receiverCode) {
+        return repository.findByOrgIdAndReceiverCodeAndRsAndLastAccessTimeIsNull(orgId, receiverCode, 10);
     }
 }
