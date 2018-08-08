@@ -80,6 +80,75 @@ public class IndexAnalysisAppManager {
     }
 
     @Transactional(readOnly = true)
+    public Map<String, Object> cetSingleDataStatistics(Long orgId,String cetType, String teacherYear, String semester, String collegeCode, String professionCode,String className) {
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> condition = new HashMap<>();
+        try {
+            String XN = teacherYear + "-" + (Integer.valueOf(teacherYear) + 1);
+            StringBuilder sql = new StringBuilder("SELECT ZXRS as total,CKRC as joinTotal,TGRC as passTotal,ZF as totalScore,GF as maxScore FROM t_zb_djksjc where 1=1");
+            sql.append(" and DHLJ = '2' ");
+            sql.append(" and KSLX= :cetType ");
+            sql.append(" and XN IN ('" + XN + "') and XQM = :semester ");
+            condition.put("cetType", cetType);
+            condition.put("semester", semester);
+
+            if (null == collegeCode && null == professionCode && null == className) {
+                sql.append(" and BH = :orgId ");
+                condition.put("orgId", orgId);
+            } else if (null == professionCode && null == className) {
+                sql.append(" and BH = :collegeCode and P_BH = :orgId ");
+                condition.put("collegeCode", collegeCode);
+                condition.put("orgId", orgId);
+            } else if (null == className) {
+                sql.append(" and BH = :professionCode and P_BH = :collegeCode ");
+                condition.put("professionCode", professionCode);
+                condition.put("collegeCode", collegeCode);
+            } else {
+                sql.append(" and BH = :className and P_BH = :professionCode ");
+                condition.put("className", className);
+                condition.put("professionCode", professionCode);
+            }
+
+            Query sq = em.createNativeQuery(sql.toString());
+            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            for (Map.Entry<String, Object> e : condition.entrySet()) {
+                sq.setParameter(e.getKey(), e.getValue());
+            }
+            Map res = (Map) sq.getSingleResult();
+            CurrentStatisticsVO data = new CurrentStatisticsVO();
+            if (null != res.get("total")) {
+                data.setTotal(Integer.valueOf(res.get("total").toString()));
+            }
+            if (null != res.get("joinTotal")) {
+                data.setJoinTotal(Integer.valueOf(res.get("joinTotal").toString()));
+            }
+            if (null != res.get("passTotal")) {
+                data.setPass(Integer.valueOf(res.get("passTotal").toString()));
+            }
+            //通过人员的成绩均值为 总分/通过人数
+            if (null != res.get("totalScore") && null != res.get("joinTotal")) {
+                data.setAvg(new BigDecimal(res.get("totalScore").toString()).divide((new BigDecimal(res.get("joinTotal").toString())), 2, BigDecimal.ROUND_HALF_DOWN) + "");
+            }
+            //通过率为：通过人数/在校人数
+            if (data.getTotal() > 0) {
+                data.setRate(new DecimalFormat("0.00").format((double) data.getPass() * 100 / data.getTotal()));
+            }
+            if(null != res.get("maxScore")){
+                data.setMax(res.get("maxScore").toString());
+            }
+            result.put("success", true);
+            result.put("data", data);
+            return result;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message", "单次考试统计分析---数据统计失败！");
+            return result;
+        }
+    }
+
+    @Transactional(readOnly = true)
     public Map<String, Object> currentStatistics(Long orgId, String cetType, String collegeCode, String professionCode, String className) {
         Map<String, Object> result = new HashMap<>();
         Map<String, Object> condition = new HashMap<>();
