@@ -1,37 +1,24 @@
 package com.aizhixin.cloud.dataanalysis.alertinformation.controller;
 
+import com.aizhixin.cloud.dataanalysis.alertinformation.domain.AlertInforQueryDomain;
 import com.aizhixin.cloud.dataanalysis.alertinformation.domain.AlertInforQueryTeacherDomain;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningDetailsDTO;
-import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
+import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
+import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.aizhixin.cloud.dataanalysis.alertinformation.domain.AlertInforQueryDomain;
-import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
-import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
-
-import java.awt.print.Pageable;
-import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.validation.Valid;
 
 /**
  * @author: Created by jianwei.wu
@@ -67,8 +54,9 @@ public class AlertWarningInformationController {
             @ApiParam(value = "type 预警类型") @RequestParam(value = "type", required = false) String type,
             @ApiParam(value = "warningLevel 预警等级") @RequestParam(value = "warningLevel", required = false) String warningLevel,
             @ApiParam(value = "pageNumber 第几页") @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
-            @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return alertWarningInforService.findPageWarningInfor(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId, collegeCode, type, warningLevel);
+            @ApiParam(value = "pageSize 每页数据的数目") @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @ApiParam(value = "workNo 登录用户工号") @RequestParam(value = "workNo", required = false) String workNo) {
+        return alertWarningInforService.findPageWarningInfor(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId, collegeCode, type, warningLevel, workNo);
     }
 
     /**

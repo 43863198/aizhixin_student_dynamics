@@ -256,4 +256,19 @@ public class NotificationRecordService {
         }
         return notificationRecordManager.list(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId, collegeName, rs, receiver, startDate, endDate);
     }
+
+    public void lastAccessTag(Long orgId, String workNo) {
+        if (null == orgId || orgId <= 0 || null == workNo || workNo.isEmpty()) {
+            return;
+        }
+        Date current = new Date();
+        List<AlarmReceiver> list = alarmReceiverManager.findNotLastAccessByJobNumber(orgId, workNo);//该工号发送完通知以后没有标记最后访问时间
+        if (null != list && !list.isEmpty()) {
+            for (AlarmReceiver receiver : list) {
+                receiver.setLastModifiedDate(current);
+                receiver.setLastModifiedBy(workNo);
+            }
+            alarmReceiverManager.save(list);
+        }
+    }
 }
