@@ -3,13 +3,9 @@
  */
 package com.aizhixin.cloud.dataanalysis.alertinformation.domain;
 
-import java.util.Date;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * @author zhen.pan
@@ -48,4 +44,7 @@ public class AlertInforQueryDomain {
 	
 	@ApiModelProperty(value = "每页数据的数目", required = false)
 	private Integer pageSize;
+
+	@ApiModelProperty(value = "登录人工号")
+	private String workNo;
 }

@@ -130,7 +130,7 @@ public class AlertWarningInformationService {
         return pageJdbcUtil.getInfo(querySql, registerCountRm);
     }
 
-    public PageData<WarningDetailsDTO> findPageWarningInfor(Pageable pageable, Long orgId, String collegeCode, String type, String warningLevel, String workNo) {
+    public PageData<WarningDetailsDTO> findPageWarningInfor(Pageable pageable, Long orgId, String collegeCode, String type, String warningLevel) {
         PageData<WarningDetailsDTO> p = new PageData<>();
         Map<String, Object> condition = new HashMap<>();
         StringBuilder cql = new StringBuilder("SELECT count(1) FROM t_warning_information aw WHERE 1 = 1");
@@ -197,9 +197,6 @@ public class AlertWarningInformationService {
         p.getPage().setPageNumber(pageable.getPageNumber());
         p.getPage().setPageSize(pageable.getPageSize());
         p.getPage().setTotalPages(PageUtil.cacalatePagesize(count, p.getPage().getPageSize()));
-
-
-        notificationRecordService.lastAccessTag(orgId, workNo);//短信通知最后访问标记
         return p;
     }
 
@@ -654,6 +651,8 @@ public class AlertWarningInformationService {
             countDomain.setLevel2CountNum(sum2);
             countDomain.setLevel3CountNum(sum3);
         }
+
+        notificationRecordService.lastAccessTag(domain.getOrgId(), domain.getWorkNo());//短信通知最后访问标记
         pageInfor.put(ApiReturnConstants.COUNT, countDomain);
         return pageInfor;
     }

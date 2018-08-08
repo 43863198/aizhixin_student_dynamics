@@ -1,6 +1,7 @@
 package com.aizhixin.cloud.dataanalysis.zb.dto;
 
 
+import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -34,5 +35,28 @@ public class SchoolCalendarDTO {
         this.ksrq = ksrq;
         this.jsrq = jsrq;
         this.zs = zs;
+    }
+    public SchoolCalendarDTO(String xn, String xq) {
+        this.xn = xn;
+        this.xq = xq;
+        if (null != xn && null != xq) {
+            int p = xn.indexOf("-");
+            String n = null;
+            String end = null;
+            String start = null;
+            if (p > 0) {
+                if ("1".equals(xq)) {
+                    n = xn.substring(0, p);
+                    start = n + "-09-01";
+                    end = (Integer.valueOf(n) + 1) + "-02-01";
+                } else if ("2".equals(xq)) {
+                    n = xn.substring(p + 1);
+                    start = n + "-03-01";
+                    end = n + "-08-01";
+                }
+                this.ksrq = DateUtil.parseShortDate(start);
+                this.jsrq =  DateUtil.parseShortDate(end);
+            }
+        }
     }
 }
