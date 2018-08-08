@@ -1596,7 +1596,7 @@ public class CetStatisticAnalysisService {
 //         totalInfoDomain.setScoreScaleDomains(scoreScaleTotscoreScaleDomainsal(orgId, collegeCode, professionCode, classCode, cetType));
 //         totalInfoDomain.setAgeSexStatisticalInfoDomains(ageTotal(orgId,collegeCode,professionCode,classCode,cetType));
 //         totalInfoDomain.setNjStatisticalInfoDomains(njTotal(orgId,collegeCode,professionCode,classCode,cetType));
-             totalInfoDomain.setScoreScaleDomains(scoreScaleTotal(orgId, collegeCode, professionCode, className, cetType));
+//             totalInfoDomain.setScoreScaleDomains(scoreScaleTotal(orgId, collegeCode, professionCode, className, cetType));
 
 //            sd.setTotalInfoDomain(totalInfoDomain);
 //            AvgInfoDomain avgInfoDomain=new AvgInfoDomain();
@@ -1807,23 +1807,54 @@ public class CetStatisticAnalysisService {
         List<CetSexStatisticalInfoDomain> cetSexStatisticalInfoDomainListAll=cetSexStatisticalJdbc.sexStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,true);
         List<CetSexStatisticalInfoDomain> cetSexStatisticalInfoDomainList=cetSexStatisticalJdbc.sexStatisticalInfo(orgId,collegeCode,professionCode,classCode,cetType,false);
         Map<String,CetSexStatisticalInfoDomain> m=new HashMap<>();
-        if (null!=cetSexStatisticalInfoDomainListAll&&0<cetSexStatisticalInfoDomainListAll.size()&&null!=cetSexStatisticalInfoDomainList&&0<cetSexStatisticalInfoDomainList.size()){
-            for (CetSexStatisticalInfoDomain cetSexStatisticalInfoDomain:cetSexStatisticalInfoDomainListAll) {
-                for (CetSexStatisticalInfoDomain statisticalInfoDomain:cetSexStatisticalInfoDomainList) {
-                    if (cetSexStatisticalInfoDomain.getSex().equals(statisticalInfoDomain.getSex())){
-                        CetSexStatisticalInfoDomain c=new CetSexStatisticalInfoDomain();
-                        c.setSex(cetSexStatisticalInfoDomain.getSex());
-                        c.setAllTotal(cetSexStatisticalInfoDomain.getAllTotal());
-                        c.setPassTotal(statisticalInfoDomain.getPassTotal());
-                        if (cetSexStatisticalInfoDomain.getSex().equals("男")){
-                            m.put("man",c);
-                        }else{
-                            m.put("woman",c);
-                        }
-                    }
+        CetSexStatisticalInfoDomain n = new CetSexStatisticalInfoDomain ();
+        n.setSex("男");
+        n.setPassTotal(0L);
+        n.setAllTotal(0L);
+        m.put("man", n);
+
+        CetSexStatisticalInfoDomain v = new CetSexStatisticalInfoDomain ();
+        v.setSex("女");
+        v.setPassTotal(0L);
+        v.setAllTotal(0L);
+        m.put("woman", v);
+        if (null != cetSexStatisticalInfoDomainListAll && !cetSexStatisticalInfoDomainListAll.isEmpty()) {
+            for (CetSexStatisticalInfoDomain a : cetSexStatisticalInfoDomainListAll) {
+                if ("男".equals(a.getSex())) {
+                    n.setAllTotal(a.getAllTotal());
+                } else {
+                    v.setAllTotal(a.getAllTotal());
                 }
             }
         }
+
+        if (null != cetSexStatisticalInfoDomainList && !cetSexStatisticalInfoDomainList.isEmpty()) {
+            for (CetSexStatisticalInfoDomain p : cetSexStatisticalInfoDomainList) {
+                if ("男".equals(p.getSex())) {
+                    n.setPassTotal(p.getPassTotal());
+                } else {
+                    v.setPassTotal(p.getPassTotal());
+                }
+            }
+        }
+//
+//        if (null!=cetSexStatisticalInfoDomainListAll&&0<cetSexStatisticalInfoDomainListAll.size()&&null!=cetSexStatisticalInfoDomainList&&0<cetSexStatisticalInfoDomainList.size()){
+//            for (CetSexStatisticalInfoDomain cetSexStatisticalInfoDomain:cetSexStatisticalInfoDomainListAll) {
+//                for (CetSexStatisticalInfoDomain statisticalInfoDomain:cetSexStatisticalInfoDomainList) {
+////                    if (cetSexStatisticalInfoDomain.getSex().equals(statisticalInfoDomain.getSex())){
+////                        CetSexStatisticalInfoDomain c=new CetSexStatisticalInfoDomain();
+////                        c.setSex(cetSexStatisticalInfoDomain.getSex());
+////                        c.setAllTotal(cetSexStatisticalInfoDomain.getAllTotal());
+////                        c.setPassTotal(statisticalInfoDomain.getPassTotal());
+////                        if (cetSexStatisticalInfoDomain.getSex().equals("男")){
+////                            m.put("man",c);
+////                        }else{
+////                            m.put("woman",c);
+////                        }
+////                    }
+//                }
+//            }
+//        }
         return m;
     }
 
