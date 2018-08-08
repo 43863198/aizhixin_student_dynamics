@@ -33,6 +33,20 @@ public class CetIndexController {
         return cetLevelTestService.getCetLevelBigScreenPass(orgId);
     }
 
+    @GetMapping(value = "/cetstatistics", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "英语考试单次数据分析---数据统计", response = Void.class, notes = "等级考试单次考试统计---数据统计<br><br><b>@author dengchao</b>")
+    public ResponseEntity<Map<String, Object>> cetSingleDataStatistics(
+            @ApiParam(value = "orgId 学校id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
+            @ApiParam(value = "cetType 成绩类型： (3;4;6;)", required = true) @RequestParam(value = "cetType", required = true) String cetType,
+            @ApiParam(value = "teacherYear 学年 (格式如：2017)", required = true) @RequestParam(value = "teacherYear", required = true) String teacherYear,
+            @ApiParam(value = "semester 学期 (1,2; 1表示秋，2表示春)", required = true) @RequestParam(value = "semester", required = true) String semester,
+            @ApiParam(value = "collegeCode 学院码", required = false) @RequestParam(value = "collegeCode", required = false) String collegeCode,
+            @ApiParam(value = "professionCode 专业码", required = false) @RequestParam(value = "professionCode", required = false) String professionCode,
+            @ApiParam(value = "className 班名", required = false) @RequestParam(value = "className", required = false) String className
+    ) {
+        return new ResponseEntity<Map<String, Object>>(cetLevelTestService.cetSingleDataStatistics(orgId, cetType, teacherYear, semester, collegeCode, professionCode, className), HttpStatus.OK);
+    }
+
 
     @GetMapping(value = "/currentstatistics", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "等级考试当前状况---数据统计", response = Void.class, notes = "等级考试当前状况---数据统计<br><br><b>@author dengchao</b>")
