@@ -1,10 +1,5 @@
 package com.aizhixin.cloud.dataanalysis.alertinformation.service;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
-import java.util.regex.Pattern;
-
 import com.aizhixin.cloud.dataanalysis.alertinformation.JdbcTemplate.StudentJdbc;
 import com.aizhixin.cloud.dataanalysis.alertinformation.domain.*;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.*;
@@ -13,32 +8,34 @@ import com.aizhixin.cloud.dataanalysis.alertinformation.entity.OperationRecord;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
-import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
+import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
+import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
+import com.aizhixin.cloud.dataanalysis.common.domain.SortDTO;
+import com.aizhixin.cloud.dataanalysis.common.util.PageJdbcUtil;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
 import com.aizhixin.cloud.dataanalysis.feign.OrgManagerFeignService;
+import com.aizhixin.cloud.dataanalysis.notice.service.NotificationRecordService;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
 import com.aizhixin.cloud.dataanalysis.setup.entity.RuleParameter;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
 import com.aizhixin.cloud.dataanalysis.setup.service.RuleParameterService;
 import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
-
-import org.springframework.context.annotation.Lazy;
-import org.springframework.data.domain.Pageable;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
-import com.aizhixin.cloud.dataanalysis.common.domain.SortDTO;
-import com.aizhixin.cloud.dataanalysis.common.service.AuthUtilService;
-import com.aizhixin.cloud.dataanalysis.common.util.PageJdbcUtil;
-
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * @author: Created by jianwei.wu
@@ -69,6 +66,8 @@ public class AlertWarningInformationService {
     private AlarmSettingsService alarmSettingsService;
     @Autowired
     private RuleParameterService ruleParameterService;
+    @Autowired
+    private NotificationRecordService notificationRecordService;
 
     /**
      * 修改预警状态按预警等级和机构id
@@ -131,7 +130,7 @@ public class AlertWarningInformationService {
         return pageJdbcUtil.getInfo(querySql, registerCountRm);
     }
 
-    public PageData<WarningDetailsDTO> findPageWarningInfor(Pageable pageable, Long orgId, String collegeCode, String type, String warningLevel) {
+    public PageData<WarningDetailsDTO> findPageWarningInfor(Pageable pageable, Long orgId, String collegeCode, String type, String warningLevel, String workNo) {
         PageData<WarningDetailsDTO> p = new PageData<>();
         Map<String, Object> condition = new HashMap<>();
         StringBuilder cql = new StringBuilder("SELECT count(1) FROM t_warning_information aw WHERE 1 = 1");
@@ -198,6 +197,9 @@ public class AlertWarningInformationService {
         p.getPage().setPageNumber(pageable.getPageNumber());
         p.getPage().setPageSize(pageable.getPageSize());
         p.getPage().setTotalPages(PageUtil.cacalatePagesize(count, p.getPage().getPageSize()));
+
+
+        notificationRecordService.lastAccessTag(orgId, workNo);//短信通知最后访问标记
         return p;
     }
 
