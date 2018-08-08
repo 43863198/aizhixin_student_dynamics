@@ -262,13 +262,12 @@ public class NotificationRecordService {
             return;
         }
         Date current = new Date();
-        List<AlarmReceiver> list = alarmReceiverManager.findNotLastAccessByJobNumber(orgId, workNo);//该工号发送完通知以后没有标记最后访问时间
+        List<NotificationRecord> list = notificationRecordManager.findSendSuccesByReceiverCode(orgId, workNo);//该工号发送完通知以后没有标记最后访问时间
         if (null != list && !list.isEmpty()) {
-            for (AlarmReceiver receiver : list) {
-                receiver.setLastModifiedDate(current);
-                receiver.setLastModifiedBy(workNo);
+            for (NotificationRecord record : list) {
+                record.setLastAccessTime(current);
             }
-            alarmReceiverManager.save(list);
+            notificationRecordManager.save(list);
         }
     }
 }
