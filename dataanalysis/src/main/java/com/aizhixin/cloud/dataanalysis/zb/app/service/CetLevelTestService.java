@@ -39,6 +39,15 @@ public class CetLevelTestService {
         return indexAnalysisAppManager.getNewLevelTestBigScreenPass(orgId);
     }
 
+    public Map<String, Object> cetSingleDataStatistics(Long orgId, String cetType, String teacherYear, String semester, String collegeCode, String professionCode, String className) {
+        if ("3".equals(cetType)) {
+            if (StringUtils.isBlank(collegeCode)) {
+                collegeCode = "215";
+            }
+        }
+        return indexAnalysisAppManager.cetSingleDataStatistics(orgId, cetType, teacherYear, semester, collegeCode, professionCode, className);
+    }
+
     public Map<String, Object> currentStatistics(Long orgId, String cetType, String collegeCode, String professionCode, String className) {
         if ("3".equals(cetType)) {
             if (StringUtils.isBlank(collegeCode)) {
