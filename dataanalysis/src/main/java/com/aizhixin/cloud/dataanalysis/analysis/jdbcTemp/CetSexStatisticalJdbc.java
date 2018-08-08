@@ -42,7 +42,7 @@ public class CetSexStatisticalJdbc {
             sql+=" AND ts.`ZYH`='"+professionCode+"'";
         }
         if (!StringUtils.isEmpty(classCode)){
-            sql+=" AND ts.`BH`='"+classCode+"'";
+            sql+=" AND ts.`BJMC`='"+classCode+"'";
         }
         sql+="  GROUP BY ts.`xb`";
 
@@ -70,7 +70,7 @@ public class CetSexStatisticalJdbc {
             sql+=" AND ts.`ZYH`='"+professionCode+"'";
         }
         if (!StringUtils.isEmpty(classCode)){
-            sql+=" AND ts.`BH`='"+classCode+"'";
+            sql+=" AND ts.`BJMC`='"+classCode+"'";
         }
         if (!isAll){
             if ("三级".equals(cetType)) {
@@ -118,7 +118,7 @@ public class CetSexStatisticalJdbc {
             sql+=" AND ts.`ZYH`='"+professionCode+"'";
         }
         if (!StringUtils.isEmpty(classCode)){
-            sql+=" AND ts.`BH`='"+classCode+"'";
+            sql+=" AND ts.`BJMC`='"+classCode+"'";
         }
 
 
@@ -178,7 +178,7 @@ public class CetSexStatisticalJdbc {
             sql+=" AND ts.`ZYH`='"+professionCode+"'";
         }
         if (!StringUtils.isEmpty(classCode)){
-            sql+=" AND ts.`BH`='"+classCode+"'";
+            sql+=" AND ts.`BJMC`='"+classCode+"'";
         }
         sql+=" AND tcs.`TYPE` LIKE '%大学英语"+cetType+"%' and tcs.`SCORE`>0 GROUP BY ts.`xh`";
 
