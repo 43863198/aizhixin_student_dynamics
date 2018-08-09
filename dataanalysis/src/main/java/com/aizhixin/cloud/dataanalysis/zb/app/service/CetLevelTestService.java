@@ -1,24 +1,15 @@
 package com.aizhixin.cloud.dataanalysis.zb.app.service;
 
-import com.aizhixin.cloud.dataanalysis.analysis.dto.CetTrendDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.vo.CetDetailVO;
-import com.aizhixin.cloud.dataanalysis.analysis.vo.ScoreStatisticsVO;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
-import com.aizhixin.cloud.dataanalysis.zb.app.vo.CurrentStatisticsVO;
 import com.aizhixin.cloud.dataanalysis.zb.app.vo.EnglishLevelBigScreenVO;
 import com.aizhixin.cloud.dataanalysis.zb.manager.IndexAnalysisAppManager;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.SQLQuery;
-import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +27,7 @@ public class CetLevelTestService {
         if (null == orgId || orgId <= 0) {
             return new ArrayList<>();
         }
-        return indexAnalysisAppManager.getNewLevelTestBigScreenPass(orgId);
+        return indexAnalysisAppManager.getNewLevelTestBigScreenPassForOld(orgId);
     }
 
     public Map<String, Object> cetSingleDataStatistics(Long orgId, String cetType, String teacherYear, String semester, String collegeCode, String professionCode, String className) {

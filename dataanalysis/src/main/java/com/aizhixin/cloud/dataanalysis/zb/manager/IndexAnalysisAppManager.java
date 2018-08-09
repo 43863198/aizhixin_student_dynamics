@@ -7,6 +7,7 @@ import com.aizhixin.cloud.dataanalysis.analysis.domain.SemesterRateInfoDomain;
 import com.aizhixin.cloud.dataanalysis.analysis.vo.CetDetailVO;
 import com.aizhixin.cloud.dataanalysis.analysis.vo.CetSingleDataStatisticsVO;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
+import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.zb.app.domain.NjStatisticalInfoDomain;
 import com.aizhixin.cloud.dataanalysis.zb.app.domain.TotalInfoDomain;
 import com.aizhixin.cloud.dataanalysis.zb.app.vo.AvgVo;
@@ -33,12 +34,15 @@ import java.util.*;
 @Transactional
 public class IndexAnalysisAppManager {
 
+    private final static String SQL_DJ_DC_OLD = "SELECT ss.`JOIN_NUMBER` as CKRC,ss.`PASS_NUMBER` as TGRC,ss.`EXAMINATION_DATE` as KSRQ FROM `t_score_statistics` AS ss  WHERE ss.`ORG_ID` = ? and ss.`SCORE_TYPE` LIKE ?  and ss.`CODE` = ? AND ss.`STATISTICS_TYPE` = '000' AND ss.`PARENT_CODE` = ? ORDER BY ss.`EXAMINATION_DATE` DESC LIMIT 1";
     private final static String SQL_DJ_DP_TGL = "SELECT XN,XQM,KSLX,ZXRS, CKRC,TGRC FROM t_zb_djksjc WHERE XXDM=? and BH=? and DHLJ=? AND KSLX=?  AND XN = (SELECT max(XN) FROM t_zb_djksjc WHERE KSLX=? AND  DHLJ=?) ORDER BY XQM DESC LIMIT 1";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
     @Autowired
     private EntityManager em;
+    @Autowired
+    private CetLjIndexAnalysisManager cetLjIndexAnalysisManager;
 
 
     @Transactional(readOnly = true)
@@ -80,6 +84,45 @@ public class IndexAnalysisAppManager {
             rsList.add(list.get(0));
         }
         return rsList;
+    }
+
+    @Transactional(readOnly = true)
+    public List<EnglishLevelBigScreenVO> getNewLevelTestBigScreenPassForOld(Long orgId) {
+        List<EnglishLevelBigScreenVO> rsList = new ArrayList<>();
+        calPass(rsList, orgId, "%三级%", "3");
+        calPass(rsList, orgId, "%四级%", "4");
+        calPass(rsList, orgId, "%六级%", "6");
+        return rsList;
+    }
+
+    private void calPass(List<EnglishLevelBigScreenVO> rsList, Long orgId, String type, String sign) {
+        List<EnglishLevelBigScreenVO> list = jdbcTemplate.query(SQL_DJ_DC_OLD,
+                new Object[]{orgId, type, orgId.toString(), orgId.toString()},
+                new int[]{Types.BIGINT, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR},
+                (ResultSet rs, int rowNum) ->
+                        new EnglishLevelBigScreenVO(
+                                rs.getDate("KSRQ"), sign,
+                                rs.getInt("CKRC")*1L, rs.getInt("TGRC")*1L)
+        );
+        if (null != list && list.size() > 0) {
+            EnglishLevelBigScreenVO v = list.get(0);
+            if (null != v) {
+                String year = null;
+                Date d = null;
+                int p = v.getXn().indexOf("-");
+                if (p > 0) {
+                    year = v.getXn().substring(p + 1);
+                }
+                if ("1".equals(v.getXq())) {
+                    d = DateUtil.parseShortDate(year + "-02-01");
+                } else {
+                    d = DateUtil.parseShortDate(year + "-08-01");
+                }
+                long rs = cetLjIndexAnalysisManager.queryAllZxrs(CetLjIndexAnalysisManager.SQL_SCHOOL_RS, orgId, d);
+                v.setZxrs(rs);
+                rsList.add(v);
+            }
+        }
     }
 
     @Transactional(readOnly = true)

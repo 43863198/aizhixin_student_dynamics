@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Calendar;
+import java.util.Date;
+
 @ApiModel(description = "最近一天英语等级考试通过率")
 @NoArgsConstructor
 @ToString
@@ -29,6 +32,23 @@ public class EnglishLevelBigScreenVO {
         this.xq = xq;
         this.kslx = kslx;
         this.zxrs = zxrs;
+        this.ckrs = ckrs;
+        this.tgrs = tgrs;
+    }
+
+    public EnglishLevelBigScreenVO (Date ksrq, String kslx, Long ckrs, Long tgrs) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(ksrq);
+        int month = c.get(Calendar.MONTH);
+        int year = c.get(Calendar.YEAR);
+        this.kslx = kslx;
+        if (month > 7 ||  month <= 2) {
+            this.xn = year + "-" + (year + 1);
+            this.xq = "1";
+        } else {
+            this.xn = (year - 1) + "-" + year;
+            this.xq = "2";
+        }
         this.ckrs = ckrs;
         this.tgrs = tgrs;
     }
