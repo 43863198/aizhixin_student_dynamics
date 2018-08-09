@@ -14,11 +14,9 @@ import com.aizhixin.cloud.dataanalysis.zb.app.vo.CurrentStatisticsVO;
 import com.aizhixin.cloud.dataanalysis.zb.app.vo.EnglishLevelBigScreenVO;
 import com.aizhixin.cloud.dataanalysis.zb.app.vo.OrganizationStatisticsVO;
 import org.hibernate.SQLQuery;
-import org.hibernate.id.IncrementGenerator;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +24,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Types;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -36,7 +33,7 @@ import java.util.*;
 @Transactional
 public class IndexAnalysisAppManager {
 
-    private final static String SQL_DJ_DP_TGL = "SELECT XN,XQM,KSLX,ZXRS, CKRC,TGRC FROM t_zb_djksjc WHERE XXDM=? and BH=? and DHLJ=? AND KSLX=?  AND XN = (SELECT max(XN) FROM t_zb_djksjc WHERE KSLX=?) ORDER BY XQM DESC LIMIT 1";
+    private final static String SQL_DJ_DP_TGL = "SELECT XN,XQM,KSLX,ZXRS, CKRC,TGRC FROM t_zb_djksjc WHERE XXDM=? and BH=? and DHLJ=? AND KSLX=?  AND XN = (SELECT max(XN) FROM t_zb_djksjc WHERE KSLX=? AND  DHLJ=?) ORDER BY XQM DESC LIMIT 1";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -47,35 +44,38 @@ public class IndexAnalysisAppManager {
     @Transactional(readOnly = true)
     public List<EnglishLevelBigScreenVO> getNewLevelTestBigScreenPass(Long orgId) {
         List<EnglishLevelBigScreenVO> rsList = new ArrayList<>();
-        List<EnglishLevelBigScreenVO> list = jdbcTemplate.query(SQL_DJ_DP_TGL, new Object[]{orgId.toString(), orgId.toString(), "1", "3", "3"}, new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR}, new RowMapper<EnglishLevelBigScreenVO>() {
-            public EnglishLevelBigScreenVO mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return new EnglishLevelBigScreenVO(rs.getString("XN"), rs.getString("XQM"),
-                        rs.getString("KSLX"), rs.getLong("ZXRS"),
-                        rs.getLong("CKRC"), rs.getLong("TGRC"));
-            }
-        });
+        List<EnglishLevelBigScreenVO> list = jdbcTemplate.query(SQL_DJ_DP_TGL,
+                new Object[]{orgId.toString(), orgId.toString(), "1", "3", "3", "1"},
+                new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR},
+                (ResultSet rs, int rowNum) ->
+                    new EnglishLevelBigScreenVO(rs.getString("XN"), rs.getString("XQM"),
+                            rs.getString("KSLX"), rs.getLong("ZXRS"),
+                            rs.getLong("CKRC"), rs.getLong("TGRC"))
+        );
         if (null != list && list.size() > 0) {
             rsList.add(list.get(0));
         }
 
-        list = jdbcTemplate.query(SQL_DJ_DP_TGL, new Object[]{orgId.toString(), orgId.toString(), "1", "4", "4"}, new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR}, new RowMapper<EnglishLevelBigScreenVO>() {
-            public EnglishLevelBigScreenVO mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return new EnglishLevelBigScreenVO(rs.getString("XN"), rs.getString("XQM"),
-                        rs.getString("KSLX"), rs.getLong("ZXRS"),
-                        rs.getLong("CKRC"), rs.getLong("TGRC"));
-            }
-        });
+        list = jdbcTemplate.query(SQL_DJ_DP_TGL,
+                new Object[]{orgId.toString(), orgId.toString(), "1", "4", "4", "1"},
+                new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR},
+                (ResultSet rs, int rowNum) ->
+                        new EnglishLevelBigScreenVO(rs.getString("XN"), rs.getString("XQM"),
+                                rs.getString("KSLX"), rs.getLong("ZXRS"),
+                                rs.getLong("CKRC"), rs.getLong("TGRC"))
+        );
         if (null != list && list.size() > 0) {
             rsList.add(list.get(0));
         }
 
-        list = jdbcTemplate.query(SQL_DJ_DP_TGL, new Object[]{orgId.toString(), orgId.toString(), "1", "6", "6"}, new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR}, new RowMapper<EnglishLevelBigScreenVO>() {
-            public EnglishLevelBigScreenVO mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return new EnglishLevelBigScreenVO(rs.getString("XN"), rs.getString("XQM"),
-                        rs.getString("KSLX"), rs.getLong("ZXRS"),
-                        rs.getLong("CKRC"), rs.getLong("TGRC"));
-            }
-        });
+        list = jdbcTemplate.query(SQL_DJ_DP_TGL,
+                new Object[]{orgId.toString(), orgId.toString(), "1", "6", "6", "1"},
+                new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR},
+                (ResultSet rs, int rowNum) ->
+                        new EnglishLevelBigScreenVO(rs.getString("XN"), rs.getString("XQM"),
+                                rs.getString("KSLX"), rs.getLong("ZXRS"),
+                                rs.getLong("CKRC"), rs.getLong("TGRC"))
+        );
         if (null != list && list.size() > 0) {
             rsList.add(list.get(0));
         }
