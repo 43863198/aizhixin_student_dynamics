@@ -1,6 +1,11 @@
 package com.aizhixin.cloud.dataanalysis.zb.manager;
 
+import com.aizhixin.cloud.dataanalysis.analysis.domain.OverYearsInfoDomain;
+import com.aizhixin.cloud.dataanalysis.analysis.domain.SemesterAddRateDomain;
+import com.aizhixin.cloud.dataanalysis.analysis.domain.SemesterPassRateDomain;
+import com.aizhixin.cloud.dataanalysis.analysis.domain.SemesterRateInfoDomain;
 import com.aizhixin.cloud.dataanalysis.analysis.vo.CetDetailVO;
+import com.aizhixin.cloud.dataanalysis.analysis.vo.CetSingleDataStatisticsVO;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.zb.app.domain.NjStatisticalInfoDomain;
 import com.aizhixin.cloud.dataanalysis.zb.app.domain.TotalInfoDomain;
@@ -24,10 +29,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Component
 @Transactional
@@ -500,21 +503,6 @@ public class IndexAnalysisAppManager {
         }
     }
 
-    @Transactional(readOnly = true)
-    public Map<String, Object> getTop(Long orgId, String cetType, String teacherYear, String semester) {
-        Map<String, Object> result = new HashMap<>();
-        Map<String, Object> condition = new HashMap<>();
-        try {
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            result.put("success", false);
-            result.put("message", "单次考试统计TOP10---数据统计失败！");
-            return result;
-        }
-        return result;
-    }
 
     @Transactional(readOnly = true)
     public Map<String, Object> currentStatistics(Long orgId, String cetType, String collegeCode, String professionCode, String className) {
@@ -754,19 +742,87 @@ public class IndexAnalysisAppManager {
         return result;
     }
 
-    public Map<String, Object> OverYearsPassRate(Long orgId, String collegeCode, String professionCode, String cetType, String className) {
+    public Map<String, Object> OverYearsPassRate(Long orgId, String cetType, String collegeCode, String professionCode, String className) {
         Map<String, Object> result = new HashMap<>();
-        Map<String, Object> condition = new HashMap<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+        List<SemesterPassRateDomain> semesterPassRateDomains=new ArrayList<>();
+        List<SemesterAddRateDomain> semesterAddRateDomains=new ArrayList<>();
+        Date date=new Date();
+        String endTeacherYear=sdf.format(date);
+        Integer c= Integer.parseInt(endTeacherYear);
+        List<OverYearsInfoDomain> list=new ArrayList<>();
         try {
+            for(int i=c-5;i<c;i++){
+                Map<String,Object> map= cetSingleDataStatistics(orgId,cetType,i+"","2",collegeCode,professionCode,className);
+                if (map!=null){
+                    CetSingleDataStatisticsVO csdsVO = (CetSingleDataStatisticsVO) map.get("data");
+                    if (null!=csdsVO){
+                        SemesterPassRateDomain semesterPassRateDomain=new SemesterPassRateDomain();
+                        semesterPassRateDomain.setSemesterInfo(i+"春");
+                        semesterPassRateDomain.setPassRate(csdsVO.getPassRate());
+                        semesterPassRateDomains.add(semesterPassRateDomain);
+                        OverYearsInfoDomain overYearsInfoDomain=new OverYearsInfoDomain();
+                        overYearsInfoDomain.setSemesterInfo(i+"春");
+                        overYearsInfoDomain.setPassRate(csdsVO.getPassRate());
+                        list.add(overYearsInfoDomain);
+                    }
+                }
 
+                Map<String,Object> map2= cetSingleDataStatistics(orgId,cetType,i+"","1",collegeCode,professionCode,className);
+                if (map!=null){
+                    CetSingleDataStatisticsVO csdsVO = (CetSingleDataStatisticsVO) map2.get("data");
+                    if (null!=csdsVO){
+                        SemesterPassRateDomain semesterPassRateDomain=new SemesterPassRateDomain();
+                        semesterPassRateDomain.setPassRate(csdsVO.getPassRate());
+                        semesterPassRateDomain.setSemesterInfo(i+"秋");
+                        semesterPassRateDomains.add(semesterPassRateDomain);
+                        OverYearsInfoDomain overYearsInfoDomain=new OverYearsInfoDomain();
+                        overYearsInfoDomain.setSemesterInfo(i+"秋");
+                        overYearsInfoDomain.setPassRate(csdsVO.getPassRate());
+                        list.add(overYearsInfoDomain);
+                    }
+                }
+            }
+
+            int i=0;
+            for (OverYearsInfoDomain overYearsInfoDomain:list) {
+                SemesterAddRateDomain semesterAddRateDomain=new SemesterAddRateDomain();
+                semesterAddRateDomain.setSemesterInfo(overYearsInfoDomain.getSemesterInfo());
+                if (i==0){
+                    semesterAddRateDomain.setAddRate(null);
+                }else{
+                    if (overYearsInfoDomain.getPassRate()!=null&&list.get(i-1).getPassRate()!=null) {
+                        if (!overYearsInfoDomain.getPassRate().equals("0.00")&&!list.get(i-1).getPassRate().equals("0.00")) {
+                            Double a = (Double.valueOf(overYearsInfoDomain.getPassRate()).doubleValue() - Double.valueOf(list.get(i - 1).getPassRate()).doubleValue()) / Double.valueOf(list.get(i - 1).getPassRate()).doubleValue();
+                            semesterAddRateDomain.setAddRate(new DecimalFormat("0.0000").format(a));
+                        }else{
+                            semesterAddRateDomain.setAddRate("0");
+                        }
+                    }else {
+                        semesterAddRateDomain.setAddRate(null);
+                    }
+                }
+                semesterAddRateDomains.add(semesterAddRateDomain);
+                i++;
+            }
+            SemesterRateInfoDomain semesterRateInfoDomain=new SemesterRateInfoDomain();
+            semesterRateInfoDomain.setSemesterPassRateDomains(semesterPassRateDomains);
+            semesterRateInfoDomain.setSemesterAddRateDomains(semesterAddRateDomains);
+            //leijiPass(orgId,cetType,collegeCode,professionCode,classCode,semesterRateInfoDomain);
+            result.put("success",true);
+            result.put("data",semesterRateInfoDomain);
+            return result;
 
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
-            result.put("message", "英语考试单次数据分析---数据统计失败！");
+            result.put("message", "英语考试历年通过率分析---数据统计失败！");
             return result;
         }
-        return null;
+    }
+
+    public void  accumulate(){
+
     }
 
     public PageData<CetDetailVO> getDetailList(Long orgId, String cetType, String collegeCode, String professionCode, String className, String nj, String isPass, Integer scoreSeg, Integer pageNumber, Integer pageSize) {
