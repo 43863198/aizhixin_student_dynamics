@@ -101,6 +101,10 @@ public class CetLjIndexAnalysisService {
         //班级
         noDateRs(rsMap, CetLjIndexAnalysisManager.SQL_CLASSES_RS, orgId, current);
         ljIndexAndZxrs(cache, CetLjIndexAnalysisManager.SQL_LJ_CLASSES, orgId, rsMap, current);
+
+        System.out.println("---------------------------------------------------------------------------------------------------");
+        log.info("start save data.count:{}", cache.size());
+        cetLjIndexAnalysisManager.saveJczb(cache);
     }
 
     private void noDateRs(Map<String, Long> rsMap, String rsSql, Long orgId, Date current) {
