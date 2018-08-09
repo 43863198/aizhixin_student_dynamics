@@ -123,6 +123,7 @@ public class CetLjIndexAnalysisManager {
 
     public static String SQL_INSERT_JCZB = "INSERT INTO t_zb_djksjc (XN, XQM, XXDM, KSLX, DHLJ, P_BH, BH, ZXRS, CKRC, ZF, GF, TGZF, TGRC, NRC, NZF, VRC, VZF, NTGRC, VTGRC) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     public static String SQL_DELETE_NEW_SHOOL_LJ = "DELETE FROM t_zb_djksjc WHERE DHLJ='2' AND XXDM=?";
+    public static String SQL_DELETE_ALL_NEW_SHOOL_LJ = "DELETE FROM t_zb_djksjc WHERE DHLJ='2' AND XN IS NULL AND XXDM=?";
 //    public static String SQL_DELETE_NEW_SHOOL_LJ = "DELETE FROM t_zb_djksjc WHERE DHLJ='2' AND XN IS NULL AND XQM IS NULL AND XXDM=?";
 
     @Autowired
