@@ -908,7 +908,7 @@ public class SchoolStatisticsService {
                     jc = Integer.parseInt(jcList.get(0).toString());
                 }
             }
-            if(jc!=0) {
+//            if(jc!=0) {
                 StringBuilder cql = new StringBuilder("SELECT TEACHING_BUILDING_NUMBER as tbn, count(1) as count FROM t_class_room WHERE NORMAL = 0 ");
                 StringBuilder sql = new StringBuilder("SELECT cr.TEACHING_BUILDING_NUMBER AS tbn, count(DISTINCT cr.CLASSROOM_NAME) as count ");
                 sql.append("FROM(SELECT cs.START_PERIOD,cs.PERIOD_NUM,ct.TEACHER_NAME,ct.TEACHING_CLASS_NAME, ct.PLACE,ct.SET_UP_UNIT FROM " +
@@ -973,7 +973,7 @@ public class SchoolStatisticsService {
                         }
                     }
                 }
-            }
+//            }
             result.put("success", true);
             result.put("data", dataList);
             return result;

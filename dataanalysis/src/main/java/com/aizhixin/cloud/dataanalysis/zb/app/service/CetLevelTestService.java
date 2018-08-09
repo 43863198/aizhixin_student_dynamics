@@ -48,6 +48,26 @@ public class CetLevelTestService {
         return indexAnalysisAppManager.cetSingleDataStatistics(orgId, cetType, teacherYear, semester, collegeCode, professionCode, className);
     }
 
+    public Map<String, Object> cetSingleDataAvgScoure(Long orgId, String cetType, String teacherYear, String semester, String collegeCode, String professionCode, String className) {
+        if ("3".equals(cetType)) {
+            if (StringUtils.isBlank(collegeCode)) {
+                collegeCode = "215";
+            }
+        }
+        return indexAnalysisAppManager.cetSingleDataAvgScoure(orgId, cetType, teacherYear, semester, collegeCode, professionCode, className);
+    }
+
+    public Map<String, Object> cetSingleDataNumberOfPeople(Long orgId, String cetType, String teacherYear, String semester, String collegeCode, String professionCode, String className) {
+        if ("3".equals(cetType)) {
+            if (StringUtils.isBlank(collegeCode)) {
+                collegeCode = "215";
+            }
+        }
+        return indexAnalysisAppManager.cetSingleDataNumberOfPeople(orgId, cetType, teacherYear, semester, collegeCode, professionCode, className);
+    }
+
+
+
     public Map<String, Object> currentStatistics(Long orgId, String cetType, String collegeCode, String professionCode, String className) {
         if ("3".equals(cetType)) {
             if (StringUtils.isBlank(collegeCode)) {
@@ -67,6 +87,11 @@ public class CetLevelTestService {
     }
 
     public Map<String, Object> OverYearsPassRate(Long orgId, String cetType, String collegeCode, String professionCode, String className) {
+        if ("3".equals(cetType)) {
+            if (StringUtils.isBlank(collegeCode)) {
+                collegeCode = "215";
+            }
+        }
         return indexAnalysisAppManager.OverYearsPassRate(orgId, cetType, collegeCode, professionCode, className);
     }
 
