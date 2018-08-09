@@ -69,6 +69,6 @@ public class IndexAalysisManualController {
     @GetMapping(value = "/cetljnewest", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "英语等级考试最新累计基础指标统计", response = Void.class, notes = "英语等级考试最新累计基础指标统计<br><br><b>@author zhen.pan</b>")
     public void cetljNewest(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId") Long orgId) {
-        cetLjIndexAnalysisService.schoolBaseIndex(orgId);
+        cetLjIndexAnalysisService.calLjNewest(orgId);
     }
 }
