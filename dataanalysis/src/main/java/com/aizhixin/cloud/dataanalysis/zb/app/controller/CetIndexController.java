@@ -48,7 +48,7 @@ public class CetIndexController {
     }
 
     @GetMapping(value = "/avg", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "英语考试单次数据分析---均值分布---按行政单位", response = Void.class, notes = "英语考试单次数据分析---均值分布---按行政单位<br><br><b>@author jianwei.wu</b>")
+    @ApiOperation(httpMethod = "GET", value = "英语考试单次数据分析---均值分布---按行政单位", response = Void.class, notes = "英语考试单次数据分析---均值分布---按行政单位<br><br><b>@author dengchao</b>")
     public ResponseEntity<Map<String, Object>> cetSingleDataAvgScoure(
             @ApiParam(value = "orgId 学校id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "cetType 成绩类型： (3;4;6;)", required = true) @RequestParam(value = "cetType", required = true) String cetType,
@@ -76,7 +76,7 @@ public class CetIndexController {
     }
 
     @GetMapping(value = "/currentstatistics", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "等级考试当前状况---数据统计", response = Void.class, notes = "等级考试当前状况---数据统计<br><br><b>@author dengchao</b>")
+    @ApiOperation(httpMethod = "GET", value = "英语考试当前状况---数据统计", response = Void.class, notes = "等级考试当前状况---数据统计<br><br><b>@author dengchao</b>")
     public ResponseEntity<Map<String, Object>> currentStatistics(
             @ApiParam(value = "orgId 学校id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
             @ApiParam(value = "cetType 成绩类型： (3;4;6;)", required = true) @RequestParam(value = "cetType", required = true) String cetType,
