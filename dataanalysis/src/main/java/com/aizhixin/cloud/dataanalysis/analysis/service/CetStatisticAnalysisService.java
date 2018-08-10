@@ -2442,9 +2442,14 @@ public class CetStatisticAnalysisService {
             dql.append(" AND x.YXSMC IS NOT NULL");
             dql.append(" GROUP BY x.YXSH");
 
+            StringBuilder tdql = new StringBuilder("SELECT count(tx.XH) AS currentTotal, tx.YXSMC as name FROM t_xsjbxx tx WHERE 1 = 1  and tx.XXID = '"+ orgId + "' AND tx.DQZT NOT IN ('02','04','16') AND CURDATE() BETWEEN tx.RXNY AND tx.YBYNY GROUP BY tx.YXSH");
+
             Query dq = em.createNativeQuery(dql.toString());
+            Query tdq = em.createNativeQuery(tdql.toString());
             dq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            tdq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             List<Object> dres = dq.getResultList();
+            List<Object> tdres = tdq.getResultList();
             if (null != dres) {
                 for(Object obj: dres) {
                     Map d = (Map) obj;
@@ -2475,6 +2480,20 @@ public class CetStatisticAnalysisService {
                 }
             }
 
+            if(null != tdres){
+                for(int i = 0 ; i< tdres.size();i++){
+                    Map map = (Map)tdres.get(i);
+                    for(int j = 0; j< collegeList.size();j++){
+                        if(map.get("name").equals(collegeList.get(j).getCollegeName())){
+                            collegeList.get(j).setTotalNumber(Integer.valueOf(map.get("currentTotal").toString()));
+                            collegeList.get(j).setRate(new DecimalFormat("0.00").format((double)collegeList.get(j).getPassNumber() * 100 / Integer.valueOf(map.get("currentTotal").toString())));
+                            break;
+                        }
+                    }
+
+                }
+            }
+
             StringBuilder  pql = new StringBuilder("SELECT x.YXSMC as dname, x.ZYMC as pname, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>='" + theScore +"',1,0)) as pass, AVG(cs.SCORE) as avg, MAX(cs.SCORE) as max ");
             pql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER");
             pql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY");
@@ -2482,9 +2501,15 @@ public class CetStatisticAnalysisService {
             pql.append(" AND cs.SCORE>0");
             pql.append(" AND x.ZYMC IS NOT NULL");
             pql.append(" GROUP BY x.ZYH");
+
+            StringBuilder tpql = new StringBuilder("SELECT count(tx.XH) AS currentTotal, tx.YXSMC as xymc, tx.ZYMC as zymc FROM t_xsjbxx tx WHERE 1 = 1  and tx.XXID = '"+ orgId + "' AND tx.DQZT NOT IN ('02','04','16') AND CURDATE() BETWEEN tx.RXNY AND tx.YBYNY  GROUP BY tx.ZYMC,tx.YXSMC");
+
             Query pq = em.createNativeQuery(pql.toString());
+            Query tpq = em.createNativeQuery(tpql.toString());
             pq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            tpq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             List<Object> pres = pq.getResultList();
+            List<Object> tpres = tpq.getResultList();
             if (null != pres) {
                 for(Object obj: pres) {
                     Map d = (Map) obj;
@@ -2518,6 +2543,20 @@ public class CetStatisticAnalysisService {
                 }
             }
 
+            if(null != tpres){
+                for(int i = 0 ; i< tpres.size();i++){
+                    Map map = (Map)tpres.get(i);
+                    for(int j = 0; j< majorList.size();j++){
+                        if(map.get("xymc").equals(majorList.get(j).getCollegeName()) && map.get("zymc").equals(majorList.get(j).getMajorName())){
+                            majorList.get(j).setTotalNumber(Integer.valueOf(map.get("currentTotal").toString()));
+                            majorList.get(j).setRate(new DecimalFormat("0.00").format((double)majorList.get(j).getPassNumber() * 100 / Integer.valueOf(map.get("currentTotal").toString())));
+                            break;
+                        }
+                    }
+
+                }
+            }
+
             StringBuilder  cql = new StringBuilder("SELECT x.YXSMC as dname, x.ZYMC as pname, x.BJMC as cname, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE>='" + theScore +"',1,0)) as pass, AVG(cs.SCORE) as avg, MAX(cs.SCORE) as max ");
             cql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER, MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER");
             cql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY");
@@ -2525,8 +2564,13 @@ public class CetStatisticAnalysisService {
             cql.append(" AND cs.SCORE>0");
             cql.append(" AND x.BJMC IS NOT NULL");
             cql.append(" GROUP BY x.BJMC");
+
+            StringBuilder tcql = new StringBuilder("SELECT count(tx.XH) AS currentTotal, tx.YXSMC as xymc, tx.BJMC as bj FROM t_xsjbxx tx WHERE 1 = 1  and tx.XXID = '"+ orgId + "' AND tx.DQZT NOT IN ('02','04','16') AND CURDATE() BETWEEN tx.RXNY AND tx.YBYNY  GROUP BY tx.BJMC,tx.YXSMC");
+
             Query cq = em.createNativeQuery(cql.toString());
+            Query tcq = em.createNativeQuery(tcql.toString());
             cq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            tcq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             List<Object> cres = cq.getResultList();
             if (null != cres) {
                 for(Object obj: cres) {
@@ -2564,6 +2608,22 @@ public class CetStatisticAnalysisService {
                 }
             }
 
+            List<Object> tcres = tcq.getResultList();
+
+            if(null != tcres){
+                for(int i = 0 ; i< tcres.size();i++){
+                    Map map = (Map)tcres.get(i);
+                    for(int j = 0; j< classList.size();j++){
+                        if(map.get("xymc").equals(classList.get(j).getCollegeName()) && map.get("bj").equals(classList.get(j).getClassName())){
+                            classList.get(j).setTotalNumber(Integer.valueOf(map.get("currentTotal").toString()));
+                            classList.get(j).setRate(new DecimalFormat("0.00").format((double)classList.get(j).getPassNumber() * 100 / Integer.valueOf(map.get("currentTotal").toString())));
+                            break;
+                        }
+                    }
+
+                }
+            }
+
             StringBuilder  gql = new StringBuilder("SELECT x.YXSMC as dname, x.NJ as nj, SUM(if(cs.SCORE>0,1,0)) as cj, SUM(if(cs.SCORE >= '" + theScore +"',1,0)) as pass, AVG(cs.SCORE) as avg, MAX(cs.SCORE) as max ");
             gql.append(" FROM t_xsjbxx x LEFT JOIN (SELECT JOB_NUMBER,  MAX(SCORE) as SCORE FROM t_cet_score WHERE TYPE = '"+type+"' GROUP BY JOB_NUMBER");
             gql.append(" ) cs ON x.XH = cs.JOB_NUMBER WHERE CURDATE() BETWEEN x.RXNY AND x.YBYNY");
@@ -2571,8 +2631,15 @@ public class CetStatisticAnalysisService {
             gql.append(" AND cs.SCORE>0");
             gql.append(" AND x.NJ IS NOT NULL");
             gql.append(" GROUP BY x.NJ,x.YXSH");
+
+
+            StringBuilder tgql = new StringBuilder("SELECT count(tx.XH) AS currentTotal, tx.YXSMC as xymc, tx.NJ as nj FROM t_xsjbxx tx WHERE 1 = 1  and tx.XXID = '"+ orgId + "' AND tx.DQZT NOT IN ('02','04','16') AND CURDATE() BETWEEN tx.RXNY AND tx.YBYNY  GROUP BY tx.NJ,tx.YXSMC");
+
+
             Query gq = em.createNativeQuery(gql.toString());
+            Query tgq = em.createNativeQuery(tgql.toString());
             gq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            tgq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             List<Object> gres = gq.getResultList();
             if (null != gres) {
                 for(Object obj: gres) {
@@ -2614,6 +2681,22 @@ public class CetStatisticAnalysisService {
                     if(null!=tysList&&tysList.size()>0){
                         yearSemesterDTO = tysList.get(0);
                     }
+                }
+            }
+
+            List<Object> tgres = tgq.getResultList();
+
+            if(null != tgres){
+                for(int i = 0 ; i< tgres.size();i++){
+                    Map map = (Map)tgres.get(i);
+                    for(int j = 0; j< gradeList.size();j++){
+                        if(map.get("xymc").equals(gradeList.get(j).getCollegeName()) && map.get("nj").equals(gradeList.get(j).getGradeName())){
+                            gradeList.get(j).setTotalNumber(Integer.valueOf(map.get("currentTotal").toString()));
+                            gradeList.get(j).setRate(new DecimalFormat("0.00").format((double)gradeList.get(j).getPassNumber() * 100 / Integer.valueOf(map.get("currentTotal").toString())));
+                            break;
+                        }
+                    }
+
                 }
             }
 
