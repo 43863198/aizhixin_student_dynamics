@@ -589,6 +589,7 @@ public class CetStatisticAnalysisService {
             result.put("data", csdsVO);
             return result;
         } catch (Exception e) {
+            e.printStackTrace();
             result.put("success", false);
             result.put("message", "英语考试单次数据分析---数据统计失败！");
             return result;
@@ -697,6 +698,7 @@ public class CetStatisticAnalysisService {
             result.put("data", csaList);
             return result;
         } catch (Exception e) {
+            e.printStackTrace();
             result.put("success", false);
             result.put("message", "英语考试单次数据分析---均值分布---按行政单位统计失败！");
             return result;
@@ -920,6 +922,7 @@ public class CetStatisticAnalysisService {
             result.put("data", cnpList);
             return result;
         } catch (Exception e) {
+            e.printStackTrace();
             result.put("success", false);
             result.put("message", "英语考试单次数据分析---均值分布---按年级统计失败！");
             return result;
@@ -1143,6 +1146,7 @@ public class CetStatisticAnalysisService {
             result.put("data", csnpList);
             return result;
         } catch (Exception e) {
+            e.printStackTrace();
             result.put("success", false);
             result.put("message", "英语考试单次数据分析---人数分布---按性别统计失败！");
             return result;
