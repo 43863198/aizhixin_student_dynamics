@@ -11,6 +11,7 @@ import lombok.Data;
 public class CurrentStatisticsCollegeVO {
     private String collegeName;
     private int joinNumber;
+    private int TotalNumber;
     private int passNumber;
     private String rate;
     private String avg;

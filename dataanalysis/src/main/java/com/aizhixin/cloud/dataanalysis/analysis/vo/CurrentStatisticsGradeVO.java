@@ -12,6 +12,7 @@ public class CurrentStatisticsGradeVO {
     private String gradeName;
     private String collegeName;
     private int joinNumber;
+    private int totalNumber;
     private int passNumber;
     private String rate;
     private String avg;
