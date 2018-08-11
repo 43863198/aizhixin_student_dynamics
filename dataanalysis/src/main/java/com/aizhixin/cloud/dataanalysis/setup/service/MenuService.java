@@ -27,4 +27,12 @@ public class MenuService {
     public List<Menu> findByOrgIdAndTagAndRoles(Long orgId, String tag, Set<String> rolesSet) {
         return menuManager.findByOrgIdAndTagAndRolesIn(orgId, tag, rolesSet);
     }
+
+    public Menu findById(String id) {
+        return menuManager.findById(id);
+    }
+
+    public Menu update(Menu menu) {
+        return menuManager.save(menu);
+    }
 }
