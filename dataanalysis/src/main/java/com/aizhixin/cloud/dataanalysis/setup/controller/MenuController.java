@@ -1,5 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.setup.controller;
 
+import com.aizhixin.cloud.dataanalysis.common.domain.MessageVO;
 import com.aizhixin.cloud.dataanalysis.setup.mongoEntity.Menu;
 import com.aizhixin.cloud.dataanalysis.setup.service.MenuService;
 import io.swagger.annotations.Api;
@@ -23,13 +24,16 @@ public class MenuController {
     private MenuService menuService;
 
 
-    @PostMapping(value = "/save", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "POST", value = "添加数据", response = Void.class, notes = "添加数据<br><br><b>@author pazhen</b>")
-    public  Menu save(@ApiParam(value = "菜单内容", required = true) @RequestBody Menu menu) {
-     return menuService.save(menu);
+    public MessageVO save(@ApiParam(value = "菜单内容", required = true) @RequestBody Menu menu) {
+        MessageVO vo = new MessageVO();
+        menu = menuService.save(menu);
+        vo.setData(menu.getId());
+        return vo;
     }
 
-    @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "查询数据", response = Void.class, notes = "查询数据<br><br><b>@author pazhen</b>")
     public List<Menu> list(@ApiParam(value = "菜单内容", required = true) @RequestParam Long orgId,
                            @ApiParam(value = "菜单内容", required = true) @RequestParam String tag,
@@ -41,4 +45,18 @@ public class MenuController {
         }
     }
 
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "根据ID查询数据", response = Void.class, notes = "根据ID查询数据<br><br><b>@author pazhen</b>")
+    public Menu get(@ApiParam(value = "id", required = true) @PathVariable String id) {
+        return menuService.findById(id);
+    }
+
+    @PutMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "PUT", value = "修改数据", response = Void.class, notes = "修改数据<br><br><b>@author pazhen</b>")
+    public MessageVO update(@ApiParam(value = "菜单内容", required = true) @RequestBody Menu menu) {
+        MessageVO vo = new MessageVO();
+        menu = menuService.update(menu);
+        vo.setData(menu.getId());
+        return vo;
+    }
 }

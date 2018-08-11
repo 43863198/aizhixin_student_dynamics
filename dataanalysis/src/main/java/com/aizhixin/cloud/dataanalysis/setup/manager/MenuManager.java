@@ -18,8 +18,13 @@ public class MenuManager {
     public Menu save (Menu entity) {
         return menuRespository.save(entity);
     }
-    public List<Menu> save (List<Menu> entitys) {
-        return menuRespository.save(entitys);
+
+    public Menu findById(String id) {
+        return menuRespository.findOne(id);
+    }
+
+    public void deleteById(String id) {
+        menuRespository.deleteById(id);
     }
 
     public List<Menu> findByOrgIdAndTag(Long orgId, String tag) {
