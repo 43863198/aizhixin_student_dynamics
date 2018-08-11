@@ -872,9 +872,7 @@ public class SchoolStatisticsService {
             List<Object> res = sq.getResultList();
             List<Object> zres = zsq.getResultList();
             List<Object> bzres = bzsq.getResultList();
-
-
-
+            
             List<StudentByGradeVo> totalList = new ArrayList<>();
             List<StudentByGradeVo> inList = new ArrayList<>();
             List<StudentByGradeVo> outList = new ArrayList<>();
@@ -909,8 +907,6 @@ public class SchoolStatisticsService {
                 outList.add(studentByGradeVo);
             }
 
-
-
             for (int i = 0 ; i<totalList.size();i++){
                 String grade = totalList.get(i).getGrade();
                 for(int j = 0;j < inList.size();j++){
@@ -919,7 +915,7 @@ public class SchoolStatisticsService {
                     }
                 }
                 for(int k = 0;k < outList.size();k++){
-                    if(grade.equals(inList.get(k).getGrade())){
+                    if(grade.equals(outList.get(k).getGrade())){
                         totalList.get(i).setOut(outList.get(k).getOut());
                     }
                 }
