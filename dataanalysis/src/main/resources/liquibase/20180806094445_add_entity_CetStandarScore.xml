@@ -41,7 +41,7 @@
             <column name="CJ" type="DECIMAL(8,2)" remarks="CJ综合成绩"/>
             <column name="TLCJ" type="DECIMAL(8,2)" remarks="TLCJ听力成绩"/>
             <column name="YDCJ" type="DECIMAL(8,2)" remarks="YDCJ阅读成绩"/>
-            <column name="KSSC" type="DECIMAL(8,2)" remarks="XZCJ写作成绩"/>
+            <column name="XZCJ" type="DECIMAL(8,2)" remarks="XZCJ写作成绩"/>
             <column name="TG" type="INT(4)" remarks="TG是否通过"/>
             <column name="CK" type="INT(4)" remarks="CK是否参考"/>
         </createTable>
