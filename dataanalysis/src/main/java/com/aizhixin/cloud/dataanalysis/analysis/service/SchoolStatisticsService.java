@@ -9,10 +9,7 @@ import com.aizhixin.cloud.dataanalysis.analysis.respository.CetScoreStatisticsRe
 import com.aizhixin.cloud.dataanalysis.analysis.respository.PracticeStaticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.SchoolStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.TeachingScoreStatisticsRespository;
-import com.aizhixin.cloud.dataanalysis.analysis.vo.GraduateRateVO;
-import com.aizhixin.cloud.dataanalysis.analysis.vo.ReportRateVO;
-import com.aizhixin.cloud.dataanalysis.analysis.vo.StudentStatisticsVO;
-import com.aizhixin.cloud.dataanalysis.analysis.vo.TeachingBuildingsUsegeVO;
+import com.aizhixin.cloud.dataanalysis.analysis.vo.*;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
@@ -837,6 +834,108 @@ public class SchoolStatisticsService {
             return result;
         }
     }
+
+    public Map<String, Object> studentStatisticsByGrade(Long orgId){
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> condition = new HashMap<>();
+        try{
+            //总人数
+            StringBuilder sql = new StringBuilder("select count(xh) as total,NJ as grade from t_xsjbxx where CURDATE() BETWEEN RXNY and YBYNY ");
+            //在校人数
+            StringBuilder zsql = new StringBuilder("select count(xh) as total,NJ  as grade from t_xsjbxx where CURDATE() BETWEEN RXNY and YBYNY and DQZT NOT IN ('02','04','16') ");
+            //休停学人数
+            StringBuilder bzsql = new StringBuilder("select count(xh) as total,NJ as grade from t_xsjbxx where CURDATE() BETWEEN RXNY and YBYNY and DQZT IN ('02','04','16') ");
+
+            if(null != orgId){
+                sql.append(" and XXID=:orgId ");
+                zsql.append(" and XXID=:orgId ");
+                bzsql.append(" and XXID=:orgId ");
+                condition.put("orgId", orgId);
+            }
+
+            sql.append(" GROUP BY NJ");
+            zsql.append(" GROUP BY NJ");
+            bzsql.append(" GROUP BY NJ");
+
+            Query sq = em.createNativeQuery(sql.toString());
+            Query zsq = em.createNativeQuery(zsql.toString());
+            Query bzsq = em.createNativeQuery(bzsql.toString());
+            for (Map.Entry<String,Object> e : condition.entrySet()){
+                sq.setParameter(e.getKey(),e.getValue());
+                zsq.setParameter(e.getKey(),e.getValue());
+                bzsq.setParameter(e.getKey(),e.getValue());
+            }
+            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            zsq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            bzsq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+
+            List<Object> res = sq.getResultList();
+            List<Object> zres = zsq.getResultList();
+            List<Object> bzres = bzsq.getResultList();
+
+
+
+            List<StudentByGradeVo> totalList = new ArrayList<>();
+            List<StudentByGradeVo> inList = new ArrayList<>();
+            List<StudentByGradeVo> outList = new ArrayList<>();
+
+            for (Object obj : res) {
+                Map row = (Map) obj;
+                StudentByGradeVo studentByGradeVo = new StudentByGradeVo();
+                if (null != row.get("grade") && null != row.get("total")) {
+                    studentByGradeVo.setGrade(row.get("grade").toString());
+                    studentByGradeVo.setTotal(Integer.valueOf(row.get("total").toString()));
+                }
+                totalList.add(studentByGradeVo);
+            }
+
+            for (Object obj : zres) {
+                Map row = (Map) obj;
+                StudentByGradeVo studentByGradeVo = new StudentByGradeVo();
+                if (null != row.get("grade") && null != row.get("total")) {
+                    studentByGradeVo.setGrade(row.get("grade").toString());
+                    studentByGradeVo.setIn(Integer.valueOf(row.get("total").toString()));
+                }
+                inList.add(studentByGradeVo);
+            }
+
+            for (Object obj : bzres) {
+                Map row = (Map) obj;
+                StudentByGradeVo studentByGradeVo = new StudentByGradeVo();
+                if (null != row.get("grade") && null != row.get("total")) {
+                    studentByGradeVo.setGrade(row.get("grade").toString());
+                    studentByGradeVo.setOut(Integer.valueOf(row.get("total").toString()));
+                }
+                outList.add(studentByGradeVo);
+            }
+
+
+
+            for (int i = 0 ; i<totalList.size();i++){
+                String grade = totalList.get(i).getGrade();
+                for(int j = 0;j < inList.size();j++){
+                    if(grade.equals(inList.get(j).getGrade())){
+                        totalList.get(i).setIn(inList.get(j).getIn());
+                    }
+                }
+                for(int k = 0;k < outList.size();k++){
+                    if(grade.equals(inList.get(k).getGrade())){
+                        totalList.get(i).setOut(outList.get(k).getOut());
+                    }
+                }
+            }
+
+            result.put("success", true);
+            result.put("data", totalList);
+            return result;
+        }catch (Exception e){
+            result.put("success", false);
+            result.put("message", "获取各年级人数数据失败！");
+            return result;
+
+        }
+    }
+
 
     public Map<String, Object> teachingBuildingUsage(Long orgId) {
         List<TeachingBuildingsUsegeVO> dataList = new ArrayList<>();
