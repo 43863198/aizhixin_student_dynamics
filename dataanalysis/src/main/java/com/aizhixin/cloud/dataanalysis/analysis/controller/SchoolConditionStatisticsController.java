@@ -197,6 +197,17 @@ public class SchoolConditionStatisticsController {
     }
 
     /**
+     * 按年级统计学生情况
+     * @param orgId
+     * @returng
+     */
+    @GetMapping(value = "/studentstatisticsbygrade", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "按年级统计学生情况", response = Void.class, notes = "学生情况<br><br><b>@author dengchao</b>")
+    public ResponseEntity<Map<String, Object>>  studentStatisticsByGrade(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId) {
+        return new ResponseEntity<>(schoolStatisticsService.studentStatisticsByGrade(orgId),HttpStatus.OK);
+    }
+
+    /**
      * 今日教学楼使用情况
      * @param orgId
      * @returng
