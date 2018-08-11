@@ -60,8 +60,11 @@
     <include file="classpath:liquibase/201712181132845_update_entity_AlarmSettings.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20180517163245_update_entity_AlarmReceiver.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/201806273163200_update_entity_WarningInformation.xml" relativeToChangelogFile="false"/>
-    -->
-
     <include file="classpath:liquibase/20180726102920_update_entity_Department.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20180730170945_add_entity_NodificationRecord.xml" relativeToChangelogFile="false"/>
+    -->
+
+    <include file="classpath:liquibase/20180806094445_add_entity_CetStandarScore.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20180806100445_add_entity_StandarScore.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20180811101045_add_entity_CetBaseIndex.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
