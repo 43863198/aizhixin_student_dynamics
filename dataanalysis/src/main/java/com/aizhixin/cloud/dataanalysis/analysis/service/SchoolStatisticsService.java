@@ -873,17 +873,60 @@ public class SchoolStatisticsService {
             List<Object> zres = zsq.getResultList();
             List<Object> bzres = bzsq.getResultList();
 
-            List<Object> totalList = new ArrayList<>();
-            List<Object> inList = new ArrayList<>();
-            List<Object> outList = new ArrayList<>();
 
-            Map<String,Object> resultMap = new HashMap<>();
-            resultMap.put("total",getStudentListByGrade(res,totalList));
-            resultMap.put("in",getStudentListByGrade(zres,inList));
-            resultMap.put("out",getStudentListByGrade(bzres,outList));
+
+            List<StudentByGradeVo> totalList = new ArrayList<>();
+            List<StudentByGradeVo> inList = new ArrayList<>();
+            List<StudentByGradeVo> outList = new ArrayList<>();
+
+            for (Object obj : res) {
+                Map row = (Map) obj;
+                StudentByGradeVo studentByGradeVo = new StudentByGradeVo();
+                if (null != row.get("grade") && null != row.get("total")) {
+                    studentByGradeVo.setGrade(row.get("grade").toString());
+                    studentByGradeVo.setTotal(Integer.valueOf(row.get("total").toString()));
+                }
+                totalList.add(studentByGradeVo);
+            }
+
+            for (Object obj : zres) {
+                Map row = (Map) obj;
+                StudentByGradeVo studentByGradeVo = new StudentByGradeVo();
+                if (null != row.get("grade") && null != row.get("total")) {
+                    studentByGradeVo.setGrade(row.get("grade").toString());
+                    studentByGradeVo.setIn(Integer.valueOf(row.get("total").toString()));
+                }
+                inList.add(studentByGradeVo);
+            }
+
+            for (Object obj : bzres) {
+                Map row = (Map) obj;
+                StudentByGradeVo studentByGradeVo = new StudentByGradeVo();
+                if (null != row.get("grade") && null != row.get("total")) {
+                    studentByGradeVo.setGrade(row.get("grade").toString());
+                    studentByGradeVo.setOut(Integer.valueOf(row.get("total").toString()));
+                }
+                outList.add(studentByGradeVo);
+            }
+
+
+
+            for (int i = 0 ; i<totalList.size();i++){
+                String grade = totalList.get(i).getGrade();
+                for(int j = 0;j < inList.size();j++){
+                    if(grade.equals(inList.get(j).getGrade())){
+                        totalList.get(i).setIn(inList.get(j).getIn());
+                    }
+                }
+                for(int k = 0;k < outList.size();k++){
+                    if(grade.equals(inList.get(k).getGrade())){
+                        totalList.get(i).setOut(outList.get(k).getOut());
+                    }
+                }
+            }
 
             result.put("success", true);
-            result.put("data", resultMap);
+            result.put("data", totalList);
             return result;
         }catch (Exception e){
             result.put("success", false);
@@ -893,18 +936,6 @@ public class SchoolStatisticsService {
         }
     }
 
-    public List<Object> getStudentListByGrade(List<Object> target,List<Object> list){
-        for (Object obj : target) {
-            Map row = (Map) obj;
-            StudentByGradeVo studentByGradeVo = new StudentByGradeVo();
-            if (null != row.get("grade") && null != row.get("total")) {
-                studentByGradeVo.setGrade(row.get("grade").toString());
-                studentByGradeVo.setTotal(Integer.valueOf(row.get("total").toString()));
-            }
-            list.add(studentByGradeVo);
-        }
-        return list;
-    }
 
     public Map<String, Object> teachingBuildingUsage(Long orgId) {
         List<TeachingBuildingsUsegeVO> dataList = new ArrayList<>();
