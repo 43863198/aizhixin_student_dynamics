@@ -20,6 +20,8 @@ import com.mongodb.BasicDBObject;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -59,6 +61,8 @@ public class CetStatisticAnalysisService {
     private CetSexStatisticalJdbc cetSexStatisticalJdbc;
     @Autowired
     private CetAvgStatisticalJdbc cetAvgStatisticalJdbc;
+
+    final static private Logger logger = LoggerFactory.getLogger(CetStatisticAnalysisService.class);
 
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -590,6 +594,7 @@ public class CetStatisticAnalysisService {
             return result;
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("英语考试单次数据分析---数据统计失败:{}",e.getMessage());
             result.put("success", false);
             result.put("message", "英语考试单次数据分析---数据统计失败！");
             return result;
@@ -699,6 +704,7 @@ public class CetStatisticAnalysisService {
             return result;
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("英语考试单次数据分析---均值分布---按行政单位统计失败:{}",e.getMessage());
             result.put("success", false);
             result.put("message", "英语考试单次数据分析---均值分布---按行政单位统计失败！");
             return result;
@@ -923,6 +929,7 @@ public class CetStatisticAnalysisService {
             return result;
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("英语考试单次数据分析---均值分布---按年级统计失败:{}",e.getMessage());
             result.put("success", false);
             result.put("message", "英语考试单次数据分析---均值分布---按年级统计失败！");
             return result;
@@ -1147,6 +1154,7 @@ public class CetStatisticAnalysisService {
             return result;
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("英语考试单次数据分析---人数分布---按性别统计失败:{}",e.getMessage());
             result.put("success", false);
             result.put("message", "英语考试单次数据分析---人数分布---按性别统计失败！");
             return result;
