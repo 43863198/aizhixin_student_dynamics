@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+    <!-- 标准学生等级考试基础指标-->
+    <changeSet id="20180811101045" author="zhen.pan">
+		<preConditions onFail="MARK_RAN">
+	        <not>
+	            <tableExists tableName="T_ZB_DJKSJC"/>
+	        </not>
+	    </preConditions>
+        <createTable tableName="T_ZB_DJKSJC" remarks="通知记录表">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="XN" type="VARCHAR(20)" remarks="XN学年"/>
+            <column name="XQM" type="VARCHAR(10)" remarks="XQM学期"/>
+            <column name="XXDM" type="VARCHAR(20)" remarks="XXDM学校代码"/>
+            <column name="DHLJ" type="VARCHAR(10)" remarks="DHLJ单次或者累计 1单次 2累计"/>
+            <column name="P_BH" type="VARCHAR(20)" remarks="P_BH上一级编码"/>
+            <column name="BH" type="VARCHAR(120)" remarks="BH编码"/>
+            <column name="KSLX" type="VARCHAR(10)" remarks="KSLX考试类型3三级、4四级、6六级"/>
+            <column name="ZXRS" type="INT" remarks="ZXRS在校人数"/>
+            <column name="NZXRS" type="INT" remarks="NZXRS男在校人数"/>
+            <column name="VZXRS" type="INT" remarks="VZXRS女在校人数"/>
+            <column name="CKRC" type="INT" remarks="CKRC参考人次"/>
+            <column name="ZF" type="DECIMAL(11,2)" remarks="ZF总分"/>
+            <column name="GF" type="DECIMAL(8,2)" remarks="GF最高分"/>
+            <column name="TGZF" type="DECIMAL(11,2)" remarks="TGZF通过人员的总分"/>
+            <column name="TGRC" type="INT" remarks="TGRC通过人次"/>
+            <column name="NRC" type="INT" remarks="NRC男总人次"/>
+            <column name="NZF" type="DECIMAL(11,2)" remarks="NZF男总分"/>
+            <column name="VRC" type="INT" remarks="VRC女总人次"/>
+            <column name="VZF" type="DECIMAL(11,2)" remarks="VZF女总分"/>
+            <column name="NTGRC" type="INT" remarks="NTGRC男通过人次"/>
+            <column name="VTGRC" type="INT" remarks="VTGRC女通过人次"/>
+        </createTable>
+        <createIndex indexName="idx_djksjc_xn" tableName="T_ZB_DJKSJC" unique="false">
+            <column name="XN" type="VARCHAR(20)"/>
+        </createIndex>
+        <createIndex indexName="idx_djksjc_xqm" tableName="T_ZB_DJKSJC" unique="false">
+            <column name="XQM" type="VARCHAR(10)"/>
+        </createIndex>
+        <createIndex indexName="idx_djksjc_xxdm" tableName="T_ZB_DJKSJC" unique="false">
+            <column name="XXDM" type="VARCHAR(20)"/>
+        </createIndex>
+        <createIndex indexName="idx_djksjc_dhlj" tableName="T_ZB_DJKSJC" unique="false">
+            <column name="DHLJ" type="VARCHAR(20)"/>
+        </createIndex>
+        <createIndex indexName="idx_djksjc_pbh" tableName="T_ZB_DJKSJC" unique="false">
+            <column name="P_BH" type="VARCHAR(20)"/>
+        </createIndex>
+        <createIndex indexName="idx_djksjc_bh" tableName="T_ZB_DJKSJC" unique="false">
+            <column name="BH" type="VARCHAR(120)"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
