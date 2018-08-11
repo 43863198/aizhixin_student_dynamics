@@ -811,6 +811,7 @@ public class CetStatisticAnalysisService {
             result.put("data", csaList);
             return result;
         } catch (Exception e) {
+            logger.info("英语考试单次数据分析---均值分布---按男女计失败:{}",e.getMessage());
             result.put("success", false);
             result.put("message", "英语考试单次数据分析---均值分布---按男女计失败！");
             return result;
@@ -1041,6 +1042,7 @@ public class CetStatisticAnalysisService {
             result.put("data", csnpList);
             return result;
         } catch (Exception e) {
+            logger.info("英语考试单次数据分析---人数分布---按行政单位统计失败:{}",e.getMessage());
             result.put("success", false);
             result.put("message", "英语考试单次数据分析---人数分布---按行政单位统计失败！");
             return result;
@@ -1265,6 +1267,7 @@ public class CetStatisticAnalysisService {
             result.put("data", csaList);
             return result;
         } catch (Exception e) {
+            logger.info("英语考试单次数据分析---人数分布---按年级统计失败:{}",e.getMessage());
             result.put("success", false);
             result.put("message", "英语考试单次数据分析---人数分布---按年级统计失败！");
             return result;
@@ -1464,6 +1467,7 @@ public class CetStatisticAnalysisService {
             return result;
         } catch (Exception e) {
             e.printStackTrace();
+            logger.info("英语考试当前状况---数据统计统计失败:{}",e.getMessage());
             result.put("success", false);
             result.put("message", "英语考试当前状况---数据统计统计失败！");
             return result;
@@ -1620,6 +1624,7 @@ public class CetStatisticAnalysisService {
             result.put("data", totalInfoDomain);
             return result;
         } catch (Exception e) {
+            logger.info("英语考试当前状况---人数分布---按行政班统计失败:{}",e.getMessage());
             e.printStackTrace();
             result.put("success", false);
             result.put("message", "英语考试当前状况---人数分布---按行政班统计失败！");
@@ -1791,6 +1796,7 @@ public class CetStatisticAnalysisService {
             p.getPage().setTotalElements(count);
             p.getPage().setTotalPages(PageUtil.cacalatePagesize(count, p.getPage().getPageSize()));
         } catch (Exception e) {
+            logger.info("英语考试获取列表失败:{}",e.getMessage());
             e.printStackTrace();
         }
         return p;
@@ -1802,14 +1808,22 @@ public class CetStatisticAnalysisService {
 
     public  Map<String,Object>  avg(Long orgId,String collegeCode,String professionCode,String classCode,String className, String cetType){
         Map<String,Object> result=new HashMap<>();
-        AvgInfoDomain avgInfoDomain=new AvgInfoDomain();
-        avgInfoDomain.setAvgDomains(avgInfo(orgId,collegeCode,professionCode,classCode,className,cetType));
+        try{
+            AvgInfoDomain avgInfoDomain=new AvgInfoDomain();
+            avgInfoDomain.setAvgDomains(avgInfo(orgId,collegeCode,professionCode,classCode,className,cetType));
 //        avgInfoDomain.setAvgAgeDomains(avgAvgInfo(orgId,collegeCode,professionCode,classCode,className,cetType));
-        avgInfoDomain.setAvgSexDomains(avgSexInfo(orgId,collegeCode,professionCode,classCode,className,cetType));
-        avgInfoDomain.setAvgNjDomains(avgNjInfo(orgId,collegeCode,professionCode,classCode,className,cetType));
-        result.put("data", avgInfoDomain);
-        result.put("success", true);
-        return result;
+            avgInfoDomain.setAvgSexDomains(avgSexInfo(orgId,collegeCode,professionCode,classCode,className,cetType));
+            avgInfoDomain.setAvgNjDomains(avgNjInfo(orgId,collegeCode,professionCode,classCode,className,cetType));
+            result.put("data", avgInfoDomain);
+            result.put("success", true);
+            return result;
+        }catch (Exception e){
+            logger.info("英语考试当前状况---均值分布:{}",e.getMessage());
+            result.put("success", false);
+            result.put("message", "英语考试当前状况---均值分布---数据统计失败！");
+            return  result;
+        }
+
     }
 
 
