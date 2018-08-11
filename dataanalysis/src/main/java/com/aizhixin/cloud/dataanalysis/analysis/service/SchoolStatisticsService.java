@@ -9,10 +9,7 @@ import com.aizhixin.cloud.dataanalysis.analysis.respository.CetScoreStatisticsRe
 import com.aizhixin.cloud.dataanalysis.analysis.respository.PracticeStaticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.SchoolStatisticsRespository;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.TeachingScoreStatisticsRespository;
-import com.aizhixin.cloud.dataanalysis.analysis.vo.GraduateRateVO;
-import com.aizhixin.cloud.dataanalysis.analysis.vo.ReportRateVO;
-import com.aizhixin.cloud.dataanalysis.analysis.vo.StudentStatisticsVO;
-import com.aizhixin.cloud.dataanalysis.analysis.vo.TeachingBuildingsUsegeVO;
+import com.aizhixin.cloud.dataanalysis.analysis.vo.*;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
@@ -836,6 +833,77 @@ public class SchoolStatisticsService {
             result.put("message", "获取毕业生人数情况失败！");
             return result;
         }
+    }
+
+    public Map<String, Object> studentStatisticsByGrade(Long orgId){
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> condition = new HashMap<>();
+        try{
+            //总人数
+            StringBuilder sql = new StringBuilder("select count(xh) as total,NJ as grade from t_xsjbxx where CURDATE() BETWEEN RXNY and YBYNY ");
+            //在校人数
+            StringBuilder zsql = new StringBuilder("select count(xh) as total,NJ  as grade from t_xsjbxx where CURDATE() BETWEEN RXNY and YBYNY and DQZT NOT IN ('02','04','16') ");
+            //休停学人数
+            StringBuilder bzsql = new StringBuilder("select count(xh) as total,NJ as grade from t_xsjbxx where CURDATE() BETWEEN RXNY and YBYNY and DQZT IN ('02','04','16') ");
+
+            if(null != orgId){
+                sql.append(" and XXID=:orgId ");
+                zsql.append(" and XXID=:orgId ");
+                bzsql.append(" and XXID=:orgId ");
+                condition.put("orgId", orgId);
+            }
+
+            sql.append(" GROUP BY NJ");
+            zsql.append(" GROUP BY NJ");
+            bzsql.append(" GROUP BY NJ");
+
+            Query sq = em.createNativeQuery(sql.toString());
+            Query zsq = em.createNativeQuery(zsql.toString());
+            Query bzsq = em.createNativeQuery(bzsql.toString());
+            for (Map.Entry<String,Object> e : condition.entrySet()){
+                sq.setParameter(e.getKey(),e.getValue());
+                zsq.setParameter(e.getKey(),e.getValue());
+                bzsq.setParameter(e.getKey(),e.getValue());
+            }
+            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            zsq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            bzsq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+
+            List<Object> res = sq.getResultList();
+            List<Object> zres = zsq.getResultList();
+            List<Object> bzres = bzsq.getResultList();
+
+            List<Object> totalList = new ArrayList<>();
+            List<Object> inList = new ArrayList<>();
+            List<Object> outList = new ArrayList<>();
+
+            Map<String,Object> resultMap = new HashMap<>();
+            resultMap.put("total",getStudentListByGrade(res,totalList));
+            resultMap.put("in",getStudentListByGrade(zres,inList));
+            resultMap.put("out",getStudentListByGrade(bzres,outList));
+
+            result.put("success", true);
+            result.put("data", resultMap);
+            return result;
+        }catch (Exception e){
+            result.put("success", false);
+            result.put("message", "获取各年级人数数据失败！");
+            return result;
+
+        }
+    }
+
+    public List<Object> getStudentListByGrade(List<Object> target,List<Object> list){
+        for (Object obj : target) {
+            Map row = (Map) obj;
+            StudentByGradeVo studentByGradeVo = new StudentByGradeVo();
+            if (null != row.get("grade") && null != row.get("total")) {
+                studentByGradeVo.setGrade(row.get("grade").toString());
+                studentByGradeVo.setTotal(Integer.valueOf(row.get("total").toString()));
+            }
+            list.add(studentByGradeVo);
+        }
+        return list;
     }
 
     public Map<String, Object> teachingBuildingUsage(Long orgId) {
