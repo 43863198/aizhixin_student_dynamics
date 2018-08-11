@@ -59,4 +59,10 @@ public class MenuController {
         vo.setData(menu.getId());
         return vo;
     }
+
+    @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "DELETE", value = "根据ID删除数据", response = Void.class, notes = "根据ID删除数据<br><br><b>@author pazhen</b>")
+    public void delete(@ApiParam(value = "id", required = true) @PathVariable String id) {
+        menuService.delete(id);
+    }
 }

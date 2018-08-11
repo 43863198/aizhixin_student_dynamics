@@ -35,4 +35,8 @@ public class MenuService {
     public Menu update(Menu menu) {
         return menuManager.save(menu);
     }
+
+    public void delete(String id) {
+        menuManager.deleteById(id);
+    }
 }
