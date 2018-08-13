@@ -118,8 +118,8 @@ public class IndexAnalysisAppManager {
                 } else {
                     d = DateUtil.parseShortDate(year + "-08-01");
                 }
-                long rs = cetLjIndexAnalysisManager.queryAllZxrs(CetLjIndexAnalysisManager.SQL_SCHOOL_RS, orgId, d);
-                v.setZxrs(rs);
+//                long rs = cetLjIndexAnalysisManager.queryAllZxrs(CetLjIndexAnalysisManager.SQL_SCHOOL_RS, orgId, d);
+//                v.setZxrs(rs);
                 rsList.add(v);
             }
         }
