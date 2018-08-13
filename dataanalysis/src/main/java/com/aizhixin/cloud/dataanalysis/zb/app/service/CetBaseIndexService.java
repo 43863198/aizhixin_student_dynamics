@@ -135,9 +135,11 @@ public class CetBaseIndexService {
 
         CetBaseIndex c = findNewLjOneDwIndex(orgId, cetType, collegeCode, professionalCode, classesCode);
         if (null != c) {
+            v.getMan().setZxrs(c.getNzxrs());
             v.getMan().setCkrc(c.getNrc());
             v.getMan().setTgrs(c.getTgrc());
 
+            v.getWomen().setZxrs(c.getVzxrs());
             v.getWomen().setTgrs(c.getVtgrc());
             v.getWomen().setCkrc(c.getVrc());
         }
@@ -160,9 +162,11 @@ public class CetBaseIndexService {
 
         CetBaseIndex c = findNewLjOneDwIndex(orgId, cetType, collegeCode, professionalCode, classesCode);
         if (null != c) {
+            v.getMan().setZxrs(c.getNzxrs());
             v.getMan().setCkrc(c.getNrc());
             v.getMan().setZf(c.getNzf());
 
+            v.getWomen().setZxrs(c.getVzxrs());
             v.getWomen().setCkrc(c.getVtgrc());
             v.getWomen().setZf(c.getVzf());
         }
