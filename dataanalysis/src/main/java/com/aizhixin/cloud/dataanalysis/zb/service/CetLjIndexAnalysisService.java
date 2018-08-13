@@ -130,36 +130,16 @@ public class CetLjIndexAnalysisService {
         Date current = new Date ();
         Map<String, ZxrsDTO> rsMap = new HashMap<>();
 
-        //全校当前时间统计
-        List<AnalysisBasezbDTO> list = cetLjIndexAnalysisManager.queryLjJczb(CetLjIndexAnalysisManager.SQL_LJ_SCHOOL, orgId, new Date());
-        List<ZxrsDTO> rsList = cetLjIndexAnalysisManager.querySubZxrs(CetLjIndexAnalysisManager.SQL_SCHOOL_RS, orgId, new Date (), new Date ());
-        ZxrsDTO rs = new ZxrsDTO ();
-        long zxrs = 0;
-        for (ZxrsDTO d : rsList) {
-            zxrs += d.getZxrs();
-            if ("男".equals(d.getXb())) {
-                rs.setNzxrs(d.getZxrs());
-            } else if ("女".equals(d.getXb())) {
-                rs.setVzxrs(d.getZxrs());
-            }
-        }
-        rs.setZxrs(zxrs);
-        for (AnalysisBasezbDTO d : list) {
-            d.setZxrs(zxrs);
-            d.setNzxrs(rs.getNzxrs());
-            d.setVzxrs(rs.getVzxrs());
-            d.setXxdm(orgId.toString());
-            d.setDhlj("2");
-            cache.add(d);
-        }
-
+        //全校
+        List<AnalysisBasezbDTO> list = cetLjIndexAnalysisManager.queryLjJczb(CetLjIndexAnalysisManager.SQL_LJ_SCHOOL, orgId, current);
+        noDateRs(rsMap, CetLjIndexAnalysisManager.SQL_LJ_SCHOOL, orgId, current);
+        ljIndexAndZxrs(cache, CetLjIndexAnalysisManager.SQL_LJ_SCHOOL, orgId, rsMap, current);
         //学院
         noDateRs(rsMap, CetLjIndexAnalysisManager.SQL_COLLEGE_RS, orgId, current);
         ljIndexAndZxrs(cache, CetLjIndexAnalysisManager.SQL_LJ_COLLEGE, orgId, rsMap, current);
         //专业
         noDateRs(rsMap, CetLjIndexAnalysisManager.SQL_PROFESSIONAL_RS, orgId, current);
         ljIndexAndZxrs(cache, CetLjIndexAnalysisManager.SQL_LJ_PROFESSIONAL, orgId, rsMap, current);
-
         //班级
         noDateRs(rsMap, CetLjIndexAnalysisManager.SQL_CLASSES_RS, orgId, current);
         ljIndexAndZxrs(cache, CetLjIndexAnalysisManager.SQL_LJ_CLASSES, orgId, rsMap, current);

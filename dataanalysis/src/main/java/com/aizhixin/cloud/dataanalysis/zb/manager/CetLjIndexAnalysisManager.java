@@ -25,8 +25,6 @@ public class CetLjIndexAnalysisManager {
     public static String SQL_PROFESSIONAL_RS = "SELECT ss.ZYH AS BH, ss.XB, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.ZYH, ss.XB";
     public static String SQL_CLASSES_RS = "SELECT ss.BJMC AS BH, ss.XB, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.BJMC, ss.XB";
 
-//    public static String SQL_COUNT_SEMSTER = "SELECT COUNT(*) FROM t_b_djksxx WHERE XXDM = ? AND XN=? AND XQM=?";
-
     public static String SQL_CET_ALL_XN_XQ = "SELECT XN, XQM FROM t_b_djksxx WHERE XXDM = ? GROUP BY XN,XQM ORDER BY XN DESC, XQM DESC;";
 
     public static String SQL_LJ_SCHOOL = "SELECT NULL AS P_BH, d.XXID AS BH, c.KSLX," +
@@ -124,24 +122,12 @@ public class CetLjIndexAnalysisManager {
     public static String SQL_INSERT_JCZB = "INSERT INTO t_zb_djksjc (XN, XQM, XXDM, KSLX, DHLJ, P_BH, BH, ZXRS, NZXRS, VZXRS, CKRC, ZF, GF, TGZF, TGRC, NRC, NZF, VRC, VZF, NTGRC, VTGRC) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     public static String SQL_DELETE_ALL_NOT_NEW_SHOOL_LJ = "DELETE FROM t_zb_djksjc WHERE XN IS NOT NULL ANDDHLJ='2' AND XXDM=?";
     public static String SQL_DELETE_ALL_NEW_SHOOL_LJ = "DELETE FROM t_zb_djksjc WHERE DHLJ='2' AND XN IS NULL AND XXDM=?";
-//    public static String SQL_DELETE_NEW_SHOOL_LJ = "DELETE FROM t_zb_djksjc WHERE DHLJ='2' AND XN IS NULL AND XQM IS NULL AND XXDM=?";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Transactional(readOnly = true)
     public List<AnalysisBasezbDTO> queryLjJczb(String sql, Long orgId, Date date) {
-//        String start = DateUtil.formatYearMonth(date);
-//        return jdbcTemplate.query(sql.toString(), new Object[]{orgId, start, date, orgId, start, date}, new int [] {Types.BIGINT, Types.VARCHAR, Types.DATE, Types.BIGINT, Types.VARCHAR, Types.DATE}, new RowMapper<AnalysisBasezbDTO>() {
-//            public AnalysisBasezbDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
-//                return new AnalysisBasezbDTO (rs.getString("XN"), rs.getString("XQ"),
-//                        rs.getString("KSLX"), rs.getString("P_BH"),rs.getString("BH"),
-//                        rs.getLong("CKRC"), rs.getDouble("ZF"),
-//                        null , rs.getDouble("TGZF"), rs.getLong("TGRC"), rs.getLong("NRC"),
-//                        rs.getDouble("NZF"), rs.getLong("VRC"), rs.getDouble("VZF"),
-//                        rs.getLong("NTGRC"), rs.getLong("VTGRC"));
-//            }
-//        });
         return queryLjJczb(sql, orgId, date, date);
     }
 
@@ -164,16 +150,6 @@ public class CetLjIndexAnalysisManager {
         jdbcTemplate.update(sql, new Object[]{ xxdm}, new int[] {Types.VARCHAR});
     }
 
-    @Transactional(readOnly = true)
-    public Long queryAllZxrs(String sql, Long orgId, Date e) {
-        String start = DateUtil.formatYearMonth(e);
-        return jdbcTemplate.queryForObject(sql, new Object[]{orgId, start, e}, new int [] {Types.BIGINT, Types.VARCHAR, Types.DATE}, Long.class);
-    }
-
-//    @Transactional(readOnly = true)
-//    public Long queryCetCount(String sql, String xxdm, String xn, String xq) {
-//        return jdbcTemplate.queryForObject(sql, new Object[]{xxdm, xn, xq}, new int [] {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR}, Long.class);
-//    }
 
     @Transactional(readOnly = true)
     public List<ZxrsDTO> querySubZxrs(String sql, Long orgId, Date s, Date e) {
