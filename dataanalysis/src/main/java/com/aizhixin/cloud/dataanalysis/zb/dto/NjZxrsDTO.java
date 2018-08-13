@@ -19,12 +19,17 @@ public class NjZxrsDTO {
     @Getter @Setter private String bh;
     @ApiModelProperty(value = "年级")
     @Getter @Setter private String nj;
-    @ApiModelProperty(value = "在线人数")
+    @ApiModelProperty(value = "在校人数")
     @Getter @Setter private long zxrs;
+
 
     public NjZxrsDTO(String bh, String nj, long zxrs) {
         this.bh = bh;
-        this.nj = nj;
+        if (null != nj && nj.endsWith("级") && nj.length() >= 4) {
+            this.nj = nj.substring(0, 4);
+        } else {
+            this.nj = nj;
+        }
         this.zxrs = zxrs;
     }
 }
