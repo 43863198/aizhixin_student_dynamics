@@ -121,7 +121,7 @@ public class CetLjIndexAnalysisManager {
             "d.XH=c.XH AND d.XXID=? AND d.RXNY<= ? AND d.YBYNY >= ? " +
             "GROUP BY d.XXID,  c.KSLX, d.YXSH, d.ZYH, d.BJMC ";
 
-    public static String SQL_INSERT_JCZB = "INSERT INTO t_zb_djksjc (XN, XQM, XXDM, KSLX, DHLJ, P_BH, BH, ZXRS, CKRC, ZF, GF, TGZF, TGRC, NRC, NZF, VRC, VZF, NTGRC, VTGRC) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public static String SQL_INSERT_JCZB = "INSERT INTO t_zb_djksjc (XN, XQM, XXDM, KSLX, DHLJ, P_BH, BH, ZXRS, NZXRS, VZXRS, CKRC, ZF, GF, TGZF, TGRC, NRC, NZF, VRC, VZF, NTGRC, VTGRC) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     public static String SQL_DELETE_NEW_SHOOL_LJ = "DELETE FROM t_zb_djksjc WHERE DHLJ='2' AND XXDM=?";
     public static String SQL_DELETE_ALL_NEW_SHOOL_LJ = "DELETE FROM t_zb_djksjc WHERE DHLJ='2' AND XN IS NULL AND XXDM=?";
 //    public static String SQL_DELETE_NEW_SHOOL_LJ = "DELETE FROM t_zb_djksjc WHERE DHLJ='2' AND XN IS NULL AND XQM IS NULL AND XXDM=?";
@@ -221,25 +221,35 @@ public class CetLjIndexAnalysisManager {
                 } else {
                     preparedStatement.setLong(8, d.getZxrs());//ZXRS
                 }
-                preparedStatement.setLong(9, d.getCkrs());//CKRC
-                preparedStatement.setDouble(10, d.getZf());//ZF
-                if (null == d.getGf()) {
-                    preparedStatement.setNull(11, Types.DOUBLE);//GF
+                if (null == d.getNzxrs()) {
+                    preparedStatement.setNull(9, Types.BIGINT);//NZXRS
                 } else {
-                    preparedStatement.setDouble(11, d.getGf());//GF
+                    preparedStatement.setLong(9, d.getNzxrs());//NZXRS
+                }
+                if (null == d.getVzxrs()) {
+                    preparedStatement.setNull(10, Types.BIGINT);//VZXRS
+                } else {
+                    preparedStatement.setLong(10, d.getVzxrs());//VZXRS
+                }
+                preparedStatement.setLong(11, d.getCkrs());//CKRC
+                preparedStatement.setDouble(12, d.getZf());//ZF
+                if (null == d.getGf()) {
+                    preparedStatement.setNull(13, Types.DOUBLE);//GF
+                } else {
+                    preparedStatement.setDouble(13, d.getGf());//GF
                 }
                 if (null == d.getTgzf()) {
-                    preparedStatement.setNull(12, Types.DOUBLE);//TGZF
+                    preparedStatement.setNull(14, Types.DOUBLE);//TGZF
                 } else {
-                    preparedStatement.setDouble(12, d.getTgzf());//TGZF
+                    preparedStatement.setDouble(14, d.getTgzf());//TGZF
                 }
-                preparedStatement.setLong(13, d.getTgrc());//TGRC
-                preparedStatement.setLong(14, d.getNrc());//NRC
-                preparedStatement.setDouble(15, d.getNzf());//NZF
-                preparedStatement.setLong(16, d.getVrc());//VRC
-                preparedStatement.setDouble(17, d.getVzf());//VZF
-                preparedStatement.setLong(18, d.getNtgrc());//NTGRC
-                preparedStatement.setLong(19, d.getVtgrc());//VTGRC
+                preparedStatement.setLong(15, d.getTgrc());//TGRC
+                preparedStatement.setLong(16, d.getNrc());//NRC
+                preparedStatement.setDouble(17, d.getNzf());//NZF
+                preparedStatement.setLong(18, d.getVrc());//VRC
+                preparedStatement.setDouble(19, d.getVzf());//VZF
+                preparedStatement.setLong(20, d.getNtgrc());//NTGRC
+                preparedStatement.setLong(21, d.getVtgrc());//VTGRC
             }
 
             @Override
