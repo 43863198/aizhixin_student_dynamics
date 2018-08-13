@@ -20,10 +20,10 @@ import java.util.List;
 @Transactional
 @Component
 public class CetLjIndexAnalysisManager {
-    public static String SQL_SCHOOL_RS = "SELECT count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=?";
-    public static String SQL_COLLEGE_RS = "SELECT ss.YXSH AS BH, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.YXSH";
-    public static String SQL_PROFESSIONAL_RS = "SELECT ss.ZYH AS BH, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.ZYH";
-    public static String SQL_CLASSES_RS = "SELECT ss.BJMC AS BH, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.BJMC";
+    public static String SQL_SCHOOL_RS = "SELECT ss.XXID, ss.XB, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.XXID, ss.XB";
+    public static String SQL_COLLEGE_RS = "SELECT ss.YXSH AS BH, ss.XB, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.YXSH, ss.XB";
+    public static String SQL_PROFESSIONAL_RS = "SELECT ss.ZYH AS BH, ss.XB, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.ZYH, ss.XB";
+    public static String SQL_CLASSES_RS = "SELECT ss.BJMC AS BH, ss.XB, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.BJMC, ss.XB";
 
 //    public static String SQL_COUNT_SEMSTER = "SELECT COUNT(*) FROM t_b_djksxx WHERE XXDM = ? AND XN=? AND XQM=?";
 
@@ -121,7 +121,7 @@ public class CetLjIndexAnalysisManager {
             "d.XH=c.XH AND d.XXID=? AND d.RXNY<= ? AND d.YBYNY >= ? " +
             "GROUP BY d.XXID,  c.KSLX, d.YXSH, d.ZYH, d.BJMC ";
 
-    public static String SQL_INSERT_JCZB = "INSERT INTO t_zb_djksjc (XN, XQM, XXDM, KSLX, DHLJ, P_BH, BH, ZXRS, CKRC, ZF, GF, TGZF, TGRC, NRC, NZF, VRC, VZF, NTGRC, VTGRC) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public static String SQL_INSERT_JCZB = "INSERT INTO t_zb_djksjc (XN, XQM, XXDM, KSLX, DHLJ, P_BH, BH, ZXRS, NZXRS, VZXRS, CKRC, ZF, GF, TGZF, TGRC, NRC, NZF, VRC, VZF, NTGRC, VTGRC) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     public static String SQL_DELETE_NEW_SHOOL_LJ = "DELETE FROM t_zb_djksjc WHERE DHLJ='2' AND XXDM=?";
     public static String SQL_DELETE_ALL_NEW_SHOOL_LJ = "DELETE FROM t_zb_djksjc WHERE DHLJ='2' AND XN IS NULL AND XXDM=?";
 //    public static String SQL_DELETE_NEW_SHOOL_LJ = "DELETE FROM t_zb_djksjc WHERE DHLJ='2' AND XN IS NULL AND XQM IS NULL AND XXDM=?";
@@ -179,7 +179,7 @@ public class CetLjIndexAnalysisManager {
     public List<ZxrsDTO> querySubZxrs(String sql, Long orgId, Date s, Date e) {
         String start = DateUtil.formatYearMonth(e);
         return jdbcTemplate.query(sql.toString(), new Object[]{orgId, start, s}, new int [] {Types.BIGINT, Types.VARCHAR, Types.DATE},
-                (ResultSet rs, int rowNum) -> new ZxrsDTO (rs.getString("BH"), rs.getLong("ZXRS"))
+                (ResultSet rs, int rowNum) -> new ZxrsDTO (rs.getString("BH"), rs.getString("XB"), rs.getLong("ZXRS"))
         );
     }
 
@@ -221,25 +221,35 @@ public class CetLjIndexAnalysisManager {
                 } else {
                     preparedStatement.setLong(8, d.getZxrs());//ZXRS
                 }
-                preparedStatement.setLong(9, d.getCkrs());//CKRC
-                preparedStatement.setDouble(10, d.getZf());//ZF
-                if (null == d.getGf()) {
-                    preparedStatement.setNull(11, Types.DOUBLE);//GF
+                if (null == d.getNzxrs()) {
+                    preparedStatement.setNull(9, Types.BIGINT);//NZXRS
                 } else {
-                    preparedStatement.setDouble(11, d.getGf());//GF
+                    preparedStatement.setLong(9, d.getNzxrs());//NZXRS
+                }
+                if (null == d.getVzxrs()) {
+                    preparedStatement.setNull(10, Types.BIGINT);//VZXRS
+                } else {
+                    preparedStatement.setLong(10, d.getVzxrs());//VZXRS
+                }
+                preparedStatement.setLong(11, d.getCkrs());//CKRC
+                preparedStatement.setDouble(12, d.getZf());//ZF
+                if (null == d.getGf()) {
+                    preparedStatement.setNull(13, Types.DOUBLE);//GF
+                } else {
+                    preparedStatement.setDouble(13, d.getGf());//GF
                 }
                 if (null == d.getTgzf()) {
-                    preparedStatement.setNull(12, Types.DOUBLE);//TGZF
+                    preparedStatement.setNull(14, Types.DOUBLE);//TGZF
                 } else {
-                    preparedStatement.setDouble(12, d.getTgzf());//TGZF
+                    preparedStatement.setDouble(14, d.getTgzf());//TGZF
                 }
-                preparedStatement.setLong(13, d.getTgrc());//TGRC
-                preparedStatement.setLong(14, d.getNrc());//NRC
-                preparedStatement.setDouble(15, d.getNzf());//NZF
-                preparedStatement.setLong(16, d.getVrc());//VRC
-                preparedStatement.setDouble(17, d.getVzf());//VZF
-                preparedStatement.setLong(18, d.getNtgrc());//NTGRC
-                preparedStatement.setLong(19, d.getVtgrc());//VTGRC
+                preparedStatement.setLong(15, d.getTgrc());//TGRC
+                preparedStatement.setLong(16, d.getNrc());//NRC
+                preparedStatement.setDouble(17, d.getNzf());//NZF
+                preparedStatement.setLong(18, d.getVrc());//VRC
+                preparedStatement.setDouble(19, d.getVzf());//VZF
+                preparedStatement.setLong(20, d.getNtgrc());//NTGRC
+                preparedStatement.setLong(21, d.getVtgrc());//VTGRC
             }
 
             @Override

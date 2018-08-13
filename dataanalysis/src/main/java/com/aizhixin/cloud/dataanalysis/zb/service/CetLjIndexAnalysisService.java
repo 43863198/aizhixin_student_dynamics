@@ -79,13 +79,26 @@ public class CetLjIndexAnalysisService {
         cetLjIndexAnalysisManager.deleteHistory(CetLjIndexAnalysisManager.SQL_DELETE_ALL_NEW_SHOOL_LJ, orgId.toString());
 
         Date current = new Date ();
-        Map<String, Long> rsMap = new HashMap<>();
+        Map<String, ZxrsDTO> rsMap = new HashMap<>();
 
         //全校当前时间统计
         List<AnalysisBasezbDTO> list = cetLjIndexAnalysisManager.queryLjJczb(CetLjIndexAnalysisManager.SQL_LJ_SCHOOL, orgId, new Date());
-        Long zxrs = cetLjIndexAnalysisManager.queryAllZxrs(CetLjIndexAnalysisManager.SQL_SCHOOL_RS, orgId, new Date ());
+        List<ZxrsDTO> rsList = cetLjIndexAnalysisManager.querySubZxrs(CetLjIndexAnalysisManager.SQL_SCHOOL_RS, orgId, new Date (), new Date ());
+        ZxrsDTO rs = new ZxrsDTO ();
+        long zxrs = 0;
+        for (ZxrsDTO d : rsList) {
+            zxrs += d.getZxrs();
+            if ("男".equals(d.getXb())) {
+                rs.setNzxrs(d.getZxrs());
+            } else if ("女".equals(d.getXb())) {
+                rs.setVzxrs(d.getZxrs());
+            }
+        }
+        rs.setZxrs(zxrs);
         for (AnalysisBasezbDTO d : list) {
             d.setZxrs(zxrs);
+            d.setNzxrs(rs.getNzxrs());
+            d.setVzxrs(rs.getVzxrs());
             d.setXxdm(orgId.toString());
             d.setDhlj("2");
             cache.add(d);
@@ -107,11 +120,32 @@ public class CetLjIndexAnalysisService {
         cetLjIndexAnalysisManager.saveJczb(cache);
     }
 
-    private void noDateRs(Map<String, Long> rsMap, String rsSql, Long orgId, Date current) {
+    private void noDateRs(Map<String, ZxrsDTO> rsMap, String rsSql, Long orgId, Date current) {
         rsMap.clear();
+        Map<String, List<ZxrsDTO>> dwRsMap = new HashMap<>();
         List<ZxrsDTO> rsList = cetLjIndexAnalysisManager.querySubZxrs(rsSql, orgId, current, current);
         for (ZxrsDTO d : rsList) {
-            rsMap.put(d.getBh(), d.getZxrs());
+            List<ZxrsDTO> list = dwRsMap.get(d.getBh());
+            if (null == list) {
+                list = new ArrayList<>();
+                dwRsMap.put(d.getBh(), list);
+            }
+            list.add(d);
+        }
+        for (Map.Entry<String, List<ZxrsDTO>> e : dwRsMap.entrySet()) {
+            ZxrsDTO d = rsMap.get(e.getKey());
+            if (null == d) {
+                d = new ZxrsDTO();
+                rsMap.put(e.getKey(), d);
+            }
+            for(ZxrsDTO r : e.getValue()) {
+                d.setZxrs(d.getZxrs() + r.getZxrs());
+                if ("男".equals(r.getXb())) {
+                    d.setNzxrs(r.getZxrs());
+                } else if ("女".equals(r.getXb())) {
+                    d.setVzxrs(r.getZxrs());
+                }
+            }
         }
     }
 
@@ -132,14 +166,16 @@ public class CetLjIndexAnalysisService {
         }
     }
 
-    private void ljIndexAndZxrs(List<AnalysisBasezbDTO> cache, String sbSQL, Long orgId, Map<String, Long> rsMap, Date current) {
+    private void ljIndexAndZxrs(List<AnalysisBasezbDTO> cache, String sbSQL, Long orgId, Map<String, ZxrsDTO> rsMap, Date current) {
         List<AnalysisBasezbDTO> list = cetLjIndexAnalysisManager.queryLjJczb(sbSQL, orgId, current, current);//基础指标
         for (AnalysisBasezbDTO d : list) {
             d.setXxdm(orgId.toString());
             d.setDhlj("2");
-            Long zxrs = rsMap.get(d.getBh());
-            if (null != zxrs) {
-                d.setZxrs(zxrs);
+            ZxrsDTO rs = rsMap.get(d.getBh());
+            if (null != rs) {
+                d.setZxrs(rs.getZxrs());
+                d.setNzxrs(rs.getNzxrs());
+                d.setVzxrs(rs.getVzxrs());
             } else {
                 System.out.println("---------------------No rs:" + d.toString());
             }

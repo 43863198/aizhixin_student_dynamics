@@ -30,6 +30,10 @@ public class AnalysisBasezbDTO {
     @Getter @Setter private String bh;
     @ApiModelProperty(value = "在校人数")
     @Getter @Setter private Long zxrs;
+    @ApiModelProperty(value = "男在校人数")
+    @Getter @Setter private Long nzxrs;
+    @ApiModelProperty(value = "女在校人数")
+    @Getter @Setter private Long vzxrs;
     @ApiModelProperty(value = "参考人数")
     @Getter @Setter private Long ckrs;
     @ApiModelProperty(value = "总分")
