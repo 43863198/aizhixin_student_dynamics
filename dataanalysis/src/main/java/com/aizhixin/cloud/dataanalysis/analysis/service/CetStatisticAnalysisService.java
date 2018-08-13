@@ -2195,7 +2195,7 @@ public class CetStatisticAnalysisService {
             gql.append(" order by grade ASC");
 //            sql = dql.toString();
 //            System.out.println("signExport 021:" + gql);
-            Query gq = em.createNativeQuery(dql.toString());
+            Query gq = em.createNativeQuery(gql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 gq.setParameter(e.getKey(), e.getValue());
             }
