@@ -131,8 +131,7 @@ public class CetLjIndexAnalysisService {
         Map<String, ZxrsDTO> rsMap = new HashMap<>();
 
         //全校
-        List<AnalysisBasezbDTO> list = cetLjIndexAnalysisManager.queryLjJczb(CetLjIndexAnalysisManager.SQL_LJ_SCHOOL, orgId, current);
-        noDateRs(rsMap, CetLjIndexAnalysisManager.SQL_LJ_SCHOOL, orgId, current);
+        noDateRs(rsMap, CetLjIndexAnalysisManager.SQL_SCHOOL_RS, orgId, current);
         ljIndexAndZxrs(cache, CetLjIndexAnalysisManager.SQL_LJ_SCHOOL, orgId, rsMap, current);
         //学院
         noDateRs(rsMap, CetLjIndexAnalysisManager.SQL_COLLEGE_RS, orgId, current);
