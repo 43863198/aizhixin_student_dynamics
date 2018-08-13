@@ -94,12 +94,51 @@ public class CetIndexController {
 
     @GetMapping(value = "/lj/gradeavg", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "三、四、六级累计年级均值分布", response = Void.class, notes = "三、四、六级累计年级均值分布<br><br><b>@author zhen.pan</b>")
-    public List<CetGradeAvgVo> gradeavg(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId,
-                           @ApiParam(value = "cetType 成绩类型(3;4;6;)", required = true) @RequestParam(value = "cetType") String cetType,
-                           @ApiParam(value = "collegeCode 学院码") @RequestParam(value = "collegeCode", required = false) String collegeCode,
-                           @ApiParam(value = "professionCode 专业码") @RequestParam(value = "professionCode", required = false) String professionCode,
-                           @ApiParam(value = "className 班名") @RequestParam(value = "className", required = false) String className) {
+    public List<CetGradeAvgVo> gradeavg(
+            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId,
+            @ApiParam(value = "cetType 成绩类型(3;4;6;)", required = true) @RequestParam(value = "cetType") String cetType,
+            @ApiParam(value = "collegeCode 学院码") @RequestParam(value = "collegeCode", required = false) String collegeCode,
+            @ApiParam(value = "professionCode 专业码") @RequestParam(value = "professionCode", required = false) String professionCode,
+            @ApiParam(value = "className 班名") @RequestParam(value = "className", required = false) String className) {
         return cetBaseIndexService.findDwLjGradeAvgCount(orgId, cetType, collegeCode, professionCode, className);
+    }
+
+
+
+    @GetMapping(value = "/dc/cetorgcount", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "三、四、六级单次单位统计", response = Void.class, notes = "三、四、六级单次单位统计<br><br><b>@author zhen.pan</b>")
+    public DwDcCountVO cetOrgDcCount(
+            @ApiParam(value = "xnxq 学年学期YYYY-CCCC-x", required = true) @RequestParam(value = "xnxq") String xnxq,
+            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId,
+            @ApiParam(value = "cetType 成绩类型(3;4;6;)", required = true) @RequestParam(value = "cetType") String cetType,
+            @ApiParam(value = "collegeCode 学院码") @RequestParam(value = "collegeCode", required = false) String collegeCode,
+            @ApiParam(value = "professionCode 专业码") @RequestParam(value = "professionCode", required = false) String professionCode,
+            @ApiParam(value = "className 班名") @RequestParam(value = "className", required = false) String className) {
+        return cetBaseIndexService.findDcDwCount(xnxq, orgId, cetType, collegeCode, professionCode, className);
+    }
+
+    @GetMapping(value = "/dc/cetorgdistr", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "三、四、六级单次子单位人数分布", response = Void.class, notes = "三、四、六级单次子单位人数分布<br><br><b>@author zhen.pan</b>")
+    public List<DwDistributeCountVO> cetDcOrgDistri(
+            @ApiParam(value = "xnxq 学年学期YYYY-CCCC-x", required = true) @RequestParam(value = "xnxq") String xnxq,
+            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId,
+            @ApiParam(value = "cetType 成绩类型(3;4;6;)", required = true) @RequestParam(value = "cetType") String cetType,
+            @ApiParam(value = "collegeCode 学院码") @RequestParam(value = "collegeCode", required = false) String collegeCode,
+            @ApiParam(value = "professionCode 专业码") @RequestParam(value = "professionCode", required = false) String professionCode,
+            @ApiParam(value = "className 班名") @RequestParam(value = "className", required = false) String className) {
+        return cetBaseIndexService.findSubDwDcCount(xnxq, orgId, cetType, collegeCode, professionCode, className);
+    }
+
+    @GetMapping(value = "/dc/cetorgavgdistr", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "三、四、六级累计子单位均值分布", response = Void.class, notes = "三、四、六级累计子单位均值分布<br><br><b>@author zhen.pan</b>")
+    public List<DwDistributeCountVO> cetDcOrgLjAvgDistr(
+            @ApiParam(value = "xnxq 学年学期YYYY-CCCC-x", required = true) @RequestParam(value = "xnxq") String xnxq,
+            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId,
+            @ApiParam(value = "cetType 成绩类型(3;4;6;)", required = true) @RequestParam(value = "cetType") String cetType,
+            @ApiParam(value = "collegeCode 学院码") @RequestParam(value = "collegeCode", required = false) String collegeCode,
+            @ApiParam(value = "professionCode 专业码") @RequestParam(value = "professionCode", required = false) String professionCode,
+            @ApiParam(value = "className 班名") @RequestParam(value = "className", required = false) String className) {
+        return cetBaseIndexService.findSubDwDcCount(xnxq, orgId, cetType, collegeCode, professionCode, className);
     }
 
 //    @GetMapping(value = "/cetstatistics", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -33,4 +33,24 @@ public class CetBaseIndexManager {
     public List<CetBaseIndex> findSubDwLj(String xxdm, String kslx, String pbh) {
         return cetBaseIndexRespository.findByXxdmAndDhljAndKslxAndPbhAndXnIsNullOrderByBh(xxdm, "2", kslx, pbh);
     }
+
+    public CetBaseIndex findDcOneDw(String xn, String xq, String xxdm, String kslx) {
+        List<CetBaseIndex> list = cetBaseIndexRespository.findByXnAndXqmAndXxdmAndDhljAndKslxAndBh(xn, xq, xxdm, "1", kslx, xxdm);
+        if (null != list && list.size() > 0) {
+            return list.get(0);
+        }
+        return new CetBaseIndex();
+    }
+
+    public CetBaseIndex findDcOneDw(String xn, String xq, String xxdm, String kslx, String pbh, String bh) {
+        List<CetBaseIndex> list = cetBaseIndexRespository.findByXnAndXqmAndXxdmAndDhljAndKslxAndPbhAndBh(xn, xq, xxdm, "1", kslx, pbh, bh);
+        if (null != list && list.size() > 0) {
+            return list.get(0);
+        }
+        return new CetBaseIndex();
+    }
+
+    public List<CetBaseIndex> findDcSubDw(String xn, String xq, String xxdm, String kslx, String pbh) {
+        return cetBaseIndexRespository.findByXnAndXqmAndXxdmAndDhljAndKslxAndPbhOrderByBh(xn, xq, xxdm, "1", kslx, pbh);
+    }
 }
