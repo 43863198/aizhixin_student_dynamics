@@ -181,6 +181,9 @@ public class CetBaseIndexService {
         return v;
     }
 
+    /**
+     * 累计最新年级指标基础指标查询请求
+     */
     private List<CetGradeIndex> findNewLjGradeIndex(Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
         if (StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)) {
             return cetGradeIndexManager.findNewLjAllSchool(orgId.toString(), cetType);
@@ -194,6 +197,9 @@ public class CetBaseIndexService {
         return new ArrayList<>();
     }
 
+    /**
+     * 累计年级人数指标s
+     */
     public List<CetGradeRsVo> findDwLjGradeRsCount (Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
         List<CetGradeRsVo> rs = new ArrayList<>();
         List<CetGradeIndex> list = findNewLjGradeIndex(orgId, cetType, collegeCode, professionalCode, classesCode);
@@ -207,6 +213,9 @@ public class CetBaseIndexService {
         return rs;
     }
 
+    /**
+     * 累计年级的均值分布
+     */
     public List<CetGradeAvgVo> findDwLjGradeAvgCount (Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
         List<CetGradeAvgVo> rs = new ArrayList<>();
         List<CetGradeIndex> list = findNewLjGradeIndex(orgId, cetType, collegeCode, professionalCode, classesCode);
@@ -219,5 +228,103 @@ public class CetBaseIndexService {
             rs.add(v);
         }
         return rs;
+    }
+
+    private CetBaseIndex findDcBaseIndex(String xn, String xq, Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
+        CetBaseIndex c = new CetBaseIndex();
+        if (StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)) {
+            c = cetBaseIndexManager.findDcOneDw(xn, xq, orgId.toString(), cetType);
+        } else if (!StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)){
+            c = cetBaseIndexManager.findDcOneDw(xn, xq, orgId.toString(), cetType, orgId.toString(), collegeCode);
+        } else if (!StringUtils.isEmpty(collegeCode) && !StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)){
+            c = cetBaseIndexManager.findDcOneDw(xn, xq, orgId.toString(), cetType, collegeCode, professionalCode);
+        } else if (!StringUtils.isEmpty(professionalCode) && !StringUtils.isEmpty(classesCode)){
+            c = cetBaseIndexManager.findDcOneDw(xn, xq, orgId.toString(), cetType, professionalCode, classesCode);
+        }
+        return c;
+    }
+
+    public DwDcCountVO findDcDwCount(String xnxq, Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
+        int p = xnxq.lastIndexOf("-");
+        String xn = null, xq = null;
+        if (p > 0) {
+            xn = xnxq.substring(0, p);
+            xq = xnxq.substring(p + 1);
+        }
+        if (null == xn || null == xq) {
+            return new DwDcCountVO();
+        }
+        CetBaseIndex c = findDcBaseIndex(xn, xq, orgId, cetType, collegeCode, professionalCode, classesCode);
+        DwDcCountVO vo = new DwDcCountVO ();
+        vo.setCkrc(c.getCkrc());
+        vo.setGf(c.getGf());
+        vo.setTgrs(c.getTgrc());
+        vo.setZf(c.getZf());
+        vo.setZxrs(c.getZxrs());
+        return vo;
+    }
+
+    public List<DwDistributeCountVO> findSubDwDcCount(String xnxq, Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
+        List<DwDistributeCountVO> rsList = new ArrayList<>();
+        int p = xnxq.lastIndexOf("-");
+        String xn = null, xq = null;
+        if (p > 0) {
+            xn = xnxq.substring(0, p);
+            xq = xnxq.substring(p + 1);
+        }
+        if (null == xn || null == xq) {
+            return rsList;
+        }
+        boolean college = false, professinal = false, classes = false;
+        List<CetBaseIndex> list  = new ArrayList<>();
+        if (StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)) {
+            list  =  cetBaseIndexManager.findDcSubDw(xn, xq, orgId.toString(), cetType, orgId.toString());
+            college = true;
+        } else if (!StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)){
+            list  =  cetBaseIndexManager.findDcSubDw(xn, xq, orgId.toString(), cetType, collegeCode);
+            professinal = true;
+        } else if (!StringUtils.isEmpty(collegeCode) && !StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)){
+            list  =  cetBaseIndexManager.findDcSubDw(xn, xq, orgId.toString(), cetType, professionalCode);
+            classes = true;
+        } else if (!StringUtils.isEmpty(professionalCode) && !StringUtils.isEmpty(classesCode)){
+            list  =  cetBaseIndexManager.findDcSubDw(xn, xq, orgId.toString(), cetType, classesCode);
+            classes = true;
+        }
+        Set<String> bhSet = new HashSet<>();
+        for (CetBaseIndex d : list) {
+            DwDistributeCountVO v = new DwDistributeCountVO ();
+            v.setCode(d.getBh());
+            v.setCkrc(d.getCkrc());
+            v.setTgrs(d.getTgrc());
+            v.setZf(d.getZf());
+            v.setZxrs(d.getZxrs());
+            bhSet.add(d.getBh());
+            rsList.add(v);
+        }
+        Map<String, OrganizationDTO> orgMap = new HashMap<>();
+        if (!bhSet.isEmpty()) {
+            List<OrganizationDTO> orgList = null;
+            if (college) {
+                orgList = organizationService.getCollegeList(orgId, bhSet);
+            }  else if( professinal) {
+                orgList = organizationService.getProfessionList(orgId, null, bhSet);
+            } else if (classes) {
+                orgList = organizationService.getClassList(orgId, null, null, bhSet);
+            }
+            if (null != orgList) {
+                for (OrganizationDTO o : orgList) {
+                    orgMap.put(o.getCode(), o);
+                }
+            }
+        }
+        if (!orgMap.isEmpty()) {
+            for (DwDistributeCountVO v : rsList) {
+                OrganizationDTO o = orgMap.get(v.getCode());
+                if (null != o) {
+                    v.setName(o.getName());
+                }
+            }
+        }
+        return rsList;
     }
 }
