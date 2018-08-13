@@ -20,10 +20,10 @@ import java.util.List;
 @Transactional
 @Component
 public class CetLjIndexAnalysisManager {
-    public static String SQL_SCHOOL_RS = "SELECT count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=?";
-    public static String SQL_COLLEGE_RS = "SELECT ss.YXSH AS BH, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.YXSH";
-    public static String SQL_PROFESSIONAL_RS = "SELECT ss.ZYH AS BH, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.ZYH";
-    public static String SQL_CLASSES_RS = "SELECT ss.BJMC AS BH, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.BJMC";
+    public static String SQL_SCHOOL_RS = "SELECT ss.XXID, ss.XB, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.XXID, ss.XB";
+    public static String SQL_COLLEGE_RS = "SELECT ss.YXSH AS BH, ss.XB, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.YXSH, ss.XB";
+    public static String SQL_PROFESSIONAL_RS = "SELECT ss.ZYH AS BH, ss.XB, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.ZYH, ss.XB";
+    public static String SQL_CLASSES_RS = "SELECT ss.BJMC AS BH, ss.XB, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.BJMC, ss.XB";
 
 //    public static String SQL_COUNT_SEMSTER = "SELECT COUNT(*) FROM t_b_djksxx WHERE XXDM = ? AND XN=? AND XQM=?";
 
@@ -179,7 +179,7 @@ public class CetLjIndexAnalysisManager {
     public List<ZxrsDTO> querySubZxrs(String sql, Long orgId, Date s, Date e) {
         String start = DateUtil.formatYearMonth(e);
         return jdbcTemplate.query(sql.toString(), new Object[]{orgId, start, s}, new int [] {Types.BIGINT, Types.VARCHAR, Types.DATE},
-                (ResultSet rs, int rowNum) -> new ZxrsDTO (rs.getString("BH"), rs.getLong("ZXRS"))
+                (ResultSet rs, int rowNum) -> new ZxrsDTO (rs.getString("BH"), rs.getString("XB"), rs.getLong("ZXRS"))
         );
     }
 
