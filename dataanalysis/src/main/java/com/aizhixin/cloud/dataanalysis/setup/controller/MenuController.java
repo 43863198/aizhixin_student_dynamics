@@ -18,7 +18,7 @@ import java.util.Set;
  */
 @RestController
 @RequestMapping("/api/v1/module/common/options")
-@Api(description = "基础数据菜单相关API")
+@Api(description = "基础数据菜单及组件管理相关API")
 public class MenuController {
     @Autowired
     private MenuService menuService;
