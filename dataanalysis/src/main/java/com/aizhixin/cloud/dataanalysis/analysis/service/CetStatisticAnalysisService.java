@@ -64,9 +64,6 @@ public class CetStatisticAnalysisService {
 
     final static private Logger logger = LoggerFactory.getLogger(CetStatisticAnalysisService.class);
 
-
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
     public void deleteAllByOrgId(Long orgId) {
         cetScoreStatisticsRespository.deleteByOrgId(orgId);
     }
@@ -500,6 +497,7 @@ public class CetStatisticAnalysisService {
         try {
             Date start = null;
             Date end = null;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, teacherYear, semester);
             if (null != schoolCalendar) {
                 if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
@@ -609,6 +607,7 @@ public class CetStatisticAnalysisService {
         try {
             Date start = null;
             Date end = null;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, teacherYear, semester);
             if (null != schoolCalendar) {
                 if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
@@ -719,6 +718,7 @@ public class CetStatisticAnalysisService {
         try {
             Date start = null;
             Date end = null;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, teacherYear, semester);
             if (null != schoolCalendar) {
                 if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
@@ -826,6 +826,7 @@ public class CetStatisticAnalysisService {
         try {
             Date start = null;
             Date end = null;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, teacherYear, semester);
             if (null != schoolCalendar) {
                 if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
@@ -945,6 +946,7 @@ public class CetStatisticAnalysisService {
         try {
             Date start = null;
             Date end = null;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, teacherYear, semester);
             if (null != schoolCalendar) {
                 if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
@@ -1056,6 +1058,7 @@ public class CetStatisticAnalysisService {
         try {
             Date start = null;
             Date end = null;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, teacherYear, semester);
             if (null != schoolCalendar) {
                 if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
@@ -1171,6 +1174,7 @@ public class CetStatisticAnalysisService {
         try {
             Date start = null;
             Date end = null;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, teacherYear, semester);
             if (null != schoolCalendar) {
                 if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
@@ -1282,6 +1286,7 @@ public class CetStatisticAnalysisService {
         try {
             Date start = null;
             Date end = null;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, teacherYear, semester);
             if (null != schoolCalendar) {
                 if (null != schoolCalendar.get("success") && Boolean.parseBoolean(schoolCalendar.get("success").toString())) {
@@ -2001,6 +2006,7 @@ public class CetStatisticAnalysisService {
         try {
             Date start = null;
             Date end = null;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             if (!StringUtils.isBlank(teacherYear)&&!StringUtils.isBlank(semester)) {
                 Map<String, Object> schoolCalendar = schoolYearTermService.getSchoolCalendar(orgId, teacherYear, semester);
                 if (null != schoolCalendar) {
