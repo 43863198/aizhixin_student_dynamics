@@ -230,6 +230,9 @@ public class CetBaseIndexService {
         return rs;
     }
 
+    /**
+     * 单次单位总值查询
+     */
     private CetBaseIndex findDcBaseIndex(String xn, String xq, Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
         CetBaseIndex c = new CetBaseIndex();
         if (StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)) {
@@ -244,6 +247,9 @@ public class CetBaseIndexService {
         return c;
     }
 
+    /**
+     * 单次单位总值查询
+     */
     public DwDcCountVO findDcDwCount(String xnxq, Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
         int p = xnxq.lastIndexOf("-");
         String xn = null, xq = null;
@@ -256,14 +262,19 @@ public class CetBaseIndexService {
         }
         CetBaseIndex c = findDcBaseIndex(xn, xq, orgId, cetType, collegeCode, professionalCode, classesCode);
         DwDcCountVO vo = new DwDcCountVO ();
-        vo.setCkrc(c.getCkrc());
-        vo.setGf(c.getGf());
-        vo.setTgrs(c.getTgrc());
-        vo.setZf(c.getZf());
-        vo.setZxrs(c.getZxrs());
+        if (null != c) {
+            vo.setCkrc(c.getCkrc());
+            vo.setGf(c.getGf());
+            vo.setTgrs(c.getTgrc());
+            vo.setZf(c.getZf());
+            vo.setZxrs(c.getZxrs());
+        }
         return vo;
     }
 
+    /**
+     * 单次子单位指标值查询
+     */
     public List<DwDistributeCountVO> findSubDwDcCount(String xnxq, Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
         List<DwDistributeCountVO> rsList = new ArrayList<>();
         int p = xnxq.lastIndexOf("-");
