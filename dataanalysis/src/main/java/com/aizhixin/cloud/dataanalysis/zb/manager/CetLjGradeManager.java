@@ -26,7 +26,7 @@ public class CetLjGradeManager {
 
     public static String SQL_LJ_NJ_SCHOOL = "SELECT c.KSLX, NULL AS 'P_BH', x.XXID AS BH, c.NJ, COUNT(x.XH) AS CKRC, SUM(c.CJ) AS ZF, SUM(IF(c.CJ >= IF(c.KSLX='3', 60, 425), 1, 0)) as TGRC " +
             "FROM t_xsjbxx x, (" +
-            "SELECT d.KSLX, d.XH, MAX(d.CJ) AS CJ " +
+            "SELECT d.NJ, d.KSLX, d.XH, MAX(d.CJ) AS CJ " +
             "FROM t_b_djksxx d,t_xsjbxx s " +
             "WHERE d.XH=s.XH AND s.XXID=? AND s.RXNY<=? AND s.YBYNY>=? " +
             "GROUP BY d.KSLX,d.XH " +
