@@ -3,6 +3,7 @@ package com.aizhixin.cloud.dataanalysis.zb.controller;
 import com.aizhixin.cloud.dataanalysis.bz.service.CetEtlService;
 import com.aizhixin.cloud.dataanalysis.bz.service.StandardScoreService;
 import com.aizhixin.cloud.dataanalysis.zb.service.AnalysisIndexService;
+import com.aizhixin.cloud.dataanalysis.zb.service.CetLjGradeService;
 import com.aizhixin.cloud.dataanalysis.zb.service.CetLjIndexAnalysisService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,6 +30,8 @@ public class IndexAnalysisManualController {
     private StandardScoreService standardScoreService;
     @Autowired
     private CetLjIndexAnalysisService cetLjIndexAnalysisService;
+    @Autowired
+    private CetLjGradeService cetLjGradeService;
 
     @GetMapping(value = "/cet/etl", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "英语等级考试数据库对数据库标准数据清洗ETL", response = Void.class, notes = "英语等级考试数据库对数据库标准数据清洗ETL<br><br><b>@author zhen.pan</b>")
@@ -60,15 +63,27 @@ public class IndexAnalysisManualController {
         analysisIndexService.schoolStudentScoreIndex(orgId);
     }
 
-    @GetMapping(value = "/cetlj", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/cet/lj", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "英语等级考试累计基础指标统计", response = Void.class, notes = "英语等级考试累计基础指标统计<br><br><b>@author zhen.pan</b>")
     public void cetlj(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId") Long orgId) {
         cetLjIndexAnalysisService.calLjHaveTest(orgId);
     }
 
-    @GetMapping(value = "/cetljnewest", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/cet/lj/newest", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "英语等级考试最新累计基础指标统计", response = Void.class, notes = "英语等级考试最新累计基础指标统计<br><br><b>@author zhen.pan</b>")
     public void cetljNewest(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId") Long orgId) {
         cetLjIndexAnalysisService.calLjNewest(orgId);
+    }
+
+    @GetMapping(value = "/cet/lj/grade/newest", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "英语等级考试最新累计年级指标统计", response = Void.class, notes = "英语等级考试最新累计年级指标统计<br><br><b>@author zhen.pan</b>")
+    public void cetljGradeNewest(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId") Long orgId) {
+        cetLjGradeService.calLjNewest(orgId);
+    }
+
+    @GetMapping(value = "/cet/lj/grade", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "英语等级考试所有累计年级指标统计", response = Void.class, notes = "英语等级考试所有累计年级指标统计<br><br><b>@author zhen.pan</b>")
+    public void cetljGrade(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId") Long orgId) {
+        cetLjGradeService.calLjAll(orgId);
     }
 }

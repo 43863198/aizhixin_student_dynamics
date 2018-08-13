@@ -3,7 +3,9 @@ package com.aizhixin.cloud.dataanalysis.zb.app.service;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.OrganizationDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.service.OrganizationService;
 import com.aizhixin.cloud.dataanalysis.zb.app.entity.CetBaseIndex;
+import com.aizhixin.cloud.dataanalysis.zb.app.entity.CetGradeIndex;
 import com.aizhixin.cloud.dataanalysis.zb.app.mananger.CetBaseIndexManager;
+import com.aizhixin.cloud.dataanalysis.zb.app.mananger.CetGradeIndexManager;
 import com.aizhixin.cloud.dataanalysis.zb.app.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,6 +21,8 @@ public class CetBaseIndexService {
     private CetBaseIndexManager cetBaseIndexManager;
     @Autowired
     private OrganizationService organizationService;
+    @Autowired
+    private CetGradeIndexManager cetGradeIndexManager;
 
     private CetBaseIndex findNewLjOneDwIndex(Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
         CetBaseIndex c = null;
@@ -26,9 +30,9 @@ public class CetBaseIndexService {
             c = cetBaseIndexManager.findNewLjAllSchool(orgId.toString(), cetType);
         } else if (!StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)){
             c = cetBaseIndexManager.findNewDwLj(orgId.toString(), cetType, orgId.toString(), collegeCode);
-        } else if (!StringUtils.isEmpty(professionalCode) && !StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)){
+        } else if (!StringUtils.isEmpty(collegeCode) && !StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)){
             c = cetBaseIndexManager.findNewDwLj(orgId.toString(), cetType, collegeCode, professionalCode);
-        } else if (!StringUtils.isEmpty(classesCode) && !StringUtils.isEmpty(classesCode)){
+        } else if (!StringUtils.isEmpty(professionalCode) && !StringUtils.isEmpty(classesCode)){
             c = cetBaseIndexManager.findNewDwLj(orgId.toString(), cetType, professionalCode, classesCode);
         }
         return c;
@@ -175,5 +179,45 @@ public class CetBaseIndexService {
             v.getWomen().setZxrs(c.getVzxrs());
         }
         return v;
+    }
+
+    private List<CetGradeIndex> findNewLjGradeIndex(Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
+        if (StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)) {
+            return cetGradeIndexManager.findNewLjAllSchool(orgId.toString(), cetType);
+        } else if (!StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)){
+            return cetGradeIndexManager.findNewLj(orgId.toString(), cetType, orgId.toString(), collegeCode);
+        } else if (!StringUtils.isEmpty(collegeCode) && !StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)){
+            return cetGradeIndexManager.findNewLj(orgId.toString(), cetType, collegeCode, professionalCode);
+        } else if (!StringUtils.isEmpty(professionalCode) && !StringUtils.isEmpty(classesCode)){
+            return cetGradeIndexManager.findNewLj(orgId.toString(), cetType, professionalCode, classesCode);
+        }
+        return new ArrayList<>();
+    }
+
+    public List<CetGradeRsVo> findDwLjGradeRsCount (Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
+        List<CetGradeRsVo> rs = new ArrayList<>();
+        List<CetGradeIndex> list = findNewLjGradeIndex(orgId, cetType, collegeCode, professionalCode, classesCode);
+        for(CetGradeIndex g : list) {
+            CetGradeRsVo v = new CetGradeRsVo ();
+            v.setNj(g.getNj());
+            v.setZxrs(g.getZxrs());
+            v.setTgrs(g.getTgrc());
+            rs.add(v);
+        }
+        return rs;
+    }
+
+    public List<CetGradeAvgVo> findDwLjGradeAvgCount (Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
+        List<CetGradeAvgVo> rs = new ArrayList<>();
+        List<CetGradeIndex> list = findNewLjGradeIndex(orgId, cetType, collegeCode, professionalCode, classesCode);
+        for(CetGradeIndex g : list) {
+            CetGradeAvgVo v = new CetGradeAvgVo ();
+            v.setNj(g.getNj());
+            v.setZxrs(g.getZxrs());
+            v.setCkrc(g.getCkrc());
+            v.setZf(g.getZf());
+            rs.add(v);
+        }
+        return rs;
     }
 }
