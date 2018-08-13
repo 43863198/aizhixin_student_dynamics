@@ -20,7 +20,7 @@ import java.util.List;
 @Transactional
 @Component
 public class CetLjIndexAnalysisManager {
-    public static String SQL_SCHOOL_RS = "SELECT ss.XXID, ss.XB, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.XXID, ss.XB";
+    public static String SQL_SCHOOL_RS = "SELECT ss.XXID AS BH, ss.XB, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.XXID, ss.XB";
     public static String SQL_COLLEGE_RS = "SELECT ss.YXSH AS BH, ss.XB, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.YXSH, ss.XB";
     public static String SQL_PROFESSIONAL_RS = "SELECT ss.ZYH AS BH, ss.XB, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.ZYH, ss.XB";
     public static String SQL_CLASSES_RS = "SELECT ss.BJMC AS BH, ss.XB, count(ss.XH) AS ZXRS FROM t_xsjbxx ss WHERE ss.XXID = ?  AND ss.DQZT NOT IN ('02','04','16') AND ss.RXNY<=? AND ss.YBYNY>=? GROUP BY ss.BJMC, ss.XB";

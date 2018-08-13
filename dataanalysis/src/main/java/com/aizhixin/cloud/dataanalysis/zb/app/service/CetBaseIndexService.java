@@ -137,9 +137,11 @@ public class CetBaseIndexService {
         if (null != c) {
             v.getMan().setCkrc(c.getNrc());
             v.getMan().setTgrs(c.getTgrc());
+            v.getMan().setZxrs(c.getNzxrs());
 
             v.getWomen().setTgrs(c.getVtgrc());
             v.getWomen().setCkrc(c.getVrc());
+            v.getWomen().setZxrs(c.getVzxrs());
         }
         return v;
     }
@@ -162,9 +164,11 @@ public class CetBaseIndexService {
         if (null != c) {
             v.getMan().setCkrc(c.getNrc());
             v.getMan().setZf(c.getNzf());
+            v.getMan().setZxrs(c.getNzxrs());
 
             v.getWomen().setCkrc(c.getVtgrc());
             v.getWomen().setZf(c.getVzf());
+            v.getWomen().setZxrs(c.getVzxrs());
         }
         return v;
     }
