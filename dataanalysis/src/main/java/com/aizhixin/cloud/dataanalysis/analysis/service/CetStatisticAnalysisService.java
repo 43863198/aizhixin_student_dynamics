@@ -1918,7 +1918,7 @@ public class CetStatisticAnalysisService {
         List<NjStatisticalInfoDomain> njStatisticalInfoDomains = new ArrayList<>();
         List<NjStatisticalInfoDomain> njStatisticalInfoDomainListAll = cetSexStatisticalJdbc.njStatisticalInfo(orgId, collegeCode, professionCode, classCode, cetType, true);
         List<NjStatisticalInfoDomain> njStatisticalInfoDomainList = cetSexStatisticalJdbc.njStatisticalInfo(orgId, collegeCode, professionCode, classCode, cetType, false);
-        if (null != njStatisticalInfoDomainListAll && 0 < njStatisticalInfoDomainListAll.size() && null != njStatisticalInfoDomainList && 0 < njStatisticalInfoDomainList.size()) {
+        if (null != njStatisticalInfoDomainListAll && 0 < njStatisticalInfoDomainListAll.size() && null != njStatisticalInfoDomainList) {
                 for(int i = 0 ; i< njStatisticalInfoDomainListAll.size();i++){
                     for(int j = 0 ; j< njStatisticalInfoDomainList.size();j++){
                         if (njStatisticalInfoDomainListAll.get(i).getNj().equals(njStatisticalInfoDomainList.get(j).getNj())) {
