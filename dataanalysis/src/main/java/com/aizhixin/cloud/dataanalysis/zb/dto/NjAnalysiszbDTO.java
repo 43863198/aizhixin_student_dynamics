@@ -50,4 +50,8 @@ public class NjAnalysiszbDTO {
         this.zf = zf;
         this.tgrc = tgrc;
     }
+
+    public NjAnalysiszbDTO(String kslx, String pbh , String bh, String nj, Long ckrc, Double zf, Long tgrc) {
+        this(null, null, kslx, pbh, bh, nj, ckrc, zf, tgrc);
+    }
 }

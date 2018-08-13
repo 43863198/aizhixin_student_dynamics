@@ -82,6 +82,26 @@ public class CetIndexController {
         return cetBaseIndexService.findDwLjSexAvgCount(orgId, cetType, collegeCode, professionCode, className);
     }
 
+    @GetMapping(value = "/lj/graders", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "三、四、六级累计年级人数分布", response = Void.class, notes = "三、四、六级累计年级人数分布<br><br><b>@author zhen.pan</b>")
+    public List<CetGradeRsVo> graders(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId,
+                         @ApiParam(value = "cetType 成绩类型(3;4;6;)", required = true) @RequestParam(value = "cetType") String cetType,
+                         @ApiParam(value = "collegeCode 学院码") @RequestParam(value = "collegeCode", required = false) String collegeCode,
+                         @ApiParam(value = "professionCode 专业码") @RequestParam(value = "professionCode", required = false) String professionCode,
+                         @ApiParam(value = "className 班名") @RequestParam(value = "className", required = false) String className) {
+        return cetBaseIndexService.findDwLjGradeRsCount(orgId, cetType, collegeCode, professionCode, className);
+    }
+
+    @GetMapping(value = "/lj/gradeavg", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "三、四、六级累计年级均值分布", response = Void.class, notes = "三、四、六级累计年级均值分布<br><br><b>@author zhen.pan</b>")
+    public List<CetGradeAvgVo> gradeavg(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId,
+                           @ApiParam(value = "cetType 成绩类型(3;4;6;)", required = true) @RequestParam(value = "cetType") String cetType,
+                           @ApiParam(value = "collegeCode 学院码") @RequestParam(value = "collegeCode", required = false) String collegeCode,
+                           @ApiParam(value = "professionCode 专业码") @RequestParam(value = "professionCode", required = false) String professionCode,
+                           @ApiParam(value = "className 班名") @RequestParam(value = "className", required = false) String className) {
+        return cetBaseIndexService.findDwLjGradeAvgCount(orgId, cetType, collegeCode, professionCode, className);
+    }
+
 //    @GetMapping(value = "/cetstatistics", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @ApiOperation(httpMethod = "GET", value = "英语考试单次数据分析---数据统计", response = Void.class, notes = "等级考试单次考试统计---数据统计<br><br><b>@author dengchao</b>")
 //    public ResponseEntity<Map<String, Object>> cetSingleDataStatistics(
