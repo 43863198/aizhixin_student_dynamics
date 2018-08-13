@@ -14,8 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Transactional
 @Component
@@ -148,6 +147,35 @@ public class CetLjIndexAnalysisManager {
 
     public void deleteHistory(String sql, String xxdm) {
         jdbcTemplate.update(sql, new Object[]{ xxdm}, new int[] {Types.VARCHAR});
+    }
+
+    public void haveCalendarRs(Map<String, ZxrsDTO> rsMap, String rsSql, Long orgId, SchoolCalendarDTO  c) {
+        Map<String, List<ZxrsDTO>> dwRsMap = new HashMap<>();
+        List<ZxrsDTO> rsList = querySubZxrs(rsSql, orgId, c.getKsrq(), c.getJsrq());
+        for (ZxrsDTO d : rsList) {
+            List<ZxrsDTO> list = dwRsMap.get(d.getBh());
+            if (null == list) {
+                list = new ArrayList<>();
+                dwRsMap.put(d.getBh(), list);
+            }
+            list.add(d);
+        }
+        for (Map.Entry<String, List<ZxrsDTO>> e : dwRsMap.entrySet()) {
+            String key = c.getXn() + "-" + c.getXq() + "-" + e.getKey();
+            ZxrsDTO d = rsMap.get(key);
+            if (null == d) {
+                d = new ZxrsDTO();
+                rsMap.put(key, d);
+            }
+            for(ZxrsDTO r : e.getValue()) {
+                d.setZxrs(d.getZxrs() + r.getZxrs());
+                if ("男".equals(r.getXb())) {
+                    d.setNzxrs(r.getZxrs());
+                } else if ("女".equals(r.getXb())) {
+                    d.setVzxrs(r.getZxrs());
+                }
+            }
+        }
     }
 
 

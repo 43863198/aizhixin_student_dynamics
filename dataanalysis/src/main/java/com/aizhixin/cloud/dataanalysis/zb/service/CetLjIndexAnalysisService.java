@@ -31,7 +31,7 @@ public class CetLjIndexAnalysisService {
         //全校
         rsMap.clear();
         for (SchoolCalendarDTO  c : schoolCalendarList) {//查询在校人数
-            haveCalendarRs(rsMap, CetLjIndexAnalysisManager.SQL_SCHOOL_RS, orgId, c);
+            cetLjIndexAnalysisManager.haveCalendarRs(rsMap, CetLjIndexAnalysisManager.SQL_SCHOOL_RS, orgId, c);
         }
         log.info("Find zxrs school data count:{}", rsMap.size());
         for (SchoolCalendarDTO  c : schoolCalendarList) {
@@ -41,7 +41,7 @@ public class CetLjIndexAnalysisService {
         //学院
         rsMap.clear();
         for (SchoolCalendarDTO  c : schoolCalendarList) {//查询在校人数
-            haveCalendarRs(rsMap, CetLjIndexAnalysisManager.SQL_COLLEGE_RS, orgId, c);
+            cetLjIndexAnalysisManager.haveCalendarRs(rsMap, CetLjIndexAnalysisManager.SQL_COLLEGE_RS, orgId, c);
         }
         log.info("Find zxrs college data count:{}", rsMap.size());
         for (SchoolCalendarDTO  c : schoolCalendarList) {
@@ -51,7 +51,7 @@ public class CetLjIndexAnalysisService {
         //专业
         rsMap.clear();
         for (SchoolCalendarDTO  c : schoolCalendarList) {//查询在校人数
-            haveCalendarRs(rsMap, CetLjIndexAnalysisManager.SQL_PROFESSIONAL_RS, orgId, c);
+            cetLjIndexAnalysisManager.haveCalendarRs(rsMap, CetLjIndexAnalysisManager.SQL_PROFESSIONAL_RS, orgId, c);
         }
         log.info("Find zxrs professional data count:{}", rsMap.size());
         for (SchoolCalendarDTO  c : schoolCalendarList) {
@@ -61,7 +61,7 @@ public class CetLjIndexAnalysisService {
         //班级
         rsMap.clear();
         for (SchoolCalendarDTO  c : schoolCalendarList) {//查询在校人数
-            haveCalendarRs(rsMap, CetLjIndexAnalysisManager.SQL_CLASSES_RS, orgId, c);
+            cetLjIndexAnalysisManager.haveCalendarRs(rsMap, CetLjIndexAnalysisManager.SQL_CLASSES_RS, orgId, c);
         }
         log.info("Find zxrs classes data count:{}", rsMap.size());
         for (SchoolCalendarDTO  c : schoolCalendarList) {
@@ -71,35 +71,6 @@ public class CetLjIndexAnalysisService {
         System.out.println("---------------------------------------------------------------------------------------------------");
         log.info("start save data.count:{}", cache.size());
         cetLjIndexAnalysisManager.saveJczb(cache);
-    }
-
-    private void haveCalendarRs(Map<String, ZxrsDTO> rsMap, String rsSql, Long orgId, SchoolCalendarDTO  c) {
-        Map<String, List<ZxrsDTO>> dwRsMap = new HashMap<>();
-        List<ZxrsDTO> rsList = cetLjIndexAnalysisManager.querySubZxrs(rsSql, orgId, c.getKsrq(), c.getJsrq());
-        for (ZxrsDTO d : rsList) {
-            List<ZxrsDTO> list = dwRsMap.get(d.getBh());
-            if (null == list) {
-                list = new ArrayList<>();
-                dwRsMap.put(d.getBh(), list);
-            }
-            list.add(d);
-        }
-        for (Map.Entry<String, List<ZxrsDTO>> e : dwRsMap.entrySet()) {
-            String key = c.getXn() + "-" + c.getXq() + "-" + e.getKey();
-            ZxrsDTO d = rsMap.get(key);
-            if (null == d) {
-                d = new ZxrsDTO();
-                rsMap.put(key, d);
-            }
-            for(ZxrsDTO r : e.getValue()) {
-                d.setZxrs(d.getZxrs() + r.getZxrs());
-                if ("男".equals(r.getXb())) {
-                    d.setNzxrs(r.getZxrs());
-                } else if ("女".equals(r.getXb())) {
-                    d.setVzxrs(r.getZxrs());
-                }
-            }
-        }
     }
 
     private void ljIndexAndZxrs(List<AnalysisBasezbDTO> cache, SchoolCalendarDTO c, String sbSQL, Long orgId, Map<String, ZxrsDTO> rsMap) {
