@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/v1/index/manual")
 @Api(description = "英语手动触发")
-public class IndexAalysisManualController {
+public class IndexAnalysisManualController {
     @Autowired
     private AnalysisIndexService analysisIndexService;
     @Autowired
