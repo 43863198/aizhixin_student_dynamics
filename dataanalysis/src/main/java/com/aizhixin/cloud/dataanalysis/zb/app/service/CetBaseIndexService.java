@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 @Component
@@ -208,6 +209,32 @@ public class CetBaseIndexService {
         }
         if (null != rs && !rs.isEmpty()) {
             Collections.sort(rs);
+        }
+    }
+
+    /**
+     * 通过率计算
+     */
+    private void yearAllRsRate(List<BaseIndexYearRsVO> rs, List<YearPercentageVO> list) {
+        Double lastRate = null, rate = null;
+        boolean first = true;
+        DecimalFormat format = new DecimalFormat("#.00");
+        for (BaseIndexYearRsVO v : rs) {
+            YearPercentageVO vo = new YearPercentageVO ();
+            vo.setXnxq(v.getXnxq());
+            if (null != v.getZxrs() && null != v.getTgrs()) {
+                rate = v.getTgrs() * 1.0 / v.getZxrs();
+                if (null != lastRate) {
+                    lastRate = (rate - lastRate) * 100 / lastRate;
+                    vo.setRate(format.format(lastRate));
+                }
+                lastRate = rate;
+            }
+            if (!first) {
+                list.add(vo);
+            } else {
+                first = false;
+            }
         }
     }
 
@@ -549,5 +576,57 @@ public class CetBaseIndexService {
             Collections.sort(rs);
         }
         return rs;
+    }
+
+    /**
+     * 历年单次通过率增长率
+     */
+    public List<YearPercentageVO> findDcAllYearRsRate (Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
+        List<BaseIndexYearRsVO> rs = findDcAllYearRsCount(orgId, cetType, collegeCode, professionalCode, classesCode);
+        List<YearPercentageVO> list = new ArrayList<>();
+        yearAllRsRate(rs, list);
+        return list;
+    }
+
+
+    /**
+     * 历年累计通过率增长率
+     */
+    public List<YearPercentageVO> findLjAllYearRsRate (Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
+        List<BaseIndexYearRsVO> rs = findLjAllYearRsCount(orgId, cetType, collegeCode, professionalCode, classesCode);
+        List<YearPercentageVO> list = new ArrayList<>();
+        yearAllRsRate(rs, list);
+        return list;
+    }
+
+
+    /**
+     * 历年单次均值增长率
+     */
+    public List<YearPercentageVO> findDcAllYearAvgRate (Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
+        List<BaseIndexYearAvgVO> rs = findDcAllYearAvgCount(orgId, cetType, collegeCode, professionalCode, classesCode);
+        List<YearPercentageVO> list = new ArrayList<>();
+        Double lastRate = null;
+        Double lastAvg = null, avg = null;
+        boolean first = true;
+        DecimalFormat format = new DecimalFormat("#.00");
+        for (BaseIndexYearAvgVO v : rs) {
+            YearPercentageVO vo = new YearPercentageVO ();
+            vo.setXnxq(v.getXnxq());
+            if (null != v.getCkrc() && null != v.getZf()) {
+                avg = v.getZf() / v.getCkrc();
+                if (null != lastAvg) {
+                    lastRate = (avg - lastAvg) * 100 / lastAvg;
+                    vo.setRate(format.format(lastRate));
+                }
+                lastAvg = avg;
+            }
+            if (!first) {
+                list.add(vo);
+            } else {
+                first = false;
+            }
+        }
+        return list;
     }
 }
