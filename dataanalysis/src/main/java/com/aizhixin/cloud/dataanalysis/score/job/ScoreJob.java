@@ -1,20 +1,9 @@
 package com.aizhixin.cloud.dataanalysis.score.job;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
+import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.TeacherYearSemesterDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.service.SchoolYearTermService;
-import com.aizhixin.cloud.dataanalysis.common.service.DistributeLock;
+import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.FailScoreStatistics;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.FirstTwoSemestersScoreStatistics;
 import com.aizhixin.cloud.dataanalysis.score.mongoEntity.LastSemesterScoreStatistics;
@@ -28,14 +17,15 @@ import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
-
-import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
-import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class ScoreJob {
@@ -367,9 +357,9 @@ public class ScoreJob {
                             if (null != d1.get("cj")) {
                                 count++;
                                 if (null != d1.get("kch") && null != d1.get("kcmc") && null != d1.get("xf")) {
-                                    source.append("【KCH:" + d1.get("kch") + ";");
-                                    source.append("KCMC:" + d1.get("kcmc") + ";");
-                                    source.append("XF:" + d1.get("xf") + "】 ");
+                                    source.append("【课程号:" + d1.get("kch") + ";");
+                                    source.append("课程名称:" + d1.get("kcmc") + ";");
+                                    source.append("学分:" + d1.get("xf") + "】 ");
                                 }
                                 if (null != d1.get("xf")) {
                                     totalXF = totalXF + Float.valueOf(d1.get("xf").toString());
