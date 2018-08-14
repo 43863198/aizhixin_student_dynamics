@@ -42,7 +42,7 @@ public class StudentStandardScoreController {
     }
 
 
-    @GetMapping(value = "/top", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/cetTop", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "英语考试单次数据分析---top10", response = Void.class, notes = "英语考试单次数据分析---top10<br><br><b>@author jianwei.wu</b>")
     public ResponseEntity<Map<String, Object>> getTop(
             @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId") Long orgId,
