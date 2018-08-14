@@ -87,6 +87,23 @@ public class CetBaseIndexService {
         return new ArrayList<>();
     }
 
+
+    /**
+     * 单次年级指标基础指标查询请求
+     */
+    private List<CetGradeIndex> findDcGradeIndex(String xn, String xq, Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
+        if (StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)) {
+            return cetGradeIndexManager.findDcAllSchool(xn, xq, orgId.toString(), cetType);
+        } else if (!StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)){
+            return cetGradeIndexManager.findDc(xn, xq, orgId.toString(), cetType, orgId.toString(), collegeCode);
+        } else if (!StringUtils.isEmpty(collegeCode) && !StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)){
+            return cetGradeIndexManager.findDc(xn, xq, orgId.toString(), cetType, collegeCode, professionalCode);
+        } else if (!StringUtils.isEmpty(professionalCode) && !StringUtils.isEmpty(classesCode)){
+            return cetGradeIndexManager.findDc(xn, xq, orgId.toString(), cetType, professionalCode, classesCode);
+        }
+        return new ArrayList<>();
+    }
+
     /**
      * 单次单位总值查询
      */
@@ -131,6 +148,33 @@ public class CetBaseIndexService {
                     v.setName(o.getName());
                 }
             }
+        }
+    }
+
+    /**
+     * 填充年级人数
+     */
+    private void fillGradeRs(List<CetGradeRsVo> rs, List<CetGradeIndex> list) {
+        for(CetGradeIndex g : list) {
+            CetGradeRsVo v = new CetGradeRsVo ();
+            v.setNj(g.getNj());
+            v.setZxrs(g.getZxrs());
+            v.setTgrs(g.getTgrc());
+            rs.add(v);
+        }
+    }
+
+    /**
+     * 填充年级均值
+     */
+    private void fillGradeAvg(List<CetGradeAvgVo> rs, List<CetGradeIndex> list) {
+        for(CetGradeIndex g : list) {
+            CetGradeAvgVo v = new CetGradeAvgVo ();
+            v.setNj(g.getNj());
+            v.setZxrs(g.getZxrs());
+            v.setCkrc(g.getCkrc());
+            v.setZf(g.getZf());
+            rs.add(v);
         }
     }
 
@@ -240,13 +284,7 @@ public class CetBaseIndexService {
     public List<CetGradeRsVo> findDwLjGradeRsCount (Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
         List<CetGradeRsVo> rs = new ArrayList<>();
         List<CetGradeIndex> list = findNewLjGradeIndex(orgId, cetType, collegeCode, professionalCode, classesCode);
-        for(CetGradeIndex g : list) {
-            CetGradeRsVo v = new CetGradeRsVo ();
-            v.setNj(g.getNj());
-            v.setZxrs(g.getZxrs());
-            v.setTgrs(g.getTgrc());
-            rs.add(v);
-        }
+        fillGradeRs(rs, list);
         return rs;
     }
 
@@ -256,14 +294,7 @@ public class CetBaseIndexService {
     public List<CetGradeAvgVo> findDwLjGradeAvgCount (Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
         List<CetGradeAvgVo> rs = new ArrayList<>();
         List<CetGradeIndex> list = findNewLjGradeIndex(orgId, cetType, collegeCode, professionalCode, classesCode);
-        for(CetGradeIndex g : list) {
-            CetGradeAvgVo v = new CetGradeAvgVo ();
-            v.setNj(g.getNj());
-            v.setZxrs(g.getZxrs());
-            v.setCkrc(g.getCkrc());
-            v.setZf(g.getZf());
-            rs.add(v);
-        }
+        fillGradeAvg(rs, list);
         return rs;
     }
 
@@ -389,5 +420,51 @@ public class CetBaseIndexService {
         CetBaseIndex c = findDcBaseIndex(xn, xq, orgId, cetType, collegeCode, professionalCode, classesCode);
         sexRsValue(v, c);
         return v;
+    }
+
+
+
+    /**
+     * 单次年级人数指标
+     */
+    public List<CetGradeRsVo> findDcGradeRsCount (String xnxq, Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
+        List<CetGradeRsVo> rs = new ArrayList<>();
+        int p = xnxq.lastIndexOf("-");
+        String xn = null, xq = null;
+        if (p > 0) {
+            xn = xnxq.substring(0, p);
+            xq = xnxq.substring(p + 1);
+        }
+        if (null == xn || null == xq) {
+            return rs;
+        }
+        if (null == orgId || orgId <= 0) {
+            return rs;
+        }
+        List<CetGradeIndex> list = findDcGradeIndex(xn, xq, orgId, cetType, collegeCode, professionalCode, classesCode);
+        fillGradeRs(rs, list);
+        return rs;
+    }
+
+    /**
+     * 单次年级的均值分布
+     */
+    public List<CetGradeAvgVo> findDcGradeAvgCount (String xnxq, Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
+        List<CetGradeAvgVo> rs = new ArrayList<>();
+        int p = xnxq.lastIndexOf("-");
+        String xn = null, xq = null;
+        if (p > 0) {
+            xn = xnxq.substring(0, p);
+            xq = xnxq.substring(p + 1);
+        }
+        if (null == xn || null == xq) {
+            return rs;
+        }
+        if (null == orgId || orgId <= 0) {
+            return rs;
+        }
+        List<CetGradeIndex> list = findDcGradeIndex(xn, xq, orgId, cetType, collegeCode, professionalCode, classesCode);
+        fillGradeAvg(rs, list);
+        return rs;
     }
 }

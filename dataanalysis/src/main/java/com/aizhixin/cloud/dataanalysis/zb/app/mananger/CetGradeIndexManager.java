@@ -20,4 +20,11 @@ public class CetGradeIndexManager {
     public List<CetGradeIndex> findNewLj(String xxdm, String kslx, String pbh, String bh) {
         return cetGradeIndexRespository.findByXxdmAndDhljAndKslxAndPbhAndBhAndXnIsNullOrderByBh(xxdm, "2", kslx, pbh, bh);
     }
+
+    public List<CetGradeIndex> findDcAllSchool(String xn, String xq, String xxdm, String kslx) {
+        return  cetGradeIndexRespository.findByXnAndXqmAndXxdmAndDhljAndKslxAndBhOrderByNj(xn, xq, xxdm, "1", kslx, xxdm);
+    }
+    public List<CetGradeIndex> findDc(String xn, String xq, String xxdm, String kslx, String pbh, String bh) {
+        return cetGradeIndexRespository.findByXnAndXqmAndXxdmAndDhljAndKslxAndPbhAndBhOrderByBh(xn, xq, xxdm, "1", kslx, pbh, bh);
+    }
 }
