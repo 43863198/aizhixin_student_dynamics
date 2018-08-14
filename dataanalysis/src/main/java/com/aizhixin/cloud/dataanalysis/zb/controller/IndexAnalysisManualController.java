@@ -3,7 +3,7 @@ package com.aizhixin.cloud.dataanalysis.zb.controller;
 import com.aizhixin.cloud.dataanalysis.bz.service.CetEtlService;
 import com.aizhixin.cloud.dataanalysis.bz.service.StandardScoreService;
 import com.aizhixin.cloud.dataanalysis.zb.service.CetDcIndexAnalysisService;
-import com.aizhixin.cloud.dataanalysis.zb.service.CetLjGradeService;
+import com.aizhixin.cloud.dataanalysis.zb.service.CetGradeService;
 import com.aizhixin.cloud.dataanalysis.zb.service.CetLjIndexAnalysisService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,7 +31,7 @@ public class IndexAnalysisManualController {
     @Autowired
     private CetLjIndexAnalysisService cetLjIndexAnalysisService;
     @Autowired
-    private CetLjGradeService cetLjGradeService;
+    private CetGradeService cetGradeService;
     @Autowired
     private CetDcIndexAnalysisService cetDcIndexAnalysisService;
 
@@ -80,13 +80,19 @@ public class IndexAnalysisManualController {
     @GetMapping(value = "/cet/lj/grade/newest", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "英语等级考试最新累计年级指标统计", response = Void.class, notes = "英语等级考试最新累计年级指标统计<br><br><b>@author zhen.pan</b>")
     public void cetljGradeNewest(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId") Long orgId) {
-        cetLjGradeService.calLjNewest(orgId);
+        cetGradeService.calLjNewest(orgId);
     }
 
     @GetMapping(value = "/cet/lj/grade", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "英语等级考试所有累计年级指标统计", response = Void.class, notes = "英语等级考试所有累计年级指标统计<br><br><b>@author zhen.pan</b>")
     public void cetljGrade(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId") Long orgId) {
-        cetLjGradeService.calLjAll(orgId);
+        cetGradeService.calLjAll(orgId);
+    }
+
+    @GetMapping(value = "/cet/dc/grade", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "英语等级考试单次所有年级指标统计", response = Void.class, notes = "英语等级考试单次所有年级指标统计<br><br><b>@author zhen.pan</b>")
+    public void cetDcGrade(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId") Long orgId) {
+        cetGradeService.calDcAll(orgId);
     }
 
     @GetMapping(value = "/cet/dc", produces = MediaType.APPLICATION_JSON_VALUE)
