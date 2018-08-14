@@ -53,4 +53,12 @@ public class CetBaseIndexManager {
     public List<CetBaseIndex> findDcSubDw(String xn, String xq, String xxdm, String kslx, String pbh) {
         return cetBaseIndexRespository.findByXnAndXqmAndXxdmAndDhljAndKslxAndPbhOrderByBh(xn, xq, xxdm, "1", kslx, pbh);
     }
+
+    public List<CetBaseIndex> findAllYearCount(String xxdm, String kslx, String dhlj) {
+        return cetBaseIndexRespository.findByXxdmAndDhljAndKslxAndBhAndXnIsNotNullOrderByXn(xxdm, dhlj, kslx, xxdm);
+    }
+
+    public List<CetBaseIndex> findAllYearCount(String xxdm, String kslx, String dhlj, String pbh, String bh) {
+        return cetBaseIndexRespository.findByXxdmAndDhljAndKslxAndPbhAndBhAndXnIsNotNullOrderByXn(xxdm, dhlj, kslx, pbh, bh);
+    }
 }

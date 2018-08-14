@@ -188,4 +188,37 @@ public class CetIndexController {
             @ApiParam(value = "className 班名") @RequestParam(value = "className", required = false) String className) {
         return cetBaseIndexService.findDcGradeAvgCount(xnxq, orgId, cetType, collegeCode, professionCode, className);
     }
+
+    @GetMapping(value = "/year/dcrs", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "三、四、六级历年单次人数分布", response = Void.class, notes = "三、四、六级历年单次人数分布<br><br><b>@author zhen.pan</b>")
+    public List<BaseIndexYearRsVO> dcyearrs(
+            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId,
+            @ApiParam(value = "cetType 成绩类型(3;4;6;)", required = true) @RequestParam(value = "cetType") String cetType,
+            @ApiParam(value = "collegeCode 学院码") @RequestParam(value = "collegeCode", required = false) String collegeCode,
+            @ApiParam(value = "professionCode 专业码") @RequestParam(value = "professionCode", required = false) String professionCode,
+            @ApiParam(value = "className 班名") @RequestParam(value = "className", required = false) String className) {
+        return cetBaseIndexService.findDcAllYearRsCount(orgId, cetType, collegeCode, professionCode, className);
+    }
+
+    @GetMapping(value = "/year/ljrs", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "三、四、六级历年累计人数分布", response = Void.class, notes = "三、四、六级历年累计人数分布<br><br><b>@author zhen.pan</b>")
+    public List<BaseIndexYearRsVO> ljyearrs(
+            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId,
+            @ApiParam(value = "cetType 成绩类型(3;4;6;)", required = true) @RequestParam(value = "cetType") String cetType,
+            @ApiParam(value = "collegeCode 学院码") @RequestParam(value = "collegeCode", required = false) String collegeCode,
+            @ApiParam(value = "professionCode 专业码") @RequestParam(value = "professionCode", required = false) String professionCode,
+            @ApiParam(value = "className 班名") @RequestParam(value = "className", required = false) String className) {
+        return cetBaseIndexService.findLjAllYearRsCount(orgId, cetType, collegeCode, professionCode, className);
+    }
+
+    @GetMapping(value = "/year/dcavg", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "三、四、六级历年单次均值分布", response = Void.class, notes = "三、四、六级历年单次均值分布<br><br><b>@author zhen.pan</b>")
+    public List<BaseIndexYearAvgVO> dcyearavg(
+            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId,
+            @ApiParam(value = "cetType 成绩类型(3;4;6;)", required = true) @RequestParam(value = "cetType") String cetType,
+            @ApiParam(value = "collegeCode 学院码") @RequestParam(value = "collegeCode", required = false) String collegeCode,
+            @ApiParam(value = "professionCode 专业码") @RequestParam(value = "professionCode", required = false) String professionCode,
+            @ApiParam(value = "className 班名") @RequestParam(value = "className", required = false) String className) {
+        return cetBaseIndexService.findDcAllYearAvgCount(orgId, cetType, collegeCode, professionCode, className);
+    }
 }

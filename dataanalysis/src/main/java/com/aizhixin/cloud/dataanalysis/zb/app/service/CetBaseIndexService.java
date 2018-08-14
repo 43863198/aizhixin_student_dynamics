@@ -179,6 +179,39 @@ public class CetBaseIndexService {
     }
 
     /**
+     * 历年指标汇总
+     */
+    private List<CetBaseIndex> findAllYear(Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode, String dhlj) {
+        if (StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)) {
+            return cetBaseIndexManager.findAllYearCount(orgId.toString(), cetType, dhlj);
+        } else if (!StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)){
+            return cetBaseIndexManager.findAllYearCount(orgId.toString(), cetType, dhlj, orgId.toString(), collegeCode);
+        } else if (!StringUtils.isEmpty(collegeCode) && !StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)){
+            return cetBaseIndexManager.findAllYearCount(orgId.toString(), cetType, dhlj, collegeCode, professionalCode);
+        } else if (!StringUtils.isEmpty(professionalCode) && !StringUtils.isEmpty(classesCode)){
+            return cetBaseIndexManager.findAllYearCount(orgId.toString(), cetType, dhlj, professionalCode, classesCode);
+        }
+        return new ArrayList<>();
+    }
+
+    /**
+     * 历年人数分布填充
+     */
+    private void fillAllYearRs(List<BaseIndexYearRsVO> rs, List<CetBaseIndex> list) {
+        for (CetBaseIndex d : list) {
+            BaseIndexYearRsVO v = new BaseIndexYearRsVO();
+            rs.add(v);
+            v.setCkrc(d.getCkrc());
+            v.setTgrs(d.getTgrc());
+            v.setXnxq(d.getXn() + "-" + d.getXqm());
+            v.setZxrs(d.getZxrs());
+        }
+        if (null != rs && !rs.isEmpty()) {
+            Collections.sort(rs);
+        }
+    }
+
+    /**
      * 累计单位统计
      */
     public DwLjCountVO findDwLjCount(Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
@@ -465,6 +498,56 @@ public class CetBaseIndexService {
         }
         List<CetGradeIndex> list = findDcGradeIndex(xn, xq, orgId, cetType, collegeCode, professionalCode, classesCode);
         fillGradeAvg(rs, list);
+        return rs;
+    }
+
+
+    /**
+     * 历年单次的人数分布
+     */
+    public List<BaseIndexYearRsVO> findDcAllYearRsCount (Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
+        List<BaseIndexYearRsVO> rs = new ArrayList<>();
+        if (null == orgId || orgId <= 0) {
+            return rs;
+        }
+        List<CetBaseIndex> list = findAllYear(orgId, cetType, collegeCode, professionalCode, classesCode, "1");
+        fillAllYearRs(rs, list);
+        return rs;
+    }
+
+    /**
+     * 历年累计的人数分布
+     */
+    public List<BaseIndexYearRsVO> findLjAllYearRsCount (Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
+        List<BaseIndexYearRsVO> rs = new ArrayList<>();
+        if (null == orgId || orgId <= 0) {
+            return rs;
+        }
+        List<CetBaseIndex> list = findAllYear(orgId, cetType, collegeCode, professionalCode, classesCode, "2");
+        fillAllYearRs(rs, list);
+        return rs;
+    }
+
+    /**
+     * 历年单次的均值分布
+     */
+    public List<BaseIndexYearAvgVO> findDcAllYearAvgCount (Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
+        List<BaseIndexYearAvgVO> rs = new ArrayList<>();
+        if (null == orgId || orgId <= 0) {
+            return rs;
+        }
+        List<CetBaseIndex> list = findAllYear(orgId, cetType, collegeCode, professionalCode, classesCode, "1");
+        for (CetBaseIndex d : list) {
+            BaseIndexYearAvgVO v = new BaseIndexYearAvgVO();
+            rs.add(v);
+            v.setCkrc(d.getCkrc());
+            v.setXnxq(d.getXn() + "-" + d.getXqm());
+            v.setZxrs(d.getZxrs());
+            v.setZf(d.getZf());
+        }
+        if (null != rs && !rs.isEmpty()) {
+            Collections.sort(rs);
+        }
         return rs;
     }
 }
