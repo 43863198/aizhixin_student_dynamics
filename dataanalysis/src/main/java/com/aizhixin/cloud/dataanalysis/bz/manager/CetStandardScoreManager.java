@@ -1,8 +1,12 @@
 package com.aizhixin.cloud.dataanalysis.bz.manager;
 
+import com.aizhixin.cloud.dataanalysis.analysis.vo.CetDetailVO;
 import com.aizhixin.cloud.dataanalysis.bz.entity.CetStandardScore;
 import com.aizhixin.cloud.dataanalysis.bz.repository.CetStandardScoreRepository;
 import com.aizhixin.cloud.dataanalysis.bz.vo.CetTopVo;
+import com.aizhixin.cloud.dataanalysis.common.PageData;
+import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,11 +44,11 @@ public class CetStandardScoreManager {
         if (null != list && list.size() > 0) {
             return list;
         }
-        return new ArrayList<CetStandardScore>();
+        return new ArrayList<>();
     }
 
     public Map<String, Object> getTop(Long orgId, String cetType, String teacherYear, String semester) {
-        Map<String,Object> resultMap = new HashMap<>();
+        Map<String, Object> resultMap = new HashMap<>();
         List<CetTopVo> listVo = new ArrayList<>();
         Pageable pageable = new PageRequest(0, 10, Sort.Direction.DESC, "cj");
         CetStandardScore cetStandardScore = new CetStandardScore();
@@ -61,8 +65,8 @@ public class CetStandardScoreManager {
 
             Map map = getCollegeName(temp.getYxsh());
 
-            cetTopVo.setName(map.get("simple_name") != null?map.get("simple_name").toString():"");
-            cetTopVo.setCollegeName(map.get("name") != null?map.get("name").toString():"");
+            cetTopVo.setName(map.get("simple_name") != null ? map.get("simple_name").toString() : "");
+            cetTopVo.setCollegeName(map.get("name") != null ? map.get("name").toString() : "");
 
             cetTopVo.setProfessionName(getProfessionName(temp.getZyh()));
             cetTopVo.setClassName(temp.getBh());
@@ -71,7 +75,7 @@ public class CetStandardScoreManager {
 
             listVo.add(cetTopVo);
         }
-        resultMap.put("data",listVo);
+        resultMap.put("data", listVo);
         return resultMap;
     }
 
@@ -81,16 +85,133 @@ public class CetStandardScoreManager {
         query.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
         query.setParameter("collegeCode", collegeCode);
         Map map = (Map) query.getSingleResult();
-        return  map;
+        return map;
     }
 
-    public String getProfessionName(String professionCode){
+    public String getProfessionName(String professionCode) {
 
-        StringBuilder sql =new StringBuilder("select NAME as name from t_profession where CODE = :professionCode") ;
+        StringBuilder sql = new StringBuilder("select NAME as name from t_profession where CODE = :professionCode");
         Query query = em.createNativeQuery(sql.toString());
         query.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
         query.setParameter("professionCode", professionCode);
         Map map = (Map) query.getSingleResult();
-        return  map.get("name") != null ? map.get("name").toString():"";
+        return map.get("name") != null ? map.get("name").toString() : "";
+    }
+
+    public PageData<CetDetailVO> getDetailList(Long orgId, String cetType, String collegeCode, String professionCode, String className, Integer scoreSeg, Integer pageNumber, Integer pageSize) {
+       PageData<CetDetailVO> p = new PageData<>();
+       Map<String, Object> condition = new HashMap<>();
+        StringBuilder sql = new StringBuilder("select XH,XM,BH,ZYH,YXSH,NJ,max(CJ) as CJ from t_b_djksxx where 1=1 ");
+        StringBuilder cql = new StringBuilder("select COUNT(DISTINCT xh) as count from t_b_djksxx where 1=1 ");
+        if (null != orgId) {
+            sql.append(" and XXDM = :orgId");
+            cql.append(" and XXDM = :orgId");
+            condition.put("orgId", orgId);
+        }
+        if (!StringUtils.isBlank(cetType)) {
+            sql.append(" and KSLX = :cetType");
+            cql.append(" and KSLX = :cetType");
+            condition.put("cetType", cetType);
+        }
+        if (!StringUtils.isBlank(collegeCode)) {
+            sql.append(" and YXSH = :collegeCode");
+            cql.append(" and YXSH = :collegeCode");
+            condition.put("collegeCode", collegeCode);
+        }
+        if (!StringUtils.isBlank(professionCode)) {
+            sql.append(" and ZYH = :professionCode");
+            cql.append(" and ZYH = :professionCode");
+            condition.put("professionCode", professionCode);
+        }
+        if (!StringUtils.isBlank(className)) {
+            sql.append(" and BH = :className");
+            cql.append(" and BH = :className");
+            condition.put("className", className);
+        }
+
+        if (null != scoreSeg && scoreSeg >= 1 && scoreSeg <= 4) {
+            switch (scoreSeg) {
+                case 1:
+                    sql.append(" and CJ < 390 and CJ > 0");
+                    cql.append(" and CJ < 390 and CJ > 0");
+                    break;
+                case 2:
+                    sql.append(" and CJ < 425 and CJ >= 390");
+                    cql.append(" and CJ < 425 and CJ >= 390");
+                    break;
+                case 3:
+                    sql.append(" and CJ <= 550 and CJ >= 425");
+                    cql.append(" and CJ <= 550 and CJ >= 425");
+                    break;
+                case 4:
+                    sql.append(" and CJ > 550");
+                    cql.append(" and CJ > 550");
+                    break;
+                default:
+            }
+        } else {
+            sql.append(" and CJ > 0");
+            cql.append(" and CJ > 0");
+        }
+
+        sql.append(" group by XH");
+        Query sq = em.createNativeQuery(sql.toString());
+        Query csq = em.createNativeQuery(cql.toString());
+        sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+        csq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+        for (Map.Entry<String, Object> e : condition.entrySet()) {
+            sq.setParameter(e.getKey(), e.getValue());
+            csq.setParameter(e.getKey(), e.getValue());
+        }
+        Long count = Long.parseLong(((Map)csq.getSingleResult()).get("count").toString());
+
+        if (null == pageNumber || pageNumber < 1) {
+            pageNumber = 1;
+        }
+        if (null == pageSize) {
+            pageSize = 20;
+        }
+        sq.setFirstResult((pageNumber - 1) * pageSize);
+        sq.setMaxResults(pageSize);
+        List<Object> res = sq.getResultList();
+        List<CetDetailVO> sList = new ArrayList<>();
+        for (Object obj : res) {
+            Map row = (Map) obj;
+            CetDetailVO s = new CetDetailVO();
+            if (null != row.get("XH")) {
+                s.setJobNumber(row.get("XH").toString());
+            }
+            if (null != row.get("XM")) {
+                s.setName(row.get("XM").toString());
+            }
+            if (null != row.get("YXSH")) {
+                s.setCollegeName(row.get("YXSH").toString());
+            }
+            if (null != row.get("ZYH")) {
+                s.setProfessionName(getProfessionName(row.get("ZYH").toString()));
+            }
+            if (null != row.get("BH")) {
+                s.setClassName(row.get("BH").toString());
+            }
+            if (null != row.get("NJ")) {
+                s.setGrade(row.get("NJ").toString());
+            }
+            if (null != row.get("CJ") && !row.get("CJ").equals("")) {
+                if (Float.valueOf(row.get("CJ").toString()) > 0) {
+                    s.setScore(Math.round(Float.valueOf(row.get("CJ").toString())) + "");
+                } else {
+                    s.setScore(0 + "");
+                }
+            }
+
+            sList.add(s);
+        }
+        p.setData(sList);
+        p.getPage().setPageNumber(pageNumber);
+        p.getPage().setPageSize(pageSize);
+        p.getPage().setTotalElements(count);
+        p.getPage().setTotalPages(PageUtil.cacalatePagesize(count, p.getPage().getPageSize()));
+
+        return p;
     }
 }

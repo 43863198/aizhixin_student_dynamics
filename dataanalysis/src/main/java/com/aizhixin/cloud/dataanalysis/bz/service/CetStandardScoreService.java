@@ -1,7 +1,9 @@
 package com.aizhixin.cloud.dataanalysis.bz.service;
 
+import com.aizhixin.cloud.dataanalysis.analysis.vo.CetDetailVO;
 import com.aizhixin.cloud.dataanalysis.bz.entity.CetStandardScore;
 import com.aizhixin.cloud.dataanalysis.bz.manager.CetStandardScoreManager;
+import com.aizhixin.cloud.dataanalysis.common.PageData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,7 +25,14 @@ public class CetStandardScoreService {
     }
 
     public Map<String, Object> getTop(Long orgId, String cetType, String teacherYear, String semester) {
-        teacherYear = teacherYear + "-" +  (Integer.valueOf(teacherYear) + 1);
+        teacherYear = teacherYear + "-" + (Integer.valueOf(teacherYear) + 1);
         return cetStandardScoreManager.getTop(orgId, cetType, teacherYear, semester);
+    }
+
+    /**
+     * 查看数据详情
+     */
+    public PageData<CetDetailVO> getDetailList(Long orgId, String cetType, String collegeCode, String professionCode, String className, Integer scoreSeg, Integer pageNumber, Integer pageSize) {
+        return cetStandardScoreManager.getDetailList(orgId, cetType, collegeCode, professionCode, className, scoreSeg, pageNumber, pageSize);
     }
 }
