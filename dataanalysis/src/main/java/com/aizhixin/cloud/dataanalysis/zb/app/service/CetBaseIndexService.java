@@ -24,6 +24,9 @@ public class CetBaseIndexService {
     @Autowired
     private CetGradeIndexManager cetGradeIndexManager;
 
+    /**
+     * 单位累计指标的查询
+     */
     private CetBaseIndex findNewLjOneDwIndex(Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
         CetBaseIndex c = null;
         if (StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)) {
@@ -36,6 +39,99 @@ public class CetBaseIndexService {
             c = cetBaseIndexManager.findNewDwLj(orgId.toString(), cetType, professionalCode, classesCode);
         }
         return c;
+    }
+
+    /**
+     * 性别人数赋值
+     */
+    private void sexRsValue(SexRsVO v, CetBaseIndex c) {
+        if (null != c) {
+            v.getMan().setZxrs(c.getNzxrs());
+            v.getMan().setCkrc(c.getNrc());
+            v.getMan().setTgrs(c.getTgrc());
+
+            v.getWomen().setZxrs(c.getVzxrs());
+            v.getWomen().setTgrs(c.getVtgrc());
+            v.getWomen().setCkrc(c.getVrc());
+        }
+    }
+
+    /**
+     * 性别均值赋值
+     */
+    private void sexAvgValue(SexAvgVO v, CetBaseIndex c) {
+        if (null != c) {
+            v.getMan().setZxrs(c.getNzxrs());
+            v.getMan().setCkrc(c.getNrc());
+            v.getMan().setZf(c.getNzf());
+
+            v.getWomen().setZxrs(c.getVzxrs());
+            v.getWomen().setCkrc(c.getVtgrc());
+            v.getWomen().setZf(c.getVzf());
+        }
+    }
+
+    /**
+     * 累计最新年级指标基础指标查询请求
+     */
+    private List<CetGradeIndex> findNewLjGradeIndex(Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
+        if (StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)) {
+            return cetGradeIndexManager.findNewLjAllSchool(orgId.toString(), cetType);
+        } else if (!StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)){
+            return cetGradeIndexManager.findNewLj(orgId.toString(), cetType, orgId.toString(), collegeCode);
+        } else if (!StringUtils.isEmpty(collegeCode) && !StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)){
+            return cetGradeIndexManager.findNewLj(orgId.toString(), cetType, collegeCode, professionalCode);
+        } else if (!StringUtils.isEmpty(professionalCode) && !StringUtils.isEmpty(classesCode)){
+            return cetGradeIndexManager.findNewLj(orgId.toString(), cetType, professionalCode, classesCode);
+        }
+        return new ArrayList<>();
+    }
+
+    /**
+     * 单次单位总值查询
+     */
+    private CetBaseIndex findDcBaseIndex(String xn, String xq, Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
+        CetBaseIndex c = new CetBaseIndex();
+        if (StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)) {
+            c = cetBaseIndexManager.findDcOneDw(xn, xq, orgId.toString(), cetType);
+        } else if (!StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)){
+            c = cetBaseIndexManager.findDcOneDw(xn, xq, orgId.toString(), cetType, orgId.toString(), collegeCode);
+        } else if (!StringUtils.isEmpty(collegeCode) && !StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)){
+            c = cetBaseIndexManager.findDcOneDw(xn, xq, orgId.toString(), cetType, collegeCode, professionalCode);
+        } else if (!StringUtils.isEmpty(professionalCode) && !StringUtils.isEmpty(classesCode)){
+            c = cetBaseIndexManager.findDcOneDw(xn, xq, orgId.toString(), cetType, professionalCode, classesCode);
+        }
+        return c;
+    }
+
+    /**
+     * 填充学院名称
+     */
+    private void fillCollegeName(Long orgId, List<DwDistributeCountVO> rsList, boolean college, boolean professinal, boolean classes, Set<String> bhSet) {
+        Map<String, OrganizationDTO> orgMap = new HashMap<>();
+        if (!bhSet.isEmpty()) {
+            List<OrganizationDTO> orgList = null;
+            if (college) {
+                orgList = organizationService.getCollegeList(orgId, bhSet);
+            }  else if( professinal) {
+                orgList = organizationService.getProfessionList(orgId, null, bhSet);
+            } else if (classes) {
+                orgList = organizationService.getClassList(orgId, null, null, bhSet);
+            }
+            if (null != orgList) {
+                for (OrganizationDTO o : orgList) {
+                    orgMap.put(o.getCode(), o);
+                }
+            }
+        }
+        if (!orgMap.isEmpty()) {
+            for (DwDistributeCountVO v : rsList) {
+                OrganizationDTO o = orgMap.get(v.getCode());
+                if (null != o) {
+                    v.setName(o.getName());
+                }
+            }
+        }
     }
 
     /**
@@ -95,30 +191,7 @@ public class CetBaseIndexService {
                 v.setCode(c.getBh());
                 bhSet.add(c.getBh());
             }
-            Map<String, OrganizationDTO> orgMap = new HashMap<>();
-            if (!bhSet.isEmpty()) {
-                List<OrganizationDTO> orgList = null;
-                if (college) {
-                    orgList = organizationService.getCollegeList(orgId, bhSet);
-                }  else if( professinal) {
-                    orgList = organizationService.getProfessionList(orgId, null, bhSet);
-                } else if (classes) {
-                    orgList = organizationService.getClassList(orgId, null, null, bhSet);
-                }
-                if (null != orgList) {
-                    for (OrganizationDTO o : orgList) {
-                        orgMap.put(o.getCode(), o);
-                    }
-                }
-            }
-            if (!orgMap.isEmpty()) {
-                for (DwDistributeCountVO v : rs) {
-                    OrganizationDTO o = orgMap.get(v.getCode());
-                    if (null != o) {
-                        v.setName(o.getName());
-                    }
-                }
-            }
+            fillCollegeName(orgId, rs, college, professinal, classes, bhSet);
         }
         return rs;
     }
@@ -138,17 +211,7 @@ public class CetBaseIndexService {
         }
 
         CetBaseIndex c = findNewLjOneDwIndex(orgId, cetType, collegeCode, professionalCode, classesCode);
-        if (null != c) {
-            v.getMan().setZxrs(c.getNzxrs());
-            v.getMan().setCkrc(c.getNrc());
-            v.getMan().setTgrs(c.getTgrc());
-            v.getMan().setZxrs(c.getNzxrs());
-
-            v.getWomen().setZxrs(c.getVzxrs());
-            v.getWomen().setTgrs(c.getVtgrc());
-            v.getWomen().setCkrc(c.getVrc());
-            v.getWomen().setZxrs(c.getVzxrs());
-        }
+        sexRsValue(v, c);
         return v;
     }
 
@@ -167,38 +230,12 @@ public class CetBaseIndexService {
         }
 
         CetBaseIndex c = findNewLjOneDwIndex(orgId, cetType, collegeCode, professionalCode, classesCode);
-        if (null != c) {
-            v.getMan().setZxrs(c.getNzxrs());
-            v.getMan().setCkrc(c.getNrc());
-            v.getMan().setZf(c.getNzf());
-            v.getMan().setZxrs(c.getNzxrs());
-
-            v.getWomen().setZxrs(c.getVzxrs());
-            v.getWomen().setCkrc(c.getVtgrc());
-            v.getWomen().setZf(c.getVzf());
-            v.getWomen().setZxrs(c.getVzxrs());
-        }
+        sexAvgValue(v, c);
         return v;
     }
 
     /**
-     * 累计最新年级指标基础指标查询请求
-     */
-    private List<CetGradeIndex> findNewLjGradeIndex(Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
-        if (StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)) {
-            return cetGradeIndexManager.findNewLjAllSchool(orgId.toString(), cetType);
-        } else if (!StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)){
-            return cetGradeIndexManager.findNewLj(orgId.toString(), cetType, orgId.toString(), collegeCode);
-        } else if (!StringUtils.isEmpty(collegeCode) && !StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)){
-            return cetGradeIndexManager.findNewLj(orgId.toString(), cetType, collegeCode, professionalCode);
-        } else if (!StringUtils.isEmpty(professionalCode) && !StringUtils.isEmpty(classesCode)){
-            return cetGradeIndexManager.findNewLj(orgId.toString(), cetType, professionalCode, classesCode);
-        }
-        return new ArrayList<>();
-    }
-
-    /**
-     * 累计年级人数指标s
+     * 累计年级人数指标
      */
     public List<CetGradeRsVo> findDwLjGradeRsCount (Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
         List<CetGradeRsVo> rs = new ArrayList<>();
@@ -228,23 +265,6 @@ public class CetBaseIndexService {
             rs.add(v);
         }
         return rs;
-    }
-
-    /**
-     * 单次单位总值查询
-     */
-    private CetBaseIndex findDcBaseIndex(String xn, String xq, Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
-        CetBaseIndex c = new CetBaseIndex();
-        if (StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)) {
-            c = cetBaseIndexManager.findDcOneDw(xn, xq, orgId.toString(), cetType);
-        } else if (!StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)){
-            c = cetBaseIndexManager.findDcOneDw(xn, xq, orgId.toString(), cetType, orgId.toString(), collegeCode);
-        } else if (!StringUtils.isEmpty(collegeCode) && !StringUtils.isEmpty(professionalCode) && StringUtils.isEmpty(classesCode)){
-            c = cetBaseIndexManager.findDcOneDw(xn, xq, orgId.toString(), cetType, collegeCode, professionalCode);
-        } else if (!StringUtils.isEmpty(professionalCode) && !StringUtils.isEmpty(classesCode)){
-            c = cetBaseIndexManager.findDcOneDw(xn, xq, orgId.toString(), cetType, professionalCode, classesCode);
-        }
-        return c;
     }
 
     /**
@@ -312,30 +332,62 @@ public class CetBaseIndexService {
             bhSet.add(d.getBh());
             rsList.add(v);
         }
-        Map<String, OrganizationDTO> orgMap = new HashMap<>();
-        if (!bhSet.isEmpty()) {
-            List<OrganizationDTO> orgList = null;
-            if (college) {
-                orgList = organizationService.getCollegeList(orgId, bhSet);
-            }  else if( professinal) {
-                orgList = organizationService.getProfessionList(orgId, null, bhSet);
-            } else if (classes) {
-                orgList = organizationService.getClassList(orgId, null, null, bhSet);
-            }
-            if (null != orgList) {
-                for (OrganizationDTO o : orgList) {
-                    orgMap.put(o.getCode(), o);
-                }
-            }
-        }
-        if (!orgMap.isEmpty()) {
-            for (DwDistributeCountVO v : rsList) {
-                OrganizationDTO o = orgMap.get(v.getCode());
-                if (null != o) {
-                    v.setName(o.getName());
-                }
-            }
-        }
+        fillCollegeName(orgId, rsList, college, professinal, classes, bhSet);
         return rsList;
+    }
+
+    /**
+     * 单次性别均值分布
+     */
+    public SexAvgVO findDwDcSexAvgCount(String xnxq, Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
+        SexAvgVO v = new SexAvgVO ();
+        BaseIndexAvgVO man = new BaseIndexAvgVO();
+        BaseIndexAvgVO woman = new BaseIndexAvgVO();
+        v.setMan(man);
+        v.setWomen(woman);
+        int p = xnxq.lastIndexOf("-");
+        String xn = null, xq = null;
+        if (p > 0) {
+            xn = xnxq.substring(0, p);
+            xq = xnxq.substring(p + 1);
+        }
+        if (null == xn || null == xq) {
+            return v;
+        }
+        if (null == orgId || orgId <= 0) {
+            return v;
+        }
+
+        CetBaseIndex c = findDcBaseIndex(xn, xq, orgId, cetType, collegeCode, professionalCode, classesCode);
+        sexAvgValue(v, c);
+        return v;
+    }
+
+    /**
+     * 累计性别人数分布
+     */
+    public SexRsVO findDwDcSexRsCount(String xnxq, Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
+        SexRsVO v = new SexRsVO ();
+        BaseIndexRsVO man = new BaseIndexRsVO();
+        BaseIndexRsVO woman = new BaseIndexRsVO();
+        v.setMan(man);
+        v.setWomen(woman);
+
+        int p = xnxq.lastIndexOf("-");
+        String xn = null, xq = null;
+        if (p > 0) {
+            xn = xnxq.substring(0, p);
+            xq = xnxq.substring(p + 1);
+        }
+        if (null == xn || null == xq) {
+            return v;
+        }
+        if (null == orgId || orgId <= 0) {
+            return v;
+        }
+
+        CetBaseIndex c = findDcBaseIndex(xn, xq, orgId, cetType, collegeCode, professionalCode, classesCode);
+        sexRsValue(v, c);
+        return v;
     }
 }
