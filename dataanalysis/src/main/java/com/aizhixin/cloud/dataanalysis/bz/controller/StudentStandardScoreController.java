@@ -42,17 +42,16 @@ public class StudentStandardScoreController {
     }
 
 
-    @GetMapping(value = "/cetTop", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/cettop", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "英语考试单次数据分析---top10", response = Void.class, notes = "英语考试单次数据分析---top10<br><br><b>@author jianwei.wu</b>")
     public ResponseEntity<Map<String, Object>> getTop(
             @ApiParam(value = "orgId 学校id" , required = true) @RequestParam(value = "orgId") Long orgId,
             @ApiParam(value = "cetType 成绩类型： (3;4;6;)" , required = true ) @RequestParam(value = "cetType") String cetType,
-            @ApiParam(value = "teacherYear 学年 (格式如：2017)" , required = true ) @RequestParam(value = "teacherYear") String teacherYear,
-            @ApiParam(value = "semester 学期 (1,2; 1表示秋，2表示春)" , required = true) @RequestParam(value = "semester") String semester ) {
-        return new ResponseEntity<>(cetStandardScoreService.getTop(orgId,cetType, teacherYear, semester), HttpStatus.OK);
+            @ApiParam(value = "teacherYear-semester 学年学期 (格式如：2017-2018-1)  (1,2; 1表示秋，2表示春)" , required = true ) @RequestParam(value = "teacherYear") String teacherYear,
+        return new ResponseEntity<>(cetStandardScoreService.getTop(orgId,cetType, teacherYear), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/cetDetaillist", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/cetdetaillist", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "三、四、六级查看数据详情---数据列表", response = Void.class, notes = "三、四、六级查看数据详情---数据列表<br><br><b>@author dengchao</b>")
     public ResponseEntity<Object> getDetailList(
             @ApiParam(value = "orgId 学校id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,

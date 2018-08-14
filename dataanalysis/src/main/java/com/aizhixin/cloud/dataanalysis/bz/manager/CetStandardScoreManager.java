@@ -47,7 +47,7 @@ public class CetStandardScoreManager {
         return new ArrayList<>();
     }
 
-    public Map<String, Object> getTop(Long orgId, String cetType, String teacherYear, String semester) {
+    public Map<String, Object> getTop(Long orgId, String cetType, String teacherYear) {
         Map<String, Object> resultMap = new HashMap<>();
         List<CetTopVo> listVo = new ArrayList<>();
         Pageable pageable = new PageRequest(0, 10, Sort.Direction.DESC, "cj");

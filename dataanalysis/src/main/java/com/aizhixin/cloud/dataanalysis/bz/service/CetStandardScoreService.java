@@ -24,9 +24,9 @@ public class CetStandardScoreService {
         return cetStandardScoreManager.getCetScore(orgId, jobNum, pageNumber, pageSize);
     }
 
-    public Map<String, Object> getTop(Long orgId, String cetType, String teacherYear, String semester) {
+    public Map<String, Object> getTop(Long orgId, String cetType, String teacherYear) {
         teacherYear = teacherYear + "-" + (Integer.valueOf(teacherYear) + 1);
-        return cetStandardScoreManager.getTop(orgId, cetType, teacherYear, semester);
+        return cetStandardScoreManager.getTop(orgId, cetType, teacherYear);
     }
 
     /**
