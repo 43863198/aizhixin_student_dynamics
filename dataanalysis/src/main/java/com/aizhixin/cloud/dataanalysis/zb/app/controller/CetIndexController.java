@@ -165,4 +165,27 @@ public class CetIndexController {
         return cetBaseIndexService.findDwDcSexAvgCount(xnxq, orgId, cetType, collegeCode, professionCode, className);
     }
 
+    @GetMapping(value = "/dc/graders", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "三、四、六级累计年级人数分布", response = Void.class, notes = "三、四、六级累计年级人数分布<br><br><b>@author zhen.pan</b>")
+    public List<CetGradeRsVo> dcgraders(
+            @ApiParam(value = "xnxq 学年学期YYYY-CCCC-x", required = true) @RequestParam(value = "xnxq") String xnxq,
+            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId,
+            @ApiParam(value = "cetType 成绩类型(3;4;6;)", required = true) @RequestParam(value = "cetType") String cetType,
+            @ApiParam(value = "collegeCode 学院码") @RequestParam(value = "collegeCode", required = false) String collegeCode,
+            @ApiParam(value = "professionCode 专业码") @RequestParam(value = "professionCode", required = false) String professionCode,
+            @ApiParam(value = "className 班名") @RequestParam(value = "className", required = false) String className) {
+        return cetBaseIndexService.findDcGradeRsCount(xnxq, orgId, cetType, collegeCode, professionCode, className);
+    }
+
+    @GetMapping(value = "/dc/gradeavg", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "三、四、六级累计年级均值分布", response = Void.class, notes = "三、四、六级累计年级均值分布<br><br><b>@author zhen.pan</b>")
+    public List<CetGradeAvgVo> dcgradeavg(
+            @ApiParam(value = "xnxq 学年学期YYYY-CCCC-x", required = true) @RequestParam(value = "xnxq") String xnxq,
+            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId,
+            @ApiParam(value = "cetType 成绩类型(3;4;6;)", required = true) @RequestParam(value = "cetType") String cetType,
+            @ApiParam(value = "collegeCode 学院码") @RequestParam(value = "collegeCode", required = false) String collegeCode,
+            @ApiParam(value = "professionCode 专业码") @RequestParam(value = "professionCode", required = false) String professionCode,
+            @ApiParam(value = "className 班名") @RequestParam(value = "className", required = false) String className) {
+        return cetBaseIndexService.findDcGradeAvgCount(xnxq, orgId, cetType, collegeCode, professionCode, className);
+    }
 }
