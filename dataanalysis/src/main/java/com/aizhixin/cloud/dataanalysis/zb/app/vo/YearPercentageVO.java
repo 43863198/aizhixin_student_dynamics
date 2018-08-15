@@ -14,7 +14,7 @@ public class YearPercentageVO implements Comparable<YearPercentageVO> {
     @ApiModelProperty(value = "学年学期")
     @Getter @Setter private String xnxq;
     @ApiModelProperty(value = "比率(已经乘100了)")
-    @Getter @Setter private String rate;
+    @Getter @Setter private Double rate;
 
     public int compareTo(YearPercentageVO o) {
         if (null == o || null == o.getXnxq()) {
