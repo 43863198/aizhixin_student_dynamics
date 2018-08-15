@@ -32,4 +32,23 @@ public class StandardScoreService {
             list = scoreETLFromDBManager.queryDBData(ScoreETLFromDBManager.SQL_ETL_DB_SRC, orgId, start, pz);
         }
     }
+
+    @Async
+    public void etlDB2DB(Long orgId, String xn, String xq) {
+        int p = xn.indexOf("-");
+        if ("1".equals(xq)) {
+            xq = "2";
+            if (p > 0)
+                xn = xn.substring(0, p);
+        } else {
+            xq = "1";
+            if (p > 0)
+                xn = xn.substring(p + 1);
+        }
+        List<StandardScore> list = scoreETLFromDBManager.queryOldSemesterDBData(orgId, xn, xq);
+        log.info("Load data page {}.", list.size());
+        if (!list.isEmpty()) {
+            standardScoreManager.save(list);
+        }
+    }
 }
