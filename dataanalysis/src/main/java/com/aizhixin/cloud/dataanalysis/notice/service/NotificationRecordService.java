@@ -16,7 +16,7 @@ import com.aizhixin.cloud.dataanalysis.notice.vo.NotificationRecordVO;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmReceiver;
 import com.aizhixin.cloud.dataanalysis.setup.manager.AlarmReceiverManager;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -42,7 +42,7 @@ public class NotificationRecordService {
     @Value("${dl.dledu.back.host}")
     private String zhixinUrl;
 
-    private Logger logger = Logger.getLogger(this.getClass());
+    final static private org.slf4j.Logger logger = LoggerFactory.getLogger(NotificationRecordService.class);
 
     private String getZeroAlerContent (String collegeName, String teacherYear, String semester, String type) {
         StringBuilder sb = new StringBuilder();
