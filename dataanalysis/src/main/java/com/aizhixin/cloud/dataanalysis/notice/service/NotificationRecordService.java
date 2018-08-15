@@ -16,7 +16,6 @@ import com.aizhixin.cloud.dataanalysis.notice.vo.NotificationRecordVO;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmReceiver;
 import com.aizhixin.cloud.dataanalysis.setup.manager.AlarmReceiverManager;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -42,7 +41,6 @@ public class NotificationRecordService {
     @Value("${dl.dledu.back.host}")
     private String zhixinUrl;
 
-    private Logger logger = Logger.getLogger(this.getClass());
 
     private String getZeroAlerContent (String collegeName, String teacherYear, String semester, String type) {
         StringBuilder sb = new StringBuilder();
@@ -260,6 +258,13 @@ public class NotificationRecordService {
         if (null == orgId || orgId <= 0) {
             return new PageData<>();
         }
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = requestAttributes.getRequest();
+        String ip = getIPAddress(request);
+//        System.out.println("ip------>" + request.getRemoteAddr());
+//        System.out.println("ip------>" + ip);
+        log.info("getIPAddress:" + ip);
+        log.info("request.getRemoteAddr():" + request.getRemoteAddr());
         return notificationRecordManager.list(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId, collegeName, rs, receiver, startDate, endDate);
     }
 
@@ -271,10 +276,11 @@ public class NotificationRecordService {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
         String ip = getIPAddress(request);
-        System.out.println("ip------>" + request.getRemoteAddr());
-        System.out.println("ip------>" + ip);
-        logger.info("getIPAddress:" + ip);
-        logger.info("request.getRemoteAddr():" + request.getRemoteAddr());
+//        System.out.println("ip------>" + request.getRemoteAddr());
+//        System.out.println("ip------>" + ip);
+        log.info("getIPAddress:" + ip);
+        log.info("request.getRemoteAddr():" + request.getRemoteAddr());
+
         List<NotificationRecord> list = notificationRecordManager.findSendSuccesByReceiverCode(orgId, workNo);//该工号发送完通知以后没有标记最后访问时间
         if (null != list && !list.isEmpty()) {
             for (NotificationRecord record : list) {
