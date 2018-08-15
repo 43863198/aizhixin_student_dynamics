@@ -2,14 +2,17 @@ package com.aizhixin.cloud.dataanalysis.zb.service;
 
 import com.aizhixin.cloud.dataanalysis.zb.app.entity.StudentSemesterScoreIndex;
 import com.aizhixin.cloud.dataanalysis.zb.app.mananger.StudentSemesterScoreIndexManager;
+import com.aizhixin.cloud.dataanalysis.zb.dto.StudentScorezbDTO;
 import com.aizhixin.cloud.dataanalysis.zb.dto.StudentSemesterScoreIndexDTO;
 import com.aizhixin.cloud.dataanalysis.zb.dto.XnXqDTO;
 import com.aizhixin.cloud.dataanalysis.zb.manager.StandardScoreSemesterManager;
+import com.aizhixin.cloud.dataanalysis.zb.manager.StudentScoreIndexManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +27,8 @@ public class StandardScoreSemesterIndexService {
     private StandardScoreSemesterManager standardScoreSemesterManager;
     @Autowired
     private StudentSemesterScoreIndexManager studentSemesterScoreIndexManager;
+    @Autowired
+    private StudentScoreIndexManager studentScoreIndexManager;
 
     @Async
     public void oneSemesterStudentScoreIndex(String xxdm, String xn, String xq) {
@@ -59,6 +64,25 @@ public class StandardScoreSemesterIndexService {
         List<XnXqDTO> list = standardScoreSemesterManager.queryAllYearAndSemester(xxdm);
         for (XnXqDTO xnxq : list) {
             oneSemesterStudentScoreIndex(xxdm, xnxq.getXn(), xnxq.getXq());
+        }
+    }
+
+     @Async
+    public void schoolStudentScoreIndex(Long orgId) {
+        List<StudentScorezbDTO> cache = new ArrayList<>();
+        List<XnXqDTO> xnList = studentScoreIndexManager.queryStudentScoreXnXq(StudentScoreIndexManager.SQL_DC_XN_XQ, orgId.toString());
+        for (XnXqDTO d : xnList) {
+            List<StudentScorezbDTO> rs = studentScoreIndexManager.queryDczb(StudentScoreIndexManager.SQL_DC_COLLEGE, orgId.toString(), d.getXn(), d.getXq());
+            if (null != rs && !rs.isEmpty()) {
+                cache.addAll(rs);
+            }
+            rs = studentScoreIndexManager.queryDczb(StudentScoreIndexManager.SQL_DC_PROFESSIONAL, orgId.toString(), d.getXn(), d.getXq());
+            if (null != rs && !rs.isEmpty()) {
+                cache.addAll(rs);
+            }
+        }
+        if (!cache.isEmpty()) {
+            studentScoreIndexManager.saveStudentScoreIndex(cache, orgId.toString());
         }
     }
 }
