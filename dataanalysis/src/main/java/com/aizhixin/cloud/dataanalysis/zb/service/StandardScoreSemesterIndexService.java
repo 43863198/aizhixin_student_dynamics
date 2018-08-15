@@ -40,7 +40,7 @@ public class StandardScoreSemesterIndexService {
             d.setXxdm(xxdm);
             d.setXn(xn);
             d.setXqm(xq);
-            StudentSemesterScoreIndexDTO zb = zbMap.get(d.getNj());
+            StudentSemesterScoreIndexDTO zb = zbMap.get(d.getXh());
             if (null != zb) {
                 d.setCkkcs(zb.getCkkcs());
                 d.setBjgkcs(zb.getBjgkcs());
