@@ -47,8 +47,7 @@ public class CetStandardScoreManager {
         return new ArrayList<>();
     }
 
-    public Map<String, Object> getTop(Long orgId, String cetType, String teacherYear) {
-        Map<String, Object> resultMap = new HashMap<>();
+    public List<CetTopVo> getTop(Long orgId, String cetType, String teacherYear,String semester) {
         List<CetTopVo> listVo = new ArrayList<>();
         Pageable pageable = new PageRequest(0, 10, Sort.Direction.DESC, "cj");
         CetStandardScore cetStandardScore = new CetStandardScore();
@@ -75,8 +74,7 @@ public class CetStandardScoreManager {
 
             listVo.add(cetTopVo);
         }
-        resultMap.put("data", listVo);
-        return resultMap;
+        return listVo;
     }
 
     public Map getCollegeName(String collegeCode) {
@@ -208,7 +206,7 @@ public class CetStandardScoreManager {
         }
         p.setData(sList);
         p.getPage().setPageNumber(pageNumber);
-        p.getPage().setPageSize(pageSize);
+        p.getPage().setPageSize(pageSize + 1);
         p.getPage().setTotalElements(count);
         p.getPage().setTotalPages(PageUtil.cacalatePagesize(count, p.getPage().getPageSize()));
 
