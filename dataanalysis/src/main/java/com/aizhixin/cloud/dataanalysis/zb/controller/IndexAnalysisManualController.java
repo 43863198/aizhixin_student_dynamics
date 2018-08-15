@@ -5,6 +5,7 @@ import com.aizhixin.cloud.dataanalysis.bz.service.StandardScoreService;
 import com.aizhixin.cloud.dataanalysis.zb.service.CetDcIndexAnalysisService;
 import com.aizhixin.cloud.dataanalysis.zb.service.CetGradeService;
 import com.aizhixin.cloud.dataanalysis.zb.service.CetLjIndexAnalysisService;
+import com.aizhixin.cloud.dataanalysis.zb.service.StandardScoreSemesterIndexService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -34,6 +35,8 @@ public class IndexAnalysisManualController {
     private CetGradeService cetGradeService;
     @Autowired
     private CetDcIndexAnalysisService cetDcIndexAnalysisService;
+    @Autowired
+    private StandardScoreSemesterIndexService standardScoreSemesterIndexService;
 
     @GetMapping(value = "/cet/etl", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "英语等级考试数据库对数据库标准数据清洗ETL", response = Void.class, notes = "英语等级考试数据库对数据库标准数据清洗ETL<br><br><b>@author zhen.pan</b>")
@@ -99,5 +102,19 @@ public class IndexAnalysisManualController {
     @ApiOperation(httpMethod = "GET", value = "英语等级考试单次基础指标统计", response = Void.class, notes = "英语等级考试单次基础指标统计<br><br><b>@author zhen.pan</b>")
     public void cetDc(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId") Long orgId) {
         cetDcIndexAnalysisService.calDcHaveTest(orgId);
+    }
+
+    @GetMapping(value = "/semesterscore/semester", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "学生成绩学期对应数据学生指标的生成", response = Void.class, notes = "学生成绩学期对应数据学生指标的生成<br><br><b>@author zhen.pan</b>")
+    public void score(@ApiParam(value = "xxdm 机构代码" , required = true) @RequestParam(value = "xxdm") String xxdm,
+                      @ApiParam(value = "xn 学年" , required = true) @RequestParam(value = "xn") String xn,
+                      @ApiParam(value = "xq 学期" , required = true) @RequestParam(value = "xq") String xq) {
+        standardScoreSemesterIndexService.oneSemesterStudentScoreIndex(xxdm, xn, xq);
+    }
+
+    @GetMapping(value = "/semesterscore/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "学生成绩所有学期对应数据学生指标的生成", response = Void.class, notes = "学生成绩所有学期对应数据学生指标的生成<br><br><b>@author zhen.pan</b>")
+    public void scoreAll(@ApiParam(value = "xxdm 机构代码" , required = true) @RequestParam(value = "xxdm") String xxdm) {
+        standardScoreSemesterIndexService.allSemesterStudentScoreIndex(xxdm);
     }
 }
