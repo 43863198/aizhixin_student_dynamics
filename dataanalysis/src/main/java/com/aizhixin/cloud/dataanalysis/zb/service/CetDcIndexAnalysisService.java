@@ -59,7 +59,7 @@ public class CetDcIndexAnalysisService {
             cetLjIndexAnalysisManager.haveCalendarRs(rsMap, CetLjIndexAnalysisManager.SQL_CLASSES_RS, orgId, c);
         }
         dcIndexAndZxrs(cache, CetDcIndexAnalysisManager.SQL_DC_CLASSES, orgId.toString(), rsMap);
-        log.info("-----------------------------Cal dc data add classes count:{}", cache.size());
+        log.info("----------------------------------------Cal dc data add classes count:{}", cache.size());
         cetLjIndexAnalysisManager.saveJczb(cache);
     }
 
