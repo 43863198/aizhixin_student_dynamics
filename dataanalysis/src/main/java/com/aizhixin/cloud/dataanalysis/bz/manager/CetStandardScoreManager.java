@@ -206,7 +206,7 @@ public class CetStandardScoreManager {
         }
         p.setData(sList);
         p.getPage().setPageNumber(pageNumber);
-        p.getPage().setPageSize(pageSize + 1);
+        p.getPage().setPageSize(pageSize);
         p.getPage().setTotalElements(count);
         p.getPage().setTotalPages(PageUtil.cacalatePagesize(count, p.getPage().getPageSize()));
 
