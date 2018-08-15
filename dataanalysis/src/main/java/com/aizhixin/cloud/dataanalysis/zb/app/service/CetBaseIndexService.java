@@ -150,9 +150,6 @@ public class CetBaseIndexService {
                 if (null != o) {
                     v.setName(o.getName());
                 }
-                if (classes) {
-                    v.setName(v.getCode());
-                }
             }
         }
     }
@@ -301,9 +298,14 @@ public class CetBaseIndexService {
                 v.setTgrs(c.getTgrc());
                 v.setZf(c.getZf());
                 v.setCode(c.getBh());
+                if (classes) {
+                    v.setName(v.getCode());
+                }
                 bhSet.add(c.getBh());
             }
-            fillCollegeName(orgId, rs, college, professinal, classes, bhSet);
+            if (!classes) {
+                fillCollegeName(orgId, rs, college, professinal, classes, bhSet);
+            }
         }
         return rs;
     }
@@ -428,10 +430,15 @@ public class CetBaseIndexService {
             v.setTgrs(d.getTgrc());
             v.setZf(d.getZf());
             v.setZxrs(d.getZxrs());
+            if (classes) {
+                v.setName(v.getCode());
+            }
             bhSet.add(d.getBh());
             rsList.add(v);
         }
-        fillCollegeName(orgId, rsList, college, professinal, classes, bhSet);
+        if(!classes) {
+            fillCollegeName(orgId, rsList, college, professinal, classes, bhSet);
+        }
         return rsList;
     }
 
