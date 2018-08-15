@@ -49,6 +49,14 @@ public class IndexAnalysisManualController {
     public void etlScore(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId") Long orgId) {
         standardScoreService.etlDB2DB(orgId);
     }
+
+    @GetMapping(value = "/score/etlxnxq", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "学生成绩数据库对数据库标准数据清洗ETL", response = Void.class, notes = "学生成绩数据库对数据库标准数据清洗ETL<br><br><b>@author zhen.pan</b>")
+    public void etlScore(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId") Long orgId,
+                         @ApiParam(value = "xn 学年" , required = true) @RequestParam(value = "xn") String xn,
+                         @ApiParam(value = "xq 学期" , required = true) @RequestParam(value = "xq") String xq) {
+        standardScoreService.etlDB2DB(orgId, xn, xq);
+    }
 //
 //    @GetMapping(value = "/cet", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @ApiOperation(httpMethod = "GET", value = "英语等级考试基础指标统计", response = Void.class, notes = "英语等级考试基础指标统计<br><br><b>@author zhen.pan</b>")
