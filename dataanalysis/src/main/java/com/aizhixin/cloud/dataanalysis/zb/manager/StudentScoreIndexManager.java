@@ -60,7 +60,6 @@ public class StudentScoreIndexManager {
         });
     }
 
-
     public void saveStudentScoreIndex(final List<StudentScorezbDTO> list, String xxdm) {
         jdbcTemplate.batchUpdate(SQL_INSERT, new BatchPreparedStatementSetter() {
             @Override
