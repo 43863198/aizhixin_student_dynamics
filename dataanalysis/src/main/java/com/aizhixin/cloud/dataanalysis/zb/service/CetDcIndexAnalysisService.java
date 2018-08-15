@@ -58,7 +58,7 @@ public class CetDcIndexAnalysisService {
         for (SchoolCalendarDTO  c : schoolCalendarList) {//查询在校人数
             cetLjIndexAnalysisManager.haveCalendarRs(rsMap, CetLjIndexAnalysisManager.SQL_CLASSES_RS, orgId, c);
         }
-        dcIndexAndZxrs(cache, CetDcIndexAnalysisManager.SQL_DC_PROFESSIONAL, orgId.toString(), rsMap);
+        dcIndexAndZxrs(cache, CetDcIndexAnalysisManager.SQL_DC_CLASSES, orgId.toString(), rsMap);
         log.info("Cal dc data add classes count:{}", cache.size());
 
         System.out.println("---------------------------------------------------------------------------------------------------");
