@@ -49,11 +49,11 @@ public class CetBaseIndexService {
         if (null != c) {
             v.getMan().setZxrs(c.getNzxrs());
             v.getMan().setCkrc(c.getNrc());
-            v.getMan().setTgrs(c.getTgrc());
+            v.getMan().setTgrs(c.getNtgrc());
 
             v.getWomen().setZxrs(c.getVzxrs());
-            v.getWomen().setTgrs(c.getVtgrc());
             v.getWomen().setCkrc(c.getVrc());
+            v.getWomen().setTgrs(c.getVtgrc());
         }
     }
 
@@ -67,7 +67,7 @@ public class CetBaseIndexService {
             v.getMan().setZf(c.getNzf());
 
             v.getWomen().setZxrs(c.getVzxrs());
-            v.getWomen().setCkrc(c.getVtgrc());
+            v.getWomen().setCkrc(c.getVrc());
             v.getWomen().setZf(c.getVzf());
         }
     }
@@ -161,6 +161,7 @@ public class CetBaseIndexService {
             v.setNj(g.getNj());
             v.setZxrs(g.getZxrs());
             v.setTgrs(g.getTgrc());
+            v.setCkrc(g.getCkrc());
             rs.add(v);
         }
     }
@@ -291,7 +292,7 @@ public class CetBaseIndexService {
                 v.setZxrs(c.getZxrs());
                 v.setCkrc(c.getCkrc());
                 v.setTgrs(c.getTgrc());
-                v.setZf(c.getTgzf());
+                v.setZf(c.getZf());
                 v.setCode(c.getBh());
                 bhSet.add(c.getBh());
             }

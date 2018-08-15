@@ -15,6 +15,8 @@ public class CetGradeRsVo {
     @Getter @Setter private String nj;
     @ApiModelProperty(value = "在校人数")
     @Getter @Setter private Long zxrs = 0L;
+    @ApiModelProperty(value = "参考人次")
+    @Getter @Setter private Long ckrc = 0L;
     @ApiModelProperty(value = "通过人数")
     @Getter @Setter private Long tgrs = 0L;
 }

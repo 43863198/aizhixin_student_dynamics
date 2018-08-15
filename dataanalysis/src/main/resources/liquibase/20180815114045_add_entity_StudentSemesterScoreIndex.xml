@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+    <!-- 学生学期成绩指标-->
+    <changeSet id="20180815114045" author="zhen.pan">
+		<preConditions onFail="MARK_RAN">
+	        <not>
+	            <tableExists tableName="T_ZB_XSXQCJ"/>
+	        </not>
+	    </preConditions>
+        <createTable tableName="T_ZB_XSXQCJ" remarks="学生学期成绩指标">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="XN" type="VARCHAR(20)" remarks="XN学年"/>
+            <column name="XQM" type="VARCHAR(10)" remarks="XQM学期"/>
+            <column name="XXDM" type="VARCHAR(20)" remarks="XXDM学校代码"/>
+            <column name="YXSH" type="VARCHAR(20)" remarks="YXSH院系所号"/>
+            <column name="ZYH" type="VARCHAR(20)" remarks="ZYH专业号"/>
+            <column name="BH" type="VARCHAR(120)" remarks="BH班级编码"/>
+            <column name="XH" type="VARCHAR(50)" remarks="XH学号"/>
+            <column name="XM" type="VARCHAR(80)" remarks="XM姓名"/>
+            <column name="NJ" type="VARCHAR(10)" remarks="NJ年级"/>
+
+            <column name="GPA" type="DECIMAL(8,2)" remarks="GPA平均学分绩点"/>
+            <column name="CKKCS" type="BIGINT" remarks="CKKCS参考课程数"/>
+            <column name="BJGKCS" type="BIGINT" remarks="BJGKCS不及格课程数"/>
+            <column name="BJGZXF" type="DECIMAL(8,2)" remarks="BJGZXF不及格课程学分总计"/>
+        </createTable>
+        <createIndex indexName="idx_xsxqcj_xn" tableName="T_ZB_XSXQCJ" unique="false">
+            <column name="XN" type="VARCHAR(20)"/>
+        </createIndex>
+        <createIndex indexName="idx_xsxqcj_xqm" tableName="T_ZB_XSXQCJ" unique="false">
+            <column name="XQM" type="VARCHAR(10)"/>
+        </createIndex>
+        <createIndex indexName="idx__xsxqcj_xxdm" tableName="T_ZB_XSXQCJ" unique="false">
+            <column name="XXDM" type="VARCHAR(20)"/>
+        </createIndex>
+        <createIndex indexName="idx__xsxqcj_yxsh" tableName="T_ZB_XSXQCJ" unique="false">
+            <column name="YXSH" type="VARCHAR(20)"/>
+        </createIndex>
+        <createIndex indexName="idx_xsxqcj_zyh" tableName="T_ZB_XSXQCJ" unique="false">
+            <column name="ZYH" type="VARCHAR(20)"/>
+        </createIndex>
+        <createIndex indexName="idx_xsxqcj_bh" tableName="T_ZB_XSXQCJ" unique="false">
+            <column name="BH" type="VARCHAR(120)"/>
+        </createIndex>
+        <createIndex indexName="idx_xsxqcj_xh" tableName="T_ZB_XSXQCJ" unique="false">
+            <column name="XH" type="VARCHAR(50)"/>
+        </createIndex>
+        <createIndex indexName="idx_xsxqcj_nj" tableName="T_ZB_XSXQCJ" unique="false">
+            <column name="NJ" type="VARCHAR(10)"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
