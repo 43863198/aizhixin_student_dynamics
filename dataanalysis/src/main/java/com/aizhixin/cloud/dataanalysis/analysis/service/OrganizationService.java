@@ -45,7 +45,7 @@ public class OrganizationService {
             } else {
                 sb.append(",");
             }
-            sb.append(c);
+            sb.append("'").append(c).append("'");
         }
         return sb.toString();
     }
@@ -114,7 +114,7 @@ public class OrganizationService {
         }
 
         if (null != codes && !codes.isEmpty()) {
-            sql.append(" and COMPANY_NUMBER in (" + setToString(codes) + ") ");
+            sql.append(" and CODE in (" + setToString(codes) + ") ");
         }
         Query sq = em.createNativeQuery(sql.toString());
         sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
