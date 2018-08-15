@@ -161,6 +161,7 @@ public class CetBaseIndexService {
             v.setNj(g.getNj());
             v.setZxrs(g.getZxrs());
             v.setTgrs(g.getTgrc());
+            v.setCkrc(g.getCkrc());
             rs.add(v);
         }
     }
