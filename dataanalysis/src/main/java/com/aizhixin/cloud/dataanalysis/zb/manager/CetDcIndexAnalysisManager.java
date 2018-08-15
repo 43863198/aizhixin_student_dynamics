@@ -63,7 +63,6 @@ public class CetDcIndexAnalysisManager {
             "GROUP BY x.KSLX,x.XN, x.XQM, x.YXSH, x.ZYH, x.BH";
 
     public static String SQL_DELETE_ALL_SHOOL_DC = "DELETE FROM t_zb_djksjc WHERE DHLJ='1' AND XXDM=?";
-
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -80,7 +79,6 @@ public class CetDcIndexAnalysisManager {
                         rs.getDouble("NZF"), rs.getLong("VRC"), rs.getDouble("VZF"),
                         rs.getLong("NTGRC"), rs.getLong("VTGRC")));
     }
-
     public void deleteHistory(String sql, String xxdm) {
         jdbcTemplate.update(sql, new Object[]{ xxdm}, new int[] {Types.VARCHAR});
     }
