@@ -41,7 +41,7 @@ public class StandardScoreSemesterManager {
 
     public static String SQL_ALL_SCORE_SEMESTER = "SELECT c.XN, c.XQM FROM  t_b_xscjxx c WHERE c.XXDM=? GROUP BY c.XN, c.XQM ORDER BY c.XN DESC, c.XQM DESC";
 
-    public static String SQL_DELETE_XN_XQ = "DELETE FROM  t_b_xscjxx  WHERE XXDM=? AND XN=? AND XQM=?";
+    public static String SQL_DELETE_XN_XQ = "DELETE FROM  T_ZB_XSXQCJ  WHERE XXDM=? AND XN=? AND XQM=?";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
