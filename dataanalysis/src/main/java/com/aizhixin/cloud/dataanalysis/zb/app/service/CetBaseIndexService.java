@@ -291,7 +291,7 @@ public class CetBaseIndexService {
                 v.setZxrs(c.getZxrs());
                 v.setCkrc(c.getCkrc());
                 v.setTgrs(c.getTgrc());
-                v.setZf(c.getTgzf());
+                v.setZf(c.getZf());
                 v.setCode(c.getBh());
                 bhSet.add(c.getBh());
             }
