@@ -260,6 +260,13 @@ public class NotificationRecordService {
         if (null == orgId || orgId <= 0) {
             return new PageData<>();
         }
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = requestAttributes.getRequest();
+        String ip = getIPAddress(request);
+        System.out.println("ip------>" + request.getRemoteAddr());
+        System.out.println("ip------>" + ip);
+        logger.info("getIPAddress:" + ip);
+        logger.info("request.getRemoteAddr():" + request.getRemoteAddr());
         return notificationRecordManager.list(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId, collegeName, rs, receiver, startDate, endDate);
     }
 
@@ -268,13 +275,6 @@ public class NotificationRecordService {
             return;
         }
         Date current = new Date();
-        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = requestAttributes.getRequest();
-        String ip = getIPAddress(request);
-        System.out.println("ip------>" + request.getRemoteAddr());
-        System.out.println("ip------>" + ip);
-        logger.info("getIPAddress:" + ip);
-        logger.info("request.getRemoteAddr():" + request.getRemoteAddr());
         List<NotificationRecord> list = notificationRecordManager.findSendSuccesByReceiverCode(orgId, workNo);//该工号发送完通知以后没有标记最后访问时间
         if (null != list && !list.isEmpty()) {
             for (NotificationRecord record : list) {
