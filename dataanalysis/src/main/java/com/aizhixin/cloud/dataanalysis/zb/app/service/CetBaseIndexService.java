@@ -134,9 +134,10 @@ public class CetBaseIndexService {
                 orgList = organizationService.getCollegeList(orgId, bhSet);
             }  else if( professinal) {
                 orgList = organizationService.getProfessionList(orgId, null, bhSet);
-            } else if (classes) {
-                orgList = organizationService.getClassList(orgId, null, null, bhSet);
             }
+//            else if (classes) {
+//                orgList = organizationService.getClassList(orgId, null, null, bhSet);
+//            }
             if (null != orgList) {
                 for (OrganizationDTO o : orgList) {
                     orgMap.put(o.getCode(), o);
@@ -148,6 +149,9 @@ public class CetBaseIndexService {
                 OrganizationDTO o = orgMap.get(v.getCode());
                 if (null != o) {
                     v.setName(o.getName());
+                }
+                if (classes) {
+                    v.setName(v.getCode());
                 }
             }
         }
