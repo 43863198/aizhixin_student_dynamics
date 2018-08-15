@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -219,15 +220,17 @@ public class CetBaseIndexService {
     private void yearAllRsRate(List<BaseIndexYearRsVO> rs, List<YearPercentageVO> list) {
         Double lastRate = null, rate = null;
         boolean first = true;
-        DecimalFormat format = new DecimalFormat("#.00");
+
+        DecimalFormat format = new DecimalFormat("#0.00");
+        format.setRoundingMode(RoundingMode.HALF_UP);
         for (BaseIndexYearRsVO v : rs) {
             YearPercentageVO vo = new YearPercentageVO ();
             vo.setXnxq(v.getXnxq());
             if (null != v.getZxrs() && null != v.getTgrs()) {
                 rate = v.getTgrs() * 1.0 / v.getZxrs();
                 if (null != lastRate) {
-                    lastRate = (rate - lastRate) * 100 / lastRate;
-                    vo.setRate(format.format(lastRate));
+                    lastRate = (rate - lastRate) * 100.0 / lastRate;
+                    vo.setRate(new Double(format.format(lastRate)));
                 }
                 lastRate = rate;
             }
@@ -610,7 +613,8 @@ public class CetBaseIndexService {
         Double lastRate = null;
         Double lastAvg = null, avg = null;
         boolean first = true;
-        DecimalFormat format = new DecimalFormat("#.00");
+        DecimalFormat format = new DecimalFormat("#0.00");
+        format.setRoundingMode(RoundingMode.HALF_UP);
         for (BaseIndexYearAvgVO v : rs) {
             YearPercentageVO vo = new YearPercentageVO ();
             vo.setXnxq(v.getXnxq());
@@ -618,7 +622,7 @@ public class CetBaseIndexService {
                 avg = v.getZf() / v.getCkrc();
                 if (null != lastAvg) {
                     lastRate = (avg - lastAvg) * 100 / lastAvg;
-                    vo.setRate(format.format(lastRate));
+                    vo.setRate(new Double(format.format(lastRate)));
                 }
                 lastAvg = avg;
             }
