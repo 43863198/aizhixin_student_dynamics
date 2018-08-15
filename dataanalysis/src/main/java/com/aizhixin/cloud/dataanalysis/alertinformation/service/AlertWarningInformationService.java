@@ -1207,7 +1207,7 @@ public class AlertWarningInformationService {
                 warningDetailsDTO.setWarningState(alertWarningInformation.getWarningState());
                 warningDetailsDTO.setDealTime(alertWarningInformation.getLastModifiedDate());
                 warningDetailsDTO.setWarningCondition(alertWarningInformation.getWarningCondition());
-                warningDetailsDTO.setWarningSource(alertWarningInformation.getWarningSource());
+                warningDetailsDTO.setWarningSource(dataFormat(alertWarningInformation.getWarningSource()));
 
                 Map stuMap = studentJdbc.findOne(warningDetailsDTO.getJobNumber(), alertWarningInformation.getOrgId());
                 if (stuMap != null && stuMap.get("nj") != null) {
@@ -1265,6 +1265,11 @@ public class AlertWarningInformationService {
         result.put("success", true);
         result.put("data", warningDetailsDTO);
         return result;
+    }
+
+    public String dataFormat(String str){
+
+        return str.replaceAll("KCH","课程号").replaceAll("KCMC","课程名称").replaceAll("XF","学分");
     }
 
     public List<WarningInformation> getawinfoByDefendantId(Long orgId, String warningType, String jobNumber) {
