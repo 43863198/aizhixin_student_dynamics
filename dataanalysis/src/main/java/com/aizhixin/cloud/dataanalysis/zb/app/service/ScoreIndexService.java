@@ -4,6 +4,7 @@ import com.aizhixin.cloud.dataanalysis.analysis.dto.OrganizationDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.service.OrganizationService;
 import com.aizhixin.cloud.dataanalysis.zb.app.entity.ScoreIndex;
 import com.aizhixin.cloud.dataanalysis.zb.app.mananger.ScoreIndexManager;
+import com.aizhixin.cloud.dataanalysis.zb.app.vo.ScoreAllYearIndexVO;
 import com.aizhixin.cloud.dataanalysis.zb.app.vo.ScoreAvgJdVO;
 import com.aizhixin.cloud.dataanalysis.zb.app.vo.ScoreDwCountVO;
 import com.aizhixin.cloud.dataanalysis.zb.app.vo.ScoreSubDwIndexVO;
@@ -174,6 +175,47 @@ public class ScoreIndexService {
         }
         if (!orgMap.isEmpty()) {
             for (ScoreSubDwIndexVO v : list) {
+                OrganizationDTO o = orgMap.get(v.getCode());
+                if (null != o) {
+                    v.setName(o.getName());
+                }
+            }
+        }
+        return list;
+    }
+
+    public List<ScoreAllYearIndexVO> findSubDwIndex(Long orgId, String collegeCode) {
+        List<ScoreAllYearIndexVO> list = new ArrayList<>();
+        if (null == orgId || orgId <= 0) {
+            return list;
+        }
+        boolean college = false, professional = false;
+        if (StringUtils.isEmpty(collegeCode)) {
+            college = true;
+            list =  scoreIndexManager.findByXxdmAllSemsesterIndex(orgId.toString());
+        } else {
+            professional = true;
+            list =  scoreIndexManager.findByXxdmAllSemsesterIndex(orgId.toString(), collegeCode);
+        }
+
+        Set<String> bhSet = new HashSet<>();
+        for (ScoreAllYearIndexVO v : list) {
+            bhSet.add(v.getCode());
+        }
+        Map<String, OrganizationDTO> orgMap = new HashMap<>();
+        List<OrganizationDTO> orgList = null;
+        if (college) {
+            orgList = organizationService.getCollegeList(orgId, bhSet);
+        } else if (professional) {
+            orgList = organizationService.getProfessionList(orgId, null, bhSet);
+        }
+        if (null != orgList) {
+            for (OrganizationDTO o : orgList) {
+                orgMap.put(o.getCode(), o);
+            }
+        }
+        if (!orgMap.isEmpty()) {
+            for (ScoreAllYearIndexVO v : list) {
                 OrganizationDTO o = orgMap.get(v.getCode());
                 if (null != o) {
                     v.setName(o.getName());
