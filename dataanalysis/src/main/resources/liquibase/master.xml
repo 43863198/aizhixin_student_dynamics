@@ -69,4 +69,5 @@
     <include file="classpath:liquibase/20180811101045_add_entity_CetBaseIndex.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20180813164445_add_entity_CetGradeIndex.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20180815114045_add_entity_StudentSemesterScoreIndex.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20180816094245_add_entity_ScoreIndex.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
