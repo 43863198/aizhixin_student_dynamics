@@ -2,12 +2,13 @@ package com.aizhixin.cloud.dataanalysis.zb.app.service;
 
 import com.aizhixin.cloud.dataanalysis.analysis.dto.OrganizationDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.service.OrganizationService;
+import com.aizhixin.cloud.dataanalysis.common.PageData;
+import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.zb.app.entity.ScoreIndex;
+import com.aizhixin.cloud.dataanalysis.zb.app.entity.StudentSemesterScoreIndex;
 import com.aizhixin.cloud.dataanalysis.zb.app.mananger.ScoreIndexManager;
-import com.aizhixin.cloud.dataanalysis.zb.app.vo.ScoreAllYearIndexVO;
-import com.aizhixin.cloud.dataanalysis.zb.app.vo.ScoreAvgJdVO;
-import com.aizhixin.cloud.dataanalysis.zb.app.vo.ScoreDwCountVO;
-import com.aizhixin.cloud.dataanalysis.zb.app.vo.ScoreSubDwIndexVO;
+import com.aizhixin.cloud.dataanalysis.zb.app.mananger.StudentSemesterScoreIndexManager;
+import com.aizhixin.cloud.dataanalysis.zb.app.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,8 @@ public class ScoreIndexService {
     private ScoreIndexManager scoreIndexManager;
     @Autowired
     private OrganizationService organizationService;
+    @Autowired
+    private StudentSemesterScoreIndexManager studentSemesterScoreIndexManager;
 
     /**
      * 单位成绩统计
@@ -223,5 +226,88 @@ public class ScoreIndexService {
             }
         }
         return list;
+    }
+
+    public PageData<StudentSemesterScoreIndexVO> findScoreSemesterDetails(Long orgId, String xnxq, String collegeCode, String professionalCode, String nj, String name, Integer pageNumber, Integer pageSize) {
+        PageData<StudentSemesterScoreIndexVO> pd = new PageData<>();
+        if (null == orgId || orgId <= 0) {
+            return pd;
+        }
+        int p = xnxq.lastIndexOf("-");
+        String xn = null, xq = null;
+        if (p > 0) {
+            xn = xnxq.substring(0, p);
+            xq = xnxq.substring(p + 1);
+        }
+        if (null == xn || null == xq) {
+            return pd;
+        }
+        PageData<StudentSemesterScoreIndex> page = studentSemesterScoreIndexManager.querySemesterScoreIndex(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId.toString(), xn, xq, collegeCode, professionalCode, nj, name);
+//        Page<StudentSemesterScoreIndex> page = null;
+//        if (!StringUtils.isEmpty(collegeCode) && StringUtils.isEmpty(professionalCode)) {
+//            page = studentSemesterScoreIndexManager.findByXxdmAndXnAndXqmAndYxsh(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId.toString(), xn, xq, collegeCode);
+//        } else if (!StringUtils.isEmpty(collegeCode) && !StringUtils.isEmpty(professionalCode)) {
+//            page = studentSemesterScoreIndexManager.findByXxdmAndXnAndXqmAndZyh(PageUtil.createNoErrorPageRequest(pageNumber, pageSize), orgId.toString(), xn, xq, collegeCode, professionalCode);
+//        }
+//        pd.getPage().setPageNumber(page.getNumber() + 1);
+//        pd.getPage().setPageSize(page.getSize());
+//        pd.getPage().setTotalElements(page.getTotalElements());
+//        pd.getPage().setTotalPages(page.getTotalPages());
+        pd.setPage(page.getPage());
+        List<StudentSemesterScoreIndexVO> data = new ArrayList<>();
+        pd.setData(data);
+
+        fillOutData(orgId, page.getData(), data);
+        return pd;
+    }
+
+    private void fillOutData(Long orgId, List<StudentSemesterScoreIndex> list, List<StudentSemesterScoreIndexVO> data) {
+        Set<String> cbhSet = new HashSet<>();
+        Set<String> pbhSet = new HashSet<>();
+        for (StudentSemesterScoreIndex d : list) {
+            StudentSemesterScoreIndexVO v = new StudentSemesterScoreIndexVO ();
+            v.setYxsh(d.getYxsh());
+            v.setZyh(d.getZyh());
+            v.setBjmc(d.getBh());
+            v.setXh(d.getXh());
+            v.setXm(d.getXm());
+            v.setNj(d.getNj());
+
+            v.setCkkcs(d.getCkkcs());
+            v.setGpa(d.getGpa());
+            v.setBjgkcs(d.getBjgkcs());
+            v.setBjgzxf(d.getBjgzxf());
+
+            cbhSet.add(v.getYxsh());
+            pbhSet.add(v.getZyh());
+            data.add(v);
+        }
+        Map<String, OrganizationDTO> cMap = new HashMap<>();
+        Map<String, OrganizationDTO> pMap = new HashMap<>();
+
+        List<OrganizationDTO> clist = organizationService.getCollegeList(orgId, cbhSet);
+        List<OrganizationDTO> plist = organizationService.getCollegeList(orgId, pbhSet);
+
+        if (null != clist) {
+            for (OrganizationDTO o : clist) {
+                cMap.put(o.getCode(), o);
+            }
+        }
+        if (null != clist) {
+            for (OrganizationDTO o : plist) {
+                pMap.put(o.getCode(), o);
+            }
+        }
+
+        for (StudentSemesterScoreIndexVO v : data) {
+            OrganizationDTO c = cMap.get(v.getYxsh());
+            if (null != c) {
+                v.setYxsmc(c.getName());
+            }
+            c = pMap.get(v.getZyh());
+            if (null != c) {
+                v.setZymc(c.getName());
+            }
+        }
     }
 }
