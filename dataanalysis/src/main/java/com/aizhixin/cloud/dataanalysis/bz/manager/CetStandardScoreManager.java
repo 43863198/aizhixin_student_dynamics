@@ -92,8 +92,13 @@ public class CetStandardScoreManager {
         Query query = em.createNativeQuery(sql.toString());
         query.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
         query.setParameter("professionCode", professionCode);
-        Map map = (Map) query.getSingleResult();
-        return map.get("name") != null ? map.get("name").toString() : "";
+        List list =  query.getResultList();
+        if(null != list && list.size() > 0){
+            Map map = (Map)list.get(0);
+            return map.get("name") != null ? map.get("name").toString() : "";
+        }else {
+            return "";
+        }
     }
 
     public PageData<CetDetailVO> getDetailList(Long orgId, String cetType, String collegeCode, String professionCode, String className, Integer scoreSeg, Integer pageNumber, Integer pageSize) {
