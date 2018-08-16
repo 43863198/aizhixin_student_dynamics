@@ -2,6 +2,7 @@ package com.aizhixin.cloud.dataanalysis.zb.app.mananger;
 
 import com.aizhixin.cloud.dataanalysis.zb.app.entity.ScoreIndex;
 import com.aizhixin.cloud.dataanalysis.zb.app.respository.ScoreIndexRespository;
+import com.aizhixin.cloud.dataanalysis.zb.app.vo.ScoreAllYearIndexVO;
 import com.aizhixin.cloud.dataanalysis.zb.app.vo.ScoreDwCountVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -38,5 +39,13 @@ public class ScoreIndexManager {
 
     public List<ScoreIndex> findByXxdmAndXnAndXqmAndPbh(String xxdm, String xn, String xqm, String parentBh) {
         return  scoreIndexRespository.findByXxdmAndXnAndXqmAndPbh(xxdm, xn, xqm, parentBh);
+    }
+
+    public List<ScoreAllYearIndexVO> findByXxdmAllSemsesterIndex(String xxdm) {
+        return  scoreIndexRespository.findByXxdmAllSemesterCountIndex(xxdm);
+    }
+
+    public List<ScoreAllYearIndexVO> findByXxdmAllSemsesterIndex(String xxdm, String bh) {
+        return  scoreIndexRespository.findByXxdmAndCollegeAllSemesterCountIndex(xxdm, bh);
     }
 }

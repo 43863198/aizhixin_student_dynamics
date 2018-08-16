@@ -2,6 +2,7 @@ package com.aizhixin.cloud.dataanalysis.zb.app.controller;
 
 
 import com.aizhixin.cloud.dataanalysis.zb.app.service.ScoreIndexService;
+import com.aizhixin.cloud.dataanalysis.zb.app.vo.ScoreAllYearIndexVO;
 import com.aizhixin.cloud.dataanalysis.zb.app.vo.ScoreAvgJdVO;
 import com.aizhixin.cloud.dataanalysis.zb.app.vo.ScoreDwCountVO;
 import com.aizhixin.cloud.dataanalysis.zb.app.vo.ScoreSubDwIndexVO;
@@ -43,7 +44,6 @@ public class ScoreIndexController {
         return scoreIndexService.findSubDwAvgJd(orgId, xnxq, collegeCode);
     }
 
-
     @GetMapping(value = "/sub/index", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "子单位成绩指标", response = Void.class, notes = "子单位成绩指标<br><br><b>@author zhen.pan</b>")
     public List<ScoreSubDwIndexVO> subOrgIndex(
@@ -51,5 +51,13 @@ public class ScoreIndexController {
             @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId,
             @ApiParam(value = "collegeCode 学院码") @RequestParam(value = "collegeCode", required = false) String collegeCode) {
         return scoreIndexService.findSubDwIndex(orgId, xnxq, collegeCode);
+    }
+
+    @GetMapping(value = "/year/index", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "历年趋势指标", response = Void.class, notes = "历年趋势指标<br><br><b>@author zhen.pan</b>")
+    public List<ScoreAllYearIndexVO> yearIndex(
+            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId,
+            @ApiParam(value = "collegeCode 学院码") @RequestParam(value = "collegeCode", required = false) String collegeCode) {
+        return scoreIndexService.findSubDwIndex(orgId, collegeCode);
     }
 }
