@@ -419,7 +419,11 @@ public class CetBaseIndexService {
             list  =  cetBaseIndexManager.findDcSubDw(xn, xq, orgId.toString(), cetType, professionalCode);
             classes = true;
         } else if (!StringUtils.isEmpty(professionalCode) && !StringUtils.isEmpty(classesCode)){
-            list  =  cetBaseIndexManager.findDcSubDw(xn, xq, orgId.toString(), cetType, classesCode);
+            CetBaseIndex cetBaseIndex  =  cetBaseIndexManager.findDcOneDw(xn, xq, orgId.toString(), cetType, professionalCode, classesCode);
+            list = new ArrayList<>();
+            if (null != cetBaseIndex) {
+                list.add(cetBaseIndex);
+            }
             classes = true;
         }
         Set<String> bhSet = new HashSet<>();

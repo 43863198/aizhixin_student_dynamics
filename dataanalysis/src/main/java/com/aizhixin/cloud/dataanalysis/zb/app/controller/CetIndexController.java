@@ -130,7 +130,7 @@ public class CetIndexController {
     }
 
     @GetMapping(value = "/dc/suborgavg", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "三、四、六级累计子单位均值分布", response = Void.class, notes = "三、四、六级累计子单位均值分布<br><br><b>@author zhen.pan</b>")
+    @ApiOperation(httpMethod = "GET", value = "三、四、六级单次子单位均值分布", response = Void.class, notes = "三、四、六级单次子单位均值分布<br><br><b>@author zhen.pan</b>")
     public List<DwDistributeCountVO> cetDcOrgLjAvgDistr(
             @ApiParam(value = "xnxq 学年学期YYYY-CCCC-x", required = true) @RequestParam(value = "xnxq") String xnxq,
             @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId,
@@ -166,7 +166,7 @@ public class CetIndexController {
     }
 
     @GetMapping(value = "/dc/graders", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "三、四、六级累计年级人数分布", response = Void.class, notes = "三、四、六级累计年级人数分布<br><br><b>@author zhen.pan</b>")
+    @ApiOperation(httpMethod = "GET", value = "三、四、六级单次年级人数分布", response = Void.class, notes = "三、四、六级单次年级人数分布<br><br><b>@author zhen.pan</b>")
     public List<CetGradeRsVo> dcgraders(
             @ApiParam(value = "xnxq 学年学期YYYY-CCCC-x", required = true) @RequestParam(value = "xnxq") String xnxq,
             @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId,
@@ -178,7 +178,7 @@ public class CetIndexController {
     }
 
     @GetMapping(value = "/dc/gradeavg", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "三、四、六级累计年级均值分布", response = Void.class, notes = "三、四、六级累计年级均值分布<br><br><b>@author zhen.pan</b>")
+    @ApiOperation(httpMethod = "GET", value = "三、四、六级单次年级均值分布", response = Void.class, notes = "三、四、六级单次年级均值分布<br><br><b>@author zhen.pan</b>")
     public List<CetGradeAvgVo> dcgradeavg(
             @ApiParam(value = "xnxq 学年学期YYYY-CCCC-x", required = true) @RequestParam(value = "xnxq") String xnxq,
             @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId,
