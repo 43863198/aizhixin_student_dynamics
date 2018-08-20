@@ -229,7 +229,7 @@ public class CetBaseIndexService {
                 if (v.getCkrc() > 0) {
                     rate = v.getTgrs() * 1.0 / v.getCkrc();
                 }
-                calRate(lastRate, rate, vo, lastRate != 0);
+                calRate(lastRate, rate, vo);
                 lastRate = rate;
             }
             if (!first) {
@@ -240,8 +240,8 @@ public class CetBaseIndexService {
         }
     }
 
-    private void calRate(Double lastRate, Double rate, YearPercentageVO vo, boolean b) {
-        if (null != lastRate) {
+    private void calRate(Double lastRate, Double rate, YearPercentageVO vo) {
+        if (null != lastRate && 0 != lastRate) {
             lastRate = (rate - lastRate) * 100.0 / lastRate;
             String t = lastRate.toString();
             int p = t.indexOf(".");
@@ -270,7 +270,7 @@ public class CetBaseIndexService {
                 if (v.getZxrs() > 0) {
                     rate = v.getTgrs() * 1.0 / v.getZxrs();
                 }
-                calRate(lastRate, rate, vo, 0 != lastRate);
+                calRate(lastRate, rate, vo);
                 lastRate = rate;
             }
             if (!first) {
