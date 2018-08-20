@@ -211,6 +211,9 @@ public class CetBaseIndexService {
         if (null != rs && !rs.isEmpty()) {
             Collections.sort(rs);
         }
+        if (rs.size() >= 11) {
+            rs.remove(0);
+        }
     }
 
     /**
@@ -225,6 +228,12 @@ public class CetBaseIndexService {
         for (BaseIndexYearRsVO v : rs) {
             YearPercentageVO vo = new YearPercentageVO ();
             vo.setXnxq(v.getXnxq());
+            if (!first) {
+                vo.setRate(0.0);
+            } else {
+                first = false;
+            }
+
             if (null != v.getCkrc() && null != v.getTgrs()) {
                 if (v.getCkrc() > 0) {
                     rate = v.getTgrs() * 1.0 / v.getCkrc();
@@ -232,11 +241,7 @@ public class CetBaseIndexService {
                 calRate(lastRate, rate, vo);
                 lastRate = rate;
             }
-            if (!first) {
-                list.add(vo);
-            } else {
-                first = false;
-            }
+            list.add(vo);
         }
     }
 
@@ -260,12 +265,16 @@ public class CetBaseIndexService {
     private void yearAllLjRsRate(List<BaseIndexYearRsVO> rs, List<YearPercentageVO> list) {
         Double lastRate = null, rate = null;
         boolean first = true;
-
 //        DecimalFormat format = new DecimalFormat("#0.00");
 //        format.setRoundingMode(RoundingMode.HALF_UP);
         for (BaseIndexYearRsVO v : rs) {
             YearPercentageVO vo = new YearPercentageVO ();
             vo.setXnxq(v.getXnxq());
+            if (!first) {
+                vo.setRate(0.0);
+            } else {
+                first = false;
+            }
             if (null != v.getZxrs() && null != v.getTgrs()) {
                 if (v.getZxrs() > 0) {
                     rate = v.getTgrs() * 1.0 / v.getZxrs();
@@ -273,11 +282,7 @@ public class CetBaseIndexService {
                 calRate(lastRate, rate, vo);
                 lastRate = rate;
             }
-            if (!first) {
-                list.add(vo);
-            } else {
-                first = false;
-            }
+            list.add(vo);
         }
     }
 
@@ -595,7 +600,7 @@ public class CetBaseIndexService {
             return rs;
         }
         List<CetBaseIndex> list = findAllYear(orgId, cetType, collegeCode, professionalCode, classesCode, "1");
-        fillAllYearRs(rs, list);
+         fillAllYearRs(rs, list);
         return rs;
     }
 
@@ -631,6 +636,9 @@ public class CetBaseIndexService {
         }
         if (null != rs && !rs.isEmpty()) {
             Collections.sort(rs);
+            if (rs.size() >= 11) {
+                rs.remove(0);
+            }
         }
         return rs;
     }
@@ -671,6 +679,11 @@ public class CetBaseIndexService {
         for (BaseIndexYearAvgVO v : rs) {
             YearPercentageVO vo = new YearPercentageVO ();
             vo.setXnxq(v.getXnxq());
+            if (!first) {
+                vo.setRate(0.0);
+            } else {
+                first = false;
+            }
             if (null != v.getCkrc() && null != v.getZf()) {
                 if (v.getCkrc() > 0) {
                     avg = v.getZf() / v.getCkrc();
@@ -689,11 +702,7 @@ public class CetBaseIndexService {
                 }
                 lastAvg = avg;
             }
-            if (!first) {
-                list.add(vo);
-            } else {
-                first = false;
-            }
+            list.add(vo);
         }
         return list;
     }
