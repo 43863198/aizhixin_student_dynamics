@@ -221,7 +221,6 @@ public class CetBaseIndexService {
      */
     private void yearAllDcRsRate(List<BaseIndexYearRsVO> rs, List<YearPercentageVO> list) {
         Double lastRate = null, rate = null;
-        boolean first = true;
 
 //        DecimalFormat format = new DecimalFormat("#0.00");
 //        format.setRoundingMode(RoundingMode.HALF_UP);
@@ -236,11 +235,7 @@ public class CetBaseIndexService {
                 calRate(lastRate, rate, vo);
                 lastRate = rate;
             }
-            if (!first) {
-                list.add(vo);
-            } else {
-                first = false;
-            }
+            list.add(vo);
         }
     }
 
@@ -263,7 +258,6 @@ public class CetBaseIndexService {
      */
     private void yearAllLjRsRate(List<BaseIndexYearRsVO> rs, List<YearPercentageVO> list) {
         Double lastRate = null, rate = null;
-        boolean first = true;
 
 //        DecimalFormat format = new DecimalFormat("#0.00");
 //        format.setRoundingMode(RoundingMode.HALF_UP);
@@ -277,11 +271,7 @@ public class CetBaseIndexService {
                 calRate(lastRate, rate, vo);
                 lastRate = rate;
             }
-            if (!first) {
-                list.add(vo);
-            } else {
-                first = false;
-            }
+            list.add(vo);
         }
     }
 
@@ -672,7 +662,6 @@ public class CetBaseIndexService {
         List<YearPercentageVO> list = new ArrayList<>();
         Double lastRate = null;
         Double lastAvg = null, avg = null;
-        boolean first = true;
 //        DecimalFormat format = new DecimalFormat("#0.00");
 //        format.setRoundingMode(RoundingMode.HALF_UP);
         for (BaseIndexYearAvgVO v : rs) {
@@ -697,11 +686,7 @@ public class CetBaseIndexService {
                 }
                 lastAvg = avg;
             }
-            if (!first) {
-                list.add(vo);
-            } else {
-                first = false;
-            }
+            list.add(vo);
         }
         return list;
     }
