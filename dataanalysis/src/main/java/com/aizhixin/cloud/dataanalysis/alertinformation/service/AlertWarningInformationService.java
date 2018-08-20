@@ -1268,8 +1268,13 @@ public class AlertWarningInformationService {
     }
 
     public String dataFormat(String str){
+        if(null != str){
+          return  str.replaceAll("KCH","课程号").replaceAll("KCMC","课程名称").replaceAll("XF","学分");
+        }else{
+            return str;
+        }
 
-        return str.replaceAll("KCH","课程号").replaceAll("KCMC","课程名称").replaceAll("XF","学分");
+
     }
 
     public List<WarningInformation> getawinfoByDefendantId(Long orgId, String warningType, String jobNumber) {
