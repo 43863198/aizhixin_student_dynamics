@@ -12,8 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.*;
 
 @Component
@@ -222,23 +220,36 @@ public class CetBaseIndexService {
         Double lastRate = null, rate = null;
         boolean first = true;
 
-        DecimalFormat format = new DecimalFormat("#0.00");
-        format.setRoundingMode(RoundingMode.HALF_UP);
+//        DecimalFormat format = new DecimalFormat("#0.00");
+//        format.setRoundingMode(RoundingMode.HALF_UP);
         for (BaseIndexYearRsVO v : rs) {
             YearPercentageVO vo = new YearPercentageVO ();
             vo.setXnxq(v.getXnxq());
             if (null != v.getCkrc() && null != v.getTgrs()) {
-                rate = v.getTgrs() * 1.0 / v.getCkrc();
-                if (null != lastRate) {
-                    lastRate = (rate - lastRate) * 100.0 / lastRate;
-                    vo.setRate(new Double(format.format(lastRate)));
+                if (v.getCkrc() > 0) {
+                    rate = v.getTgrs() * 1.0 / v.getCkrc();
                 }
+                calRate(lastRate, rate, vo, lastRate != 0);
                 lastRate = rate;
             }
             if (!first) {
                 list.add(vo);
             } else {
                 first = false;
+            }
+        }
+    }
+
+    private void calRate(Double lastRate, Double rate, YearPercentageVO vo, boolean b) {
+        if (null != lastRate) {
+            lastRate = (rate - lastRate) * 100.0 / lastRate;
+            String t = lastRate.toString();
+            int p = t.indexOf(".");
+            if (p > 0 && t.length() > p + 3) {
+                t = t.substring(0, p + 3);
+                vo.setRate(new Double(t));
+            } else {
+                vo.setRate(lastRate);
             }
         }
     }
@@ -250,17 +261,16 @@ public class CetBaseIndexService {
         Double lastRate = null, rate = null;
         boolean first = true;
 
-        DecimalFormat format = new DecimalFormat("#0.00");
-        format.setRoundingMode(RoundingMode.HALF_UP);
+//        DecimalFormat format = new DecimalFormat("#0.00");
+//        format.setRoundingMode(RoundingMode.HALF_UP);
         for (BaseIndexYearRsVO v : rs) {
             YearPercentageVO vo = new YearPercentageVO ();
             vo.setXnxq(v.getXnxq());
             if (null != v.getZxrs() && null != v.getTgrs()) {
-                rate = v.getTgrs() * 1.0 / v.getZxrs();
-                if (null != lastRate) {
-                    lastRate = (rate - lastRate) * 100.0 / lastRate;
-                    vo.setRate(new Double(format.format(lastRate)));
+                if (v.getZxrs() > 0) {
+                    rate = v.getTgrs() * 1.0 / v.getZxrs();
                 }
+                calRate(lastRate, rate, vo, 0 != lastRate);
                 lastRate = rate;
             }
             if (!first) {
@@ -656,16 +666,26 @@ public class CetBaseIndexService {
         Double lastRate = null;
         Double lastAvg = null, avg = null;
         boolean first = true;
-        DecimalFormat format = new DecimalFormat("#0.00");
-        format.setRoundingMode(RoundingMode.HALF_UP);
+//        DecimalFormat format = new DecimalFormat("#0.00");
+//        format.setRoundingMode(RoundingMode.HALF_UP);
         for (BaseIndexYearAvgVO v : rs) {
             YearPercentageVO vo = new YearPercentageVO ();
             vo.setXnxq(v.getXnxq());
             if (null != v.getCkrc() && null != v.getZf()) {
-                avg = v.getZf() / v.getCkrc();
-                if (null != lastAvg) {
+                if (v.getCkrc() > 0) {
+                    avg = v.getZf() / v.getCkrc();
+                }
+                if (null != lastAvg && lastAvg != 0) {
                     lastRate = (avg - lastAvg) * 100 / lastAvg;
-                    vo.setRate(new Double(format.format(lastRate)));
+//                    vo.setRate(new Double(format.format(lastRate)));
+                    String t = lastRate.toString();
+                    int p = t.indexOf(".");
+                    if (p > 0 && t.length() > p + 3) {
+                        t = t.substring(0, p + 3);
+                        vo.setRate(new Double(t));
+                    } else {
+                        vo.setRate(lastRate);
+                    }
                 }
                 lastAvg = avg;
             }
