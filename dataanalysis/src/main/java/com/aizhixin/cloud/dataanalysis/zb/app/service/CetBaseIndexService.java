@@ -216,9 +216,37 @@ public class CetBaseIndexService {
     }
 
     /**
-     * 通过率计算
+     * 单次通过率增长率计算
      */
-    private void yearAllRsRate(List<BaseIndexYearRsVO> rs, List<YearPercentageVO> list) {
+    private void yearAllDcRsRate(List<BaseIndexYearRsVO> rs, List<YearPercentageVO> list) {
+        Double lastRate = null, rate = null;
+        boolean first = true;
+
+        DecimalFormat format = new DecimalFormat("#0.00");
+        format.setRoundingMode(RoundingMode.HALF_UP);
+        for (BaseIndexYearRsVO v : rs) {
+            YearPercentageVO vo = new YearPercentageVO ();
+            vo.setXnxq(v.getXnxq());
+            if (null != v.getCkrc() && null != v.getTgrs()) {
+                rate = v.getTgrs() * 1.0 / v.getCkrc();
+                if (null != lastRate) {
+                    lastRate = (rate - lastRate) * 100.0 / lastRate;
+                    vo.setRate(new Double(format.format(lastRate)));
+                }
+                lastRate = rate;
+            }
+            if (!first) {
+                list.add(vo);
+            } else {
+                first = false;
+            }
+        }
+    }
+
+    /**
+     * 累计通过率增长率计算
+     */
+    private void yearAllLjRsRate(List<BaseIndexYearRsVO> rs, List<YearPercentageVO> list) {
         Double lastRate = null, rate = null;
         boolean first = true;
 
@@ -419,7 +447,11 @@ public class CetBaseIndexService {
             list  =  cetBaseIndexManager.findDcSubDw(xn, xq, orgId.toString(), cetType, professionalCode);
             classes = true;
         } else if (!StringUtils.isEmpty(professionalCode) && !StringUtils.isEmpty(classesCode)){
-            list  =  cetBaseIndexManager.findDcSubDw(xn, xq, orgId.toString(), cetType, classesCode);
+            CetBaseIndex cetBaseIndex  =  cetBaseIndexManager.findDcOneDw(xn, xq, orgId.toString(), cetType, professionalCode, classesCode);
+            list = new ArrayList<>();
+            if (null != cetBaseIndex) {
+                list.add(cetBaseIndex);
+            }
             classes = true;
         }
         Set<String> bhSet = new HashSet<>();
@@ -599,7 +631,7 @@ public class CetBaseIndexService {
     public List<YearPercentageVO> findDcAllYearRsRate (Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
         List<BaseIndexYearRsVO> rs = findDcAllYearRsCount(orgId, cetType, collegeCode, professionalCode, classesCode);
         List<YearPercentageVO> list = new ArrayList<>();
-        yearAllRsRate(rs, list);
+        yearAllDcRsRate(rs, list);
         return list;
     }
 
@@ -610,7 +642,7 @@ public class CetBaseIndexService {
     public List<YearPercentageVO> findLjAllYearRsRate (Long orgId, String cetType, String collegeCode, String professionalCode, String classesCode) {
         List<BaseIndexYearRsVO> rs = findLjAllYearRsCount(orgId, cetType, collegeCode, professionalCode, classesCode);
         List<YearPercentageVO> list = new ArrayList<>();
-        yearAllRsRate(rs, list);
+        yearAllLjRsRate(rs, list);
         return list;
     }
 
