@@ -221,13 +221,19 @@ public class CetBaseIndexService {
      */
     private void yearAllDcRsRate(List<BaseIndexYearRsVO> rs, List<YearPercentageVO> list) {
         Double lastRate = null, rate = null;
+        boolean first = true;
 
 //        DecimalFormat format = new DecimalFormat("#0.00");
 //        format.setRoundingMode(RoundingMode.HALF_UP);
         for (BaseIndexYearRsVO v : rs) {
             YearPercentageVO vo = new YearPercentageVO ();
             vo.setXnxq(v.getXnxq());
-            vo.setRate(0.0);
+            if (!first) {
+                vo.setRate(0.0);
+            } else {
+                first = false;
+            }
+
             if (null != v.getCkrc() && null != v.getTgrs()) {
                 if (v.getCkrc() > 0) {
                     rate = v.getTgrs() * 1.0 / v.getCkrc();
@@ -258,12 +264,17 @@ public class CetBaseIndexService {
      */
     private void yearAllLjRsRate(List<BaseIndexYearRsVO> rs, List<YearPercentageVO> list) {
         Double lastRate = null, rate = null;
-
+        boolean first = true;
 //        DecimalFormat format = new DecimalFormat("#0.00");
 //        format.setRoundingMode(RoundingMode.HALF_UP);
         for (BaseIndexYearRsVO v : rs) {
             YearPercentageVO vo = new YearPercentageVO ();
             vo.setXnxq(v.getXnxq());
+            if (!first) {
+                vo.setRate(0.0);
+            } else {
+                first = false;
+            }
             if (null != v.getZxrs() && null != v.getTgrs()) {
                 if (v.getZxrs() > 0) {
                     rate = v.getTgrs() * 1.0 / v.getZxrs();
@@ -662,12 +673,17 @@ public class CetBaseIndexService {
         List<YearPercentageVO> list = new ArrayList<>();
         Double lastRate = null;
         Double lastAvg = null, avg = null;
+        boolean first = true;
 //        DecimalFormat format = new DecimalFormat("#0.00");
 //        format.setRoundingMode(RoundingMode.HALF_UP);
         for (BaseIndexYearAvgVO v : rs) {
             YearPercentageVO vo = new YearPercentageVO ();
             vo.setXnxq(v.getXnxq());
-            vo.setRate(0.0);
+            if (!first) {
+                vo.setRate(0.0);
+            } else {
+                first = false;
+            }
             if (null != v.getCkrc() && null != v.getZf()) {
                 if (v.getCkrc() > 0) {
                     avg = v.getZf() / v.getCkrc();
