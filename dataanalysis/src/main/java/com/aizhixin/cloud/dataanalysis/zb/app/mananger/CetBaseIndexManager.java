@@ -1,8 +1,11 @@
 package com.aizhixin.cloud.dataanalysis.zb.app.mananger;
 
+import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.zb.app.entity.CetBaseIndex;
 import com.aizhixin.cloud.dataanalysis.zb.app.respository.CetBaseIndexRespository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,10 +58,14 @@ public class CetBaseIndexManager {
     }
 
     public List<CetBaseIndex> findAllYearCount(String xxdm, String kslx, String dhlj) {
-        return cetBaseIndexRespository.findByXxdmAndDhljAndKslxAndBhAndXnIsNotNullOrderByXn(xxdm, dhlj, kslx, xxdm);
+        PageRequest p = PageUtil.createNoErrorPageRequest(0, 11);
+        Page<CetBaseIndex> page = cetBaseIndexRespository.findByXxdmAndDhljAndKslxAndBhAndXnIsNotNullOrderByXnDescXqmDesc(p, xxdm, dhlj, kslx, xxdm);
+        return page.getContent();
     }
 
     public List<CetBaseIndex> findAllYearCount(String xxdm, String kslx, String dhlj, String pbh, String bh) {
-        return cetBaseIndexRespository.findByXxdmAndDhljAndKslxAndPbhAndBhAndXnIsNotNullOrderByXn(xxdm, dhlj, kslx, pbh, bh);
+        PageRequest p = PageUtil.createNoErrorPageRequest(0, 11);
+        Page<CetBaseIndex> page = cetBaseIndexRespository.findByXxdmAndDhljAndKslxAndPbhAndBhAndXnIsNotNullOrderByXnDescXqmDesc(p, xxdm, dhlj, kslx, pbh, bh);
+        return page.getContent();
     }
 }
