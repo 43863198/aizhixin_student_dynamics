@@ -211,6 +211,9 @@ public class CetBaseIndexService {
         if (null != rs && !rs.isEmpty()) {
             Collections.sort(rs);
         }
+        if (rs.size() >= 11) {
+            rs.remove(0);
+        }
     }
 
     /**
@@ -225,6 +228,7 @@ public class CetBaseIndexService {
         for (BaseIndexYearRsVO v : rs) {
             YearPercentageVO vo = new YearPercentageVO ();
             vo.setXnxq(v.getXnxq());
+            vo.setRate(0.0);
             if (null != v.getCkrc() && null != v.getTgrs()) {
                 if (v.getCkrc() > 0) {
                     rate = v.getTgrs() * 1.0 / v.getCkrc();
@@ -595,7 +599,7 @@ public class CetBaseIndexService {
             return rs;
         }
         List<CetBaseIndex> list = findAllYear(orgId, cetType, collegeCode, professionalCode, classesCode, "1");
-        fillAllYearRs(rs, list);
+         fillAllYearRs(rs, list);
         return rs;
     }
 
@@ -631,6 +635,9 @@ public class CetBaseIndexService {
         }
         if (null != rs && !rs.isEmpty()) {
             Collections.sort(rs);
+            if (rs.size() >= 11) {
+                rs.remove(0);
+            }
         }
         return rs;
     }
@@ -671,6 +678,7 @@ public class CetBaseIndexService {
         for (BaseIndexYearAvgVO v : rs) {
             YearPercentageVO vo = new YearPercentageVO ();
             vo.setXnxq(v.getXnxq());
+            vo.setRate(0.0);
             if (null != v.getCkrc() && null != v.getZf()) {
                 if (v.getCkrc() > 0) {
                     avg = v.getZf() / v.getCkrc();
