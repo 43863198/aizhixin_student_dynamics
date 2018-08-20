@@ -188,7 +188,8 @@ public class CetStandardScoreManager {
                 s.setName(row.get("XM").toString());
             }
             if (null != row.get("YXSH")) {
-                s.setCollegeName(row.get("YXSH").toString());
+               Map map =  getCollegeName(row.get("YXSH").toString());
+                s.setCollegeName(map.get("simple_name") != null ? map.get("simple_name").toString() : map.get("name").toString());
             }
             if (null != row.get("ZYH")) {
                 s.setProfessionName(getProfessionName(row.get("ZYH").toString()));
