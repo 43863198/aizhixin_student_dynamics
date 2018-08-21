@@ -53,7 +53,7 @@ public class EtlStudyExceptionManager {
 
     private static String SQL_XSJB_XX = "SELECT XH, XM, BJMC, YXSH FROM t_xsjbxx WHERE ZYH=? AND NJ=? AND XXID=?";
 
-    public static String SQL_INSERT_XSPYJH = "INSERT INTO t_xspyjh (XN, XQM, XH, XM, NJ, BJMC, ZYH, YXSH, XXDM, KCH, KCMC, XF) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public static String SQL_INSERT_XSPYJH = "INSERT INTO t_xspyjh (XN, XQM, XH, XM, NJ, BJMC, ZYH, YXSH, XXDM, KCH, KCMC, XF, XDZT, JD) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -135,7 +135,7 @@ public class EtlStudyExceptionManager {
         jdbcTemplate.batchUpdate(SQL_INSERT_XSPYJH, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement preparedStatement, int i) throws SQLException {
-                //(XN, XQM, XH, XM, NJ, BJMC, ZYH, YXSH, XXDM, KCH, KCMC, XF)
+                //(XN, XQM, XH, XM, NJ, BJMC, ZYH, YXSH, XXDM, KCH, KCMC, XF, XDZT, JD)
                 EtlStudendStudyPlanDTO d = list.get(i);
                 preparedStatement.setString(1, d.getXn());//XN
                 preparedStatement.setString(2, d.getXqm());//XQ
@@ -149,6 +149,8 @@ public class EtlStudyExceptionManager {
                 preparedStatement.setString(10, d.getKch());//KCH
                 preparedStatement.setString(11, d.getKcmc());//KCMC
                 preparedStatement.setDouble(12, d.getXf());//XF
+                preparedStatement.setInt(13, 100);//XDZT
+                preparedStatement.setDouble(14, 0);//JD
             }
 
             @Override
