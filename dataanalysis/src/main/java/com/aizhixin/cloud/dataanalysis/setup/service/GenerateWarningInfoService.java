@@ -3,7 +3,6 @@ package com.aizhixin.cloud.dataanalysis.setup.service;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
 import com.aizhixin.cloud.dataanalysis.common.service.DistributeLock;
-import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
 import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
@@ -11,11 +10,15 @@ import com.aizhixin.cloud.dataanalysis.setup.entity.Rule;
 import com.aizhixin.cloud.dataanalysis.setup.entity.RuleParameter;
 import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.studentRegister.job.StudentRegisterJob;
+import org.hibernate.SQLQuery;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.*;
 
 /**
@@ -43,6 +46,8 @@ public class GenerateWarningInfoService {
     private RuleService ruleService;
     @Autowired
     private DistributeLock distributeLock;
+    @Autowired
+    private EntityManager em;
 
     public void warningJob() {
         Calendar c = Calendar.getInstance();
@@ -76,15 +81,50 @@ public class GenerateWarningInfoService {
         int year = c.get(Calendar.YEAR);
         // 当前月份
         int month = c.get(Calendar.MONTH) + 1;
-        // 当前学期编号
-        String semester = "秋";
+        //当前日期
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        String date = year + "-" + month + "-" + day;
+        Map map = getXQAndXN(orgId,date);
+        String teachYear;
+        String semester;
+        if(null != map){
+             teachYear = map.get("teacherYear").toString();
+             semester = map.get("semester").toString();
+        }else{
+         semester = "秋";
         if (month > 3 && month < 9) {
             semester = "春";
         } else {
             year = year - 1;
         }
-        String teachYear = year + "";
+         teachYear = year + "";
+        }
         warningInfo(orgId, warningType, teachYear, semester);
+
+    }
+
+    public Map getXQAndXN(Long orgId,String date){
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> condition = new HashMap<>();
+        try {
+            StringBuilder sql = new StringBuilder("SELECT  TEACHER_YEAR as teacherYear, SEMESTER as semester FROM t_school_calendar WHERE 1=1");
+            if (null != orgId) {
+                sql.append(" and ORG_ID = :orgId");
+                condition.put("orgId", orgId);
+            }
+            sql.append(" AND '"+ date +"' BETWEEN START_TIME AND END_TIME");
+            Query sq = em.createNativeQuery(sql.toString());
+            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            for (Map.Entry<String, Object> e : condition.entrySet()) {
+                sq.setParameter(e.getKey(), e.getValue());
+            }
+            Map res = (Map)sq.getSingleResult();
+            return res;
+        }catch (Exception e){
+            result.put("success", false);
+            result.put("message", "获取学当前年学期失败！");
+            return new HashMap<>();
+        }
 
     }
 
