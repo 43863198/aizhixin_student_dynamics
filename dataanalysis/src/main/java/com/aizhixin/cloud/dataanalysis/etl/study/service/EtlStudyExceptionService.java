@@ -94,6 +94,9 @@ public class EtlStudyExceptionService {
             log.info("Query student count ({})", xhList.size());
             int i = 0;
             for (String xh : xhList) {
+                if ("3172112111134".equals(xh)) {
+                    System.out.println("--------------xh---------------------------");
+                }
                 List<EtlStudentStudyPlanXdztDTO> cjList = etlStudyExceptionManager.queryXskccj(xxdm, xh);
                 if(null != cjList && !cjList.isEmpty()) {
                     Map<String, EtlStudentStudyPlanXdztDTO> kchCjMap = new HashMap<>();
@@ -110,7 +113,7 @@ public class EtlStudyExceptionService {
                                 if (null != cj.getCj() && cj.getCj() >= 60) {
                                     jh.setXdzt(10);//通过
                                     jh.setJd(cj.getJd());
-                                    if (null == cj.getJd() || cj.getId() <= 0) {
+                                    if (null == cj.getJd() || cj.getJd() <= 0) {
                                         log.warn("Student cj data exception: pyjh:({}), cj:({})", jh.toString(), cj.toString());
                                     }
                                     //修改修读状况
