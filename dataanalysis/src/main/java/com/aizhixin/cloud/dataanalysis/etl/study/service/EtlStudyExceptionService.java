@@ -94,9 +94,9 @@ public class EtlStudyExceptionService {
             log.info("Query student count ({})", xhList.size());
             int i = 0;
             for (String xh : xhList) {
-                if ("3172112111134".equals(xh)) {
-                    System.out.println("--------------xh---------------------------");
-                }
+//                if ("3172112111134".equals(xh)) {
+//                    System.out.println("--------------xh---------------------------");
+//                }
                 List<EtlStudentStudyPlanXdztDTO> cjList = etlStudyExceptionManager.queryXskccj(xxdm, xh);
                 if(null != cjList && !cjList.isEmpty()) {
                     Map<String, EtlStudentStudyPlanXdztDTO> kchCjMap = new HashMap<>();
