@@ -91,22 +91,18 @@ public class EtlStudyExceptionService {
     public void calStudentPyjh(String xxdm, String yxsh, String xn) {
         List<String> xhList = etlStudyExceptionManager.queryXyXspyjhXh(xxdm, yxsh, xn);
         if (null != xhList) {
+            log.info("Query student count ({})", xhList.size());
+            int i = 0;
             for (String xh : xhList) {
                 List<EtlStudentStudyPlanXdztDTO> cjList = etlStudyExceptionManager.queryXskccj(xxdm, xh);
                 if(null != cjList && !cjList.isEmpty()) {
                     Map<String, EtlStudentStudyPlanXdztDTO> kchCjMap = new HashMap<>();
-                    StringBuilder kchs = new StringBuilder();
-                    boolean first = true;
+                    Set<String> kchs = new HashSet();
                     for (EtlStudentStudyPlanXdztDTO cj : cjList) {
                         kchCjMap.put(cj.getKch(), cj);
-                        if (!first) {
-                            kchs.append(",");
-                        } else {
-                            first = false;
-                        }
-                        kchs.append("'").append(cj.getKch()).append("'");
+                        kchs.add(cj.getKch());
                     }
-                    List<EtlStudentStudyPlanXdztDTO> pyjhList = etlStudyExceptionManager.queryXsKcPyjh(xh, kchs.toString(), xxdm);
+                    List<EtlStudentStudyPlanXdztDTO> pyjhList = etlStudyExceptionManager.queryXsKcPyjh(xh, kchs, xxdm);
                     if (null != pyjhList) {
                         for (EtlStudentStudyPlanXdztDTO jh : pyjhList) {
                             EtlStudentStudyPlanXdztDTO cj = kchCjMap.get(jh.getKch());
@@ -124,7 +120,12 @@ public class EtlStudyExceptionService {
                         }
                     }
                 }
+                i++;
+                if (i > 0 && 0 == i % 50) {
+                    log.info("Cal student study plan count({})", i);
+                }
             }
         }
+        log.info("Cal student study plan end.");
     }
 }
