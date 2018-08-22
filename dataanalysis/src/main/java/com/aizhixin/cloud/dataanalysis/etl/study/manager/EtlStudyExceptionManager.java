@@ -1,6 +1,7 @@
 package com.aizhixin.cloud.dataanalysis.etl.study.manager;
 
 import com.aizhixin.cloud.dataanalysis.etl.study.dto.EtlStudendStudyPlanDTO;
+import com.aizhixin.cloud.dataanalysis.etl.study.dto.EtlStudentStudyPlanXdztDTO;
 import com.aizhixin.cloud.dataanalysis.etl.study.dto.EtlStudyTeachingPlanDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -55,6 +56,10 @@ public class EtlStudyExceptionManager {
 
     public static String SQL_INSERT_XSPYJH = "INSERT INTO t_xspyjh (XN, XQM, XH, XM, NJ, BJMC, ZYH, YXSH, XXDM, KCH, KCMC, XF, XDZT, JD) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
+    public static String SQL_XSPYJH_YXSH = "SELECT DISTINCT XH FROM t_xspyjh WHERE XXDM=? AND YXSH=? AND XDZT != 10 AND XN <= ?";
+    private static String SQL_XS_KCCJ = "SELECT  XH, KCH, MAX(BFCJ) AS CJ, MAX(JD) AS JD FROM t_b_xscjxx WHERE XXDM=? AND XH=? GROUP BY XH, KCH";
+    private static String SQL_XS_PYJH_XH_KCH = "SELECT ID, XH, KCH FROM t_xspyjh WHERE XH=? AND KCH in (?) AND XDZT != 10 AND XXDM=?";
+    private static String SQL_XS_PYJH_UPDATE_XDZT = "UPDATE t_xspyjh SET XDZT=?, JD=? WHERE ID=?";
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -158,5 +163,53 @@ public class EtlStudyExceptionManager {
                 return list.size();
             }
         });
+    }
+
+    /**
+     * 查询特定截止特定学年的学院的学生培养计划的学生学号
+     */
+    @Transactional(readOnly = true)
+    public List<String> queryXyXspyjhXh(String xxdm, String yxsh, String xn) {
+        return jdbcTemplate.query(SQL_XSPYJH_YXSH,
+                new Object[]{xxdm, yxsh, xn},
+                new int [] {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR},
+                (ResultSet rs, int rowNum) -> rs.getString("XH")
+        );
+    }
+
+
+    /**
+     * 查询学生的所有课程的最大成绩及几点
+     */
+    @Transactional(readOnly = true)
+    public List<EtlStudentStudyPlanXdztDTO> queryXskccj(String xxdm, String xh) {
+        return jdbcTemplate.query(SQL_XS_KCCJ,
+                new Object[]{xxdm, xh},
+                new int [] {Types.VARCHAR, Types.VARCHAR},
+                (ResultSet rs, int rowNum) -> new EtlStudentStudyPlanXdztDTO(rs.getString("XH"), rs.getString("KCH"), rs.getDouble("CJ"), rs.getDouble("JD"))
+        );
+    }
+
+
+    /**
+     * 查询学生对应课程的培养计划
+     */
+    @Transactional(readOnly = true)
+    public List<EtlStudentStudyPlanXdztDTO> queryXsKcPyjh(String xh, String kchs, String xxdm) {
+        return jdbcTemplate.query(SQL_XS_PYJH_XH_KCH,
+                new Object[]{xh, kchs, xxdm},
+                new int [] {Types.VARCHAR , Types.VARCHAR, Types.VARCHAR},
+                (ResultSet rs, int rowNum) -> new EtlStudentStudyPlanXdztDTO(rs.getLong("ID"), rs.getString("XH"), rs.getString("KCH"))
+        );
+    }
+
+    /**
+     * 更新学生的学习计划
+     */
+    public void updateXsStudyPlan(EtlStudentStudyPlanXdztDTO d) {
+        jdbcTemplate.update(SQL_XS_PYJH_UPDATE_XDZT,
+                new Object[]{d.getXdzt(), d.getJd(), d.getId()},
+                new int [] {Types.INTEGER, Types.DOUBLE, Types.BIGINT}
+        );
     }
 }

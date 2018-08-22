@@ -33,4 +33,12 @@ public class EtlStudentExceptionController {
             @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId) {
         etlStudyExceptionService.createXnXqStudentPyjh(xn, xq, orgId);
     }
+    @GetMapping(value = "/cal/student/pyjh", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "根据成绩更新学生的培养计划", response = Void.class, notes = "根据成绩更新学生的培养计划<br><br><b>@author zhen.pan</b>")
+    public void calStudentPyjh(
+            @ApiParam(value = "xxdm 学校代码", required = true) @RequestParam(value = "xxdm") String xxdm,
+            @ApiParam(value = "yxsh 学院", required = true) @RequestParam(value = "yxsh") String yxsh,
+            @ApiParam(value = "xn YYYY-CCCC培养计划的截止日期", required = true) @RequestParam(value = "xn") String xn) {
+        etlStudyExceptionService.calStudentPyjh(xxdm, yxsh, xn);
+    }
 }

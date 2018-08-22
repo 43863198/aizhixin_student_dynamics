@@ -1,6 +1,7 @@
 package com.aizhixin.cloud.dataanalysis.etl.study.service;
 
 import com.aizhixin.cloud.dataanalysis.etl.study.dto.EtlStudendStudyPlanDTO;
+import com.aizhixin.cloud.dataanalysis.etl.study.dto.EtlStudentStudyPlanXdztDTO;
 import com.aizhixin.cloud.dataanalysis.etl.study.dto.EtlStudyTeachingPlanDTO;
 import com.aizhixin.cloud.dataanalysis.etl.study.manager.EtlStudyExceptionManager;
 import lombok.extern.slf4j.Slf4j;
@@ -8,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -83,6 +82,47 @@ public class EtlStudyExceptionService {
                 if (!xspyjhList.isEmpty()) {
                     log.info("Save xspyjh data count ({})", xspyjhList.size());
                     etlStudyExceptionManager.saveXspyjh(xspyjhList);
+                }
+            }
+        }
+    }
+
+    @Async
+    public void calStudentPyjh(String xxdm, String yxsh, String xn) {
+        List<String> xhList = etlStudyExceptionManager.queryXyXspyjhXh(xxdm, yxsh, xn);
+        if (null != xhList) {
+            for (String xh : xhList) {
+                List<EtlStudentStudyPlanXdztDTO> cjList = etlStudyExceptionManager.queryXskccj(xxdm, xh);
+                if(null != cjList && !cjList.isEmpty()) {
+                    Map<String, EtlStudentStudyPlanXdztDTO> kchCjMap = new HashMap<>();
+                    StringBuilder kchs = new StringBuilder();
+                    boolean first = true;
+                    for (EtlStudentStudyPlanXdztDTO cj : cjList) {
+                        kchCjMap.put(cj.getKch(), cj);
+                        if (!first) {
+                            kchs.append(",");
+                        } else {
+                            first = false;
+                        }
+                        kchs.append("'").append(cj.getKch()).append("'");
+                    }
+                    List<EtlStudentStudyPlanXdztDTO> pyjhList = etlStudyExceptionManager.queryXsKcPyjh(xh, kchs.toString(), xxdm);
+                    if (null != pyjhList) {
+                        for (EtlStudentStudyPlanXdztDTO jh : pyjhList) {
+                            EtlStudentStudyPlanXdztDTO cj = kchCjMap.get(jh.getKch());
+                            if (null != cj) {
+                                if (null != cj.getCj() && cj.getCj() >= 60) {
+                                    jh.setXdzt(10);//通过
+                                    jh.setJd(cj.getJd());
+                                    if (null == cj.getJd() || cj.getId() <= 0) {
+                                        log.warn("Student cj data exception: pyjh:({}), cj:({})", jh.toString(), cj.toString());
+                                    }
+                                    //修改修读状况
+                                    etlStudyExceptionManager.updateXsStudyPlan(jh);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
