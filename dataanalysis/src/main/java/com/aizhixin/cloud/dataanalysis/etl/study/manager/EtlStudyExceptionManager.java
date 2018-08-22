@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -61,6 +62,7 @@ public class EtlStudyExceptionManager {
     public static String SQL_INSERT_XSPYJH = "INSERT INTO t_xspyjh (XN, XQM, XH, XM, NJ, BJMC, ZYH, YXSH, XXDM, KCH, KCMC, XF, XDZT, JD) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     public static String SQL_XSPYJH_YXSH = "SELECT DISTINCT XH FROM t_xspyjh WHERE XXDM=? AND YXSH=? AND XDZT != 10 AND XN <= ?";
+    public static String SQL_XSPYJH = "SELECT DISTINCT XH FROM t_xspyjh WHERE XXDM=? AND XDZT != 10 AND XN <= ?";
     private static String SQL_XS_KCCJ = "SELECT  XH, KCH, MAX(BFCJ) AS CJ, MAX(JD) AS JD FROM t_b_xscjxx WHERE XXDM=? AND XH=? GROUP BY XH, KCH HAVING MAX(BFCJ) >= 60";
     private static String SQL_XS_PYJH_XH_KCH = "SELECT ID, XH, KCH FROM t_xspyjh WHERE XH = :xh AND KCH in (:kchs) AND XDZT != 10 AND XXDM = :xxdm";
     private static String SQL_XS_PYJH_UPDATE_XDZT = "UPDATE t_xspyjh SET XDZT=?, JD=? WHERE ID=?";
@@ -170,15 +172,23 @@ public class EtlStudyExceptionManager {
     }
 
     /**
-     * 查询特定截止特定学年的学院的学生培养计划的学生学号
+     * 查询特定截止日期特定学年的学院的学生培养计划的学生学号
      */
     @Transactional(readOnly = true)
-    public List<String> queryXyXspyjhXh(String xxdm, String yxsh, String xn) {
-        return jdbcTemplate.query(SQL_XSPYJH_YXSH,
-                new Object[]{xxdm, yxsh, xn},
-                new int [] {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR},
-                (ResultSet rs, int rowNum) -> rs.getString("XH")
-        );
+    public List<String> queryXspyjhXh(String xxdm, String yxsh, String xn) {
+        if (StringUtils.isEmpty(yxsh)) {
+            return jdbcTemplate.query(SQL_XSPYJH,
+                    new Object[]{xxdm, xn},
+                    new int[]{Types.VARCHAR, Types.VARCHAR},
+                    (ResultSet rs, int rowNum) -> rs.getString("XH")
+            );
+        } else {
+            return jdbcTemplate.query(SQL_XSPYJH_YXSH,
+                    new Object[]{xxdm, yxsh, xn},
+                    new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR},
+                    (ResultSet rs, int rowNum) -> rs.getString("XH")
+            );
+        }
     }
 
 
