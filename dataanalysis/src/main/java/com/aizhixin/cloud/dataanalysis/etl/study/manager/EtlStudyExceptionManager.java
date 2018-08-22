@@ -6,6 +6,7 @@ import com.aizhixin.cloud.dataanalysis.etl.study.dto.EtlStudyTeachingPlanDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +14,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Component
 @Transactional
@@ -58,7 +62,7 @@ public class EtlStudyExceptionManager {
 
     public static String SQL_XSPYJH_YXSH = "SELECT DISTINCT XH FROM t_xspyjh WHERE XXDM=? AND YXSH=? AND XDZT != 10 AND XN <= ?";
     private static String SQL_XS_KCCJ = "SELECT  XH, KCH, MAX(BFCJ) AS CJ, MAX(JD) AS JD FROM t_b_xscjxx WHERE XXDM=? AND XH=? GROUP BY XH, KCH";
-    private static String SQL_XS_PYJH_XH_KCH = "SELECT ID, XH, KCH FROM t_xspyjh WHERE XH=? AND KCH in (?) AND XDZT != 10 AND XXDM=?";
+    private static String SQL_XS_PYJH_XH_KCH = "SELECT ID, XH, KCH FROM t_xspyjh WHERE XH = :xh AND KCH in (:kchs) AND XDZT != 10 AND XXDM = :xxdm";
     private static String SQL_XS_PYJH_UPDATE_XDZT = "UPDATE t_xspyjh SET XDZT=?, JD=? WHERE ID=?";
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -195,12 +199,18 @@ public class EtlStudyExceptionManager {
      * 查询学生对应课程的培养计划
      */
     @Transactional(readOnly = true)
-    public List<EtlStudentStudyPlanXdztDTO> queryXsKcPyjh(String xh, String kchs, String xxdm) {
-        return jdbcTemplate.query(SQL_XS_PYJH_XH_KCH,
-                new Object[]{xh, kchs, xxdm},
-                new int [] {Types.VARCHAR , Types.VARCHAR, Types.VARCHAR},
-                (ResultSet rs, int rowNum) -> new EtlStudentStudyPlanXdztDTO(rs.getLong("ID"), rs.getString("XH"), rs.getString("KCH"))
-        );
+    public List<EtlStudentStudyPlanXdztDTO> queryXsKcPyjh(String xh, Set<String> kchs, String xxdm) {
+        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbcTemplate);
+        Map<String, Object> params = new HashMap<>();
+        params.put("xh", xh);
+        params.put("kchs", kchs);
+        params.put("xxdm", xxdm);
+        return template.query(SQL_XS_PYJH_XH_KCH, params, (ResultSet rs, int rowNum) -> new EtlStudentStudyPlanXdztDTO(rs.getLong("ID"), rs.getString("XH"), rs.getString("KCH")));
+//        return jdbcTemplate.query(SQL_XS_PYJH_XH_KCH,
+//                new Object[]{xh, kchs, xxdm},
+//                new int [] {Types.VARCHAR , Types.VARCHAR, Types.VARCHAR},
+//                (ResultSet rs, int rowNum) -> new EtlStudentStudyPlanXdztDTO(rs.getLong("ID"), rs.getString("XH"), rs.getString("KCH"))
+//        );
     }
 
     /**
