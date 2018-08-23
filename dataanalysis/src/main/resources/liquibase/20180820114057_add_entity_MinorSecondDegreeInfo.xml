@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+    <!-- 辅修专业二学位信息-->
+    <changeSet id="20180820114057" author="dengchao">
+		<preConditions onFail="MARK_RAN">
+	        <not>
+	            <tableExists tableName="T_FXEXWXX"/>
+	        </not>
+	    </preConditions>
+        <createTable tableName="T_FXEXWXX" remarks="辅修专业二学位信息">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="XXDM" type="BIGINT" remarks="学校代码"/>
+			<column name="XH" type="VARCHAR(40)" remarks="学号"/>
+            <column name="XM" type="VARCHAR(80)" remarks="姓名"/>
+            <column name="ZYH" type="VARCHAR(40)" remarks="专业号"/>
+            <column name="ZYMC" type="VARCHAR(80)" remarks="专业名称"/>
+			<column name="YXSH" type="VARCHAR(40)" remarks="院系所号"/>
+            <column name="YXMC" type="VARCHAR(80)" remarks="院系名称"/>
+			<column name="FXZYH" type="VARCHAR(40)" remarks="辅修专业号"/>
+            <column name="FXZYMC" type="VARCHAR(80)" remarks="辅修专业名称"/>
+			<column name="FXYXSH" type="VARCHAR(40)" remarks="辅修院系所号"/>
+            <column name="FXYXMC" type="VARCHAR(80)" remarks="辅修院系名称"/>
+			<column name="EXWZYH" type="VARCHAR(40)" remarks="二学位专业号"/>
+            <column name="EXWZYMC" type="VARCHAR(80)" remarks="二学位专业名称"/>
+			<column name="EXWYXSH" type="VARCHAR(40)" remarks="二学位院系所号"/>
+            <column name="EXWYXMC" type="VARCHAR(80)" remarks="二学位院系名称"/>
+        </createTable>
+
+        <createIndex indexName="idx_fxexwxx_xxdm" tableName="T_FXEXWXX" unique="false">
+            <column name="XXDM" type="BIGINT"/>
+        </createIndex>
+        <createIndex indexName="idx_fxexwxx_yxsh" tableName="T_FXEXWXX" unique="false">
+            <column name="YXSH" type="VARCHAR(40)"/>
+        </createIndex>
+        <createIndex indexName="idx_fxexwxx_zyh" tableName="T_FXEXWXX" unique="false">
+            <column name="ZYH" type="VARCHAR(40)"/>
+        </createIndex>
+        <createIndex indexName="idx_fxexwxx_xh" tableName="T_FXEXWXX" unique="false">
+            <column name="XH" type="VARCHAR(40)"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
