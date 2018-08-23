@@ -66,7 +66,7 @@ public class StudentSemesterScoreIndexManager {
         }
         if (!StringUtils.isEmpty(professionalCode)) {
             hql.append(" AND c.zyh = :zyh");
-            chql.append(" AND o.zyh = :zyh");
+            chql.append(" AND c.zyh = :zyh");
             condition.put("zyh", professionalCode);
         }
         if (!StringUtils.isEmpty(nj)) {

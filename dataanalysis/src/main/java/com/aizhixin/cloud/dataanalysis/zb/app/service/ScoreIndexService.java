@@ -286,7 +286,7 @@ public class ScoreIndexService {
         Map<String, OrganizationDTO> pMap = new HashMap<>();
 
         List<OrganizationDTO> clist = organizationService.getCollegeList(orgId, cbhSet);
-        List<OrganizationDTO> plist = organizationService.getCollegeList(orgId, pbhSet);
+        List<OrganizationDTO> plist = organizationService.getProfessionList(orgId, null, pbhSet);
 
         if (null != clist) {
             for (OrganizationDTO o : clist) {
