@@ -73,6 +73,8 @@ public class EtlStudyExceptionService {
                                 jh.setKch(kc.getKch());
                                 jh.setKcmc(kc.getKcmc());
                                 jh.setXf(kc.getXf());
+                                jh.setKclb(kc.getKclb());
+                                jh.setKcxz(kc.getKcxz());
 
                                 xspyjhList.add(jh);
                             }
@@ -94,9 +96,6 @@ public class EtlStudyExceptionService {
             log.info("Query student count ({})", xhList.size());
             int i = 0;
             for (String xh : xhList) {
-//                if ("3172112111134".equals(xh)) {
-//                    System.out.println("--------------xh---------------------------");
-//                }
                 List<EtlStudentStudyPlanXdztDTO> cjList = etlStudyExceptionManager.queryXskccj(xxdm, xh);
                 if(null != cjList && !cjList.isEmpty()) {
                     Map<String, EtlStudentStudyPlanXdztDTO> kchCjMap = new HashMap<>();

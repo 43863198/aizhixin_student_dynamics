@@ -39,16 +39,22 @@ public class EtlStudendStudyPlanDTO {
     @Getter @Setter private Double xf;
     @ApiModelProperty(value = "学校代码")
     @Getter @Setter private String xxdm;
+    @ApiModelProperty(value = "课程类别")
+    @Getter @Setter private String kclb;
+    @ApiModelProperty(value = "课程性质")
+    @Getter @Setter private String kcxz;
 
     public EtlStudendStudyPlanDTO(String zyh, String nj) {
         this.zyh = zyh;
         this.nj = nj;
     }
 
-    public EtlStudendStudyPlanDTO(String kch, String kcmc, Double xf) {
+    public EtlStudendStudyPlanDTO(String kch, String kcmc, Double xf, String kclb, String kcxz) {
         this.kch = kch;
         this.kcmc = kcmc;
         this.xf = xf;
+        this.kclb = kclb;
+        this.kcxz = kcxz;
     }
 
     public EtlStudendStudyPlanDTO(String xh, String xm, String bjmc, String yxsh) {

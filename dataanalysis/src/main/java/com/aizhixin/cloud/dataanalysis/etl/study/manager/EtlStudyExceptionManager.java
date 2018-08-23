@@ -55,11 +55,11 @@ public class EtlStudyExceptionManager {
 
     private static String SQL_JXJH = "SELECT ZYH,NJ from t_zypyjh WHERE XN = ? AND XQM = ? AND XXDM = ? GROUP BY ZYH,NJ";
 
-    private static String SQL_JXJH_KC = "SELECT KCH, KCMC, XF from t_zypyjh WHERE ZYH = ? AND NJ = ? AND XN=? AND XQM=? AND XXDM=?";
+    private static String SQL_JXJH_KC = "SELECT KCH, KCMC, XF, KCLB, KCXZ from t_zypyjh WHERE ZYH = ? AND NJ = ? AND XN=? AND XQM=? AND XXDM=?";
 
     private static String SQL_XSJB_XX = "SELECT XH, XM, BJMC, YXSH FROM t_xsjbxx WHERE ZYH=? AND NJ=? AND XXID=?";
 
-    public static String SQL_INSERT_XSPYJH = "INSERT INTO t_xspyjh (XN, XQM, XH, XM, NJ, BJMC, ZYH, YXSH, XXDM, KCH, KCMC, XF, XDZT, JD) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public static String SQL_INSERT_XSPYJH = "INSERT INTO t_xspyjh (XN, XQM, XH, XM, NJ, BJMC, ZYH, YXSH, XXDM, KCH, KCMC, XF, XDZT, JD, KCLB, KCXZ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     public static String SQL_XSPYJH_YXSH = "SELECT DISTINCT XH FROM t_xspyjh WHERE XXDM=? AND YXSH=? AND XDZT != 10 AND XN <= ?";
     public static String SQL_XSPYJH = "SELECT DISTINCT XH FROM t_xspyjh WHERE XXDM=? AND XDZT != 10 AND XN <= ?";
@@ -126,7 +126,7 @@ public class EtlStudyExceptionManager {
         return jdbcTemplate.query(SQL_JXJH_KC,
                 new Object[]{zyh, nj, xn, xq, xxdm},
                 new int [] {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR},
-                (ResultSet rs, int rowNum) -> new EtlStudendStudyPlanDTO(rs.getString("KCH"), rs.getString("KCMC"), rs.getDouble("XF"))
+                (ResultSet rs, int rowNum) -> new EtlStudendStudyPlanDTO(rs.getString("KCH"), rs.getString("KCMC"), rs.getDouble("XF"), rs.getString("KCLB"), rs.getString("KCXZ"))
         );
     }
 
@@ -162,6 +162,8 @@ public class EtlStudyExceptionManager {
                 preparedStatement.setDouble(12, d.getXf());//XF
                 preparedStatement.setInt(13, 100);//XDZT
                 preparedStatement.setDouble(14, 0);//JD
+                preparedStatement.setString(15, d.getKclb());//KCLB
+                preparedStatement.setString(16, d.getKcxz());//KCXZ
             }
 
             @Override
