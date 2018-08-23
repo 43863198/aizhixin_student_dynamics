@@ -31,7 +31,7 @@ public class MinorSecondDegreeController {
     }
 
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "按类型查询辅修或第二学位列表", response = Void.class, notes = "按类型查询辅修或第二学位列表<br><br><b>@author dengchao</b>")
+    @ApiOperation(httpMethod = "GET", value = "查询辅修或第二学位列表", response = Void.class, notes = "查询辅修或第二学位列表<br><br><b>@author dengchao</b>")
     public PageData<MinorSecondDegreeInfo> list(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId,
                                                 @ApiParam(value = "collegeCode 学院code") @RequestParam(value = "collegeCode",  required = false) String collegeCode,
                                                 @ApiParam(value = "professionCode 专业code") @RequestParam(value = "professionCode", required = false) String professionCode,
