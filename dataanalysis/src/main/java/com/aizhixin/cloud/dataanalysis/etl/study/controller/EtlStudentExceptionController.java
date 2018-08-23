@@ -38,7 +38,7 @@ public class EtlStudentExceptionController {
     public void calStudentPyjh(
             @ApiParam(value = "xxdm 学校代码", required = true) @RequestParam(value = "xxdm") String xxdm,
             @ApiParam(value = "yxsh 学院") @RequestParam(value = "yxsh", required = false) String yxsh,
-            @ApiParam(value = "xn YYYY-CCCC培养计划的截止日期", required = true) @RequestParam(value = "xn") String xn) {
-        etlStudyExceptionService.calStudentPyjh(xxdm, yxsh, xn);
+            @ApiParam(value = "xnxq YYYY-CCCC-xq培养计划的截止学年学期", required = true) @RequestParam(value = "xnxq") String xnxq) {
+        etlStudyExceptionService.calStudentPyjh(xxdm, yxsh, xnxq);
     }
 }

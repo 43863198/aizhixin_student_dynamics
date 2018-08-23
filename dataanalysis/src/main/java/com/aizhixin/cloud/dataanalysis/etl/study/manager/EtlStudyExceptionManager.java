@@ -62,7 +62,7 @@ public class EtlStudyExceptionManager {
     public static String SQL_INSERT_XSPYJH = "INSERT INTO t_xspyjh (XN, XQM, XH, XM, NJ, BJMC, ZYH, YXSH, XXDM, KCH, KCMC, XF, XDZT, JD, KCLB, KCXZ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     public static String SQL_XSPYJH_YXSH = "SELECT DISTINCT XH FROM t_xspyjh WHERE XXDM=? AND YXSH=? AND XDZT != 10 AND XN <= ?";
-    public static String SQL_XSPYJH = "SELECT DISTINCT XH FROM t_xspyjh WHERE XXDM=? AND XDZT != 10 AND XN <= ?";
+    public static String SQL_XSPYJH = "SELECT DISTINCT XH FROM t_xspyjh WHERE XXDM=? AND XDZT != 10 AND CONCAT(XN, '-',XQM) <= ?";
     private static String SQL_XS_KCCJ = "SELECT  XH, KCH, MAX(BFCJ) AS CJ, MAX(JD) AS JD FROM t_b_xscjxx WHERE XXDM=? AND XH=? GROUP BY XH, KCH HAVING MAX(BFCJ) >= 60";
     private static String SQL_XS_PYJH_XH_KCH = "SELECT ID, XH, KCH FROM t_xspyjh WHERE XH = :xh AND KCH in (:kchs) AND XDZT != 10 AND XXDM = :xxdm";
     private static String SQL_XS_PYJH_UPDATE_XDZT = "UPDATE t_xspyjh SET XDZT=?, JD=? WHERE ID=?";
@@ -218,11 +218,6 @@ public class EtlStudyExceptionManager {
         params.put("kchs", kchs);
         params.put("xxdm", xxdm);
         return template.query(SQL_XS_PYJH_XH_KCH, params, (ResultSet rs, int rowNum) -> new EtlStudentStudyPlanXdztDTO(rs.getLong("ID"), rs.getString("XH"), rs.getString("KCH")));
-//        return jdbcTemplate.query(SQL_XS_PYJH_XH_KCH,
-//                new Object[]{xh, kchs, xxdm},
-//                new int [] {Types.VARCHAR , Types.VARCHAR, Types.VARCHAR},
-//                (ResultSet rs, int rowNum) -> new EtlStudentStudyPlanXdztDTO(rs.getLong("ID"), rs.getString("XH"), rs.getString("KCH"))
-//        );
     }
 
     /**

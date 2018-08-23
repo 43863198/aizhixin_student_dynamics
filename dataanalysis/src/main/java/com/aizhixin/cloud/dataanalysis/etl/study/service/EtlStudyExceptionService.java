@@ -90,8 +90,8 @@ public class EtlStudyExceptionService {
     }
 
     @Async
-    public void calStudentPyjh(String xxdm, String yxsh, String xn) {
-        List<String> xhList = etlStudyExceptionManager.queryXspyjhXh(xxdm, yxsh, xn);
+    public void calStudentPyjh(String xxdm, String yxsh, String xnxq) {
+        List<String> xhList = etlStudyExceptionManager.queryXspyjhXh(xxdm, yxsh, xnxq);
         if (null != xhList) {
             log.info("Query student count ({})", xhList.size());
             int i = 0;
