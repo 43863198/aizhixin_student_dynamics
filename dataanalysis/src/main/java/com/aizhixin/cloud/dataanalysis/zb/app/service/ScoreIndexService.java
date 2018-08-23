@@ -51,8 +51,8 @@ public class ScoreIndexService {
                 return v;
             }
             v.setKcs(zb.getKcs());
-            zb.setBxbjgrc(zb.getBxbjgrc());
-            zb.setCkrs(zb.getCkrs());
+            v.setBxbjgrc(zb.getBxbjgrc());
+            v.setCkrs(zb.getCkrs());
             if (null != zb.getCkrc() && 0 != zb.getCkrc()) {
                 v.setAvgcj(zb.getCjzf()/zb.getCkrc());
                 v.setAvgjd(zb.getJdzf()/zb.getCkrc());

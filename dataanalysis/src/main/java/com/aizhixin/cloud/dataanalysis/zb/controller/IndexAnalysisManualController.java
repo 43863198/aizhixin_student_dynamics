@@ -69,12 +69,12 @@ public class IndexAnalysisManualController {
 //    public void cetGrade(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId") Long orgId) {
 //        analysisIndexService.schoolNjIndex(orgId);
 //    }
-//
-//    @GetMapping(value = "/score", produces = MediaType.APPLICATION_JSON_VALUE)
-//    @ApiOperation(httpMethod = "GET", value = "学生成绩指标的计算", response = Void.class, notes = "学生成绩指标的计算<br><br><b>@author zhen.pan</b>")
-//    public void score(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId") Long orgId) {
-//        analysisIndexService.schoolStudentScoreIndex(orgId);
-//    }
+
+    @GetMapping(value = "/score", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "学生成绩指标的计算", response = Void.class, notes = "学生成绩指标的计算<br><br><b>@author zhen.pan</b>")
+    public void score(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId") Long orgId) {
+        standardScoreSemesterIndexService.schoolStudentScoreIndex(orgId);
+    }
 
     @GetMapping(value = "/cet/lj", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "英语等级考试累计基础指标统计", response = Void.class, notes = "英语等级考试累计基础指标统计<br><br><b>@author zhen.pan</b>")
