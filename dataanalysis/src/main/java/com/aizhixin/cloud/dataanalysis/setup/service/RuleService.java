@@ -53,6 +53,27 @@ public class RuleService {
             rule2.setRuleDescribe("在校学习期间，考核不合格的必修课程（含集中性实践教学环节）学分≥");
             rule2.setName("B");
             ruleList.add(rule2);
+
+            rule2 = new Rule();
+            rule2.setRuleDescribe("对比培养计划，漏选的课程数量≥");
+            rule2.setName("B");
+            ruleList.add(rule2);
+
+            rule2 = new Rule();
+            rule2.setRuleDescribe("对比培养计划，漏选的课程学分≥");
+            rule2.setName("B");
+            ruleList.add(rule2);
+
+            rule2 = new Rule();
+            rule2.setRuleDescribe("已修读的课程门数占教学计划的比例≤");
+            rule2.setName("B");
+            ruleList.add(rule2);
+
+            rule2 = new Rule();
+            rule2.setRuleDescribe("已修读的课程学分占教学计划的比例≤");
+            rule2.setName("B");
+            ruleList.add(rule2);
+
             Rule  rule3 = new Rule();
             rule3.setRuleDescribe("上学期不合格的必修课程（含集中性实践教学环节）学分≥");
             rule3.setName("C");
