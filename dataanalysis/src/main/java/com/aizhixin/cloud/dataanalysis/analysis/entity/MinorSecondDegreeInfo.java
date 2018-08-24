@@ -67,4 +67,10 @@ public class MinorSecondDegreeInfo {
     @ApiModelProperty(value = "二学位院系名称")
     @Column(name = "EXWYXMC")
     @Getter @Setter private String exwyxmc;
+    @ApiModelProperty(value = "学年")
+    @Column(name = "XN")
+    @Getter @Setter private String xn;
+    @ApiModelProperty(value = "学期码")
+    @Column(name = "XQM")
+    @Getter @Setter private String xqm;
 }
