@@ -2,10 +2,7 @@ package com.aizhixin.cloud.dataanalysis.zb.controller;
 
 import com.aizhixin.cloud.dataanalysis.bz.service.CetEtlService;
 import com.aizhixin.cloud.dataanalysis.bz.service.StandardScoreService;
-import com.aizhixin.cloud.dataanalysis.zb.service.CetDcIndexAnalysisService;
-import com.aizhixin.cloud.dataanalysis.zb.service.CetGradeService;
-import com.aizhixin.cloud.dataanalysis.zb.service.CetLjIndexAnalysisService;
-import com.aizhixin.cloud.dataanalysis.zb.service.StandardScoreSemesterIndexService;
+import com.aizhixin.cloud.dataanalysis.zb.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -37,6 +34,8 @@ public class IndexAnalysisManualController {
     private CetDcIndexAnalysisService cetDcIndexAnalysisService;
     @Autowired
     private StandardScoreSemesterIndexService standardScoreSemesterIndexService;
+    @Autowired
+    private StudyExceptionIndexService studyExceptionIndexService;
 
     @GetMapping(value = "/cet/etl", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "英语等级考试数据库对数据库标准数据清洗ETL", response = Void.class, notes = "英语等级考试数据库对数据库标准数据清洗ETL<br><br><b>@author zhen.pan</b>")
@@ -124,5 +123,11 @@ public class IndexAnalysisManualController {
     @ApiOperation(httpMethod = "GET", value = "学生成绩所有学期对应数据学生指标的生成", response = Void.class, notes = "学生成绩所有学期对应数据学生指标的生成<br><br><b>@author zhen.pan</b>")
     public void scoreAll(@ApiParam(value = "xxdm 机构代码" , required = true) @RequestParam(value = "xxdm") String xxdm) {
         standardScoreSemesterIndexService.allSemesterStudentScoreIndex(xxdm);
+    }
+
+    @GetMapping(value = "/studyException", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "计算当前时间对于学期的修读异常指标", response = Void.class, notes = "计算当前时间对于学期的修读异常指标<br><br><b>@author zhen.pan</b>")
+    public void studyException(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId") Long orgId) {
+        studyExceptionIndexService.calCurrentDateIndex(orgId);
     }
 }

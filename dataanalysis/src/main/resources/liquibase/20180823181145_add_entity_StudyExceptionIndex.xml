@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+    <!-- 修读指标-->
+    <changeSet id="20180823181145" author="zhen.pan">
+		<preConditions onFail="MARK_RAN">
+	        <not>
+	            <tableExists tableName="T_ZB_XDYC"/>
+	        </not>
+	    </preConditions>
+        <createTable tableName="T_ZB_XDYC" remarks="修读指标">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="XN" type="VARCHAR(20)" remarks="XN学年"/>
+            <column name="XQM" type="VARCHAR(10)" remarks="XQM学期"/>
+            <column name="XXDM" type="VARCHAR(20)" remarks="XXDM学校代码"/>
+            <column name="YXSH" type="VARCHAR(20)" remarks="YXSH院系所号"/>
+            <column name="YXSMC" type="VARCHAR(100)" remarks="YXSMC院系所名称"/>
+            <column name="ZYH" type="VARCHAR(20)" remarks="ZYH专业号"/>
+            <column name="ZYMC" type="VARCHAR(120)" remarks="ZYMC专业名称"/>
+            <column name="BJBH" type="VARCHAR(120)" remarks="BH班级编码"/>
+            <column name="BJMC" type="VARCHAR(120)" remarks="BJMC班级名称"/>
+            <column name="XH" type="VARCHAR(50)" remarks="XH学号"/>
+            <column name="XM" type="VARCHAR(80)" remarks="XM姓名"/>
+            <column name="KCS" type="INT" remarks="kcs课程数"/>
+            <column name="LXKCS" type="INT" remarks="lxkcs漏选课程数"/>
+            <column name="TGKCS" type="INT" remarks="tgkcs通过课程数"/>
+            <column name="XF" type="DECIMAL(11,2)" remarks="XF总学分"/>
+            <column name="LXXF" type="DECIMAL(11,2)" remarks="LXXF漏选学分"/>
+            <column name="TGXF" type="DECIMAL(11,2)" remarks="TGXF通过学分"/>
+            <column name="BXBJGXF" type="DECIMAL(11,2)" remarks="BXBJGXF必修不及格学分"/>
+        </createTable>
+        <createIndex indexName="idx_xdyc_xn" tableName="T_ZB_XDYC" unique="false">
+            <column name="XN" type="VARCHAR(20)"/>
+        </createIndex>
+        <createIndex indexName="idx_xdyc_xqm" tableName="T_ZB_XDYC" unique="false">
+            <column name="XQM" type="VARCHAR(10)"/>
+        </createIndex>
+        <createIndex indexName="idx_xdyc_xxdm" tableName="T_ZB_XDYC" unique="false">
+            <column name="XXDM" type="VARCHAR(20)"/>
+        </createIndex>
+        <createIndex indexName="idx_xdyc_yxsh" tableName="T_ZB_XDYC" unique="false">
+            <column name="YXSH" type="VARCHAR(20)"/>
+        </createIndex>
+        <createIndex indexName="idx_xdyc_zyh" tableName="T_ZB_XDYC" unique="false">
+            <column name="ZYH" type="VARCHAR(20)"/>
+        </createIndex>
+        <createIndex indexName="idx_xdyc_bjbh" tableName="T_ZB_XDYC" unique="false">
+            <column name="BJBH" type="VARCHAR(120)"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
