@@ -3,6 +3,7 @@ package com.aizhixin.cloud.dataanalysis.analysis.service;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.MinorSecondDegreeInfo;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.MinorSecondDegreeRepository;
 import com.aizhixin.cloud.dataanalysis.analysis.vo.MinorSecondDegreeVO;
+import com.aizhixin.cloud.dataanalysis.analysis.vo.OverviewVO;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.setup.service.GenerateWarningInfoService;
 import org.hibernate.SQLQuery;
@@ -230,5 +231,51 @@ public class MinorSecondDegreeService {
             e.printStackTrace();
             return new ArrayList<>();
         }
+    }
+
+    public List<OverviewVO> overview(Long orgId, String collegeCode) {
+        Long fxcount = 0L;
+        Long exwcount = 0L;
+
+        List<OverviewVO> list = new ArrayList<>();
+        Map<String, Object> condition = new HashMap<>();
+        try {
+            StringBuilder sql = new StringBuilder("select count(xh) as total from t_xsjbxx where CURDATE() BETWEEN RXNY and YBYNY and DQZT NOT IN ('02','04','16')");
+
+            if (StringUtils.isEmpty(collegeCode)) {
+                sql.append(" and XXID=:orgId ");
+                condition.put("orgId", orgId);
+                fxcount = minorSecondDegreeRepository.countByXxdmAndFxyxshIsNotNull(orgId);
+                exwcount = minorSecondDegreeRepository.countByXxdmAndExwyxshIsNotNull(orgId);
+            } else {
+                sql.append(" and YXSH=:collegeCode ");
+                condition.put("collegeCode", collegeCode);
+                fxcount = minorSecondDegreeRepository.countByXxdmAndYxshAndFxyxshIsNotNull(orgId,collegeCode);
+                exwcount = minorSecondDegreeRepository.countByXxdmAndYxshAndExwyxshIsNotNull(orgId,collegeCode);
+            }
+
+            Query sq = em.createNativeQuery(sql.toString());
+            for (Map.Entry<String,Object> e : condition.entrySet()){
+                sq.setParameter(e.getKey(),e.getValue());
+            }
+            sq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+            List<Object> res = sq.getResultList();
+            int total = 0;
+            if(null != res){
+                Map map = (Map)res.get(0);
+                total = Integer.parseInt(map.get("total").toString());
+            }
+
+            OverviewVO overviewVO =new OverviewVO();
+            overviewVO.setFxtotal(fxcount.intValue());
+            overviewVO.setExwtotal(exwcount.intValue());
+            overviewVO.setTotal(total);
+            list.add(overviewVO);
+            return list;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+
     }
 }

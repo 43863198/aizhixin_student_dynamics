@@ -23,6 +23,14 @@ public interface MinorSecondDegreeRepository extends JpaRepository<MinorSecondDe
     @Query("select exwyxmc as name,count(xh) as total from #{#entityName} where xxdm = :xxdm and exwyxmc = :yxmc GROUP BY exwyxmc")
     List<Map<String,Object>> findByXxdmAndWbExwCount(@Param(value = "xxdm") Long xxdm,@Param(value = "yxmc") String yxmc);
 
+    Long countByXxdmAndFxyxshIsNotNull(Long xxdm);
+
+    Long countByXxdmAndExwyxshIsNotNull(Long xxdm);
+
+    Long countByXxdmAndYxshAndFxyxshIsNotNull(Long xxdm,String yxsh);
+
+    Long countByXxdmAndYxshAndExwyxshIsNotNull(Long xxdm,String yxsh);
+
 
 
 }
