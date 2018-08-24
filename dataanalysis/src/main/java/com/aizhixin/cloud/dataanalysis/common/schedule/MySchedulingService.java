@@ -1,8 +1,12 @@
 package com.aizhixin.cloud.dataanalysis.common.schedule;
 
-import com.aizhixin.cloud.dataanalysis.analysis.job.CetStatisticsAnalysisJob;
+import com.aizhixin.cloud.dataanalysis.alertinformation.job.WarnInforJob;
+import com.aizhixin.cloud.dataanalysis.common.service.DistributeLock;
 import com.aizhixin.cloud.dataanalysis.common.service.SyncClassTeacher;
-import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
+import com.aizhixin.cloud.dataanalysis.monitor.job.RollCallDayJob;
+import com.aizhixin.cloud.dataanalysis.monitor.job.TeachingScheduleJob;
+import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
+import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
 import com.aizhixin.cloud.dataanalysis.setup.job.WarningTypeOnAndOffJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,15 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.aizhixin.cloud.dataanalysis.alertinformation.job.WarnInforJob;
-import com.aizhixin.cloud.dataanalysis.common.service.DistributeLock;
-import com.aizhixin.cloud.dataanalysis.monitor.job.RollCallDayJob;
-import com.aizhixin.cloud.dataanalysis.monitor.job.TeachingScheduleJob;
-import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
-import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
-import com.aizhixin.cloud.dataanalysis.studentRegister.job.StudentRegisterJob;
-
-import javax.annotation.PostConstruct;
 import java.util.Calendar;
 
 /**
@@ -128,7 +123,7 @@ public class MySchedulingService {
         }
     }
 
-    @Scheduled(cron = "0 0/10 * * * ?")
+//    @Scheduled(cron = "0 0/10 * * * ?")
     public void updateWarnStateJob() {
         if (distributeLock.updateWarnStateJobLock()) {
         	warnInforJob.updateWarnStateJob();
