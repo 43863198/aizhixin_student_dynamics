@@ -11,6 +11,8 @@ import lombok.ToString;
 public class MinorSecondDegreeVO {
     @ApiModelProperty(value = "部门名称")
     private String bmmc;
+    @ApiModelProperty(value = "部门CODE")
+    private String bmCode;
     @ApiModelProperty(value = "本部门辅修人数")
     private int bmfxs;
     @ApiModelProperty(value = "本部门二学位人数")

@@ -102,19 +102,19 @@ public class MinorSecondDegreeService {
         try {
             if (!StringUtils.isEmpty(collegeCode)) {
                 //本部门各专业辅修统计
-                StringBuilder bmfxsql = new StringBuilder("select tp.name as name,count(tf.ZYH) as total FROM (select name,CODE from t_profession where COMPANY_NUMBER = :collegeCode) as tp LEFT JOIN t_fxexwxx as tf " +
+                StringBuilder bmfxsql = new StringBuilder("select tp.name as name,tp.CODE as code,count(tf.ZYH) as total FROM (select name,CODE from t_profession where COMPANY_NUMBER = :collegeCode) as tp LEFT JOIN t_fxexwxx as tf " +
                         "on tp.CODE = tf.ZYH and tf.FXYXSH IS NOT NULL and tf.XXDM = :xxdm group by tf.ZYH");
 
                 //外部门辅修本部门各专业统计
-                StringBuilder wbmfxsql = new StringBuilder("select tp.name as name,count(tf.FXZYH) as total FROM (select name,CODE from t_profession where COMPANY_NUMBER = :collegeCode) as tp LEFT JOIN t_fxexwxx as tf " +
+                StringBuilder wbmfxsql = new StringBuilder("select tp.name as name,tp.CODE as code,count(tf.FXZYH) as total FROM (select name,CODE from t_profession where COMPANY_NUMBER = :collegeCode) as tp LEFT JOIN t_fxexwxx as tf " +
                         "on tp.CODE = tf.FXZYH and tf.FXYXSH IS NOT NULL and tf.XXDM = :xxdm group by tf.FXZYH");
 
                 //本部门各专业修二学位统计
-                StringBuilder bmexwsql = new StringBuilder("select tp.name as name,count(tf.ZYH) as total FROM (select name,CODE from t_profession where COMPANY_NUMBER = :collegeCode) as tp LEFT JOIN t_fxexwxx as tf " +
+                StringBuilder bmexwsql = new StringBuilder("select tp.name as name,tp.CODE as code,count(tf.ZYH) as total FROM (select name,CODE from t_profession where COMPANY_NUMBER = :collegeCode) as tp LEFT JOIN t_fxexwxx as tf " +
                         "on tp.CODE = tf.ZYH and tf.EXWYXSH IS NOT NULL and tf.XXDM = :xxdm group by tf.ZYH");
 
                 //外部门修本部门各专业二学位统计
-                StringBuilder wbmexwsql = new StringBuilder("select tp.name as name,count(tf.EXWZYH) as total FROM (select name,CODE from t_profession where COMPANY_NUMBER = :collegeCode) as tp LEFT JOIN t_fxexwxx as tf " +
+                StringBuilder wbmexwsql = new StringBuilder("select tp.name as name,tp.CODE as code,count(tf.EXWZYH) as total FROM (select name,CODE from t_profession where COMPANY_NUMBER = :collegeCode) as tp LEFT JOIN t_fxexwxx as tf " +
                         "on tp.CODE = tf.EXWZYH and tf.EXWYXSH IS NOT NULL and tf.XXDM = :xxdm group by tf.EXWZYH");
 
                 Query bmfx = em.createNativeQuery(bmfxsql.toString());
@@ -147,6 +147,9 @@ public class MinorSecondDegreeService {
                         }
                         if (null != d.get("name")) {
                             minorSecondDegreeVO.setBmmc(d.get("name").toString());
+                        }
+                        if (null != d.get("code")) {
+                            minorSecondDegreeVO.setBmCode(d.get("code").toString());
                         }
                         list.add(minorSecondDegreeVO);
                     }
@@ -191,6 +194,7 @@ public class MinorSecondDegreeService {
                 for (Map map : fxlist) {
                     MinorSecondDegreeVO minorSecondDegreeVO = new MinorSecondDegreeVO();
                     minorSecondDegreeVO.setBmmc(map.get("name").toString());
+                    minorSecondDegreeVO.setBmCode(map.get("code").toString());
                     minorSecondDegreeVO.setBmfxs(Integer.valueOf(map.get("total").toString()));
                     list.add(minorSecondDegreeVO);
                 }
