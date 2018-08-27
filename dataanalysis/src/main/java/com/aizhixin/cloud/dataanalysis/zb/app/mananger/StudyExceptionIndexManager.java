@@ -27,7 +27,7 @@ public class StudyExceptionIndexManager {
     }
 
     public List<StudyExceptionIndex> findByXxdmAndXnAndXqm(String xxdm, String xn, String xqm) {
-        return studyExceptionIndexZbRespository.findByXxdmAndXnAnAndXqm(xxdm, xn, xqm);
+        return studyExceptionIndexZbRespository.findByXxdmAndXnAndXqm(xxdm, xn, xqm);
     }
 
     public String findLastestXnByXxdm(String xxdm) {

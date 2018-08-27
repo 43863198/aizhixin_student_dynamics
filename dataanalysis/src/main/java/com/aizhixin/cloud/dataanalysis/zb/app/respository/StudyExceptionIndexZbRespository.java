@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface StudyExceptionIndexZbRespository extends JpaRepository<StudyExceptionIndex,Long>{
     void deleteByXxdmAndXnAndXqm(String xxdm, String xn, String xqm);
-    List<StudyExceptionIndex> findByXxdmAndXnAnAndXqm(String xxdm, String xn, String xqm);
+    List<StudyExceptionIndex> findByXxdmAndXnAndXqm(String xxdm, String xn, String xqm);
 
     @Query("SELECT max(t.xn) FROM #{#entityName} t WHERE t.xxdm = :xxdm")
     String findLastestXnByXxdm(@Param(value = "xxdm") String xxdm);
