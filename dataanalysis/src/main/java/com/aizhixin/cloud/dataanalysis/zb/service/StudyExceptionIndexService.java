@@ -122,14 +122,8 @@ public class StudyExceptionIndexService {
                     if ("与".equals(as.getRelationship())) {
                         createAndAlertDescAndAlertIndex(rsList, ruleParams, e, warn);
                     } else {
-                        try {
-                            createOrAlertDescAndAlertIndex(rsList, ruleParams, e, warn);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
+                        createOrAlertDescAndAlertIndex(rsList, ruleParams, e, warn);
                     }
-//                    String alertId = UUID.randomUUID().toString();
-//                    warn.setId(alertId);
                     warn.setName(e.getXm());
                     warn.setJobNumber(e.getXh());
                     warn.setCollogeCode(e.getYxsh());
@@ -272,6 +266,7 @@ public class StudyExceptionIndexService {
         if (desc.length() > 0) {
             warn.setWarningCondition(desc.toString());
             warn.setWarningStandard(st.toString());
+            warn.setWarningSource(desc.toString());
             rsList.add(warn);
         }
     }
