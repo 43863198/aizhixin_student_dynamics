@@ -11,6 +11,7 @@ import com.aizhixin.cloud.dataanalysis.setup.entity.RuleParameter;
 import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.studentRegister.job.StudentRegisterJob;
 import com.aizhixin.cloud.dataanalysis.zb.service.StudyExceptionIndexService;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import java.util.*;
  * @Date: 2018-05-21
  */
 @Service
+@Slf4j
 public class GenerateWarningInfoService {
     @Autowired
     private WarningTypeService warningTypeService;
@@ -141,11 +143,6 @@ public class GenerateWarningInfoService {
                 HashMap<Integer, List<WarningInformation>> restHasMap = new HashMap<>();
                 for (AlarmSettings as : alarmSettingsList) {
                     if (null != as && as.getSetupCloseFlag() == 10) {
-                        List<WarningInformation> leaveSchoolList = null;
-                        if ("AttendAbnormal".equals(type)) {
-                            leaveSchoolList = studyExceptionIndexService.generalAlertInfo(orgId, schoolYear, semester, as);
-                            continue;
-                        }
                         String rules = as.getRuleSet();
                         String[] ruleSetIds;
                         if (rules.indexOf(",") != -1) {
@@ -161,41 +158,47 @@ public class GenerateWarningInfoService {
                         List<WarningInformation> totalAchievementList = null;
                         List<WarningInformation> cetList = null;
                         List<WarningInformation> attendAbnormalList = null;
-                        for (String ruleSetId : ruleSetIds) {
-                            if (!StringUtils.isEmpty(ruleSetId)) {
-                                RuleParameter rp = ruleParameterService.findById(ruleSetId);
-                                if (null != rp) {
-                                    Rule rule = null;
-                                    List<Rule> ruleList = ruleService.getByName(rp.getRuleName());
-                                    if (null != ruleList && ruleList.size() > 0) {
-                                        rule = ruleList.get(0);
-                                    }
-                                    if (null != rule) {
-                                        if (rule.getName().equals("A")) {
-                                            WarningType wt = warningTypeService.getWarningTypeByOrgIdAndType(orgId, type);
-                                            Date startTime = wt.getStartTime();
-                                            registerList = studentRegisterJob.studenteRegisterJob(orgId, schoolYear, semester, rp.getId(), startTime);
+                        List<WarningInformation> leaveSchoolList = null;
+                        if ("AttendAbnormal".equals(type)) {
+                            leaveSchoolList = studyExceptionIndexService.generalAlertInfo(orgId, schoolYear, semester, as);
+                            log.info("Generator study exception index count({})", leaveSchoolList.size());
+                        } else {
+                            for (String ruleSetId : ruleSetIds) {
+                                if (!StringUtils.isEmpty(ruleSetId)) {
+                                    RuleParameter rp = ruleParameterService.findById(ruleSetId);
+                                    if (null != rp) {
+                                        Rule rule = null;
+                                        List<Rule> ruleList = ruleService.getByName(rp.getRuleName());
+                                        if (null != ruleList && ruleList.size() > 0) {
+                                            rule = ruleList.get(0);
                                         }
-                                        if (rule.getName().equals("D")) {
-                                            absenteeismList = rollCallJob.rollCallJob(orgId, schoolYear, semester, rp.getId());
-                                        }
-                                        if (rule.getName().equals("G")) {
-                                            performanceFluctuationList = scoreJob.scoreFluctuateJob(orgId, schoolYear, semester, rp.getId());
-                                        }
-                                        if (rule.getName().equals("F")) {
-                                            supplementAchievementList = scoreJob.makeUpScoreJob(orgId, schoolYear, semester, rp.getId());
-                                        }
-                                        if (rule.getName().equals("E")) {
-                                            totalAchievementList = scoreJob.failScoreCountJob(orgId, schoolYear, semester, rp.getId());
-                                        }
+                                        if (null != rule) {
+                                            if (rule.getName().equals("A")) {
+                                                WarningType wt = warningTypeService.getWarningTypeByOrgIdAndType(orgId, type);
+                                                Date startTime = wt.getStartTime();
+                                                registerList = studentRegisterJob.studenteRegisterJob(orgId, schoolYear, semester, rp.getId(), startTime);
+                                            }
+                                            if (rule.getName().equals("D")) {
+                                                absenteeismList = rollCallJob.rollCallJob(orgId, schoolYear, semester, rp.getId());
+                                            }
+                                            if (rule.getName().equals("G")) {
+                                                performanceFluctuationList = scoreJob.scoreFluctuateJob(orgId, schoolYear, semester, rp.getId());
+                                            }
+                                            if (rule.getName().equals("F")) {
+                                                supplementAchievementList = scoreJob.makeUpScoreJob(orgId, schoolYear, semester, rp.getId());
+                                            }
+                                            if (rule.getName().equals("E")) {
+                                                totalAchievementList = scoreJob.failScoreCountJob(orgId, schoolYear, semester, rp.getId());
+                                            }
 //                                        if (rule.getName().equals("B")) {
 //                                            leaveSchoolList = scoreJob.dropOutJob(orgId, schoolYear, semester, rp.getId());
 //                                        }
-                                        if (rule.getName().equals("H")) {
-                                            cetList = scoreJob.cet4ScoreJob(orgId, schoolYear, semester, rp.getId());
-                                        }
-                                        if (rule.getName().equals("C")) {
-                                            attendAbnormalList = scoreJob.attendAbnormalJob(orgId, schoolYear, semester, rp.getId());
+                                            if (rule.getName().equals("H")) {
+                                                cetList = scoreJob.cet4ScoreJob(orgId, schoolYear, semester, rp.getId());
+                                            }
+                                            if (rule.getName().equals("C")) {
+                                                attendAbnormalList = scoreJob.attendAbnormalJob(orgId, schoolYear, semester, rp.getId());
+                                            }
                                         }
                                     }
                                 }
