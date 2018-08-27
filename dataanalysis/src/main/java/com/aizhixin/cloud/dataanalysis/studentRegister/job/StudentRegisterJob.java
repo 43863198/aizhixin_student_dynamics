@@ -1,43 +1,26 @@
 package com.aizhixin.cloud.dataanalysis.studentRegister.job;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
 import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
-import com.aizhixin.cloud.dataanalysis.common.util.RestUtil;
 import com.aizhixin.cloud.dataanalysis.setup.entity.RuleParameter;
-import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
-import com.aizhixin.cloud.dataanalysis.setup.service.ProcessingModeService;
-
 import com.aizhixin.cloud.dataanalysis.setup.service.RuleParameterService;
 import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
+import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
+import com.aizhixin.cloud.dataanalysis.studentRegister.mongoRespository.StudentRegisterMongoRespository;
 import org.apache.log4j.Logger;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
-import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
-import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
-import com.aizhixin.cloud.dataanalysis.studentRegister.mongoRespository.StudentRegisterMongoRespository;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 @Component
 public class StudentRegisterJob {
@@ -98,9 +81,9 @@ public class StudentRegisterJob {
                             if (null != alarmRule) {
                                 if (result >= Float.parseFloat(alarmRule.getRightParameter())) {
                                     WarningInformation alertInfor = new WarningInformation();
-                                    String alertId = UUID.randomUUID()
-                                            .toString();
-                                    alertInfor.setId(alertId);
+//                                    String alertId = UUID.randomUUID()
+//                                            .toString();
+//                                    alertInfor.setId(alertId);
                                     alertInfor.setName(studentRegister.getUserName());
                                     alertInfor.setJobNumber(studentRegister.getJobNum());
                                     alertInfor.setCollogeCode(studentRegister.getCollegeCode());
