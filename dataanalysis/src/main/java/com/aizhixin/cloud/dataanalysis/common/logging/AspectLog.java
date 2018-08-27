@@ -26,9 +26,9 @@ public class AspectLog {
         try {
             long starttime = System.currentTimeMillis();
             Object result = joinPoint.proceed();
-            if(LOG.isDebugEnabled()) {
-                LOG.debug("{} {} Params[{}] Response[{}] speed time:[{}]ms", joinPoint.getSignature().getDeclaringTypeName(), joinPoint.getSignature().getName(), Arrays.toString(joinPoint.getArgs()), result, (System.currentTimeMillis() - starttime));
-            }
+//            if(LOG.isDebugEnabled()) {
+            LOG.info("{} {} Params[{}] Response[{}] speed time:[{}]ms", joinPoint.getSignature().getDeclaringTypeName(), joinPoint.getSignature().getName(), Arrays.toString(joinPoint.getArgs()), result, (System.currentTimeMillis() - starttime));
+//            }
             return result;
         } catch (IllegalArgumentException e) {
             throw e;
