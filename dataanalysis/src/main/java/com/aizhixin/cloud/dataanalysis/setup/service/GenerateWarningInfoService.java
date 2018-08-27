@@ -137,7 +137,7 @@ public class GenerateWarningInfoService {
     public void warningInfo(Long orgId, String type, String schoolYear, String semester) {
         StringBuilder path = new StringBuilder("/warningInfo");
         path.append("/").append(type);
-        if (distributeLock.getLock(path)) {
+//        if (distributeLock.getLock(path)) {
             try {
                 List<AlarmSettings> alarmSettingsList = alarmSettingsService.getAlarmSettingsByOrgIdAndWarningType(orgId, type);
                 HashMap<Integer, List<WarningInformation>> restHasMap = new HashMap<>();
@@ -690,7 +690,7 @@ public class GenerateWarningInfoService {
         }finally{
             distributeLock.delete(path);
         }
-    }
+//    }
 }
 
 }
