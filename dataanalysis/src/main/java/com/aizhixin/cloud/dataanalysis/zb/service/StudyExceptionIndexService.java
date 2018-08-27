@@ -128,8 +128,8 @@ public class StudyExceptionIndexService {
                             ex.printStackTrace();
                         }
                     }
-                    String alertId = UUID.randomUUID().toString();
-                    warn.setId(alertId);
+//                    String alertId = UUID.randomUUID().toString();
+//                    warn.setId(alertId);
                     warn.setName(e.getXm());
                     warn.setJobNumber(e.getXh());
                     warn.setCollogeCode(e.getYxsh());

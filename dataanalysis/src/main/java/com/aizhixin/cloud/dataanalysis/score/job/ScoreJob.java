@@ -539,8 +539,8 @@ public class ScoreJob {
                         result = Math.abs(result);
                         if (result >= Float.parseFloat(String.valueOf(ruleParameter.getRightParameter()))) {
                             WarningInformation alertInfor = new WarningInformation();
-                            String alertId = UUID.randomUUID().toString();
-                            alertInfor.setId(alertId);
+//                            String alertId = UUID.randomUUID().toString();
+//                            alertInfor.setId(alertId);
                             alertInfor.setName(scoreFluctuateCount.getUserName());
                             alertInfor.setJobNumber(scoreFluctuateCount.getJobNum());
                             alertInfor.setCollogeCode(scoreFluctuateCount.getCollegeCode());
@@ -593,9 +593,9 @@ public class ScoreJob {
                     if (">=".equals(ruleParameter.getRightRelationship())) {
                         if (totalScoreCount.getFailRequiredCourseNum() >= Float.parseFloat(ruleParameter.getRightParameter())) {
                             WarningInformation alertInfor = new WarningInformation();
-                            String alertId = UUID.randomUUID()
-                                    .toString();
-                            alertInfor.setId(alertId);
+//                            String alertId = UUID.randomUUID()
+//                                    .toString();
+//                            alertInfor.setId(alertId);
                             alertInfor.setName(totalScoreCount
                                     .getUserName());
                             alertInfor.setJobNumber(totalScoreCount
@@ -810,8 +810,8 @@ public class ScoreJob {
                             .parseFloat(ruleParameter
                                     .getRightParameter())) {
                         WarningInformation alertInfor = new WarningInformation();
-                        String alertId = UUID.randomUUID().toString();
-                        alertInfor.setId(alertId);
+//                        String alertId = UUID.randomUUID().toString();
+//                        alertInfor.setId(alertId);
                         alertInfor.setName(makeUpScoreCount.getUserName());
                         alertInfor.setJobNumber(makeUpScoreCount.getJobNum());
                         alertInfor.setCollogeCode(makeUpScoreCount.getCollegeCode());
@@ -954,8 +954,8 @@ public class ScoreJob {
                         for (Map d : res) {
                             if (null != d.get("xh") && cd.get("xh").equals(d.get("xh"))) {
                                 WarningInformation alertInfor = new WarningInformation();
-                                String alertId = UUID.randomUUID().toString();
-                                alertInfor.setId(alertId);
+//                                String alertId = UUID.randomUUID().toString();
+//                                alertInfor.setId(alertId);
                                 if (null != d.get("xh")) {
                                     alertInfor.setJobNumber(d.get("xh").toString());
                                 }

@@ -196,9 +196,9 @@ public class GenerateWarningInfoService {
                                             if (rule.getName().equals("H")) {
                                                 cetList = scoreJob.cet4ScoreJob(orgId, schoolYear, semester, rp.getId());
                                             }
-                                            if (rule.getName().equals("C")) {
-                                                attendAbnormalList = scoreJob.attendAbnormalJob(orgId, schoolYear, semester, rp.getId());
-                                            }
+//                                            if (rule.getName().equals("C")) {
+//                                                attendAbnormalList = scoreJob.attendAbnormalJob(orgId, schoolYear, semester, rp.getId());
+//                                            }
                                         }
                                     }
                                 }

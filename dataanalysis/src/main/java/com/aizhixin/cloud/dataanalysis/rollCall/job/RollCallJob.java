@@ -1,13 +1,5 @@
 package com.aizhixin.cloud.dataanalysis.rollCall.job;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
 import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
@@ -18,19 +10,16 @@ import com.aizhixin.cloud.dataanalysis.rollCall.mongoEntity.RollCall;
 import com.aizhixin.cloud.dataanalysis.rollCall.mongoEntity.RollCallCount;
 import com.aizhixin.cloud.dataanalysis.rollCall.mongoRespository.RollCallCountMongoRespository;
 import com.aizhixin.cloud.dataanalysis.rollCall.mongoRespository.RollCallMongoRespository;
+import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
 import com.aizhixin.cloud.dataanalysis.setup.entity.RuleParameter;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
-import com.aizhixin.cloud.dataanalysis.setup.service.ProcessingModeService;
-
 import com.aizhixin.cloud.dataanalysis.setup.service.RuleParameterService;
-import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
 import org.apache.log4j.Logger;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
+import java.util.*;
 
 @Component
 public class RollCallJob {
@@ -172,8 +161,8 @@ public class RollCallJob {
                 if (null != ruleParameter) {
                     if (rollCallCount.getOutSchoolTimes() >= Float.parseFloat(ruleParameter.getRightParameter())) {
                         WarningInformation alertInfor = new WarningInformation();
-                        String alertId = UUID.randomUUID().toString();
-                        alertInfor.setId(alertId);
+//                        String alertId = UUID.randomUUID().toString();
+//                        alertInfor.setId(alertId);
                         alertInfor.setName(rollCallCount.getUserName());
                         alertInfor.setJobNumber(rollCallCount.getJobNum());
                         alertInfor.setCollogeCode(rollCallCount.getCollegeCode());
