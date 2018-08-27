@@ -1,5 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.analysis.service;
 
+import com.aizhixin.cloud.dataanalysis.analysis.dto.OrganizationDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.MinorSecondDegreeInfo;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.MinorSecondDegreeRepository;
 import com.aizhixin.cloud.dataanalysis.analysis.vo.MinorSecondDegreeVO;
@@ -28,6 +29,8 @@ public class MinorSecondDegreeService {
     private GenerateWarningInfoService generateWarningInfoService;
     @Autowired
     private EntityManager em;
+    @Autowired
+    private OrganizationService organizationService;
 
 
     public PageData<MinorSecondDegreeInfo> list(Long xxdm, String collegeCode, String professionCode, Integer pageNumber, Integer pageSize) {
@@ -101,135 +104,53 @@ public class MinorSecondDegreeService {
         List<MinorSecondDegreeVO> list = new ArrayList<>();
         try {
             if (!StringUtils.isEmpty(collegeCode)) {
-                //本部门各专业辅修统计
-                StringBuilder bmfxsql = new StringBuilder("select tp.name as name,tp.CODE as code,count(tf.ZYH) as total FROM (select name,CODE from t_profession where COMPANY_NUMBER = :collegeCode) as tp LEFT JOIN t_fxexwxx as tf " +
-                        "on tp.CODE = tf.ZYH and tf.FXYXSH IS NOT NULL and tf.XXDM = :xxdm group by tf.ZYH");
 
-                //外部门辅修本部门各专业统计
-                StringBuilder wbmfxsql = new StringBuilder("select tp.name as name,tp.CODE as code,count(tf.FXZYH) as total FROM (select name,CODE from t_profession where COMPANY_NUMBER = :collegeCode) as tp LEFT JOIN t_fxexwxx as tf " +
-                        "on tp.CODE = tf.FXZYH and tf.FXYXSH IS NOT NULL and tf.XXDM = :xxdm group by tf.FXZYH");
-
-                //本部门各专业修二学位统计
-                StringBuilder bmexwsql = new StringBuilder("select tp.name as name,tp.CODE as code,count(tf.ZYH) as total FROM (select name,CODE from t_profession where COMPANY_NUMBER = :collegeCode) as tp LEFT JOIN t_fxexwxx as tf " +
-                        "on tp.CODE = tf.ZYH and tf.EXWYXSH IS NOT NULL and tf.XXDM = :xxdm group by tf.ZYH");
-
-                //外部门修本部门各专业二学位统计
-                StringBuilder wbmexwsql = new StringBuilder("select tp.name as name,tp.CODE as code,count(tf.EXWZYH) as total FROM (select name,CODE from t_profession where COMPANY_NUMBER = :collegeCode) as tp LEFT JOIN t_fxexwxx as tf " +
-                        "on tp.CODE = tf.EXWZYH and tf.EXWYXSH IS NOT NULL and tf.XXDM = :xxdm group by tf.EXWZYH");
-
-                Query bmfx = em.createNativeQuery(bmfxsql.toString());
-                Query wbmfx = em.createNativeQuery(wbmfxsql.toString());
-                Query bmexw = em.createNativeQuery(bmexwsql.toString());
-                Query wbmexw = em.createNativeQuery(wbmexwsql.toString());
-                bmfx.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-                wbmfx.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-                bmexw.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-                wbmexw.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-
-                bmfx.setParameter("collegeCode", collegeCode);
-                wbmfx.setParameter("collegeCode", collegeCode);
-                bmexw.setParameter("collegeCode", collegeCode);
-                wbmexw.setParameter("collegeCode", collegeCode);
-
-                bmfx.setParameter("xxdm", xxdm);
-                wbmfx.setParameter("xxdm", xxdm);
-                bmexw.setParameter("xxdm", xxdm);
-                wbmexw.setParameter("xxdm", xxdm);
+                //本部门各专业列表
+                Map zyMap = organizationService.getProfession(xxdm,collegeCode);
+                List<OrganizationDTO> zyList = (List)zyMap.get("data");
 
 
-                List<Object> bmfxres = bmfx.getResultList();
-                if (null != bmfxres) {
-                    for (Object obj : bmfxres) {
-                        Map d = (Map) obj;
-                        MinorSecondDegreeVO minorSecondDegreeVO = new MinorSecondDegreeVO();
-                        if (null != d.get("total")) {
-                            minorSecondDegreeVO.setBmfxs(Integer.valueOf(d.get("total").toString()));
-                        }
-                        if (null != d.get("name")) {
-                            minorSecondDegreeVO.setBmmc(d.get("name").toString());
-                        }
-                        if (null != d.get("code")) {
-                            minorSecondDegreeVO.setBmCode(d.get("code").toString());
-                        }
-                        list.add(minorSecondDegreeVO);
-                    }
-                }
-                List<Object> wbmfxres = wbmfx.getResultList();
-                if (null != wbmfxres) {
-                    for (Object obj : wbmfxres) {
-                        Map d = (Map) obj;
-                        for (MinorSecondDegreeVO mv : list) {
-                            if (mv.getBmmc().equals(d.get("name").toString())) {
-                                mv.setWbmfxs(Integer.valueOf(d.get("total").toString()));
-                            }
-                        }
-                    }
-                }
-                List<Object> bmexwres = bmexw.getResultList();
-                if (null != bmexwres) {
-                    for (Object obj : bmexwres) {
-                        Map d = (Map) obj;
-                        for (MinorSecondDegreeVO mv : list) {
-                            if (mv.getBmmc().equals(d.get("name").toString())) {
-                                mv.setBmexws(Integer.valueOf(d.get("total").toString()));
-                            }
-                        }
-                    }
-                }
-                List<Object> wbmexwres = wbmexw.getResultList();
-                if (null != wbmexwres) {
-                    for (Object obj : wbmexwres) {
-                        Map d = (Map) obj;
-                        for (MinorSecondDegreeVO mv : list) {
-                            if (mv.getBmmc().equals(d.get("name").toString())) {
-                                mv.setWbmexws(Integer.valueOf(d.get("total").toString()));
-                            }
-                        }
-                    }
-                }
-            } else {
-
-                List<Map<String, Object>> fxlist = minorSecondDegreeRepository.findByXxdmFxCount(xxdm);
-                List<Map<String, Object>> exwlist = minorSecondDegreeRepository.findByXxdmEXWCount(xxdm);
-                for (Map map : fxlist) {
+                for (OrganizationDTO temp : zyList){
                     MinorSecondDegreeVO minorSecondDegreeVO = new MinorSecondDegreeVO();
-                    minorSecondDegreeVO.setBmmc(map.get("name").toString());
-                    minorSecondDegreeVO.setBmCode(map.get("code").toString());
-                    minorSecondDegreeVO.setBmfxs(Integer.valueOf(map.get("total").toString()));
+                    minorSecondDegreeVO.setBmmc(temp.getName());
+                    String code = temp.getCode();
+                    minorSecondDegreeVO.setBmCode(code);
+                    //本专业辅修统计
+                    List<Map<String,Object>> fxList =  minorSecondDegreeRepository.countByXxdmAndYxshAndZyhFx(xxdm,collegeCode,code);
+                    minorSecondDegreeVO.setBmfxs(fxList.size());
+                    //本专业二学位统计
+                    List<Map<String,Object>> exwList = minorSecondDegreeRepository.countByXxdmAndYxshAndZyhExw(xxdm,collegeCode,code);
+                    minorSecondDegreeVO.setBmexws(exwList.size());
+
+                    //外部门辅修本专业统计
+                    List<Map<String,Object>> wbmfxlist = minorSecondDegreeRepository.countByXxdmAndYxshWBFX(xxdm,collegeCode,code);
+                    minorSecondDegreeVO.setWbmfxs(wbmfxlist.size());
+                    //外部门修本专业二学位统计
+                    List<Map<String,Object>> wbmexwlist = minorSecondDegreeRepository.countByXxdmAndYxshWBEXW(xxdm,collegeCode,code);
+                    minorSecondDegreeVO.setWbmexws(wbmexwlist.size());
+
                     list.add(minorSecondDegreeVO);
                 }
-                for (Map map2 : exwlist) {
-                    for (MinorSecondDegreeVO mv : list) {
-                        if (mv.getBmmc().equals(map2.get("name").toString())) {
-                            mv.setBmexws(Integer.valueOf(map2.get("total").toString()));
-                        }
-                    }
-
-                }
-                List<Map<String, Object>> wfxlist = new ArrayList<>();
-                List<Map<String, Object>> wexwlist = new ArrayList<>();
-                for (MinorSecondDegreeVO mv : list) {
-                    String yxmc = mv.getBmmc();
-                    wfxlist = minorSecondDegreeRepository.findByXxdmAndWbFxCount(xxdm, yxmc);
-                    wexwlist = minorSecondDegreeRepository.findByXxdmAndWbExwCount(xxdm, yxmc);
-                    for (Map map : wfxlist) {
-                        for (MinorSecondDegreeVO mv1 : list) {
-                            if (mv1.getBmmc().equals(map.get("name").toString())) {
-                                mv1.setWbmfxs(Integer.valueOf(map.get("total").toString()));
-                            }
-                        }
-                    }
-                    for (Map map2 : wexwlist) {
-                        for (MinorSecondDegreeVO mv2 : list) {
-                            if (mv2.getBmmc().equals(map2.get("name").toString())) {
-                                mv2.setWbmexws(Integer.valueOf(map2.get("total").toString()));
-                            }
-                        }
-
-                    }
+            } else {
+                //学校各院系列表
+                Map yxMap = organizationService.getCollege(xxdm);
+                List<OrganizationDTO> yxList = (List)yxMap.get("data");
+                for(OrganizationDTO temp : yxList){
+                    MinorSecondDegreeVO minorSecondDegreeVO = new MinorSecondDegreeVO();
+                    String code = temp.getCode();
+                    List<Map<String, Object>> fxlist = minorSecondDegreeRepository.countByXxdmAndYxshFxCount(xxdm,code);
+                    minorSecondDegreeVO.setBmmc(StringUtils.isEmpty(temp.getSimple())?temp.getName():temp.getSimple());
+                    minorSecondDegreeVO.setBmCode(code);
+                    minorSecondDegreeVO.setBmfxs(fxlist.size());
+                    List<Map<String, Object>> exwlist = minorSecondDegreeRepository.countByXxdmAndYxshEXWCount(xxdm,code);
+                    minorSecondDegreeVO.setBmexws(exwlist.size());
+                    List<Map<String,Object>> wbmfxlist = minorSecondDegreeRepository.countByXxdmAndYxshWbFxCount(xxdm,code);
+                    minorSecondDegreeVO.setWbmfxs(wbmfxlist.size());
+                    List<Map<String,Object>> wbmexwlist = minorSecondDegreeRepository.countByXxdmAndYxshWbExwCount(xxdm,code);
+                    minorSecondDegreeVO.setWbmexws(wbmexwlist.size());
+                    list.add(minorSecondDegreeVO);
                 }
             }
-
             return list;
         } catch (Exception e) {
             e.printStackTrace();
@@ -238,8 +159,8 @@ public class MinorSecondDegreeService {
     }
 
     public List<OverviewVO> overview(Long orgId, String collegeCode) {
-        Long fxcount = 0L;
-        Long exwcount = 0L;
+        Long fxcount;
+        Long exwcount;
 
         List<OverviewVO> list = new ArrayList<>();
         Map<String, Object> condition = new HashMap<>();
