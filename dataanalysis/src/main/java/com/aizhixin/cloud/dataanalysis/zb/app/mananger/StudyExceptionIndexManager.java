@@ -26,4 +26,15 @@ public class StudyExceptionIndexManager {
         studyExceptionIndexZbRespository.deleteByXxdmAndXnAndXqm(xxdm, xn, xqm);
     }
 
+    public List<StudyExceptionIndex> findByXxdmAndXnAndXqm(String xxdm, String xn, String xqm) {
+        return studyExceptionIndexZbRespository.findByXxdmAndXnAnAndXqm(xxdm, xn, xqm);
+    }
+
+    public String findLastestXnByXxdm(String xxdm) {
+        return studyExceptionIndexZbRespository.findLastestXnByXxdm(xxdm);
+    }
+
+    public String findLastestXqmByXxdmAndXn(String xxdm, String xn) {
+        return studyExceptionIndexZbRespository.findLastestXqmByXxdmAndXn(xxdm, xn);
+    }
 }

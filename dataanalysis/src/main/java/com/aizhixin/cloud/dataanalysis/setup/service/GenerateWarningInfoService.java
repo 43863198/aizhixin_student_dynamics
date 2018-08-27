@@ -10,6 +10,7 @@ import com.aizhixin.cloud.dataanalysis.setup.entity.Rule;
 import com.aizhixin.cloud.dataanalysis.setup.entity.RuleParameter;
 import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.studentRegister.job.StudentRegisterJob;
+import com.aizhixin.cloud.dataanalysis.zb.service.StudyExceptionIndexService;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,8 @@ public class GenerateWarningInfoService {
     private DistributeLock distributeLock;
     @Autowired
     private EntityManager em;
+    @Autowired
+    private StudyExceptionIndexService studyExceptionIndexService;
 
     public void warningJob() {
         Calendar c = Calendar.getInstance();
@@ -138,6 +141,11 @@ public class GenerateWarningInfoService {
                 HashMap<Integer, List<WarningInformation>> restHasMap = new HashMap<>();
                 for (AlarmSettings as : alarmSettingsList) {
                     if (null != as && as.getSetupCloseFlag() == 10) {
+                        List<WarningInformation> leaveSchoolList = null;
+                        if ("AttendAbnormal".equals(type)) {
+                            leaveSchoolList = studyExceptionIndexService.generalAlertInfo(orgId, schoolYear, semester, as);
+                            continue;
+                        }
                         String rules = as.getRuleSet();
                         String[] ruleSetIds;
                         if (rules.indexOf(",") != -1) {
@@ -151,7 +159,6 @@ public class GenerateWarningInfoService {
                         List<WarningInformation> performanceFluctuationList = null;
                         List<WarningInformation> supplementAchievementList = null;
                         List<WarningInformation> totalAchievementList = null;
-                        List<WarningInformation> leaveSchoolList = null;
                         List<WarningInformation> cetList = null;
                         List<WarningInformation> attendAbnormalList = null;
                         for (String ruleSetId : ruleSetIds) {
@@ -181,9 +188,9 @@ public class GenerateWarningInfoService {
                                         if (rule.getName().equals("E")) {
                                             totalAchievementList = scoreJob.failScoreCountJob(orgId, schoolYear, semester, rp.getId());
                                         }
-                                        if (rule.getName().equals("B")) {
-                                            leaveSchoolList = scoreJob.dropOutJob(orgId, schoolYear, semester, rp.getId());
-                                        }
+//                                        if (rule.getName().equals("B")) {
+//                                            leaveSchoolList = scoreJob.dropOutJob(orgId, schoolYear, semester, rp.getId());
+//                                        }
                                         if (rule.getName().equals("H")) {
                                             cetList = scoreJob.cet4ScoreJob(orgId, schoolYear, semester, rp.getId());
                                         }
