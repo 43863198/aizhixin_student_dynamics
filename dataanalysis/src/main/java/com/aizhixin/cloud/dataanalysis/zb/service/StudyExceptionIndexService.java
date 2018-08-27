@@ -78,10 +78,10 @@ public class StudyExceptionIndexService {
         String zxq = null;
         if (xn.indexOf("-") < 0) {//非标准学年学期转换
             if ("秋".equals(xq)) {
-                zxn = xn = xn + "-" + (new Integer(xn) + 1);
+                zxn = xn + "-" + (new Integer(xn) + 1);
                 zxq = "1";
             } else if ("春".equals(xq)) {
-                zxn = xn = (new Integer(xn) - 1) + "-" + xn;
+                zxn = (new Integer(xn) - 1) + "-" + xn;
                 zxq = "2";
             }
         } else {
@@ -146,6 +146,7 @@ public class StudyExceptionIndexService {
                     warn.setSemester(xq);
                     warn.setTeacherYear(xn);
                     warn.setOrgId(orgId);
+                    warn.setWarningTime(new Date ());
                 }
             }
         }
