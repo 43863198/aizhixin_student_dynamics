@@ -117,14 +117,16 @@ public class StudyExceptionIndexService {
                 }
             }
             if (null != studyExceptionIndexList && !studyExceptionIndexList.isEmpty()) {
-                String tmp = null;
-                int p = -1;
                 for (StudyExceptionIndex e : studyExceptionIndexList) {
                     WarningInformation warn = new WarningInformation ();
                     if ("与".equals(as.getRelationship())) {
                         createAndAlertDescAndAlertIndex(rsList, ruleParams, e, warn);
                     } else {
-                        createOrAlertDescAndAlertIndex(rsList, ruleParams, e, warn);
+                        try {
+                            createOrAlertDescAndAlertIndex(rsList, ruleParams, e, warn);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
                     }
                     String alertId = UUID.randomUUID().toString();
                     warn.setId(alertId);
@@ -137,6 +139,8 @@ public class StudyExceptionIndexService {
                     warn.setProfessionalCode(e.getZyh());
                     warn.setProfessionalName(e.getZymc());
                     warn.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
+                    warn.setWarningType(as.getWarningType());
+                    warn.setWarningLevel(as.getWarningLevel());
 
                     warn.setWarningTime(new Date());
                     warn.setSemester(xq);

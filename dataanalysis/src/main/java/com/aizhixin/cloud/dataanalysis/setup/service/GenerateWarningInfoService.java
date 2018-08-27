@@ -135,8 +135,8 @@ public class GenerateWarningInfoService {
 
     @Async
     public void warningInfo(Long orgId, String type, String schoolYear, String semester) {
-        StringBuilder path = new StringBuilder("/warningInfo");
-        path.append("/").append(type);
+//        StringBuilder path = new StringBuilder("/warningInfo");
+//        path.append("/").append(type);
 //        if (distributeLock.getLock(path)) {
             try {
                 List<AlarmSettings> alarmSettingsList = alarmSettingsService.getAlarmSettingsByOrgIdAndWarningType(orgId, type);
@@ -161,7 +161,7 @@ public class GenerateWarningInfoService {
                         List<WarningInformation> leaveSchoolList = null;
                         if ("AttendAbnormal".equals(type)) {
                             leaveSchoolList = studyExceptionIndexService.generalAlertInfo(orgId, schoolYear, semester, as);
-                            log.info("Generator study exception index count({})", leaveSchoolList.size());
+                            log.info("Generator study exception index count({})", (null == leaveSchoolList ? 0 : leaveSchoolList.size()));
                         } else {
                             for (String ruleSetId : ruleSetIds) {
                                 if (!StringUtils.isEmpty(ruleSetId)) {
@@ -687,9 +687,10 @@ public class GenerateWarningInfoService {
                 warningInformationService.save(resList);
         }catch(Exception e){
             e.printStackTrace();
-        }finally{
-            distributeLock.delete(path);
         }
+//        finally{
+//            distributeLock.delete(path);
+//        }
 //    }
 }
 
