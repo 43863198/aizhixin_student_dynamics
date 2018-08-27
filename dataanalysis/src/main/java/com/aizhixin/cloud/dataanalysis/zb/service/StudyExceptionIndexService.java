@@ -71,7 +71,7 @@ public class StudyExceptionIndexService {
     /**
      * 修读异常告警计算
      */
-    @Async
+//    @Async
     public List<WarningInformation> generalAlertInfo (Long orgId, String xn, String xq, AlarmSettings as) {
         List<WarningInformation> rsList = new ArrayList<>();
         String zxn = null;
