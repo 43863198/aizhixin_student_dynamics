@@ -33,6 +33,8 @@
             <column name="EXWZYMC" type="VARCHAR(80)" remarks="二学位专业名称"/>
 			<column name="EXWYXSH" type="VARCHAR(40)" remarks="二学位院系所号"/>
             <column name="EXWYXMC" type="VARCHAR(80)" remarks="二学位院系名称"/>
+            <column name="XN" type="VARCHAR(20)" remarks="学年"/>
+            <column name="XQM" type="VARCHAR(10)" remarks="学期码"/>
         </createTable>
 
         <createIndex indexName="idx_fxexwxx_xxdm" tableName="T_FXEXWXX" unique="false">
@@ -44,8 +46,11 @@
         <createIndex indexName="idx_fxexwxx_zyh" tableName="T_FXEXWXX" unique="false">
             <column name="ZYH" type="VARCHAR(40)"/>
         </createIndex>
-        <createIndex indexName="idx_fxexwxx_xh" tableName="T_FXEXWXX" unique="false">
-            <column name="XH" type="VARCHAR(40)"/>
+        <createIndex indexName="idx_fxexwxx_xn" tableName="T_FXEXWXX" unique="false">
+            <column name="XN" type="VARCHAR(20)"/>
+        </createIndex>
+        <createIndex indexName="idx_fxexwxx_xqm" tableName="T_FXEXWXX" unique="false">
+            <column name="XQM" type="VARCHAR(10)"/>
         </createIndex>
     </changeSet>
 </databaseChangeLog>
