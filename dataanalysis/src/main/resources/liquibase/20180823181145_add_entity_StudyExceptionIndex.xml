@@ -36,6 +36,8 @@
             <column name="LXXF" type="DECIMAL(11,2)" remarks="LXXF漏选学分"/>
             <column name="TGXF" type="DECIMAL(11,2)" remarks="TGXF通过学分"/>
             <column name="BXBJGXF" type="DECIMAL(11,2)" remarks="BXBJGXF必修不及格学分"/>
+            <column name="LXKCNR" type="TEXT" remarks="LXKCNR漏选课程内容"/>
+            <column name="BXBJGKCNR" type="TEXT" remarks="BXBJGKCNR必修不及格课程内容"/>
         </createTable>
         <createIndex indexName="idx_xdyc_xn" tableName="T_ZB_XDYC" unique="false">
             <column name="XN" type="VARCHAR(20)"/>

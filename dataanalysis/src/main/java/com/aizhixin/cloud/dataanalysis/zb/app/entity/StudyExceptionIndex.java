@@ -75,7 +75,14 @@ public class StudyExceptionIndex {
     @Column(name = "BXBJGXF")
     @Getter @Setter private Double bxbjgxf;
 
-    public StudyExceptionIndex (String xh, String xm, String bjmc, String zyh, String zymc, String yxsh, String yxsmc, Long kcs, Long lxkcs, Long tgkcs, Double xf, Double lxxf, Double tgxf, Double bxbjgxf) {
+    @ApiModelProperty(value = "LXKCNR漏选课程内容")
+    @Column(name = "LXKCNR")
+    @Getter @Setter private String lxkcnr;
+    @ApiModelProperty(value = "BXBJGKCNR必修不及格课程内容")
+    @Column(name = "BXBJGKCNR")
+    @Getter @Setter private String bxbjgkcnr;
+
+    public StudyExceptionIndex (String xh, String xm, String bjmc, String zyh, String zymc, String yxsh, String yxsmc, Long kcs, Long lxkcs, Long tgkcs, Double xf, Double lxxf, Double tgxf, Double bxbjgxf, String lxkcnr, String bxbjgkcnr) {
         this.xh = xh;
         this.xm = xm;
         this.bjmc = bjmc;
@@ -90,5 +97,7 @@ public class StudyExceptionIndex {
         this.lxxf = lxxf;
         this.tgxf = tgxf;
         this.bxbjgxf = bxbjgxf;
+        this.lxkcnr = lxkcnr;
+        this.bxbjgkcnr = bxbjgkcnr;
     }
 }

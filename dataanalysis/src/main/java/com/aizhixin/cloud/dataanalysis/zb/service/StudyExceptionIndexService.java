@@ -29,6 +29,9 @@ public class StudyExceptionIndexService {
     @Autowired
     private RuleParameterService ruleParameterService;
 
+    /**
+     * 修读异常指标计算
+     */
     @Async
     public void calCurrentDateIndex(Long orgId) {
         Date current = new Date();
@@ -258,7 +261,7 @@ public class StudyExceptionIndexService {
                     if (e.getBxbjgxf() < new Double(r.getRightParameter())) {
                         break;
                     } else {
-                        desc.append("[").append(r.getRuledescribe()).append(e.getBxbjgxf()).append("]");
+                        desc.append("[").append(r.getRuledescribe()).append(e.getBxbjgxf()).append("] ");
                     }
                 }
             }
