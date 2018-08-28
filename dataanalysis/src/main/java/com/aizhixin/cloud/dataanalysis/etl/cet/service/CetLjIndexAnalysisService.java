@@ -1,9 +1,9 @@
-package com.aizhixin.cloud.dataanalysis.zb.service;
+package com.aizhixin.cloud.dataanalysis.etl.cet.service;
 
-import com.aizhixin.cloud.dataanalysis.zb.dto.AnalysisBasezbDTO;
-import com.aizhixin.cloud.dataanalysis.zb.dto.SchoolCalendarDTO;
-import com.aizhixin.cloud.dataanalysis.zb.dto.ZxrsDTO;
-import com.aizhixin.cloud.dataanalysis.zb.manager.CetLjIndexAnalysisManager;
+import com.aizhixin.cloud.dataanalysis.etl.cet.dto.AnalysisBasezbDTO;
+import com.aizhixin.cloud.dataanalysis.etl.cet.dto.SchoolCalendarDTO;
+import com.aizhixin.cloud.dataanalysis.etl.cet.dto.ZxrsDTO;
+import com.aizhixin.cloud.dataanalysis.etl.cet.manager.CetLjIndexAnalysisManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;

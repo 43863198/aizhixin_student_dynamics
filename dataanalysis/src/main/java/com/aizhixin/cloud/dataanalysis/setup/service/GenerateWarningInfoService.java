@@ -10,7 +10,7 @@ import com.aizhixin.cloud.dataanalysis.setup.entity.Rule;
 import com.aizhixin.cloud.dataanalysis.setup.entity.RuleParameter;
 import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.studentRegister.job.StudentRegisterJob;
-import com.aizhixin.cloud.dataanalysis.zb.service.StudyExceptionIndexService;
+import com.aizhixin.cloud.dataanalysis.etl.study.service.StudyExceptionIndexService;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;

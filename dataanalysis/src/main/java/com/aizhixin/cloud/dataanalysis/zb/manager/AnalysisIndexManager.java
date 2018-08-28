@@ -1,6 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.zb.manager;
 
-import com.aizhixin.cloud.dataanalysis.zb.dto.SchoolCalendarDTO;
+import com.aizhixin.cloud.dataanalysis.etl.cet.dto.SchoolCalendarDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;

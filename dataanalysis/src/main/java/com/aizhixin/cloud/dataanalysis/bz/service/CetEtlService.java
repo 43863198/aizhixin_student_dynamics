@@ -5,7 +5,7 @@ import com.aizhixin.cloud.dataanalysis.bz.entity.CetStandardScore;
 import com.aizhixin.cloud.dataanalysis.bz.manager.CetETLFromDBManager;
 import com.aizhixin.cloud.dataanalysis.bz.manager.CetStandardScoreManager;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
-import com.aizhixin.cloud.dataanalysis.zb.dto.SchoolCalendarDTO;
+import com.aizhixin.cloud.dataanalysis.etl.cet.dto.SchoolCalendarDTO;
 import com.aizhixin.cloud.dataanalysis.zb.manager.AnalysisIndexManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

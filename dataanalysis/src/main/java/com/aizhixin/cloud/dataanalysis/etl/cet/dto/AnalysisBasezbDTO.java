@@ -1,4 +1,4 @@
-package com.aizhixin.cloud.dataanalysis.zb.dto;
+package com.aizhixin.cloud.dataanalysis.etl.cet.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
