@@ -4,6 +4,7 @@ import com.aizhixin.cloud.dataanalysis.alertinformation.domain.*;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AttachmentInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.OperationRecord;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
+import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -153,6 +154,7 @@ public class AlarmHandlingService {
             for (String id : idArray) {
                 WarningInformation warningInformation = alertWarningInformationService.getOneById(id);
                 warningInformation.setLastModifiedDate(new Date());
+                warningInformation.setWarningState(AlertTypeConstant.ALERT_PROCESSED);
                 alertWarningInformationService.save(warningInformation);
                 Map<String, String> map = batchDealDomain.getDealTypes();
                 if (null != map) {
