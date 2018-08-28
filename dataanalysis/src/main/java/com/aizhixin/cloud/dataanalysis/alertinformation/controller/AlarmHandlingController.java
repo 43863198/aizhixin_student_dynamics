@@ -63,13 +63,13 @@ public class AlarmHandlingController {
     @PutMapping(value = "/batchprocessing",  produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "PUT", value = "批量处理本页信息", response = Void.class, notes = "批量处理本页信息<br><br><b>@author dengchao</b>")
     public Map<String, Object> processing(
-            @ApiParam(value = "<b>必填:、</b><br>warningInformationId:预警信息id<br><b>" +
+            @ApiParam(value = "<b>必填:、</b><br>warningInformationIds:预警信息id<br><b>" +
                     "<br>status:20 完成预警处理 40 撤销预警处理<br>")  @RequestBody BatchDealResultDomain batchDealResultDomain) {
         return alarmHandlingService.batchProcessing(batchDealResultDomain) ;
     }
 
     @PutMapping(value = "/batchallprocessing",  produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "PUT", value = "批量处理本页信息", response = Void.class, notes = "批量处理本页信息<br><br><b>@author dengchao</b>")
+    @ApiOperation(httpMethod = "PUT", value = "批量处理全部信息", response = Void.class, notes = "批量处理全部信息<br><br><b>@author dengchao</b>")
     public Map<String, Object> processing(
             @ApiParam(value = "<b>必填:、</b><br>orgId:机构id<br>" +
                     "<br>teacherYear:学年<br>" +
