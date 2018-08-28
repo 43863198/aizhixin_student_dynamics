@@ -120,9 +120,13 @@ public class AlarmHandlingService {
                         OperationRecord operationRecord = operaionRecordService.getOneById(or.getId());
                         operationRecord.setOrgId(warningInformation.getOrgId());
                         operationRecord.setOperationTime(new Date());
-                        operationRecord.setDealType(domain.getDealType());
-                        operationRecord.setProposal(domain.getDealInfo());
-                        operaionRecordService.save(operationRecord);
+                        Map<String,Map<String,String>> maps = domain.getDealTypes();
+                        Map<String,String> typeMap = maps.get("dealtypes");
+                        for (Map.Entry<String, String> e : typeMap.entrySet()) {
+                            operationRecord.setDealType(Integer.parseInt(e.getKey()));
+                            operationRecord.setProposal(e.getValue());
+                            operaionRecordService.save(operationRecord);
+                        }
                     }
                 }
             }
@@ -153,9 +157,15 @@ public class AlarmHandlingService {
                     OperationRecord operationRecord = operaionRecordService.getOneById(or.getId());
                     operationRecord.setOrgId(warningInformation.getOrgId());
                     operationRecord.setOperationTime(new Date());
-                    operationRecord.setDealType(batchDealDomain.getDealType());
-                    operationRecord.setProposal(batchDealDomain.getDealInfo());
-                    operaionRecordService.save(operationRecord);
+                    Map<String,Map<String,String>> map = batchDealDomain.getDealTypes();
+                    Map<String,String> typeMap = map.get("dealtypes");
+                    for (Map.Entry<String, String> e : typeMap.entrySet()) {
+                        operationRecord.setDealType(Integer.parseInt(e.getKey()));
+                        operationRecord.setProposal(e.getValue());
+                        operaionRecordService.save(operationRecord);
+                    }
+
+
                 }
             }
         } catch (Exception e) {
