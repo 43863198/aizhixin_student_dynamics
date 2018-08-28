@@ -628,13 +628,17 @@ public class AlertWarningInformationService {
     public Map<String, Object> queryStuAlertInforPage(Long orgId, String jobNum, Integer pageNumber, Integer pageSize) {
         String querySql = "SELECT ID,NAME,COLLOGE_NAME,CLASS_NAME,JOB_NUMBER,WARNING_LEVEL,WARNING_CONDITION,WARNING_TYPE,WARNING_TIME,WARNING_STATE,WARNING_SOURCE FROM `t_warning_information` where DELETE_FLAG =" + DataValidity.VALID.getState() + " ";
         querySql += " and ORG_ID =" + orgId;
-        querySql += " and job_number='" + jobNum + "'";
+        if(!StringUtils.isEmpty(jobNum)){
+            querySql += " and job_number='" + jobNum + "'";
+        }
+
         querySql += "  ORDER BY CREATED_DATE";
 
         String countSql = "SELECT count(1) FROM `t_warning_information` where DELETE_FLAG =" + DataValidity.VALID.getState() + " ";
         countSql += " and ORG_ID =" + orgId;
-        countSql += " and job_number='" + jobNum + "'";
-
+        if(!StringUtils.isEmpty(jobNum)){
+            countSql += " and job_number='" + jobNum + "'";
+        }
         List<SortDTO> sort = new ArrayList<SortDTO>();
         SortDTO dto = new SortDTO();
         dto.setKey("WARNING_TIME");
