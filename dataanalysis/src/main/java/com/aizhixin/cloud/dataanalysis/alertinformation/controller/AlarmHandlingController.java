@@ -64,10 +64,9 @@ public class AlarmHandlingController {
     @ApiOperation(httpMethod = "PUT", value = "批量处理本页信息", response = Void.class, notes = "批量处理本页信息<br><br><b>@author dengchao</b>")
     public Map<String, Object> processing(
             @ApiParam(value = "<b>必填:</b>" +
-                    "<br>warnInfoDealIdMap:预警信息id和处理操作id(以map的形式，格式如:(warningInformationId : dealId));" +
+                    "<br>warningInformationIds:预警信息id列表;" +
                     "<b>选填:</b>" +
-                    "<br>dealInfo:处理信息;" +
-                    "dealType:处理类型 辅导员处理10 学院处理 20;") @RequestBody BatchDealDomain batchDealDomain) {
+                    "dealTypes:处理类型和处理建议 辅导员处理10 学院处理 20;") @RequestBody BatchDealDomain batchDealDomain) {
         return alarmHandlingService.batchProcessing(batchDealDomain);
     }
 
@@ -82,10 +81,8 @@ public class AlarmHandlingController {
                     "<br>warningTypes:预警类型(字符串多个以,分隔);<br>" +
                     "<br>warningLevels:预警等级(字符串多个以,分隔)<br>;" +
                     "<br>collegeId:院系id<br>"+
-                    "<br>dealId:处理id;<br>" +
                     "<b>选填:</b>" +
-                    "<br>dealInfo:处理信息;<br>" +
-                    "dealType:处理类型 辅导员处理10 学院处理 20;") @RequestBody BatchAllDealDomain domain) {
+                    "dealTypes:处理类型和处理建议 辅导员处理10 学院处理 20;") @RequestBody BatchAllDealDomain domain) {
         return alarmHandlingService.batchAllProcessing(domain);
     }
 

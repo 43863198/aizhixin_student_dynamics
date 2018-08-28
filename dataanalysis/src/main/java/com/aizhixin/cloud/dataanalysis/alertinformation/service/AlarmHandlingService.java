@@ -115,18 +115,20 @@ public class AlarmHandlingService {
                     WarningInformation warningInformation = alertWarningInformationService.getOneById(map.get("ID").toString());
                     warningInformation.setLastModifiedDate(new Date());
                     alertWarningInformationService.save(warningInformation);
-                    List<OperationRecord> operationRecordList = operaionRecordService.getOperationRecordByWInfoId(map.get("ID").toString());
-                    for (OperationRecord or : operationRecordList) {
-                        OperationRecord operationRecord = operaionRecordService.getOneById(or.getId());
-                        operationRecord.setOrgId(warningInformation.getOrgId());
-                        operationRecord.setOperationTime(new Date());
-                        Map<String,Map<String,String>> maps = domain.getDealTypes();
-                        Map<String,String> typeMap = maps.get("dealtypes");
-                        for (Map.Entry<String, String> e : typeMap.entrySet()) {
-                            operationRecord.setDealType(Integer.parseInt(e.getKey()));
-                            operationRecord.setProposal(e.getValue());
-                            operaionRecordService.save(operationRecord);
+                    Map<String, String> maps = domain.getDealTypes();
+                    if (null != maps) {
+                        List<OperationRecord> operationRecordList = operaionRecordService.getOperationRecordByWInfoId(map.get("ID").toString());
+                        for (OperationRecord or : operationRecordList) {
+                            OperationRecord operationRecord = operaionRecordService.getOneById(or.getId());
+                            operationRecord.setOrgId(warningInformation.getOrgId());
+                            operationRecord.setOperationTime(new Date());
+                            for (Map.Entry<String, String> e : maps.entrySet()) {
+                                operationRecord.setDealType(Integer.parseInt(e.getKey()));
+                                operationRecord.setProposal(e.getValue());
+                                operaionRecordService.save(operationRecord);
+                            }
                         }
+
                     }
                 }
             }
@@ -148,24 +150,23 @@ public class AlarmHandlingService {
         Map<String, Object> result = new HashMap<>();
         try {
             String[] idArray = batchDealDomain.getWarningInformationIds();
-            for(String id : idArray){
+            for (String id : idArray) {
                 WarningInformation warningInformation = alertWarningInformationService.getOneById(id);
                 warningInformation.setLastModifiedDate(new Date());
                 alertWarningInformationService.save(warningInformation);
-                List<OperationRecord> operationRecordList =  operaionRecordService.getOperationRecordByWInfoId(id);
-                for (OperationRecord or : operationRecordList) {
-                    OperationRecord operationRecord = operaionRecordService.getOneById(or.getId());
-                    operationRecord.setOrgId(warningInformation.getOrgId());
-                    operationRecord.setOperationTime(new Date());
-                    Map<String,Map<String,String>> map = batchDealDomain.getDealTypes();
-                    Map<String,String> typeMap = map.get("dealtypes");
-                    for (Map.Entry<String, String> e : typeMap.entrySet()) {
-                        operationRecord.setDealType(Integer.parseInt(e.getKey()));
-                        operationRecord.setProposal(e.getValue());
-                        operaionRecordService.save(operationRecord);
+                Map<String, String> map = batchDealDomain.getDealTypes();
+                if (null != map) {
+                    List<OperationRecord> operationRecordList = operaionRecordService.getOperationRecordByWInfoId(id);
+                    for (OperationRecord or : operationRecordList) {
+                        OperationRecord operationRecord = operaionRecordService.getOneById(or.getId());
+                        operationRecord.setOrgId(warningInformation.getOrgId());
+                        operationRecord.setOperationTime(new Date());
+                        for (Map.Entry<String, String> e : map.entrySet()) {
+                            operationRecord.setDealType(Integer.parseInt(e.getKey()));
+                            operationRecord.setProposal(e.getValue());
+                            operaionRecordService.save(operationRecord);
+                        }
                     }
-
-
                 }
             }
         } catch (Exception e) {

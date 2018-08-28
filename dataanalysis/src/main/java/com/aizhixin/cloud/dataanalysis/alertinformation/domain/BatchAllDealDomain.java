@@ -11,7 +11,7 @@ import java.util.Map;
 public class BatchAllDealDomain {
 
     @ApiModelProperty(value = "处理类型和处理建议 辅导员处理10 学院处理 20", required = false)
-    private Map<String, Map<String, String>> dealTypes;
+    private Map<String, String> dealTypes;
 
     @ApiModelProperty(value = "学年", required = false)
     private String teacherYear;
