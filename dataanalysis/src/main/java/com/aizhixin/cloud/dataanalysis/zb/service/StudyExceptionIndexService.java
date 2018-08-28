@@ -138,7 +138,6 @@ public class StudyExceptionIndexService {
                     warn.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
                     warn.setWarningType(as.getWarningType());
                     warn.setWarningLevel(as.getWarningLevel());
-
                     warn.setWarningTime(new Date());
                     warn.setSemester(xq);
                     warn.setTeacherYear(xn);
@@ -154,6 +153,7 @@ public class StudyExceptionIndexService {
     private void createAndAlertDescAndAlertIndex(List<WarningInformation> rsList, List<RuleParameter> ruleParams, StudyExceptionIndex e, WarningInformation warn) {
         StringBuilder desc = new StringBuilder();
         StringBuilder st = new StringBuilder();
+        StringBuilder ss = new StringBuilder();
         boolean alter = true;
         String tmp;
         int p;
@@ -166,6 +166,7 @@ public class StudyExceptionIndexService {
                         break;
                     } else {
                         desc.append("[").append(r.getRuledescribe()).append(e.getLxkcs()).append("]");
+                        ss.append("[").append(e.getLxkcnr()).append("]");
                     }
                 } else if (r.getRuledescribe().indexOf("漏选的课程学分≥") >= 0) {
                     if (e.getLxxf() < new Double(r.getRightParameter())) {
@@ -173,6 +174,7 @@ public class StudyExceptionIndexService {
                         break;
                     } else {
                         desc.append("[").append(r.getRuledescribe()).append(e.getLxxf()).append("]");
+                        ss.append("[").append(e.getLxkcnr()).append("]");
                     }
                 } else if (r.getRuledescribe().indexOf("课程门数占教学计划的比例≤") >= 0) {
                     if (e.getLxkcs() * 100.0 / e.getKcs() > new Double(r.getRightParameter())) {
@@ -204,7 +206,7 @@ public class StudyExceptionIndexService {
                         break;
                     } else {
                         desc.append("[").append(r.getRuledescribe()).append(e.getBxbjgxf()).append("]");
-
+                        ss.append("[").append(e.getBxbjgkcnr()).append("]");
                     }
                 }
             }
@@ -212,12 +214,14 @@ public class StudyExceptionIndexService {
         if (alter) {
             warn.setWarningCondition(desc.toString());
             warn.setWarningStandard(st.toString());
+            warn.setWarningSource(ss.toString());
             rsList.add(warn);
         }
     }
     private void createOrAlertDescAndAlertIndex(List<WarningInformation> rsList, List<RuleParameter> ruleParams, StudyExceptionIndex e, WarningInformation warn) {
         StringBuilder desc = new StringBuilder();
         StringBuilder st = new StringBuilder();
+        StringBuilder ss = new StringBuilder();
         String tmp;
         int p;
         for(RuleParameter r : ruleParams) {
@@ -228,12 +232,14 @@ public class StudyExceptionIndexService {
                         break;
                     } else {
                         desc.append("[").append(r.getRuledescribe()).append(e.getLxkcs()).append("]");
+                        ss.append("[").append(e.getLxkcnr()).append("]");
                     }
                 } else if (r.getRuledescribe().indexOf("漏选的课程学分≥") >= 0) {
                     if (e.getLxxf() < new Double(r.getRightParameter())) {
                         break;
                     } else {
                         desc.append("[").append(r.getRuledescribe()).append(e.getLxxf()).append("]");
+                        ss.append("[").append(e.getLxkcnr()).append("]");
                     }
                 } else if (r.getRuledescribe().indexOf("课程门数占教学计划的比例≤") >= 0) {
                     if (e.getLxkcs() * 100.0 / e.getKcs() > new Double(r.getRightParameter())) {
@@ -262,6 +268,7 @@ public class StudyExceptionIndexService {
                         break;
                     } else {
                         desc.append("[").append(r.getRuledescribe()).append(e.getBxbjgxf()).append("] ");
+                        ss.append("[").append(e.getBxbjgkcnr()).append("]");
                     }
                 }
             }
@@ -269,7 +276,7 @@ public class StudyExceptionIndexService {
         if (desc.length() > 0) {
             warn.setWarningCondition(desc.toString());
             warn.setWarningStandard(st.toString());
-            warn.setWarningSource(desc.toString());
+            warn.setWarningSource(ss.toString());
             rsList.add(warn);
         }
     }

@@ -97,7 +97,17 @@ public class StudyExceptionIndex {
         this.lxxf = lxxf;
         this.tgxf = tgxf;
         this.bxbjgxf = bxbjgxf;
-        this.lxkcnr = lxkcnr;
-        this.bxbjgkcnr = bxbjgkcnr;
+        this.lxkcnr = strProcess(lxkcnr);
+        this.bxbjgkcnr = strProcess(bxbjgkcnr);
+    }
+
+    static String strProcess(String t) {
+        if (null != t && !t.isEmpty()) {
+            t = t.replaceAll("\\,+", ",");
+            t = t.replaceAll("^\\,;", "");
+            t = t.replaceAll("^\\;", "");
+            t = t.replaceAll("\\,;", ";");
+        }
+        return t;
     }
 }
