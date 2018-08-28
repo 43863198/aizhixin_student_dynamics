@@ -22,7 +22,9 @@ public class StudyExceptionIndexZbManager {
             "SUM(p.XF) AS XF," +
             "SUM(IF(p.XDZT=100, p.XF, 0)) AS LXXF," +
             "SUM(IF(p.XDZT!=100, p.XF, 0)) AS TGXF," +
-            "SUM(IF(p.KCLB='1', IF(p.XDZT=100, p.XF, 0), 0)) AS BXBJGXF " +
+            "SUM(IF(p.KCLB='1', IF(p.XDZT=100, p.XF, 0), 0)) AS BXBJGXF, " +
+            "IF(p.XDZT=100,GROUP_CONCAT(';课程号:', p.KCH, ',课程名:', p.KCMC, ',学分:', p.XF), '') AS LXKCNR," +
+            "IF(p.KCLB='1', IF(p.XDZT=100, GROUP_CONCAT(';课程号:', p.KCH, ',课程名:', p.KCMC, ',学分:', p.XF), ''), '') AS BXBJGKCNR " +
             "FROM t_xsjbxx x LEFT JOIN t_xspyjh p ON x.XH=p.XH " +
             "WHERE x.XXID=? AND x.YXSH=? AND p.XXDM=? AND p.YXSH=? AND x.RXNY<=? AND ? <= x.YBYNY " +
             "GROUP BY x.XH, x.XM, x.BJMC, x.ZYH, x.ZYMC, x.YXSH, x.YXSMC";
@@ -53,6 +55,6 @@ public class StudyExceptionIndexZbManager {
                         rs.getString("YXSH"), rs.getString("YXSMC"),
                         rs.getLong("KCS"), rs.getLong("LXKCS"), rs.getLong("TGKCS"),
                         rs.getDouble("XF"), rs.getDouble("LXXF"), rs.getDouble("TGXF"),
-                        rs.getDouble("BXBJGXF")));
+                        rs.getDouble("BXBJGXF"), rs.getString("LXKCNR"), rs.getString("BXBJGKCNR")));
     }
 }
