@@ -3,6 +3,7 @@ package com.aizhixin.cloud.dataanalysis.analysis.service;
 import com.aizhixin.cloud.dataanalysis.analysis.constant.AttendanceResult;
 import com.aizhixin.cloud.dataanalysis.analysis.domain.AttendanceStatisticsCourseDomain;
 import com.aizhixin.cloud.dataanalysis.analysis.domain.AttendanceStatisticsDomain;
+import com.aizhixin.cloud.dataanalysis.analysis.domain.AttendanceStatisticsTeacherDomain;
 import com.aizhixin.cloud.dataanalysis.analysis.domain.AttendanceStatisticsUnitDomain;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.OrganizationDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.AttendanceStatistics;
@@ -12,6 +13,8 @@ import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.setup.service.GenerateWarningInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -168,10 +171,10 @@ public class AttendanceStatisticsService {
             if (null == pageSize) {
                 pageSize = 20;
             }
-
+            Pageable pageable = new PageRequest(pageNumber - 1, pageSize);
             if (StringUtils.isEmpty(kchOrkcmc)) {
-                list = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndKqrqBetween(xxdm, teachYear, semester, start, end);
-                for(AttendanceStatistics temp : list){
+                list = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndKqrqBetween(xxdm, teachYear, semester, start, end, pageable);
+                for (AttendanceStatistics temp : list) {
                     AttendanceStatisticsCourseDomain attendanceStatisticsCourseDomain = new AttendanceStatisticsCourseDomain();
                     String kch = temp.getKch();
                     String kcmc = temp.getKcmc();
@@ -261,6 +264,132 @@ public class AttendanceStatisticsService {
             }
 
 
+            p.setData(resultLsit);
+            p.getPage().setPageNumber(pageNumber);
+            p.getPage().setPageSize(pageSize);
+            p.getPage().setTotalElements((long) resultLsit.size());
+            p.getPage().setTotalPages(PageUtil.cacalatePagesize((long) resultLsit.size(), p.getPage().getPageSize()));
+            return p;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new PageData<>();
+        }
+    }
+
+    /**
+     * 按教师统计
+     */
+    public PageData<AttendanceStatisticsTeacherDomain> statisticsByTeacher(Long xxdm, String jsghOrjsmc, String dateRange, Integer pageNumber, Integer pageSize) {
+        try {
+            Map dateMap = getDate(xxdm, dateRange);
+            String teachYear = dateMap.get("teachYear").toString();
+            String semester = dateMap.get("semester").toString();
+            String start = dateMap.get("start").toString();
+            String end = dateMap.get("end").toString();
+
+            PageData<AttendanceStatisticsTeacherDomain> p = new PageData<>();
+            List<AttendanceStatistics> list;
+            List<AttendanceStatisticsTeacherDomain> resultLsit = new ArrayList<>();
+            if (null == pageNumber || pageNumber < 1) {
+                pageNumber = 1;
+            }
+            if (null == pageSize) {
+                pageSize = 20;
+            }
+
+            Pageable pageable = new PageRequest(pageNumber - 1, pageSize);
+            if (StringUtils.isEmpty(jsghOrjsmc)) {
+                list = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndKqrqBetween(xxdm, teachYear, semester, start, end, pageable);
+                for (AttendanceStatistics temp : list) {
+                    AttendanceStatisticsTeacherDomain attendanceStatisticsTeacherDomain = new AttendanceStatisticsTeacherDomain();
+                    String jsgh = temp.getJsgh();
+                    String jsxm = temp.getJsxm();
+                    List<AttendanceStatistics> listByjsgh = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndKcmcAndKqrqBetween(xxdm, teachYear, semester, jsgh, start, end);
+                    int total;
+                    int arrived = 0;
+                    int late = 0;
+                    int leave = 0;
+                    int absentee = 0;
+                    int leave_early = 0;
+                    double avg;
+
+                    total = listByjsgh.size();
+                    for (AttendanceStatistics attendanceStatistics : listByjsgh) {
+                        if (temp.getKqjg().equals(AttendanceResult.ARRIVED)) {
+                            arrived++;
+                        } else if (attendanceStatistics.getKqjg().equals(AttendanceResult.LATE)) {
+                            late++;
+                        } else if (attendanceStatistics.getKqjg().equals(AttendanceResult.LEAVE)) {
+                            leave++;
+                        } else if (attendanceStatistics.getKqjg().equals(AttendanceResult.ABSENTEE)) {
+                            absentee++;
+                        } else if (attendanceStatistics.getKqjg().equals(AttendanceResult.LEAVE_EARLY)) {
+                            leave_early++;
+                        }
+                    }
+                    avg = (double) ((total - arrived - leave - absentee) / total);
+                    attendanceStatisticsTeacherDomain.setJsgh(jsgh);
+                    attendanceStatisticsTeacherDomain.setSkls(jsxm);
+                    attendanceStatisticsTeacherDomain.setYxsh(temp.getDwh());
+                    attendanceStatisticsTeacherDomain.setYxmc(temp.getDwmc());
+                    attendanceStatisticsTeacherDomain.setTotal(total);
+                    attendanceStatisticsTeacherDomain.setArrived(arrived);
+                    attendanceStatisticsTeacherDomain.setLate(late);
+                    attendanceStatisticsTeacherDomain.setLeave(leave);
+                    attendanceStatisticsTeacherDomain.setAbsentee(absentee);
+                    attendanceStatisticsTeacherDomain.setLeave_early(leave_early);
+                    attendanceStatisticsTeacherDomain.setAvg(avg);
+
+                    resultLsit.add(attendanceStatisticsTeacherDomain);
+
+                }
+            } else {
+                if (jsghOrjsmc.matches("[0-9]{1,}")) {
+                    list = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndJsghAndKqrqBetween(xxdm, teachYear, semester, jsghOrjsmc, start, end);
+
+                } else {
+                    list = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndJsxmAndKqrqBetween(xxdm, teachYear, semester, jsghOrjsmc, start, end);
+                }
+                int total;
+                int arrived = 0;
+                int late = 0;
+                int leave = 0;
+                int absentee = 0;
+                int leave_early = 0;
+                double avg;
+
+                total = list.size();
+                for (AttendanceStatistics temp : list) {
+                    if (temp.getKqjg().equals(AttendanceResult.ARRIVED)) {
+                        arrived++;
+                    } else if (temp.getKqjg().equals(AttendanceResult.LATE)) {
+                        late++;
+                    } else if (temp.getKqjg().equals(AttendanceResult.LEAVE)) {
+                        leave++;
+                    } else if (temp.getKqjg().equals(AttendanceResult.ABSENTEE)) {
+                        absentee++;
+                    } else if (temp.getKqjg().equals(AttendanceResult.LEAVE_EARLY)) {
+                        leave_early++;
+                    }
+                }
+                avg = (double) ((total - arrived - leave - absentee) / total);
+                AttendanceStatistics temp = list.get(0);
+                AttendanceStatisticsTeacherDomain attendanceStatisticsTeacherDomain = new AttendanceStatisticsTeacherDomain();
+                attendanceStatisticsTeacherDomain.setJsgh(temp.getJsgh());
+                attendanceStatisticsTeacherDomain.setSkls(temp.getJsxm());
+                attendanceStatisticsTeacherDomain.setYxsh(temp.getDwh());
+                attendanceStatisticsTeacherDomain.setYxmc(temp.getDwmc());
+                attendanceStatisticsTeacherDomain.setTotal(total);
+                attendanceStatisticsTeacherDomain.setArrived(arrived);
+                attendanceStatisticsTeacherDomain.setLate(late);
+                attendanceStatisticsTeacherDomain.setLeave(leave);
+                attendanceStatisticsTeacherDomain.setAbsentee(absentee);
+                attendanceStatisticsTeacherDomain.setLeave_early(leave_early);
+                attendanceStatisticsTeacherDomain.setAvg(avg);
+
+                resultLsit.add(attendanceStatisticsTeacherDomain);
+
+            }
             p.setData(resultLsit);
             p.getPage().setPageNumber(pageNumber);
             p.getPage().setPageSize(pageSize);
