@@ -139,15 +139,19 @@ public class MinorSecondDegreeService {
                     MinorSecondDegreeVO minorSecondDegreeVO = new MinorSecondDegreeVO();
                     String code = temp.getCode();
                     List<Map<String, Object>> fxlist = minorSecondDegreeRepository.countByXxdmAndYxshFxCount(xxdm,code);
+                    List<Map<String, Object>> exwlist = minorSecondDegreeRepository.countByXxdmAndYxshEXWCount(xxdm,code);
+                    List<Map<String,Object>> wbmfxlist = minorSecondDegreeRepository.countByXxdmAndYxshWbFxCount(xxdm,code);
+                    List<Map<String,Object>> wbmexwlist = minorSecondDegreeRepository.countByXxdmAndYxshWbExwCount(xxdm,code);
+                    if(fxlist.size() ==0 && exwlist.size() == 0 && wbmfxlist.size() == 0 && wbmexwlist.size() ==0 ){
+                        continue;
+                    }
                     minorSecondDegreeVO.setBmmc(StringUtils.isEmpty(temp.getSimple())?temp.getName():temp.getSimple());
                     minorSecondDegreeVO.setBmCode(code);
                     minorSecondDegreeVO.setBmfxs(fxlist.size());
-                    List<Map<String, Object>> exwlist = minorSecondDegreeRepository.countByXxdmAndYxshEXWCount(xxdm,code);
                     minorSecondDegreeVO.setBmexws(exwlist.size());
-                    List<Map<String,Object>> wbmfxlist = minorSecondDegreeRepository.countByXxdmAndYxshWbFxCount(xxdm,code);
                     minorSecondDegreeVO.setWbmfxs(wbmfxlist.size());
-                    List<Map<String,Object>> wbmexwlist = minorSecondDegreeRepository.countByXxdmAndYxshWbExwCount(xxdm,code);
                     minorSecondDegreeVO.setWbmexws(wbmexwlist.size());
+
                     list.add(minorSecondDegreeVO);
                 }
             }

@@ -1,0 +1,15 @@
+package com.aizhixin.cloud.dataanalysis.alertinformation.domain;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+@ApiModel(description = "批量处理预警信息")
+@Data
+public class BatchDealResultDomain {
+    @ApiModelProperty(value = "预警信息id列表", required = false)
+    private String[] warningInformationIds;
+
+    @ApiModelProperty(value = "处理结果", required = false)
+    private int status;
+}

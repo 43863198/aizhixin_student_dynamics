@@ -1,8 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.alertinformation.service;
 
-import com.aizhixin.cloud.dataanalysis.alertinformation.domain.AttachmentDomain;
-import com.aizhixin.cloud.dataanalysis.alertinformation.domain.DealDomain;
-import com.aizhixin.cloud.dataanalysis.alertinformation.domain.DealResultDomain;
+import com.aizhixin.cloud.dataanalysis.alertinformation.domain.*;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AttachmentInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.OperationRecord;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
@@ -104,6 +102,46 @@ public class AlarmHandlingService {
         }
         result.put("success", true);
         result.put("message", "处理信息修改成功！");
+        return result;
+    }
+
+    public Map<String, Object> batchAllProcessing(AlertInforQueryDomain domain) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            int row = alertWarningInformationService.updateAllAlertInforPage(domain);
+            System.out.println("row------>" + row);
+            if (row > 0) {
+                result.put("success", true);
+                result.put("message", "保存处理结果成功！");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message", "保存处理结果异常！");
+        }
+
+        return result;
+    }
+
+    public Map<String, Object> batchProcessing(BatchDealResultDomain batchDealResultDomain) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            String[] array = batchDealResultDomain.getWarningInformationIds();
+            for (String str : array) {
+                WarningInformation warningInformation = alertWarningInformationService.getOneById(str);
+                if (null != warningInformation) {
+                    warningInformation.setWarningState(batchDealResultDomain.getStatus());
+                    warningInformation.setLastModifiedDate(new Date());
+                    alertWarningInformationService.save(warningInformation);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("message", "保存处理结果异常！");
+        }
+        result.put("success", true);
+        result.put("message", "保存处理结果成功！");
         return result;
     }
 

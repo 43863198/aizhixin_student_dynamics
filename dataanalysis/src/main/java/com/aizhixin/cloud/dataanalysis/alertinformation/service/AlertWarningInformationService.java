@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -68,6 +70,8 @@ public class AlertWarningInformationService {
     private RuleParameterService ruleParameterService;
     @Autowired
     private NotificationRecordService notificationRecordService;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     /**
      * 修改预警状态按预警等级和机构id
@@ -311,14 +315,14 @@ public class AlertWarningInformationService {
             countSql += " and TEACHING_YEAR = " + domain.getTeacherYear();
         }
         if (null != domain.getSemester()) {
-            if(domain.getSemester().equals("2")){
+            if (domain.getSemester().equals("2")) {
                 domain.setSemester("秋");
             }
-            if(domain.getSemester().equals("1")){
+            if (domain.getSemester().equals("1")) {
                 domain.setSemester("春");
             }
-            querySql += " and SEMESTER = '" + domain.getSemester()+"'";
-            countSql += " and SEMESTER = '" + domain.getSemester()+"'";
+            querySql += " and SEMESTER = '" + domain.getSemester() + "'";
+            countSql += " and SEMESTER = '" + domain.getSemester() + "'";
         }
 
         querySql += " and ORG_ID =" + domain.getOrgId();
@@ -330,6 +334,108 @@ public class AlertWarningInformationService {
         dto.setAsc(false);
 
         return pageJdbcUtil.getPageInfor(domain.getPageSize(), domain.getPageNumber(), alertInforRm, sort, querySql, countSql);
+    }
+
+    public Integer updateAllAlertInforPage(AlertInforQueryDomain domain) {
+
+        try {
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String current = sdf.format(new Date());
+            String updateSql = "update t_warning_information set LAST_MODIFIED_DATE = '" + current + "',WARNING_STATE = '20'  where DELETE_FLAG =" + DataValidity.VALID.getState() + " ";
+
+            if (!StringUtils.isEmpty(domain.getKeywords())) {
+
+                updateSql += " and ( NAME like '%" + domain.getKeywords() + "%' or JOB_NUMBER like '%" + domain.getKeywords() + "%') ";
+            }
+
+            if (!StringUtils.isEmpty(domain.getCollegeCodes())) {
+                String[] collogeIdArr = domain.getCollegeCodes().split(",");
+                String collogeCodes = "";
+                for (String collogeCode : collogeIdArr) {
+                    if (!StringUtils.isEmpty(collogeCode)) {
+                        if (StringUtils.isEmpty(collogeCodes)) {
+                            collogeCodes = collogeCode;
+                        } else {
+                            collogeCodes += "," + collogeCode;
+                        }
+                    }
+                }
+
+                updateSql += " and COLLOGE_CODE in (" + collogeCodes
+                        + ")";
+            }
+
+            if (!StringUtils.isEmpty(domain.getWarningLevels())) {
+                String[] warnLevelArr = domain.getWarningLevels().split(",");
+                String warnLevels = "";
+                for (String warnLevel : warnLevelArr) {
+                    if (!StringUtils.isEmpty(warnLevel)) {
+                        if (StringUtils.isEmpty(warnLevels)) {
+                            warnLevels = warnLevel;
+                        } else {
+                            warnLevels += "," + warnLevel;
+                        }
+                    }
+                }
+
+                updateSql += " and WARNING_LEVEL in (" + warnLevels
+                        + ")";
+            }
+
+            if (!StringUtils.isEmpty(domain.getWarningTypes())) {
+                String[] warnTypeArr = domain.getWarningTypes().split(",");
+                String warnTypes = "";
+                for (String warnType : warnTypeArr) {
+                    if (!StringUtils.isEmpty(warnType)) {
+                        if (StringUtils.isEmpty(warnTypes)) {
+                            warnTypes = "'" + warnType + "'";
+                        } else {
+                            warnTypes += "," + "'" + warnType + "'";
+                        }
+                    }
+                }
+
+                updateSql += " and WARNING_TYPE in (" + warnTypes + ")";
+            }
+
+            if (!StringUtils.isEmpty(domain.getWarningStates())) {
+                String[] warnStateArr = domain.getWarningStates().split(",");
+                String warnStates = "";
+                for (String warnState : warnStateArr) {
+                    if (!StringUtils.isEmpty(warnState)) {
+                        if (StringUtils.isEmpty(warnStates)) {
+                            warnStates = warnState;
+                        } else {
+                            warnStates += "," + warnState;
+                        }
+                    }
+                }
+
+                updateSql += " and WARNING_STATE in (" + warnStates + ")";
+            }
+            if (null != domain.getTeacherYear()) {
+                updateSql += " and TEACHING_YEAR = " + domain.getTeacherYear();
+            }
+            if (null != domain.getSemester()) {
+                if (domain.getSemester().equals("2")) {
+                    domain.setSemester("秋");
+                }
+                if (domain.getSemester().equals("1")) {
+                    domain.setSemester("春");
+                }
+                updateSql += " and SEMESTER = '" + domain.getSemester() + "'";
+            }
+
+            updateSql += " and ORG_ID =" + domain.getOrgId();
+
+            int row = jdbcTemplate.update(updateSql);
+            return row;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+
     }
 
     public Map<String, Object> queryTeacherAlertInforPage(AlertInforQueryTeacherDomain domain) {
@@ -394,14 +500,14 @@ public class AlertWarningInformationService {
             countSql += " and TEACHING_YEAR = " + domain.getTeacherYear();
         }
         if (null != domain.getSemester()) {
-            if(domain.getSemester().equals("2")){
+            if (domain.getSemester().equals("2")) {
                 domain.setSemester("秋");
             }
-            if(domain.getSemester().equals("1")){
+            if (domain.getSemester().equals("1")) {
                 domain.setSemester("春");
             }
-            querySql += " and SEMESTER = '" + domain.getSemester()+"'";
-            countSql += " and SEMESTER = '" + domain.getSemester()+"'";
+            querySql += " and SEMESTER = '" + domain.getSemester() + "'";
+            countSql += " and SEMESTER = '" + domain.getSemester() + "'";
         }
 
         querySql += " and ORG_ID =" + domain.getOrgId();
@@ -527,13 +633,13 @@ public class AlertWarningInformationService {
             querySql += " and TEACHING_YEAR = " + domain.getTeacherYear();
         }
         if (null != domain.getSemester()) {
-            if(domain.getSemester().equals("2")){
+            if (domain.getSemester().equals("2")) {
                 domain.setSemester("秋");
             }
-            if(domain.getSemester().equals("1")){
+            if (domain.getSemester().equals("1")) {
                 domain.setSemester("春");
             }
-            querySql += " and SEMESTER = '" + domain.getSemester()+"'";
+            querySql += " and SEMESTER = '" + domain.getSemester() + "'";
         }
 
         querySql += " and ORG_ID =" + domain.getOrgId() + " GROUP BY COLLOGE_CODE,WARNING_LEVEL ORDER BY COLLOGE_CODE,WARNING_LEVEL ;";
@@ -602,13 +708,13 @@ public class AlertWarningInformationService {
             querySql += " and TEACHING_YEAR = " + domain.getTeacherYear();
         }
         if (null != domain.getSemester()) {
-            if(domain.getSemester().equals("2")){
+            if (domain.getSemester().equals("2")) {
                 domain.setSemester("秋");
             }
-            if(domain.getSemester().equals("1")){
+            if (domain.getSemester().equals("1")) {
                 domain.setSemester("春");
             }
-            querySql += " and SEMESTER = '" + domain.getSemester()+"'";
+            querySql += " and SEMESTER = '" + domain.getSemester() + "'";
         }
 
         querySql += " and ORG_ID =" + domain.getOrgId() + " and class_name in (select tct.classes_name from t_class_teacher tct where tct.teacher_id='" + domain.getUserId() + "') GROUP BY COLLOGE_CODE,WARNING_LEVEL ORDER BY COLLOGE_CODE,WARNING_LEVEL ;";
@@ -832,11 +938,11 @@ public class AlertWarningInformationService {
                 condition.put("teacherYear", teacherYear);
             }
             if (null != semester) {
-                if(semester.equals("2")){
-                    semester="秋";
+                if (semester.equals("2")) {
+                    semester = "秋";
                 }
-                if(semester.equals("1")){
-                    semester="春";
+                if (semester.equals("1")) {
+                    semester = "春";
                 }
                 sql.append(" and SEMESTER = :semester");
                 condition.put("semester", semester);
@@ -931,11 +1037,11 @@ public class AlertWarningInformationService {
             condition.put("teacherYear", teacherYear);
         }
         if (null != semester) {
-            if(semester.equals("2")){
-                semester="秋";
+            if (semester.equals("2")) {
+                semester = "秋";
             }
-            if(semester.equals("1")){
-                semester="春";
+            if (semester.equals("1")) {
+                semester = "春";
             }
             sql.append(" and SEMESTER = :semester");
             condition.put("semester", semester);
@@ -984,11 +1090,11 @@ public class AlertWarningInformationService {
             condition.put("teacherYear", teacherYear);
         }
         if (null != semester) {
-            if(semester.equals("2")){
-                semester="秋";
+            if (semester.equals("2")) {
+                semester = "秋";
             }
-            if(semester.equals("1")){
-                semester="春";
+            if (semester.equals("1")) {
+                semester = "春";
             }
             sql.append(" and SEMESTER = :semester");
             condition.put("semester", semester);
@@ -1055,11 +1161,11 @@ public class AlertWarningInformationService {
             condition.put("teacherYear", teacherYear);
         }
         if (null != semester) {
-            if(semester.equals("2")){
-                semester="秋";
+            if (semester.equals("2")) {
+                semester = "秋";
             }
-            if(semester.equals("1")){
-                semester="春";
+            if (semester.equals("1")) {
+                semester = "春";
             }
             sql.append(" and SEMESTER = :semester");
             condition.put("semester", semester);
@@ -1218,15 +1324,15 @@ public class AlertWarningInformationService {
                 if (null != alertWarningInformation.getAlarmSettingsId()) {
                     AlarmSettings as = alarmSettingsService.getAlarmSettingsById(alertWarningInformation.getAlarmSettingsId());
                     String[] rpIds = as.getRuleSet().split(",");
-                    if(rpIds.length>0){
-                        for(String rpId :rpIds){
+                    if (rpIds.length > 0) {
+                        for (String rpId : rpIds) {
                             RuleParameter rp = ruleParameterService.findById(rpId);
                             standard = standard + rp.getRuledescribe() + rp.getRightParameter() + as.getRelationship();
 
                         }
                     }
                 }
-                if (!StringUtils.isBlank(standard)&&standard.length()>1) {
+                if (!StringUtils.isBlank(standard) && standard.length() > 1) {
                     warningDetailsDTO.setWarningStandard(standard.substring(0, standard.length() - 1));
                 }
                 List<DealDomain> dealDomainList = new ArrayList<>();
@@ -1267,10 +1373,10 @@ public class AlertWarningInformationService {
         return result;
     }
 
-    public String dataFormat(String str){
-        if(null != str){
-          return  str.replaceAll("KCH","课程号").replaceAll("KCMC","课程名称").replaceAll("XF","学分");
-        }else{
+    public String dataFormat(String str) {
+        if (null != str) {
+            return str.replaceAll("KCH", "课程号").replaceAll("KCMC", "课程名称").replaceAll("XF", "学分");
+        } else {
             return str;
         }
 
@@ -1315,11 +1421,11 @@ public class AlertWarningInformationService {
             iql.append(" and TEACHING_YEAR = :teacherYear");
         }
         if (null != semester) {
-            if(semester.equals("2")){
-                semester="秋";
+            if (semester.equals("2")) {
+                semester = "秋";
             }
-            if(semester.equals("1")){
-                semester="春";
+            if (semester.equals("1")) {
+                semester = "春";
             }
             sql.append(" and SEMESTER = :semester");
             cql.append(" and SEMESTER = :semester");
@@ -1353,11 +1459,11 @@ public class AlertWarningInformationService {
                 iq.setParameter("teacherYear", teacherYear);
             }
             if (null != semester) {
-                if(semester.equals("2")){
-                    semester="秋";
+                if (semester.equals("2")) {
+                    semester = "秋";
                 }
-                if(semester.equals("1")){
-                    semester="春";
+                if (semester.equals("1")) {
+                    semester = "春";
                 }
                 cq.setParameter("semester", semester);
                 sq.setParameter("semester", semester);
