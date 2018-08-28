@@ -1,4 +1,4 @@
-package com.aizhixin.cloud.dataanalysis.zb.manager;
+package com.aizhixin.cloud.dataanalysis.etl.study.manager;
 
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.zb.app.entity.StudyExceptionIndex;

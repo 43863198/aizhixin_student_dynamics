@@ -1,9 +1,9 @@
-package com.aizhixin.cloud.dataanalysis.zb.manager;
+package com.aizhixin.cloud.dataanalysis.etl.cet.manager;
 
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
-import com.aizhixin.cloud.dataanalysis.zb.dto.AnalysisBasezbDTO;
-import com.aizhixin.cloud.dataanalysis.zb.dto.SchoolCalendarDTO;
-import com.aizhixin.cloud.dataanalysis.zb.dto.ZxrsDTO;
+import com.aizhixin.cloud.dataanalysis.etl.cet.dto.AnalysisBasezbDTO;
+import com.aizhixin.cloud.dataanalysis.etl.cet.dto.SchoolCalendarDTO;
+import com.aizhixin.cloud.dataanalysis.etl.cet.dto.ZxrsDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;

@@ -1,8 +1,8 @@
-package com.aizhixin.cloud.dataanalysis.zb.manager;
+package com.aizhixin.cloud.dataanalysis.etl.score.manager;
 
 import com.aizhixin.cloud.dataanalysis.zb.app.entity.StudentSemesterScoreIndex;
-import com.aizhixin.cloud.dataanalysis.zb.dto.StudentSemesterScoreIndexDTO;
-import com.aizhixin.cloud.dataanalysis.zb.dto.XnXqDTO;
+import com.aizhixin.cloud.dataanalysis.etl.score.dto.StudentSemesterScoreIndexDTO;
+import com.aizhixin.cloud.dataanalysis.etl.cet.dto.XnXqDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;

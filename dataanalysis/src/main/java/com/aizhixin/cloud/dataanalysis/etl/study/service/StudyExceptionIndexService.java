@@ -1,4 +1,4 @@
-package com.aizhixin.cloud.dataanalysis.zb.service;
+package com.aizhixin.cloud.dataanalysis.etl.study.service;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
@@ -7,7 +7,7 @@ import com.aizhixin.cloud.dataanalysis.setup.entity.RuleParameter;
 import com.aizhixin.cloud.dataanalysis.setup.service.RuleParameterService;
 import com.aizhixin.cloud.dataanalysis.zb.app.entity.StudyExceptionIndex;
 import com.aizhixin.cloud.dataanalysis.zb.app.mananger.StudyExceptionIndexManager;
-import com.aizhixin.cloud.dataanalysis.zb.manager.StudyExceptionIndexZbManager;
+import com.aizhixin.cloud.dataanalysis.etl.study.manager.StudyExceptionIndexZbManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;

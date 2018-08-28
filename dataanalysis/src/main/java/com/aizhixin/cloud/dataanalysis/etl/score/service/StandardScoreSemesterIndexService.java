@@ -1,12 +1,12 @@
-package com.aizhixin.cloud.dataanalysis.zb.service;
+package com.aizhixin.cloud.dataanalysis.etl.score.service;
 
 import com.aizhixin.cloud.dataanalysis.zb.app.entity.StudentSemesterScoreIndex;
 import com.aizhixin.cloud.dataanalysis.zb.app.mananger.StudentSemesterScoreIndexManager;
-import com.aizhixin.cloud.dataanalysis.zb.dto.StudentScorezbDTO;
-import com.aizhixin.cloud.dataanalysis.zb.dto.StudentSemesterScoreIndexDTO;
-import com.aizhixin.cloud.dataanalysis.zb.dto.XnXqDTO;
-import com.aizhixin.cloud.dataanalysis.zb.manager.StandardScoreSemesterManager;
-import com.aizhixin.cloud.dataanalysis.zb.manager.StudentScoreIndexManager;
+import com.aizhixin.cloud.dataanalysis.etl.score.dto.StudentScorezbDTO;
+import com.aizhixin.cloud.dataanalysis.etl.score.dto.StudentSemesterScoreIndexDTO;
+import com.aizhixin.cloud.dataanalysis.etl.cet.dto.XnXqDTO;
+import com.aizhixin.cloud.dataanalysis.etl.score.manager.StandardScoreSemesterManager;
+import com.aizhixin.cloud.dataanalysis.etl.score.manager.StudentScoreIndexManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;

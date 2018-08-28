@@ -1,6 +1,6 @@
-package com.aizhixin.cloud.dataanalysis.zb.manager;
+package com.aizhixin.cloud.dataanalysis.etl.cet.manager;
 
-import com.aizhixin.cloud.dataanalysis.zb.dto.AnalysisBasezbDTO;
+import com.aizhixin.cloud.dataanalysis.etl.cet.dto.AnalysisBasezbDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
