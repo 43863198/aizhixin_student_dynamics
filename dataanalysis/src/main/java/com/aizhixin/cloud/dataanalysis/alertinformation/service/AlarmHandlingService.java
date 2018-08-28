@@ -105,11 +105,30 @@ public class AlarmHandlingService {
         return result;
     }
 
-    public Map<String, Object> batchAllProcessing(AlertInforQueryDomain domain) {
+    public Map<String, Object> batchAllProcessing(BatchAllDealDomain domain) {
         Map<String, Object> result = new HashMap<>();
         try {
             int row = alertWarningInformationService.updateAllAlertInforPage(domain);
-            System.out.println("row------>" + row);
+            List<Map<String, Object>> idList = alertWarningInformationService.queryAllAlertInforPage(domain);
+            for (Map map : idList) {
+                if (null != map && null != map.get("ID")) {
+                    WarningInformation warningInformation = alertWarningInformationService.getOneById(map.get("ID").toString());
+                    warningInformation.setLastModifiedDate(new Date());
+                    alertWarningInformationService.save(warningInformation);
+                    List<OperationRecord> operationRecordList = operaionRecordService.getOperationRecordByWInfoId(map.get("ID").toString());
+                    for (OperationRecord or : operationRecordList) {
+                        OperationRecord operationRecord = operaionRecordService.getOneById(or.getId());
+                        operationRecord.setOrgId(warningInformation.getOrgId());
+                        operationRecord.setOperationTime(new Date());
+                        operationRecord.setDealType(domain.getDealType());
+                        operationRecord.setProposal(domain.getDealInfo());
+                        operaionRecordService.save(operationRecord);
+
+                    }
+
+                }
+            }
+
             if (row > 0) {
                 result.put("success", true);
                 result.put("message", "保存处理结果成功！");
@@ -123,18 +142,26 @@ public class AlarmHandlingService {
         return result;
     }
 
-    public Map<String, Object> batchProcessing(BatchDealResultDomain batchDealResultDomain) {
+    public Map<String, Object> batchProcessing(BatchDealDomain batchDealDomain) {
         Map<String, Object> result = new HashMap<>();
         try {
-            String[] array = batchDealResultDomain.getWarningInformationIds();
+            String[] array = batchDealDomain.getWarningInformationIds();
             for (String str : array) {
-                WarningInformation warningInformation = alertWarningInformationService.getOneById(str);
-                if (null != warningInformation) {
-                    warningInformation.setWarningState(batchDealResultDomain.getStatus());
+                if (null != str) {
+                    WarningInformation warningInformation = alertWarningInformationService.getOneById(str);
                     warningInformation.setLastModifiedDate(new Date());
                     alertWarningInformationService.save(warningInformation);
+                    if (null != batchDealDomain.getDealId() && !StringUtils.isBlank(batchDealDomain.getDealId())) {
+                        OperationRecord operationRecord = operaionRecordService.getOneById(batchDealDomain.getDealId());
+                        operationRecord.setOrgId(warningInformation.getOrgId());
+                        operationRecord.setOperationTime(new Date());
+                        operationRecord.setDealType(batchDealDomain.getDealType());
+                        operationRecord.setProposal(batchDealDomain.getDealInfo());
+                        operaionRecordService.save(operationRecord);
+                    }
                 }
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
