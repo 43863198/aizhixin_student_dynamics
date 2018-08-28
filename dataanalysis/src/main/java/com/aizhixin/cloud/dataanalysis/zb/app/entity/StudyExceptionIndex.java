@@ -104,9 +104,10 @@ public class StudyExceptionIndex {
     static String strProcess(String t) {
         if (null != t && !t.isEmpty()) {
             t = t.replaceAll("\\,+", ",");
-            t = t.replaceAll("^\\,;", "");
-            t = t.replaceAll("^\\;", "");
-            t = t.replaceAll("\\,;", ";");
+            t = t.replaceAll("^\\, ", "");
+//            t = t.replaceAll("^\\;", "");
+            t = t.trim();
+            t = t.replaceAll("\\, ", " ");
         }
         return t;
     }

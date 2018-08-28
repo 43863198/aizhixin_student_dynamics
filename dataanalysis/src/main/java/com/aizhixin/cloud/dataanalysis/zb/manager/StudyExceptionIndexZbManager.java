@@ -23,8 +23,8 @@ public class StudyExceptionIndexZbManager {
             "SUM(IF(p.XDZT=100, p.XF, 0)) AS LXXF," +
             "SUM(IF(p.XDZT!=100, p.XF, 0)) AS TGXF," +
             "SUM(IF(p.KCLB='1', IF(p.XDZT=100, p.XF, 0), 0)) AS BXBJGXF, " +
-            "GROUP_CONCAT(IF(p.XDZT=100,CONCAT(';课程号:', p.KCH, ',课程名:', p.KCMC, ',学分:', p.XF), '')) AS LXKCNR," +
-            "GROUP_CONCAT(IF(p.KCLB='1', CONCAT(';课程号:', p.KCH, ',课程名:', p.KCMC, ',学分:', p.XF), ''))  AS BXBJGKCNR " +
+            "GROUP_CONCAT(IF(p.XDZT=100,CONCAT(' 课程号:', p.KCH, ',课程名:', p.KCMC, ',学分:', p.XF), '')) AS LXKCNR," +
+            "GROUP_CONCAT(IF(p.KCLB='1', CONCAT(' 课程号:', p.KCH, ',课程名:', p.KCMC, ',学分:', p.XF), ''))  AS BXBJGKCNR " +
             "FROM t_xsjbxx x LEFT JOIN t_xspyjh p ON x.XH=p.XH " +
             "WHERE x.XXID=? AND x.YXSH=? AND p.XXDM=? AND p.YXSH=? AND x.RXNY<=? AND ? <= x.YBYNY " +
             "GROUP BY x.XH, x.XM, x.BJMC, x.ZYH, x.ZYMC, x.YXSH, x.YXSMC";
