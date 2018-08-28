@@ -143,13 +143,14 @@ public class AlarmHandlingService {
     public Map<String, Object> batchProcessing(BatchDealDomain batchDealDomain) {
         Map<String, Object> result = new HashMap<>();
         try {
-            Map<String, String> map = batchDealDomain.getWarnInfoDealIdMap();
-            for (Map.Entry<String, String> e : map.entrySet()) {
-                if (null != e) {
-                    WarningInformation warningInformation = alertWarningInformationService.getOneById(e.getKey());
-                    warningInformation.setLastModifiedDate(new Date());
-                    alertWarningInformationService.save(warningInformation);
-                    OperationRecord operationRecord = operaionRecordService.getOneById(e.getValue());
+            String[] idArray = batchDealDomain.getWarningInformationIds();
+            for(String id : idArray){
+                WarningInformation warningInformation = alertWarningInformationService.getOneById(id);
+                warningInformation.setLastModifiedDate(new Date());
+                alertWarningInformationService.save(warningInformation);
+                List<OperationRecord> operationRecordList =  operaionRecordService.getOperationRecordByWInfoId(id);
+                for (OperationRecord or : operationRecordList) {
+                    OperationRecord operationRecord = operaionRecordService.getOneById(or.getId());
                     operationRecord.setOrgId(warningInformation.getOrgId());
                     operationRecord.setOperationTime(new Date());
                     operationRecord.setDealType(batchDealDomain.getDealType());
@@ -157,7 +158,6 @@ public class AlarmHandlingService {
                     operaionRecordService.save(operationRecord);
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
