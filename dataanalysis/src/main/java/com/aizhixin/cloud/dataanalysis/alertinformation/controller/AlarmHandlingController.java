@@ -63,10 +63,10 @@ public class AlarmHandlingController {
     @PutMapping(value = "/batchprocessing", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "PUT", value = "批量处理本页信息", response = Void.class, notes = "批量处理本页信息<br><br><b>@author dengchao</b>")
     public Map<String, Object> processing(
-            @ApiParam(value = "<b>必填:、</b><br>warningInformationId:预警信息id<br><b>" +
-                    "</b><br>dealId:处理id;" +
-                    "选填:、" +
-                    "</b><br>dealInfo:处理信息;" +
+            @ApiParam(value = "<b>必填:</b>" +
+                    "<br>warnInfoDealIdMap:预警信息id和处理操作id(以map的形式，格式如:(warningInformationId : dealId));" +
+                    "<b>选填:</b>" +
+                    "<br>dealInfo:处理信息;" +
                     "dealType:处理类型 辅导员处理10 学院处理 20;") @RequestBody BatchDealDomain batchDealDomain) {
         return alarmHandlingService.batchProcessing(batchDealDomain);
     }

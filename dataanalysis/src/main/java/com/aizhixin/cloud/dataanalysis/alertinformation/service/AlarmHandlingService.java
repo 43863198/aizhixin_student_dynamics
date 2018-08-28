@@ -123,9 +123,7 @@ public class AlarmHandlingService {
                         operationRecord.setDealType(domain.getDealType());
                         operationRecord.setProposal(domain.getDealInfo());
                         operaionRecordService.save(operationRecord);
-
                     }
-
                 }
             }
 
@@ -145,20 +143,18 @@ public class AlarmHandlingService {
     public Map<String, Object> batchProcessing(BatchDealDomain batchDealDomain) {
         Map<String, Object> result = new HashMap<>();
         try {
-            String[] array = batchDealDomain.getWarningInformationIds();
-            for (String str : array) {
-                if (null != str) {
-                    WarningInformation warningInformation = alertWarningInformationService.getOneById(str);
+            Map<String, String> map = batchDealDomain.getWarnInfoDealIdMap();
+            for (Map.Entry<String, String> e : map.entrySet()) {
+                if (null != e) {
+                    WarningInformation warningInformation = alertWarningInformationService.getOneById(e.getKey());
                     warningInformation.setLastModifiedDate(new Date());
                     alertWarningInformationService.save(warningInformation);
-                    if (null != batchDealDomain.getDealId() && !StringUtils.isBlank(batchDealDomain.getDealId())) {
-                        OperationRecord operationRecord = operaionRecordService.getOneById(batchDealDomain.getDealId());
-                        operationRecord.setOrgId(warningInformation.getOrgId());
-                        operationRecord.setOperationTime(new Date());
-                        operationRecord.setDealType(batchDealDomain.getDealType());
-                        operationRecord.setProposal(batchDealDomain.getDealInfo());
-                        operaionRecordService.save(operationRecord);
-                    }
+                    OperationRecord operationRecord = operaionRecordService.getOneById(e.getValue());
+                    operationRecord.setOrgId(warningInformation.getOrgId());
+                    operationRecord.setOperationTime(new Date());
+                    operationRecord.setDealType(batchDealDomain.getDealType());
+                    operationRecord.setProposal(batchDealDomain.getDealInfo());
+                    operaionRecordService.save(operationRecord);
                 }
             }
 
