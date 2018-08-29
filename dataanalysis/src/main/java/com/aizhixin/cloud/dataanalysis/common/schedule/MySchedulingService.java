@@ -11,6 +11,7 @@ import com.aizhixin.cloud.dataanalysis.setup.job.WarningTypeOnAndOffJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +39,8 @@ public class MySchedulingService {
     private WarningTypeOnAndOffJob warningTypeOnAndOffJob;
     @Autowired
     private SyncClassTeacher syncClassTeacher;
+    @Value("${sync.orgId}")
+    private Long orgId;
 
     @Scheduled(cron = "0 0 3 * * ?")
     public void rollCallCountJob() {
@@ -165,7 +168,7 @@ public class MySchedulingService {
         if (distributeLock.getSyncClassTeacherLock()) {
             LOG.info("同步学校管理平台班主任定时任务");
 //            Long orgId = 218L;//测试学校id218
-            Long orgId = 138L;//现网桂林理工的学校id
+            //Long orgId = 138L;//现网桂林理工的学校id
             syncClassTeacher.syncData(orgId);
         } else {
             LOG.info("同步学校管理平台班主任定时任务，获取锁失败");
