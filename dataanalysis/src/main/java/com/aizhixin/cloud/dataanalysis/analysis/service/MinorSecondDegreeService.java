@@ -117,16 +117,19 @@ public class MinorSecondDegreeService {
                     minorSecondDegreeVO.setBmCode(code);
                     //本专业辅修统计
                     List<Map<String,Object>> fxList =  minorSecondDegreeRepository.countByXxdmAndYxshAndZyhFx(xxdm,collegeCode,code);
-                    minorSecondDegreeVO.setBmfxs(fxList.size());
                     //本专业二学位统计
                     List<Map<String,Object>> exwList = minorSecondDegreeRepository.countByXxdmAndYxshAndZyhExw(xxdm,collegeCode,code);
-                    minorSecondDegreeVO.setBmexws(exwList.size());
-
                     //外部门辅修本专业统计
                     List<Map<String,Object>> wbmfxlist = minorSecondDegreeRepository.countByXxdmAndYxshWBFX(xxdm,collegeCode,code);
-                    minorSecondDegreeVO.setWbmfxs(wbmfxlist.size());
                     //外部门修本专业二学位统计
                     List<Map<String,Object>> wbmexwlist = minorSecondDegreeRepository.countByXxdmAndYxshWBEXW(xxdm,collegeCode,code);
+
+                    if(fxList.size() ==0 && exwList.size() == 0 && wbmfxlist.size() == 0 && wbmexwlist.size() ==0 ){
+                        continue;
+                    }
+                    minorSecondDegreeVO.setBmfxs(fxList.size());
+                    minorSecondDegreeVO.setBmexws(exwList.size());
+                    minorSecondDegreeVO.setWbmfxs(wbmfxlist.size());
                     minorSecondDegreeVO.setWbmexws(wbmexwlist.size());
 
                     list.add(minorSecondDegreeVO);
