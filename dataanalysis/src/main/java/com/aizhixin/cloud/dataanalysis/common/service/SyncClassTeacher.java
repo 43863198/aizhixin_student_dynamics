@@ -1,8 +1,8 @@
 package com.aizhixin.cloud.dataanalysis.common.service;
 
 import com.aizhixin.cloud.dataanalysis.feign.OrgManagerFeignService;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -18,6 +18,7 @@ import java.util.List;
  */
 @Service
 @Transactional
+@Slf4j
 public class SyncClassTeacher {
     @Autowired
     private OrgManagerFeignService orgManagerFeignService;
@@ -27,9 +28,13 @@ public class SyncClassTeacher {
     public void syncData(Long orgId){
         List<Object[]> classTeacherData = new ArrayList<>();
         Long[]  teacherIds = orgManagerFeignService.getTeacherIds(orgId);
+        for(Long temp : teacherIds){
+            log.info("teacherIds={}:",temp);
+        }
         if(null!=teacherIds&&teacherIds.length>0){
             for(Long tid : teacherIds) {
                 String classes = orgManagerFeignService.getClassesByTeacher(tid);
+                log.info("classes={}:",classes);
                 if(null!=classes){
                     JSONArray jsonArray = JSONArray.fromObject(classes);
                     for(int i=0;i<jsonArray.length();i++){
