@@ -4,6 +4,7 @@ import com.aizhixin.cloud.dataanalysis.analysis.entity.AttendanceStatistics;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public interface AttendanceStatisticsRepository extends JpaRepository<Attendance
 
 
     @Query("select kch,kcmc,jsgh,jsxm,kqjg,dwmc,dwh from #{#entityName} where xxdm = :xxdm and xn = :xn and xqm = :xqm and kqrq BETWEEN :start and :end group by kcmc")
-    List<AttendanceStatistics> findByXxdmAndXnAndXqmAndKqrqBetween(Long xxdm, String xn, String xqm, String start, String end, Pageable pageable);
+    List<AttendanceStatistics> findByXxdmAndXnAndXqmAndKqrqBetween(@Param(value = "xxdm")Long xxdm, @Param(value = "xn")String xn, @Param(value = "xqm")String xqm, @Param(value = "start")String start, @Param(value = "end")String end, Pageable pageable);
 
     List<AttendanceStatistics> findByXxdmAndXnAndXqmAndKchAndKqrqBetween(Long xxdm, String xn, String xqm, String kch, String start, String end);
 
