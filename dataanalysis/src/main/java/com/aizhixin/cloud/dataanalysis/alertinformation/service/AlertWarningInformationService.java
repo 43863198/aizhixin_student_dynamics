@@ -336,7 +336,7 @@ public class AlertWarningInformationService {
         return pageJdbcUtil.getPageInfor(domain.getPageSize(), domain.getPageNumber(), alertInforRm, sort, querySql, countSql);
     }
 
-    public Integer updateAllAlertInforPage(AlertInforQueryDomain domain) {
+    public Integer updateAllAlertInforPage(BatchAllDealDomain domain) {
 
         try {
 
@@ -438,6 +438,108 @@ public class AlertWarningInformationService {
 
     }
 
+    public List<Map<String,Object>> queryAllAlertInforPage(BatchAllDealDomain domain) {
+        List<Map<String,Object>> idList = new ArrayList<>();
+
+        try {
+
+            String querySql = "SELECT ID FROM `t_warning_information` where DELETE_FLAG =" + DataValidity.VALID.getState() + " ";
+
+            if (!StringUtils.isEmpty(domain.getKeywords())) {
+
+                querySql += " and ( NAME like '%" + domain.getKeywords() + "%' or JOB_NUMBER like '%" + domain.getKeywords() + "%') ";
+            }
+
+            if (!StringUtils.isEmpty(domain.getCollegeCodes())) {
+                String[] collogeIdArr = domain.getCollegeCodes().split(",");
+                String collogeCodes = "";
+                for (String collogeCode : collogeIdArr) {
+                    if (!StringUtils.isEmpty(collogeCode)) {
+                        if (StringUtils.isEmpty(collogeCodes)) {
+                            collogeCodes = collogeCode;
+                        } else {
+                            collogeCodes += "," + collogeCode;
+                        }
+                    }
+                }
+
+                querySql += " and COLLOGE_CODE in (" + collogeCodes
+                        + ")";
+            }
+
+            if (!StringUtils.isEmpty(domain.getWarningLevels())) {
+                String[] warnLevelArr = domain.getWarningLevels().split(",");
+                String warnLevels = "";
+                for (String warnLevel : warnLevelArr) {
+                    if (!StringUtils.isEmpty(warnLevel)) {
+                        if (StringUtils.isEmpty(warnLevels)) {
+                            warnLevels = warnLevel;
+                        } else {
+                            warnLevels += "," + warnLevel;
+                        }
+                    }
+                }
+
+                querySql += " and WARNING_LEVEL in (" + warnLevels
+                        + ")";
+            }
+
+            if (!StringUtils.isEmpty(domain.getWarningTypes())) {
+                String[] warnTypeArr = domain.getWarningTypes().split(",");
+                String warnTypes = "";
+                for (String warnType : warnTypeArr) {
+                    if (!StringUtils.isEmpty(warnType)) {
+                        if (StringUtils.isEmpty(warnTypes)) {
+                            warnTypes = "'" + warnType + "'";
+                        } else {
+                            warnTypes += "," + "'" + warnType + "'";
+                        }
+                    }
+                }
+
+                querySql += " and WARNING_TYPE in (" + warnTypes + ")";
+            }
+
+            if (!StringUtils.isEmpty(domain.getWarningStates())) {
+                String[] warnStateArr = domain.getWarningStates().split(",");
+                String warnStates = "";
+                for (String warnState : warnStateArr) {
+                    if (!StringUtils.isEmpty(warnState)) {
+                        if (StringUtils.isEmpty(warnStates)) {
+                            warnStates = warnState;
+                        } else {
+                            warnStates += "," + warnState;
+                        }
+                    }
+                }
+
+                querySql += " and WARNING_STATE in (" + warnStates + ")";
+            }
+            if (null != domain.getTeacherYear()) {
+                querySql += " and TEACHING_YEAR = " + domain.getTeacherYear();
+            }
+            if (null != domain.getSemester()) {
+                if (domain.getSemester().equals("2")) {
+                    domain.setSemester("秋");
+                }
+                if (domain.getSemester().equals("1")) {
+                    domain.setSemester("春");
+                }
+                querySql += " and SEMESTER = '" + domain.getSemester() + "'";
+            }
+
+            querySql += " and ORG_ID =" + domain.getOrgId();
+
+
+            idList = jdbcTemplate.queryForList(querySql);
+            return idList;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList();
+        }
+
+    }
+
     public Map<String, Object> queryTeacherAlertInforPage(AlertInforQueryTeacherDomain domain) {
 
         String querySql = "SELECT ID,NAME,COLLOGE_NAME,CLASS_NAME,JOB_NUMBER,WARNING_LEVEL,WARNING_CONDITION,WARNING_TYPE,WARNING_TIME,WARNING_STATE,WARNING_SOURCE FROM `t_warning_information` where DELETE_FLAG =" + DataValidity.VALID.getState() + " ";
@@ -526,13 +628,17 @@ public class AlertWarningInformationService {
     public Map<String, Object> queryStuAlertInforPage(Long orgId, String jobNum, Integer pageNumber, Integer pageSize) {
         String querySql = "SELECT ID,NAME,COLLOGE_NAME,CLASS_NAME,JOB_NUMBER,WARNING_LEVEL,WARNING_CONDITION,WARNING_TYPE,WARNING_TIME,WARNING_STATE,WARNING_SOURCE FROM `t_warning_information` where DELETE_FLAG =" + DataValidity.VALID.getState() + " ";
         querySql += " and ORG_ID =" + orgId;
-        querySql += " and job_number='" + jobNum + "'";
+        if(!StringUtils.isEmpty(jobNum)){
+            querySql += " and job_number='" + jobNum + "'";
+        }
+
         querySql += "  ORDER BY CREATED_DATE";
 
         String countSql = "SELECT count(1) FROM `t_warning_information` where DELETE_FLAG =" + DataValidity.VALID.getState() + " ";
         countSql += " and ORG_ID =" + orgId;
-        countSql += " and job_number='" + jobNum + "'";
-
+        if(!StringUtils.isEmpty(jobNum)){
+            countSql += " and job_number='" + jobNum + "'";
+        }
         List<SortDTO> sort = new ArrayList<SortDTO>();
         SortDTO dto = new SortDTO();
         dto.setKey("WARNING_TIME");

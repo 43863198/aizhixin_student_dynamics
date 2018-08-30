@@ -4,6 +4,7 @@ import com.aizhixin.cloud.dataanalysis.alertinformation.domain.*;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AttachmentInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.OperationRecord;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
+import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -105,11 +106,34 @@ public class AlarmHandlingService {
         return result;
     }
 
-    public Map<String, Object> batchAllProcessing(AlertInforQueryDomain domain) {
+    public Map<String, Object> batchAllProcessing(BatchAllDealDomain domain) {
         Map<String, Object> result = new HashMap<>();
         try {
             int row = alertWarningInformationService.updateAllAlertInforPage(domain);
-            System.out.println("row------>" + row);
+            List<Map<String, Object>> idList = alertWarningInformationService.queryAllAlertInforPage(domain);
+            for (Map map : idList) {
+                if (null != map && null != map.get("ID")) {
+                    WarningInformation warningInformation = alertWarningInformationService.getOneById(map.get("ID").toString());
+                    warningInformation.setLastModifiedDate(new Date());
+                    alertWarningInformationService.save(warningInformation);
+                    Map<String, String> maps = domain.getDealTypes();
+                    if (null != maps) {
+                        List<OperationRecord> operationRecordList = operaionRecordService.getOperationRecordByWInfoId(map.get("ID").toString());
+                        for (OperationRecord or : operationRecordList) {
+                            OperationRecord operationRecord = operaionRecordService.getOneById(or.getId());
+                            operationRecord.setOrgId(warningInformation.getOrgId());
+                            operationRecord.setOperationTime(new Date());
+                            for (Map.Entry<String, String> e : maps.entrySet()) {
+                                operationRecord.setDealType(Integer.parseInt(e.getKey()));
+                                operationRecord.setProposal(e.getValue());
+                                operaionRecordService.save(operationRecord);
+                            }
+                        }
+
+                    }
+                }
+            }
+
             if (row > 0) {
                 result.put("success", true);
                 result.put("message", "保存处理结果成功！");
@@ -123,16 +147,28 @@ public class AlarmHandlingService {
         return result;
     }
 
-    public Map<String, Object> batchProcessing(BatchDealResultDomain batchDealResultDomain) {
+    public Map<String, Object> batchProcessing(BatchDealDomain batchDealDomain) {
         Map<String, Object> result = new HashMap<>();
         try {
-            String[] array = batchDealResultDomain.getWarningInformationIds();
-            for (String str : array) {
-                WarningInformation warningInformation = alertWarningInformationService.getOneById(str);
-                if (null != warningInformation) {
-                    warningInformation.setWarningState(batchDealResultDomain.getStatus());
-                    warningInformation.setLastModifiedDate(new Date());
-                    alertWarningInformationService.save(warningInformation);
+            String[] idArray = batchDealDomain.getWarningInformationIds();
+            for (String id : idArray) {
+                WarningInformation warningInformation = alertWarningInformationService.getOneById(id);
+                warningInformation.setLastModifiedDate(new Date());
+                warningInformation.setWarningState(AlertTypeConstant.ALERT_PROCESSED);
+                alertWarningInformationService.save(warningInformation);
+                Map<String, String> map = batchDealDomain.getDealTypes();
+                if (null != map) {
+                    List<OperationRecord> operationRecordList = operaionRecordService.getOperationRecordByWInfoId(id);
+                    for (OperationRecord or : operationRecordList) {
+                        OperationRecord operationRecord = operaionRecordService.getOneById(or.getId());
+                        operationRecord.setOrgId(warningInformation.getOrgId());
+                        operationRecord.setOperationTime(new Date());
+                        for (Map.Entry<String, String> e : map.entrySet()) {
+                            operationRecord.setDealType(Integer.parseInt(e.getKey()));
+                            operationRecord.setProposal(e.getValue());
+                            operaionRecordService.save(operationRecord);
+                        }
+                    }
                 }
             }
         } catch (Exception e) {
@@ -154,6 +190,34 @@ public class AlarmHandlingService {
                 warningInformation.setLastModifiedDate(new Date());
                 alertWarningInformationService.save(warningInformation);
             }
+            if (null != dealResultDomain.getDealId() && !StringUtils.isBlank(dealResultDomain.getDealId())) {
+                OperationRecord operationRecord = operaionRecordService.getOneById(dealResultDomain.getDealId());
+                operationRecord.setOrgId(warningInformation.getOrgId());
+                operationRecord.setOperationTime(new Date());
+                Map<String, Object> maps = dealResultDomain.getDealTypes();
+                if (null != maps) {
+                    for (Map.Entry<String, Object> e : maps.entrySet()) {
+                        operationRecord.setDealType(Integer.parseInt(e.getKey()));
+                        Map map = (Map)e.getValue();
+                        operationRecord.setProposal(map.get("dealInfo").toString());
+                        String id =operaionRecordService.save(operationRecord);
+                        for (AttachmentDomain d : (List<AttachmentDomain>)map.get("attachmentDomain")) {
+                            AttachmentInformation attachmentInformation = null;
+                            if (null != d.getId() && !StringUtils.isBlank(d.getId())) {
+                                attachmentInformation = attachmentInfomationService.getOneById(d.getId());
+                            } else {
+                                attachmentInformation = new AttachmentInformation();
+                            }
+                            attachmentInformation.setOrgId(warningInformation.getOrgId());
+                            attachmentInformation.setAttachmentName(d.getFileName());
+                            attachmentInformation.setAttachmentPath(d.getFileUrl());
+                            attachmentInformation.setOperationRecordId(id);
+                            attachmentInfomationService.save(attachmentInformation);
+                        }
+                    }
+                }
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);

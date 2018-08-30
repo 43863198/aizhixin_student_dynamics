@@ -1,10 +1,11 @@
 
 package com.aizhixin.cloud.dataanalysis.common.util;
 
-import java.util.List;
-import java.util.Map;
-
 import com.aizhixin.cloud.dataanalysis.common.PageData;
+import com.aizhixin.cloud.dataanalysis.common.PageDomain;
+import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
+import com.aizhixin.cloud.dataanalysis.common.core.PaginationCore;
+import com.aizhixin.cloud.dataanalysis.common.domain.SortDTO;
 import org.apache.commons.collections.map.HashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +15,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
-import com.aizhixin.cloud.dataanalysis.common.PageDomain;
-import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
-import com.aizhixin.cloud.dataanalysis.common.core.PaginationCore;
-import com.aizhixin.cloud.dataanalysis.common.domain.SortDTO;
+import java.util.List;
+import java.util.Map;
 
 
 @Repository
@@ -30,11 +29,12 @@ public class PageJdbcUtil {
     public <T> Map<String, Object> getPageInfor(Integer pageSize, Integer offset, RowMapper<T> rowMapper,
                                                 List<SortDTO> sort, String querySql, String countSql) {
         Map<String, Object> r = new HashedMap();
-
-        if (pageSize == null || pageSize <= 0)
+        if (pageSize == null || pageSize <= 0){
             pageSize = PaginationCore.DEFAULT_LIMIT;
-        if (offset == null || offset <= 0)
+        }
+        if (offset == null || offset <= 0){
             offset = PaginationCore.DEFAULT_OFFSET;
+        }
 
         Long totalCount = jdbcTemplate.queryForObject(
                 countSql, Long.class);

@@ -225,11 +225,18 @@ public class ScoreJob {
                         sfc.setSecondTotalScores(totalCJ2);
                         sfc.setSecondTotalCourseNums(count2);
                         sfc.setSecondTotalGradePoint(totalXFJD2);
+                        logger.info("学生学号:" + d.get("xh").toString());
+                        logger.info("学生姓名:" + d.get("xm").toString());
+                        logger.info("学生绩点:" + d.get("jd").toString());
+                        logger.info("学生学分:" + d.get("xf").toString());
+                        logger.info("上学期总（学分*绩点）:" + totalXFJD2);
+                        logger.info("上学期总学分:" + totalXF2);
                         if (totalXF2 != 0) {
                             sfc.setSecondAvgradePoint(totalXFJD2 / totalXF2);
                         } else {
                             sfc.setSecondAvgradePoint(0);
                         }
+
 
                         int count1 = 0;
                         float totalCJ1 = 0;
@@ -534,6 +541,8 @@ public class ScoreJob {
                 if (null != ruleParameter) {
                     float result = 0;
                     result = scoreFluctuateCount.getSecondAvgradePoint() - scoreFluctuateCount.getFirstAvgradePoint();
+                    logger.info("上学期平均绩点:" + scoreFluctuateCount.getSecondAvgradePoint());
+                    logger.info("上上学期平均绩点:" + scoreFluctuateCount.getFirstAvgradePoint());
                     // 上学期平均绩点小于上上学期平均绩点时
                     if (result < 0) {
                         result = Math.abs(result);

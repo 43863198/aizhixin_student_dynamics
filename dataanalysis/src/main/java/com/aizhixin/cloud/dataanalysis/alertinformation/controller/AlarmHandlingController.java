@@ -1,7 +1,7 @@
 package com.aizhixin.cloud.dataanalysis.alertinformation.controller;
 
-import com.aizhixin.cloud.dataanalysis.alertinformation.domain.AlertInforQueryDomain;
-import com.aizhixin.cloud.dataanalysis.alertinformation.domain.BatchDealResultDomain;
+import com.aizhixin.cloud.dataanalysis.alertinformation.domain.BatchAllDealDomain;
+import com.aizhixin.cloud.dataanalysis.alertinformation.domain.BatchDealDomain;
 import com.aizhixin.cloud.dataanalysis.alertinformation.domain.DealDomain;
 import com.aizhixin.cloud.dataanalysis.alertinformation.domain.DealResultDomain;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlarmHandlingService;
@@ -34,11 +34,11 @@ public class AlarmHandlingController {
                     "</b><br>dealId:处理操作id;" +
                     "</b><br>dealInfo:处理信息;" +
                     "dealType:处理类型 辅导员处理10 学院处理 20;" +
-                    "<br>attachmentDomain:附件信息、<br>")  @RequestBody DealDomain dealDomain) {
-        return alarmHandlingService.addProcessing(dealDomain) ;
+                    "<br>attachmentDomain:附件信息、<br>") @RequestBody DealDomain dealDomain) {
+        return alarmHandlingService.addProcessing(dealDomain);
     }
 
-    @PutMapping(value = "/updateprocessing",  produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/updateprocessing", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "PUT", value = "修改处理信息", response = Void.class, notes = "修改处理信息<br><br><b>@author wu.jianwei</b>")
     public Map<String, Object> updateProcessing(
             @ApiParam(value = "<b>必填:、</b><br>warningInformationId:预警信息id<br><b>" +
@@ -46,36 +46,48 @@ public class AlarmHandlingController {
                     "选填:、" +
                     "</b><br>dealInfo:处理信息;" +
                     "dealType:处理类型 辅导员处理10 学院处理 20;" +
-                    "<br>attachmentDomain:附件信息、<br>")  @RequestBody DealDomain dealDomain) {
-        return alarmHandlingService.updateProcessing(dealDomain) ;
+                    "<br>attachmentDomain:附件信息、<br>") @RequestBody DealDomain dealDomain) {
+        return alarmHandlingService.updateProcessing(dealDomain);
     }
 
 
     @RequestMapping(value = "/processing", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "POST", value = "处理结果", response = Void.class, notes = "处理结果<br><br><b>@author wu.jianwei</b>")
     public Map<String, Object> processing(
-            @ApiParam(value = "<b>必填:、</b><br>warningInformationId:预警信息id<br><b>" +
-                    "<br>status:20 完成预警处理 40 撤销预警处理<br>")  @RequestBody DealResultDomain dealResultDomain) {
-        return alarmHandlingService.processing(dealResultDomain) ;
+            @ApiParam(value = "<b>必填:</b><br>warningInformationId:预警信息id<br>" +
+                    "<b><br>status:20 完成预警处理 40 撤销预警处理<br></b>" +
+                    "<br>dealId:处理id;" +
+                    " 选填:" +
+                    " </b><br>dealTypes:处理信息;" +
+                    " dealType:处理类型（辅导员处理10 学院处理 20）和处理信息（处理建议、附件）") @RequestBody DealResultDomain dealResultDomain) {
+        return alarmHandlingService.processing(dealResultDomain);
     }
 
 
-    @PutMapping(value = "/batchprocessing",  produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/batchprocessing", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "PUT", value = "批量处理本页信息", response = Void.class, notes = "批量处理本页信息<br><br><b>@author dengchao</b>")
     public Map<String, Object> processing(
-            @ApiParam(value = "<b>必填:、</b><br>warningInformationIds:预警信息id<br><b>" +
-                    "<br>status:20 完成预警处理 40 撤销预警处理<br>")  @RequestBody BatchDealResultDomain batchDealResultDomain) {
-        return alarmHandlingService.batchProcessing(batchDealResultDomain) ;
+            @ApiParam(value = "<b>必填:</b>" +
+                    "<br>warningInformationIds:预警信息id列表;" +
+                    "<b>选填:</b>" +
+                    "dealTypes:处理类型和处理建议 辅导员处理10 学院处理 20;") @RequestBody BatchDealDomain batchDealDomain) {
+        return alarmHandlingService.batchProcessing(batchDealDomain);
     }
 
-    @PutMapping(value = "/batchallprocessing",  produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/batchallprocessing", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "PUT", value = "批量处理全部信息", response = Void.class, notes = "批量处理全部信息<br><br><b>@author dengchao</b>")
     public Map<String, Object> processing(
-            @ApiParam(value = "<b>必填:、</b><br>orgId:机构id<br>" +
+            @ApiParam(value = "<b>必填:</b><br>orgId:机构id<br>" +
                     "<br>teacherYear:学年<br>" +
                     "<br>semester:学期<br>" +
-                    "<b>选填:、</b><br>collogeCodes:学院code(字符串多个以,分隔);warningTypes:预警类型(字符串多个以,分隔);warningLevels:预警等级(字符串多个以,分隔);<br>collegeId:院系id、<br>")  @RequestBody AlertInforQueryDomain domain) {
-        return alarmHandlingService.batchAllProcessing(domain) ;
+                    "<b>选填:</b>" +
+                    "<br>collogeCodes:学院code(字符串多个以,分隔);<br>" +
+                    "<br>warningTypes:预警类型(字符串多个以,分隔);<br>" +
+                    "<br>warningLevels:预警等级(字符串多个以,分隔)<br>;" +
+                    "<br>collegeId:院系id<br>"+
+                    "<b>选填:</b>" +
+                    "dealTypes:处理类型和处理建议 辅导员处理10 学院处理 20;") @RequestBody BatchAllDealDomain domain) {
+        return alarmHandlingService.batchAllProcessing(domain);
     }
 
 }
