@@ -21,20 +21,20 @@ public class OperaionRecordService {
     private OperationRecordRepository operationRecordRepository;
 
 
-    public OperationRecord getOneById(String id){
+    public OperationRecord getOneById(String id) {
         return operationRecordRepository.findOne(id);
     }
 
-    public String save(OperationRecord operationRecord){
-         return operationRecordRepository.save(operationRecord).getId();
+    public String save(OperationRecord operationRecord) {
+        return operationRecordRepository.save(operationRecord).getId();
     }
 
-    public List<OperationRecord> getOperationRecordByWInfoId(String warningInformationId){
+    public List<OperationRecord> getOperationRecordByWInfoId(String warningInformationId) {
         return operationRecordRepository.getOperationRecordByWInfoId(warningInformationId, DataValidity.VALID.getState());
     }
 
+    public void deleteByWarningInformationIdAndDealType(String warningInformationId, int dealType) {
+        operationRecordRepository.deleteByWarningInformationIdAndDealType(warningInformationId, dealType);
 
-
-
-
+    }
 }
