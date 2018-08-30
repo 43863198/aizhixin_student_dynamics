@@ -58,9 +58,8 @@ public class AlarmHandlingController {
                     "<b><br>status:20 完成预警处理 40 撤销预警处理<br></b>" +
                     "<br>dealId:处理id;" +
                     " 选填:" +
-                    " </b><br>dealInfo:处理信息;" +
-                    " dealType:处理类型 辅导员处理10 学院处理 20;" +
-                    "<br>attachmentDomain:附件信息、<br>") @RequestBody DealResultDomain dealResultDomain) {
+                    " </b><br>dealTypes:处理信息;" +
+                    " dealType:处理类型（辅导员处理10 学院处理 20）和处理信息（处理建议、附件）") @RequestBody DealResultDomain dealResultDomain) {
         return alarmHandlingService.processing(dealResultDomain);
     }
 
