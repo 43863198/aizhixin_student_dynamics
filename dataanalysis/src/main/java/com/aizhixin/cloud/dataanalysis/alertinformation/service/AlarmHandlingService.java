@@ -201,16 +201,17 @@ public class AlarmHandlingService {
                         Map map = (Map)e.getValue();
                         operationRecord.setProposal(map.get("dealInfo").toString());
                         String id =operaionRecordService.save(operationRecord);
-                        List<AttachmentInformation> attachmentInformations = attachmentInfomationService.getAttachmentInformationByOprId(id);
-                        if (null != attachmentInformations) {
-                            attachmentInfomationService.deleteAttachmentInformation(attachmentInformations);
-                        }
                         for (AttachmentDomain d : (List<AttachmentDomain>)map.get("attachmentDomain")) {
-                            AttachmentInformation attachmentInformation = new AttachmentInformation();
+                            AttachmentInformation attachmentInformation = null;
+                            if (null != d.getId() && !StringUtils.isBlank(d.getId())) {
+                                attachmentInformation = attachmentInfomationService.getOneById(d.getId());
+                            } else {
+                                attachmentInformation = new AttachmentInformation();
+                            }
                             attachmentInformation.setOrgId(warningInformation.getOrgId());
                             attachmentInformation.setAttachmentName(d.getFileName());
                             attachmentInformation.setAttachmentPath(d.getFileUrl());
-                            attachmentInformation.setOperationRecordId(dealResultDomain.getDealId());
+                            attachmentInformation.setOperationRecordId(id);
                             attachmentInfomationService.save(attachmentInformation);
                         }
                     }
