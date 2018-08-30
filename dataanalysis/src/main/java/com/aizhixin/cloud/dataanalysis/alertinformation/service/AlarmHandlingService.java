@@ -185,38 +185,44 @@ public class AlarmHandlingService {
         Map<String, Object> result = new HashMap<>();
         try {
             WarningInformation warningInformation = alertWarningInformationService.getOneById(dealResultDomain.getWarningInformationId());
+            OperationRecord operationRecord = null;
             if (null != warningInformation) {
                 warningInformation.setWarningState(dealResultDomain.getStatus());
                 warningInformation.setLastModifiedDate(new Date());
                 alertWarningInformationService.save(warningInformation);
             }
-            if (null != dealResultDomain.getDealId() && !StringUtils.isBlank(dealResultDomain.getDealId())) {
-                OperationRecord operationRecord = operaionRecordService.getOneById(dealResultDomain.getDealId());
-                operationRecord.setOrgId(warningInformation.getOrgId());
-                operationRecord.setOperationTime(new Date());
-                Map<String, Object> maps = dealResultDomain.getDealTypes();
-                if (null != maps) {
-                    for (Map.Entry<String, Object> e : maps.entrySet()) {
-                        operationRecord.setDealType(Integer.parseInt(e.getKey()));
-                        Map map = (Map)e.getValue();
-                        operationRecord.setProposal(map.get("dealInfo").toString());
-                        String id =operaionRecordService.save(operationRecord);
-                        for (AttachmentDomain d : (List<AttachmentDomain>)map.get("attachmentDomain")) {
-                            AttachmentInformation attachmentInformation = null;
-                            if (null != d.getId() && !StringUtils.isBlank(d.getId())) {
-                                attachmentInformation = attachmentInfomationService.getOneById(d.getId());
-                            } else {
-                                attachmentInformation = new AttachmentInformation();
-                            }
-                            attachmentInformation.setOrgId(warningInformation.getOrgId());
-                            attachmentInformation.setAttachmentName(d.getFileName());
-                            attachmentInformation.setAttachmentPath(d.getFileUrl());
-                            attachmentInformation.setOperationRecordId(id);
-                            attachmentInfomationService.save(attachmentInformation);
+            if (!StringUtils.isBlank(dealResultDomain.getDealId())) {
+                operationRecord = operaionRecordService.getOneById(dealResultDomain.getDealId());
+            } else {
+                operationRecord = new OperationRecord();
+            }
+
+            operationRecord.setOrgId(warningInformation.getOrgId());
+            operationRecord.setOperationTime(new Date());
+            operationRecord.setWarningInformationId(dealResultDomain.getWarningInformationId());
+            Map<String, Object> maps = dealResultDomain.getDealTypes();
+            if (null != maps) {
+                for (Map.Entry<String, Object> e : maps.entrySet()) {
+                    operationRecord.setDealType(Integer.parseInt(e.getKey()));
+                    Map map = (Map) e.getValue();
+                    operationRecord.setProposal(map.get("dealInfo").toString());
+                    String id = operaionRecordService.save(operationRecord);
+                    for (AttachmentDomain d : (List<AttachmentDomain>) map.get("attachmentDomain")) {
+                        AttachmentInformation attachmentInformation = null;
+                        if (null != d.getId() && !StringUtils.isBlank(d.getId())) {
+                            attachmentInformation = attachmentInfomationService.getOneById(d.getId());
+                        } else {
+                            attachmentInformation = new AttachmentInformation();
                         }
+                        attachmentInformation.setOrgId(warningInformation.getOrgId());
+                        attachmentInformation.setAttachmentName(d.getFileName());
+                        attachmentInformation.setAttachmentPath(d.getFileUrl());
+                        attachmentInformation.setOperationRecordId(id);
+                        attachmentInfomationService.save(attachmentInformation);
                     }
                 }
             }
+
 
         } catch (Exception e) {
             e.printStackTrace();
