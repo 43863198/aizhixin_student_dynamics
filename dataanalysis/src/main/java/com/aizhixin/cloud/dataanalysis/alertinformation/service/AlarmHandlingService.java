@@ -120,10 +120,10 @@ public class AlarmHandlingService {
                     if (null != maps) {
                         List<OperationRecord> operationRecordList = operaionRecordService.getOperationRecordByWInfoId(map.get("ID").toString());
                         for (OperationRecord or : operationRecordList) {
-                            OperationRecord operationRecord = operaionRecordService.getOneById(or.getId());
-                            operationRecord.setOrgId(warningInformation.getOrgId());
-                            operationRecord.setOperationTime(new Date());
                             for (Map.Entry<String, String> e : maps.entrySet()) {
+                                OperationRecord operationRecord = operaionRecordService.getOneById(or.getId());
+                                operationRecord.setOrgId(warningInformation.getOrgId());
+                                operationRecord.setOperationTime(new Date());
                                 operationRecord.setDealType(Integer.parseInt(e.getKey()));
                                 operationRecord.setProposal(e.getValue());
                                 operaionRecordService.save(operationRecord);
@@ -160,10 +160,10 @@ public class AlarmHandlingService {
                 if (null != map) {
                     List<OperationRecord> operationRecordList = operaionRecordService.getOperationRecordByWInfoId(id);
                     for (OperationRecord or : operationRecordList) {
-                        OperationRecord operationRecord = operaionRecordService.getOneById(or.getId());
-                        operationRecord.setOrgId(warningInformation.getOrgId());
-                        operationRecord.setOperationTime(new Date());
                         for (Map.Entry<String, String> e : map.entrySet()) {
+                            OperationRecord operationRecord = operaionRecordService.getOneById(or.getId());
+                            operationRecord.setOrgId(warningInformation.getOrgId());
+                            operationRecord.setOperationTime(new Date());
                             operationRecord.setDealType(Integer.parseInt(e.getKey()));
                             operationRecord.setProposal(e.getValue());
                             operaionRecordService.save(operationRecord);
