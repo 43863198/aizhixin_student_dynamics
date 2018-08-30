@@ -181,10 +181,10 @@ public class StudyExceptionIndexService {
                         alter = false;
                         break;
                     } else {
-                        tmp = (e.getLxkcs() * 100.0 / e.getKcs()) + "";
+                        tmp = (e.getTgkcs() * 100.0 / e.getKcs()) + "";
                         p = tmp.indexOf(".");
                         if (p > 0 && p + 2 < tmp.length()) {
-                            tmp = tmp.substring(0, p);
+                            tmp = tmp.substring(0, p + 2);
                         }
                         desc.append("[").append(r.getRuledescribe()).append(tmp).append("]");
                     }
@@ -196,7 +196,7 @@ public class StudyExceptionIndexService {
                         tmp = (e.getTgxf() * 100.0 / e.getXf()) + "";
                         p = tmp.indexOf(".");
                         if (p > 0 && p + 2 < tmp.length()) {
-                            tmp = tmp.substring(0, p);
+                            tmp = tmp.substring(0, p + 2);
                         }
                         desc.append("[").append(r.getRuledescribe()).append(tmp).append("]");
                     }
@@ -242,13 +242,13 @@ public class StudyExceptionIndexService {
                         ss.append("[").append(e.getLxkcnr()).append("]");
                     }
                 } else if (r.getRuledescribe().indexOf("课程门数占教学计划的比例≤") >= 0) {
-                    if (e.getLxkcs() * 100.0 / e.getKcs() > new Double(r.getRightParameter())) {
+                    if (e.getTgkcs() * 100.0 / e.getKcs() > new Double(r.getRightParameter())) {
                         break;
                     } else {
-                        tmp = (e.getLxkcs() * 100.0 / e.getKcs()) + "";
+                        tmp = (e.getTgkcs() * 100.0 / e.getKcs()) + "";
                         p = tmp.indexOf(".");
                         if (p > 0 && p + 2 < tmp.length()) {
-                            tmp = tmp.substring(0, p);
+                            tmp = tmp.substring(0, p + 2);
                         }
                         desc.append("[").append(r.getRuledescribe()).append(tmp).append("]");
                     }
@@ -259,7 +259,7 @@ public class StudyExceptionIndexService {
                         tmp = (e.getTgxf() * 100.0 / e.getXf()) + "";
                         p = tmp.indexOf(".");
                         if (p > 0 && p + 2 < tmp.length()) {
-                            tmp = tmp.substring(0, p);
+                            tmp = tmp.substring(0, p + 2);
                         }
                         desc.append("[").append(r.getRuledescribe()).append(tmp).append("]");
                     }
