@@ -193,16 +193,14 @@ public class AlarmHandlingService {
             }
             if (!StringUtils.isBlank(dealResultDomain.getDealId())) {
                 operationRecord = operaionRecordService.getOneById(dealResultDomain.getDealId());
-            } else {
-                operationRecord = new OperationRecord();
             }
-
-            operationRecord.setOrgId(warningInformation.getOrgId());
-            operationRecord.setOperationTime(new Date());
-            operationRecord.setWarningInformationId(dealResultDomain.getWarningInformationId());
             Map<String, Object> maps = dealResultDomain.getDealTypes();
             if (null != maps) {
                 for (Map.Entry<String, Object> e : maps.entrySet()) {
+                    operationRecord = new OperationRecord();
+                    operationRecord.setOrgId(warningInformation.getOrgId());
+                    operationRecord.setOperationTime(new Date());
+                    operationRecord.setWarningInformationId(dealResultDomain.getWarningInformationId());
                     operationRecord.setDealType(Integer.parseInt(e.getKey()));
                     Map map = (Map) e.getValue();
                     operationRecord.setProposal(map.get("dealInfo").toString());
@@ -221,9 +219,11 @@ public class AlarmHandlingService {
                         attachmentInfomationService.save(attachmentInformation);
                     }
                 }
+            } else {
+                operationRecord.setOrgId(warningInformation.getOrgId());
+                operationRecord.setOperationTime(new Date());
+                operationRecord.setWarningInformationId(dealResultDomain.getWarningInformationId());
             }
-
-
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
