@@ -200,13 +200,12 @@ public class AlarmHandlingService {
                         operationRecord.setDealType(Integer.parseInt(e.getKey()));
                         Map map = (Map)e.getValue();
                         operationRecord.setProposal(map.get("dealInfo").toString());
-                        operationRecord.setProposal(map.get("dealInfo").toString());
                         String id =operaionRecordService.save(operationRecord);
                         List<AttachmentInformation> attachmentInformations = attachmentInfomationService.getAttachmentInformationByOprId(id);
                         if (null != attachmentInformations) {
                             attachmentInfomationService.deleteAttachmentInformation(attachmentInformations);
                         }
-                        for (AttachmentDomain d : dealResultDomain.getAttachmentDomain()) {
+                        for (AttachmentDomain d : (List<AttachmentDomain>)map.get("attachmentDomain")) {
                             AttachmentInformation attachmentInformation = new AttachmentInformation();
                             attachmentInformation.setOrgId(warningInformation.getOrgId());
                             attachmentInformation.setAttachmentName(d.getFileName());
@@ -214,20 +213,6 @@ public class AlarmHandlingService {
                             attachmentInformation.setOperationRecordId(dealResultDomain.getDealId());
                             attachmentInfomationService.save(attachmentInformation);
                         }
-                    }
-                } else {
-                    operaionRecordService.save(operationRecord);
-                    List<AttachmentInformation> attachmentInformations = attachmentInfomationService.getAttachmentInformationByOprId(operationRecord.getId());
-                    if (null != attachmentInformations) {
-                        attachmentInfomationService.deleteAttachmentInformation(attachmentInformations);
-                    }
-                    for (AttachmentDomain d : dealResultDomain.getAttachmentDomain()) {
-                        AttachmentInformation attachmentInformation = new AttachmentInformation();
-                        attachmentInformation.setOrgId(warningInformation.getOrgId());
-                        attachmentInformation.setAttachmentName(d.getFileName());
-                        attachmentInformation.setAttachmentPath(d.getFileUrl());
-                        attachmentInformation.setOperationRecordId(dealResultDomain.getDealId());
-                        attachmentInfomationService.save(attachmentInformation);
                     }
                 }
             }
