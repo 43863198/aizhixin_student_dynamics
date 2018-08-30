@@ -177,7 +177,7 @@ public class StudyExceptionIndexService {
                         ss.append("[").append(e.getLxkcnr()).append("]");
                     }
                 } else if (r.getRuledescribe().indexOf("课程门数占教学计划的比例≤") >= 0) {
-                    if (e.getLxkcs() * 100.0 / e.getKcs() > new Double(r.getRightParameter())) {
+                    if (e.getTgkcs() * 100.0 / e.getKcs() > new Double(r.getRightParameter())) {
                         alter = false;
                         break;
                     } else {
