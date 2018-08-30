@@ -194,30 +194,42 @@ public class AlarmHandlingService {
                 OperationRecord operationRecord = operaionRecordService.getOneById(dealResultDomain.getDealId());
                 operationRecord.setOrgId(warningInformation.getOrgId());
                 operationRecord.setOperationTime(new Date());
-                Map<String, String> maps = dealResultDomain.getDealTypes();
+                Map<String, Object> maps = dealResultDomain.getDealTypes();
                 if (null != maps) {
-                    for (Map.Entry<String, String> e : maps.entrySet()) {
+                    for (Map.Entry<String, Object> e : maps.entrySet()) {
                         operationRecord.setDealType(Integer.parseInt(e.getKey()));
-                        operationRecord.setProposal(e.getValue());
-                        operaionRecordService.save(operationRecord);
+                        Map map = (Map)e.getValue();
+                        operationRecord.setProposal(map.get("dealInfo").toString());
+                        operationRecord.setProposal(map.get("dealInfo").toString());
+                        String id =operaionRecordService.save(operationRecord);
+                        List<AttachmentInformation> attachmentInformations = attachmentInfomationService.getAttachmentInformationByOprId(id);
+                        if (null != attachmentInformations) {
+                            attachmentInfomationService.deleteAttachmentInformation(attachmentInformations);
+                        }
+                        for (AttachmentDomain d : dealResultDomain.getAttachmentDomain()) {
+                            AttachmentInformation attachmentInformation = new AttachmentInformation();
+                            attachmentInformation.setOrgId(warningInformation.getOrgId());
+                            attachmentInformation.setAttachmentName(d.getFileName());
+                            attachmentInformation.setAttachmentPath(d.getFileUrl());
+                            attachmentInformation.setOperationRecordId(dealResultDomain.getDealId());
+                            attachmentInfomationService.save(attachmentInformation);
+                        }
                     }
                 } else {
                     operaionRecordService.save(operationRecord);
+                    List<AttachmentInformation> attachmentInformations = attachmentInfomationService.getAttachmentInformationByOprId(operationRecord.getId());
+                    if (null != attachmentInformations) {
+                        attachmentInfomationService.deleteAttachmentInformation(attachmentInformations);
+                    }
+                    for (AttachmentDomain d : dealResultDomain.getAttachmentDomain()) {
+                        AttachmentInformation attachmentInformation = new AttachmentInformation();
+                        attachmentInformation.setOrgId(warningInformation.getOrgId());
+                        attachmentInformation.setAttachmentName(d.getFileName());
+                        attachmentInformation.setAttachmentPath(d.getFileUrl());
+                        attachmentInformation.setOperationRecordId(dealResultDomain.getDealId());
+                        attachmentInfomationService.save(attachmentInformation);
+                    }
                 }
-
-                List<AttachmentInformation> attachmentInformations = attachmentInfomationService.getAttachmentInformationByOprId(operationRecord.getId());
-                if (null != attachmentInformations) {
-                    attachmentInfomationService.deleteAttachmentInformation(attachmentInformations);
-                }
-                for (AttachmentDomain d : dealResultDomain.getAttachmentDomain()) {
-                    AttachmentInformation attachmentInformation = new AttachmentInformation();
-                    attachmentInformation.setOrgId(warningInformation.getOrgId());
-                    attachmentInformation.setAttachmentName(d.getFileName());
-                    attachmentInformation.setAttachmentPath(d.getFileUrl());
-                    attachmentInformation.setOperationRecordId(dealResultDomain.getDealId());
-                    attachmentInfomationService.save(attachmentInformation);
-                }
-
             }
 
         } catch (Exception e) {
