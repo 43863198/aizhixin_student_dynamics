@@ -54,8 +54,13 @@ public class AlarmHandlingController {
     @RequestMapping(value = "/processing", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "POST", value = "处理结果", response = Void.class, notes = "处理结果<br><br><b>@author wu.jianwei</b>")
     public Map<String, Object> processing(
-            @ApiParam(value = "<b>必填:、</b><br>warningInformationId:预警信息id<br><b>" +
-                    "<br>status:20 完成预警处理 40 撤销预警处理<br>") @RequestBody DealResultDomain dealResultDomain) {
+            @ApiParam(value = "<b>必填:</b><br>warningInformationId:预警信息id<br>" +
+                    "<b><br>status:20 完成预警处理 40 撤销预警处理<br></b>" +
+                    "<br>dealId:处理id;" +
+                    " 选填:" +
+                    " </b><br>dealInfo:处理信息;" +
+                    " dealType:处理类型 辅导员处理10 学院处理 20;" +
+                    "<br>attachmentDomain:附件信息、<br>") @RequestBody DealResultDomain dealResultDomain) {
         return alarmHandlingService.processing(dealResultDomain);
     }
 

@@ -190,6 +190,36 @@ public class AlarmHandlingService {
                 warningInformation.setLastModifiedDate(new Date());
                 alertWarningInformationService.save(warningInformation);
             }
+            if (null != dealResultDomain.getDealId() && !StringUtils.isBlank(dealResultDomain.getDealId())) {
+                OperationRecord operationRecord = operaionRecordService.getOneById(dealResultDomain.getDealId());
+                operationRecord.setOrgId(warningInformation.getOrgId());
+                operationRecord.setOperationTime(new Date());
+                Map<String, String> maps = dealResultDomain.getDealTypes();
+                if (null != maps) {
+                    for (Map.Entry<String, String> e : maps.entrySet()) {
+                        operationRecord.setDealType(Integer.parseInt(e.getKey()));
+                        operationRecord.setProposal(e.getValue());
+                        operaionRecordService.save(operationRecord);
+                    }
+                } else {
+                    operaionRecordService.save(operationRecord);
+                }
+
+                List<AttachmentInformation> attachmentInformations = attachmentInfomationService.getAttachmentInformationByOprId(operationRecord.getId());
+                if (null != attachmentInformations) {
+                    attachmentInfomationService.deleteAttachmentInformation(attachmentInformations);
+                }
+                for (AttachmentDomain d : dealResultDomain.getAttachmentDomain()) {
+                    AttachmentInformation attachmentInformation = new AttachmentInformation();
+                    attachmentInformation.setOrgId(warningInformation.getOrgId());
+                    attachmentInformation.setAttachmentName(d.getFileName());
+                    attachmentInformation.setAttachmentPath(d.getFileUrl());
+                    attachmentInformation.setOperationRecordId(dealResultDomain.getDealId());
+                    attachmentInfomationService.save(attachmentInformation);
+                }
+
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
