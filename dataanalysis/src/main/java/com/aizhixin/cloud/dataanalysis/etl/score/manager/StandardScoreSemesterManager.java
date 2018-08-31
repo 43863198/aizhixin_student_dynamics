@@ -126,7 +126,7 @@ public class StandardScoreSemesterManager {
     public List<StudentSemesterScoreAlertIndexDTO> queryStudentScoreAlertBd(Long orgId, String jxn, String jxq, String yxn, String yxq) {
         return jdbcTemplate.query(SQL_ALERT_BD,
                 new Object[]{orgId.toString(), jxn, jxq, orgId.toString(), yxn, yxq, orgId},
-                new int [] {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR},
+                new int [] {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.BIGINT},
                 (ResultSet rs, int rowNum) -> new StudentSemesterScoreAlertIndexDTO(
                         rs.getString("XH"), rs.getString("XM"),
                         rs.getString("BH"), rs.getString("BJMC"),
