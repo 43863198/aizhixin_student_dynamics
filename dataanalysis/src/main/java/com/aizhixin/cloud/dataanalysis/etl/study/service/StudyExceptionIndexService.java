@@ -142,7 +142,6 @@ public class StudyExceptionIndexService {
                     warn.setSemester(xq);
                     warn.setTeacherYear(xn);
                     warn.setOrgId(orgId);
-                    warn.setWarningTime(new Date ());
                 }
             }
         }
