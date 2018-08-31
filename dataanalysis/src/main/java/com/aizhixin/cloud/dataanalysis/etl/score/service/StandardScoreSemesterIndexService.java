@@ -181,6 +181,8 @@ public class StandardScoreSemesterIndexService {
                     if (!alert) {
                         continue;
                     }
+                    warn.setWarningCondition(desc.toString());
+                    warn.setWarningStandard(st.toString());
                     warn.setName(e.getXm());
                     warn.setJobNumber(e.getXh());
                     warn.setCollogeCode(e.getYxsh());
