@@ -3,6 +3,8 @@ package com.aizhixin.cloud.dataanalysis.setup.service;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
 import com.aizhixin.cloud.dataanalysis.common.service.DistributeLock;
+import com.aizhixin.cloud.dataanalysis.etl.score.service.StandardScoreSemesterIndexService;
+import com.aizhixin.cloud.dataanalysis.etl.study.service.StudyExceptionIndexService;
 import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
 import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
@@ -10,7 +12,6 @@ import com.aizhixin.cloud.dataanalysis.setup.entity.Rule;
 import com.aizhixin.cloud.dataanalysis.setup.entity.RuleParameter;
 import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.studentRegister.job.StudentRegisterJob;
-import com.aizhixin.cloud.dataanalysis.etl.study.service.StudyExceptionIndexService;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
@@ -53,6 +54,8 @@ public class GenerateWarningInfoService {
     private EntityManager em;
     @Autowired
     private StudyExceptionIndexService studyExceptionIndexService;
+    @Autowired
+    private StandardScoreSemesterIndexService standardScoreSemesterIndexService;
 
     public void warningJob() {
         Calendar c = Calendar.getInstance();
@@ -162,6 +165,9 @@ public class GenerateWarningInfoService {
                     if ("AttendAbnormal".equals(type)) {
                         leaveSchoolList = studyExceptionIndexService.generalAlertInfo(orgId, schoolYear, semester, as);
                         log.info("Generator study exception index count({})", (null == leaveSchoolList ? 0 : leaveSchoolList.size()));
+                    }  else if("PerformanceFluctuation".equals(type)) {
+                        performanceFluctuationList = standardScoreSemesterIndexService.generalStudentSemesterScoreBdAlertInfo(orgId, schoolYear, semester, as);
+                        log.info("Generator score PerformanceFluctuation index count({})", (null == performanceFluctuationList ? 0 : performanceFluctuationList.size()));
                     } else {
                         for (String ruleSetId : ruleSetIds) {
                             if (!StringUtils.isEmpty(ruleSetId)) {
@@ -181,9 +187,9 @@ public class GenerateWarningInfoService {
                                         if (rule.getName().equals("D")) {
                                             absenteeismList = rollCallJob.rollCallJob(orgId, schoolYear, semester, rp.getId());
                                         }
-                                        if (rule.getName().equals("G")) {
-                                            performanceFluctuationList = scoreJob.scoreFluctuateJob(orgId, schoolYear, semester, rp.getId());
-                                        }
+//                                        if (rule.getName().equals("G")) {
+//                                            performanceFluctuationList = scoreJob.scoreFluctuateJob(orgId, schoolYear, semester, rp.getId());
+//                                        }
                                         if (rule.getName().equals("F")) {
                                             supplementAchievementList = scoreJob.makeUpScoreJob(orgId, schoolYear, semester, rp.getId());
                                         }
