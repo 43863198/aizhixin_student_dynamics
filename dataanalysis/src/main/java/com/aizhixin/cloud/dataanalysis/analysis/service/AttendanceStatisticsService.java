@@ -13,11 +13,13 @@ import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.setup.service.GenerateWarningInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -57,26 +59,35 @@ public class AttendanceStatisticsService {
                 actual = attendanceStatisticsRepository.countByXxdmAndXnAndXqmAndKqjgAndKqrqBetweenOrderByYxsh(xxdm, teachYear, semester, AttendanceResult.ARRIVED, start, end);
                 leave = attendanceStatisticsRepository.countByXxdmAndXnAndXqmAndKqjgAndKqrqBetweenOrderByYxsh(xxdm, teachYear, semester, AttendanceResult.LEAVE, start, end);
                 absentee = attendanceStatisticsRepository.countByXxdmAndXnAndXqmAndKqjgAndKqrqBetweenOrderByYxsh(xxdm, teachYear, semester, AttendanceResult.ABSENTEE, start, end);
-                avg = (double) ((total.intValue() - actual.intValue() - leave.intValue() - absentee.intValue()) / total.intValue());
+                if (total.intValue() != 0) {
+                    avg = actual.intValue() * 1.0 / total.intValue();
+                } else {
+                    avg = 0d;
+                }
+
                 //学校各院系列表
                 Map yxMap = organizationService.getCollege(xxdm);
                 List<OrganizationDTO> yxList = (List) yxMap.get("data");
                 for (OrganizationDTO temp : yxList) {
                     AttendanceStatisticsUnitDomain attendanceStatisticsUnitDomain = new AttendanceStatisticsUnitDomain();
                     String code = temp.getCode();
-                    attendanceStatisticsUnitDomain.setUnitCode(code);
-                    attendanceStatisticsUnitDomain.setUnitName(StringUtils.isEmpty(temp.getSimple()) ? temp.getName() : temp.getSimple());
                     Map collegeMap = getAttendanceByCollege(xxdm, code, teachYear, semester, start, end);
                     Long unittotal = Long.parseLong(collegeMap.get("total").toString());
                     Long unitactual = Long.parseLong(collegeMap.get("actual").toString());
                     Long unitleave = Long.parseLong(collegeMap.get("leave").toString());
                     Long unitabsentee = Long.parseLong(collegeMap.get("absentee").toString());
                     Double unitavg = Double.parseDouble(collegeMap.get("avg").toString());
+                    if (unittotal.intValue() == 0) {
+                        continue;
+                    }
                     attendanceStatisticsUnitDomain.setTotal(unittotal.intValue());
                     attendanceStatisticsUnitDomain.setActual(unitactual.intValue());
                     attendanceStatisticsUnitDomain.setLeave(unitleave.intValue());
                     attendanceStatisticsUnitDomain.setAbsentee(unitabsentee.intValue());
                     attendanceStatisticsUnitDomain.setAvg(unitavg);
+                    attendanceStatisticsUnitDomain.setUnitCode(code);
+                    attendanceStatisticsUnitDomain.setUnitName(StringUtils.isEmpty(temp.getSimple()) ? temp.getName() : temp.getSimple());
+
                     list.add(attendanceStatisticsUnitDomain);
                 }
             } else if (StringUtils.isEmpty(zyh)) {
@@ -92,14 +103,18 @@ public class AttendanceStatisticsService {
                 for (OrganizationDTO temp : zyList) {
                     AttendanceStatisticsUnitDomain attendanceStatisticsUnitDomain = new AttendanceStatisticsUnitDomain();
                     String code = temp.getCode();
-                    attendanceStatisticsUnitDomain.setUnitCode(code);
-                    attendanceStatisticsUnitDomain.setUnitName(temp.getName());
+
                     Map professionMap = getAttendaneByProfession(xxdm, yxsh, code, teachYear, semester, start, end);
                     Long unittotal = Long.parseLong(professionMap.get("total").toString());
                     Long unitactual = Long.parseLong(professionMap.get("actual").toString());
                     Long unitleave = Long.parseLong(professionMap.get("leave").toString());
                     Long unitabsentee = Long.parseLong(professionMap.get("absentee").toString());
                     Double unitavg = Double.parseDouble(professionMap.get("avg").toString());
+                    if (unittotal.intValue() == 0) {
+                        continue;
+                    }
+                    attendanceStatisticsUnitDomain.setUnitCode(code);
+                    attendanceStatisticsUnitDomain.setUnitName(temp.getName());
                     attendanceStatisticsUnitDomain.setTotal(unittotal.intValue());
                     attendanceStatisticsUnitDomain.setActual(unitactual.intValue());
                     attendanceStatisticsUnitDomain.setLeave(unitleave.intValue());
@@ -119,15 +134,20 @@ public class AttendanceStatisticsService {
                 List<OrganizationDTO> bjList = (List) zyMap.get("data");
                 for (OrganizationDTO temp : bjList) {
                     AttendanceStatisticsUnitDomain attendanceStatisticsUnitDomain = new AttendanceStatisticsUnitDomain();
+                    String name = temp.getName();
                     String code = temp.getCode();
-                    attendanceStatisticsUnitDomain.setUnitCode(code);
-                    attendanceStatisticsUnitDomain.setUnitName(temp.getName());
-                    Map classMap = getAttendaneByClass(xxdm, yxsh, zyh, code, teachYear, semester, start, end);
+
+                    Map classMap = getAttendaneByClass(xxdm, yxsh, zyh, name, teachYear, semester, start, end);
                     Long unittotal = Long.parseLong(classMap.get("total").toString());
                     Long unitactual = Long.parseLong(classMap.get("actual").toString());
                     Long unitleave = Long.parseLong(classMap.get("leave").toString());
                     Long unitabsentee = Long.parseLong(classMap.get("absentee").toString());
                     Double unitavg = Double.parseDouble(classMap.get("avg").toString());
+                    if (unittotal.intValue() == 0) {
+                        continue;
+                    }
+                    attendanceStatisticsUnitDomain.setUnitCode(code);
+                    attendanceStatisticsUnitDomain.setUnitName(name);
                     attendanceStatisticsUnitDomain.setTotal(unittotal.intValue());
                     attendanceStatisticsUnitDomain.setActual(unitactual.intValue());
                     attendanceStatisticsUnitDomain.setLeave(unitleave.intValue());
@@ -140,7 +160,7 @@ public class AttendanceStatisticsService {
             attendanceStatisticsDomain.setActual(actual.intValue());
             attendanceStatisticsDomain.setLeave(leave.intValue());
             attendanceStatisticsDomain.setAbsentee(absentee.intValue());
-            attendanceStatisticsDomain.setAvg(avg);
+            attendanceStatisticsDomain.setAvg(new BigDecimal(avg).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
 
             attendanceStatisticsVO.setAttendanceStatisticsDomain(attendanceStatisticsDomain);
             attendanceStatisticsVO.setAttendanceStatisticsUnitDomainList(list);
@@ -173,12 +193,12 @@ public class AttendanceStatisticsService {
             }
             Pageable pageable = new PageRequest(pageNumber - 1, pageSize);
             if (StringUtils.isEmpty(kchOrkcmc)) {
-                list = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndKqrqBetween(xxdm, teachYear, semester, start, end, pageable);
-                for (AttendanceStatistics temp : list) {
+                Page<AttendanceStatistics> page = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndKqrqBetweenGroupByKcmc(xxdm, teachYear, semester, start, end, pageable);
+                for (AttendanceStatistics temp : page.getContent()) {
                     AttendanceStatisticsCourseDomain attendanceStatisticsCourseDomain = new AttendanceStatisticsCourseDomain();
                     String kch = temp.getKch();
                     String kcmc = temp.getKcmc();
-                    List<AttendanceStatistics> listBykch = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndKcmcAndKqrqBetween(xxdm, teachYear, semester, kch, start, end);
+                    List<AttendanceStatistics> listBykch = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndKchOrKcmcAndKqrqBetween(xxdm, teachYear, semester, kcmc, start, end);
                     int total;
                     int arrived = 0;
                     int late = 0;
@@ -189,7 +209,7 @@ public class AttendanceStatisticsService {
 
                     total = listBykch.size();
                     for (AttendanceStatistics attendanceStatistics : listBykch) {
-                        if (temp.getKqjg().equals(AttendanceResult.ARRIVED)) {
+                        if (attendanceStatistics.getKqjg().equals(AttendanceResult.ARRIVED)) {
                             arrived++;
                         } else if (attendanceStatistics.getKqjg().equals(AttendanceResult.LATE)) {
                             late++;
@@ -201,7 +221,11 @@ public class AttendanceStatisticsService {
                             leave_early++;
                         }
                     }
-                    avg = (double) ((total - arrived - leave - absentee) / total);
+                    if (total != 0) {
+                        avg = arrived * 1.0 / total;
+                    } else {
+                        continue;
+                    }
                     attendanceStatisticsCourseDomain.setKch(kch);
                     attendanceStatisticsCourseDomain.setKcmc(kcmc);
                     attendanceStatisticsCourseDomain.setSkls(temp.getJsxm());
@@ -211,18 +235,13 @@ public class AttendanceStatisticsService {
                     attendanceStatisticsCourseDomain.setLeave(leave);
                     attendanceStatisticsCourseDomain.setAbsentee(absentee);
                     attendanceStatisticsCourseDomain.setLeave_early(leave_early);
-                    attendanceStatisticsCourseDomain.setAvg(avg);
+                    attendanceStatisticsCourseDomain.setAvg(new BigDecimal(avg).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
 
                     resultLsit.add(attendanceStatisticsCourseDomain);
 
                 }
             } else {
-                if (kchOrkcmc.matches("[0-9]{1,}")) {
-                    list = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndKchAndKqrqBetween(xxdm, teachYear, semester, kchOrkcmc, start, end);
-
-                } else {
-                    list = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndKcmcAndKqrqBetween(xxdm, teachYear, semester, kchOrkcmc, start, end);
-                }
+                list = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndKchOrKcmcAndKqrqBetween(xxdm, teachYear, semester, kchOrkcmc, start, end);
                 int total;
                 int arrived = 0;
                 int late = 0;
@@ -245,7 +264,11 @@ public class AttendanceStatisticsService {
                         leave_early++;
                     }
                 }
-                avg = (double) ((total - arrived - leave - absentee) / total);
+                if (total != 0) {
+                    avg = arrived * 1.0 / total;
+                } else {
+                    avg = 0d;
+                }
                 AttendanceStatistics temp = list.get(0);
                 AttendanceStatisticsCourseDomain attendanceStatisticsCourseDomain = new AttendanceStatisticsCourseDomain();
                 attendanceStatisticsCourseDomain.setKch(temp.getKch());
@@ -257,7 +280,7 @@ public class AttendanceStatisticsService {
                 attendanceStatisticsCourseDomain.setLeave(leave);
                 attendanceStatisticsCourseDomain.setAbsentee(absentee);
                 attendanceStatisticsCourseDomain.setLeave_early(leave_early);
-                attendanceStatisticsCourseDomain.setAvg(avg);
+                attendanceStatisticsCourseDomain.setAvg(new BigDecimal(avg).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
 
                 resultLsit.add(attendanceStatisticsCourseDomain);
 
@@ -299,12 +322,12 @@ public class AttendanceStatisticsService {
 
             Pageable pageable = new PageRequest(pageNumber - 1, pageSize);
             if (StringUtils.isEmpty(jsghOrjsmc)) {
-                list = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndKqrqBetween(xxdm, teachYear, semester, start, end, pageable);
-                for (AttendanceStatistics temp : list) {
+                Page<AttendanceStatistics> page = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndKqrqBetweenGroupByJsxm(xxdm, teachYear, semester, start, end, pageable);
+                for (AttendanceStatistics temp : page.getContent()) {
                     AttendanceStatisticsTeacherDomain attendanceStatisticsTeacherDomain = new AttendanceStatisticsTeacherDomain();
                     String jsgh = temp.getJsgh();
                     String jsxm = temp.getJsxm();
-                    List<AttendanceStatistics> listByjsgh = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndKcmcAndKqrqBetween(xxdm, teachYear, semester, jsgh, start, end);
+                    List<AttendanceStatistics> listByjsgh = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndJsghOrJsxmAndKqrqBetween(xxdm, teachYear, semester, jsgh, start, end);
                     int total;
                     int arrived = 0;
                     int late = 0;
@@ -315,7 +338,7 @@ public class AttendanceStatisticsService {
 
                     total = listByjsgh.size();
                     for (AttendanceStatistics attendanceStatistics : listByjsgh) {
-                        if (temp.getKqjg().equals(AttendanceResult.ARRIVED)) {
+                        if (attendanceStatistics.getKqjg().equals(AttendanceResult.ARRIVED)) {
                             arrived++;
                         } else if (attendanceStatistics.getKqjg().equals(AttendanceResult.LATE)) {
                             late++;
@@ -327,7 +350,11 @@ public class AttendanceStatisticsService {
                             leave_early++;
                         }
                     }
-                    avg = (double) ((total - arrived - leave - absentee) / total);
+                    if (total != 0) {
+                        avg = arrived * 1.0 / total;
+                    } else {
+                        avg = 0d;
+                    }
                     attendanceStatisticsTeacherDomain.setJsgh(jsgh);
                     attendanceStatisticsTeacherDomain.setSkls(jsxm);
                     attendanceStatisticsTeacherDomain.setYxsh(temp.getDwh());
@@ -338,18 +365,14 @@ public class AttendanceStatisticsService {
                     attendanceStatisticsTeacherDomain.setLeave(leave);
                     attendanceStatisticsTeacherDomain.setAbsentee(absentee);
                     attendanceStatisticsTeacherDomain.setLeave_early(leave_early);
-                    attendanceStatisticsTeacherDomain.setAvg(avg);
+                    attendanceStatisticsTeacherDomain.setAvg(new BigDecimal(avg).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
 
                     resultLsit.add(attendanceStatisticsTeacherDomain);
 
                 }
             } else {
-                if (jsghOrjsmc.matches("[0-9]{1,}")) {
-                    list = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndJsghAndKqrqBetween(xxdm, teachYear, semester, jsghOrjsmc, start, end);
+                list = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndJsghOrJsxmAndKqrqBetween(xxdm, teachYear, semester, jsghOrjsmc, start, end);
 
-                } else {
-                    list = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndJsxmAndKqrqBetween(xxdm, teachYear, semester, jsghOrjsmc, start, end);
-                }
                 int total;
                 int arrived = 0;
                 int late = 0;
@@ -372,7 +395,12 @@ public class AttendanceStatisticsService {
                         leave_early++;
                     }
                 }
-                avg = (double) ((total - arrived - leave - absentee) / total);
+                if (total != 0) {
+                    avg = arrived * 1.0 / total;
+                } else {
+                    avg = 0d;
+                }
+
                 AttendanceStatistics temp = list.get(0);
                 AttendanceStatisticsTeacherDomain attendanceStatisticsTeacherDomain = new AttendanceStatisticsTeacherDomain();
                 attendanceStatisticsTeacherDomain.setJsgh(temp.getJsgh());
@@ -385,7 +413,7 @@ public class AttendanceStatisticsService {
                 attendanceStatisticsTeacherDomain.setLeave(leave);
                 attendanceStatisticsTeacherDomain.setAbsentee(absentee);
                 attendanceStatisticsTeacherDomain.setLeave_early(leave_early);
-                attendanceStatisticsTeacherDomain.setAvg(avg);
+                attendanceStatisticsTeacherDomain.setAvg(new BigDecimal(avg).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
 
                 resultLsit.add(attendanceStatisticsTeacherDomain);
 
@@ -426,14 +454,20 @@ public class AttendanceStatisticsService {
         //旷课人次
         Long absentee = attendanceStatisticsRepository.countByXxdmAndYxshAndXnAndXqmAndKqjgAndKqrqBetweenOrderByZyh(xxdm, yxsh, teachYear, semester, AttendanceResult.ABSENTEE, start, end);
         //平均到课率
-        Double avg = (double) ((total.intValue() - actual.intValue() - leave.intValue() - absentee.intValue()) / total.intValue());
+        Double avg;
+        if (total.intValue() != 0) {
+            avg = actual.intValue() * 1.0 / total.intValue();
+        } else {
+            avg = 0d;
+        }
+
 
         Map<String, Object> map = new HashMap<>();
         map.put("total", total);
         map.put("actual", actual);
         map.put("leave", leave);
         map.put("absentee", absentee);
-        map.put("avg", avg);
+        map.put("avg", new BigDecimal(avg).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
         return map;
     }
 
@@ -450,14 +484,19 @@ public class AttendanceStatisticsService {
         //旷课人次
         Long absentee = attendanceStatisticsRepository.countByXxdmAndYxshAndZyhAndXnAndXqmAndKqjgAndKqrqBetweenOrderByBjmc(xxdm, yxsh, zyh, teachYear, semester, AttendanceResult.ABSENTEE, start, end);
         //平均到课率
-        Double avg = (double) ((total.intValue() - actual.intValue() - leave.intValue() - absentee.intValue()) / total.intValue());
+        Double avg;
+        if (total.intValue() != 0) {
+            avg = actual.intValue() * 1.0 / total.intValue();
+        } else {
+            avg = 0d;
+        }
 
         Map<String, Object> map = new HashMap<>();
         map.put("total", total);
         map.put("actual", actual);
         map.put("leave", leave);
         map.put("absentee", absentee);
-        map.put("avg", avg);
+        map.put("avg", new BigDecimal(avg).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
         return map;
     }
 
@@ -474,14 +513,19 @@ public class AttendanceStatisticsService {
         //旷课人次
         Long absentee = attendanceStatisticsRepository.countByXxdmAndYxshAndZyhAndBjmcAndXnAndXqmAndKqjgAndKqrqBetween(xxdm, yxsh, zyh, bjmc, teachYear, semester, AttendanceResult.ABSENTEE, start, end);
         //平均到课率
-        Double avg = (double) ((total.intValue() - actual.intValue() - leave.intValue() - absentee.intValue()) / total.intValue());
+        Double avg;
+        if (total.intValue() != 0) {
+            avg = actual.intValue() * 1.0 / total.intValue();
+        } else {
+            avg = 0d;
+        }
 
         Map<String, Object> map = new HashMap<>();
         map.put("total", total);
         map.put("actual", actual);
         map.put("leave", leave);
         map.put("absentee", absentee);
-        map.put("avg", avg);
+        map.put("avg", new BigDecimal(avg).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
         return map;
     }
 

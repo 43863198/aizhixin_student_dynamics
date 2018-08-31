@@ -1,6 +1,7 @@
 package com.aizhixin.cloud.dataanalysis.analysis.respository;
 
 import com.aizhixin.cloud.dataanalysis.analysis.entity.AttendanceStatistics;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -29,15 +30,15 @@ public interface AttendanceStatisticsRepository extends JpaRepository<Attendance
     Long countByXxdmAndYxshAndZyhAndBjmcAndXnAndXqmAndKqjgAndKqrqBetween(Long xxdm, String yxsh, String zyh, String bjmc, String xn, String xqm, String kqjg, String start, String end);
 
 
-    @Query("select kch,kcmc,jsgh,jsxm,kqjg,dwmc,dwh from #{#entityName} where xxdm = :xxdm and xn = :xn and xqm = :xqm and kqrq BETWEEN :start and :end group by kcmc")
-    List<AttendanceStatistics> findByXxdmAndXnAndXqmAndKqrqBetween(@Param(value = "xxdm")Long xxdm, @Param(value = "xn")String xn, @Param(value = "xqm")String xqm, @Param(value = "start")String start, @Param(value = "end")String end, Pageable pageable);
+    @Query(value = "select ss from #{#entityName} ss where xxdm = :xxdm and xn = :xn and xqm = :xqm and kqrq BETWEEN :start and :end group by kcmc")
+    Page<AttendanceStatistics> findByXxdmAndXnAndXqmAndKqrqBetweenGroupByKcmc(@Param(value = "xxdm")Long xxdm, @Param(value = "xn")String xn, @Param(value = "xqm")String xqm, @Param(value = "start")String start, @Param(value = "end")String end, Pageable pageable);
 
-    List<AttendanceStatistics> findByXxdmAndXnAndXqmAndKchAndKqrqBetween(Long xxdm, String xn, String xqm, String kch, String start, String end);
+    @Query(value = "select ss from #{#entityName} ss where xxdm = :xxdm and xn = :xn and xqm = :xqm and kqrq BETWEEN :start and :end group by jsxm")
+    Page<AttendanceStatistics> findByXxdmAndXnAndXqmAndKqrqBetweenGroupByJsxm(@Param(value = "xxdm")Long xxdm, @Param(value = "xn")String xn, @Param(value = "xqm")String xqm, @Param(value = "start")String start, @Param(value = "end")String end, Pageable pageable);
 
-    List<AttendanceStatistics> findByXxdmAndXnAndXqmAndKcmcAndKqrqBetween(Long xxdm, String xn, String xqm, String kcmc, String start, String end);
+    @Query(value = "select ss from #{#entityName} ss where xxdm = :xxdm and xn = :xn and xqm = :xqm and kch = :kchorkcmc or kcmc = :kchorkcmc and kqrq BETWEEN :start and :end")
+    List<AttendanceStatistics> findByXxdmAndXnAndXqmAndKchOrKcmcAndKqrqBetween(@Param(value = "xxdm")Long xxdm, @Param(value = "xn")String xn, @Param(value = "xqm")String xqm, @Param(value = "kchorkcmc")String kchorkcmc, @Param(value = "start")String start, @Param(value = "end")String end);
 
-    List<AttendanceStatistics> findByXxdmAndXnAndXqmAndJsghAndKqrqBetween(Long xxdm, String xn, String xqm, String jsgh, String start, String end);
-
-    List<AttendanceStatistics> findByXxdmAndXnAndXqmAndJsxmAndKqrqBetween(Long xxdm, String xn, String xqm, String jsxm, String start, String end);
-
+    @Query(value = "select ss from #{#entityName} ss where xxdm = :xxdm and xn = :xn and xqm = :xqm and jsgh = :jsghorjsmc or jsxm = :jsghorjsmc and kqrq BETWEEN :start and :end")
+    List<AttendanceStatistics> findByXxdmAndXnAndXqmAndJsghOrJsxmAndKqrqBetween(@Param(value = "xxdm")Long xxdm, @Param(value = "xn")String xn, @Param(value = "xqm")String xqm, @Param(value = "jsghorjsmc")String jsghorjsmc, @Param(value = "start")String start, @Param(value = "end")String end);
 }
