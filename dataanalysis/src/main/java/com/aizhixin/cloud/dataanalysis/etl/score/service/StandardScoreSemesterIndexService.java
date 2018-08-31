@@ -108,11 +108,12 @@ public class StandardScoreSemesterIndexService {
         if (!paramSet.isEmpty()) {
             List<RuleParameter> ruleParams = ruleParameterService.getRuleParameterByIds(paramSet);
             if (null == ruleParams || ruleParams.isEmpty()) {
-                log.info("No study exception alert params");
+                log.info("No score PerformanceFluctuation alert params");
                 return rsList;
             }
             List<String> xnxqs = standardScoreSemesterManager.queryLastestSemester(orgId.toString());
             if (null == xnxqs || xnxqs.size() != 2) {
+                log.warn("Not found lastest 2 semester data.");
                 return rsList;
             }
             String jxn = null, jxq = null, yxn = null, yxq = null, tmp = null;
@@ -130,59 +131,53 @@ public class StandardScoreSemesterIndexService {
                 yxq = tmp.substring(p + 1);
             }
             if (null == jxn || null == jxq || null == yxn || null == yxq) {
+                log.warn("");
                 return rsList;
             }
             List<StudentSemesterScoreAlertIndexDTO> semesterScoreAlertIndexDTOList = standardScoreSemesterManager.queryStudentScoreAlertBd(orgId, jxn, jxq, yxn, yxq);
             if (null != semesterScoreAlertIndexDTOList && !semesterScoreAlertIndexDTOList.isEmpty()) {
+                log.info("Query score PerformanceFluctuation data:{}", semesterScoreAlertIndexDTOList.size());
                 for (StudentSemesterScoreAlertIndexDTO e : semesterScoreAlertIndexDTOList) {
                     WarningInformation warn = new WarningInformation ();
                     StringBuilder desc = new StringBuilder();
                     StringBuilder st = new StringBuilder();
                     boolean alert = false;
-//                    if ("与".equals(as.getRelationship())) {
+
                     //缺省只处理只有一种确定指标的情况
-                        alert = true;
-                        for (RuleParameter r : ruleParams) {
-                            st.append("[").append(r.getRuledescribe()).append(":").append(r.getRightParameter()).append("]");
-                            desc.append("[");
-                            tmp = e.getJxnxq();
-                            if (null != tmp) {
-                                String[] tc = tmp.split("\\-");
-                                if (3 == tc.length) {
-                                    if ("1".equals(tc[2])) {
-                                        desc.append(tc[0]).append("年秋");
-                                    } else {
-                                        desc.append(tc[1]).append("年春");
-                                    }
+                    alert = true;
+                    for (RuleParameter r : ruleParams) {
+                        st.append("[").append(r.getRuledescribe()).append(":").append(r.getRightParameter()).append("]");
+                        desc.append("[");
+                        tmp = e.getJxnxq();
+                        if (null != tmp) {
+                            String[] tc = tmp.split("\\-");
+                            if (3 == tc.length) {
+                                if ("1".equals(tc[2])) {
+                                    desc.append(tc[0]).append("年秋");
+                                } else {
+                                    desc.append(tc[1]).append("年春");
                                 }
-                                desc.append("平均学分绩点为:").append(e.getJgpa()).append(";");
                             }
-                            tmp = e.getYxnxq();
-                            if (null != tmp) {
-                                String[] tc = tmp.split("\\-");
-                                if (3 == tc.length) {
-                                    if ("1".equals(tc[2])) {
-                                        desc.append(tc[0]).append("年秋");
-                                    } else {
-                                        desc.append(tc[1]).append("年春");
-                                    }
-                                }
-                                desc.append("平均学分绩点为:").append(e.getYgpa()).append(";");
-                            }
-                            desc.append("平均学分绩点下降:").append(e.getGpa()).append("]");
-                            if (new Double(r.getRightParameter()) < e.getGpa()) {
-                                alert = false;
-                            }
+                            desc.append("平均学分绩点为:").append(e.getJgpa()).append(";");
                         }
-//                    } else {
-//                        for (RuleParameter r : ruleParams) {
-//                            if (new Double(r.getRightParameter()) >= e.getGpa()) {
-//                                alert = true;
-//                                st.append("[").append(r.getRuledescribe()).append(":").append(r.getRightParameter()).append("]");
-//                                desc.append("[").append(r.getRuledescribe()).append(e.getGpa()).append("]");
-//                            }
-//                        }
-//                    }
+                        tmp = e.getYxnxq();
+                        if (null != tmp) {
+                            String[] tc = tmp.split("\\-");
+                            if (3 == tc.length) {
+                                if ("1".equals(tc[2])) {
+                                    desc.append(tc[0]).append("年秋");
+                                } else {
+                                    desc.append(tc[1]).append("年春");
+                                }
+                            }
+                            desc.append("平均学分绩点为:").append(e.getYgpa()).append(";");
+                        }
+                        desc.append("平均学分绩点下降:").append(e.getGpa()).append("]");
+                        if (new Double(r.getRightParameter()) < e.getGpa()) {
+                            alert = false;
+                        }
+                    }
+
                     if (!alert) {
                         continue;
                     }
@@ -190,7 +185,7 @@ public class StandardScoreSemesterIndexService {
                     warn.setJobNumber(e.getXh());
                     warn.setCollogeCode(e.getYxsh());
                     warn.setCollogeName(e.getYxsmc());
-                    warn.setClassCode(null);
+                    warn.setClassCode(e.getBjbh());
                     warn.setClassName(e.getBjmc());
                     warn.setProfessionalCode(e.getZyh());
                     warn.setProfessionalName(e.getZymc());
@@ -203,7 +198,11 @@ public class StandardScoreSemesterIndexService {
                     warn.setOrgId(orgId);
                     rsList.add(warn);
                 }
+            } else {
+                log.warn("Not found any score PerformanceFluctuation data");
             }
+        } else {
+            log.warn("Not found any alert set params.");
         }
         return rsList;
     }
