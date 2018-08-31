@@ -114,22 +114,20 @@ public class AlarmHandlingService {
             for (Map map : idList) {
                 if (null != map && null != map.get("ID")) {
                     WarningInformation warningInformation = alertWarningInformationService.getOneById(map.get("ID").toString());
-                    warningInformation.setLastModifiedDate(new Date());
-                    alertWarningInformationService.save(warningInformation);
-                    Map<String, String> maps = domain.getDealTypes();
-                    if (null != maps) {
-                        List<OperationRecord> operationRecordList = operaionRecordService.getOperationRecordByWInfoId(map.get("ID").toString());
-                        for (OperationRecord or : operationRecordList) {
-                            OperationRecord operationRecord = operaionRecordService.getOneById(or.getId());
-                            operationRecord.setOrgId(warningInformation.getOrgId());
-                            operationRecord.setOperationTime(new Date());
+                    if (warningInformation.getWarningState() != 20) {
+                        Map<String, String> maps = domain.getDealTypes();
+                        if (null != maps) {
                             for (Map.Entry<String, String> e : maps.entrySet()) {
-                                operationRecord.setDealType(Integer.parseInt(e.getKey()));
-                                operationRecord.setProposal(e.getValue());
-                                operaionRecordService.save(operationRecord);
+                                operaionRecordService.deleteByWarningInformationIdAndDealType(map.get("ID").toString(), Integer.parseInt(e.getKey()));
+                                OperationRecord operationRecord1 = new OperationRecord();
+                                operationRecord1.setWarningInformationId(map.get("ID").toString());
+                                operationRecord1.setOrgId(warningInformation.getOrgId());
+                                operationRecord1.setOperationTime(new Date());
+                                operationRecord1.setDealType(Integer.parseInt(e.getKey()));
+                                operationRecord1.setProposal(e.getValue());
+                                operaionRecordService.save(operationRecord1);
                             }
                         }
-
                     }
                 }
             }
@@ -153,20 +151,22 @@ public class AlarmHandlingService {
             String[] idArray = batchDealDomain.getWarningInformationIds();
             for (String id : idArray) {
                 WarningInformation warningInformation = alertWarningInformationService.getOneById(id);
-                warningInformation.setLastModifiedDate(new Date());
-                warningInformation.setWarningState(AlertTypeConstant.ALERT_PROCESSED);
-                alertWarningInformationService.save(warningInformation);
-                Map<String, String> map = batchDealDomain.getDealTypes();
-                if (null != map) {
-                    List<OperationRecord> operationRecordList = operaionRecordService.getOperationRecordByWInfoId(id);
-                    for (OperationRecord or : operationRecordList) {
-                        OperationRecord operationRecord = operaionRecordService.getOneById(or.getId());
-                        operationRecord.setOrgId(warningInformation.getOrgId());
-                        operationRecord.setOperationTime(new Date());
+                if (warningInformation.getWarningState() != 20) {
+                    warningInformation.setLastModifiedDate(new Date());
+                    warningInformation.setWarningState(AlertTypeConstant.ALERT_PROCESSED);
+                    alertWarningInformationService.save(warningInformation);
+                    Map<String, String> map = batchDealDomain.getDealTypes();
+                    if (null != map) {
                         for (Map.Entry<String, String> e : map.entrySet()) {
-                            operationRecord.setDealType(Integer.parseInt(e.getKey()));
-                            operationRecord.setProposal(e.getValue());
-                            operaionRecordService.save(operationRecord);
+                            //删除历史的处理意见
+                            operaionRecordService.deleteByWarningInformationIdAndDealType(id, Integer.parseInt(e.getKey()));
+                            OperationRecord operationRecord1 = new OperationRecord();
+                            operationRecord1.setWarningInformationId(id);
+                            operationRecord1.setOrgId(warningInformation.getOrgId());
+                            operationRecord1.setOperationTime(new Date());
+                            operationRecord1.setDealType(Integer.parseInt(e.getKey()));
+                            operationRecord1.setProposal(e.getValue());
+                            operaionRecordService.save(operationRecord1);
                         }
                     }
                 }
@@ -193,16 +193,17 @@ public class AlarmHandlingService {
             }
             if (!StringUtils.isBlank(dealResultDomain.getDealId())) {
                 operationRecord = operaionRecordService.getOneById(dealResultDomain.getDealId());
-            } else {
-                operationRecord = new OperationRecord();
             }
-
-            operationRecord.setOrgId(warningInformation.getOrgId());
-            operationRecord.setOperationTime(new Date());
-            operationRecord.setWarningInformationId(dealResultDomain.getWarningInformationId());
             Map<String, Object> maps = dealResultDomain.getDealTypes();
             if (null != maps) {
                 for (Map.Entry<String, Object> e : maps.entrySet()) {
+
+                    operaionRecordService.deleteByWarningInformationIdAndDealType(dealResultDomain.getWarningInformationId(), Integer.parseInt(e.getKey()));
+
+                    operationRecord = new OperationRecord();
+                    operationRecord.setOrgId(warningInformation.getOrgId());
+                    operationRecord.setOperationTime(new Date());
+                    operationRecord.setWarningInformationId(dealResultDomain.getWarningInformationId());
                     operationRecord.setDealType(Integer.parseInt(e.getKey()));
                     Map map = (Map) e.getValue();
                     operationRecord.setProposal(map.get("dealInfo").toString());
@@ -221,9 +222,11 @@ public class AlarmHandlingService {
                         attachmentInfomationService.save(attachmentInformation);
                     }
                 }
+            } else {
+                operationRecord.setOrgId(warningInformation.getOrgId());
+                operationRecord.setOperationTime(new Date());
+                operationRecord.setWarningInformationId(dealResultDomain.getWarningInformationId());
             }
-
-
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
