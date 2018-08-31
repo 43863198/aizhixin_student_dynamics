@@ -134,6 +134,8 @@ public class StandardScoreSemesterIndexService {
                 log.warn("");
                 return rsList;
             }
+            //缺省只处理只有一种确定指标的情况(或的情况)
+            RuleParameter r = ruleParams.get(0);
             List<StudentSemesterScoreAlertIndexDTO> semesterScoreAlertIndexDTOList = standardScoreSemesterManager.queryStudentScoreAlertBd(orgId, jxn, jxq, yxn, yxq);
             if (null != semesterScoreAlertIndexDTOList && !semesterScoreAlertIndexDTOList.isEmpty()) {
                 log.info("Query score PerformanceFluctuation data:{}", semesterScoreAlertIndexDTOList.size());
@@ -142,45 +144,40 @@ public class StandardScoreSemesterIndexService {
                     StringBuilder desc = new StringBuilder();
                     StringBuilder st = new StringBuilder();
                     boolean alert = false;
-
-                    //缺省只处理只有一种确定指标的情况
-                    alert = true;
-                    for (RuleParameter r : ruleParams) {
-                        st.append("[").append(r.getRuledescribe()).append(":").append(r.getRightParameter()).append("]");
-                        desc.append("[");
-                        tmp = e.getJxnxq();
-                        if (null != tmp) {
-                            String[] tc = tmp.split("\\-");
-                            if (3 == tc.length) {
-                                if ("1".equals(tc[2])) {
-                                    desc.append(tc[0]).append("年秋");
-                                } else {
-                                    desc.append(tc[1]).append("年春");
-                                }
-                            }
-                            desc.append("平均学分绩点为:").append(e.getJgpa()).append(";");
-                        }
-                        tmp = e.getYxnxq();
-                        if (null != tmp) {
-                            String[] tc = tmp.split("\\-");
-                            if (3 == tc.length) {
-                                if ("1".equals(tc[2])) {
-                                    desc.append(tc[0]).append("年秋");
-                                } else {
-                                    desc.append(tc[1]).append("年春");
-                                }
-                            }
-                            desc.append("平均学分绩点为:").append(e.getYgpa()).append(";");
-                        }
-                        desc.append("平均学分绩点下降:").append(e.getGpa()).append("]");
-                        if (new Double(r.getRightParameter()) < e.getGpa()) {
-                            alert = false;
-                        }
+                    if (new Double(r.getRightParameter()) < e.getGpa()) {
+                        alert = true;
                     }
 
                     if (!alert) {
                         continue;
                     }
+                    st.append("[").append(r.getRuledescribe()).append(":").append(r.getRightParameter()).append("]");
+                    desc.append("[");
+                    tmp = e.getJxnxq();
+                    if (null != tmp) {
+                        String[] tc = tmp.split("\\-");
+                        if (3 == tc.length) {
+                            if ("1".equals(tc[2])) {
+                                desc.append(tc[0]).append("年秋");
+                            } else {
+                                desc.append(tc[1]).append("年春");
+                            }
+                        }
+                        desc.append("平均学分绩点为:").append(e.getJgpa()).append(";");
+                    }
+                    tmp = e.getYxnxq();
+                    if (null != tmp) {
+                        String[] tc = tmp.split("\\-");
+                        if (3 == tc.length) {
+                            if ("1".equals(tc[2])) {
+                                desc.append(tc[0]).append("年秋");
+                            } else {
+                                desc.append(tc[1]).append("年春");
+                            }
+                        }
+                        desc.append("平均学分绩点为:").append(e.getYgpa()).append(";");
+                    }
+                    desc.append("平均学分绩点下降:").append(e.getGpa()).append("]");
                     warn.setWarningCondition(desc.toString());
                     warn.setWarningStandard(st.toString());
                     warn.setName(e.getXm());
