@@ -56,7 +56,7 @@ public class StandardScoreSemesterManager {
             "j.GPA AS JGPA, " +
             "y.XNXQ AS YXNXQ, " +
             "y.GPA AS YGPA, " +
-            "j.GPA-y.GPA AS GPA " +
+            "y.GPA-j.GPA AS GPA " +
             "FROM ( " +
             "  SELECT " +
             "  b.XH, " +
