@@ -1352,7 +1352,7 @@ public class AlertWarningInformationService {
         Map<String, Object> result = new HashMap<>();
         List<CollegeStatisticsDTO> collegeStatisticsDTOList = new ArrayList<>();
         Map<String, Object> condition = new HashMap<>();
-        StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3 FROM t_warning_information  WHERE 1 = 1");
+        StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3,COLLOGE_CODE as code FROM t_warning_information  WHERE 1 = 1");
         if (null != orgId) {
             sql.append(" and ORG_ID = :orgId");
             condition.put("orgId", orgId);
@@ -1384,6 +1384,9 @@ public class AlertWarningInformationService {
                     }
                     if (null != d[3]) {
                         collegeStatisticsDTO.setSum3(Integer.valueOf(String.valueOf(d[3])));
+                    }
+                    if (null != d[4]) {
+                        collegeStatisticsDTO.setCode(String.valueOf(d[4]));
                     }
                     collegeStatisticsDTOList.add(collegeStatisticsDTO);
                 }
