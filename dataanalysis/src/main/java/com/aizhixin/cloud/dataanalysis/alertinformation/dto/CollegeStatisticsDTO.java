@@ -16,6 +16,9 @@ public class CollegeStatisticsDTO implements Comparable<CollegeStatisticsDTO>{
     @ApiModelProperty(value = "院系名称", required = false)
     protected String collegeName ;
 
+    @ApiModelProperty(value = "院系code", required = false)
+    protected String collegeCode;
+
     @ApiModelProperty(value = "一级数量", required = false)
     protected int sum1;
 
@@ -30,6 +33,8 @@ public class CollegeStatisticsDTO implements Comparable<CollegeStatisticsDTO>{
 
     @ApiModelProperty(value = "已处理数量", required = false)
     protected int alreadyProcessed;
+
+
 
 
     @Override

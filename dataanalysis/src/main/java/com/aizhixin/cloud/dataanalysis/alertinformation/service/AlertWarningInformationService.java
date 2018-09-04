@@ -1133,7 +1133,7 @@ public class AlertWarningInformationService {
         Map<String, Object> result = new HashMap<>();
         List<CollegeStatisticsDTO> collegeStatisticsDTOList = new ArrayList<>();
         Map<String, Object> condition = new HashMap<>();
-        StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, COUNT(1), SUM(IF(WARNING_STATE = 20 OR WARNING_STATE = 40, 1, 0)) FROM t_warning_information  WHERE 1 = 1");
+        StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, COUNT(1), SUM(IF(WARNING_STATE = 20 OR WARNING_STATE = 40, 1, 0)),COLLOGE_CODE as code FROM t_warning_information  WHERE 1 = 1");
         if (null != orgId) {
             sql.append(" and ORG_ID = :orgId");
             condition.put("orgId", orgId);
@@ -1167,6 +1167,7 @@ public class AlertWarningInformationService {
                         collegeStatisticsDTO.setCollegeName(String.valueOf(d[0]));
                         collegeStatisticsDTO.setTotal(Integer.valueOf(String.valueOf(d[1])));
                         collegeStatisticsDTO.setAlreadyProcessed(Integer.valueOf(String.valueOf(d[2])));
+                        collegeStatisticsDTO.setCollegeCode(String.valueOf(d[3]));
                         collegeStatisticsDTOList.add(collegeStatisticsDTO);
                     }
                 }

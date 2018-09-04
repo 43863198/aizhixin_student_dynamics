@@ -37,7 +37,10 @@
             <column name="TEACHER_JOB_NUMBER" type="VARCHAR(50)" remarks="教师工号"/>
             <column name="TEACHER_NAME" type="VARCHAR(80)" remarks="教师姓名"/>
             <column name="RESULT" type="VARCHAR(20)" remarks="考勤结果(1:已到 2:旷课 3:迟到 4:请假 5:早退 6:已提交 7:未提交 8:超出设定范围 9:取消本次考勤)"/>
-            <column name="考勤日期" type="DATE" remarks="日期"/>
+            <column name="KQRQ" type="DATE" remarks="日期"/>
+            <column name="CURRICULA_TIME" type="VARCHAR(40)" remarks="开课日期"/>
+            <column name="WEEKLY" type="VARCHAR(40)" remarks="上课周次"/>
+            <column name="COURSE_NATURE" type="VARCHAR(20)" remarks="课程性质"/>
         </createTable>
 
         <createIndex indexName="idx_attendance_xxdm" tableName="T_ATTENDANCE" unique="false">
