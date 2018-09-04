@@ -136,21 +136,14 @@ public class StandardScoreSemesterIndexService {
             }
             //缺省只处理只有一种确定指标的情况(或的情况)
             RuleParameter r = ruleParams.get(0);
-            List<StudentSemesterScoreAlertIndexDTO> semesterScoreAlertIndexDTOList = standardScoreSemesterManager.queryStudentScoreAlertBd(orgId, jxn, jxq, yxn, yxq);
+            Double gpa = new Double(r.getRightParameter());
+            List<StudentSemesterScoreAlertIndexDTO> semesterScoreAlertIndexDTOList = standardScoreSemesterManager.queryStudentScoreAlertBd(orgId, jxn, jxq, yxn, yxq, gpa);
             if (null != semesterScoreAlertIndexDTOList && !semesterScoreAlertIndexDTOList.isEmpty()) {
                 log.info("Query score PerformanceFluctuation data:{}", semesterScoreAlertIndexDTOList.size());
                 for (StudentSemesterScoreAlertIndexDTO e : semesterScoreAlertIndexDTOList) {
                     WarningInformation warn = new WarningInformation ();
                     StringBuilder desc = new StringBuilder();
                     StringBuilder st = new StringBuilder();
-                    boolean alert = false;
-                    if (new Double(r.getRightParameter()) < e.getGpa()) {
-                        alert = true;
-                    }
-
-                    if (!alert) {
-                        continue;
-                    }
                     st.append("[").append(r.getRuledescribe()).append(":").append(r.getRightParameter()).append("]");
                     desc.append("[");
                     tmp = e.getJxnxq();

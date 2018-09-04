@@ -71,7 +71,7 @@ public class StandardScoreSemesterManager {
             "  s.GPA " +
             "  FROM t_zb_xsxqcj s WHERE s.XXDM=? AND s.XN=? AND s.XQM=? " +
             ") y " +
-            "WHERE j.XH=y.XH AND (j.GPA-y.GPA < 0) " +
+            "WHERE j.XH=y.XH AND (j.GPA-y.GPA < 0) AND (y.GPA - j.GPA > ?)" +
             ") b LEFT JOIN t_xsjbxx x ON b.XH=x.XH AND x.XXID=? ";
 
     private static String SQL_LASTEST_SCORE_SEMESTER = "SELECT DISTINCT CONCAT(XN, '-',XQM) AS XNXQ FROM t_zb_xsxqcj WHERE XXDM=? ORDER BY CONCAT(XN, '-',XQM) DESC LIMIT 2";
@@ -123,10 +123,10 @@ public class StandardScoreSemesterManager {
      * 学生成绩预警波动计算
      */
     @Transactional(readOnly = true)
-    public List<StudentSemesterScoreAlertIndexDTO> queryStudentScoreAlertBd(Long orgId, String jxn, String jxq, String yxn, String yxq) {
+    public List<StudentSemesterScoreAlertIndexDTO> queryStudentScoreAlertBd(Long orgId, String jxn, String jxq, String yxn, String yxq, Double gpa) {
         return jdbcTemplate.query(SQL_ALERT_BD,
-                new Object[]{orgId.toString(), jxn, jxq, orgId.toString(), yxn, yxq, orgId},
-                new int [] {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.BIGINT},
+                new Object[]{orgId.toString(), jxn, jxq, orgId.toString(), yxn, yxq, gpa, orgId},
+                new int [] {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.DOUBLE, Types.BIGINT},
                 (ResultSet rs, int rowNum) -> new StudentSemesterScoreAlertIndexDTO(
                         rs.getString("XH"), rs.getString("XM"),
                         rs.getString("BH"), rs.getString("BJMC"),
