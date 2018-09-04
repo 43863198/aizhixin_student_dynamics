@@ -44,6 +44,13 @@ public interface AttendanceStatisticsRepository extends JpaRepository<Attendance
     @Query(value = "select ss from #{#entityName} ss where xxdm = :xxdm and xn = :xn and xqm = :xqm and jsgh = :jsghorjsmc or jsxm = :jsghorjsmc and kqrq BETWEEN :start and :end")
     List<AttendanceStatistics> findByXxdmAndXnAndXqmAndJsghOrJsxmAndKqrqBetween(@Param(value = "xxdm") Long xxdm, @Param(value = "xn") String xn, @Param(value = "xqm") String xqm, @Param(value = "jsghorjsmc") String jsghorjsmc, @Param(value = "start") String start, @Param(value = "end") String end);
 
+    @Query(value = "select ss from #{#entityName} ss where xxdm = :xxdm and xn = :xn and xqm = :xqm and kqrq BETWEEN :start and :end group by kcmc")
+    List<AttendanceStatistics> findByXxdmAndXnAndXqmAndKqrqBetweenGroupByKcmcBfy(@Param(value = "xxdm") Long xxdm, @Param(value = "xn") String xn, @Param(value = "xqm") String xqm, @Param(value = "start") String start, @Param(value = "end") String end);
+
+    @Query(value = "select ss from #{#entityName} ss where xxdm = :xxdm and xn = :xn and xqm = :xqm and kqrq BETWEEN :start and :end group by jsxm")
+    List<AttendanceStatistics> findByXxdmAndXnAndXqmAndKqrqBetweenGroupByJsxmBfy(@Param(value = "xxdm") Long xxdm, @Param(value = "xn") String xn, @Param(value = "xqm") String xqm, @Param(value = "start") String start, @Param(value = "end") String end);
+
+
     @Modifying
     @Transactional
     @Query(value = "delete from #{#entityName} where xxdm=:xxdm and yxsh=:yxsh and xn=:xn and xqm=:xqm")
