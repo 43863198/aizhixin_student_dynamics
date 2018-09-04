@@ -1167,7 +1167,7 @@ public class AlertWarningInformationService {
                         collegeStatisticsDTO.setCollegeName(String.valueOf(d[0]));
                         collegeStatisticsDTO.setTotal(Integer.valueOf(String.valueOf(d[1])));
                         collegeStatisticsDTO.setAlreadyProcessed(Integer.valueOf(String.valueOf(d[2])));
-                        collegeStatisticsDTO.setCollegeCode(String.valueOf(d[3]));
+                        collegeStatisticsDTO.setCode(String.valueOf(d[3]));
                         collegeStatisticsDTOList.add(collegeStatisticsDTO);
                     }
                 }
@@ -1512,7 +1512,7 @@ public class AlertWarningInformationService {
         Map<String, Object> result = new HashMap<>();
         //学院预警统计数量
         List<CollegeStatisticsDTO> collegeStatisticsDTOList = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, count(1) as count FROM t_warning_information  WHERE 1 = 1");
+        StringBuilder sql = new StringBuilder("SELECT COLLOGE_NAME, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, count(1) as count,COLLOGE_CODE as code FROM t_warning_information  WHERE 1 = 1");
         //学院预警信息
         PageData<CollegeWarningInfoDTO> p = new PageData<>();
         StringBuilder cql = new StringBuilder("SELECT count(sub.COLLOGE_CODE) FROM (SELECT COLLOGE_CODE FROM t_warning_information WHERE 1 = 1 ");
@@ -1600,6 +1600,9 @@ public class AlertWarningInformationService {
                     }
                     if (null != d[4]) {
                         collegeStatisticsDTO.setTotal(Integer.valueOf(String.valueOf(d[4])));
+                    }
+                    if (null != d[5]) {
+                        collegeStatisticsDTO.setCode(String.valueOf(d[5]));
                     }
                     collegeStatisticsDTOList.add(collegeStatisticsDTO);
                 }

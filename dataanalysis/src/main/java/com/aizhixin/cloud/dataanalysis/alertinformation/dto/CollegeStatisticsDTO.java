@@ -17,7 +17,7 @@ public class CollegeStatisticsDTO implements Comparable<CollegeStatisticsDTO>{
     protected String collegeName ;
 
     @ApiModelProperty(value = "院系code", required = false)
-    protected String collegeCode;
+    protected String code;
 
     @ApiModelProperty(value = "一级数量", required = false)
     protected int sum1;
