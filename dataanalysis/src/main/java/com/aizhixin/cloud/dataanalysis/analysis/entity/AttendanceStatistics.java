@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Entity(name = "T_ATTENDANCE")
 @NoArgsConstructor
 @ToString
-public class AttendanceStatistics {
+public class AttendanceStatistics implements Cloneable{
     @ApiModelProperty(value = "ID")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -79,6 +79,24 @@ public class AttendanceStatistics {
     @ApiModelProperty(value = "考勤日期")
     @Column(name = "KQRQ")
     @Getter @Setter private String kqrq;
+    @ApiModelProperty(value = "开课日期")
+    @Column(name = "CURRICULA_TIME")
+    @Getter @Setter private String kkrq;
+    @ApiModelProperty(value = "上课周次")
+    @Column(name = "WEEKLY")
+    @Getter @Setter private String skzc;
+    @ApiModelProperty(value = "课程性质")
+    @Column(name = "COURSE_NATURE")
+    @Getter @Setter private String kcxz;
 
-
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        AttendanceStatistics as = null;
+        try{
+            as = (AttendanceStatistics)super.clone();
+        }catch(CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return as;
+    }
 }
