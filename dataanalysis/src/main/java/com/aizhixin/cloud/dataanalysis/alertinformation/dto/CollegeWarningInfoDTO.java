@@ -16,6 +16,9 @@ public class CollegeWarningInfoDTO {
     @ApiModelProperty(value = "院系名称", required = false)
     protected String collegeName ;
 
+    @ApiModelProperty(value = "院系code", required = false)
+    protected String code ;
+
     @ApiModelProperty(value = "告警总数量", required = false)
     protected int total;
 

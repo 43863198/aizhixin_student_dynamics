@@ -1516,7 +1516,7 @@ public class AlertWarningInformationService {
         //学院预警信息
         PageData<CollegeWarningInfoDTO> p = new PageData<>();
         StringBuilder cql = new StringBuilder("SELECT count(sub.COLLOGE_CODE) FROM (SELECT COLLOGE_CODE FROM t_warning_information WHERE 1 = 1 ");
-        StringBuilder iql = new StringBuilder("SELECT COLLOGE_NAME, count(1) as count, SUM(IF(WARNING_STATE = 20 OR WARNING_STATE = 40, 1, 0)) as sum, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, SUM(IF(WARNING_LEVEL = 1 and (WARNING_STATE = 20 OR WARNING_STATE = 40), 1, 0)) as asum1, SUM(IF(WARNING_LEVEL = 2 and (WARNING_STATE = 20 OR WARNING_STATE = 40), 1, 0)) as asum2, SUM(IF(WARNING_LEVEL = 3 and (WARNING_STATE = 20 OR WARNING_STATE = 40), 1, 0)) as asum3 FROM t_warning_information  WHERE 1 = 1");
+        StringBuilder iql = new StringBuilder("SELECT COLLOGE_NAME, count(1) as count, SUM(IF(WARNING_STATE = 20 OR WARNING_STATE = 40, 1, 0)) as sum, SUM(IF(WARNING_LEVEL = 1, 1, 0)) as sum1, SUM(IF(WARNING_LEVEL = 2, 1, 0)) as sum2, SUM(IF(WARNING_LEVEL = 3, 1, 0)) as sum3, SUM(IF(WARNING_LEVEL = 1 and (WARNING_STATE = 20 OR WARNING_STATE = 40), 1, 0)) as asum1, SUM(IF(WARNING_LEVEL = 2 and (WARNING_STATE = 20 OR WARNING_STATE = 40), 1, 0)) as asum2, SUM(IF(WARNING_LEVEL = 3 and (WARNING_STATE = 20 OR WARNING_STATE = 40), 1, 0)) as asum3,COLLOGE_CODE as code FROM t_warning_information  WHERE 1 = 1");
         if (null != orgId) {
             sql.append(" and ORG_ID = :orgId");
             cql.append(" and ORG_ID = :orgId");
@@ -1643,6 +1643,9 @@ public class AlertWarningInformationService {
                         }
                         if (null != d[8]) {
                             collegeWarningInfoDTO.setProcessedSum3(Integer.valueOf(String.valueOf(d[8])));
+                        }
+                        if (null != d[9]) {
+                            collegeWarningInfoDTO.setCode(String.valueOf(d[9]));
                         }
                         collegeWarningInfoDTO.setProcessedProportion(ProportionUtil.accuracy(collegeWarningInfoDTO.getProcessedNumber() * 1.0, collegeWarningInfoDTO.getTotal() * 1.0, 2));
                         collegeWarningInfoDTOList.add(collegeWarningInfoDTO);
