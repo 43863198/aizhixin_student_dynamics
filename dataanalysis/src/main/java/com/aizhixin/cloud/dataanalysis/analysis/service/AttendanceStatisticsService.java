@@ -56,12 +56,12 @@ public class AttendanceStatisticsService {
         String end = dateMap.get("end").toString();
         try {
             if (StringUtils.isEmpty(kchOrkcmc)) {
-                List<AttendanceStatistics> page = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndKqrqBetweenGroupByKcmcBfy(xxdm, teachYear, semester, start, end);
+                List<AttendanceStatistics> page = attendanceStatisticsRepository.findByXxdmAndKqrqBetweenGroupByKcmcBfy(xxdm, start, end);
                 for (AttendanceStatistics temp : page) {
                     AttendanceStatisticsCourseDomain attendanceStatisticsCourseDomain = new AttendanceStatisticsCourseDomain();
                     String kch = temp.getKch();
                     String kcmc = temp.getKcmc();
-                    List<AttendanceStatistics> listBykch = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndKchOrKcmcAndKqrqBetween(xxdm, teachYear, semester, kcmc, start, end);
+                    List<AttendanceStatistics> listBykch = attendanceStatisticsRepository.findByXxdmAndKchOrKcmcAndKqrqBetween(xxdm, kcmc, start, end);
                     int total;
                     int arrived = 0;
                     int late = 0;
@@ -103,7 +103,7 @@ public class AttendanceStatisticsService {
                     resultLsit.add(attendanceStatisticsCourseDomain);
                 }
             } else {
-                list = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndKchOrKcmcAndKqrqBetween(xxdm, teachYear, semester, kchOrkcmc, start, end);
+                list = attendanceStatisticsRepository.findByXxdmAndKchOrKcmcAndKqrqBetween(xxdm, kchOrkcmc, start, end);
                 int total;
                 int arrived = 0;
                 int late = 0;
@@ -164,12 +164,12 @@ public class AttendanceStatisticsService {
         String end = dateMap.get("end").toString();
         try {
             if (StringUtils.isEmpty(jsghOrjsmc)) {
-                List<AttendanceStatistics> page = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndKqrqBetweenGroupByJsxmBfy(xxdm, teachYear, semester, start, end);
+                List<AttendanceStatistics> page = attendanceStatisticsRepository.findByXxdmAndKqrqBetweenGroupByJsxmBfy(xxdm, start, end);
                 for (AttendanceStatistics temp : page) {
                     AttendanceStatisticsTeacherDomain attendanceStatisticsTeacherDomain = new AttendanceStatisticsTeacherDomain();
                     String jsgh = temp.getJsgh();
                     String jsxm = temp.getJsxm();
-                    List<AttendanceStatistics> listByjsgh = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndJsghOrJsxmAndKqrqBetween(xxdm, teachYear, semester, jsgh, start, end);
+                    List<AttendanceStatistics> listByjsgh = attendanceStatisticsRepository.findByXxdmAndJsghOrJsxmAndKqrqBetween(xxdm, jsgh, start, end);
                     int total;
                     int arrived = 0;
                     int late = 0;
@@ -213,7 +213,7 @@ public class AttendanceStatisticsService {
 
                 }
             } else {
-                list = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndJsghOrJsxmAndKqrqBetween(xxdm, teachYear, semester, jsghOrjsmc, start, end);
+                list = attendanceStatisticsRepository.findByXxdmAndJsghOrJsxmAndKqrqBetween(xxdm, jsghOrjsmc, start, end);
 
                 int total;
                 int arrived = 0;
@@ -286,10 +286,10 @@ public class AttendanceStatisticsService {
             AttendanceStatisticsDomain attendanceStatisticsDomain = new AttendanceStatisticsDomain();
             List<AttendanceStatisticsUnitDomain> list = new ArrayList<>();
             if (StringUtils.isEmpty(yxsh) && StringUtils.isEmpty(zyh)) {
-                total = attendanceStatisticsRepository.countByXxdmAndXnAndXqmAndKqrqBetweenOrderByYxsh(xxdm, teachYear, semester, start, end);
-                actual = attendanceStatisticsRepository.countByXxdmAndXnAndXqmAndKqjgAndKqrqBetweenOrderByYxsh(xxdm, teachYear, semester, AttendanceResult.ARRIVED, start, end);
-                leave = attendanceStatisticsRepository.countByXxdmAndXnAndXqmAndKqjgAndKqrqBetweenOrderByYxsh(xxdm, teachYear, semester, AttendanceResult.LEAVE, start, end);
-                absentee = attendanceStatisticsRepository.countByXxdmAndXnAndXqmAndKqjgAndKqrqBetweenOrderByYxsh(xxdm, teachYear, semester, AttendanceResult.ABSENTEE, start, end);
+                total = attendanceStatisticsRepository.countByXxdmAndKqrqBetweenOrderByYxsh(xxdm, start, end);
+                actual = attendanceStatisticsRepository.countByXxdmAndKqjgAndKqrqBetweenOrderByYxsh(xxdm, AttendanceResult.ARRIVED, start, end);
+                leave = attendanceStatisticsRepository.countByXxdmAndKqjgAndKqrqBetweenOrderByYxsh(xxdm, AttendanceResult.LEAVE, start, end);
+                absentee = attendanceStatisticsRepository.countByXxdmAndKqjgAndKqrqBetweenOrderByYxsh(xxdm, AttendanceResult.ABSENTEE, start, end);
                 if (total.intValue() != 0) {
                     avg = actual.intValue() * 1.0 / total.intValue();
                 } else {
@@ -424,12 +424,12 @@ public class AttendanceStatisticsService {
             }
             Pageable pageable = new PageRequest(pageNumber - 1, pageSize);
             if (StringUtils.isEmpty(kchOrkcmc)) {
-                Page<AttendanceStatistics> page = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndKqrqBetweenGroupByKcmc(xxdm, teachYear, semester, start, end, pageable);
+                Page<AttendanceStatistics> page = attendanceStatisticsRepository.findByXxdmAndKqrqBetweenGroupByKcmc(xxdm, start, end, pageable);
                 for (AttendanceStatistics temp : page.getContent()) {
                     AttendanceStatisticsCourseDomain attendanceStatisticsCourseDomain = new AttendanceStatisticsCourseDomain();
                     String kch = temp.getKch();
                     String kcmc = temp.getKcmc();
-                    List<AttendanceStatistics> listBykch = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndKchOrKcmcAndKqrqBetween(xxdm, teachYear, semester, kcmc, start, end);
+                    List<AttendanceStatistics> listBykch = attendanceStatisticsRepository.findByXxdmAndKchOrKcmcAndKqrqBetween(xxdm, kcmc, start, end);
                     int total;
                     int arrived = 0;
                     int late = 0;
@@ -472,7 +472,7 @@ public class AttendanceStatisticsService {
 
                 }
             } else {
-                list = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndKchOrKcmcAndKqrqBetween(xxdm, teachYear, semester, kchOrkcmc, start, end);
+                list = attendanceStatisticsRepository.findByXxdmAndKchOrKcmcAndKqrqBetween(xxdm, kchOrkcmc, start, end);
                 int total;
                 int arrived = 0;
                 int late = 0;
@@ -553,12 +553,12 @@ public class AttendanceStatisticsService {
 
             Pageable pageable = new PageRequest(pageNumber - 1, pageSize);
             if (StringUtils.isEmpty(jsghOrjsmc)) {
-                Page<AttendanceStatistics> page = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndKqrqBetweenGroupByJsxm(xxdm, teachYear, semester, start, end, pageable);
+                Page<AttendanceStatistics> page = attendanceStatisticsRepository.findByXxdmAndKqrqBetweenGroupByJsxm(xxdm, start, end, pageable);
                 for (AttendanceStatistics temp : page.getContent()) {
                     AttendanceStatisticsTeacherDomain attendanceStatisticsTeacherDomain = new AttendanceStatisticsTeacherDomain();
                     String jsgh = temp.getJsgh();
                     String jsxm = temp.getJsxm();
-                    List<AttendanceStatistics> listByjsgh = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndJsghOrJsxmAndKqrqBetween(xxdm, teachYear, semester, jsgh, start, end);
+                    List<AttendanceStatistics> listByjsgh = attendanceStatisticsRepository.findByXxdmAndJsghOrJsxmAndKqrqBetween(xxdm, jsgh, start, end);
                     int total;
                     int arrived = 0;
                     int late = 0;
@@ -602,7 +602,7 @@ public class AttendanceStatisticsService {
 
                 }
             } else {
-                list = attendanceStatisticsRepository.findByXxdmAndXnAndXqmAndJsghOrJsxmAndKqrqBetween(xxdm, teachYear, semester, jsghOrjsmc, start, end);
+                list = attendanceStatisticsRepository.findByXxdmAndJsghOrJsxmAndKqrqBetween(xxdm, jsghOrjsmc, start, end);
 
                 int total;
                 int arrived = 0;
@@ -677,13 +677,13 @@ public class AttendanceStatisticsService {
      */
     public Map getAttendanceByCollege(Long xxdm, String yxsh, String teachYear, String semester, String start, String end) {
         //应出勤人次
-        Long total = attendanceStatisticsRepository.countByXxdmAndYxshAndXnAndXqmAndKqrqBetweenOrderByZyh(xxdm, yxsh, teachYear, semester, start, end);
+        Long total = attendanceStatisticsRepository.countByXxdmAndYxshAndKqrqBetweenOrderByZyh(xxdm, yxsh, start, end);
         //实到人次
-        Long actual = attendanceStatisticsRepository.countByXxdmAndYxshAndXnAndXqmAndKqjgAndKqrqBetweenOrderByZyh(xxdm, yxsh, teachYear, semester, AttendanceResult.ARRIVED, start, end);
+        Long actual = attendanceStatisticsRepository.countByXxdmAndYxshAndKqjgAndKqrqBetweenOrderByZyh(xxdm, yxsh, AttendanceResult.ARRIVED, start, end);
         //请假人次
-        Long leave = attendanceStatisticsRepository.countByXxdmAndYxshAndXnAndXqmAndKqjgAndKqrqBetweenOrderByZyh(xxdm, yxsh, teachYear, semester, AttendanceResult.LEAVE, start, end);
+        Long leave = attendanceStatisticsRepository.countByXxdmAndYxshAndKqjgAndKqrqBetweenOrderByZyh(xxdm, yxsh, AttendanceResult.LEAVE, start, end);
         //旷课人次
-        Long absentee = attendanceStatisticsRepository.countByXxdmAndYxshAndXnAndXqmAndKqjgAndKqrqBetweenOrderByZyh(xxdm, yxsh, teachYear, semester, AttendanceResult.ABSENTEE, start, end);
+        Long absentee = attendanceStatisticsRepository.countByXxdmAndYxshAndKqjgAndKqrqBetweenOrderByZyh(xxdm, yxsh, AttendanceResult.ABSENTEE, start, end);
         //平均到课率
         Double avg;
         if (total.intValue() != 0) {
@@ -707,13 +707,13 @@ public class AttendanceStatisticsService {
      */
     public Map getAttendaneByProfession(Long xxdm, String yxsh, String zyh, String teachYear, String semester, String start, String end) {
         //应出勤人次
-        Long total = attendanceStatisticsRepository.countByXxdmAndYxshAndZyhAndXnAndXqmAndKqrqBetweenOrderByBjmc(xxdm, yxsh, zyh, teachYear, semester, start, end);
+        Long total = attendanceStatisticsRepository.countByXxdmAndYxshAndZyhAndKqrqBetweenOrderByBjmc(xxdm, yxsh, zyh, start, end);
         //实到人次
-        Long actual = attendanceStatisticsRepository.countByXxdmAndYxshAndZyhAndXnAndXqmAndKqjgAndKqrqBetweenOrderByBjmc(xxdm, yxsh, zyh, teachYear, semester, AttendanceResult.ARRIVED, start, end);
+        Long actual = attendanceStatisticsRepository.countByXxdmAndYxshAndZyhAndKqjgAndKqrqBetweenOrderByBjmc(xxdm, yxsh, zyh, AttendanceResult.ARRIVED, start, end);
         //请假人次
-        Long leave = attendanceStatisticsRepository.countByXxdmAndYxshAndZyhAndXnAndXqmAndKqjgAndKqrqBetweenOrderByBjmc(xxdm, yxsh, zyh, teachYear, semester, AttendanceResult.LEAVE, start, end);
+        Long leave = attendanceStatisticsRepository.countByXxdmAndYxshAndZyhAndKqjgAndKqrqBetweenOrderByBjmc(xxdm, yxsh, zyh, AttendanceResult.LEAVE, start, end);
         //旷课人次
-        Long absentee = attendanceStatisticsRepository.countByXxdmAndYxshAndZyhAndXnAndXqmAndKqjgAndKqrqBetweenOrderByBjmc(xxdm, yxsh, zyh, teachYear, semester, AttendanceResult.ABSENTEE, start, end);
+        Long absentee = attendanceStatisticsRepository.countByXxdmAndYxshAndZyhAndKqjgAndKqrqBetweenOrderByBjmc(xxdm, yxsh, zyh, AttendanceResult.ABSENTEE, start, end);
         //平均到课率
         Double avg;
         if (total.intValue() != 0) {
@@ -736,13 +736,13 @@ public class AttendanceStatisticsService {
      */
     public Map getAttendaneByClass(Long xxdm, String yxsh, String zyh, String bjmc, String teachYear, String semester, String start, String end) {
         //应出勤人次
-        Long total = attendanceStatisticsRepository.countByXxdmAndYxshAndZyhAndBjmcAndXnAndXqmAndKqrqBetween(xxdm, yxsh, zyh, bjmc, teachYear, semester, start, end);
+        Long total = attendanceStatisticsRepository.countByXxdmAndYxshAndZyhAndBjmcAndKqrqBetween(xxdm, yxsh, zyh, bjmc, start, end);
         //实到人次
-        Long actual = attendanceStatisticsRepository.countByXxdmAndYxshAndZyhAndBjmcAndXnAndXqmAndKqjgAndKqrqBetween(xxdm, yxsh, zyh, bjmc, teachYear, semester, AttendanceResult.ARRIVED, start, end);
+        Long actual = attendanceStatisticsRepository.countByXxdmAndYxshAndZyhAndBjmcAndKqjgAndKqrqBetween(xxdm, yxsh, zyh, bjmc, AttendanceResult.ARRIVED, start, end);
         //请假人次
-        Long leave = attendanceStatisticsRepository.countByXxdmAndYxshAndZyhAndBjmcAndXnAndXqmAndKqjgAndKqrqBetween(xxdm, yxsh, zyh, bjmc, teachYear, semester, AttendanceResult.LEAVE, start, end);
+        Long leave = attendanceStatisticsRepository.countByXxdmAndYxshAndZyhAndBjmcAndKqjgAndKqrqBetween(xxdm, yxsh, zyh, bjmc, AttendanceResult.LEAVE, start, end);
         //旷课人次
-        Long absentee = attendanceStatisticsRepository.countByXxdmAndYxshAndZyhAndBjmcAndXnAndXqmAndKqjgAndKqrqBetween(xxdm, yxsh, zyh, bjmc, teachYear, semester, AttendanceResult.ABSENTEE, start, end);
+        Long absentee = attendanceStatisticsRepository.countByXxdmAndYxshAndZyhAndBjmcAndKqjgAndKqrqBetween(xxdm, yxsh, zyh, bjmc, AttendanceResult.ABSENTEE, start, end);
         //平均到课率
         Double avg;
         if (total.intValue() != 0) {

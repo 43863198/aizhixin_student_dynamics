@@ -15,44 +15,54 @@ import java.util.List;
 @Repository
 public interface AttendanceStatisticsRepository extends JpaRepository<AttendanceStatistics, Integer> {
 
-    Long countByXxdmAndXnAndXqmAndKqrqBetweenOrderByYxsh(Long xxdm, String xn, String xqm, String start, String end);
+    Long countByXxdmAndKqrqBetweenOrderByYxsh(Long xxdm, String start, String end);
 
-    Long countByXxdmAndXnAndXqmAndKqjgAndKqrqBetweenOrderByYxsh(Long xxdm, String xn, String xqm, String kqjg, String start, String end);
+    Long countByXxdmAndKqjgAndKqrqBetweenOrderByYxsh(Long xxdm, String kqjg, String start, String end);
 
-    Long countByXxdmAndYxshAndXnAndXqmAndKqrqBetweenOrderByZyh(Long xxdm, String yxsh, String xn, String xqm, String start, String end);
+    Long countByXxdmAndYxshAndKqrqBetweenOrderByZyh(Long xxdm, String yxsh, String start, String end);
 
-    Long countByXxdmAndYxshAndXnAndXqmAndKqjgAndKqrqBetweenOrderByZyh(Long xxdm, String yxsh, String xn, String xqm, String kqjg, String start, String end);
+    Long countByXxdmAndYxshAndKqjgAndKqrqBetweenOrderByZyh(Long xxdm, String yxsh, String kqjg, String start, String end);
 
-    Long countByXxdmAndYxshAndZyhAndXnAndXqmAndKqrqBetweenOrderByBjmc(Long xxdm, String yxsh, String zyh, String xn, String xqm, String start, String end);
+    Long countByXxdmAndYxshAndZyhAndKqrqBetweenOrderByBjmc(Long xxdm, String yxsh, String zyh, String start, String end);
 
-    Long countByXxdmAndYxshAndZyhAndXnAndXqmAndKqjgAndKqrqBetweenOrderByBjmc(Long xxdm, String yxsh, String zyh, String xn, String xqm, String kqjg, String start, String end);
+    Long countByXxdmAndYxshAndZyhAndKqjgAndKqrqBetweenOrderByBjmc(Long xxdm, String yxsh, String zyh, String kqjg, String start, String end);
 
-    Long countByXxdmAndYxshAndZyhAndBjmcAndXnAndXqmAndKqrqBetween(Long xxdm, String yxsh, String zyh, String xn, String bjmc, String xqm, String start, String end);
+    Long countByXxdmAndYxshAndZyhAndBjmcAndKqrqBetween(Long xxdm, String yxsh, String zyh, String bjmc, String start, String end);
 
-    Long countByXxdmAndYxshAndZyhAndBjmcAndXnAndXqmAndKqjgAndKqrqBetween(Long xxdm, String yxsh, String zyh, String bjmc, String xn, String xqm, String kqjg, String start, String end);
+    Long countByXxdmAndYxshAndZyhAndBjmcAndKqjgAndKqrqBetween(Long xxdm, String yxsh, String zyh, String bjmc, String kqjg, String start, String end);
 
 
-    @Query(value = "select ss from #{#entityName} ss where xxdm = :xxdm and xn = :xn and xqm = :xqm and kqrq BETWEEN :start and :end group by kcmc")
-    Page<AttendanceStatistics> findByXxdmAndXnAndXqmAndKqrqBetweenGroupByKcmc(@Param(value = "xxdm") Long xxdm, @Param(value = "xn") String xn, @Param(value = "xqm") String xqm, @Param(value = "start") String start, @Param(value = "end") String end, Pageable pageable);
+    @Query(value = "select ss from #{#entityName} ss where xxdm = :xxdm and kqrq BETWEEN :start and :end group by kcmc")
+    Page<AttendanceStatistics> findByXxdmAndKqrqBetweenGroupByKcmc(@Param(value = "xxdm") Long xxdm, @Param(value = "start") String start, @Param(value = "end") String end, Pageable pageable);
 
-    @Query(value = "select ss from #{#entityName} ss where xxdm = :xxdm and xn = :xn and xqm = :xqm and kqrq BETWEEN :start and :end group by jsxm")
-    Page<AttendanceStatistics> findByXxdmAndXnAndXqmAndKqrqBetweenGroupByJsxm(@Param(value = "xxdm") Long xxdm, @Param(value = "xn") String xn, @Param(value = "xqm") String xqm, @Param(value = "start") String start, @Param(value = "end") String end, Pageable pageable);
+    @Query(value = "select ss from #{#entityName} ss where xxdm = :xxdm and kqrq BETWEEN :start and :end group by jsxm")
+    Page<AttendanceStatistics> findByXxdmAndKqrqBetweenGroupByJsxm(@Param(value = "xxdm") Long xxdm, @Param(value = "start") String start, @Param(value = "end") String end, Pageable pageable);
 
-    @Query(value = "select ss from #{#entityName} ss where xxdm = :xxdm and xn = :xn and xqm = :xqm and kch = :kchorkcmc or kcmc = :kchorkcmc and kqrq BETWEEN :start and :end")
-    List<AttendanceStatistics> findByXxdmAndXnAndXqmAndKchOrKcmcAndKqrqBetween(@Param(value = "xxdm") Long xxdm, @Param(value = "xn") String xn, @Param(value = "xqm") String xqm, @Param(value = "kchorkcmc") String kchorkcmc, @Param(value = "start") String start, @Param(value = "end") String end);
+    @Query(value = "select ss from #{#entityName} ss where xxdm = :xxdm and kch = :kchorkcmc or kcmc = :kchorkcmc and kqrq BETWEEN :start and :end")
+    List<AttendanceStatistics> findByXxdmAndKchOrKcmcAndKqrqBetween(@Param(value = "xxdm") Long xxdm, @Param(value = "kchorkcmc") String kchorkcmc, @Param(value = "start") String start, @Param(value = "end") String end);
 
-    @Query(value = "select ss from #{#entityName} ss where xxdm = :xxdm and xn = :xn and xqm = :xqm and jsgh = :jsghorjsmc or jsxm = :jsghorjsmc and kqrq BETWEEN :start and :end")
-    List<AttendanceStatistics> findByXxdmAndXnAndXqmAndJsghOrJsxmAndKqrqBetween(@Param(value = "xxdm") Long xxdm, @Param(value = "xn") String xn, @Param(value = "xqm") String xqm, @Param(value = "jsghorjsmc") String jsghorjsmc, @Param(value = "start") String start, @Param(value = "end") String end);
+    @Query(value = "select ss from #{#entityName} ss where xxdm = :xxdm and jsgh = :jsghorjsmc or jsxm = :jsghorjsmc and kqrq BETWEEN :start and :end")
+    List<AttendanceStatistics> findByXxdmAndJsghOrJsxmAndKqrqBetween(@Param(value = "xxdm") Long xxdm, @Param(value = "jsghorjsmc") String jsghorjsmc, @Param(value = "start") String start, @Param(value = "end") String end);
 
-    @Query(value = "select ss from #{#entityName} ss where xxdm = :xxdm and xn = :xn and xqm = :xqm and kqrq BETWEEN :start and :end group by kcmc")
-    List<AttendanceStatistics> findByXxdmAndXnAndXqmAndKqrqBetweenGroupByKcmcBfy(@Param(value = "xxdm") Long xxdm, @Param(value = "xn") String xn, @Param(value = "xqm") String xqm, @Param(value = "start") String start, @Param(value = "end") String end);
+    @Query(value = "select ss from #{#entityName} ss where xxdm = :xxdm and kqrq BETWEEN :start and :end group by kcmc")
+    List<AttendanceStatistics> findByXxdmAndKqrqBetweenGroupByKcmcBfy(@Param(value = "xxdm") Long xxdm, @Param(value = "start") String start, @Param(value = "end") String end);
 
-    @Query(value = "select ss from #{#entityName} ss where xxdm = :xxdm and xn = :xn and xqm = :xqm and kqrq BETWEEN :start and :end group by jsxm")
-    List<AttendanceStatistics> findByXxdmAndXnAndXqmAndKqrqBetweenGroupByJsxmBfy(@Param(value = "xxdm") Long xxdm, @Param(value = "xn") String xn, @Param(value = "xqm") String xqm, @Param(value = "start") String start, @Param(value = "end") String end);
+    @Query(value = "select ss from #{#entityName} ss where xxdm = :xxdm and kqrq BETWEEN :start and :end group by jsxm")
+    List<AttendanceStatistics> findByXxdmAndKqrqBetweenGroupByJsxmBfy(@Param(value = "xxdm") Long xxdm, @Param(value = "start") String start, @Param(value = "end") String end);
 
 
     @Modifying
     @Transactional
-    @Query(value = "delete from #{#entityName} where xxdm=:xxdm and yxsh=:yxsh and xn=:xn and xqm=:xqm")
-    void deleteByXxdmAndYxshAndXnAndXqm(@Param(value = "xxdm") Long xxdm, @Param("yxsh") String yxsh, @Param("xn") String xn, @Param("xqm") String xqm);
+    @Query(value = "delete from #{#entityName} where xxdm=:xxdm and yxsh=:yxsh")
+    void deleteByXxdmAndYxsh(@Param(value = "xxdm") Long xxdm, @Param("yxsh") String yxsh);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete from #{#entityName} where xxdm=:xxdm and yxsh=:yxsh and zyh=:zyh")
+    void deleteByXxdmAndYxshAndZyh(@Param(value = "xxdm") Long xxdm, @Param("yxsh") String yxsh, @Param("zyh") String zyh);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete from #{#entityName} where xxdm=:xxdm and yxsh=:yxsh and zyh=:zyh and bjmc=:bjmc")
+    void deleteByXxdmAndYxshAndZyhAndBjmc(@Param(value = "xxdm") Long xxdm, @Param("yxsh") String yxsh, @Param("zyh") String zyh,@Param("bjmc") String bjmc);
 }

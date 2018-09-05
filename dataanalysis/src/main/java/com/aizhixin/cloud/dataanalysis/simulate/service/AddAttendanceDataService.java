@@ -39,7 +39,7 @@ public class AddAttendanceDataService {
             String t = null;
             String s = null;
 
-            //转换为学校日历表中的学年学期 格式如:2017年秋
+            //转换为学校日历表中的学年学期 格式如:2018年春
             String st = null;
             String sj = null;
 
@@ -53,16 +53,24 @@ public class AddAttendanceDataService {
                 if ("2".equals(s)) {
                     tt = t.split("-")[1];
                     ss = "1";
-                    st = xnxq.substring(0, index).split("-")[0];
-                    sj = "秋";
+                    st = xnxq.substring(0, index).split("-")[1];
+                    sj = "春";
                 } else {
                     tt = t.split("-")[0];
                     ss = "2";
-                    st = xnxq.substring(0, index).split("-")[1];
-                    sj = "春";
+                    st = xnxq.substring(0, index).split("-")[0];
+                    sj = "秋";
                 }
             }
-            attendanceStatisticsRepository.deleteByXxdmAndYxshAndXnAndXqm(orgId,collegeCode,t, s);
+
+            if(StringUtils.isEmpty(professionCode) && StringUtils.isEmpty(className)){
+                attendanceStatisticsRepository.deleteByXxdmAndYxsh(orgId,collegeCode);
+            }else if(StringUtils.isEmpty(className)){
+                attendanceStatisticsRepository.deleteByXxdmAndYxshAndZyh(orgId,collegeCode,professionCode);
+            }else{
+               attendanceStatisticsRepository.deleteByXxdmAndYxshAndZyhAndBjmc(orgId,collegeCode,professionCode,className);
+            }
+
 
             Date start = null;
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
