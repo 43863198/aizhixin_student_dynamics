@@ -163,8 +163,8 @@ public class GenerateWarningInfoService {
                     List<WarningInformation> attendAbnormalList = null;
                     List<WarningInformation> leaveSchoolList = null;
                     if ("AttendAbnormal".equals(type)) {
-                        leaveSchoolList = studyExceptionIndexService.generalAlertInfo(orgId, schoolYear, semester, as);
-                        log.info("Generator study exception index count({})", (null == leaveSchoolList ? 0 : leaveSchoolList.size()));
+                        attendAbnormalList = studyExceptionIndexService.generalAlertInfo(orgId, schoolYear, semester, as);
+                        log.info("Generator study exception index count({})", (null == attendAbnormalList ? 0 : attendAbnormalList.size()));
                     }  else if("PerformanceFluctuation".equals(type)) {
                         performanceFluctuationList = standardScoreSemesterIndexService.generalStudentSemesterScoreBdAlertInfo(orgId, schoolYear, semester, as);
                         log.info("Generator score PerformanceFluctuation index count({})", (null == performanceFluctuationList ? 0 : performanceFluctuationList.size()));
