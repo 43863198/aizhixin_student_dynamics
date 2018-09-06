@@ -438,8 +438,8 @@ public class AlertWarningInformationService {
 
     }
 
-    public List<Map<String,Object>> queryAllAlertInforPage(BatchAllDealDomain domain) {
-        List<Map<String,Object>> idList = new ArrayList<>();
+    public List<Map<String, Object>> queryAllAlertInforPage(BatchAllDealDomain domain) {
+        List<Map<String, Object>> idList = new ArrayList<>();
 
         try {
 
@@ -628,7 +628,7 @@ public class AlertWarningInformationService {
     public Map<String, Object> queryStuAlertInforPage(Long orgId, String jobNum, Integer pageNumber, Integer pageSize) {
         String querySql = "SELECT ID,NAME,COLLOGE_NAME,CLASS_NAME,JOB_NUMBER,WARNING_LEVEL,WARNING_CONDITION,WARNING_TYPE,WARNING_TIME,WARNING_STATE,WARNING_SOURCE FROM `t_warning_information` where DELETE_FLAG =" + DataValidity.VALID.getState() + " ";
         querySql += " and ORG_ID =" + orgId;
-        if(!StringUtils.isEmpty(jobNum)){
+        if (!StringUtils.isEmpty(jobNum)) {
             querySql += " and job_number='" + jobNum + "'";
         }
 
@@ -636,7 +636,7 @@ public class AlertWarningInformationService {
 
         String countSql = "SELECT count(1) FROM `t_warning_information` where DELETE_FLAG =" + DataValidity.VALID.getState() + " ";
         countSql += " and ORG_ID =" + orgId;
-        if(!StringUtils.isEmpty(jobNum)){
+        if (!StringUtils.isEmpty(jobNum)) {
             countSql += " and job_number='" + jobNum + "'";
         }
         List<SortDTO> sort = new ArrayList<SortDTO>();
@@ -876,8 +876,29 @@ public class AlertWarningInformationService {
      * @return
      */
     public Map<String, Object> getTeacherAlertInforPage(AlertInforQueryTeacherDomain domain) {
-        Map<String, Object> pageInfor = this.queryTeacherAlertInforPage(domain);
-        List<RegisterAlertCountDomain> countList = this.alertTeacherCountInfor(domain);
+        Map<String, Object> pageInfor;
+        List<RegisterAlertCountDomain> countList;
+
+        //多重身份，以最高权限为准
+        if (StringUtils.isBlank(domain.getUserId() + "")) {
+            AlertInforQueryDomain alertInforQueryDomain = new AlertInforQueryDomain();
+            alertInforQueryDomain.setTeacherYear(domain.getTeacherYear());
+            alertInforQueryDomain.setSemester(domain.getSemester());
+            alertInforQueryDomain.setWarningStates(domain.getWarningStates());
+            alertInforQueryDomain.setWarningLevels(domain.getWarningLevels());
+            alertInforQueryDomain.setWarningTypes(domain.getWarningTypes());
+            alertInforQueryDomain.setOrgId(domain.getOrgId());
+            alertInforQueryDomain.setKeywords(domain.getKeywords());
+            alertInforQueryDomain.setPageNumber(domain.getPageNumber());
+            alertInforQueryDomain.setPageSize(domain.getPageSize());
+            alertInforQueryDomain.setCollegeCodes(domain.getCollegeCodes());
+            pageInfor = this.queryAlertInforPage(alertInforQueryDomain);
+            countList = this.alertCountInfor(alertInforQueryDomain);
+        } else {
+            pageInfor = this.queryTeacherAlertInforPage(domain);
+            countList = this.alertTeacherCountInfor(domain);
+        }
+
         LevelAlertCountDomain countDomain = new LevelAlertCountDomain();
         if (null != countList && countList.size() > 0) {
             Long sum1 = 0L;

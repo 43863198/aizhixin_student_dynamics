@@ -18,6 +18,9 @@ public class AlertInforQueryTeacherDomain {
 	@ApiModelProperty(value = "机构id", required = false)
 	private Long orgId;
 
+	@ApiModelProperty(value = "学院code（多个以,分割）", required = false)
+	private String collegeCodes;
+
 	@ApiModelProperty(value = "UserId", required = false)
 	private Long userId;
 
