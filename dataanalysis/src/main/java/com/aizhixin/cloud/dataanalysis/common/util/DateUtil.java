@@ -3,6 +3,7 @@
  */
 package com.aizhixin.cloud.dataanalysis.common.util;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -25,7 +26,24 @@ public class DateUtil {
 	public static String formatYearMonth(Date date) {
 		return format(date, YEAR_HOMTH);
 	}
-	
+
+//	public static Date parser2Date(String dateString, String pattern) {
+//		SimpleDateFormat format = new SimpleDateFormat(pattern);
+//		try {
+//			return format.parse(dateString);
+//		} catch (ParseException e) {
+//			e.printStackTrace();
+//		}
+//		return null;
+//	}
+	public static Date parserShortDate(String dateString) {
+		try {
+			return shorFormat.parse(dateString);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	 /**
      * 使用用户格式格式化日期
      *
@@ -41,6 +59,14 @@ public class DateUtil {
         }
         return (returnValue);
     }
+
+	public static String formatShort(Date date) {
+		String returnValue = "";
+		if (date != null) {
+			returnValue = shorFormat.format(date);
+		}
+		return (returnValue);
+	}
 	
 	/**
 	 * 判断是否周一
@@ -180,6 +206,12 @@ public class DateUtil {
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
 		c.add(Calendar.WEEK_OF_YEAR, 1);
+		return getMonday(c.getTime());
+	}
+	public static Date getPreMonday(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.add(Calendar.WEEK_OF_YEAR, -1);
 		return getMonday(c.getTime());
 	}
 	/**
