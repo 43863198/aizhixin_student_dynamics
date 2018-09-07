@@ -98,8 +98,18 @@ public class AddAttendanceDataService {
                     "and tct.SEMESTER_NUMBER=:semester and tct.TEACHER_NAME IS NOT NULL and  tct.TEACHER_NAME <>'' and tct.CURRICULA_TIME <>'  -'");
             condition.put("orgId", orgId);
             condition.put("collegeCode", collegeCode);
-            condition.put("professionCode", professionCode);
-            condition.put("className", className);
+            if(StringUtils.isBlank(professionCode)){
+                sql = new StringBuilder(sql.toString().replace("and tx.ZYH=:professionCode",""));
+            }else{
+                condition.put("professionCode", professionCode);
+            }
+
+            if(StringUtils.isBlank(className)){
+                sql = new StringBuilder(sql.toString().replace("and tx.BJMC=:className",""));
+            }else{
+                condition.put("className", className);
+            }
+
             condition.put("teacherYear", tt);
             condition.put("semester", ss);
             Query sq = em.createNativeQuery(sql.toString());
