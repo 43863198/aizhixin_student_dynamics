@@ -57,7 +57,10 @@ public class RollcallService {
         }
     }
 
-    public SchoolWeekRollcallScreenZhVO queryLastestWeekRollcall(Long orgId) {
+    /**
+     * 模拟数据版
+     */
+    public SchoolWeekRollcallScreenZhVO queryLastestWeekRollcallDemo(Long orgId) {
         SchoolWeekRollcallScreenZhVO zhVo = new SchoolWeekRollcallScreenZhVO ();
         Date current = new Date();
         int curWeek = DateUtil.getDayOfWeek(current);
@@ -107,6 +110,52 @@ public class RollcallService {
                 zhVo.setQs(zhVo.getDkl());
             }
         }
+        return zhVo;
+    }
+
+    /**
+     * 真实逻辑版
+     */
+    public SchoolWeekRollcallScreenZhVO queryLastestWeekRollcall(Long orgId) {
+        SchoolWeekRollcallScreenZhVO zhVo = new SchoolWeekRollcallScreenZhVO ();
+        Date current = new Date();
+        Date monday = DateUtil.getMonday(current);
+        NumberFormat nt = NumberFormat.getPercentInstance();
+        nt.setMinimumFractionDigits(2);
+
+        Date lastestPreMonday =  DateUtil.getPreMonday(current);
+        Date nextday = DateUtil.nextDate(current);
+
+        int arithmetic = rollCallManager.getOrgArithmetic(orgId);
+        List<SchoolWeekRollcallScreenVO> preWeek = rollCallManager.findRollcallStatics(orgId, lastestPreMonday, monday);
+        List<SchoolWeekRollcallScreenVO> curWeekDataList = rollCallManager.findRollcallStaticsDayAndDay(orgId, monday, nextday);
+        zhVo.setDays(curWeekDataList);
+
+        SchoolWeekRollcallScreenVO preWeekData = null;//上周合计值
+        SchoolWeekRollcallScreenVO curWeekData = new SchoolWeekRollcallScreenVO ();//本周合计值
+        if (null != preWeek && preWeek.size() > 0) {
+            preWeekData = preWeek.get(0);
+        }
+        if (null != curWeekDataList && curWeekDataList.size() > 0) {
+            for (SchoolWeekRollcallScreenVO v : curWeekDataList) {
+                cacheLjz(v, curWeekData);
+            }
+        }
+
+        double curWeekDkl = 0.0;
+        if (null != curWeekData.getYdrs()) {
+            curWeekDkl = rollCallManager.attendanceAccount(curWeekData.getYdrs(), curWeekData.getSdrs(), curWeekData.getCdrs(), curWeekData.getQjrs(), curWeekData.getKkrs(), arithmetic);//本周到课率
+            zhVo.setDkl(nt.format(curWeekDkl));
+        } else {
+            zhVo.setDkl("0.00%");
+        }
+        if (null != preWeekData) {
+            double preWeekDkl = rollCallManager.attendanceAccount(preWeekData.getYdrs(), preWeekData.getSdrs(), preWeekData.getCdrs(), preWeekData.getQjrs(), preWeekData.getKkrs(), arithmetic);//上周到课率
+            zhVo.setQs(nt.format(curWeekDkl - preWeekDkl));
+        } else {
+            zhVo.setQs(nt.format(curWeekDkl));
+        }
+
         return zhVo;
     }
 }

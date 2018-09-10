@@ -1,28 +1,114 @@
 package com.aizhixin.cloud.dataanalysis.dd.rollcall.manager;
 
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.SchoolWeekRollcallScreenVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.sql.ResultSet;
+import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Component
+@Slf4j
 public class RollCallManager {
     /**
-     * 最近14天的考勤数据
+     * 最新一星期逐天的考勤数据
      */
-    private String SQL_DD_LASTEST14DAY_ROLLCALL = "SELECT   DATE_FORMAT(v.CREATED_DATE, '%Y-%m-%d') AS dateday,  COUNT(*) AS total,  SUM(IF(v.`TYPE` = 1, 1, 0)) AS normal," +
+    private String SQL_DD_LASTEST_WEEK_ROLLCALL = "SELECT   DATE_FORMAT(v.CREATED_DATE, '%Y-%m-%d') AS dateday,  COUNT(*) AS total,  SUM(IF(v.`TYPE` = 1, 1, 0)) AS normal," +
             "SUM(IF(v.`TYPE` = 3, 1, 0)) AS later,  SUM(IF(v.`TYPE` = 4, 1, 0)) AS askForLeave," +
             "SUM(IF(v.`TYPE` = 5, 1, 0)) AS leaveEarly,  SUM(IF(v.`TYPE` = 2, 1, 0)) AS truant " +
             "FROM  #database#.dd_rollcall v " +
             "WHERE v.org_id = ? AND v.CREATED_DATE BETWEEN ? AND ? " +
             "GROUP BY  dateday " +
             "ORDER BY dateday ";
+
+    private String SQL_DD_DAY_AND_DAY_ROLLCALL = "SELECT   DATE_FORMAT(v.CREATED_DATE, '%Y-%m-%d') AS dateday,  COUNT(*) AS total,  SUM(IF(v.`TYPE` = 1, 1, 0)) AS normal," +
+            "SUM(IF(v.`TYPE` = 3, 1, 0)) AS later,  SUM(IF(v.`TYPE` = 4, 1, 0)) AS askForLeave," +
+            "SUM(IF(v.`TYPE` = 5, 1, 0)) AS leaveEarly,  SUM(IF(v.`TYPE` = 2, 1, 0)) AS truant " +
+            "FROM  #database#.dd_rollcall v " +
+            "WHERE v.org_id = ? AND v.CREATED_DATE BETWEEN ? AND ? " +
+            "ORDER BY dateday ";
+
+    private String SQL_ORG_SET = "SELECT arithmetic FROM #database#.DD_ORGAN_SET WHERE ORGAN_ID=?";
+
+    @Value("${dl.dd.back.dbname}")
     private String ddDatabaseName;
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    public int getOrgArithmetic(Long orgId) {
+        String sql = SQL_ORG_SET.replaceAll("#database#", ddDatabaseName);
+        Integer a = null;
+        try {
+            a = jdbcTemplate.queryForObject(sql, new Object[]{orgId}, new int[]{Types.BIGINT}, Integer.class);
+        } catch (Exception e) {
+        }
+        if (null == a) {
+            a = 10;
+        }
+        return a;
+    }
+
+    public List<SchoolWeekRollcallScreenVO> findRollcallStaticsDayAndDay(Long orgId, Date start, Date end) {
+        String sql = SQL_DD_LASTEST_WEEK_ROLLCALL.replaceAll("#database#", ddDatabaseName);
+        log.info("params: orgId:{}, start:{},end:{}; native SQL:{}", orgId, start, end, sql);
+        return jdbcTemplate.query(sql,
+                new Object[]{orgId, start, end},
+                new int [] {Types.BIGINT, Types.TIMESTAMP, Types.TIMESTAMP},
+                (ResultSet rs, int rowNum) -> new SchoolWeekRollcallScreenVO(
+                        rs.getString("dateday"),
+                        rs.getInt("total"), rs.getInt("normal"),
+                        rs.getInt("later"), rs.getInt("askForLeave"),
+                        rs.getInt("truant"), rs.getInt("leaveEarly"))
+        );
+    }
+
+    public List<SchoolWeekRollcallScreenVO> findRollcallStatics(Long orgId, Date start, Date end) {
+        String sql = SQL_DD_DAY_AND_DAY_ROLLCALL.replaceAll("#database#", ddDatabaseName);
+        log.info("params: orgId:{}, start:{},end:{}; native SQL:{}", orgId, start, end, sql);
+        return jdbcTemplate.query(sql,
+                new Object[]{orgId, start, end},
+                new int [] {Types.BIGINT, Types.TIMESTAMP, Types.TIMESTAMP},
+                (ResultSet rs, int rowNum) -> new SchoolWeekRollcallScreenVO(
+                        rs.getString("dateday"),
+                        rs.getInt("total"), rs.getInt("normal"),
+                        rs.getInt("later"), rs.getInt("askForLeave"),
+                        rs.getInt("truant"), rs.getInt("leaveEarly"))
+        );
+    }
+
+    public double attendanceAccount(int total, int normal, int later, int askForleave, int leave, int type) {
+        if (type == 0) {
+            type = 10;
+        }
+        int element = 0;
+        switch (type) {
+            case 10:
+                element = normal;
+                break;
+            case 20:
+                element = normal + askForleave;
+                break;
+            case 30:
+                element = normal + later;
+                break;
+            case 40:
+                element = normal + leave;
+                break;
+            case 50:
+                element = normal + later + leave;
+                break;
+            case 60:
+                element = normal + later + leave + askForleave;
+                break;
+        }
+        return element / (total == 0 ? 1 : total);
+    }
 
 
     public List<SchoolWeekRollcallScreenVO> queryLastTwoWeekRollcall(Long orgId, String start, String end) {
