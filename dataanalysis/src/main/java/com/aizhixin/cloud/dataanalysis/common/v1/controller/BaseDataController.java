@@ -47,7 +47,7 @@ public class BaseDataController {
     @ApiOperation(httpMethod = "GET", value = "查询学校的老师信息", response = Void.class, notes = "查询学校的老师信息<br><br><b>@author zhen.pan</b>")
     public List<TeacherVO> queryOrgTeacher(
             @ApiParam(value = "orgId 学校ID", required = true) @PathVariable Long orgId,
-            @ApiParam(value = "collegeId 学院ID", required = false) @RequestParam Long collegeId,
+            @ApiParam(value = "collegeId 学院ID") @RequestParam(required = false) Long collegeId,
             @ApiParam(value = "name 老师姓名或工号", required = true) @RequestParam(value = "name") String name) {
         return baseDataService.queryTeacher(orgId, collegeId, name);
     }

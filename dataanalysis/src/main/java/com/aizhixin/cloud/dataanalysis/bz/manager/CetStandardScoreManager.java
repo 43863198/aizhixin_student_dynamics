@@ -131,30 +131,44 @@ public class CetStandardScoreManager {
             cql.append(" and BH = :className");
             condition.put("className", className);
         }
-
-        if (null != scoreSeg && scoreSeg >= 1 && scoreSeg <= 4) {
-            switch (scoreSeg) {
-                case 1:
-                    sql.append(" and CJ < 390 and CJ > 0");
-                    cql.append(" and CJ < 390 and CJ > 0");
-                    break;
-                case 2:
-                    sql.append(" and CJ < 425 and CJ >= 390");
-                    cql.append(" and CJ < 425 and CJ >= 390");
-                    break;
-                case 3:
-                    sql.append(" and CJ <= 550 and CJ >= 425");
-                    cql.append(" and CJ <= 550 and CJ >= 425");
-                    break;
-                case 4:
-                    sql.append(" and CJ > 550");
-                    cql.append(" and CJ > 550");
-                    break;
-                default:
+        if (!StringUtils.isBlank(cetType)) {
+            if (!"3".equals(cetType)) {
+                if (null != scoreSeg && scoreSeg >= 1 && scoreSeg <= 4) {
+                    switch (scoreSeg) {
+                        case 1:
+                            sql.append(" and CJ < 390 and CJ > 0");
+                            cql.append(" and CJ < 390 and CJ > 0");
+                            break;
+                        case 2:
+                            sql.append(" and CJ < 425 and CJ >= 390");
+                            cql.append(" and CJ < 425 and CJ >= 390");
+                            break;
+                        case 3:
+                            sql.append(" and CJ <= 550 and CJ >= 425");
+                            cql.append(" and CJ <= 550 and CJ >= 425");
+                            break;
+                        case 4:
+                            sql.append(" and CJ > 550");
+                            cql.append(" and CJ > 550");
+                            break;
+                        default:
+                    }
+                }
+//                else {
+//                    sql.append(" and CJ > 0");
+//                    cql.append(" and CJ > 0");
+//                }
+            } else {
+                if (null != scoreSeg) {
+                    if (1 == scoreSeg) {
+                        sql.append(" and CJ < 60");
+                        cql.append(" and CJ < 60");
+                    } else if (2 == scoreSeg) {
+                        sql.append(" and CJ >= 60");
+                        cql.append(" and CJ >= 60");
+                    }
+                }
             }
-        } else {
-            sql.append(" and CJ > 0");
-            cql.append(" and CJ > 0");
         }
 
         sql.append(" group by XH");
