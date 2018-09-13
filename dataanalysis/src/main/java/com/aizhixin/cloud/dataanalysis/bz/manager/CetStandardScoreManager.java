@@ -11,15 +11,13 @@ import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Transactional
@@ -29,6 +27,8 @@ public class CetStandardScoreManager {
 
     @Autowired
     private EntityManager em;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     public void save(List<CetStandardScore> entitys) {
         cetStandardScoreRepository.save(entitys);
@@ -77,6 +77,7 @@ public class CetStandardScoreManager {
         return listVo;
     }
 
+
     public Map getCollegeName(String collegeCode) {
         StringBuilder sql = new StringBuilder("select COMPANY_NAME as name,SIMPLE_NAME as simple_name from t_department where COMPANY_NUMBER = :collegeCode");
         Query query = em.createNativeQuery(sql.toString());
@@ -109,7 +110,7 @@ public class CetStandardScoreManager {
         if (null != orgId) {
             sql.append(" and XXDM = :orgId");
             cql.append(" and XXDM = :orgId");
-            condition.put("orgId", orgId);
+            condition.put("orgId", orgId.toString());
         }
         if (!StringUtils.isBlank(cetType)) {
             sql.append(" and KSLX = :cetType");
@@ -154,10 +155,6 @@ public class CetStandardScoreManager {
                         default:
                     }
                 }
-//                else {
-//                    sql.append(" and CJ > 0");
-//                    cql.append(" and CJ > 0");
-//                }
             } else {
                 if (null != scoreSeg) {
                     if (1 == scoreSeg) {
@@ -170,6 +167,21 @@ public class CetStandardScoreManager {
                 }
             }
         }
+
+        //限制查询时间最近四年
+        Calendar c = Calendar.getInstance();
+        int month = c.get(Calendar.MONTH) + 1;
+        int year = c.get(Calendar.YEAR);
+        String xnxq = null;
+        if (month >= 9) {
+            year = year - 4;
+            xnxq = year + "-" + (month > 9 ? month : "0" + month);
+        } else {
+            year = year - 5;
+            xnxq = year + "-" + (month > 9 ? month : "0" + month);
+        }
+        sql.append(" and CONCAT(xn, '-', xqm) >='").append(xnxq).append("'");
+        cql.append(" and CONCAT(xn, '-', xqm) >='").append(xnxq).append("'");
 
         sql.append(" group by XH");
         Query sq = em.createNativeQuery(sql.toString());

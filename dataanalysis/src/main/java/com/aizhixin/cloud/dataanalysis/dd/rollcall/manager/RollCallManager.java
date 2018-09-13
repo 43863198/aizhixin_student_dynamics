@@ -34,6 +34,20 @@ public class RollCallManager {
             "WHERE v.org_id = ? AND v.CREATED_DATE BETWEEN ? AND ? " +
             "ORDER BY dateday ";
 
+    private String sql_teachingclass_rollcall_day = "SELECT " +
+            "r.TEACHINGCLASS_ID as teachingClassId," +
+            "COUNT(*) AS total, " +
+            "SUM(IF(r.`TYPE` = 1, 1, 0)) AS normal," +
+            "SUM(IF(r.`TYPE` = 3, 1, 0)) AS later," +
+            "SUM(IF(r.`TYPE` = 4, 1, 0)) AS askForLeave," +
+            "SUM(IF(r.`TYPE` = 5, 1, 0)) AS leaveEarly," +
+            "SUM(IF(r.`TYPE` = 2, 1, 0)) AS truant," +
+            "ROUND(SUM(IF(r.`TYPE` = 1, 1, 0))/COUNT(*),4) AS DKL " +
+            "FROM dd_rollcall r " +
+            "WHERE  r.org_id=? AND r.CREATED_DATE BETWEEN ? AND ? " +
+            "GROUP BY r.TEACHINGCLASS_ID,DATE_FORMAT(r.`CREATED_DATE`, '%Y-%m-%d') " +
+            "ORDER BY TEACHINGCLASS_ID";
+
     private String SQL_ORG_SET = "SELECT arithmetic FROM #database#.DD_ORGAN_SET WHERE ORGAN_ID=?";
 
     @Value("${dl.dd.back.dbname}")
