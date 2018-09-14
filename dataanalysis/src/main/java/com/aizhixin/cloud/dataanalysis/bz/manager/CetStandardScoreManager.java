@@ -105,31 +105,54 @@ public class CetStandardScoreManager {
     public PageData<CetDetailVO> getDetailList(Long orgId, String cetType, String collegeCode, String professionCode, String className, Integer scoreSeg, Integer pageNumber, Integer pageSize) {
        PageData<CetDetailVO> p = new PageData<>();
        Map<String, Object> condition = new HashMap<>();
-        StringBuilder sql = new StringBuilder("select XH,XM,BH,ZYH,YXSH,NJ,max(CJ) as CJ from t_b_djksxx where 1=1 ");
-        StringBuilder cql = new StringBuilder("select COUNT(DISTINCT xh) as count from t_b_djksxx where 1=1 ");
+        StringBuilder sql = new StringBuilder("select c.XH,c.XM,c.BH,c.ZYH,c.YXSH,c.NJ,max(c.CJ) as CJ from t_b_djksxx c left join t_xsjbxx s ON c.XH=s.XH WHERE ");
+        StringBuilder cql = new StringBuilder("select COUNT(DISTINCT c.xh) as count from t_b_djksxx c left join t_xsjbxx s ON c.XH=s.XH WHERE ");
+        Calendar c = Calendar.getInstance();
+        int month = c.get(Calendar.MONTH) + 1;
+        int year = c.get(Calendar.YEAR);
+        sql.append(" s.RXNY <='").append(year);
+        if(month < 10) {
+            sql.append("0");
+        }
+        sql.append(month).append("' AND s.YBYNY <= :currdate");
+
+        cql.append(" s.RXNY <='").append(year);
+        if(month < 10) {
+            cql.append("0");
+        }
+        cql.append(month).append("' AND s.YBYNY <= :currdate");
+        condition.put("currdate", new Date());
         if (null != orgId) {
-            sql.append(" and XXDM = :orgId");
-            cql.append(" and XXDM = :orgId");
-            condition.put("orgId", orgId.toString());
+            sql.append(" and c.XXDM = :orgId");
+            cql.append(" and c.XXDM = :orgId");
+            sql.append(" and s.XXID = :orgId");
+            cql.append(" and s.XXID = :orgId");
+            condition.put("orgId", orgId);
         }
         if (!StringUtils.isBlank(cetType)) {
-            sql.append(" and KSLX = :cetType");
-            cql.append(" and KSLX = :cetType");
+            sql.append(" and c.KSLX = :cetType");
+            cql.append(" and c.KSLX = :cetType");
             condition.put("cetType", cetType);
         }
         if (!StringUtils.isBlank(collegeCode)) {
-            sql.append(" and YXSH = :collegeCode");
-            cql.append(" and YXSH = :collegeCode");
+            sql.append(" and c.YXSH = :collegeCode");
+            cql.append(" and c.YXSH = :collegeCode");
+            sql.append(" and s.YXSH = :collegeCode");
+            cql.append(" and s.YXSH = :collegeCode");
             condition.put("collegeCode", collegeCode);
         }
         if (!StringUtils.isBlank(professionCode)) {
-            sql.append(" and ZYH = :professionCode");
-            cql.append(" and ZYH = :professionCode");
+            sql.append(" and c.ZYH = :professionCode");
+            cql.append(" and c.ZYH = :professionCode");
+            sql.append(" and s.ZYH = :professionCode");
+            cql.append(" and s.ZYH = :professionCode");
             condition.put("professionCode", professionCode);
         }
         if (!StringUtils.isBlank(className)) {
-            sql.append(" and BH = :className");
-            cql.append(" and BH = :className");
+            sql.append(" and c.BH = :className");
+            cql.append(" and c.BH = :className");
+            sql.append(" and s.BJMC = :className");
+            cql.append(" and s.BJMC = :className");
             condition.put("className", className);
         }
         if (!StringUtils.isBlank(cetType)) {
@@ -137,20 +160,20 @@ public class CetStandardScoreManager {
                 if (null != scoreSeg && scoreSeg >= 1 && scoreSeg <= 4) {
                     switch (scoreSeg) {
                         case 1:
-                            sql.append(" and CJ < 390 and CJ > 0");
-                            cql.append(" and CJ < 390 and CJ > 0");
+                            sql.append(" and c.CJ < 390 and c.CJ > 0");
+                            cql.append(" and c.CJ < 390 and c.CJ > 0");
                             break;
                         case 2:
-                            sql.append(" and CJ < 425 and CJ >= 390");
-                            cql.append(" and CJ < 425 and CJ >= 390");
+                            sql.append(" and c.CJ < 425 and c.CJ >= 390");
+                            cql.append(" and c.CJ < 425 and c.CJ >= 390");
                             break;
                         case 3:
-                            sql.append(" and CJ <= 550 and CJ >= 425");
-                            cql.append(" and CJ <= 550 and CJ >= 425");
+                            sql.append(" and c.CJ <= 550 and c.CJ >= 425");
+                            cql.append(" and c.CJ <= 550 and c.CJ >= 425");
                             break;
                         case 4:
-                            sql.append(" and CJ > 550");
-                            cql.append(" and CJ > 550");
+                            sql.append(" and c.CJ > 550");
+                            cql.append(" and c.CJ > 550");
                             break;
                         default:
                     }
@@ -158,30 +181,15 @@ public class CetStandardScoreManager {
             } else {
                 if (null != scoreSeg) {
                     if (1 == scoreSeg) {
-                        sql.append(" and CJ < 60");
-                        cql.append(" and CJ < 60");
+                        sql.append(" and c.CJ < 60");
+                        cql.append(" and c.CJ < 60");
                     } else if (2 == scoreSeg) {
-                        sql.append(" and CJ >= 60");
-                        cql.append(" and CJ >= 60");
+                        sql.append(" and c.CJ >= 60");
+                        cql.append(" and c.CJ >= 60");
                     }
                 }
             }
         }
-
-        //限制查询时间最近四年
-        Calendar c = Calendar.getInstance();
-        int month = c.get(Calendar.MONTH) + 1;
-        int year = c.get(Calendar.YEAR);
-        String xnxq = null;
-        if (month >= 9) {
-            year = year - 4;
-            xnxq = year + "-" + (month > 9 ? month : "0" + month);
-        } else {
-            year = year - 5;
-            xnxq = year + "-" + (month > 9 ? month : "0" + month);
-        }
-        sql.append(" and CONCAT(xn, '-', xqm) >='").append(xnxq).append("'");
-        cql.append(" and CONCAT(xn, '-', xqm) >='").append(xnxq).append("'");
 
         sql.append(" group by XH");
         Query sq = em.createNativeQuery(sql.toString());
