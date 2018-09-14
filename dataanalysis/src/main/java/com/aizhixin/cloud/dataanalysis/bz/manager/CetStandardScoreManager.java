@@ -114,13 +114,13 @@ public class CetStandardScoreManager {
         if(month < 10) {
             sql.append("0");
         }
-        sql.append(month).append("' AND s.YBYNY <= :currdate");
+        sql.append(month).append("' AND s.YBYNY >= :currdate");
 
         cql.append(" s.RXNY <='").append(year);
         if(month < 10) {
             cql.append("0");
         }
-        cql.append(month).append("' AND s.YBYNY <= :currdate");
+        cql.append(month).append("' AND s.YBYNY >= :currdate");
         condition.put("currdate", new Date());
         if (null != orgId) {
             sql.append(" and c.XXDM = :orgId");
