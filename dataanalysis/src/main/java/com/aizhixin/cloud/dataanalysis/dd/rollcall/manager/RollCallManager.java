@@ -277,11 +277,11 @@ public class RollCallManager {
         Map<String, Object> params = new HashMap<>();
         params.put("orgId", orgId);
         if (null != collegeId && collegeId > 0) {
-            sb.append(" AND r.college_id=:collegeId");
+            sb.append(" AND r.college_id=:collegeId ");
             params.put("collegeId", collegeId);
         }
         if (null != teacherId && teacherId > 0) {
-            sb.append(" AND r.TEACHER_ID=:teacherId");
+            sb.append(" AND r.TEACHER_ID=:teacherId ");
             params.put("teacherId", teacherId);
         }
         if (null == dkl || dkl <= 0) {
@@ -409,7 +409,7 @@ public class RollCallManager {
         params.put("orgId", orgId);
         Set<Long> classesSet = new HashSet<>();
         if (null != collegeId && collegeId > 0) {
-            sb.append(" AND r.college_id=:collegeId");
+            sb.append(" AND r.college_id=:collegeId ");
             params.put("collegeId", collegeId);
         }
         if (null != teacherId && teacherId > 0) {//查询班级ID列表
