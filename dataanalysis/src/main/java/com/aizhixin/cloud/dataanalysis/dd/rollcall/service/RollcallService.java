@@ -1,10 +1,12 @@
 package com.aizhixin.cloud.dataanalysis.dd.rollcall.service;
 
 
+import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.manager.RollCallManager;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.SchoolWeekRollcallScreenVO;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.SchoolWeekRollcallScreenZhVO;
+import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.TeacherRollcallAlertVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -157,5 +159,16 @@ public class RollcallService {
         }
 
         return zhVo;
+    }
+
+    /**
+     * 学校管理平台老师考勤告警查询
+     * 需要查询点点和org的数据库，直接查询没有调用接口
+     */
+    public PageData<TeacherRollcallAlertVO> queryTeacherRollcallAlert (Long orgId, Long collegeId, Long teacherId, Date start, Date end, Double dkl, Integer pageIndex, Integer pageSize) {
+        if (null == orgId || orgId <= 0) {
+            return new PageData<>();
+        }
+        return rollCallManager.queryTeacherDkl(orgId, collegeId, teacherId, start, end, dkl, pageIndex, pageSize);
     }
 }
