@@ -3,6 +3,7 @@ package com.aizhixin.cloud.dataanalysis.dd.rollcall.controller;
 
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.service.RollcallService;
+import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.ClassesRollcallAlertVO;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.SchoolWeekRollcallScreenZhVO;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.TeacherRollcallAlertVO;
 import io.swagger.annotations.Api;
@@ -44,5 +45,21 @@ public class RollcallController {
             @ApiParam(value = "pageSize 每页条数") @RequestParam(value = "pageSize", required = false) Integer pageSize
     ) {
         return  rollcallService.queryTeacherRollcallAlert(orgId, collegeId, teacherId, start, end, dkl, pageIndex, pageSize);
+    }
+
+
+    @GetMapping(value = "/alert/orgId/{orgId}/classes", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "学校管理平台班级考勤告警查询", response = Void.class, notes = "学校管理平台班级考勤告警查询<br><br><b>@author zhen.pan</b>")
+    public PageData<ClassesRollcallAlertVO> queryClassesRollcallAlert(
+            @ApiParam(value = "orgId 机构id" , required = true) @PathVariable Long orgId,
+            @ApiParam(value = "collegeId 学院id") @RequestParam(value = "collegeId", required = false) Long collegeId,
+            @ApiParam(value = "teacherId 老师id") @RequestParam(value = "teacherId", required = false) Long teacherId,
+            @ApiParam(value = "起始日期 yyyy-MM-dd")@DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(value = "start", required = false) Date start,
+            @ApiParam(value = "结束日期 yyyy-MM-dd")@DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(value = "end", required = false) Date end,
+            @ApiParam(value = "dkl 到课率阀值(缺省0.8)") @RequestParam(value = "dkl", required = false) Double dkl,
+            @ApiParam(value = "pageIndex 第几页") @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
+            @ApiParam(value = "pageSize 每页条数") @RequestParam(value = "pageSize", required = false) Integer pageSize
+    ) {
+        return  rollcallService.queryClassesRollcallAlert(orgId, collegeId, teacherId, start, end, dkl, pageIndex, pageSize);
     }
 }

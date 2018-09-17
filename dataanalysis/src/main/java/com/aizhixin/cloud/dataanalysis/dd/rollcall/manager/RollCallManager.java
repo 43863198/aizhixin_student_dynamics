@@ -3,6 +3,7 @@ package com.aizhixin.cloud.dataanalysis.dd.rollcall.manager;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.dto.OrgTeacherInfoDTO;
+import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.ClassesRollcallAlertVO;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.SchoolWeekRollcallScreenVO;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.TeacherCourseRollcallAlertVO;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.TeacherRollcallAlertVO;
@@ -104,6 +105,34 @@ public class RollCallManager {
             "u.ID, u.`NAME` teacherName, u.JOB_NUMBER  workNo, c.`NAME` collegeName " +
             "FROM #orgMnagerDB#.t_user u LEFT JOIN #orgMnagerDB#.t_college c ON u.COLLEGE_ID=c.ID " +
             "WHERE u.ORG_ID = :orgId AND u.ID IN (:teacherIds)";
+
+    private String SQL_CLASSES_ROLLCALL_ALERT_COUNT = "SELECT count(*) FROM ( SELECT " +
+            "#dklcal#" +
+            " FROM #database#.dd_rollcall r " +
+            " WHERE  r.org_id = :orgId AND r.CREATED_DATE BETWEEN :start AND :end" +
+            " #queryCondition#" +
+            " GROUP BY r.TEACHER_ID, DATE_FORMAT(r.`CREATED_DATE`, '%Y-%m-%d') " +
+            " ORDER BY CLASS_ID) c WHERE  dkl < :dkl  ";
+
+    private String SQL_CLASSES_ROLLCALL_ALERT = "SELECT classesId, caldate, dkl FROM ( SELECT r.CLASS_ID as classesId,DATE_FORMAT(r.`CREATED_DATE`, '%Y-%m-%d') as caldate, " +
+            "#dklcal#" +
+            " FROM #database#.dd_rollcall r " +
+            " WHERE  r.org_id = :orgId AND r.CREATED_DATE BETWEEN :start AND :end " +
+            " #queryCondition#" +
+            " GROUP BY r.TEACHER_ID, DATE_FORMAT(r.`CREATED_DATE`, '%Y-%m-%d') " +
+            " ORDER BY CLASS_ID ) c WHERE dkl < :dkl ";
+
+    private String SQL_CLASSES_INFO = "SELECT " +
+            "c.ID,c.`NAME` AS classesName, c.TEACHING_YEAR AS grade, p.`NAME` AS professionalName, g.`NAME` AS collegeName " +
+            "FROM #orgMnagerDB#.t_classes c LEFT JOIN #orgMnagerDB#.t_professional p ON c.PROFESSIONAL_ID=p.ID LEFT JOIN #orgMnagerDB#.t_college g ON c.COLLEGE_ID=g.ID " +
+            "WHERE c.ID in (:classesIds)";
+
+    private String SQL_CLASSES_TEACHER = "SELECT " +
+            "c.CLASSES_ID AS classesId, u.`NAME` AS teacherName " +
+            "FROM #orgMnagerDB#.t_classes_teacher c LEFT JOIN #orgMnagerDB#.t_user u ON c.TEACHER_ID=u.ID " +
+            "WHERE c.CLASSES_ID IN (:classesIds)";
+
+    private String SQL_CLASSES_TEACHER_CLASSESIDS = "SELECT CLASSES_ID FROM #orgMnagerDB#.t_classes_teacher  WHERE ORG_ID = ? AND TEACHER_ID = ?";
 
     @Value("${dl.dd.back.dbname}")
     private String ddDatabaseName;
@@ -355,6 +384,135 @@ public class RollCallManager {
             } else  {
                 pageData.setData(new ArrayList<>());
             }
+        }
+        return pageData;
+    }
+
+    public PageData<ClassesRollcallAlertVO> queryClassesDkl(Long orgId, Long collegeId, Long teacherId, Date start, Date end, Double dkl, Integer pageIndex, Integer pageSize) {
+        PageData<ClassesRollcallAlertVO> pageData = new PageData<>();
+        if (null == pageIndex || pageIndex < 1) {
+            pageIndex = 1;
+        }
+        if (null == pageSize || pageSize <= 0) {
+            pageSize = 20;
+        }
+        pageData.getPage().setPageNumber(pageIndex);
+        pageData.getPage().setPageSize(pageSize);
+        pageData.getPage().setTotalElements(0L);
+        pageData.getPage().setTotalPages(1);
+
+        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbcTemplate);
+        int type = getOrgArithmetic(orgId);
+        String dklSql = getDklCalSql(type);
+        StringBuilder sb = new StringBuilder("");
+        Map<String, Object> params = new HashMap<>();
+        params.put("orgId", orgId);
+        Set<Long> classesSet = new HashSet<>();
+        if (null != collegeId && collegeId > 0) {
+            sb.append(" AND r.college_id=:collegeId");
+            params.put("collegeId", collegeId);
+        }
+        if (null != teacherId && teacherId > 0) {//查询班级ID列表
+            String sql = SQL_CLASSES_TEACHER_CLASSESIDS.replaceAll("#database#", orgDatabaseName);
+            List<Long> classesList = jdbcTemplate.query(sql, new Object[] {orgId, teacherId}, new int[]{Types.BIGINT, Types.BIGINT}, (ResultSet rs, int rowNum) -> rs.getLong(1));
+            if (null != classesList && !classesList.isEmpty()) {
+                classesSet.addAll(classesList);
+            }
+        }
+        if (!classesSet.isEmpty()) {
+            sb.append(" AND r.CLASS_ID in(:classesIdSet) ");
+            params.put("classesIdSet", classesSet);
+        }
+        if (null == dkl || dkl <= 0) {
+            dkl = 0.8;
+        }
+        params.put("dkl", dkl);
+        Date cur = new Date();
+        if (null == start) {
+            start = DateUtil.afterNDay(cur, -1);
+            start = DateUtil.getZerotime(start);
+        } else {
+            start = DateUtil.getZerotime(start);
+        }
+        if (null == end) {
+            end = DateUtil.afterNDay(cur, 1);
+            end = DateUtil.getZerotime(end);
+        } else {
+            end = DateUtil.afterNDay(end, 1);
+            end = DateUtil.getZerotime(end);
+        }
+        params.put("start", start);
+        params.put("end", end);
+
+        String sql_count = SQL_CLASSES_ROLLCALL_ALERT_COUNT.replaceAll("#database#", ddDatabaseName);
+        sql_count = sql_count.replaceAll("#dklcal#", dklSql);
+        sql_count = sql_count.replaceAll("#queryCondition#", sb.toString());
+        log.info("Count classes rollcall alert sql:{}", sql_count);
+        List<Long> counts =  template.query(sql_count, params, (ResultSet rs, int rowNum) -> rs.getLong(1));
+        Long count = 0L;
+        if (null != counts && counts.size() > 0) {
+            count = counts.get(0);
+        }
+        pageData.getPage().setTotalElements(count);
+        pageData.getPage().setPageNumber((int)(count/pageSize + (0 == count % pageSize ? 0 : 1)));
+        if (count > 0) {
+            String sql = SQL_CLASSES_ROLLCALL_ALERT.replaceAll("#database#", ddDatabaseName);
+            sql = sql.replaceAll("#dklcal#", dklSql);
+            sql = sql.replaceAll("#queryCondition#", sb.toString());
+            int ps = (pageIndex - 1) * pageSize;
+            sql = sql +  " LIMIT " + ps + ", " + pageSize;
+            log.info("Query classes rollcall alert sql:{}", sql);
+            //r.CLASS_ID as classesId,DATE_FORMAT(r.`CREATED_DATE`, '%Y-%m-%d') as caldate
+            Map<Long, ClassesRollcallAlertVO> classesInfoMap = new HashMap<>();
+            Map<Long, ClassesRollcallAlertVO> classesTeacherInfoMap = new HashMap<>();
+            List<ClassesRollcallAlertVO> list = template.query(sql, params, (ResultSet rs, int rowNum) -> new ClassesRollcallAlertVO(rs.getString("caldate"), rs.getLong("classesId"), rs.getDouble("dkl")));
+            if (null != list && !list.isEmpty()) {
+                pageData.setData(list);
+                Set<Long> classesIds = new HashSet<>();
+
+                //查询填充班级和班主任信息
+                for (ClassesRollcallAlertVO v : list) {
+                    classesIds.add(v.getClassesId());
+                }
+                if (!classesIds.isEmpty()) {
+                    //c.ID,c.`NAME` AS classesName, c.TEACHING_YEAR AS grade, p.`NAME` AS professionalName, g.`NAME` AS collegeName
+                    params.clear();
+                    params.put("classesIds", classesIds);
+                    sql = SQL_CLASSES_INFO.replaceAll("#orgMnagerDB#", orgDatabaseName);
+                    List<ClassesRollcallAlertVO> classesList = template.query(sql, params, (ResultSet rs, int rowNum) -> new ClassesRollcallAlertVO(rs.getLong("ID"), rs.getString("classesName"), rs.getString("grade"), rs.getString("professionalName"), rs.getString("collegeName")));
+                    if(null != classesList) {
+                        for (ClassesRollcallAlertVO v : classesList) {
+                            classesInfoMap.put(v.getClassesId(), v);
+                        }
+                    }
+                    //c.CLASSES_ID AS classesId, u.`NAME` AS teacherName
+                    sql = SQL_CLASSES_TEACHER.replaceAll("#orgMnagerDB#", orgDatabaseName);
+                    List<ClassesRollcallAlertVO> classesTeacherList = template.query(sql, params, (ResultSet rs, int rowNum) -> new ClassesRollcallAlertVO(rs.getLong("classesId"), rs.getString("teacherName")));
+                    if(null != classesTeacherList) {
+                        for (ClassesRollcallAlertVO v : classesTeacherList) {
+                            classesTeacherInfoMap.put(v.getClassesId(), v);
+                        }
+                    }
+                }
+
+                for (ClassesRollcallAlertVO v : list) {
+                    ClassesRollcallAlertVO c = classesInfoMap.get(v.getClassesId());
+                    if (null != c) {
+                        v.setClassesName(c.getClassesName());
+                        v.setProfessionalName(c.getProfessionalName());
+                        v.setCollegeName(c.getCollegeName());
+                        v.setGrade(c.getGrade());
+                    }
+                    ClassesRollcallAlertVO ct = classesTeacherInfoMap.get(v.getClassesId());
+                    if (null != ct) {
+                        v.setTeacherName(ct.getTeacherName());
+                    }
+                }
+            } else  {
+                pageData.setData(new ArrayList<>());
+            }
+        } else  {
+            pageData.setData(new ArrayList<>());
         }
         return pageData;
     }
