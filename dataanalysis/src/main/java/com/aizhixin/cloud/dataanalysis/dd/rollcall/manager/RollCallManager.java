@@ -123,7 +123,7 @@ public class RollCallManager {
             " ORDER BY CLASS_ID ) c WHERE dkl < :dkl ";
 
     private String SQL_CLASSES_INFO = "SELECT " +
-            "c.ID,c.`NAME` AS classesName, c.TEACHING_YEAR AS grade, p.`NAME` AS professionalName, g.`NAME` AS collegeName " +
+            "c.ID,c.`NAME` AS classesName , c.code AS classesCode, c.TEACHING_YEAR AS grade, p.`NAME` AS professionalName, g.`NAME` AS collegeName " +
             "FROM #orgMnagerDB#.t_classes c LEFT JOIN #orgMnagerDB#.t_professional p ON c.PROFESSIONAL_ID=p.ID LEFT JOIN #orgMnagerDB#.t_college g ON c.COLLEGE_ID=g.ID " +
             "WHERE c.ID in (:classesIds)";
 
@@ -479,7 +479,7 @@ public class RollCallManager {
                     params.clear();
                     params.put("classesIds", classesIds);
                     sql = SQL_CLASSES_INFO.replaceAll("#orgMnagerDB#", orgDatabaseName);
-                    List<ClassesRollcallAlertVO> classesList = template.query(sql, params, (ResultSet rs, int rowNum) -> new ClassesRollcallAlertVO(rs.getLong("ID"), rs.getString("classesName"), rs.getString("grade"), rs.getString("professionalName"), rs.getString("collegeName")));
+                    List<ClassesRollcallAlertVO> classesList = template.query(sql, params, (ResultSet rs, int rowNum) -> new ClassesRollcallAlertVO(rs.getLong("ID"), rs.getString("classesName"), rs.getString("classesCode"), rs.getString("grade"), rs.getString("professionalName"), rs.getString("collegeName")));
                     if(null != classesList) {
                         for (ClassesRollcallAlertVO v : classesList) {
                             classesInfoMap.put(v.getClassesId(), v);

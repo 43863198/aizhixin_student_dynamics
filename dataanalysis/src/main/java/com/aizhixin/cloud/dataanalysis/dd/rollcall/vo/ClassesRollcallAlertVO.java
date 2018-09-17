@@ -19,6 +19,8 @@ public class ClassesRollcallAlertVO {
     @Getter  @Setter private String day;
     @ApiModelProperty(value = "班级ID")
     @Getter  @Setter private Long classesId;
+    @ApiModelProperty(value = "班级代码")
+    @Getter  @Setter private String classesCode;
     @ApiModelProperty(value = "班级名称")
     @Getter  @Setter private String classesName;
     @ApiModelProperty(value = "年级")
@@ -41,9 +43,10 @@ public class ClassesRollcallAlertVO {
         this.classesId = classesId;
         this.dkl = dkl;
     }
-    public ClassesRollcallAlertVO (Long classesId, String classesName, String grade, String professionalName, String collegeName) {
+    public ClassesRollcallAlertVO (Long classesId, String classesName, String classesCode, String grade, String professionalName, String collegeName) {
         this.classesId = classesId;
         this.classesName = classesName;
+        this.classesCode = classesCode;
         this.grade = grade;
         this.professionalName = professionalName;
         this.collegeName =  collegeName;
