@@ -73,5 +73,6 @@
     <include file="classpath:liquibase/20180823181145_add_entity_StudyExceptionIndex.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20180820114057_add_entity_MinorSecondDegreeInfo.xml" relativeToChangelogFile="false"/>
     <include file="classpath:liquibase/20181535460508_add_entity_AttendanceStatistics.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:liquibase/20180918111745_add_entity_Lastest3RollcallAlert.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

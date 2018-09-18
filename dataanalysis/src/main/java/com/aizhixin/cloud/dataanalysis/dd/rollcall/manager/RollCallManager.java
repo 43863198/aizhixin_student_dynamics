@@ -290,7 +290,7 @@ public class RollCallManager {
         params.put("dkl", dkl);
         Date cur = new Date();
         if (null == start) {
-            start = DateUtil.afterNDay(cur, -1);
+            start = DateUtil.afterNDay(cur, -7);
             start =  DateUtil.getZerotime(start);
         } else {
             start = DateUtil.getZerotime(start);
