@@ -66,7 +66,7 @@ public class RollcallController {
 
 
     @GetMapping(value = "/alert/orgId/{orgId}/studentlastest3", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "学校管理平台班级考勤告警查询", response = Void.class, notes = "学校管理平台班级考勤告警查询<br><br><b>@author zhen.pan</b>")
+    @ApiOperation(httpMethod = "GET", value = "学校管理平台最近3天学生考勤告警查询", response = Void.class, notes = "学校管理平台最近3天学生考勤告警查询<br><br><b>@author zhen.pan</b>")
     public PageData<Lastest3RollcallAlertVO> queryClassesRollcallAlert(
             @ApiParam(value = "orgId 机构id" , required = true) @PathVariable Long orgId,
             @ApiParam(value = "collegeId 学院id") @RequestParam(value = "collegeId", required = false) Long collegeId,

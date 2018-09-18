@@ -92,11 +92,11 @@ public class RollCallManager {
 //            "ROUND((SUM(IF(r.`TYPE` = 1, 1, 0)) + SUM(IF(r.`TYPE` = 4, 1, 0)))/COUNT(*),4) AS dkl " +
             "#dklcal#" +
             "FROM #database#.dd_rollcall r , #database#.dd_schedule_rollcall sr, #database#.dd_schedule s " +
-            "WHERE  r.org_id = :orgId AND s.ORGAN_ID = :orgId AND r.SCHEDULE_ROLLCALL_ID = sr.ID AND sr.SCHEDULE_ID=s.ID AND s.TEACH_DATE >= :start AND s.TEACH_DATE < :end AND r.TEACHER_ID IN (:teachers)" +
+            "WHERE  r.org_id = :orgId AND s.ORGAN_ID = :orgId AND r.SCHEDULE_ROLLCALL_ID = sr.ID AND sr.SCHEDULE_ID=s.ID AND s.TEACH_DATE >= :start AND s.TEACH_DATE < :end AND r.TEACHER_ID IN (:teachers) " +
             "GROUP BY r.TEACHER_ID, s.TEACH_DATE, r.COURSE_ID, s.COURSE_NAME,s.PERIOD_NO " +
             "ORDER BY s.TEACH_DATE DESC, r.TEACHER_ID,r.COURSE_ID,s.PERIOD_NO " +
             ") c " +
-            "WHERE c.dkl < :dkl";
+            "WHERE 1=1 ";
 
     private String SQL_ORG_SET = "SELECT arithmetic FROM #database#.DD_ORGAN_SET WHERE ORGAN_ID=?";
 
@@ -338,6 +338,7 @@ public class RollCallManager {
                 Map<String, String> courseMap = new HashMap<>();
                 if (!teachers.isEmpty()) {
                     params.put("teachers", teachers);
+                    params.remove("dkl");
 
                     sql = SQL_TEACHER_COURSE_CLASSES_ROLLCALL_ALERT.replaceAll("#database#", ddDatabaseName);
                     sql = sql.replaceAll("#dklcal#", dklSql);
