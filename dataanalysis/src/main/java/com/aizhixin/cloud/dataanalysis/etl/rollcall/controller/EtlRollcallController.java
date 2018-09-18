@@ -28,7 +28,7 @@ public class EtlRollcallController {
     public void calLastest3StudentRollAlert(@ApiParam(value = "orgId 机构id") @RequestParam(value = "orgId", required = false) Long orgId,
                                   @ApiParam(value = "起始日期 yyyy-MM-dd")@DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(value = "start", required = false) Date start,
                                   @ApiParam(value = "结束日期 yyyy-MM-dd")@DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam(value = "end", required = false) Date end,
-                                  @ApiParam(value = "dkl 到课率阀值(缺省0.8)") @RequestParam(value = "dkl", required = false) Double dkl) {
+                                  @ApiParam(value = "dkl 到课率阀值(缺省0.6)") @RequestParam(value = "dkl", required = false) Double dkl) {
         etlRollcallAlertService.calLastest3StudentRollAlert(orgId, start, end, dkl);
     }
 }

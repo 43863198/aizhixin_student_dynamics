@@ -34,7 +34,7 @@ public class EtlRollcallAlertService {
         }
         List<Long> orgs = new ArrayList<>();//计算合适的orgId
         if (null == orgId || orgId <= 0) {
-            Date s = DateUtil.afterNDay(start, -3);
+            Date s = DateUtil.afterNDay(start, -2);
             List<Long> os = etlRollcallAlertManager.queryOrgIds(DateUtil.getZerotime(s), end);
             if (null != os) {
                 orgs.addAll(os);

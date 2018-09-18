@@ -11,7 +11,7 @@
     <changeSet id="20180918111745" author="zhen.pan">
 		<preConditions onFail="MARK_RAN">
 	        <not>
-	            <tableExists tableName="T_ZB_XDYC"/>
+	            <tableExists tableName="T_ALERT_LASTEST3_ROLLCALL"/>
 	        </not>
 	    </preConditions>
         <createTable tableName="T_ALERT_LASTEST3_ROLLCALL" remarks="最近三天考勤告警">

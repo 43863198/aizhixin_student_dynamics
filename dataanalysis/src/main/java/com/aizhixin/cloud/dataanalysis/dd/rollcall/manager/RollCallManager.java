@@ -59,13 +59,12 @@ public class RollCallManager {
             "FROM ( " +
             "SELECT " +
             "r.TEACHER_ID as teacherId," +
-            "DATE_FORMAT(r.`CREATED_DATE`, '%Y-%m-%d') as caldate ," +
+            "s.TEACH_DATE as caldate ," +
             "#dklcal#" +
-            "FROM #database#.dd_rollcall r " +
-            "WHERE  r.org_id = :orgId AND r.CREATED_DATE BETWEEN :start AND :end " +
+            "FROM #database#.dd_rollcall r INNER JOIN #database#.dd_schedule_rollcall sr ON r.SCHEDULE_ROLLCALL_ID = sr.ID INNER JOIN #database#.dd_schedule s ON sr.SCHEDULE_ID = s.ID " +
+            "WHERE  r.org_id = :orgId AND s.TEACH_DATE BETWEEN :start AND :end " +
             "#queryCondition#" +
-            "GROUP BY r.TEACHER_ID, DATE_FORMAT(r.`CREATED_DATE`, '%Y-%m-%d') " +
-            "ORDER BY TEACHER_ID " +
+            "GROUP BY r.TEACHER_ID, s.TEACH_DATE " +
             ") c " +
             "WHERE c.dkl < :dkl";
     private String SQL_TEACHER_DAY_ROLLCALL_ALERT = "SELECT " +
@@ -73,13 +72,13 @@ public class RollCallManager {
             "FROM ( " +
             "SELECT " +
             "r.TEACHER_ID as teacherId," +
-            "DATE_FORMAT(r.`CREATED_DATE`, '%Y-%m-%d') as caldate ," +
+            "s.TEACH_DATE as caldate ," +
             "#dklcal#" +
-            "FROM #database#.dd_rollcall r " +
-            "WHERE  r.org_id = :orgId AND r.CREATED_DATE BETWEEN :start AND :end " +
+            "FROM #database#.dd_rollcall r INNER JOIN #database#.dd_schedule_rollcall sr ON r.SCHEDULE_ROLLCALL_ID = sr.ID INNER JOIN #database#.dd_schedule s ON sr.SCHEDULE_ID = s.ID " +
+            "WHERE  r.org_id = :orgId AND s.TEACH_DATE BETWEEN :start AND :end " +
             "#queryCondition#" +
-            "GROUP BY r.TEACHER_ID, DATE_FORMAT(r.`CREATED_DATE`, '%Y-%m-%d') " +
-            "ORDER BY TEACHER_ID " +
+            "GROUP BY r.TEACHER_ID, s.TEACH_DATE " +
+            "ORDER BY s.TEACH_DATE DESC, r.TEACHER_ID " +
             ") c " +
             "WHERE c.dkl < :dkl";
     private String SQL_TEACHER_COURSE_CLASSES_ROLLCALL_ALERT = "SELECT " +
@@ -87,15 +86,15 @@ public class RollCallManager {
             "FROM (" +
             "SELECT " +
             "r.TEACHER_ID as teacherId," +
-            "DATE_FORMAT(r.`CREATED_DATE`, '%Y-%m-%d') as caldate , " +
+            "s.TEACH_DATE as caldate , " +
             "r.COURSE_ID as courseId, s.COURSE_NAME as courseName," +
             " CONCAT(s.PERIOD_NO,'-',s.PERIOD_NO + s.PERIOD_NUM -1) as period," +
 //            "ROUND((SUM(IF(r.`TYPE` = 1, 1, 0)) + SUM(IF(r.`TYPE` = 4, 1, 0)))/COUNT(*),4) AS dkl " +
             "#dklcal#" +
-            "FROM #database#.dd_rollcall r,#database#.dd_schedule_rollcall sr, #database#.dd_schedule s " +
-            "WHERE  r.org_id = :orgId AND s.ORGAN_ID = :orgId AND r.SCHEDULE_ROLLCALL_ID = sr.ID AND sr.SCHEDULE_ID=s.ID AND r.CREATED_DATE BETWEEN :start AND :end and r.TEACHER_ID in (:teachers)" +
-            "GROUP BY r.TEACHER_ID, DATE_FORMAT(r.`CREATED_DATE`, '%Y-%m-%d'), r.COURSE_ID, s.COURSE_NAME,s.PERIOD_NO " +
-            "ORDER BY r.CREATED_DATE, r.TEACHER_ID,r.COURSE_ID,s.PERIOD_NO " +
+            "FROM #database#.dd_rollcall r , #database#.dd_schedule_rollcall sr, #database#.dd_schedule s " +
+            "WHERE  r.org_id = :orgId AND s.ORGAN_ID = :orgId AND r.SCHEDULE_ROLLCALL_ID = sr.ID AND sr.SCHEDULE_ID=s.ID AND s.TEACH_DATE BETWEEN :start AND :end and r.TEACHER_ID in (:teachers)" +
+            "GROUP BY r.TEACHER_ID, s.TEACH_DATE, r.COURSE_ID, s.COURSE_NAME,s.PERIOD_NO " +
+            "ORDER BY s.TEACH_DATE DESC, r.TEACHER_ID,r.COURSE_ID,s.PERIOD_NO " +
             ") c " +
             "WHERE c.dkl < :dkl";
 
@@ -108,19 +107,19 @@ public class RollCallManager {
 
     private String SQL_CLASSES_ROLLCALL_ALERT_COUNT = "SELECT count(*) FROM ( SELECT " +
             "#dklcal#" +
-            " FROM #database#.dd_rollcall r " +
-            " WHERE  r.org_id = :orgId AND r.CREATED_DATE BETWEEN :start AND :end" +
+            "FROM #database#.dd_rollcall r INNER JOIN #database#.dd_schedule_rollcall sr ON r.SCHEDULE_ROLLCALL_ID = sr.ID INNER JOIN #database#.dd_schedule s ON sr.SCHEDULE_ID = s.ID " +
+            " WHERE  r.org_id = :orgId AND s.TEACH_DATE BETWEEN :start AND :end" +
             " #queryCondition#" +
-            " GROUP BY r.TEACHER_ID, DATE_FORMAT(r.`CREATED_DATE`, '%Y-%m-%d') " +
-            " ORDER BY CLASS_ID) c WHERE  dkl < :dkl  ";
+            " GROUP BY r.TEACHER_ID, s.TEACH_DATE " +
+            ") c WHERE  dkl < :dkl  ";
 
-    private String SQL_CLASSES_ROLLCALL_ALERT = "SELECT classesId, caldate, dkl FROM ( SELECT r.CLASS_ID as classesId,DATE_FORMAT(r.`CREATED_DATE`, '%Y-%m-%d') as caldate, " +
+    private String SQL_CLASSES_ROLLCALL_ALERT = "SELECT classesId, caldate, dkl FROM ( SELECT r.CLASS_ID as classesId, s.TEACH_DATE as caldate, " +
             "#dklcal#" +
-            " FROM #database#.dd_rollcall r " +
-            " WHERE  r.org_id = :orgId AND r.CREATED_DATE BETWEEN :start AND :end " +
+            "FROM #database#.dd_rollcall r INNER JOIN #database#.dd_schedule_rollcall sr ON r.SCHEDULE_ROLLCALL_ID = sr.ID INNER JOIN #database#.dd_schedule s ON sr.SCHEDULE_ID = s.ID " +
+            " WHERE  r.org_id = :orgId AND s.TEACH_DATE BETWEEN :start AND :end " +
             " #queryCondition#" +
-            " GROUP BY r.TEACHER_ID, DATE_FORMAT(r.`CREATED_DATE`, '%Y-%m-%d') " +
-            " ORDER BY CLASS_ID ) c WHERE dkl < :dkl ";
+            " GROUP BY r.TEACHER_ID, s.TEACH_DATE " +
+            " ORDER BY s.TEACH_DATE DESC, r.CLASS_ID ) c WHERE dkl < :dkl ";
 
     private String SQL_CLASSES_INFO = "SELECT " +
             "c.ID,c.`NAME` AS classesName , c.code AS classesCode, c.TEACHING_YEAR AS grade, p.`NAME` AS professionalName, g.`NAME` AS collegeName " +
@@ -290,20 +289,19 @@ public class RollCallManager {
         params.put("dkl", dkl);
         Date cur = new Date();
         if (null == start) {
-            start = DateUtil.afterNDay(cur, -7);
+            start = DateUtil.afterNDay(cur, -1);
             start =  DateUtil.getZerotime(start);
         } else {
             start = DateUtil.getZerotime(start);
         }
         if (null == end) {
-            end = DateUtil.afterNDay(cur, 1);
-            end =  DateUtil.getZerotime(end);
+            end =  DateUtil.getZerotime(cur);
         } else {
             end = DateUtil.afterNDay(end, 1);
             end = DateUtil.getZerotime(end);
         }
-        params.put("start", start);
-        params.put("end", end);
+        params.put("start", DateUtil.formatShort(start));
+        params.put("end", DateUtil.formatShort(end));
 
         NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbcTemplate);
         String sql_count = SQL_TEACHER_DAY_ROLLCALL_ALERT_COUNT.replaceAll("#database#", ddDatabaseName);
@@ -438,11 +436,10 @@ public class RollCallManager {
             end = DateUtil.afterNDay(cur, 1);
             end = DateUtil.getZerotime(end);
         } else {
-            end = DateUtil.afterNDay(end, 1);
-            end = DateUtil.getZerotime(end);
+            end = DateUtil.getZerotime(cur);
         }
-        params.put("start", start);
-        params.put("end", end);
+        params.put("start", DateUtil.formatShort(start));
+        params.put("end", DateUtil.formatShort(end));
 
         String sql_count = SQL_CLASSES_ROLLCALL_ALERT_COUNT.replaceAll("#database#", ddDatabaseName);
         sql_count = sql_count.replaceAll("#dklcal#", dklSql);
