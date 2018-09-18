@@ -62,7 +62,7 @@ public class RollCallManager {
             "s.TEACH_DATE as caldate ," +
             "#dklcal#" +
             "FROM #database#.dd_rollcall r INNER JOIN #database#.dd_schedule_rollcall sr ON r.SCHEDULE_ROLLCALL_ID = sr.ID INNER JOIN #database#.dd_schedule s ON sr.SCHEDULE_ID = s.ID " +
-            "WHERE  r.org_id = :orgId AND s.TEACH_DATE BETWEEN :start AND :end " +
+            "WHERE  r.org_id = :orgId AND s.TEACH_DATE >= :start AND s.TEACH_DATE < :end " +
             "#queryCondition#" +
             "GROUP BY r.TEACHER_ID, s.TEACH_DATE " +
             ") c " +
@@ -75,7 +75,7 @@ public class RollCallManager {
             "s.TEACH_DATE as caldate ," +
             "#dklcal#" +
             "FROM #database#.dd_rollcall r INNER JOIN #database#.dd_schedule_rollcall sr ON r.SCHEDULE_ROLLCALL_ID = sr.ID INNER JOIN #database#.dd_schedule s ON sr.SCHEDULE_ID = s.ID " +
-            "WHERE  r.org_id = :orgId AND s.TEACH_DATE BETWEEN :start AND :end " +
+            "WHERE  r.org_id = :orgId AND s.TEACH_DATE >= :start AND s.TEACH_DATE < :end " +
             "#queryCondition#" +
             "GROUP BY r.TEACHER_ID, s.TEACH_DATE " +
             "ORDER BY s.TEACH_DATE DESC, r.TEACHER_ID " +
@@ -92,7 +92,7 @@ public class RollCallManager {
 //            "ROUND((SUM(IF(r.`TYPE` = 1, 1, 0)) + SUM(IF(r.`TYPE` = 4, 1, 0)))/COUNT(*),4) AS dkl " +
             "#dklcal#" +
             "FROM #database#.dd_rollcall r , #database#.dd_schedule_rollcall sr, #database#.dd_schedule s " +
-            "WHERE  r.org_id = :orgId AND s.ORGAN_ID = :orgId AND r.SCHEDULE_ROLLCALL_ID = sr.ID AND sr.SCHEDULE_ID=s.ID AND s.TEACH_DATE BETWEEN :start AND :end and r.TEACHER_ID in (:teachers)" +
+            "WHERE  r.org_id = :orgId AND s.ORGAN_ID = :orgId AND r.SCHEDULE_ROLLCALL_ID = sr.ID AND sr.SCHEDULE_ID=s.ID AND s.TEACH_DATE >= :start AND s.TEACH_DATE < :end AND r.TEACHER_ID IN (:teachers)" +
             "GROUP BY r.TEACHER_ID, s.TEACH_DATE, r.COURSE_ID, s.COURSE_NAME,s.PERIOD_NO " +
             "ORDER BY s.TEACH_DATE DESC, r.TEACHER_ID,r.COURSE_ID,s.PERIOD_NO " +
             ") c " +
@@ -116,7 +116,7 @@ public class RollCallManager {
     private String SQL_CLASSES_ROLLCALL_ALERT = "SELECT classesId, caldate, dkl FROM ( SELECT r.CLASS_ID as classesId, s.TEACH_DATE as caldate, " +
             "#dklcal#" +
             "FROM #database#.dd_rollcall r INNER JOIN #database#.dd_schedule_rollcall sr ON r.SCHEDULE_ROLLCALL_ID = sr.ID INNER JOIN #database#.dd_schedule s ON sr.SCHEDULE_ID = s.ID " +
-            " WHERE  r.org_id = :orgId AND s.TEACH_DATE BETWEEN :start AND :end " +
+            " WHERE  r.org_id = :orgId AND s.TEACH_DATE >= :start AND s.TEACH_DATE < :end " +
             " #queryCondition#" +
             " GROUP BY r.TEACHER_ID, s.TEACH_DATE " +
             " ORDER BY s.TEACH_DATE DESC, r.CLASS_ID ) c WHERE dkl < :dkl ";
@@ -352,7 +352,12 @@ public class RollCallManager {
                             if (null != tmp) {
                                 v.append(tmp);
                             }
-                            v.append("[").append(vo.getCourseName()).append(", ").append(vo.getPeriod()).append(", ").append(vo.getDkl()).append("]");
+                            String dt = "" + (vo.getDkl() * 100);
+                            int p = dt.indexOf(".");
+                            if (p > 0 && p + 3 < dt.length()) {
+                                dt = dt.substring(0, p + 3);
+                            }
+                            v.append("[").append(vo.getCourseName()).append(", ").append(vo.getPeriod()).append(", ").append(dt).append("%]");
                             courseMap.put(vo.getDay() + "-" + vo.getTeacherId(), v.toString());
                         }
                     }
@@ -411,7 +416,7 @@ public class RollCallManager {
             params.put("collegeId", collegeId);
         }
         if (null != teacherId && teacherId > 0) {//查询班级ID列表
-            String sql = SQL_CLASSES_TEACHER_CLASSESIDS.replaceAll("#database#", orgDatabaseName);
+            String sql = SQL_CLASSES_TEACHER_CLASSESIDS.replaceAll("#orgMnagerDB#", orgDatabaseName);
             List<Long> classesList = jdbcTemplate.query(sql, new Object[] {orgId, teacherId}, new int[]{Types.BIGINT, Types.BIGINT}, (ResultSet rs, int rowNum) -> rs.getLong(1));
             if (null != classesList && !classesList.isEmpty()) {
                 classesSet.addAll(classesList);
@@ -433,10 +438,10 @@ public class RollCallManager {
             start = DateUtil.getZerotime(start);
         }
         if (null == end) {
-            end = DateUtil.afterNDay(cur, 1);
-            end = DateUtil.getZerotime(end);
-        } else {
             end = DateUtil.getZerotime(cur);
+        } else {
+            end = DateUtil.afterNDay(end, 1);
+            end = DateUtil.getZerotime(end);
         }
         params.put("start", DateUtil.formatShort(start));
         params.put("end", DateUtil.formatShort(end));
