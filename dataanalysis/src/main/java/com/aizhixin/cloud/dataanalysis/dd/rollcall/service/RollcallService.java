@@ -3,11 +3,9 @@ package com.aizhixin.cloud.dataanalysis.dd.rollcall.service;
 
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
+import com.aizhixin.cloud.dataanalysis.dd.rollcall.manager.Lastest3RollcallAlertManager;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.manager.RollCallManager;
-import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.ClassesRollcallAlertVO;
-import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.SchoolWeekRollcallScreenVO;
-import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.SchoolWeekRollcallScreenZhVO;
-import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.TeacherRollcallAlertVO;
+import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +19,8 @@ public class RollcallService {
 
     @Autowired
     private RollCallManager rollCallManager;
+    @Autowired
+    private Lastest3RollcallAlertManager lastest3RollcallAlertManager;
 
     private void cacheLjz(SchoolWeekRollcallScreenVO v, SchoolWeekRollcallScreenVO c) {
         if (null == c.getYdrs()) {
@@ -182,5 +182,12 @@ public class RollcallService {
             return new PageData<>();
         }
         return rollCallManager.queryClassesDkl(orgId, collegeId, teacherId, start, end, dkl, pageIndex, pageSize);
+    }
+
+    /**
+     * 学生最近3天到课率告警统计
+     */
+    public PageData<Lastest3RollcallAlertVO> findLastest3RollcallAlert(Long orgId, Long collegeId, String name, Date start, Date end, Integer pageIndex, Integer pageSize) {
+        return lastest3RollcallAlertManager.findLastest3RollcallAlert(orgId, collegeId, name, start, end, pageIndex, pageSize);
     }
 }
