@@ -190,4 +190,11 @@ public class RollcallService {
     public PageData<Lastest3RollcallAlertVO> findLastest3RollcallAlert(Long orgId, Long collegeId, String name, Date start, Date end, Integer pageIndex, Integer pageSize) {
         return lastest3RollcallAlertManager.findLastest3RollcallAlert(orgId, collegeId, name, start, end, pageIndex, pageSize);
     }
+
+    /**
+     * 学生缺课告警统计
+     */
+    public PageData<UnNormalRollcallAlertVO> queryStudentUnNormalRollcall(Long orgId, Long collegeId, String name, Date start, Date end, Double undkl, Integer pageIndex, Integer pageSize) {
+        return rollCallManager.queryStudentUnNormalRollcall(orgId, collegeId, name, start, end, undkl, pageIndex, pageSize);
+    }
 }
