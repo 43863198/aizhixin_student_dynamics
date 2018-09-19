@@ -1,6 +1,7 @@
 package com.aizhixin.cloud.dataanalysis.dd.rollcall.manager;
 
 import com.aizhixin.cloud.dataanalysis.common.PageData;
+import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.dto.IDNoNameDTO;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.dto.OrgTeacherInfoDTO;
@@ -342,7 +343,7 @@ public class RollCallManager {
             count = counts.get(0);
         }
         pageData.getPage().setTotalElements(count);
-        pageData.getPage().setPageNumber((int)(count/pageSize + (0 == count % pageSize ? 0 : 1)));
+        pageData.getPage().setTotalPages(PageUtil.cacalatePagesize(count, pageSize));
         if (count > 0) {
             String sql = SQL_TEACHER_DAY_ROLLCALL_ALERT.replaceAll("#database#", ddDatabaseName);
             sql = sql.replaceAll("#dklcal#", dklSql);
@@ -492,7 +493,7 @@ public class RollCallManager {
             count = counts.get(0);
         }
         pageData.getPage().setTotalElements(count);
-        pageData.getPage().setPageNumber((int)(count/pageSize + (0 == count % pageSize ? 0 : 1)));
+        pageData.getPage().setTotalPages(PageUtil.cacalatePagesize(count, pageSize));
         if (count > 0) {
             String sql = SQL_CLASSES_ROLLCALL_ALERT.replaceAll("#database#", ddDatabaseName);
             sql = sql.replaceAll("#dklcal#", dklSql);
@@ -617,7 +618,7 @@ public class RollCallManager {
             count = counts.get(0);
         }
         pageData.getPage().setTotalElements(count);
-        pageData.getPage().setPageNumber((int)(count/pageSize + (0 == count % pageSize ? 0 : 1)));
+        pageData.getPage().setTotalPages(PageUtil.cacalatePagesize(count, pageSize));
         if (count > 0) {
             String sql = SQL_STUDENT_UNNORMAL_COURSE_ALERT.replaceAll("#database#", ddDatabaseName);
             sql = sql.replaceAll("#queryCondition#", sb.toString());
