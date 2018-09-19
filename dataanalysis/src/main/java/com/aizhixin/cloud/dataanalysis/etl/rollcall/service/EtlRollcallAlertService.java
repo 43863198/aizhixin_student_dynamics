@@ -2,6 +2,7 @@ package com.aizhixin.cloud.dataanalysis.etl.rollcall.service;
 
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.etl.rollcall.manager.EtlRollcallAlertManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 @Component
+@Slf4j
 public class EtlRollcallAlertService {
 
     @Autowired
@@ -44,6 +46,7 @@ public class EtlRollcallAlertService {
         }
         while (start.before(end)){
             for (Long o : orgs) {
+                log.info("Cal Lastest3 student rollcall orgId:{}, Date:{}", o, DateUtil.formatShort(start));
                 etlRollcallAlertManager.calStudentLastest3RollcallAlert(o, start, dkl);
             }
             start = DateUtil.afterNDay(start, 1);
