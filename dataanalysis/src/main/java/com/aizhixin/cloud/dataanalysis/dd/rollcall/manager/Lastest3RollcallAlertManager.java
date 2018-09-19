@@ -72,6 +72,7 @@ public class Lastest3RollcallAlertManager {
             sql.append(" AND (t.studentNo LIKE :name OR t.studentName LIKE :name)");
             sqlc.append(" AND (t.studentNo LIKE :name OR t.studentName LIKE :name)");
         }
+        sql.append(" ORDER BY t.calDate DESC");
         Query q = em.createQuery(sqlc.toString());
         for (Map.Entry<String, Object> e : params.entrySet()) {
             q.setParameter(e.getKey(), e.getValue());

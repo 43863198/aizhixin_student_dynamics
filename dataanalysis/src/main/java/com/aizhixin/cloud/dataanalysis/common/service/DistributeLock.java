@@ -69,6 +69,21 @@ public class DistributeLock {
         return locked;
     }
 
+    /**
+     * 初始化天任务数据锁的获取
+     * @return  是否获取到锁
+     */
+    public boolean getDayTaskLock() {
+        StringBuilder lockPath = new StringBuilder(zkLockPath);
+        StringBuilder taskPath = new StringBuilder(zkTaskPath);
+        Date current = new Date();
+        String curDayString = DateUtil.formatShort(current);
+        lockPath.append("/").append(curDayString).append("/lastest3");
+        taskPath.append("/").append(curDayString).append("/lastest3");
+
+        return getLock(lockPath.toString(), taskPath.toString());
+    }
+
     public void delete() {
         CuratorFramework client = CuratorFrameworkFactory.newClient(zkConnectString, new RetryNTimes(ZOOKEEPER_RETRY_TIMES, ZOOKEEPER_RETRY_SLEEP_TIMES));
         try {
