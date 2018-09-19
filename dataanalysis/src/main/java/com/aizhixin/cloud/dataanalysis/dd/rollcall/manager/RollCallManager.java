@@ -449,6 +449,8 @@ public class RollCallManager {
             List<Long> classesList = jdbcTemplate.query(sql, new Object[] {orgId, teacherId}, new int[]{Types.BIGINT, Types.BIGINT}, (ResultSet rs, int rowNum) -> rs.getLong(1));
             if (null != classesList && !classesList.isEmpty()) {
                 classesSet.addAll(classesList);
+            } else {
+                return pageData;
             }
         }
         if (!classesSet.isEmpty()) {
