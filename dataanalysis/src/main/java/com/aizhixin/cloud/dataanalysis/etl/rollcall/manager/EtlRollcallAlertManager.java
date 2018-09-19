@@ -37,7 +37,7 @@ public class EtlRollcallAlertManager {
 //            " ROUND(SUM(IF(r.`TYPE` = 1, 1, 0))/COUNT(*),4) AS dkl " +
                     "#dklcal#" +
                     "FROM #database#.dd_rollcall r INNER JOIN #database#.dd_schedule_rollcall sr ON r.SCHEDULE_ROLLCALL_ID = sr.ID INNER JOIN #database#.dd_schedule s ON sr.SCHEDULE_ID = s.ID " +
-                    " WHERE  r.org_id = :orgId AND s.TEACH_DATE >= :start AND s.TEACH_DATE < :end " +
+                    " WHERE  r.org_id = :orgId AND s.TEACH_DATE >= :start AND s.TEACH_DATE <= :end " +
                     " GROUP BY r.CLASS_ID, r.student_id " +
                     " ORDER BY r.CLASS_ID, r.student_id " +
                     ") c LEFT JOIN #orgMnagerDB#.t_user u ON c.studentId=u.ID LEFT JOIN #orgMnagerDB#.t_classes s ON u.CLASSES_ID=s.ID LEFT JOIN #orgMnagerDB#.t_professional p ON u.PROFESSIONAL_ID=p.ID LEFT JOIN #orgMnagerDB#.t_college g ON u.COLLEGE_ID=g.ID " +
