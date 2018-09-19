@@ -43,7 +43,7 @@ public class EtlRollcallAlertManager {
                     ") c LEFT JOIN #orgMnagerDB#.t_user u ON c.studentId=u.ID LEFT JOIN #orgMnagerDB#.t_classes s ON u.CLASSES_ID=s.ID LEFT JOIN #orgMnagerDB#.t_professional p ON u.PROFESSIONAL_ID=p.ID LEFT JOIN #orgMnagerDB#.t_college g ON u.COLLEGE_ID=g.ID " +
                     " WHERE c.dkl<:dkl";
 
-    private final static String SQL_STUDENT_LASTEST3_ROLLCALL_ALERT_CLEAN = "DELETE FROM t_student_lastest3_rollcall_alert  WHERE ORG_ID=? and CAL_DATE=?";
+    private final static String SQL_STUDENT_LASTEST3_ROLLCALL_ALERT_CLEAN = "DELETE FROM T_ALERT_LASTEST3_ROLLCALL  WHERE ORG_ID=? and CAL_DATE=?";
 
     private final static String SQL_ROLLCALL_LAST3DAY_ORGID = "SELECT  DISTINCT r.org_id AS orgId FROM #database#.dd_rollcall r WHERE r.CREATED_DATE BETWEEN :start AND :end";
 
@@ -66,7 +66,7 @@ public class EtlRollcallAlertManager {
         Map<String, Object> params = new HashMap<>();
         params.put("orgId", orgId);
         params.put("dkl", dkl);
-        Date pre3Date = DateUtil.afterNDay(date, -3);
+        Date pre3Date = DateUtil.afterNDay(date, -2);
         pre3Date = DateUtil.getZerotime(pre3Date);//从0点开始
         params.put("start", pre3Date);
         StringBuilder time = new StringBuilder("'");

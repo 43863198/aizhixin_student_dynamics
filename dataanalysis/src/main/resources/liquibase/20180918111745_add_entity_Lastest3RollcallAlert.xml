@@ -31,7 +31,7 @@
             <column name="SHOULD_COUNT" type="INT" remarks="应到"/>
             <column name="NORMAL" type="INT" remarks="实到"/>
             <column name="DKL" type="DECIMAL(11,4)" remarks="到课率"/>
-            <column name="CREATED_TIME" type="TIMESTAMP" remarks="数据创建日期时间"/>
+            <column name="CREATED_TIME" type="TIMESTAMP" defaultValueDate="${now}" remarks="数据创建日期时间"/>
             <column name="ORG_ID" type="BIGINT" remarks="学校"/>
         </createTable>
         <createIndex indexName="idx_alert_lastest3_rollcall_student_no" tableName="T_ALERT_LASTEST3_ROLLCALL" unique="false">
