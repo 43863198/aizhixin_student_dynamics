@@ -3,16 +3,14 @@ package com.aizhixin.cloud.dataanalysis.dd.rollcall.manager;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.dto.OrgTeacherInfoDTO;
-import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.ClassesRollcallAlertVO;
-import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.SchoolWeekRollcallScreenVO;
-import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.TeacherCourseRollcallAlertVO;
-import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.TeacherRollcallAlertVO;
+import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.sql.ResultSet;
 import java.sql.Types;
@@ -131,16 +129,28 @@ public class RollCallManager {
 
     private String SQL_CLASSES_TEACHER_CLASSESIDS = "SELECT CLASSES_ID FROM #orgMnagerDB#.t_classes_teacher  WHERE ORG_ID = ? AND TEACHER_ID = ?";
 
-    private String SQL_STUDENT_UNNORMAL_COURSE_ALERT = "SELECT studentId, studentNo, studentName, classesName, prefessionalName, collegeName, courseId, shouldCount, unNormal, undkl " +
+
+    private String SQL_STUDENT_UNNORMAL_COURSE_ALERT_COUNT = "SELECT COUNT(*) " +
             "FROM ( " +
-            "SELECT r.STUDENT_ID AS studentId, r.STUDENT_NUM AS studentNo, r.STUDENT_NAME AS studentName, r.class_name AS classesName, r.professional_name AS prefessionalName, r.college_name AS collegeName, r.COURSE_ID AS courseId,  " +
+            "SELECT " +
+            "(SUM(IF(r.`TYPE` = 3, 1, 0)) + SUM(IF(r.`TYPE` = 4, 1, 0)) + SUM(IF(r.`TYPE` = 5, 1, 0)) + SUM(IF(r.`TYPE` = 2, 1, 0)))/COUNT(*) AS undkl " +
+            "FROM dd_api_test.dd_rollcall r  " +
+            "WHERE r.org_id = :orgId AND r.CREATED_DATE >= :start AND r.CREATED_DATE < :end " +
+            " #queryCondition# " +
+            "GROUP BY r.STUDENT_ID , r.STUDENT_NUM, r.STUDENT_NAME, r.CLASS_ID, r.class_name, r.professional_name, r.college_name, r.COURSE_ID " +
+            " ) c WHERE c.undkl > :undkl";
+
+    private String SQL_STUDENT_UNNORMAL_COURSE_ALERT = "SELECT studentId, studentNo, studentName, classesId, classesName, prefessionalName, collegeName, courseId, shouldCount, unNormal " +
+            "FROM ( " +
+            "SELECT r.STUDENT_ID AS studentId, r.STUDENT_NUM AS studentNo, r.STUDENT_NAME AS studentName, r.CLASS_ID AS classesId, r.class_name AS classesName, r.professional_name AS prefessionalName, r.college_name AS collegeName, r.COURSE_ID AS courseId,  " +
             "COUNT(*) AS shouldCount, " +
             "(SUM(IF(r.`TYPE` = 3, 1, 0)) + SUM(IF(r.`TYPE` = 4, 1, 0)) + SUM(IF(r.`TYPE` = 5, 1, 0)) + SUM(IF(r.`TYPE` = 2, 1, 0))) AS unNormal, " +
             "(SUM(IF(r.`TYPE` = 3, 1, 0)) + SUM(IF(r.`TYPE` = 4, 1, 0)) + SUM(IF(r.`TYPE` = 5, 1, 0)) + SUM(IF(r.`TYPE` = 2, 1, 0)))/COUNT(*) AS undkl " +
             "FROM dd_api_test.dd_rollcall r  " +
-            "WHERE .org_id=? AND r.CREATED_DATE >= ? AND r.CREATED_DATE < ? " +
-            "GROUP BY r.STUDENT_ID , r.STUDENT_NUM, r.STUDENT_NAME, r.class_name, r.professional_name, r.college_name, r.COURSE_ID " +
-            ") c WHERE c.undkl > ?";
+            "WHERE r.org_id = :orgId AND r.CREATED_DATE >= :start AND r.CREATED_DATE < :end " +
+            " #queryCondition# " +
+            "GROUP BY r.STUDENT_ID , r.STUDENT_NUM, r.STUDENT_NAME, r.CLASS_ID, r.class_name, r.professional_name, r.college_name, r.COURSE_ID " +
+            "ORDER BY undkl DESC, r.STUDENT_NUM) c WHERE c.undkl > :undkl";
 
     @Value("${dl.dd.back.dbname}")
     private String ddDatabaseName;
@@ -538,4 +548,85 @@ public class RollCallManager {
         }
         return pageData;
     }
-}
+
+    public PageData<UnNormalRollcallAlertVO> queryStudentUnNormalRollcall(Long orgId, Long collegeId, String name, Date start, Date end, Double undkl, Integer pageIndex, Integer pageSize) {
+        PageData<UnNormalRollcallAlertVO> pageData = new PageData<>();
+        if (null == pageIndex || pageIndex < 1) {
+            pageIndex = 1;
+        }
+        if (null == pageSize || pageSize <= 0) {
+            pageSize = 20;
+        }
+        pageData.getPage().setPageNumber(pageIndex);
+        pageData.getPage().setPageSize(pageSize);
+        pageData.getPage().setTotalElements(0L);
+        pageData.getPage().setTotalPages(1);
+
+        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbcTemplate);
+        int type = getOrgArithmetic(orgId);
+        String dklSql = getDklCalSql(type);
+        StringBuilder sb = new StringBuilder("");
+        Map<String, Object> params = new HashMap<>();
+        params.put("orgId", orgId);
+        Set<Long> classesSet = new HashSet<>();
+        if (null != collegeId && collegeId > 0) {
+            sb.append(" AND r.college_id=:collegeId ");
+            params.put("collegeId", collegeId);
+        }
+        if (!StringUtils.isEmpty(name)) {//姓名模糊匹配
+            sb.append(" AND (r.STUDENT_NAME like :name OR r.STUDENT_NUM like :name)");
+            params.put("name", "%" + name + "%");
+        }
+        if (null == undkl || undkl <= 0) {
+            undkl = 0.3;
+        }
+        params.put("undkl", undkl);
+        Date cur = new Date();
+        Date today = new Date();
+        today = DateUtil.getZerotime(today);
+        if (null == start) {
+            start = DateUtil.afterNDay(cur, -1);
+            start = DateUtil.getZerotime(start);
+        } else {
+            start = DateUtil.getZerotime(start);
+        }
+        if (null == end) {
+            end = DateUtil.getZerotime(cur);
+        } else {
+            end = DateUtil.afterNDay(end, 1);
+            end = DateUtil.getZerotime(end);
+        }
+        if (end.after(today)) {
+            end = today;
+        }
+        params.put("start", start);
+        params.put("end", end);
+        String sql_count = SQL_STUDENT_UNNORMAL_COURSE_ALERT_COUNT.replaceAll("#database#", ddDatabaseName);
+        sql_count = sql_count.replaceAll("#queryCondition#", sb.toString());
+        sql_count = sql_count.replaceAll("#queryCondition#", sb.toString());
+        log.info("Count Student unNormal rollcall alert sql:{}", sql_count);
+        List<Long> counts =  template.query(sql_count, params, (ResultSet rs, int rowNum) -> rs.getLong(1));
+        Long count = 0L;
+        if (null != counts && counts.size() > 0) {
+            count = counts.get(0);
+        }
+        pageData.getPage().setTotalElements(count);
+        pageData.getPage().setPageNumber((int)(count/pageSize + (0 == count % pageSize ? 0 : 1)));
+        if (count > 0) {
+            String sql = SQL_STUDENT_UNNORMAL_COURSE_ALERT.replaceAll("#database#", ddDatabaseName);
+            sql = sql.replaceAll("#queryCondition#", sb.toString());
+            int ps = (pageIndex - 1) * pageSize;
+            sql = sql +  " LIMIT " + ps + ", " + pageSize;
+            log.info("Query Student unNormal rollcall alert sql:{}", sql);
+            List<UnNormalRollcallAlertVO> list = template.query(sql, params, (ResultSet rs, int rowNum) ->
+                    new UnNormalRollcallAlertVO(rs.getLong("studentId"), rs.getString("studentNo"), rs.getString("studentName"),
+                            rs.getLong("classesId"), rs.getString("classesName"), rs.getString("prefessionalName"),
+                            rs.getString("collegeName"), rs.getLong("courseId"), rs.getLong("shouldCount"), rs.getLong("unNormal") )
+            );
+            if (null != list && !list.isEmpty()) {
+                pageData.setData(list);
+            }
+        }
+        return pageData;
+    }
+    }
