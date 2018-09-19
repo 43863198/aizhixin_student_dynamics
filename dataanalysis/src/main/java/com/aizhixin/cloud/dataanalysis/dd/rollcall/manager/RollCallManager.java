@@ -89,14 +89,12 @@ public class RollCallManager {
             "s.TEACH_DATE as caldate , " +
             "r.COURSE_ID as courseId, s.COURSE_NAME as courseName," +
             " CONCAT(s.PERIOD_NO,'-',s.PERIOD_NO + s.PERIOD_NUM -1) as period," +
-//            "ROUND((SUM(IF(r.`TYPE` = 1, 1, 0)) + SUM(IF(r.`TYPE` = 4, 1, 0)))/COUNT(*),4) AS dkl " +
             "#dklcal#" +
             "FROM #database#.dd_rollcall r , #database#.dd_schedule_rollcall sr, #database#.dd_schedule s " +
             "WHERE  r.org_id = :orgId AND s.ORGAN_ID = :orgId AND r.SCHEDULE_ROLLCALL_ID = sr.ID AND sr.SCHEDULE_ID=s.ID AND s.TEACH_DATE >= :start AND s.TEACH_DATE < :end AND r.TEACHER_ID IN (:teachers) " +
             "GROUP BY r.TEACHER_ID, s.TEACH_DATE, r.COURSE_ID, s.COURSE_NAME,s.PERIOD_NO " +
             "ORDER BY s.TEACH_DATE DESC, r.TEACHER_ID,r.COURSE_ID,s.PERIOD_NO " +
-            ") c " +
-            "WHERE 1=1 ";
+            ") c ";
 
     private String SQL_ORG_SET = "SELECT arithmetic FROM #database#.DD_ORGAN_SET WHERE ORGAN_ID=?";
 
@@ -108,9 +106,9 @@ public class RollCallManager {
     private String SQL_CLASSES_ROLLCALL_ALERT_COUNT = "SELECT count(*) FROM ( SELECT " +
             "#dklcal#" +
             "FROM #database#.dd_rollcall r INNER JOIN #database#.dd_schedule_rollcall sr ON r.SCHEDULE_ROLLCALL_ID = sr.ID INNER JOIN #database#.dd_schedule s ON sr.SCHEDULE_ID = s.ID " +
-            " WHERE  r.org_id = :orgId AND s.TEACH_DATE BETWEEN :start AND :end" +
+            " WHERE  r.org_id = :orgId AND s.TEACH_DATE >= :start AND s.TEACH_DATE < :end" +
             " #queryCondition#" +
-            " GROUP BY r.TEACHER_ID, s.TEACH_DATE " +
+            " GROUP BY r.CLASS_ID, s.TEACH_DATE " +
             ") c WHERE  dkl < :dkl  ";
 
     private String SQL_CLASSES_ROLLCALL_ALERT = "SELECT classesId, caldate, dkl FROM ( SELECT r.CLASS_ID as classesId, s.TEACH_DATE as caldate, " +
@@ -118,7 +116,7 @@ public class RollCallManager {
             "FROM #database#.dd_rollcall r INNER JOIN #database#.dd_schedule_rollcall sr ON r.SCHEDULE_ROLLCALL_ID = sr.ID INNER JOIN #database#.dd_schedule s ON sr.SCHEDULE_ID = s.ID " +
             " WHERE  r.org_id = :orgId AND s.TEACH_DATE >= :start AND s.TEACH_DATE < :end " +
             " #queryCondition#" +
-            " GROUP BY r.TEACHER_ID, s.TEACH_DATE " +
+            " GROUP BY r.CLASS_ID, s.TEACH_DATE " +
             " ORDER BY s.TEACH_DATE DESC, r.CLASS_ID ) c WHERE dkl < :dkl ";
 
     private String SQL_CLASSES_INFO = "SELECT " +
@@ -132,6 +130,17 @@ public class RollCallManager {
             "WHERE c.CLASSES_ID IN (:classesIds)";
 
     private String SQL_CLASSES_TEACHER_CLASSESIDS = "SELECT CLASSES_ID FROM #orgMnagerDB#.t_classes_teacher  WHERE ORG_ID = ? AND TEACHER_ID = ?";
+
+    private String SQL_STUDENT_UNNORMAL_COURSE_ALERT = "SELECT studentId, studentNo, studentName, classesName, prefessionalName, collegeName, courseId, shouldCount, unNormal, undkl " +
+            "FROM ( " +
+            "SELECT r.STUDENT_ID AS studentId, r.STUDENT_NUM AS studentNo, r.STUDENT_NAME AS studentName, r.class_name AS classesName, r.professional_name AS prefessionalName, r.college_name AS collegeName, r.COURSE_ID AS courseId,  " +
+            "COUNT(*) AS shouldCount, " +
+            "(SUM(IF(r.`TYPE` = 3, 1, 0)) + SUM(IF(r.`TYPE` = 4, 1, 0)) + SUM(IF(r.`TYPE` = 5, 1, 0)) + SUM(IF(r.`TYPE` = 2, 1, 0))) AS unNormal, " +
+            "(SUM(IF(r.`TYPE` = 3, 1, 0)) + SUM(IF(r.`TYPE` = 4, 1, 0)) + SUM(IF(r.`TYPE` = 5, 1, 0)) + SUM(IF(r.`TYPE` = 2, 1, 0)))/COUNT(*) AS undkl " +
+            "FROM dd_api_test.dd_rollcall r  " +
+            "WHERE .org_id=? AND r.CREATED_DATE >= ? AND r.CREATED_DATE < ? " +
+            "GROUP BY r.STUDENT_ID , r.STUDENT_NUM, r.STUDENT_NAME, r.class_name, r.professional_name, r.college_name, r.COURSE_ID " +
+            ") c WHERE c.undkl > ?";
 
     @Value("${dl.dd.back.dbname}")
     private String ddDatabaseName;
@@ -288,6 +297,8 @@ public class RollCallManager {
         }
         params.put("dkl", dkl);
         Date cur = new Date();
+        Date today = new Date();
+        today =  DateUtil.getZerotime(today);
         if (null == start) {
             start = DateUtil.afterNDay(cur, -1);
             start =  DateUtil.getZerotime(start);
@@ -299,6 +310,9 @@ public class RollCallManager {
         } else {
             end = DateUtil.afterNDay(end, 1);
             end = DateUtil.getZerotime(end);
+        }
+        if (end.after(today)) {
+            end = today;
         }
         params.put("start", DateUtil.formatShort(start));
         params.put("end", DateUtil.formatShort(end));
@@ -432,6 +446,8 @@ public class RollCallManager {
         }
         params.put("dkl", dkl);
         Date cur = new Date();
+        Date today = new Date();
+        today =  DateUtil.getZerotime(today);
         if (null == start) {
             start = DateUtil.afterNDay(cur, -1);
             start = DateUtil.getZerotime(start);
@@ -443,6 +459,9 @@ public class RollCallManager {
         } else {
             end = DateUtil.afterNDay(end, 1);
             end = DateUtil.getZerotime(end);
+        }
+        if (end.after(today)) {
+            end = today;
         }
         params.put("start", DateUtil.formatShort(start));
         params.put("end", DateUtil.formatShort(end));
