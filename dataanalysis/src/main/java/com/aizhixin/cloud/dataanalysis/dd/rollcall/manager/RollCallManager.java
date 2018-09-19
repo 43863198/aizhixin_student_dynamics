@@ -2,6 +2,7 @@ package com.aizhixin.cloud.dataanalysis.dd.rollcall.manager;
 
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
+import com.aizhixin.cloud.dataanalysis.dd.rollcall.dto.IDNoNameDTO;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.dto.OrgTeacherInfoDTO;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.*;
 import lombok.extern.slf4j.Slf4j;
@@ -134,7 +135,7 @@ public class RollCallManager {
             "FROM ( " +
             "SELECT " +
             "(SUM(IF(r.`TYPE` = 3, 1, 0)) + SUM(IF(r.`TYPE` = 4, 1, 0)) + SUM(IF(r.`TYPE` = 5, 1, 0)) + SUM(IF(r.`TYPE` = 2, 1, 0)))/COUNT(*) AS undkl " +
-            "FROM dd_api_test.dd_rollcall r  " +
+            "FROM #database#.dd_rollcall r  " +
             "WHERE r.org_id = :orgId AND r.CREATED_DATE >= :start AND r.CREATED_DATE < :end " +
             " #queryCondition# " +
             "GROUP BY r.STUDENT_ID , r.STUDENT_NUM, r.STUDENT_NAME, r.CLASS_ID, r.class_name, r.professional_name, r.college_name, r.COURSE_ID " +
@@ -146,11 +147,14 @@ public class RollCallManager {
             "COUNT(*) AS shouldCount, " +
             "(SUM(IF(r.`TYPE` = 3, 1, 0)) + SUM(IF(r.`TYPE` = 4, 1, 0)) + SUM(IF(r.`TYPE` = 5, 1, 0)) + SUM(IF(r.`TYPE` = 2, 1, 0))) AS unNormal, " +
             "(SUM(IF(r.`TYPE` = 3, 1, 0)) + SUM(IF(r.`TYPE` = 4, 1, 0)) + SUM(IF(r.`TYPE` = 5, 1, 0)) + SUM(IF(r.`TYPE` = 2, 1, 0)))/COUNT(*) AS undkl " +
-            "FROM dd_api_test.dd_rollcall r  " +
+            "FROM #database#.dd_rollcall r  " +
             "WHERE r.org_id = :orgId AND r.CREATED_DATE >= :start AND r.CREATED_DATE < :end " +
             " #queryCondition# " +
             "GROUP BY r.STUDENT_ID , r.STUDENT_NUM, r.STUDENT_NAME, r.CLASS_ID, r.class_name, r.professional_name, r.college_name, r.COURSE_ID " +
             "ORDER BY undkl DESC, r.STUDENT_NUM) c WHERE c.undkl > :undkl";
+
+    private String SQL_ORG_COURSE = "SELECT c.ID, c.`NAME` FROM #orgMnagerDB#.t_course c WHERE c.ID IN (:courseIds)";
+    private String SQL_ORG_CLASSES_SIMPLE = "SELECT c.ID, c.`NAME`, c.TEACHING_YEAR FROM #orgMnagerDB#.t_classes c WHERE c.ID IN (:classesIds)";
 
     @Value("${dl.dd.back.dbname}")
     private String ddDatabaseName;
@@ -625,6 +629,53 @@ public class RollCallManager {
             );
             if (null != list && !list.isEmpty()) {
                 pageData.setData(list);
+                Set<Long> classesIds = new HashSet<>();
+                Set<Long> courseIds = new HashSet<>();
+                for (UnNormalRollcallAlertVO v : list) {
+                    classesIds.add(v.getClassesId());
+                    courseIds.add(v.getCourseId());
+                }
+                Map<Long, IDNoNameDTO> courseMap = new HashMap<>();
+                Map<Long, IDNoNameDTO> classesMap = new HashMap<>();
+                //SQL_ORG_COURSE
+                if (!courseIds.isEmpty()) {
+                    params.clear();
+                    params.put("courseIds", courseIds);
+                    sql = SQL_ORG_COURSE.replaceAll("#orgMnagerDB#", orgDatabaseName);
+                    List<IDNoNameDTO> courseList = template.query(sql, params, (ResultSet rs, int rowNum) ->
+                            new IDNoNameDTO(rs.getLong("ID"), rs.getString("NAME"))
+                    );
+                    if (null != courseList && !courseList.isEmpty()) {
+                        for (IDNoNameDTO d : courseList) {
+                            courseMap.put(d.getId(), d);
+                        }
+                    }
+                }
+                //SQL_ORG_CLASSES_SIMPLE
+                if (!classesIds.isEmpty()) {
+                    params.clear();
+                    params.put("classesIds", classesIds);
+                    sql = SQL_ORG_CLASSES_SIMPLE.replaceAll("#orgMnagerDB#", orgDatabaseName);
+                    List<IDNoNameDTO> classesList = template.query(sql, params, (ResultSet rs, int rowNum) ->
+                            new IDNoNameDTO(rs.getLong("ID"), rs.getString("NAME"), rs.getString("TEACHING_YEAR"))
+                    );
+                    if (null != classesList && !classesList.isEmpty()) {
+                        for (IDNoNameDTO d : classesList) {
+                            classesMap.put(d.getId(), d);
+                        }
+                    }
+                }
+                for (UnNormalRollcallAlertVO v : list) {
+                    IDNoNameDTO dc = courseMap.get(v.getCourseId());
+                    if (null != dc) {
+                        v.setCourseName(dc.getName());
+                    }
+
+                    dc = classesMap.get(v.getClassesId());
+                    if (null != dc) {
+                        v.setGrade(dc.getNo());
+                    }
+                }
             }
         }
         return pageData;
