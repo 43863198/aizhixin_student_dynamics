@@ -1,13 +1,14 @@
 package com.aizhixin.cloud.dataanalysis.common.schedule;
 
-import com.aizhixin.cloud.dataanalysis.alertinformation.job.WarnInforJob;
 import com.aizhixin.cloud.dataanalysis.common.service.DistributeLock;
 import com.aizhixin.cloud.dataanalysis.common.service.SyncClassTeacher;
+import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
+import com.aizhixin.cloud.dataanalysis.etl.rollcall.service.EtlRollcallAlertService;
 import com.aizhixin.cloud.dataanalysis.monitor.job.RollCallDayJob;
 import com.aizhixin.cloud.dataanalysis.monitor.job.TeachingScheduleJob;
 import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
-import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
 import com.aizhixin.cloud.dataanalysis.setup.job.WarningTypeOnAndOffJob;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,21 +17,23 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * 定时任务入口
  */
 @Component
+@Slf4j
 public class MySchedulingService {
     final static private Logger LOG = LoggerFactory.getLogger(MySchedulingService.class);
     @Autowired
     private DistributeLock distributeLock;
     @Autowired
     private RollCallJob rollCallJob;
-    @Autowired
-    private ScoreJob scoreJob;
-    @Autowired
-    private WarnInforJob warnInforJob;
+//    @Autowired
+//    private ScoreJob scoreJob;
+//    @Autowired
+//    private WarnInforJob warnInforJob;
     @Autowired
     private RollCallDayJob rollCallDayJob;
     @Autowired
@@ -41,6 +44,8 @@ public class MySchedulingService {
     private SyncClassTeacher syncClassTeacher;
     @Value("${sync.orgId}")
     private Long orgId;
+    @Autowired
+    private EtlRollcallAlertService etlRollcallAlertService;
 
     @Scheduled(cron = "0 0 3 * * ?")
     public void rollCallCountJob() {
@@ -175,4 +180,21 @@ public class MySchedulingService {
         }
     }
 
+    /**
+     * 最近三天学生考勤告警统计
+     */
+    @Scheduled(cron = "0 40 22 * * ?")
+    public void lastest3RollcallAlert() {
+        if (distributeLock.getDayTaskLock()) {
+            log.info("Start cal Lastest3 student rollcall alert data.");
+            Date c = new Date();
+            c = DateUtil.afterNDay(c, -1);//计算前一天的数据
+            etlRollcallAlertService.calLastest3StudentRollAlert(null, c, c, null);
+        }
+    }
+
+    @Scheduled(cron = "0 20 23 * * ?")
+    public void delete() {
+        distributeLock.delete();
+    }
 }
