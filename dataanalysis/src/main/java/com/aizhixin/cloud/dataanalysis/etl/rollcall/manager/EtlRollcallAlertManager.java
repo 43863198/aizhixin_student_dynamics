@@ -83,7 +83,7 @@ public class EtlRollcallAlertManager {
         sql = sql.replaceAll("#database#", ddDatabaseName);
         sql = sql.replaceAll("#orgMnagerDB#", orgDatabaseName);
 
-        log.info("Create student lastest3day rollcall alert data sql:{}", sql);
+        log.info("Create student lastest3day rollcall alert data sql:{}, orgId:{}, start:{}, end:{}, dkl:{}", sql, orgId, params.get("start"), params.get("end"), dkl);
         NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbcTemplate);
         int insertCount = template.update(sql, params);
         log.info("Create student lastest3day rollcall alert data count:{}", insertCount);
