@@ -44,23 +44,27 @@ public class Lastest3RollcallAlertManager {
         params.put("orgId", orgId);
 
         Date cur = new Date();
+        Date today = new Date();
+        today =  DateUtil.getZerotime(today);
         if (null == start) {
-            start = DateUtil.afterNDay(cur, -7);
+            start = DateUtil.afterNDay(cur, -1);
             start =  DateUtil.getZerotime(start);
         } else {
             start = DateUtil.getZerotime(start);
         }
         if (null == end) {
-            end = DateUtil.afterNDay(cur, 1);
-            end =  DateUtil.getZerotime(end);
+            end = DateUtil.getZerotime(cur);
         } else {
             end = DateUtil.afterNDay(end, 1);
             end = DateUtil.getZerotime(end);
         }
+        if (end.after(today)) {
+            end = today;
+        }
         params.put("start", start);
         params.put("end", end);
-        sql.append(" AND t.calDate BETWEEN :start AND :end");
-        sqlc.append(" AND t.calDate BETWEEN :start AND :end");
+        sql.append(" AND t.calDate >= :start AND t.calDate < :end");
+        sqlc.append(" AND t.calDate >= :start AND t.calDate < :end");
 
         if (null !=  collegeId && collegeId > 0) {
             params.put("collegeId", collegeId);

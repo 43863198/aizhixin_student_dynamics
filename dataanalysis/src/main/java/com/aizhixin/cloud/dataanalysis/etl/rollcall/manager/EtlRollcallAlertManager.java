@@ -68,13 +68,13 @@ public class EtlRollcallAlertManager {
         params.put("dkl", dkl);
         Date pre3Date = DateUtil.afterNDay(date, -2);
         pre3Date = DateUtil.getZerotime(pre3Date);//从0点开始
-        params.put("start", pre3Date);
+        params.put("start", DateUtil.formatShort(pre3Date));
         StringBuilder time = new StringBuilder("'");
         time.append(DateUtil.formatShort(pre3Date)).append("~").append(DateUtil.formatShort(date)).append("' AS dateRange,");
         time.append("'").append(DateUtil.formatShort(date)).append("' AS calDate,");
         String sql = SQL_STUDENT_LASTEST3_ROLLCALL_ALERT.replaceAll("#last3day#", time.toString());
-        date = DateUtil.afterNDay(date, 1);
-        params.put("end", DateUtil.getZerotime(date));//下一天的0点
+//        date = DateUtil.afterNDay(date, 1);
+        params.put("end", DateUtil.formatShort(DateUtil.getZerotime(date)));//下一天的0点
 
         int type = rollCallManager.getOrgArithmetic(orgId);//到课率
         String dklSql = rollCallManager.getDklCalSql(type);
