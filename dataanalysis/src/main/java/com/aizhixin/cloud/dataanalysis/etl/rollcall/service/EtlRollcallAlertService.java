@@ -23,13 +23,23 @@ public class EtlRollcallAlertService {
      */
     @Async
     public void calLastest3StudentRollAlert(Long orgId, Date start, Date end, Double dkl) {
+        Date cur = new Date();
+        Date today = new Date();
+        today =  DateUtil.getZerotime(today);
         if (null == start) {
-            start = new Date();
+            start = DateUtil.afterNDay(cur, -1);
+            start =  DateUtil.getZerotime(start);
+        } else {
+            start = DateUtil.getZerotime(start);
         }
         if (null == end) {
-            end = DateUtil.afterNDay(start, 1);
+            end =  DateUtil.getZerotime(cur);
         } else {
             end = DateUtil.afterNDay(end, 1);
+            end = DateUtil.getZerotime(end);
+        }
+        if (end.after(today)) {
+            end = today;
         }
         if(null == dkl) {
             dkl = 0.6;
