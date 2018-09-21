@@ -157,6 +157,33 @@ public class RollCallManager {
     private String SQL_ORG_COURSE = "SELECT c.ID, c.`NAME` FROM #orgMnagerDB#.t_course c WHERE c.ID IN (:courseIds)";
     private String SQL_ORG_CLASSES_SIMPLE = "SELECT c.ID, c.`NAME`, c.TEACHING_YEAR FROM #orgMnagerDB#.t_classes c WHERE c.ID IN (:classesIds)";
 
+    private String SQL_STUDENT_ROLLCALL_ALERT_COUNT = "SELECT count(*) as count " +
+            " FROM ( " +
+            "  SELECT " +
+            " #dklcal# " +
+            "  FROM #database#.dd_rollcall r INNER JOIN #database#.dd_schedule_rollcall sr ON r.SCHEDULE_ROLLCALL_ID = sr.ID INNER JOIN #database#.dd_schedule s ON sr.SCHEDULE_ID = s.ID " +
+            "  WHERE  r.org_id = :orgId AND s.TEACH_DATE >= :start AND s.TEACH_DATE < :end " +
+            " #queryCondition# " +
+            "  GROUP BY r.STUDENT_ID, r.STUDENT_NAME, r.STUDENT_NUM, r.class_name, r.professional_name,r.college_name " +
+            ") c " +
+            " WHERE c.dkl < :dkl";
+
+    private String SQL_STUDENT_ROLLCALL_ALERT = "SELECT  c.studentName, c.studentNo, c.classesName, c.professionalName, c.collegeName, c.shouldCount, c.normal, c.dkl " +
+            " FROM ( " +
+            "  SELECT  r.STUDENT_NAME AS studentName, r.STUDENT_NUM AS studentNo," +
+            " r.class_name AS classesName, r.professional_name AS professionalName, r.college_name AS collegeName," +
+            "  COUNT(*) AS shouldCount," +
+            "  SUM(IF(r.`TYPE` = 1, 1, 0)) AS normal," +
+            " #dklcal# " +
+//            "  ROUND(SUM(IF(r.`TYPE` = 1, 1, 0))/COUNT(*),4) AS dkl " +
+            " FROM #database#.dd_rollcall r INNER JOIN #database#.dd_schedule_rollcall sr ON r.SCHEDULE_ROLLCALL_ID = sr.ID INNER JOIN #database#.dd_schedule s ON sr.SCHEDULE_ID = s.ID " +
+            "  WHERE  r.org_id = :orgId AND s.TEACH_DATE >= :start AND s.TEACH_DATE < :end " +
+            " #queryCondition# " +
+            "  GROUP BY r.STUDENT_ID, r.STUDENT_NAME, r.STUDENT_NUM, r.class_name, r.professional_name,r.college_name " +
+            "  ORDER BY ROUND(SUM(IF(r.`TYPE` = 1, 1, 0))/COUNT(*),4) DESC " +
+            ") c " +
+            " WHERE c.dkl < :dkl";
+
     @Value("${dl.dd.back.dbname}")
     private String ddDatabaseName;
 
@@ -610,7 +637,6 @@ public class RollCallManager {
         params.put("end", end);
         String sql_count = SQL_STUDENT_UNNORMAL_COURSE_ALERT_COUNT.replaceAll("#database#", ddDatabaseName);
         sql_count = sql_count.replaceAll("#queryCondition#", sb.toString());
-        sql_count = sql_count.replaceAll("#queryCondition#", sb.toString());
         log.info("Count Student unNormal rollcall alert sql:{}", sql_count);
         List<Long> counts =  template.query(sql_count, params, (ResultSet rs, int rowNum) -> rs.getLong(1));
         Long count = 0L;
@@ -683,4 +709,85 @@ public class RollCallManager {
         }
         return pageData;
     }
+
+    public PageData<StudentRollcallAlertVO> findStudentRollcallAlert(Long orgId, Long collegeId, String name, Date start, Date end, Integer pageIndex, Integer pageSize) {
+        PageData<StudentRollcallAlertVO> pageData = new PageData<>();
+        if (null == pageIndex || pageIndex < 1) {
+            pageIndex = 1;
+        }
+        if (null == pageSize || pageSize <= 0) {
+            pageSize = 20;
+        }
+        pageData.getPage().setPageNumber(pageIndex);
+        pageData.getPage().setPageSize(pageSize);
+        pageData.getPage().setTotalElements(0L);
+        pageData.getPage().setTotalPages(1);
+
+        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbcTemplate);
+        int type = getOrgArithmetic(orgId);
+        String dklSql = getDklCalSql(type);
+
+        StringBuilder sb = new StringBuilder("");
+        Map<String, Object> params = new HashMap<>();
+        params.put("orgId", orgId);
+        if (null != collegeId && collegeId > 0) {
+            sb.append(" AND r.college_id=:collegeId ");
+            params.put("collegeId", collegeId);
+        }
+        if (!StringUtils.isEmpty(name)) {//姓名模糊匹配
+            sb.append(" AND (r.STUDENT_NAME like :name OR r.STUDENT_NUM like :name)");
+            params.put("name", "%" + name + "%");
+        }
+
+        params.put("dkl", 0.3);
+        Date cur = new Date();
+        Date today = new Date();
+        today = DateUtil.getZerotime(today);
+        if (null == start) {
+            start = DateUtil.afterNDay(cur, -1);
+            start = DateUtil.getZerotime(start);
+        } else {
+            start = DateUtil.getZerotime(start);
+        }
+        if (null == end) {
+            end = DateUtil.getZerotime(cur);
+        } else {
+            end = DateUtil.afterNDay(end, 1);
+            end = DateUtil.getZerotime(end);
+        }
+        if (end.after(today)) {
+            end = today;
+        }
+        params.put("start", DateUtil.formatShort(start));
+        params.put("end", DateUtil.formatShort(end));
+        String sql_count = SQL_STUDENT_ROLLCALL_ALERT_COUNT.replaceAll("#database#", ddDatabaseName);
+        sql_count = sql_count.replaceAll("#dklcal#", dklSql);
+        sql_count = sql_count.replaceAll("#queryCondition#", sb.toString());
+        log.info("Count Student rollcall alert sql:{}, start:{}, end: {}", sql_count, params.get("start"), params.get("end"));
+        List<Long> counts =  template.query(sql_count, params, (ResultSet rs, int rowNum) -> rs.getLong(1));
+        Long count = 0L;
+        if (null != counts && counts.size() > 0) {
+            count = counts.get(0);
+        }
+        pageData.getPage().setTotalElements(count);
+        pageData.getPage().setTotalPages(PageUtil.cacalatePagesize(count, pageSize));
+        if (count > 0) {
+            String sql = SQL_STUDENT_ROLLCALL_ALERT.replaceAll("#database#", ddDatabaseName);
+            sql = sql.replaceAll("#dklcal#", dklSql);
+            sql = sql.replaceAll("#queryCondition#", sb.toString());
+            int ps = (pageIndex - 1) * pageSize;
+            sql = sql +  " LIMIT " + ps + ", " + pageSize;
+            log.info("Query Student  rollcall alert sql:{}", sql);
+            List<StudentRollcallAlertVO> list = template.query(sql, params, (ResultSet rs, int rowNum) ->
+                    new StudentRollcallAlertVO(rs.getString("studentNo"), rs.getString("studentName"),
+                             rs.getString("classesName"), rs.getString("professionalName"),
+                            rs.getString("collegeName"), rs.getLong("shouldCount"), rs.getLong("normal"), rs.getDouble("dkl") )
+            );
+            if (null != list && !list.isEmpty()) {
+                pageData.setData(list);
+            }
+        }
+        return pageData;
     }
+
+}
