@@ -63,8 +63,8 @@ public class RollcallController {
 
 
     @GetMapping(value = "/alert/orgId/{orgId}/studentlastest3", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "学校管理平台最近3天学生考勤告警查询", response = Void.class, notes = "学校管理平台最近3天学生考勤告警查询<br><br><b>@author zhen.pan</b>")
-    public PageData<Lastest3RollcallAlertVO> queryClassesRollcallAlert(
+    @ApiOperation(httpMethod = "GET", value = "学校管理平台学生考勤告警查询", response = Void.class, notes = "学校管理平台学生考勤告警查询<br><br><b>@author zhen.pan</b>")
+    public PageData<StudentRollcallAlertVO> queryClassesRollcallAlert(
             @ApiParam(value = "orgId 机构id" , required = true) @PathVariable Long orgId,
             @ApiParam(value = "collegeId 学院id") @RequestParam(value = "collegeId", required = false) Long collegeId,
             @ApiParam(value = "name 学号或姓名") @RequestParam(value = "name", required = false) String name,
@@ -73,7 +73,7 @@ public class RollcallController {
             @ApiParam(value = "pageIndex 第几页") @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
             @ApiParam(value = "pageSize 每页条数") @RequestParam(value = "pageSize", required = false) Integer pageSize
     ) {
-        return  rollcallService.findLastest3RollcallAlert(orgId, collegeId, name, start, end, pageIndex, pageSize);
+        return  rollcallService.findStudentRollcallAlert(orgId, collegeId, name, start, end, pageIndex, pageSize);
     }
 
 

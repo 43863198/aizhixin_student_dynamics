@@ -2,8 +2,6 @@ package com.aizhixin.cloud.dataanalysis.common.schedule;
 
 import com.aizhixin.cloud.dataanalysis.common.service.DistributeLock;
 import com.aizhixin.cloud.dataanalysis.common.service.SyncClassTeacher;
-import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
-import com.aizhixin.cloud.dataanalysis.etl.rollcall.service.EtlRollcallAlertService;
 import com.aizhixin.cloud.dataanalysis.monitor.job.RollCallDayJob;
 import com.aizhixin.cloud.dataanalysis.monitor.job.TeachingScheduleJob;
 import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
@@ -17,7 +15,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * 定时任务入口
@@ -44,8 +41,8 @@ public class MySchedulingService {
     private SyncClassTeacher syncClassTeacher;
     @Value("${sync.orgId}")
     private Long orgId;
-    @Autowired
-    private EtlRollcallAlertService etlRollcallAlertService;
+//    @Autowired
+//    private EtlRollcallAlertService etlRollcallAlertService;
 
     @Scheduled(cron = "0 0 3 * * ?")
     public void rollCallCountJob() {
@@ -180,18 +177,18 @@ public class MySchedulingService {
         }
     }
 
-    /**
-     * 最近三天学生考勤告警统计
-     */
-    @Scheduled(cron = "0 40 22 * * ?")
-    public void lastest3RollcallAlert() {
-        if (distributeLock.getDayTaskLock()) {
-            log.info("Start cal Lastest3 student rollcall alert data.");
-            Date c = new Date();
-            c = DateUtil.afterNDay(c, -1);//计算前一天的数据
-            etlRollcallAlertService.calLastest3StudentRollAlert(null, c, c, null);
-        }
-    }
+//    /**
+//     * 最近三天学生考勤告警统计
+//     */
+//    @Scheduled(cron = "0 40 22 * * ?")
+//    public void lastest3RollcallAlert() {
+//        if (distributeLock.getDayTaskLock()) {
+//            log.info("Start cal Lastest3 student rollcall alert data.");
+//            Date c = new Date();
+//            c = DateUtil.afterNDay(c, -1);//计算前一天的数据
+//            etlRollcallAlertService.calLastest3StudentRollAlert(null, c, c, null);
+//        }
+//    }
 
     @Scheduled(cron = "0 20 23 * * ?")
     public void delete() {
