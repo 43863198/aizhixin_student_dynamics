@@ -197,7 +197,24 @@ public class RollcallService {
         return rollCallManager.queryStudentUnNormalRollcall(orgId, collegeId, name, start, end, undkl, pageIndex, pageSize);
     }
 
+    /**
+     * 单位考勤统计查询
+     */
     public UnitRollcallStatisticsDOVO findUnitRollcallStatistics(Long orgId, Long collegeId, Long professionalId, String timeRange) {
         return rollCallManager.findUnitRollcallStatistics(orgId, collegeId, professionalId, timeRange);
+    }
+
+    /**
+     * 课程考勤统计
+     */
+    public PageData<CourseRollcallStatisticsVO> findCourseRollcallStatistics(Long orgId, String timeRange, Integer pageIndex, Integer pageSize) {
+        return rollCallManager.findCourseRollcallStatistics(orgId, timeRange, pageIndex, pageSize);
+    }
+
+    /**
+     * 老师考勤统计
+     */
+    public PageData<TeacherRollcallStatisticsVO> findTeacherRollcallStatistics(Long orgId, String timeRange, Integer pageIndex, Integer pageSize) {
+        return rollCallManager.findTeacherRollcallStatistics(orgId, timeRange, pageIndex, pageSize);
     }
 }
