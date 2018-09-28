@@ -90,4 +90,16 @@ public class RollcallController {
     ) {
         return  rollcallService.queryStudentUnNormalRollcall(orgId, collegeId, name, start, end, undkl, pageIndex, pageSize);
     }
+
+
+
+    @GetMapping(value = "/statistics/orgId/{orgId}/byunit", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "按单位统计考勤数据", response = Void.class, notes = "按单位统计考勤数据<br><br><b>@author dengchao</b>")
+    public UnitRollcallStatisticsDOVO listByUnit(
+            @ApiParam(value = "orgId 机构id" , required = true) @PathVariable Long orgId,
+            @ApiParam(value = "collegeId 学院ID") @RequestParam(value = "collegeId", required = false) Long collegeId,
+            @ApiParam(value = "professionalId 专业ID") @RequestParam(value = "professionalId", required = false) Long professionalId,
+            @ApiParam(value = "dateRange 时间区间(2015-08-19~2015-09-17:2015年8月19日至2015年9月17日)", required = true) @RequestParam(value = "dateRange") String dateRange) {
+            return rollcallService.findUnitRollcallStatistics(orgId, collegeId, professionalId, dateRange);
+    }
 }

@@ -184,6 +184,27 @@ public class RollCallManager {
             ") c " +
             " WHERE c.dkl < :dkl";
 
+
+    private String SQL_UNIT_ROLLCALL_STATISTICS = "SELECT " +
+            "c.unitId, c.unitName, c.total, c.normal, c.later, c.askForLeave, c.leaveEarly, c.truant, c.dkl " +
+            "FROM (" +
+            "SELECT " +
+//            "r.college_id as unitId, r.college_name as unitName," +
+            "#unitField#" +
+            "COUNT(*) AS total, " +
+            "SUM(IF(r.`TYPE` = 1, 1, 0)) AS normal," +
+            "SUM(IF(r.`TYPE` = 3, 1, 0)) AS later," +
+            "SUM(IF(r.`TYPE` = 4, 1, 0)) AS askForLeave," +
+            "SUM(IF(r.`TYPE` = 5, 1, 0)) AS leaveEarly," +
+            "SUM(IF(r.`TYPE` = 2, 1, 0)) AS truant," +
+            "#dklcal#" +
+            "FROM #database#.dd_rollcall r , #database#.dd_schedule_rollcall sr, #database#.dd_schedule s " +
+            "WHERE  r.org_id = :orgId AND s.ORGAN_ID = :orgId AND r.SCHEDULE_ROLLCALL_ID = sr.ID AND sr.SCHEDULE_ID=s.ID AND s.TEACH_DATE >= :start AND s.TEACH_DATE <= :end " +
+            " #queryCondition# " +
+//            "GROUP BY r.college_id, r.college_name " +
+            "#groupunitField# " +
+            ") c ORDER BY c.dkl DESC";
+
     @Value("${dl.dd.back.dbname}")
     private String ddDatabaseName;
 
@@ -790,4 +811,79 @@ public class RollCallManager {
         return pageData;
     }
 
+
+    public UnitRollcallStatisticsDOVO findUnitRollcallStatistics(Long orgId, Long collegeId, Long professionalId, String timeRange) {
+        UnitRollcallStatisticsDOVO r = new UnitRollcallStatisticsDOVO ();
+        r.setStatistics(new RollcallStatisticsVO ());
+        r.setUnitList(new ArrayList<>());
+        if (null == orgId || orgId <= 0) {
+            return r;
+        }
+        if (StringUtils.isEmpty(timeRange) || timeRange.indexOf("~")<= 0) {
+            return r;
+        }
+        int type = getOrgArithmetic(orgId);
+        String dklSql = getDklCalSql(type);
+
+        int p = timeRange.indexOf("~");
+        String start = timeRange.substring(0, p);
+        String end = timeRange.substring(p + 1);
+
+        StringBuilder conditon = new StringBuilder("");
+        StringBuilder field = new StringBuilder("");
+        StringBuilder group = new StringBuilder("");
+        Map<String, Object> params = new HashMap<>();
+        params.put("orgId", orgId);
+        params.put("start", start);
+        params.put("end", end);
+        if (null != professionalId && professionalId > 0) {
+            conditon.append(" AND r.professional_id = :unitId");
+            field.append("r.CLASS_ID as unitId, r.class_name as unitName,");
+            group.append(" GROUP BY r.CLASS_ID, r.class_name ");
+            params.put("unitId", professionalId);
+        } else if (null != collegeId && collegeId > 0) {
+            conditon.append(" AND r.college_id = :unitId");
+            field.append("r.professional_id as unitId, r.professional_name as unitName,");
+            group.append(" GROUP BY r.professional_id, r.professional_name ");
+            params.put("unitId", collegeId);
+        } else {
+            field.append("r.college_id as unitId, r.college_name as unitName,");
+            group.append(" GROUP BY r.college_id, r.college_name");
+        }
+        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbcTemplate);
+
+        String sqlc = SQL_UNIT_ROLLCALL_STATISTICS.replaceAll("#database#", ddDatabaseName);
+        sqlc = sqlc.replaceAll("#dklcal#", dklSql);
+        sqlc = sqlc.replaceAll("#queryCondition#", conditon.toString());
+        sqlc = sqlc.replaceAll("#unitField#", " NULL as unitId, NULL as unitName,");
+        sqlc = sqlc.replaceAll("#groupunitField#", "");
+        //c.unitId, c.unitName, c.total, c.normal, c.later, c.askForLeave, c.leaveEarly, c.truant, c.dkl
+        log.info("Rollcall Unit statistics count sql:{}, start:{}, end: {}, professionalId:{}, collegeId:{}", sqlc, params.get("start"), params.get("end"), professionalId, collegeId);
+        List<UnitRollcallStatisticsVO> list = template.query(sqlc, params, (ResultSet rs, int rowNum) ->
+                new UnitRollcallStatisticsVO(rs.getLong("unitId"), rs.getString("unitName"),
+                        rs.getInt("total"), rs.getInt("normal"),
+                        rs.getInt("later"), rs.getInt("askForLeave"),
+                        rs.getInt("leaveEarly"), rs.getInt("truant"), rs.getDouble("dkl") )
+        );
+        if (null != list || list.size() > 0) {
+            UnitRollcallStatisticsVO v = list.get(0);
+            r.setStatistics(new RollcallStatisticsVO(v.getYdrs(), v.getSdrs(), v.getCdrs(), v.getQjrs(), v.getKkrs(), v.getZtrs(), v.getDkl()));
+        }
+        String sql = SQL_UNIT_ROLLCALL_STATISTICS.replaceAll("#database#", ddDatabaseName);
+        sql = sql.replaceAll("#dklcal#", dklSql);
+        sql = sql.replaceAll("#queryCondition#", conditon.toString());
+        sql = sql.replaceAll("#unitField#", field.toString());
+        sql = sql.replaceAll("#groupunitField#", group.toString());
+        log.info("Rollcall unit statistics sql:{}, start:{}, end: {}, professionalId:{}, collegeId:{}", sql, params.get("start"), params.get("end"), professionalId, collegeId);
+        list = template.query(sql, params, (ResultSet rs, int rowNum) ->
+                new UnitRollcallStatisticsVO(rs.getLong("unitId"), rs.getString("unitName"),
+                        rs.getInt("total"), rs.getInt("normal"),
+                        rs.getInt("later"), rs.getInt("askForLeave"), rs.getInt("truant"),
+                        rs.getInt("leaveEarly"), rs.getDouble("dkl") )
+        );
+        if (null != list) {
+            r.setUnitList(list);
+        }
+        return r;
+    }
 }
