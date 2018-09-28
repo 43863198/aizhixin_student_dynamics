@@ -196,4 +196,8 @@ public class RollcallService {
     public PageData<UnNormalRollcallAlertVO> queryStudentUnNormalRollcall(Long orgId, Long collegeId, String name, Date start, Date end, Double undkl, Integer pageIndex, Integer pageSize) {
         return rollCallManager.queryStudentUnNormalRollcall(orgId, collegeId, name, start, end, undkl, pageIndex, pageSize);
     }
+
+    public UnitRollcallStatisticsDOVO findUnitRollcallStatistics(Long orgId, Long collegeId, Long professionalId, String timeRange) {
+        return rollCallManager.findUnitRollcallStatistics(orgId, collegeId, professionalId, timeRange);
+    }
 }
