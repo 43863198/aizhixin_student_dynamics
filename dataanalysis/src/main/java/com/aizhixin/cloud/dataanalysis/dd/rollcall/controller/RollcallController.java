@@ -76,7 +76,6 @@ public class RollcallController {
         return  rollcallService.findStudentRollcallAlert(orgId, collegeId, name, start, end, pageIndex, pageSize);
     }
 
-
     @GetMapping(value = "/alert/orgId/{orgId}/unnormal", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "学校管理平台学生缺课告警查询", response = Void.class, notes = "学校管理平台学生缺课告警查询<br><br><b>@author zhen.pan</b>")
     public PageData<UnNormalRollcallAlertVO> queryStudentUnNormalRollcall(
