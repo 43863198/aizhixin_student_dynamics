@@ -35,6 +35,10 @@ public class AlarmCreateRecord {
     @Column(name = "ORG_ID")
     @Getter @Setter private Long orgId;
 
+    @ApiModelProperty(value = "预警类型名称")
+    @Column(name = "ALARM_TYPE")
+    @Getter @Setter private String alarmType;
+
     @ApiModelProperty(value = "覆盖红色预警条数")
     @Column(name = "DELETE_RED_NUM")
     @Getter @Setter private Integer deleteRedNum;

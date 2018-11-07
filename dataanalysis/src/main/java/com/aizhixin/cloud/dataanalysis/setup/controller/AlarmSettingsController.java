@@ -174,8 +174,11 @@ public class AlarmSettingsController {
     @GetMapping(value = "/eneratedata", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "GET", value = "手动生成数据", response = Void.class, notes = "手动生成数据<br><br><b>@author jianwei.wu</b>")
     public Map<String, Object> generateData(
-            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId", required = true) Long orgId,
-            @ApiParam(value = "warningType 预警类型", required = true) @RequestParam(value = "warningType", required = true) String warningType
+            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId,
+            @ApiParam(value = "warningType 预警类型", required = true) @RequestParam(value = "warningType") String warningType,
+            @ApiParam(value = "overOrAdd 覆写或仅新增(10:覆写 ;20:新增)") @RequestParam(value = "overOrAdd", required = false) Integer overOrAdd,
+            @ApiParam(value = "userId 登录用户ID", required = true) @RequestParam(value = "userId") Long userId,
+            @ApiParam(value = "userName 登录用户名称", required = true) @RequestParam(value = "userName") String userName
     ) {
         Map<String, Object> result = new HashMap<>();
         generateWarningInfoService.enerateWarningInfo(orgId, warningType);

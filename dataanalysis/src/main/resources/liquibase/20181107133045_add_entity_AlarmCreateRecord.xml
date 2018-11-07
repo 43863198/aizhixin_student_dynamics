@@ -19,6 +19,7 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="ORG_ID" type="BIGINT" remarks="学校"/>
+            <column name="ALARM_TYPE" type="VARCHAR(80)" remarks="预警类型名称"/>
             <column name="DELETE_RED_NUM" type="INT" remarks="覆盖红色预警条数"/>
             <column name="DELETE_ORG_NUM" type="INT" remarks="覆盖橙色预警条数"/>
             <column name="DELETE_YELLO_NUM" type="INT" remarks="覆盖黄色预警条数"/>
