@@ -2,19 +2,15 @@ package com.aizhixin.cloud.dataanalysis.alertinformation.dto;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.domain.DealDomain;
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import java.util.Date;
 import java.util.List;
 
@@ -94,4 +90,7 @@ public class    WarningDetailsDTO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dealTime = new Date();
+
+    @ApiModelProperty(value = "撤销说明(仅在预警状态是40的时候有用)")
+    @Getter @Setter private String cancelComments;
 }

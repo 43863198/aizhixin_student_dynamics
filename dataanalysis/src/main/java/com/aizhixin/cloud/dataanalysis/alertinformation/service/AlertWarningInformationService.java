@@ -1457,6 +1457,9 @@ public class AlertWarningInformationService {
                 warningDetailsDTO.setDealTime(alertWarningInformation.getLastModifiedDate());
                 warningDetailsDTO.setWarningCondition(alertWarningInformation.getWarningCondition());
                 warningDetailsDTO.setWarningSource(dataFormat(alertWarningInformation.getWarningSource()));
+                if (40 == alertWarningInformation.getWarningState()) {
+                    warningDetailsDTO.setCancelComments(alertWarningInformation.getCancelComments());
+                }
 
                 Map stuMap = studentJdbc.findOne(warningDetailsDTO.getJobNumber(), alertWarningInformation.getOrgId());
                 if (stuMap != null && stuMap.get("nj") != null) {
