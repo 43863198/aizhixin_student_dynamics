@@ -38,8 +38,8 @@ public class AlarmCreateRecordManager {
         page.setData(new ArrayList<>());
         page.getPage().setTotalPages(0);
         page.getPage().setTotalElements(0L);
-        page.getPage().setPageSize(p.getPageSize() + 1);
-        page.getPage().setPageNumber(p.getPageNumber());
+        page.getPage().setPageSize(p.getPageSize());
+        page.getPage().setPageNumber(p.getPageNumber() + 1);
 
         if (null == orgId || orgId <= 0) {
             return page;
