@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/v1/alarmlog")
-@Api(description = "预警设置API")
+@Api(description = "告警日志生成API")
 public class AlarmCreateRecordController {
     @Autowired
     private AlarmCreateRecordService alarmCreateRecordService;

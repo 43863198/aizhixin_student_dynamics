@@ -1,6 +1,7 @@
 package com.aizhixin.cloud.dataanalysis.alertinformation.repository;
 
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
+import com.aizhixin.cloud.dataanalysis.alertinformation.vo.AlertWarningInfomationCountVO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -53,4 +54,9 @@ public interface AlertWarningInformationRepository extends JpaRepository<Warning
     List<WarningInformation> findByOrgIdAndDeleteFlag(Long orgId,Integer deleteFlag);
 
     long countByOrgIdAndTeacherYearAndSemesterAndWarningTypeAndWarningLevel(Long orgId, String teacherYear, String semester, String warningType, int warningLevel);
+
+//    long countByOrgIdAndTeacherYearAndSemesterAndWarningType(Long orgId, String teacherYear, String semester, String warningType);
+
+    @Query("select  new com.aizhixin.cloud.dataanalysis.alertinformation.vo.AlertWarningInfomationCountVO(t.warningType, count(*)) from #{#entityName} t where t.orgId = :orgId and t.collogeCode = :collogeCode and t.teacherYear = :teacherYear and t.semester = :semester group by t.warningType")
+    List<AlertWarningInfomationCountVO> groupByType(Long orgId, String collogeCode, String teacherYear, String semester);
 }

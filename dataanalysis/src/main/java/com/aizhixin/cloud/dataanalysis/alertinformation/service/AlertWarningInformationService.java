@@ -7,6 +7,7 @@ import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AttachmentInforma
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.OperationRecord;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
+import com.aizhixin.cloud.dataanalysis.alertinformation.vo.AlertWarningInfomationCountVO;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
@@ -19,6 +20,7 @@ import com.aizhixin.cloud.dataanalysis.feign.OrgManagerFeignService;
 import com.aizhixin.cloud.dataanalysis.notice.service.NotificationRecordService;
 import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
 import com.aizhixin.cloud.dataanalysis.setup.entity.RuleParameter;
+import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
 import com.aizhixin.cloud.dataanalysis.setup.service.RuleParameterService;
 import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
@@ -100,6 +102,11 @@ public class AlertWarningInformationService {
 
     public Long countByOrgIdAndTeacherYearAndSemesterAndWarningTypeAndWarningLevel(Long orgId, String warningType, String schoolYear, String semester, int warningLevel) {
         return alertWarningInformationRepository.countByOrgIdAndTeacherYearAndSemesterAndWarningTypeAndWarningLevel(orgId, schoolYear, semester, warningType, warningLevel);
+    }
+
+
+    public List<AlertWarningInfomationCountVO> groupByType(Long orgId, String collogeCode, String schoolYear, String semester) {
+        return alertWarningInformationRepository.groupByType(orgId, collogeCode, schoolYear, semester);
     }
 
     /**
@@ -1731,5 +1738,34 @@ public class AlertWarningInformationService {
         result.put("schoolYear", schoolYear);
         result.put("semester", semester);
         return result;
+    }
+
+    public List<AlertWarningInfomationCountVO> countByTeacherYearAndSemeter(Long orgId, String collegeCode, String teacherYear, String semester) {
+        List<AlertWarningInfomationCountVO> list = new ArrayList<>();
+        if (null == orgId || orgId <= 0 || StringUtils.isEmpty(teacherYear) || StringUtils.isEmpty(semester)) {
+            return list;
+        }
+        if (null != semester) {
+            if (semester.equals("2")) {
+                semester = "秋";
+            }
+            if (semester.equals("1")) {
+                semester = "春";
+            }
+        }
+        list = groupByType(orgId, collegeCode, teacherYear, semester);
+        Set<String> keys = new HashSet<>();
+        for (AlertWarningInfomationCountVO v : list) {
+            keys.add(v.getWarningType());
+        }
+        List<WarningType> warningTypeList = warningTypeService.getWarningTypeList(orgId);
+        if (null != warningTypeList) {
+            for (WarningType wt : warningTypeList) {
+                if (!keys.contains(wt.getType())) {
+                    list.add(new AlertWarningInfomationCountVO(wt.getType(), 0));
+                }
+            }
+        }
+        return list;
     }
 }
