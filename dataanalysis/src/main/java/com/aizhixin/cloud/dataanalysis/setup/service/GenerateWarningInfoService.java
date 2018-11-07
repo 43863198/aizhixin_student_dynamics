@@ -692,9 +692,13 @@ public class GenerateWarningInfoService {
                     }
                 }
             }
+            WarningType warningType = warningTypeService.getWarningTypeByOrgIdAndType(orgId, type);
             AlarmCreateRecord alertLog = new AlarmCreateRecord();
             alertLog.setOrgId(orgId);
-            alertLog.setAlarmType(type);//需翻译成汉字
+            alertLog.setAlarmType(type);//翻译成汉字
+            if (null != warningType) {
+                alertLog.setAlarmType(warningType.getWarningName());
+            }
             alertLog.setCreatedBy(userName);
             alertLog.setCreatedId(userId);
             alertLog.setAddRedNum(r);
