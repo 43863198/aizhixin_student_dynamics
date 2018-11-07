@@ -26,48 +26,48 @@ public class IndexAnalysisAppManager {
 //    private EntityManager em;
 //    @Autowired
 //    private CetLjIndexAnalysisManager cetLjIndexAnalysisManager;
-//
-//
-//    @Transactional(readOnly = true)
-//    public List<EnglishLevelBigScreenVO> getNewLevelTestBigScreenPass(Long orgId) {
-//        List<EnglishLevelBigScreenVO> rsList = new ArrayList<>();
-//        List<EnglishLevelBigScreenVO> list = jdbcTemplate.query(SQL_DJ_DP_TGL,
-//                new Object[]{orgId.toString(), orgId.toString(), "1", "3", "3", "1"},
-//                new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR},
-//                (ResultSet rs, int rowNum) ->
-//                    new EnglishLevelBigScreenVO(rs.getString("XN"), rs.getString("XQM"),
-//                            rs.getString("KSLX"), rs.getLong("ZXRS"),
-//                            rs.getLong("CKRC"), rs.getLong("TGRC"))
-//        );
-//        if (null != list && list.size() > 0) {
-//            rsList.add(list.get(0));
-//        }
-//
-//        list = jdbcTemplate.query(SQL_DJ_DP_TGL,
-//                new Object[]{orgId.toString(), orgId.toString(), "1", "4", "4", "1"},
-//                new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR},
-//                (ResultSet rs, int rowNum) ->
-//                        new EnglishLevelBigScreenVO(rs.getString("XN"), rs.getString("XQM"),
-//                                rs.getString("KSLX"), rs.getLong("ZXRS"),
-//                                rs.getLong("CKRC"), rs.getLong("TGRC"))
-//        );
-//        if (null != list && list.size() > 0) {
-//            rsList.add(list.get(0));
-//        }
-//
-//        list = jdbcTemplate.query(SQL_DJ_DP_TGL,
-//                new Object[]{orgId.toString(), orgId.toString(), "1", "6", "6", "1"},
-//                new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR},
-//                (ResultSet rs, int rowNum) ->
-//                        new EnglishLevelBigScreenVO(rs.getString("XN"), rs.getString("XQM"),
-//                                rs.getString("KSLX"), rs.getLong("ZXRS"),
-//                                rs.getLong("CKRC"), rs.getLong("TGRC"))
-//        );
-//        if (null != list && list.size() > 0) {
-//            rsList.add(list.get(0));
-//        }
-//        return rsList;
-//    }
+
+
+    @Transactional(readOnly = true)
+    public List<EnglishLevelBigScreenVO> getNewLevelTestBigScreenPass(Long orgId) {
+        List<EnglishLevelBigScreenVO> rsList = new ArrayList<>();
+        List<EnglishLevelBigScreenVO> list = jdbcTemplate.query(SQL_DJ_DP_TGL,
+                new Object[]{orgId.toString(), orgId.toString(), "1", "3", "3", "1"},
+                new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR},
+                (ResultSet rs, int rowNum) ->
+                    new EnglishLevelBigScreenVO(rs.getString("XN"), rs.getString("XQM"),
+                            rs.getString("KSLX"), rs.getLong("ZXRS"),
+                            rs.getLong("CKRC"), rs.getLong("TGRC"))
+        );
+        if (null != list && list.size() > 0) {
+            rsList.add(list.get(0));
+        }
+
+        list = jdbcTemplate.query(SQL_DJ_DP_TGL,
+                new Object[]{orgId.toString(), orgId.toString(), "1", "4", "4", "1"},
+                new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR},
+                (ResultSet rs, int rowNum) ->
+                        new EnglishLevelBigScreenVO(rs.getString("XN"), rs.getString("XQM"),
+                                rs.getString("KSLX"), rs.getLong("ZXRS"),
+                                rs.getLong("CKRC"), rs.getLong("TGRC"))
+        );
+        if (null != list && list.size() > 0) {
+            rsList.add(list.get(0));
+        }
+
+        list = jdbcTemplate.query(SQL_DJ_DP_TGL,
+                new Object[]{orgId.toString(), orgId.toString(), "1", "6", "6", "1"},
+                new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR},
+                (ResultSet rs, int rowNum) ->
+                        new EnglishLevelBigScreenVO(rs.getString("XN"), rs.getString("XQM"),
+                                rs.getString("KSLX"), rs.getLong("ZXRS"),
+                                rs.getLong("CKRC"), rs.getLong("TGRC"))
+        );
+        if (null != list && list.size() > 0) {
+            rsList.add(list.get(0));
+        }
+        return rsList;
+    }
 
     @Transactional(readOnly = true)
     public List<EnglishLevelBigScreenVO> getNewLevelTestBigScreenPassForOld(Long orgId) {

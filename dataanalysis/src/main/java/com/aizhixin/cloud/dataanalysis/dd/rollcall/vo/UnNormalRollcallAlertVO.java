@@ -52,14 +52,14 @@ public class UnNormalRollcallAlertVO {
     @ApiModelProperty(value = "缺课数据")
     @Getter  @Setter private Long unNormal;
 
-    public UnNormalRollcallAlertVO(Long studentId, String studentNo, String studentName, Long classesId, String classesName, String professionalName, String collegeName, Long courseId, Long shouldCount, Long unNormal) {
+    public UnNormalRollcallAlertVO(Long studentId, Long courseId, Long shouldCount, Long unNormal) {
         this.studentId = studentId;
-        this.studentNo = studentNo;
-        this.studentName = studentName;
-        this.classesId = classesId;
-        this.classesName = classesName;
-        this.professionalName = professionalName;
-        this.collegeName = collegeName;
+//        this.studentNo = studentNo;
+//        this.studentName = studentName;
+//        this.classesId = classesId;
+//        this.classesName = classesName;
+//        this.professionalName = professionalName;
+//        this.collegeName = collegeName;
         this.courseId = courseId;
         this.shouldCount = shouldCount;
         this.unNormal = unNormal;

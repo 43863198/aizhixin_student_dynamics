@@ -72,23 +72,40 @@ public class StandardScoreSemesterIndexService {
         }
     }
 
-     @Async
-    public void schoolStudentScoreIndex(Long orgId) {
+    public void oneSemesterSchoolStudentScoreUnitIndex(String xxdm, String xn, String xq) {
         List<StudentScorezbDTO> cache = new ArrayList<>();
-        List<XnXqDTO> xnList = studentScoreIndexManager.queryStudentScoreXnXq(StudentScoreIndexManager.SQL_DC_XN_XQ, orgId.toString());
-        for (XnXqDTO d : xnList) {
-            List<StudentScorezbDTO> rs = studentScoreIndexManager.queryDczb(StudentScoreIndexManager.SQL_DC_COLLEGE, orgId.toString(), d.getXn(), d.getXq());
-            if (null != rs && !rs.isEmpty()) {
-                cache.addAll(rs);
-            }
-            rs = studentScoreIndexManager.queryDczb(StudentScoreIndexManager.SQL_DC_PROFESSIONAL, orgId.toString(), d.getXn(), d.getXq());
-            if (null != rs && !rs.isEmpty()) {
-                cache.addAll(rs);
-            }
+        standardScoreSemesterManager.deleteXnXqUnitIndex(xxdm, xn, xq);
+        List<StudentScorezbDTO> rs = studentScoreIndexManager.queryDczb(StudentScoreIndexManager.SQL_DC_COLLEGE, xxdm, xn, xq);//学院
+        if (null != rs && !rs.isEmpty()) {
+            cache.addAll(rs);
+        }
+        rs = studentScoreIndexManager.queryDczb(StudentScoreIndexManager.SQL_DC_PROFESSIONAL, xxdm, xn, xq);//专业
+        if (null != rs && !rs.isEmpty()) {
+            cache.addAll(rs);
         }
         if (!cache.isEmpty()) {
-            studentScoreIndexManager.saveStudentScoreIndex(cache, orgId.toString());
+            studentScoreIndexManager.saveStudentScoreIndex(cache, xxdm);
         }
+    }
+
+     @Async
+    public void schoolStudentScoreIndex(String xxdm) {
+//        List<StudentScorezbDTO> cache = new ArrayList<>();
+        List<XnXqDTO> xnList = studentScoreIndexManager.queryStudentScoreXnXq(StudentScoreIndexManager.SQL_DC_XN_XQ, xxdm);
+        for (XnXqDTO d : xnList) {
+            oneSemesterSchoolStudentScoreUnitIndex(xxdm, d.getXn(), d.getXq());
+//            List<StudentScorezbDTO> rs = studentScoreIndexManager.queryDczb(StudentScoreIndexManager.SQL_DC_COLLEGE, orgId.toString(), d.getXn(), d.getXq());
+//            if (null != rs && !rs.isEmpty()) {
+//                cache.addAll(rs);
+//            }
+//            rs = studentScoreIndexManager.queryDczb(StudentScoreIndexManager.SQL_DC_PROFESSIONAL, orgId.toString(), d.getXn(), d.getXq());
+//            if (null != rs && !rs.isEmpty()) {
+//                cache.addAll(rs);
+//            }
+        }
+//        if (!cache.isEmpty()) {
+//            studentScoreIndexManager.saveStudentScoreIndex(cache, orgId.toString());
+//        }
     }
 
     public List<WarningInformation> generalStudentSemesterScoreBdAlertInfo (Long orgId, String xn, String xq, AlarmSettings as) {

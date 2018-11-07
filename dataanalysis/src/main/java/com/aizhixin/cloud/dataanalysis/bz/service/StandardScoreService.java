@@ -51,4 +51,17 @@ public class StandardScoreService {
             standardScoreManager.save(list);
         }
     }
+
+
+    /**
+     * 长江数据清洗
+     */
+    @Async
+    public void etlCjDB2DB(String xxdm, String xn, Integer xq) {
+        List<StandardScore> list = scoreETLFromDBManager.queryChangjiangSemesterDBData(xxdm, xn, xq);
+        log.info("Load data page {}.", list.size());
+        if (!list.isEmpty()) {
+            standardScoreManager.save(list);
+        }
+    }
 }

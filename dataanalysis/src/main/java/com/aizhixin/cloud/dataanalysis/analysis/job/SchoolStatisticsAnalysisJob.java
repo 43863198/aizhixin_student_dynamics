@@ -1,51 +1,35 @@
 package com.aizhixin.cloud.dataanalysis.analysis.job;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
-
-import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
-import com.aizhixin.cloud.dataanalysis.analysis.constant.DataType;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.SchoolStatisticsDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolStatistics;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolYearTerm;
 import com.aizhixin.cloud.dataanalysis.analysis.service.SchoolStatisticsService;
 import com.aizhixin.cloud.dataanalysis.analysis.service.SchoolYearTermService;
-import com.aizhixin.cloud.dataanalysis.common.constant.ScoreConstant;
 import com.aizhixin.cloud.dataanalysis.common.constant.UserConstant;
 import com.aizhixin.cloud.dataanalysis.common.service.AuthUtilService;
 import com.aizhixin.cloud.dataanalysis.common.util.PageJdbcUtil;
-import com.aizhixin.cloud.dataanalysis.score.mongoEntity.Score;
+import com.aizhixin.cloud.dataanalysis.setup.domain.WarningTypeDomain;
 import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
-
 import com.aizhixin.cloud.dataanalysis.studentRegister.mongoEntity.StudentRegister;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import com.aizhixin.cloud.dataanalysis.studentRegister.mongoRespository.StudentRegisterMongoRespository;
+import com.mongodb.AggregationOutput;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import com.mongodb.util.JSON;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import com.aizhixin.cloud.dataanalysis.setup.domain.WarningTypeDomain;
-import com.aizhixin.cloud.dataanalysis.studentRegister.mongoRespository.StudentRegisterMongoRespository;
-import com.mongodb.AggregationOutput;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-import com.mongodb.util.JSON;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 @Component
 @Transactional
@@ -390,6 +374,31 @@ public class SchoolStatisticsAnalysisJob {
 				statisticsMap.put(collegeId, schoolStatistics);
 			}
 		}
+//		AggregationResults<Map> output = mongoTemplate.aggregate(Aggregation.newAggregation(Aggregation.match(Criteria.where("orgId").in(orgIds).and("schoolYear").is(schoolYear)), Aggregation.group("orgId", "collegeId", "collegeName").count().as("count")), "StudentRegister", Map.class);
+//
+//		for (Map map : output) {
+//			System.out.println(map.toString());
+//			BasicDBObject dbo = (BasicDBObject) it.next();
+//			long collegeId = (Long) dbo.get("collegeId");
+//			int countNum = (Integer) dbo.get("count");
+//			String collegeName = (String) dbo.get("collegeName");
+//			SchoolStatistics schoolStatistics = statisticsMap.get(collegeId);
+//			if (null != schoolStatistics) {
+//				schoolStatistics.setCollegeId(collegeId);
+//				schoolStatistics.setCollegeName(collegeName);
+//				schoolStatistics.setNewStudentsCount(countNum);
+//				statisticsMap.put(collegeId, schoolStatistics);
+//			} else {
+//				schoolStatistics = new SchoolStatistics();
+//				schoolStatistics.setTeacherYear(Integer.valueOf(schoolYear));
+//				Long orgId = (Long) dbo.get("orgId");
+//				schoolStatistics.setOrgId(orgId);
+//				schoolStatistics.setCollegeId(collegeId);
+//				schoolStatistics.setCollegeName(collegeName);
+//				schoolStatistics.setNewStudentsCount(countNum);
+//				statisticsMap.put(collegeId, schoolStatistics);
+//			}
+//		}
 	}
 
 	/**

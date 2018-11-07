@@ -3,8 +3,10 @@ package com.aizhixin.cloud.dataanalysis.dd.rollcall.manager;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
+import com.aizhixin.cloud.dataanalysis.dd.rollcall.dto.DayAndDayOfWeekDTO;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.dto.IDNoNameDTO;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.dto.OrgTeacherInfoDTO;
+import com.aizhixin.cloud.dataanalysis.dd.rollcall.dto.TeacherForRollcallDTO;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,19 +141,19 @@ public class RollCallManager {
             "FROM #database#.dd_rollcall r  " +
             "WHERE r.org_id = :orgId AND r.CREATED_DATE >= :start AND r.CREATED_DATE < :end " +
             " #queryCondition# " +
-            "GROUP BY r.STUDENT_ID , r.STUDENT_NUM, r.STUDENT_NAME, r.CLASS_ID, r.class_name, r.professional_name, r.college_name, r.COURSE_ID " +
+            "GROUP BY r.STUDENT_ID, r.COURSE_ID " +
             " ) c WHERE c.undkl > :undkl";
 
-    private String SQL_STUDENT_UNNORMAL_COURSE_ALERT = "SELECT studentId, studentNo, studentName, classesId, classesName, prefessionalName, collegeName, courseId, shouldCount, unNormal " +
+    private String SQL_STUDENT_UNNORMAL_COURSE_ALERT = "SELECT studentId, courseId, shouldCount, unNormal " +
             "FROM ( " +
-            "SELECT r.STUDENT_ID AS studentId, r.STUDENT_NUM AS studentNo, r.STUDENT_NAME AS studentName, r.CLASS_ID AS classesId, r.class_name AS classesName, r.professional_name AS prefessionalName, r.college_name AS collegeName, r.COURSE_ID AS courseId,  " +
+            "SELECT r.STUDENT_ID AS studentId, r.COURSE_ID AS courseId,  " +
             "COUNT(*) AS shouldCount, " +
             "(SUM(IF(r.`TYPE` = 3, 1, 0)) + SUM(IF(r.`TYPE` = 4, 1, 0)) + SUM(IF(r.`TYPE` = 5, 1, 0)) + SUM(IF(r.`TYPE` = 2, 1, 0))) AS unNormal, " +
             "(SUM(IF(r.`TYPE` = 3, 1, 0)) + SUM(IF(r.`TYPE` = 4, 1, 0)) + SUM(IF(r.`TYPE` = 5, 1, 0)) + SUM(IF(r.`TYPE` = 2, 1, 0)))/COUNT(*) AS undkl " +
             "FROM #database#.dd_rollcall r  " +
             "WHERE r.org_id = :orgId AND r.CREATED_DATE >= :start AND r.CREATED_DATE < :end " +
             " #queryCondition# " +
-            "GROUP BY r.STUDENT_ID , r.STUDENT_NUM, r.STUDENT_NAME, r.CLASS_ID, r.class_name, r.professional_name, r.college_name, r.COURSE_ID " +
+            "GROUP BY r.STUDENT_ID, r.COURSE_ID " +
             "ORDER BY undkl DESC, r.STUDENT_NUM) c WHERE c.undkl > :undkl";
 
     private String SQL_ORG_COURSE = "SELECT c.ID, c.`NAME` FROM #orgMnagerDB#.t_course c WHERE c.ID IN (:courseIds)";
@@ -164,14 +166,13 @@ public class RollCallManager {
             "  FROM #database#.dd_rollcall r INNER JOIN #database#.dd_schedule_rollcall sr ON r.SCHEDULE_ROLLCALL_ID = sr.ID INNER JOIN #database#.dd_schedule s ON sr.SCHEDULE_ID = s.ID " +
             "  WHERE  r.org_id = :orgId AND s.TEACH_DATE >= :start AND s.TEACH_DATE < :end " +
             " #queryCondition# " +
-            "  GROUP BY r.STUDENT_ID, r.STUDENT_NAME, r.STUDENT_NUM, r.class_name, r.professional_name,r.college_name " +
+            "  GROUP BY r.STUDENT_ID " +
             ") c " +
             " WHERE c.dkl < :dkl";
 
-    private String SQL_STUDENT_ROLLCALL_ALERT = "SELECT  c.studentName, c.studentNo, c.classesName, c.professionalName, c.collegeName, c.shouldCount, c.normal, c.dkl " +
+    private String SQL_STUDENT_ROLLCALL_ALERT = "SELECT  c.studentId, c.shouldCount, c.normal, c.dkl " +
             " FROM ( " +
-            "  SELECT  r.STUDENT_NAME AS studentName, r.STUDENT_NUM AS studentNo," +
-            " r.class_name AS classesName, r.professional_name AS professionalName, r.college_name AS collegeName," +
+            "  SELECT  r.STUDENT_ID AS studentId," +
             "  COUNT(*) AS shouldCount," +
             "  SUM(IF(r.`TYPE` = 1, 1, 0)) AS normal," +
             " #dklcal# " +
@@ -179,10 +180,15 @@ public class RollCallManager {
             " FROM #database#.dd_rollcall r INNER JOIN #database#.dd_schedule_rollcall sr ON r.SCHEDULE_ROLLCALL_ID = sr.ID INNER JOIN #database#.dd_schedule s ON sr.SCHEDULE_ID = s.ID " +
             "  WHERE  r.org_id = :orgId AND s.TEACH_DATE >= :start AND s.TEACH_DATE < :end " +
             " #queryCondition# " +
-            "  GROUP BY r.STUDENT_ID, r.STUDENT_NAME, r.STUDENT_NUM, r.class_name, r.professional_name,r.college_name " +
+            "  GROUP BY r.STUDENT_ID " +
             "  ORDER BY ROUND(SUM(IF(r.`TYPE` = 1, 1, 0))/COUNT(*),4) DESC " +
             ") c " +
             " WHERE c.dkl < :dkl";
+
+    private String SQL_STUDENT_BASE_INFO = "SELECT " +
+            "u.ID id, u.JOB_NUMBER studentNo, u.`NAME` studentName, u.CLASSES_ID AS classesId, c.`NAME` classesName, p.`NAME` professionalName, g.`NAME` collegeName " +
+            "FROM #orgMnagerDB#.t_user u LEFT JOIN #orgMnagerDB#.t_classes c ON u.CLASSES_ID=c.ID LEFT JOIN #orgMnagerDB#.t_professional p ON u.PROFESSIONAL_ID=p.ID LEFT JOIN #orgMnagerDB#.t_college g ON u.COLLEGE_ID=g.ID " +
+            "WHERE u.ID IN (:ids)";
 
     private String SQL_UNIT_ROLLCALL_STATISTICS = "SELECT " +
             "c.unitId, c.unitName, c.total, c.normal, c.later, c.askForLeave, c.leaveEarly, c.truant, c.dkl " +
@@ -212,14 +218,15 @@ public class RollCallManager {
             "COUNT(*) AS count " +
             "FROM #database#.dd_rollcall r , #database#.dd_schedule_rollcall sr, #database#.dd_schedule s " +
             "WHERE  r.org_id = :orgId AND s.ORGAN_ID = :orgId AND r.SCHEDULE_ROLLCALL_ID = sr.ID AND sr.SCHEDULE_ID=s.ID AND s.TEACH_DATE >= :start AND s.TEACH_DATE <= :end " +
-            "GROUP BY s.COURSE_NAME, s.TEACHER_NAME " +
+            " #queryCondition# " +
+            "GROUP BY s.COURSE_ID, s.COURSE_NAME, s.TEACHER_NAME " +
             ") c ";
 
     private String SQL_COUSE_ROLLCALL_STATISTICS = "SELECT " +
-            "c.courseName, c.teacherName, c.total, c.normal, c.later, c.askForLeave, c.leaveEarly, c.truant, c.dkl " +
+            "c.courseId, c.courseName, c.teacherName, c.total, c.normal, c.later, c.askForLeave, c.leaveEarly, c.truant, c.dkl " +
             "FROM (" +
             "SELECT " +
-            "s.COURSE_NAME AS courseName, s.TEACHER_NAME AS teacherName," +
+            "s.COURSE_ID AS courseId, s.COURSE_NAME AS courseName, s.TEACHER_NAME AS teacherName," +
             "COUNT(*) AS total, " +
             "SUM(IF(r.`TYPE` = 1, 1, 0)) AS normal," +
             "SUM(IF(r.`TYPE` = 3, 1, 0)) AS later," +
@@ -229,7 +236,8 @@ public class RollCallManager {
             "#dklcal#" +
             "FROM #database#.dd_rollcall r , #database#.dd_schedule_rollcall sr, #database#.dd_schedule s " +
             "WHERE  r.org_id = :orgId AND s.ORGAN_ID = :orgId AND r.SCHEDULE_ROLLCALL_ID = sr.ID AND sr.SCHEDULE_ID=s.ID AND s.TEACH_DATE >= :start AND s.TEACH_DATE <= :end " +
-            "GROUP BY s.COURSE_NAME, s.TEACHER_NAME " +
+            " #queryCondition# " +
+            "GROUP BY s.COURSE_ID, s.COURSE_NAME, s.TEACHER_NAME " +
             ") c ORDER BY c.dkl DESC";
 
 
@@ -240,6 +248,7 @@ public class RollCallManager {
             "COUNT(*) AS count " +
             "FROM #database#.dd_rollcall r , #database#.dd_schedule_rollcall sr, #database#.dd_schedule s " +
             "WHERE  r.org_id = :orgId AND s.ORGAN_ID = :orgId AND r.SCHEDULE_ROLLCALL_ID = sr.ID AND sr.SCHEDULE_ID=s.ID AND s.TEACH_DATE >= :start AND s.TEACH_DATE <= :end " +
+            " #queryCondition# " +
             "GROUP BY r.TEACHER_ID, s.TEACHER_NAME " +
             ") c ";
 
@@ -257,10 +266,24 @@ public class RollCallManager {
             "#dklcal#" +
             "FROM #database#.dd_rollcall r , #database#.dd_schedule_rollcall sr, #database#.dd_schedule s " +
             "WHERE  r.org_id = :orgId AND s.ORGAN_ID = :orgId AND r.SCHEDULE_ROLLCALL_ID = sr.ID AND sr.SCHEDULE_ID=s.ID AND s.TEACH_DATE >= :start AND s.TEACH_DATE <= :end " +
+            " #queryCondition# " +
             "GROUP BY r.TEACHER_ID, s.TEACHER_NAME " +
             ") c ORDER BY c.dkl DESC";
 
     private String SQL_TEACHER_WORKNO_COLLEGE = "SELECT u.ID, u.JOB_NUMBER, c.`NAME` FROM #orgMnagerDB#.t_user u LEFT JOIN #orgMnagerDB#.t_college c ON u.COLLEGE_ID=c.ID WHERE u.ID IN (:ids)";
+
+    //SELECT  PERIOD_NO, PERIOD_NUM FROM dd_schedule WHERE ORGAN_ID=318 AND TEACH_DATE='2018-09-25' AND  5 BETWEEN PERIOD_NO AND (PERIOD_NO + PERIOD_NUM - 1)
+
+    //今天考勤累计统计大屏
+    private String SQL_CUR_DAY_SCREEN_ROLLCALL = "SELECT COUNT(*) AS total," +
+            "SUM(IF(r.`TYPE` = 1, 1, 0)) AS normal," +
+            "SUM(IF(r.`TYPE` = 3, 1, 0)) AS later," +
+            "SUM(IF(r.`TYPE` = 4, 1, 0)) AS askForLeave," +
+            "SUM(IF(r.`TYPE` = 5, 1, 0)) AS leaveEarly," +
+            "SUM(IF(r.`TYPE` = 2, 1, 0)) AS truant," +
+            "#dklcal#" +
+            "FROM #database#.dd_rollcall r LEFT JOIN #database#.dd_schedule_rollcall sr ON sr.ID=r.SCHEDULE_ROLLCALL_ID LEFT JOIN #database#.dd_schedule s ON sr.SCHEDULE_ID=s.ID " +
+            "WHERE s.ORGAN_ID = :orgId AND s.TEACH_DATE = :teachDate AND s.END_TIME < :endtime AND s.DELETE_FLAG=0 AND r.DELETE_FLAG=0 AND sr.DELETE_FLAG=0";
 
     @Value("${dl.dd.back.dbname}")
     private String ddDatabaseName;
@@ -730,16 +753,16 @@ public class RollCallManager {
             sql = sql +  " LIMIT " + ps + ", " + pageSize;
             log.info("Query Student unNormal rollcall alert sql:{}", sql);
             List<UnNormalRollcallAlertVO> list = template.query(sql, params, (ResultSet rs, int rowNum) ->
-                    new UnNormalRollcallAlertVO(rs.getLong("studentId"), rs.getString("studentNo"), rs.getString("studentName"),
-                            rs.getLong("classesId"), rs.getString("classesName"), rs.getString("prefessionalName"),
-                            rs.getString("collegeName"), rs.getLong("courseId"), rs.getLong("shouldCount"), rs.getLong("unNormal") )
+                    new UnNormalRollcallAlertVO(rs.getLong("studentId"), rs.getLong("courseId"), rs.getLong("shouldCount"), rs.getLong("unNormal") )
             );
             if (null != list && !list.isEmpty()) {
                 pageData.setData(list);
                 Set<Long> classesIds = new HashSet<>();
                 Set<Long> courseIds = new HashSet<>();
+                Set<Long> idSet = new HashSet<>();
                 for (UnNormalRollcallAlertVO v : list) {
-                    classesIds.add(v.getClassesId());
+//                    classesIds.add(v.getClassesId());
+                    idSet.add(v.getStudentId());
                     courseIds.add(v.getCourseId());
                 }
                 Map<Long, IDNoNameDTO> courseMap = new HashMap<>();
@@ -755,6 +778,23 @@ public class RollCallManager {
                     if (null != courseList && !courseList.isEmpty()) {
                         for (IDNoNameDTO d : courseList) {
                             courseMap.put(d.getId(), d);
+                        }
+                    }
+                }
+                Map<Long, StudentRollcallAlertVO> maps = new HashMap<>();
+                if (!idSet.isEmpty()) {
+                    params.clear();
+                    params.put("ids", idSet);
+                    sql = SQL_STUDENT_BASE_INFO.replaceAll("#orgMnagerDB#", orgDatabaseName);
+                    //u.ID id, u.JOB_NUMBER studentNo, u.`NAME` studentName, c.`NAME` classesName, p.`NAME` professionalName, g.`NAME` collegeName
+                    List<StudentRollcallAlertVO> list2 = template.query(sql, params, (ResultSet rs, int rowNum) ->
+                            new StudentRollcallAlertVO(rs.getLong("id"), rs.getString("studentNo"), rs.getString("studentName"),
+                                    rs.getLong("classesId"), rs.getString("classesName"), rs.getString("professionalName"), rs.getString("collegeName") )
+                    );
+                    if (null != list2) {
+                        for (StudentRollcallAlertVO v : list2) {
+                            maps.put(v.getStudentId(), v);
+                            classesIds.add(v.getClassesId());
                         }
                     }
                 }
@@ -776,6 +816,15 @@ public class RollCallManager {
                     IDNoNameDTO dc = courseMap.get(v.getCourseId());
                     if (null != dc) {
                         v.setCourseName(dc.getName());
+                    }
+                    StudentRollcallAlertVO v2 = maps.get(v.getStudentId());
+                    if (null != v2) {
+                        v.setStudentName(v2.getStudentName());
+                        v.setStudentNo(v2.getStudentNo());
+                        v.setClassesName(v2.getClassesName());
+                        v.setClassesId(v2.getClassesId());
+                        v.setProfessionalName(v2.getProfessionalName());
+                        v.setCollegeName(v2.getCollegeName());
                     }
 
                     dc = classesMap.get(v.getClassesId());
@@ -857,12 +906,42 @@ public class RollCallManager {
             sql = sql +  " LIMIT " + ps + ", " + pageSize;
             log.info("Query Student  rollcall alert sql:{}", sql);
             List<StudentRollcallAlertVO> list = template.query(sql, params, (ResultSet rs, int rowNum) ->
-                    new StudentRollcallAlertVO(rs.getString("studentNo"), rs.getString("studentName"),
-                             rs.getString("classesName"), rs.getString("professionalName"),
-                            rs.getString("collegeName"), rs.getLong("shouldCount"), rs.getLong("normal"), rs.getDouble("dkl") )
+                    new StudentRollcallAlertVO(rs.getLong("studentId"), rs.getLong("shouldCount"), rs.getLong("normal"), rs.getDouble("dkl") )
             );
             if (null != list && !list.isEmpty()) {
                 pageData.setData(list);
+                Set<Long> idSet = new HashSet<>();
+                for (StudentRollcallAlertVO v : list) {
+                    idSet.add(v.getStudentId());
+                }
+                if (!idSet.isEmpty()) {
+                    params.clear();
+                    params.put("ids", idSet);
+                    sql = SQL_STUDENT_BASE_INFO.replaceAll("#orgMnagerDB#", orgDatabaseName);
+                    //u.ID id, u.JOB_NUMBER studentNo, u.`NAME` studentName, c.`NAME` classesName, p.`NAME` professionalName, g.`NAME` collegeName
+                    List<StudentRollcallAlertVO> list2 = template.query(sql, params, (ResultSet rs, int rowNum) ->
+                            new StudentRollcallAlertVO(rs.getLong("id"), rs.getString("studentNo"), rs.getString("studentName"),
+                                    rs.getLong("classesId"), rs.getString("classesName"), rs.getString("professionalName"), rs.getString("collegeName") )
+                    );
+                    Map<Long, StudentRollcallAlertVO> maps = new HashMap<>();
+                    if (null != list2) {
+                        for (StudentRollcallAlertVO v : list2) {
+                            maps.put(v.getStudentId(), v);
+                        }
+                    }
+                    if (!maps.isEmpty()) {
+                        for (StudentRollcallAlertVO v : list) {
+                            StudentRollcallAlertVO v2 = maps.get(v.getStudentId());
+                            if(null != v2) {
+                                v.setStudentName(v2.getStudentName());
+                                v.setStudentNo(v2.getStudentNo());
+                                v.setClassesName(v2.getClassesName());
+                                v.setProfessionalName(v2.getProfessionalName());
+                                v.setCollegeName(v2.getCollegeName());
+                            }
+                        }
+                    }
+                }
             }
         }
         return pageData;
@@ -944,7 +1023,7 @@ public class RollCallManager {
         return r;
     }
 
-    public PageData<CourseRollcallStatisticsVO> findCourseRollcallStatistics(Long orgId, String timeRange, Integer pageIndex, Integer pageSize) {
+    public PageData<CourseRollcallStatisticsVO> findCourseRollcallStatistics(Long orgId, Long collegeId, String course, String timeRange, Integer pageIndex, Integer pageSize) {
         PageData<CourseRollcallStatisticsVO> pageData = new PageData<>();
         if (null == pageIndex || pageIndex < 1) {
             pageIndex = 1;
@@ -972,9 +1051,20 @@ public class RollCallManager {
         params.put("orgId", orgId);
         params.put("start", start);
         params.put("end", end);
+        StringBuilder condition = new StringBuilder();
+        if (null != collegeId && collegeId > 0) {
+            condition.append(" AND r.college_id = :collegeId ");
+            params.put("collegeId", collegeId);
+        }
+        if (!StringUtils.isEmpty(course)) {
+            condition.append(" AND s.COURSE_NAME like :course ");
+            params.put("course", "%" + course + "%");
+        }
+
         NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbcTemplate);
 
         String sqlc = SQL_COUSE_ROLLCALL_STATISTICS_COUNT.replaceAll("#database#", ddDatabaseName);
+        sqlc = sqlc.replaceAll("#queryCondition#", condition.toString());
         log.info("Rollcall Course statistics Count sql:{}, start:{}, end: {}", sqlc, params.get("start"), params.get("end"));
         List<Integer> clist = template.query(sqlc, params, (ResultSet rs, int rowNum) -> rs.getInt("count"));
         int count = 0;
@@ -982,17 +1072,20 @@ public class RollCallManager {
             count = clist.get(0);
         }
         pageData.getPage().setTotalPages(PageUtil.cacalatePagesize(count, pageSize));
+        pageData.getPage().setTotalElements(new Long(count));
         if (count > 0) {
             int type = getOrgArithmetic(orgId);
             String dklSql = getDklCalSql(type);
             String sql = SQL_COUSE_ROLLCALL_STATISTICS.replaceAll("#database#", ddDatabaseName);
             sql = sql.replaceAll("#dklcal#", dklSql);
+            sql = sql.replaceAll("#queryCondition#", condition.toString());
             int ps = (pageIndex - 1) * pageSize;
             sql = sql +  " LIMIT " + ps + ", " + pageSize;
             //c.courseName, c.teacherName, c.total, c.normal, c.later, c.askForLeave, c.leaveEarly, c.truant, c.dkl
             log.info("Rollcall Course statistics sql:{}, start:{}, end: {}", sql, params.get("start"), params.get("end"));
             List<CourseRollcallStatisticsVO> list = template.query(sql, params, (ResultSet rs, int rowNum) ->
-                    new CourseRollcallStatisticsVO(rs.getString("courseName"), rs.getString("teacherName"),
+                    new CourseRollcallStatisticsVO(rs.getLong("courseId"),
+                            rs.getString("courseName"), rs.getString("teacherName"),
                             rs.getInt("total"), rs.getInt("normal"),
                             rs.getInt("later"), rs.getInt("askForLeave"),
                             rs.getInt("leaveEarly"), rs.getInt("truant"), rs.getDouble("dkl"))
@@ -1003,7 +1096,7 @@ public class RollCallManager {
     }
 
 
-    public PageData<TeacherRollcallStatisticsVO> findTeacherRollcallStatistics(Long orgId, String timeRange, Integer pageIndex, Integer pageSize) {
+    public PageData<TeacherRollcallStatisticsVO> findTeacherRollcallStatistics(Long orgId, Long collegeId, String teacher, String timeRange, Integer pageIndex, Integer pageSize) {
         PageData<TeacherRollcallStatisticsVO> pageData = new PageData<>();
         if (null == pageIndex || pageIndex < 1) {
             pageIndex = 1;
@@ -1031,9 +1124,20 @@ public class RollCallManager {
         params.put("orgId", orgId);
         params.put("start", start);
         params.put("end", end);
+        StringBuilder condition = new StringBuilder();
+        if (null != collegeId && collegeId > 0) {
+            condition.append(" AND r.college_id = :collegeId ");
+            params.put("collegeId", collegeId);
+        }
+        if (!StringUtils.isEmpty(teacher)) {
+            condition.append(" AND s.TEACHER_NAME like :teacher ");
+            params.put("teacher", "%" + teacher + "%");
+        }
+
         NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbcTemplate);
 
         String sqlc = SQL_TEACHER_ROLLCALL_STATISTICS_COUNT.replaceAll("#database#", ddDatabaseName);
+        sqlc = sqlc.replaceAll("#queryCondition#", condition.toString());
         log.info("Rollcall Teacher statistics Count sql:{}, start:{}, end: {}", sqlc, params.get("start"), params.get("end"));
         List<Integer> clist = template.query(sqlc, params, (ResultSet rs, int rowNum) -> rs.getInt("count"));
         int count = 0;
@@ -1041,11 +1145,13 @@ public class RollCallManager {
             count = clist.get(0);
         }
         pageData.getPage().setTotalPages(PageUtil.cacalatePagesize(count, pageSize));
+        pageData.getPage().setTotalElements(new Long(count));
         if (count > 0) {
             int type = getOrgArithmetic(orgId);
             String dklSql = getDklCalSql(type);
             String sql = SQL_TEACHER_ROLLCALL_STATISTICS.replaceAll("#database#", ddDatabaseName);
             sql = sql.replaceAll("#dklcal#", dklSql);
+            sql = sql.replaceAll("#queryCondition#", condition.toString());
             int ps = (pageIndex - 1) * pageSize;
             sql = sql +  " LIMIT " + ps + ", " + pageSize;
             //c.teacherId, c.teacherName, c.total, c.normal, c.later, c.askForLeave, c.leaveEarly, c.truant, c.dkl
@@ -1087,6 +1193,289 @@ public class RollCallManager {
                     }
                 }
             }
+        }
+        return pageData;
+    }
+
+    private RollcallStatisticsVO queryDayRollcallCount(String sql, NamedParameterJdbcTemplate template, Map<String, Object> params) {
+        log.info("Week rollcall statics sql:({})", sql);
+        List<RollcallStatisticsVO> list = template.query(sql, params, (ResultSet rs, int rowNum) ->
+                new RollcallStatisticsVO(
+                        rs.getInt("total"), rs.getInt("normal"),
+                        rs.getInt("later"), rs.getInt("askForLeave"),
+                        rs.getInt("truant"), rs.getInt("leaveEarly"), rs.getDouble("dkl"))
+        );
+        if (null != list && list.size() > 0) {
+            return list.get(0);
+        }
+        return null;
+    }
+
+    public CurrentDayRollcallStatisticsVO findDateStatistics(Long orgId, Long collegeId, String currentDate, String dayEndtime) {
+        CurrentDayRollcallStatisticsVO v = new CurrentDayRollcallStatisticsVO ();
+
+        if (null == orgId || orgId <= 0) {
+            return v;
+        }
+        if (StringUtils.isEmpty(currentDate)) {
+            return v;
+        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("orgId", orgId);
+        params.put("teachDate", currentDate);
+        int type = getOrgArithmetic(orgId);
+        String dklSql = getDklCalSql(type);
+        String sql = getDaySql(params, dklSql, collegeId, false, null, null, true, dayEndtime);
+        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbcTemplate);
+        log.info("Rollcall currentday statistics sql:{}, orgId:{}, teachDate: {}", sql, orgId, currentDate);
+        RollcallStatisticsVO vo = queryDayRollcallCount(sql, template, params);
+        if (null != vo) {
+            v.setDkl(vo.getDkl());
+            v.setYdrc(vo.getYdrs());
+            v.setSdrc(vo.getSdrs());
+            v.setYcrc(vo.getKkrs() + vo.getQjrs() + vo.getCdrs() + vo.getZtrs());
+        }
+        sql = "SELECT COUNT(r.STUDENT_ID) AS total "  +
+                "FROM #database#.dd_rollcall r LEFT JOIN #database#.dd_schedule_rollcall sr ON sr.ID=r.SCHEDULE_ROLLCALL_ID LEFT JOIN #database#.dd_schedule s ON sr.SCHEDULE_ID=s.ID " +
+                "WHERE s.ORGAN_ID = ? AND s.TEACH_DATE = ?   AND s.END_TIME < ? AND s.DELETE_FLAG=0 AND r.DELETE_FLAG=0 AND sr.DELETE_FLAG=0";
+        sql = sql.replaceAll("#database#", ddDatabaseName);
+        int c = jdbcTemplate.queryForObject(sql, new Object[] {orgId, currentDate, dayEndtime}, new int[] {Types.BIGINT, Types.VARCHAR, Types.VARCHAR}, Integer.class);
+        v.setLjxssl(c);
+
+        sql = "SELECT COUNT(*) FROM #database#.dd_schedule s WHERE s.ORGAN_ID=? AND s.TEACH_DATE=?  AND s.END_TIME < ? AND s.DELETE_FLAG=0";
+        sql = sql.replaceAll("#database#", ddDatabaseName);
+        c = jdbcTemplate.queryForObject(sql, new Object[] {orgId, currentDate, dayEndtime}, new int[] {Types.BIGINT, Types.VARCHAR, Types.VARCHAR}, Integer.class);
+        v.setLjbksl(c);
+        return v;
+    }
+
+    private String getDaySql(Map<String, Object> params, String dklSql, Long collegeId, boolean daterange, String startday, String endday, boolean time, String dayEndtime) {
+        StringBuilder sqlb = new StringBuilder("SELECT COUNT(*) AS total,")
+                .append("SUM(IF(r.`TYPE` = 1, 1, 0)) AS normal,")
+                .append("SUM(IF(r.`TYPE` = 3, 1, 0)) AS later,")
+                .append("SUM(IF(r.`TYPE` = 4, 1, 0)) AS askForLeave,")
+                .append("SUM(IF(r.`TYPE` = 5, 1, 0)) AS leaveEarly,")
+                .append("SUM(IF(r.`TYPE` = 2, 1, 0)) AS truant,")
+                .append("#dklcal#")
+                .append("FROM #database#.dd_rollcall r LEFT JOIN #database#.dd_schedule_rollcall sr ON sr.ID=r.SCHEDULE_ROLLCALL_ID LEFT JOIN #database#.dd_schedule s ON sr.SCHEDULE_ID=s.ID ")
+                .append("WHERE s.ORGAN_ID = :orgId ");
+        if (daterange) {
+            sqlb.append("AND s.TEACH_DATE >= :startday ");
+            sqlb.append("AND s.TEACH_DATE <= :endday ");
+            params.put("startday", startday);
+            params.put("endday", endday);
+        } else {
+            sqlb.append(" AND s.TEACH_DATE = :teachDate ");//params outer set
+        }
+        if (time) {
+            sqlb.append("AND s.END_TIME < :dayendtime ");
+            params.put("dayendtime", dayEndtime);
+        }
+        if (null != collegeId && collegeId > 0) {
+            sqlb.append("AND r.college_id = :collegeId ");
+            params.put("collegeId", collegeId);
+        }
+        sqlb.append("AND s.DELETE_FLAG=0 AND r.DELETE_FLAG=0 AND sr.DELETE_FLAG=0");
+        String sql = sqlb.toString().replaceAll("#database#", ddDatabaseName);
+        sql = sql.replaceAll("#dklcal#", dklSql);
+        return sql;
+    }
+
+    public SchoolWeekRollcallScreenZhV2VO queryWeekAnPreWeekRollcall(Long orgId, Long collegeId, List<DayAndDayOfWeekDTO> days, String startday, String endDay, String preWeekStartday, String preWeekEndday, String dayEndtime) {
+        log.info("Week sreen rollcall count:orgId({}), collegeId:({}), monday:({}), curentday:({}), pre week monday:({}), sunday({})", orgId, collegeId, startday, endDay, preWeekStartday, preWeekEndday);
+        SchoolWeekRollcallScreenZhV2VO v = new SchoolWeekRollcallScreenZhV2VO();
+        v.setDays(new ArrayList<>());
+        if (null == orgId || orgId <= 0) {
+            return v;
+        }
+        if (StringUtils.isEmpty(startday) || StringUtils.isEmpty(endDay)) {
+            return v;
+        }
+        if (null == days || days.isEmpty()) {
+            return v;
+        }
+        Map<String, Object> params = new HashMap<>();
+        params.put("orgId", orgId);
+        int type = getOrgArithmetic(orgId);
+        String dklSql = getDklCalSql(type);
+
+        String sql = getDaySql(params, dklSql, collegeId, false, null, null, false, null);
+        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbcTemplate);
+
+         for (int i = 0; i < days.size(); i++){
+             DayAndDayOfWeekDTO d = days.get(i);
+             params.put("teachDate", d.getDay());
+             if (i == days.size() - 1) {
+                 sql = getDaySql(params, dklSql, collegeId, false, null, null, true, dayEndtime);
+             }
+             RollcallStatisticsVO vo = queryDayRollcallCount(sql, template, params);
+             if (null != vo) {
+                 SchoolWeekRollcallScreenVO o = new SchoolWeekRollcallScreenVO(d.getDay(), vo.getYdrs(), vo.getSdrs(), vo.getCdrs(), vo.getQjrs(), vo.getKkrs(), vo.getZtrs());
+                 o.setDayOfWeek(d.getDayOfWeek().toString());
+                 o.setDkl(vo.getDkl());
+                 v.getDays().add(o);
+             }
+        }
+        params.clear();
+        sql = getDaySql(params, dklSql, collegeId, true, startday, endDay, false, null);
+        params.put("orgId", orgId);
+        RollcallStatisticsVO w = queryDayRollcallCount(sql, template, params);
+        if (null != w) {
+            v.setWeek(w);
+            v.setQs(w.getDkl());
+        }
+        params.put("startday", preWeekStartday);
+        params.put("endday", preWeekEndday);
+        RollcallStatisticsVO prew = queryDayRollcallCount(sql, template, params);
+        if (null != w && null != prew) {
+            v.setQs(w.getDkl() - prew.getDkl());
+        }
+        if (null == w && null != prew) {
+            v.setQs(0 - prew.getDkl());
+        }
+        return v;
+    }
+
+
+
+
+    public PageData<TeacherRollcallStatisticsVO> findManagerTeacherRollcallStatistics(Long orgId, Long collegeId, String teacher, String timeRange, Integer pageIndex, Integer pageSize) {
+        PageData<TeacherRollcallStatisticsVO> pageData = new PageData<>();
+        if (null == pageIndex || pageIndex < 1) {
+            pageIndex = 1;
+        }
+        if (null == pageSize || pageSize <= 0) {
+            pageSize = 20;
+        }
+        pageData.getPage().setPageNumber(pageIndex);
+        pageData.getPage().setPageSize(pageSize);
+        pageData.getPage().setTotalElements(0L);
+        pageData.getPage().setTotalPages(1);
+
+        if (null == orgId || orgId <= 0) {
+            return pageData;
+        }
+        if (StringUtils.isEmpty(timeRange) || timeRange.indexOf("~")<= 0) {
+            return pageData;
+        }
+
+        int p = timeRange.indexOf("~");
+        String start = timeRange.substring(0, p);
+        String end = timeRange.substring(p + 1);
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("orgId", orgId);
+        StringBuilder condition = new StringBuilder();
+        if (null != collegeId && collegeId > 0) {
+            condition.append(" AND u.COLLEGE_ID = :collegeId ");
+            params.put("collegeId", collegeId);
+        }
+        if (!StringUtils.isEmpty(teacher)) {
+            condition.append(" AND (u.`NAME` like :teacher OR u.JOB_NUMBER like :teacher) ");
+            params.put("teacher", "%" + teacher + "%");
+        }
+
+        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(jdbcTemplate);
+        String sqlc = "SELECT COUNT(*) count FROM (SELECT COUNT(*) FROM #orgMnagerDB#.t_classes_teacher t, #orgMnagerDB#.t_user u, #orgMnagerDB#.t_college c " +
+                "WHERE u.ORG_ID=:orgId AND t.TEACHER_ID=u.ID AND u.COLLEGE_ID=c.ID AND u.DELETE_FLAG=0 " +
+                " #queryCondition# " +
+                "GROUP BY u.ID, u.JOB_NUMBER, u.`NAME`, c.`NAME`) c";
+
+        sqlc = sqlc.replaceAll("#orgMnagerDB#", orgDatabaseName);
+        sqlc = sqlc.replaceAll("#queryCondition#", condition.toString());
+        log.info("Rollcall ManagerTeacher statistics Count sql:{}", sqlc);
+        List<Integer> clist = template.query(sqlc, params, (ResultSet rs, int rowNum) -> rs.getInt("count"));
+        int count = 0;
+        if (null != clist && clist.size() > 0) {
+            count = clist.get(0);
+        }
+        pageData.getPage().setTotalPages(PageUtil.cacalatePagesize(count, pageSize));
+        pageData.getPage().setTotalElements(new Long(count));
+        if (count > 0) {
+            //导员考勤列表统计
+            String sql = "SELECT " +
+                    "u.ID teacherId, u.JOB_NUMBER teacherNo, u.`NAME` teacherName, c.`NAME` collegeName, GROUP_CONCAT(t.CLASSES_ID) classes " +
+                    "FROM #orgMnagerDB#.t_classes_teacher t, #orgMnagerDB#.t_user u, #orgMnagerDB#.t_college c " +
+                    "WHERE u.ORG_ID=:orgId AND t.TEACHER_ID=u.ID AND u.COLLEGE_ID=c.ID AND u.DELETE_FLAG=0 " +
+                    " #queryCondition# " +
+                    "GROUP BY u.ID, u.JOB_NUMBER, u.`NAME`, c.`NAME`";
+            sql = sql.replaceAll("#orgMnagerDB#", orgDatabaseName);
+            sql = sql.replaceAll("#queryCondition#", condition.toString());
+            int ps = (pageIndex - 1) * pageSize;
+            sql = sql +  " LIMIT " + ps + ", " + pageSize;
+            //c.teacherId, c.teacherName, c.total, c.normal, c.later, c.askForLeave, c.leaveEarly, c.truant, c.dkl
+            log.info("Rollcall ManagerTeacher statistics sql:{}", sql);
+            List<TeacherForRollcallDTO> tlist = template.query(sql, params, (ResultSet rs, int rowNum) ->
+                    new TeacherForRollcallDTO(rs.getLong("teacherId"), rs.getString("teacherName"),
+                            rs.getString("teacherNo"),rs.getString("collegeName"),
+                            rs.getString("classes"))
+            );
+
+            List<TeacherRollcallStatisticsVO> list = new ArrayList<>();
+            if (null != tlist) {
+                int type = getOrgArithmetic(orgId);
+                params.clear();
+                params.put("orgId", orgId);
+                params.put("start", start);
+                params.put("end", end);
+                String dklSql = getDklCalSql(type);
+                sqlc =   "SELECT " +
+                        "COUNT(*) AS total, " +
+                        "SUM(IF(r.`TYPE` = 1, 1, 0)) AS normal," +
+                        "SUM(IF(r.`TYPE` = 3, 1, 0)) AS later," +
+                        "SUM(IF(r.`TYPE` = 4, 1, 0)) AS askForLeave," +
+                        "SUM(IF(r.`TYPE` = 5, 1, 0)) AS leaveEarly," +
+                        "SUM(IF(r.`TYPE` = 2, 1, 0)) AS truant," +
+                        "#dklcal#" +
+                        "FROM #database#.dd_rollcall r , #database#.dd_schedule_rollcall sr, #database#.dd_schedule s " +
+                        "WHERE  r.org_id = :orgId AND s.ORGAN_ID = :orgId AND r.SCHEDULE_ROLLCALL_ID = sr.ID AND sr.SCHEDULE_ID=s.ID AND s.TEACH_DATE >= :start AND s.TEACH_DATE <= :end " +
+                        " #queryCondition# ";
+
+                sqlc = sqlc.replaceAll("#database#", ddDatabaseName);
+                sqlc = sqlc.replaceAll("#dklcal#", dklSql);
+                for (TeacherForRollcallDTO d : tlist) {
+                    TeacherRollcallStatisticsVO vo = new TeacherRollcallStatisticsVO();
+                    vo.setTeacherId(d.getTeacherId());
+                    vo.setTeacherName(d.getTeacherName());
+                    vo.setTeacherWorkNo(d.getTeacherWorkNo());
+                    vo.setCollegeName(d.getCollegeName());
+                    list.add(vo);
+
+                    Set<Long> cids = new HashSet<>();
+                    if (!StringUtils.isEmpty(d.getClasses())) {
+                        String[] cc = d.getClasses().split(",");
+                        for (String cid : cc) {
+                            if (!StringUtils.isEmpty(cid)) {
+                                cids.add(new Long(cid));
+                            }
+                        }
+                    }
+                    String c = "";
+                    if (!cids.isEmpty()) {
+                        params.put("classes", cids);
+                        c = " AND r.CLASS_ID IN (:classes) ";
+                    }
+                    sql = sqlc.replaceAll("#queryCondition#", c);
+                    List<RollcallStatisticsVO> rlist = template.query(sql, params, (ResultSet rs, int rowNum) ->
+                            new RollcallStatisticsVO(rs.getInt("total"), rs.getInt("normal"),
+                                    rs.getInt("later"),rs.getInt("askForLeave"),
+                                    rs.getInt("truant"), rs.getInt("leaveEarly"), rs.getDouble("dkl"))
+                    );
+                    if (null != rlist && rlist.size() > 0) {
+                        RollcallStatisticsVO rvo = rlist.get(0);
+                        vo.setYdrs(rvo.getYdrs());
+                        vo.setSdrs(rvo.getSdrs());
+                        vo.setCdrs(rvo.getCdrs());
+                        vo.setQjrs(rvo.getQjrs());
+                        vo.setKkrs(rvo.getKkrs());
+                        vo.setZtrs(rvo.getZtrs());
+                        vo.setDkl(rvo.getDkl());
+                    }
+                }
+            }
+
+
+            pageData.setData(list);
         }
         return pageData;
     }
