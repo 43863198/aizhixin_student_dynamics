@@ -4,6 +4,7 @@ import com.aizhixin.cloud.dataanalysis.alertinformation.domain.AlertInforQueryDo
 import com.aizhixin.cloud.dataanalysis.alertinformation.domain.AlertInforQueryTeacherDomain;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningDetailsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
+import com.aizhixin.cloud.dataanalysis.alertinformation.vo.AlertWarningInfomationCountVO;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import com.aizhixin.cloud.dataanalysis.common.core.ApiReturnConstants;
 import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -271,6 +273,16 @@ public class AlertWarningInformationController {
         Map<String, Object> result = new HashMap<String, Object>();
         result.put(ApiReturnConstants.DATA, alertWarningInforService.getStuAlertInforPage(orgId, jobNum, pageNumber, pageSize));
         return new ResponseEntity<Map<String, Object>>(result, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/count/college", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "统计学院下的某学期的告警数据条数", response = Void.class, notes = "统计学院下的某学期的告警数据条数<br><br><b>@author hsh</b>")
+    public List<AlertWarningInfomationCountVO> countWarmingTypeByCollege(
+            @ApiParam(value = "机构id", required = true) @RequestParam(value = "orgId") Long orgId,
+            @ApiParam(value = "collegeCode 登录用户的学院编码", required = true) @RequestParam(value = "collegeCode") String collegeCode,
+            @ApiParam(value = "teacherYear 学年", required = true) @RequestParam(value = "teacherYear") String teacherYear,
+            @ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester") String semester) {
+        return alertWarningInforService.countByTeacherYearAndSemeter(orgId, collegeCode, teacherYear, semester);
     }
 
 }
