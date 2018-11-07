@@ -2,6 +2,8 @@ package com.aizhixin.cloud.dataanalysis.dd.rollcall.controller;
 
 
 import com.aizhixin.cloud.dataanalysis.common.PageData;
+import com.aizhixin.cloud.dataanalysis.common.RoleTool;
+import com.aizhixin.cloud.dataanalysis.common.dto.OrgCollegeIdDTO;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.service.RollcallService;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.*;
 import io.swagger.annotations.Api;
@@ -93,33 +95,107 @@ public class RollcallController {
 
 
 
+//    @GetMapping(value = "/statistics/orgId/{orgId}/byunit", produces = MediaType.APPLICATION_JSON_VALUE)
+//    @ApiOperation(httpMethod = "GET", value = "按单位统计考勤数据", response = Void.class, notes = "按单位统计考勤数据<br><br><b>@author zhen.pan</b>")
+//    public UnitRollcallStatisticsDOVO listByUnit(
+//            @ApiParam(value = "orgId 机构id" , required = true) @PathVariable Long orgId,
+//            @ApiParam(value = "collegeId 学院ID") @RequestParam(value = "collegeId", required = false) Long collegeId,
+//            @ApiParam(value = "professionalId 专业ID") @RequestParam(value = "professionalId", required = false) Long professionalId,
+//            @ApiParam(value = "dateRange 时间区间(2015-08-19~2015-09-17:2015年8月19日至2015年9月17日)", required = true) @RequestParam(value = "dateRange") String dateRange) {
+//            return rollcallService.findUnitRollcallStatistics(orgId, collegeId, professionalId, dateRange);
+//    }
+
     @GetMapping(value = "/statistics/orgId/{orgId}/byunit", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "按单位统计考勤数据", response = Void.class, notes = "按单位统计考勤数据<br><br><b>@author zhen.pan</b>")
-    public UnitRollcallStatisticsDOVO listByUnit(
+    @ApiOperation(httpMethod = "GET", value = "按单位统计考勤数据，附查询条件及权限控制", response = Void.class, notes = "按单位统计考勤数据，附查询条件及权限控制<br><br><b>@author zhen.pan</b>")
+    public UnitRollcallStatisticsDOVO listByUnitV2(
             @ApiParam(value = "orgId 机构id" , required = true) @PathVariable Long orgId,
             @ApiParam(value = "collegeId 学院ID") @RequestParam(value = "collegeId", required = false) Long collegeId,
             @ApiParam(value = "professionalId 专业ID") @RequestParam(value = "professionalId", required = false) Long professionalId,
-            @ApiParam(value = "dateRange 时间区间(2015-08-19~2015-09-17:2015年8月19日至2015年9月17日)", required = true) @RequestParam(value = "dateRange") String dateRange) {
-            return rollcallService.findUnitRollcallStatistics(orgId, collegeId, professionalId, dateRange);
+            @ApiParam(value = "dateRange 时间区间(2015-08-19~2015-09-17:2015年8月19日至2015年9月17日)", required = true) @RequestParam(value = "dateRange") String dateRange,
+            @ApiParam(value = "roleCollgeId 登录用户的学院ID") @RequestParam(value = "roleCollgeId", required = false) Long roleCollgeId,
+            @ApiParam(value = "roles 角色，多个角色使用英文逗号分隔", required = true) @RequestParam(value = "roles") String roles) {
+        OrgCollegeIdDTO d = RoleTool.orgAndCollegeResetByRole(orgId, collegeId, roleCollgeId, roles);
+        return rollcallService.findUnitRollcallStatistics(d.getOrgId(), d.getCollegeId(), professionalId, dateRange);
     }
+
+//    @GetMapping(value = "/statistics/orgId/{orgId}/course", produces = MediaType.APPLICATION_JSON_VALUE)
+//    @ApiOperation(httpMethod = "GET", value = "按课程统计考勤数据", response = Void.class, notes = "按课程统计考勤数据<br><br><b>@author zhen.pan</b>")
+//    public  PageData<CourseRollcallStatisticsVO> courseStatistics(
+//            @ApiParam(value = "orgId 机构id" , required = true) @PathVariable Long orgId,
+//            @ApiParam(value = "dateRange 时间区间(2015-08-19~2015-09-17:2015年8月19日至2015年9月17日)", required = true) @RequestParam(value = "dateRange") String dateRange,
+//            @ApiParam(value = "pageIndex 第几页") @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
+//            @ApiParam(value = "pageSize 每页条数") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+//        return rollcallService.findCourseRollcallStatistics(orgId, dateRange, pageIndex, pageSize);
+//    }
 
     @GetMapping(value = "/statistics/orgId/{orgId}/course", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "按课程统计考勤数据", response = Void.class, notes = "按课程统计考勤数据<br><br><b>@author zhen.pan</b>")
-    public  PageData<CourseRollcallStatisticsVO> courseStatistics(
+    @ApiOperation(httpMethod = "GET", value = "按课程统计考勤数据，附查询条件及权限控制", response = Void.class, notes = "按课程统计考勤数据，附查询条件及权限控制<br><br><b>@author zhen.pan</b>")
+    public  PageData<CourseRollcallStatisticsVO> courseStatisticsV2(
             @ApiParam(value = "orgId 机构id" , required = true) @PathVariable Long orgId,
+            @ApiParam(value = "course 课程名称或编号") @RequestParam(value = "course", required = false) String course,
             @ApiParam(value = "dateRange 时间区间(2015-08-19~2015-09-17:2015年8月19日至2015年9月17日)", required = true) @RequestParam(value = "dateRange") String dateRange,
+            @ApiParam(value = "roleCollgeId 登录用户的学院ID") @RequestParam(value = "roleCollgeId", required = false) Long roleCollgeId,
+            @ApiParam(value = "roles 角色，多个角色使用英文逗号分隔", required = true) @RequestParam(value = "roles") String roles,
             @ApiParam(value = "pageIndex 第几页") @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
             @ApiParam(value = "pageSize 每页条数") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return rollcallService.findCourseRollcallStatistics(orgId, dateRange, pageIndex, pageSize);
+        OrgCollegeIdDTO d = RoleTool.orgAndCollegeResetByRole(orgId, roleCollgeId, roles);
+        return rollcallService.findCourseRollcallStatisticsV2(d.getOrgId(), d.getCollegeId(), course, dateRange, pageIndex, pageSize);
     }
 
+//    @GetMapping(value = "/statistics/orgId/{orgId}/teacher", produces = MediaType.APPLICATION_JSON_VALUE)
+//    @ApiOperation(httpMethod = "GET", value = "按教师统计考勤数据", response = Void.class, notes = "按教师统计考勤数据<br><br><b>@author zhen.pan</b>")
+//    public PageData<TeacherRollcallStatisticsVO> teacherStatistics(
+//            @ApiParam(value = "orgId 机构id" , required = true) @PathVariable Long orgId,
+//            @ApiParam(value = "dateRange 时间区间(2015-08-19~2015-09-17:2015年8月19日至2015年9月17日)", required = true) @RequestParam(value = "dateRange") String dateRange,
+//            @ApiParam(value = "pageIndex 第几页") @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
+//            @ApiParam(value = "pageSize 每页条数") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+//        return rollcallService.findTeacherRollcallStatistics(orgId, dateRange, pageIndex, pageSize);
+//    }
+
     @GetMapping(value = "/statistics/orgId/{orgId}/teacher", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "按教师统计考勤数据", response = Void.class, notes = "按教师统计考勤数据<br><br><b>@author zhen.pan</b>")
-    public PageData<TeacherRollcallStatisticsVO> teacherStatistics(
+    @ApiOperation(httpMethod = "GET", value = "按教师统计考勤数据，附查询条件及权限控制", response = Void.class, notes = "按教师统计考勤数据，附查询条件及权限控制<br><br><b>@author zhen.pan</b>")
+    public PageData<TeacherRollcallStatisticsVO> teacherStatisticsV2(
             @ApiParam(value = "orgId 机构id" , required = true) @PathVariable Long orgId,
+            @ApiParam(value = "teacher 教师工号或姓名") @RequestParam(value = "teacher", required = false) String teacher,
             @ApiParam(value = "dateRange 时间区间(2015-08-19~2015-09-17:2015年8月19日至2015年9月17日)", required = true) @RequestParam(value = "dateRange") String dateRange,
+            @ApiParam(value = "roleCollgeId 登录用户的学院ID") @RequestParam(value = "roleCollgeId", required = false) Long roleCollgeId,
+            @ApiParam(value = "roles 角色，多个角色使用英文逗号分隔", required = true) @RequestParam(value = "roles") String roles,
             @ApiParam(value = "pageIndex 第几页") @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
             @ApiParam(value = "pageSize 每页条数") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        return rollcallService.findTeacherRollcallStatistics(orgId, dateRange, pageIndex, pageSize);
+        OrgCollegeIdDTO d = RoleTool.orgAndCollegeResetByRole(orgId, roleCollgeId, roles);
+        return rollcallService.findTeacherRollcallStatisticsV2(d.getOrgId(), d.getCollegeId(), teacher, dateRange, pageIndex, pageSize);
+    }
+
+    @GetMapping(value = "/currentday/orgId/{orgId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "统计大屏当天考勤数据", response = Void.class, notes = "统计大屏当天考勤数据<br><br><b>@author zhen.pan</b>")
+    public CurrentDayRollcallStatisticsVO currentday(
+            @ApiParam(value = "orgId 机构id" , required = true) @PathVariable Long orgId,
+            @ApiParam(value = "roleCollgeId 登录用户的学院ID") @RequestParam(value = "roleCollgeId", required = false) Long roleCollgeId,
+            @ApiParam(value = "roles 角色，多个角色使用英文逗号分隔", required = true) @RequestParam(value = "roles") String roles ) {
+        return rollcallService.findCurrentDayRollcallScreen(orgId, roleCollgeId, roles);
+    }
+
+    @GetMapping(value = "/curweek/orgId/{orgId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "统计大屏本周及上周的考勤数据", response = Void.class, notes = "统计大屏本周及上周的考勤数据<br><br><b>@author zhen.pan</b>")
+    public SchoolWeekRollcallScreenZhV2VO currentWeek(
+            @ApiParam(value = "orgId 机构id" , required = true) @PathVariable Long orgId,
+            @ApiParam(value = "roleCollgeId 登录用户的学院ID") @RequestParam(value = "roleCollgeId", required = false) Long roleCollgeId,
+            @ApiParam(value = "roles 角色，多个角色使用英文逗号分隔", required = true) @RequestParam(value = "roles") String roles ) {
+        return rollcallService.findCurrentWeekAndPreWeekRollcallScreen(orgId, roleCollgeId, roles);
+    }
+
+
+    @GetMapping(value = "/statistics/orgId/{orgId}/managerteacher", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "按班主任统计考勤数据，附查询条件及权限控制", response = Void.class, notes = "按班主任统计考勤数据，附查询条件及权限控制<br><br><b>@author zhen.pan</b>")
+    public PageData<TeacherRollcallStatisticsVO> managerTeacherStatistics(
+            @ApiParam(value = "orgId 机构id" , required = true) @PathVariable Long orgId,
+            @ApiParam(value = "teacher 导员工号或姓名") @RequestParam(value = "teacher", required = false) String teacher,
+            @ApiParam(value = "dateRange 时间区间(2015-08-19~2015-09-17:2015年8月19日至2015年9月17日)", required = true) @RequestParam(value = "dateRange") String dateRange,
+            @ApiParam(value = "roleCollgeId 登录用户的学院ID") @RequestParam(value = "roleCollgeId", required = false) Long roleCollgeId,
+            @ApiParam(value = "roles 角色，多个角色使用英文逗号分隔", required = true) @RequestParam(value = "roles") String roles,
+            @ApiParam(value = "pageIndex 第几页") @RequestParam(value = "pageIndex", required = false) Integer pageIndex,
+            @ApiParam(value = "pageSize 每页条数") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+        OrgCollegeIdDTO d = RoleTool.orgAndCollegeResetByRole(orgId, roleCollgeId, roles);
+        return rollcallService.findManagerTeacherRollcallStatistics(d.getOrgId(), d.getCollegeId(), teacher, dateRange, pageIndex, pageSize);
     }
 }

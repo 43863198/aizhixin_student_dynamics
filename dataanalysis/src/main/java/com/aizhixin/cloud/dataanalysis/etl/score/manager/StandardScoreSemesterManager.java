@@ -29,13 +29,13 @@ public class StandardScoreSemesterManager {
 
     public static String SQL_SEMESTER_ZB = "SELECT m.XH,  " +
             "COUNT(m.XH) AS CKKM," +
-            "SUM(IF(m.CJ<60,1,0)) AS BJGKCS," +
-            "SUM(IF(m.CJ<60, m.XF, 0)) AS BJGZXF " +
+            "SUM(IF(m.JD<=0,1,0)) AS BJGKCS," +
+            "SUM(IF(m.JD<=0, m.XF, 0)) AS BJGZXF " +
             "FROM (" +
-            "SELECT c.XH, c.XF, MAX(c.BFCJ) AS CJ " +
+            "SELECT c.XH, c.XF, MAX(c.JD) AS JD " +
             "FROM t_b_xscjxx c " +
             "WHERE c.XXDM=? AND c.XN=? AND c.XQM=? " +
-            "GROUP BY c.XH, c.KCH, c.XF " +
+            "GROUP BY c.XH, c.KCH, c.JD " +
             "ORDER BY c.XH, c.KCH " +
             ") m " +
             "GROUP BY m.XH";
@@ -43,6 +43,8 @@ public class StandardScoreSemesterManager {
     public static String SQL_ALL_SCORE_SEMESTER = "SELECT c.XN, c.XQM FROM  t_b_xscjxx c WHERE c.XXDM=? GROUP BY c.XN, c.XQM ORDER BY c.XN DESC, c.XQM DESC";
 
     public static String SQL_DELETE_XN_XQ = "DELETE FROM  T_ZB_XSXQCJ  WHERE XXDM=? AND XN=? AND XQM=?";
+
+    public static String SQL_UNIT_DELETE_XN_XQ = "DELETE FROM  T_ZB_XSCJ  WHERE XXDM=? AND XN=? AND XQM=?";
 
     //成绩波动预警计算SQL
     public static String SQL_ALERT_BD = "SELECT " +
@@ -72,7 +74,7 @@ public class StandardScoreSemesterManager {
             "  FROM t_zb_xsxqcj s WHERE s.XXDM=? AND s.XN=? AND s.XQM=? " +
             ") y " +
             "WHERE j.XH=y.XH AND (j.GPA-y.GPA < 0) AND (y.GPA - j.GPA > ?)" +
-            ") b LEFT JOIN t_xsjbxx x ON b.XH=x.XH AND x.XXID=? ";
+            ") b INNER JOIN t_xsjbxx x ON b.XH=x.XH AND x.XXID=?  AND x.DQZT NOT IN ('02', '04', '16')";
 
     private static String SQL_LASTEST_SCORE_SEMESTER = "SELECT DISTINCT CONCAT(XN, '-',XQM) AS XNXQ FROM t_zb_xsxqcj WHERE XXDM=? ORDER BY CONCAT(XN, '-',XQM) DESC LIMIT 2";
 
@@ -114,6 +116,14 @@ public class StandardScoreSemesterManager {
 
     public void deleteXnXqIndex(String xxdm, String xn, String xq) {
         jdbcTemplate.update(SQL_DELETE_XN_XQ,
+                new Object[]{xxdm, xn, xq},
+                new int [] {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR});
+    }
+
+
+
+    public void deleteXnXqUnitIndex(String xxdm, String xn, String xq) {
+        jdbcTemplate.update(SQL_UNIT_DELETE_XN_XQ,
                 new Object[]{xxdm, xn, xq},
                 new int [] {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR});
     }

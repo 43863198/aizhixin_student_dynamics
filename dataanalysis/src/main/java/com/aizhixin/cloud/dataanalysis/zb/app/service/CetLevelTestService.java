@@ -22,7 +22,8 @@ public class CetLevelTestService {
         if (null == orgId || orgId <= 0) {
             return new ArrayList<>();
         }
-        return indexAnalysisAppManager.getNewLevelTestBigScreenPassForOld(orgId);
+//        return indexAnalysisAppManager.getNewLevelTestBigScreenPassForOld(orgId);
+        return indexAnalysisAppManager.getNewLevelTestBigScreenPass(orgId);
     }
 
 //    public Map<String, Object> cetSingleDataStatistics(Long orgId, String cetType, String teacherYear, String semester, String collegeCode, String professionCode, String className) {

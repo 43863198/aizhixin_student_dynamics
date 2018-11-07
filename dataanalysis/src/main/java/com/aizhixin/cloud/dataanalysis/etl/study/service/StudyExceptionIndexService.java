@@ -205,7 +205,7 @@ public class StudyExceptionIndexService {
                         break;
                     } else {
                         desc.append("[").append(r.getRuledescribe()).append(e.getBxbjgxf()).append("]");
-                        ss.append("[").append(e.getBxbjgkcnr()).append("]");
+                        ss.append("[").append(e.getLxkcnr()).append("]");
                     }
                 }
             }

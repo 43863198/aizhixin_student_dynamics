@@ -31,8 +31,8 @@ public class SchoolWeekRollcallScreenVO {
     @Getter  @Setter private Integer kkrs;
     @ApiModelProperty(value = "早退人数")
     @Getter  @Setter private Integer ztrs;
-//    @ApiModelProperty(value = "到课率")
-//    @Getter  @Setter private String dkl;
+    @ApiModelProperty(value = "到课率")
+    @Getter  @Setter private Double dkl;
 //    @ApiModelProperty(value = "趋势%")
 //    @Getter  @Setter private String qs;
 

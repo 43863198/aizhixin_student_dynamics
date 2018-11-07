@@ -35,10 +35,26 @@ public class EtlScoreController {
         standardScoreService.etlDB2DB(orgId, xn, xq);
     }
 
-    @PutMapping(value = "/index", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "PUT", value = "学生成绩指标的计算", response = Void.class, notes = "学生成绩指标的计算<br><br><b>@author zhen.pan</b>")
-    public void score(@ApiParam(value = "orgId 机构id" , required = true) @RequestParam(value = "orgId") Long orgId) {
-        standardScoreSemesterIndexService.schoolStudentScoreIndex(orgId);
+    @PutMapping(value = "/changjiang/etlxnxq", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "PUT", value = "长江学生成绩数据库对数据库标准数据清洗ETL", response = Void.class, notes = "长江学生成绩数据库对数据库标准数据清洗ETL<br><br><b>@author zhen.pan</b>")
+    public void etlChangjiangScore(@ApiParam(value = "xxdm 机构代码" , required = true) @RequestParam(value = "xxdm") String xxdm,
+                         @ApiParam(value = "xn 学年" , required = true) @RequestParam(value = "xn") String xn,
+                         @ApiParam(value = "xq 学期" , required = true) @RequestParam(value = "xq") Integer xq) {
+        standardScoreService.etlCjDB2DB(xxdm, xn, xq);
+    }
+
+    @PutMapping(value = "/index/unit", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "PUT", value = "学生成绩单位指标的汇总计算", response = Void.class, notes = "学生成绩单位指标的汇总计算<br><br><b>@author zhen.pan</b>")
+    public void unit(@ApiParam(value = "xxdm 机构代码" , required = true) @RequestParam(value = "xxdm") String xxdm) {
+        standardScoreSemesterIndexService.schoolStudentScoreIndex(xxdm);
+    }
+
+    @PutMapping(value = "/index/unitsemster", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "PUT", value = "学生成绩单位指标按学期的汇总计算", response = Void.class, notes = "学生成绩单位指标按学期的汇总计算<br><br><b>@author zhen.pan</b>")
+    public void unitsemster(@ApiParam(value = "xxdm 机构代码" , required = true) @RequestParam(value = "xxdm") String xxdm,
+                      @ApiParam(value = "xn 学年" , required = true) @RequestParam(value = "xn") String xn,
+                      @ApiParam(value = "xq 学期" , required = true) @RequestParam(value = "xq") String xq) {
+        standardScoreSemesterIndexService.oneSemesterSchoolStudentScoreUnitIndex(xxdm, xn, xq);
     }
 
     @PutMapping(value = "/index/semester", produces = MediaType.APPLICATION_JSON_VALUE)

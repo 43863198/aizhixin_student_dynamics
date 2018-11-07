@@ -65,7 +65,7 @@ public class DateUtil {
 		if (date != null) {
 			returnValue = shorFormat.format(date);
 		}
-		return (returnValue);
+		return returnValue;
 	}
 	
 	/**

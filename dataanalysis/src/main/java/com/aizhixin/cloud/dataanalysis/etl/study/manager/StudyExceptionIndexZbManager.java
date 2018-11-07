@@ -25,8 +25,8 @@ public class StudyExceptionIndexZbManager {
             "SUM(IF(p.KCLB='1', IF(p.XDZT=100, p.XF, 0), 0)) AS BXBJGXF, " +
             "GROUP_CONCAT(IF(p.XDZT=100,CONCAT(' 课程号:', p.KCH, ',课程名:', p.KCMC, ',学分:', p.XF), '')) AS LXKCNR," +
             "GROUP_CONCAT(IF(p.KCLB='1', CONCAT(' 课程号:', p.KCH, ',课程名:', p.KCMC, ',学分:', p.XF), ''))  AS BXBJGKCNR " +
-            "FROM t_xsjbxx x LEFT JOIN t_xspyjh p ON x.XH=p.XH " +
-            "WHERE x.XXID=? AND x.YXSH=? AND p.XXDM=? AND p.YXSH=? AND x.RXNY<=? AND ? <= x.YBYNY " +
+            "FROM t_xsjbxx x LEFT JOIN t_xspyjh p ON x.XH=p.XH AND p.KCLB='1'" +
+            "WHERE x.XXID=? AND x.YXSH=? AND p.XXDM=? AND p.YXSH=? AND x.RXNY<=? AND ? <= x.YBYNY AND x.DQZT NOT IN ('02', '04', '16') " +
             "GROUP BY x.XH, x.XM, x.BJMC, x.ZYH, x.ZYMC, x.YXSH, x.YXSMC";
 
     public static String SQL_ZXXS_YXSH = "SELECT DISTINCT x.YXSH FROM t_xsjbxx x WHERE x.XXID=? AND x.RXNY<=? AND ? <= x.YBYNY";

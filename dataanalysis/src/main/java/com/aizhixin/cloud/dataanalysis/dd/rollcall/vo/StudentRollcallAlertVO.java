@@ -13,11 +13,17 @@ import lombok.ToString;
 @NoArgsConstructor
 public class StudentRollcallAlertVO {
 
+    @ApiModelProperty(value = "学生ID")
+    @Getter  @Setter private Long studentId;
+
     @ApiModelProperty(value = "学生学号")
     @Getter @Setter private String studentNo;
 
     @ApiModelProperty(value = "学生名称")
     @Getter  @Setter private String studentName;
+
+    @ApiModelProperty(value = "班级ID")
+    @Getter  @Setter private Long classesId;
 
     @ApiModelProperty(value = "班级名称")
     @Getter  @Setter private String classesName;
@@ -37,14 +43,19 @@ public class StudentRollcallAlertVO {
     @ApiModelProperty(value = "到课率")
     @Getter  @Setter private Double dkl;
 
-    public StudentRollcallAlertVO(String studentNo, String studentName, String classesName, String professionalName, String collegeName, Long shouldCount, Long normal, Double dkl) {
-        this.studentNo = studentNo;
-        this.studentName = studentName;
-        this.classesName = classesName;
-        this.professionalName = professionalName;
-        this.collegeName = collegeName;
+    public StudentRollcallAlertVO(Long studentId, Long shouldCount, Long normal, Double dkl) {
+        this.studentId = studentId;
         this.shouldCount = shouldCount;
         this.normal = normal;
         this.dkl = dkl;
+    }
+    public StudentRollcallAlertVO(Long studentId, String studentNo, String studentName, Long classesId, String classesName, String professionalName, String collegeName) {
+        this.studentId = studentId;
+        this.studentNo = studentNo;
+        this.studentName = studentName;
+        this.classesId = classesId;
+        this.classesName = classesName;
+        this.professionalName = professionalName;
+        this.collegeName = collegeName;
     }
 }

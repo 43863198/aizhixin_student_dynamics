@@ -1,18 +1,14 @@
 package com.aizhixin.cloud.dataanalysis.setup.controller;
 
-import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningSettingsDTO;
 import com.aizhixin.cloud.dataanalysis.setup.domain.AlarmSettingDomain;
 import com.aizhixin.cloud.dataanalysis.setup.domain.ProcessingModeDomain;
-import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.setup.job.WarningTypeOnAndOffJob;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
-
 import com.aizhixin.cloud.dataanalysis.setup.service.GenerateWarningInfoService;
 import com.aizhixin.cloud.dataanalysis.setup.service.RuleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

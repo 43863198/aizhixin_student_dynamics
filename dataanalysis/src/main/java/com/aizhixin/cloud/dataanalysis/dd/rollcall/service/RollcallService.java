@@ -2,7 +2,10 @@ package com.aizhixin.cloud.dataanalysis.dd.rollcall.service;
 
 
 import com.aizhixin.cloud.dataanalysis.common.PageData;
+import com.aizhixin.cloud.dataanalysis.common.RoleTool;
+import com.aizhixin.cloud.dataanalysis.common.dto.OrgCollegeIdDTO;
 import com.aizhixin.cloud.dataanalysis.common.util.DateUtil;
+import com.aizhixin.cloud.dataanalysis.dd.rollcall.dto.DayAndDayOfWeekDTO;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.manager.RollCallManager;
 import com.aizhixin.cloud.dataanalysis.dd.rollcall.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -204,17 +207,83 @@ public class RollcallService {
         return rollCallManager.findUnitRollcallStatistics(orgId, collegeId, professionalId, timeRange);
     }
 
+//    /**
+//     * 课程考勤统计
+//     */
+//    public PageData<CourseRollcallStatisticsVO> findCourseRollcallStatistics(Long orgId, String timeRange, Integer pageIndex, Integer pageSize) {
+//        return rollCallManager.findCourseRollcallStatistics(orgId, null, null, timeRange, pageIndex, pageSize);
+//    }
+
     /**
      * 课程考勤统计
      */
-    public PageData<CourseRollcallStatisticsVO> findCourseRollcallStatistics(Long orgId, String timeRange, Integer pageIndex, Integer pageSize) {
-        return rollCallManager.findCourseRollcallStatistics(orgId, timeRange, pageIndex, pageSize);
+    public PageData<CourseRollcallStatisticsVO> findCourseRollcallStatisticsV2(Long orgId, Long collegeId, String corse, String timeRange, Integer pageIndex, Integer pageSize) {
+        return rollCallManager.findCourseRollcallStatistics(orgId, collegeId, corse, timeRange, pageIndex, pageSize);
     }
+
+//    /**
+//     * 老师考勤统计
+//     */
+//    public PageData<TeacherRollcallStatisticsVO> findTeacherRollcallStatistics(Long orgId, String timeRange, Integer pageIndex, Integer pageSize) {
+//        return rollCallManager.findTeacherRollcallStatistics(orgId, null, null, timeRange, pageIndex, pageSize);
+//    }
 
     /**
      * 老师考勤统计
      */
-    public PageData<TeacherRollcallStatisticsVO> findTeacherRollcallStatistics(Long orgId, String timeRange, Integer pageIndex, Integer pageSize) {
-        return rollCallManager.findTeacherRollcallStatistics(orgId, timeRange, pageIndex, pageSize);
+    public PageData<TeacherRollcallStatisticsVO> findTeacherRollcallStatisticsV2(Long orgId, Long collegeId, String corse, String timeRange, Integer pageIndex, Integer pageSize) {
+        return rollCallManager.findTeacherRollcallStatistics(orgId, collegeId, corse, timeRange, pageIndex, pageSize);
+    }
+
+    /**
+     * 大屏当天考勤统计
+     */
+    public CurrentDayRollcallStatisticsVO findCurrentDayRollcallScreen(Long orgId, Long collegeId, String roles) {
+        Date d = new Date ();
+        String day = DateUtil.formatShort(d);
+        String dayEndtime = DateUtil.format(d, "HH:mm");
+
+        OrgCollegeIdDTO dto = RoleTool.orgAndCollegeResetByRole(orgId, collegeId, roles);
+        return  rollCallManager.findDateStatistics(dto.getOrgId(), dto.getCollegeId(), day, dayEndtime);
+    }
+
+    /**
+     * 大屏本周及上周考勤统计
+     */
+    public SchoolWeekRollcallScreenZhV2VO findCurrentWeekAndPreWeekRollcallScreen(Long orgId, Long collegeId, String roles) {
+        Date d = new Date ();
+        String dayendtime = DateUtil.format(d, "HH:mm");
+        Date cmonday = DateUtil.getMonday(d);
+        String monday = DateUtil.formatShort(cmonday);
+        String endday = DateUtil.formatShort(d);
+        int im = DateUtil.getDayOfWeek(cmonday);
+        int ie = DateUtil.getDayOfWeek(d);
+        List<DayAndDayOfWeekDTO> days = new ArrayList<>();
+        for (int i = im; i <= ie; i++) {
+            DayAndDayOfWeekDTO day = new DayAndDayOfWeekDTO();
+            day.setDayOfWeek(i);
+            Date t = cmonday;
+            if (i != im) {
+                t = DateUtil.afterNDay(cmonday, i - im);
+            }
+            day.setDay(DateUtil.formatShort(t));
+            days.add(day);
+        }
+
+        Date pmonday = DateUtil.getPreMonday(d);
+        Date psunday = DateUtil.getSunday(pmonday);
+        String pmondaystr = DateUtil.formatShort(pmonday);
+        String psundaystr = DateUtil.formatShort(psunday);
+
+        OrgCollegeIdDTO dto = RoleTool.orgAndCollegeResetByRole(orgId, collegeId, roles);
+
+        return  rollCallManager.queryWeekAnPreWeekRollcall(dto.getOrgId() , dto.getCollegeId(), days, monday, endday, pmondaystr, psundaystr, dayendtime);
+    }
+
+    /**
+     * 导员考勤统计
+     */
+    public PageData<TeacherRollcallStatisticsVO> findManagerTeacherRollcallStatistics(Long orgId, Long collegeId, String corse, String timeRange, Integer pageIndex, Integer pageSize) {
+        return rollCallManager.findManagerTeacherRollcallStatistics(orgId, collegeId, corse, timeRange, pageIndex, pageSize);
     }
 }

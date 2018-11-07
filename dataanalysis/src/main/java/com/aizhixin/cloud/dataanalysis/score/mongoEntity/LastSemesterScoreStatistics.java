@@ -94,6 +94,11 @@ public class LastSemesterScoreStatistics {
     private String dataSource;
 
     /**
+     * 不及格数据源
+     */
+    private String dataSource2;
+
+    /**
      * 不及格必修课程数
      */
     private int failRequiredCourseNum;

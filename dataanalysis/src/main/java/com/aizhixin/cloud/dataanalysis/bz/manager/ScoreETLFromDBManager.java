@@ -22,6 +22,8 @@ public class ScoreETLFromDBManager {
     public static String SQL_ETL_DB_SRC_XN_XQ = "SELECT c.XN, c.XQM, x.YXSH, x.ZYH, x.BJMC, x.XH, x.XM, x.NJ, c.JXBH, c.KCH, c.XKSX, c.RKJSGH, c.KSRQ, c.KSFSM, c.KSXZM, c.DJLKSCJ, c.JD, c.KCCJ, c.PSCJ " +
             "FROM t_xscjxx c, t_xsjbxx x  " +
             "WHERE c.XH=x.XH AND x.XXID=? AND c.XN=? AND c.XQM=?";
+
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -90,6 +92,49 @@ public class ScoreETLFromDBManager {
                 new Object[]{orgId, xn, xq},
                 new int [] {Types.BIGINT, Types.VARCHAR, Types.VARCHAR},
                 (ResultSet rs, int rowNum) -> createBean(orgId.toString(), rs)
+        );
+    }
+
+
+    private StandardScore createChangjiangBean(String xxdm, ResultSet rs) throws SQLException {
+        StandardScore s = new StandardScore ();
+        s.setXxdm(xxdm);
+        s.setXn(rs.getString("XN"));
+        s.setXqm("" + rs.getInt("XQ"));
+        s.setYxsh(rs.getString("XYDM"));
+        s.setZyh(rs.getString("ZYM"));
+        s.setBh(rs.getString("BJDM"));
+        s.setXh(rs.getString("XH"));
+        s.setXm(rs.getString("XM"));
+        s.setNj("" + rs.getInt("SZNJ"));
+        s.setJxbh(rs.getString("XKKH"));
+        s.setKch(rs.getString("KCDM"));
+        s.setKclbm("1");//全必修
+        s.setXf(new Double(rs.getString("XF")));
+
+        s.setBfcj(rs.getDouble("FSLKSCJ"));
+        if (s.getBfcj() < 60) {
+            if ("合格".equals(rs.getString("BKCJ"))) {
+                s.setJd(1.0);
+                s.setBfcj(60.0);
+
+            } else {
+                s.setJd(0.0);
+            }
+        } else {
+            s.setJd((s.getBfcj() - 50)/10);
+        }
+        s.setKscj(s.getBfcj());
+        return s;
+    }
+
+    @Transactional(readOnly = true)
+    public List<StandardScore> queryChangjiangSemesterDBData(final String xxdm, final String xn, final Integer xq) {
+        String sql = "SELECT  XM,XH,SZNJ,BJDM,ZYM,XYDM,XN,XQ,KCDM,XF,FSLKSCJ,BKCJ,XKKH FROM v_cjb WHERE XN=? AND XQ=?";
+        return jdbcTemplate.query(sql,
+                new Object[]{xn, xq},
+                new int [] {Types.VARCHAR, Types.INTEGER},
+                (ResultSet rs, int rowNum) -> createChangjiangBean(xxdm, rs)
         );
     }
 }
