@@ -15,8 +15,10 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author: Created by jianwei.wu
@@ -287,6 +289,7 @@ public class FigurePortraitService {
             if(null!=warningInformationList&&warningInformationList.size()>0){
                 for(WarningInformation w : warningInformationList){
                     EarlyWarningVO  ew = new EarlyWarningVO();
+                    ew.setWarningId(w.getId());
                     ew.setWarningTime(w.getWarningTime().toString());
                     ew.setWarningCondition(w.getWarningCondition());
                     ew.setWarningLevel(w.getWarningLevel());
