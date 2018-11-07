@@ -3,16 +3,19 @@ package com.aizhixin.cloud.dataanalysis.setup.service;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
 import com.aizhixin.cloud.dataanalysis.common.service.DistributeLock;
+import com.aizhixin.cloud.dataanalysis.common.util.RestUtil;
 import com.aizhixin.cloud.dataanalysis.etl.score.service.StandardScoreSemesterIndexService;
 import com.aizhixin.cloud.dataanalysis.etl.study.service.StudyExceptionIndexService;
 import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
 import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
+import com.aizhixin.cloud.dataanalysis.setup.dto.StudentAlertMsgDTO;
 import com.aizhixin.cloud.dataanalysis.setup.entity.*;
 import com.aizhixin.cloud.dataanalysis.studentRegister.job.StudentRegisterJob;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -55,6 +58,10 @@ public class GenerateWarningInfoService {
     private StandardScoreSemesterIndexService standardScoreSemesterIndexService;
     @Autowired
     private  AlarmCreateRecordService alarmCreateRecordService;
+    @Autowired
+    private RestUtil restUtil;
+    @Value("${dl.dledu.back.host}")
+    private String zhixinUrl;
 
     public void warningJob() {
         Calendar c = Calendar.getInstance();
@@ -657,16 +664,20 @@ public class GenerateWarningInfoService {
                     restHasMap.put(as.getWarningLevel(), gradeList);
                 }
             }
+
+            WarningType warningType = warningTypeService.getWarningTypeByOrgIdAndType(orgId, type);
             //按照预警等级去重
             LinkedList<WarningInformation> resList = new LinkedList<>();
             Set<String> jobNumber = new HashSet<>();
             int r = 0, o = 0, y = 0;//累计新生成的数据的条数
+            List<StudentAlertMsgDTO> dxList = new ArrayList<>();
             if (restHasMap.containsKey(1)) {
                 for (WarningInformation w : restHasMap.get(1)) {
                     w.setWarningLevel(1);
                     w.setWarningType(type);
                     jobNumber.add(w.getJobNumber());
                     resList.add(w);
+                    addStudentAlertMsgContent(dxList, null != warningType ? warningType.getWarningName() : "", w, 1);
                     r++;
                 }
             }
@@ -677,6 +688,7 @@ public class GenerateWarningInfoService {
                         w.setWarningType(type);
                         jobNumber.add(w.getJobNumber());
                         resList.add(w);
+                        addStudentAlertMsgContent(dxList, null != warningType ? warningType.getWarningName() : "", w, 2);
                         o++;
                     }
                 }
@@ -688,11 +700,11 @@ public class GenerateWarningInfoService {
                         w.setWarningType(type);
                         jobNumber.add(w.getJobNumber());
                         resList.add(w);
+                        addStudentAlertMsgContent(dxList, null != warningType ? warningType.getWarningName() : "", w, 3);
                         y++;
                     }
                 }
             }
-            WarningType warningType = warningTypeService.getWarningTypeByOrgIdAndType(orgId, type);
             AlarmCreateRecord alertLog = new AlarmCreateRecord();
             alertLog.setOrgId(orgId);
             alertLog.setAlarmType(type);//翻译成汉字
@@ -718,6 +730,17 @@ public class GenerateWarningInfoService {
             }
             warningInformationService.save(resList);
             alarmCreateRecordService.save(alertLog);
+            if (dxList.size() > 0) {
+                //发送短信
+                for (StudentAlertMsgDTO sm : dxList) {
+                    try {
+                        restUtil.post(zhixinUrl + "/api/web/v1/msg/send?phone=" + sm.getPhone() + "&msg=" + sm.getContent(), null);
+                        log.info("给[{}]电话号码 发送告警短信:[{}]成功", sm.getPhone(), sm.getContent());
+                    } catch (Exception e) {
+                        log.info("给[{}]电话号码 发送告警短信:[{}]失败", sm.getPhone(), sm.getContent());
+                    }
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -727,4 +750,24 @@ public class GenerateWarningInfoService {
 //    }
     }
 
+    private void addStudentAlertMsgContent(List<StudentAlertMsgDTO> list, String warningTypeName, WarningInformation w, int alertLevel) {
+        if (!StringUtils.isEmpty(w.getPhone()) && 11 == w.getPhone().length() && w.getPhone().startsWith("1") && org.apache.commons.lang.StringUtils.isNumeric(w.getPhone())) {//电话号码有值并且是11位，以1开始，并且全部是数字
+            StudentAlertMsgDTO d = new StudentAlertMsgDTO();
+            StringBuilder sb = new StringBuilder();
+            sb.append(w.getName()).append("同学，本学期有一条");
+            switch (alertLevel) {
+                case 1: sb.append("红");
+                break;
+                case 2:sb.append("橙");
+                    break;
+                case 3:sb.append("黄");
+                    break;
+                    default:
+            }
+            sb.append("色").append(warningTypeName).append("预警通知到你，预警内容");
+            sb.append(w.getWarningCondition());
+            sb.append("。希望你认真查找原因，努力学习，以便顺利完成学业。【桂工教务处】");
+            d.setPhone(w.getPhone());
+        }
+    }
 }
