@@ -179,14 +179,14 @@ public class GenerateWarningInfoService {
                                         rule = ruleList.get(0);
                                     }
                                     if (null != rule) {
-                                        if (rule.getName().equals("A")) {
-                                            WarningType wt = warningTypeService.getWarningTypeByOrgIdAndType(orgId, type);
-                                            Date startTime = wt.getStartTime();
-                                            registerList = studentRegisterJob.studenteRegisterJob(orgId, schoolYear, semester, rp.getId(), startTime);
-                                        }
-                                        if (rule.getName().equals("D")) {
-                                            absenteeismList = rollCallJob.rollCallJob(orgId, schoolYear, semester, rp.getId());
-                                        }
+//                                        if (rule.getName().equals("A")) { //迎新
+//                                            WarningType wt = warningTypeService.getWarningTypeByOrgIdAndType(orgId, type);
+//                                            Date startTime = wt.getStartTime();
+//                                            registerList = studentRegisterJob.studenteRegisterJob(orgId, schoolYear, semester, rp.getId(), startTime);
+//                                        }
+//                                        if (rule.getName().equals("D")) { //旷课
+//                                            absenteeismList = rollCallJob.rollCallJob(orgId, schoolYear, semester, rp.getId());
+//                                        }
 //                                        if (rule.getName().equals("G")) {
 //                                            performanceFluctuationList = scoreJob.scoreFluctuateJob(orgId, schoolYear, semester, rp.getId());
 //                                        }

@@ -81,8 +81,11 @@ public class StudyExceptionIndex {
     @ApiModelProperty(value = "BXBJGKCNR必修不及格课程内容")
     @Column(name = "BXBJGKCNR")
     @Getter @Setter private String bxbjgkcnr;
+    @ApiModelProperty(value = "移动电话")
+    @Column(name = "YDDH")
+    @Getter @Setter private String yddh;
 
-    public StudyExceptionIndex (String xh, String xm, String bjmc, String zyh, String zymc, String yxsh, String yxsmc, Long kcs, Long lxkcs, Long tgkcs, Double xf, Double lxxf, Double tgxf, Double bxbjgxf, String lxkcnr, String bxbjgkcnr) {
+    public StudyExceptionIndex (String xh, String xm, String bjmc, String zyh, String zymc, String yxsh, String yxsmc, Long kcs, Long lxkcs, Long tgkcs, Double xf, Double lxxf, Double tgxf, Double bxbjgxf, String lxkcnr, String bxbjgkcnr, String yddh) {
         this.xh = xh;
         this.xm = xm;
         this.bjmc = bjmc;
@@ -99,6 +102,7 @@ public class StudyExceptionIndex {
         this.bxbjgxf = bxbjgxf;
         this.lxkcnr = strProcess(lxkcnr);
         this.bxbjgkcnr = strProcess(bxbjgkcnr);
+        this.yddh = yddh;
     }
 
     static String strProcess(String t) {
