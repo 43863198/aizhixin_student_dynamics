@@ -14,6 +14,8 @@ import lombok.ToString;
 @Data
 @ToString
 public class EarlyWarningVO {
+    @ApiModelProperty(value = "预警信息ID")
+    private String warningId;
     @ApiModelProperty(value = "预警时间")
     private String warningTime;
     @ApiModelProperty(value = "预警名称")
