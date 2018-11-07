@@ -181,7 +181,7 @@ public class AlarmSettingsController {
             @ApiParam(value = "userName 登录用户名称", required = true) @RequestParam(value = "userName") String userName
     ) {
         Map<String, Object> result = new HashMap<>();
-        generateWarningInfoService.enerateWarningInfo(orgId, warningType);
+        generateWarningInfoService.enerateWarningInfo(orgId, warningType, overOrAdd, userId, userName);
         result.put("success", true);
         result.put("message", "手动生成数据成功!");
         return result;

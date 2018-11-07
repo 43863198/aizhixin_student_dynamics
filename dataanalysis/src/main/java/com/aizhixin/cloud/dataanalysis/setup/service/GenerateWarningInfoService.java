@@ -7,10 +7,7 @@ import com.aizhixin.cloud.dataanalysis.etl.score.service.StandardScoreSemesterIn
 import com.aizhixin.cloud.dataanalysis.etl.study.service.StudyExceptionIndexService;
 import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
 import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
-import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
-import com.aizhixin.cloud.dataanalysis.setup.entity.Rule;
-import com.aizhixin.cloud.dataanalysis.setup.entity.RuleParameter;
-import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
+import com.aizhixin.cloud.dataanalysis.setup.entity.*;
 import com.aizhixin.cloud.dataanalysis.studentRegister.job.StudentRegisterJob;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SQLQuery;
@@ -56,6 +53,8 @@ public class GenerateWarningInfoService {
     private StudyExceptionIndexService studyExceptionIndexService;
     @Autowired
     private StandardScoreSemesterIndexService standardScoreSemesterIndexService;
+    @Autowired
+    private  AlarmCreateRecordService alarmCreateRecordService;
 
     public void warningJob() {
         Calendar c = Calendar.getInstance();
@@ -77,13 +76,13 @@ public class GenerateWarningInfoService {
         if (null != warningTypeList && warningTypeList.size() > 0) {
             for (WarningType wt : warningTypeList) {
                 if (wt.getSetupCloseFlag() == 10) {
-                    this.warningInfo(wt.getOrgId(), wt.getType(), teachYear, semester);
+                    this.warningInfo(wt.getOrgId(), wt.getType(), teachYear, semester, 10, null, null);
                 }
             }
         }
     }
 
-    public void enerateWarningInfo(Long orgId, String warningType) {
+    public void enerateWarningInfo(Long orgId, String warningType, Integer overOrAdd, Long userId, String userName) {
         Calendar c = Calendar.getInstance();
         // 当前年份
         int year = c.get(Calendar.YEAR);
@@ -107,7 +106,7 @@ public class GenerateWarningInfoService {
             }
             teachYear = year + "";
         }
-        warningInfo(orgId, warningType, teachYear, semester);
+        warningInfo(orgId, warningType, teachYear, semester, overOrAdd, userId, userName);
 
     }
 
@@ -137,7 +136,7 @@ public class GenerateWarningInfoService {
     }
 
     @Async
-    public void warningInfo(Long orgId, String type, String schoolYear, String semester) {
+    public void warningInfo(Long orgId, String type, String schoolYear, String semester, Integer overOrAdd, Long userId, String userName) {
 //        StringBuilder path = new StringBuilder("/warningInfo");
 //        path.append("/").append(type);
 //        if (distributeLock.getLock(path)) {
@@ -661,12 +660,14 @@ public class GenerateWarningInfoService {
             //按照预警等级去重
             LinkedList<WarningInformation> resList = new LinkedList<>();
             Set<String> jobNumber = new HashSet<>();
+            int r = 0, o = 0, y = 0;//累计新生成的数据的条数
             if (restHasMap.containsKey(1)) {
                 for (WarningInformation w : restHasMap.get(1)) {
                     w.setWarningLevel(1);
                     w.setWarningType(type);
                     jobNumber.add(w.getJobNumber());
                     resList.add(w);
+                    r++;
                 }
             }
             if (restHasMap.containsKey(2)) {
@@ -676,6 +677,7 @@ public class GenerateWarningInfoService {
                         w.setWarningType(type);
                         jobNumber.add(w.getJobNumber());
                         resList.add(w);
+                        o++;
                     }
                 }
             }
@@ -686,11 +688,32 @@ public class GenerateWarningInfoService {
                         w.setWarningType(type);
                         jobNumber.add(w.getJobNumber());
                         resList.add(w);
+                        y++;
                     }
                 }
             }
-            warningInformationService.deleteWarningInformation(orgId, type, schoolYear, semester);
+            AlarmCreateRecord alertLog = new AlarmCreateRecord();
+            alertLog.setOrgId(orgId);
+            alertLog.setAlarmType(type);//需翻译成汉字
+            alertLog.setCreatedBy(userName);
+            alertLog.setCreatedId(userId);
+            alertLog.setAddRedNum(r);
+            alertLog.setAddOrgNum(o);
+            alertLog.setAddYelloNum(y);
+            alertLog.setCreatedDate(new Date());
+
+            alertLog.setDeleteRedNum(0);
+            alertLog.setDeleteOrgNum(0);
+            alertLog.setDeleteYelloNum(0);
+
+            if (null == overOrAdd || 10 == overOrAdd) {
+                warningInformationService.deleteWarningInformation(orgId, type, schoolYear, semester);
+                alertLog.setDeleteRedNum(warningInformationService.countByOrgIdAndTeacherYearAndSemesterAndWarningTypeAndWarningLevel(orgId, type, schoolYear, semester, 1).intValue());
+                alertLog.setDeleteOrgNum(warningInformationService.countByOrgIdAndTeacherYearAndSemesterAndWarningTypeAndWarningLevel(orgId, type, schoolYear, semester, 2).intValue());
+                alertLog.setDeleteYelloNum(warningInformationService.countByOrgIdAndTeacherYearAndSemesterAndWarningTypeAndWarningLevel(orgId, type, schoolYear, semester, 3).intValue());
+            }
             warningInformationService.save(resList);
+            alarmCreateRecordService.save(alertLog);
         } catch (Exception e) {
             e.printStackTrace();
         }

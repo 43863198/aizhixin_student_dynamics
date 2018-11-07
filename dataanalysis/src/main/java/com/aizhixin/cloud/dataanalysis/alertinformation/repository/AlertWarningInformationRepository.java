@@ -1,9 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.alertinformation.repository;
 
-import com.aizhixin.cloud.dataanalysis.alertinformation.domain.AttachmentDomain;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
-
-import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -55,4 +52,5 @@ public interface AlertWarningInformationRepository extends JpaRepository<Warning
 
     List<WarningInformation> findByOrgIdAndDeleteFlag(Long orgId,Integer deleteFlag);
 
+    long countByOrgIdAndTeacherYearAndSemesterAndWarningTypeAndWarningLevel(Long orgId, String teacherYear, String semester, String warningType, int warningLevel);
 }

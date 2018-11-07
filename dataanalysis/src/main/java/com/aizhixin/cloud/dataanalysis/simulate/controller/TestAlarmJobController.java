@@ -3,12 +3,16 @@
  */
 package com.aizhixin.cloud.dataanalysis.simulate.controller;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-
+import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
+import com.aizhixin.cloud.dataanalysis.analysis.job.SchoolStatisticsAnalysisJob;
+import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.service.DistributeLock;
+import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
+import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
 import com.aizhixin.cloud.dataanalysis.setup.service.GenerateWarningInfoService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,17 +21,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
-import com.aizhixin.cloud.dataanalysis.analysis.job.SchoolStatisticsAnalysisJob;
-import com.aizhixin.cloud.dataanalysis.common.constant.AlertTypeConstant;
-import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
-import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
-import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
-import com.aizhixin.cloud.dataanalysis.studentRegister.job.StudentRegisterJob;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 /**
  * @author zhengning
@@ -142,7 +138,7 @@ public class TestAlarmJobController {
             @ApiParam(value = "semester 学期", required = true) @RequestParam(value = "semester", required = true) String semester
 	) {
 		Map<String, Object> result = new HashMap<>();
-		generateWarningInfoService.warningInfo(orgId, warningType,teacherYear,semester);
+		generateWarningInfoService.warningInfo(orgId, warningType,teacherYear,semester, 10, null, null);
 		result.put("success", true);
 		result.put("message", "手动生成数据成功!");
 		return result;
