@@ -29,6 +29,10 @@ public class FailScoreStatistics {
 	 * 姓名
 	 */
 	private String userName;
+	/**
+	 * 移动电话
+	 */
+	private String phone;
 
 	/**
 	 * 照片

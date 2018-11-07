@@ -311,7 +311,7 @@ public class ScoreJob {
             failScoreStatisticsRespository.deleteAll();
             Set<FailScoreStatistics> sfcList = new HashSet<>();
             if (null != start && null != end) {
-                StringBuilder aql = new StringBuilder("SELECT XH as xh, XM as xm, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc FROM t_xsjbxx  WHERE 1 = 1");
+                StringBuilder aql = new StringBuilder("SELECT XH as xh, XM as xm, YDDH as yddh, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc FROM t_xsjbxx  WHERE 1 = 1");
                 aql.append(" AND RXFS NOT IN ('12','14')");
                 aql.append(" AND RXNY <= :start");
                 aql.append(" AND YBYNY >= :end");
@@ -342,6 +342,9 @@ public class ScoreJob {
                     }
                     if (null != d.get("xm")) {
                         sfc.setUserName(d.get("xm").toString());
+                    }
+                    if (null != d.get("yddh")) {
+                        sfc.setPhone(d.get("yddh").toString());
                     }
                     if (null != d.get("bh")) {
                         sfc.setClassCode(d.get("bh").toString());
@@ -595,7 +598,7 @@ public class ScoreJob {
                     }
                 });
 
-                StringBuilder aql = new StringBuilder("SELECT XH as xh, XM as xm, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc, NJ as nj FROM t_xsjbxx  WHERE 1 = 1");
+                StringBuilder aql = new StringBuilder("SELECT XH as xh, XM as xm, YDDH as yddh, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc, NJ as nj FROM t_xsjbxx  WHERE 1 = 1");
                 aql.append(" AND RXFS NOT IN ('12','14')");
                 aql.append(" AND RXNY <= :start");
                 aql.append(" AND YBYNY >= :end");
@@ -613,6 +616,9 @@ public class ScoreJob {
                     }
                     if (null != d.get("xm")) {
                         sfc.setUserName(d.get("xm").toString());
+                    }
+                    if (null != d.get("yddh")) {
+                        sfc.setPhone(d.get("yddh").toString());
                     }
                     if (null != d.get("bh")) {
                         sfc.setClassCode(d.get("bh").toString());
@@ -793,10 +799,9 @@ public class ScoreJob {
 //                            String alertId = UUID.randomUUID()
 //                                    .toString();
 //                            alertInfor.setId(alertId);
-                            alertInfor.setName(totalScoreCount
-                                    .getUserName());
-                            alertInfor.setJobNumber(totalScoreCount
-                                    .getJobNum());
+                            alertInfor.setName(totalScoreCount.getUserName());
+                            alertInfor.setJobNumber(totalScoreCount.getJobNum());
+                            alertInfor.setPhone(totalScoreCount.getPhone());
                             alertInfor.setCollogeCode(totalScoreCount.getCollegeCode());
                             alertInfor.setCollogeName(totalScoreCount.getCollegeName());
                             alertInfor.setClassCode(totalScoreCount.getClassCode());
@@ -1018,6 +1023,7 @@ public class ScoreJob {
 //                        alertInfor.setId(alertId);
                         alertInfor.setName(makeUpScoreCount.getUserName());
                         alertInfor.setJobNumber(makeUpScoreCount.getJobNum());
+                        alertInfor.setPhone(makeUpScoreCount.getPhone());
                         alertInfor.setCollogeCode(makeUpScoreCount.getCollegeCode());
                         alertInfor.setCollogeName(makeUpScoreCount.getCollegeName());
                         alertInfor.setClassCode(makeUpScoreCount.getClassCode());
@@ -1064,6 +1070,7 @@ public class ScoreJob {
                         alertInfor.setId(alertId);
                         alertInfor.setName(makeUpScoreCount.getUserName());
                         alertInfor.setJobNumber(makeUpScoreCount.getJobNum());
+                        alertInfor.setPhone(makeUpScoreCount.getPhone());
                         alertInfor.setCollogeCode(makeUpScoreCount.getCollegeCode());
                         alertInfor.setCollogeName(makeUpScoreCount.getCollegeName());
                         alertInfor.setClassCode(makeUpScoreCount.getClassCode());
@@ -1239,9 +1246,9 @@ public class ScoreJob {
                 }
                 final Date current = new Date();
                 StringBuilder sql = new StringBuilder("SELECT ");
-                sql.append("x.xh,x.xm, x.bh, x.bjmc, x.zyh, x.zymc, x.yxsh, x.yxsmc ");
+                sql.append("x.xh,x.xm, x.yddh, x.bh, x.bjmc, x.zyh, x.zymc, x.yxsh, x.yxsmc ");
                 sql.append("FROM (");
-                sql.append("SELECT XH as xh, XM as xm, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc ");
+                sql.append("SELECT XH as xh, XM as xm, YDDH as yddh, BH as bh, BJMC as bjmc, ZYH as zyh, ZYMC as zymc, YXSH as yxsh, YXSMC as yxsmc ");
                 sql.append("FROM t_xsjbxx  WHERE RXFS NOT IN ('12','14') AND RXNY <= ? AND YBYNY >= ? AND (? - CAST(RXNY AS SIGNED)) > ? ");
                 sql.append(") x, (");
                 sql.append("SELECT JOB_NUMBER as xh  ");
@@ -1259,6 +1266,7 @@ public class ScoreJob {
                             alertInfor.setProfessionalName(rs.getString("zymc"));
                             alertInfor.setCollogeCode(rs.getString("yxsh"));
                             alertInfor.setCollogeName(rs.getString("yxsmc"));
+                            alertInfor.setPhone("yddh");
 
                             alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
                             alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());

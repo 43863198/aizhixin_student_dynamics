@@ -131,6 +131,7 @@ public class StudyExceptionIndexService {
                     warn.setJobNumber(e.getXh());
                     warn.setCollogeCode(e.getYxsh());
                     warn.setCollogeName(e.getYxsmc());
+                    warn.setPhone(e.getYddh());
                     warn.setClassCode(null);
                     warn.setClassName(e.getBjmc());
                     warn.setProfessionalCode(e.getZyh());

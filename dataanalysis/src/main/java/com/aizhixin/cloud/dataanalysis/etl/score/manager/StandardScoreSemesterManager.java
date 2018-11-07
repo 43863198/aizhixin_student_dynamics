@@ -48,7 +48,7 @@ public class StandardScoreSemesterManager {
 
     //成绩波动预警计算SQL
     public static String SQL_ALERT_BD = "SELECT " +
-            "x.XH,x.XM,x.BH,x.BJMC,x.ZYH,x.ZYMC,x.YXSH,x.YXSMC, " +
+            "x.XH,x.XM, x.YDDH, x.BH,x.BJMC,x.ZYH,x.ZYMC,x.YXSH,x.YXSMC, " +
             "b.JXNXQ, b.JGPA, b.YXNXQ, b.YGPA, b.GPA " +
             "FROM " +
             "( " +
@@ -138,7 +138,7 @@ public class StandardScoreSemesterManager {
                 new Object[]{orgId.toString(), jxn, jxq, orgId.toString(), yxn, yxq, gpa, orgId},
                 new int [] {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.DOUBLE, Types.BIGINT},
                 (ResultSet rs, int rowNum) -> new StudentSemesterScoreAlertIndexDTO(
-                        rs.getString("XH"), rs.getString("XM"),
+                        rs.getString("XH"), rs.getString("XM"), rs.getString("YDDH"),
                         rs.getString("BH"), rs.getString("BJMC"),
                         rs.getString("ZYH"), rs.getString("ZYMC"),
                         rs.getString("YXSH"), rs.getString("YXSMC"),

@@ -15,7 +15,7 @@ import java.util.List;
 @Transactional
 @Component
 public class StudyExceptionIndexZbManager {
-    public static String SQL_XDYC_COLLEGE = "SELECT x.XH, x.XM, x.BJMC, x.ZYH, x.ZYMC, x.YXSH, x.YXSMC, " +
+    public static String SQL_XDYC_COLLEGE = "SELECT x.XH, x.XM, x.YDDH, x.BJMC, x.ZYH, x.ZYMC, x.YXSH, x.YXSMC, " +
             "COUNT(p.KCH) AS KCS," +
             "SUM(IF(p.XDZT=100, 1, 0)) AS LXKCS," +
             "SUM(IF(p.XDZT!=100, 1, 0)) AS TGKCS," +
@@ -27,7 +27,7 @@ public class StudyExceptionIndexZbManager {
             "GROUP_CONCAT(IF(p.KCLB='1', CONCAT(' 课程号:', p.KCH, ',课程名:', p.KCMC, ',学分:', p.XF), ''))  AS BXBJGKCNR " +
             "FROM t_xsjbxx x LEFT JOIN t_xspyjh p ON x.XH=p.XH AND p.KCLB='1'" +
             "WHERE x.XXID=? AND x.YXSH=? AND p.XXDM=? AND p.YXSH=? AND x.RXNY<=? AND ? <= x.YBYNY AND x.DQZT NOT IN ('02', '04', '16') " +
-            "GROUP BY x.XH, x.XM, x.BJMC, x.ZYH, x.ZYMC, x.YXSH, x.YXSMC";
+            "GROUP BY x.XH, x.XM, x.YDDH, x.BJMC, x.ZYH, x.ZYMC, x.YXSH, x.YXSMC";
 
     public static String SQL_ZXXS_YXSH = "SELECT DISTINCT x.YXSH FROM t_xsjbxx x WHERE x.XXID=? AND x.RXNY<=? AND ? <= x.YBYNY";
 
@@ -55,6 +55,6 @@ public class StudyExceptionIndexZbManager {
                         rs.getString("YXSH"), rs.getString("YXSMC"),
                         rs.getLong("KCS"), rs.getLong("LXKCS"), rs.getLong("TGKCS"),
                         rs.getDouble("XF"), rs.getDouble("LXXF"), rs.getDouble("TGXF"),
-                        rs.getDouble("BXBJGXF"), rs.getString("LXKCNR"), rs.getString("BXBJGKCNR")));
+                        rs.getDouble("BXBJGXF"), rs.getString("LXKCNR"), rs.getString("BXBJGKCNR"), rs.getString("YDDH")));
     }
 }

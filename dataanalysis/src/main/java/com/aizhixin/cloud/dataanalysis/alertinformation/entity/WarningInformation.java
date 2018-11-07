@@ -216,4 +216,8 @@ public class WarningInformation {
     @ApiModelProperty(value = "是否删除标志")
     @Column(name = "DELETE_FLAG")
     @Getter @Setter private Integer deleteFlag = DataValidity.VALID.getState();
+
+    @ApiModelProperty(value = "撤销预警建议及意见")
+    @Column(name = "CANCEL_COMMENTS")
+    @Getter @Setter private String cancelComments;
 }

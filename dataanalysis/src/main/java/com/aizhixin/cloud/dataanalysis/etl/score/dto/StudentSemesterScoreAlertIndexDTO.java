@@ -30,6 +30,8 @@ public class StudentSemesterScoreAlertIndexDTO {
     @Getter @Setter private String xh;
     @ApiModelProperty(value = "XM姓名")
     @Getter @Setter private String xm;
+    @ApiModelProperty(value = "移动电话")
+    @Getter @Setter private String yddh;
     @ApiModelProperty(value = "近学年学期")
     @Getter @Setter private String jxnxq;
     @ApiModelProperty(value = "近GPA")
@@ -41,9 +43,10 @@ public class StudentSemesterScoreAlertIndexDTO {
     @ApiModelProperty(value = "GPA差值")
     @Getter @Setter private Double gpa;
 
-    public StudentSemesterScoreAlertIndexDTO (String xh, String xm, String bjbh, String bjmc, String zyh, String zymc, String yxsh, String yxsmc, String jxnxq, Double jgpa, String yxnxq, Double ygpa, Double gpa) {
+    public StudentSemesterScoreAlertIndexDTO (String xh, String xm, String yddh, String bjbh, String bjmc, String zyh, String zymc, String yxsh, String yxsmc, String jxnxq, Double jgpa, String yxnxq, Double ygpa, Double gpa) {
         this.xh = xh;
         this.xm = xm;
+        this.yddh = yddh;
         this.bjbh = bjbh;
         this.bjmc = bjmc;
         this.zyh = zyh;

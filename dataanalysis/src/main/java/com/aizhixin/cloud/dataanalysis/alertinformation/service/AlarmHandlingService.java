@@ -76,9 +76,9 @@ public class AlarmHandlingService {
                 alertWarningInformationService.save(warningInformation);
                 if (null != dealDomain.getDealId() && !StringUtils.isBlank(dealDomain.getDealId())) {
                     OperationRecord operationRecord = operaionRecordService.getOneById(dealDomain.getDealId());
-                    operationRecord.setOrgId(warningInformation.getOrgId());
+//                    operationRecord.setOrgId(warningInformation.getOrgId());
                     operationRecord.setOperationTime(new Date());
-                    operationRecord.setDealType(dealDomain.getDealType());
+//                    operationRecord.setDealType(dealDomain.getDealType());
                     operationRecord.setProposal(dealDomain.getDealInfo());
                     operaionRecordService.save(operationRecord);
                     List<AttachmentInformation> attachmentInformations = attachmentInfomationService.getAttachmentInformationByOprId(operationRecord.getId());

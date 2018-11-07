@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <property name="now" value="now()" dbms="mysql,h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+    <property name="now" value="sysdate" dbms="oracle"/>
+
+    <changeSet id="20181107133045" author="zhen.pan">
+		<preConditions onFail="MARK_RAN">
+	        <not>
+	            <tableExists tableName="T_ALARM_CREATE_RECORD"/>
+	        </not>
+	    </preConditions>
+        <createTable tableName="T_ALARM_CREATE_RECORD" remarks="告警信息生成日志">
+            <column name="ID" type="VARCHAR(60)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ORG_ID" type="BIGINT" remarks="学校"/>
+            <column name="ALARM_TYPE" type="VARCHAR(80)" remarks="预警类型名称"/>
+            <column name="DELETE_RED_NUM" type="INT" remarks="覆盖红色预警条数"/>
+            <column name="DELETE_ORG_NUM" type="INT" remarks="覆盖橙色预警条数"/>
+            <column name="DELETE_YELLO_NUM" type="INT" remarks="覆盖黄色预警条数"/>
+            <column name="ADD_RED_NUM" type="INT" remarks="新增红色预警条数"/>
+            <column name="ADD_ORG_NUM" type="INT" remarks="新增橙色预警条数"/>
+            <column name="ADD_YELLO_NUM" type="INT" remarks="新增黄色预警条数"/>
+            <column name="CREATED_ID" type="BIGINT" remarks="创建人ID"/>
+            <column name="CREATED_BY" type="VARCHAR(80)" remarks="创建人"/>
+            <column name="CREATED_DATE" type="TIMESTAMP" defaultValueDate="${now}" remarks="数据创建日期时间"/>
+        </createTable>
+        <createIndex indexName="idx_alarm_create_record_created_date" tableName="T_ALARM_CREATE_RECORD" unique="false">
+            <column name="CREATED_DATE" type="TIMESTAMP"/>
+        </createIndex>
+        <createIndex indexName="idx_alarm_create_record_created_id" tableName="T_ALARM_CREATE_RECORD" unique="false">
+            <column name="CREATED_ID" type="BIGINT"/>
+        </createIndex>
+        <createIndex indexName="idx_alarm_create_record_org_id" tableName="T_ALARM_CREATE_RECORD" unique="false">
+            <column name="ORG_ID" type="BIGINT"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
