@@ -723,10 +723,11 @@ public class GenerateWarningInfoService {
             alertLog.setDeleteYelloNum(0);
 
             if (null == overOrAdd || 10 == overOrAdd) {
-                warningInformationService.deleteWarningInformation(orgId, type, schoolYear, semester);
                 alertLog.setDeleteRedNum(warningInformationService.countByOrgIdAndTeacherYearAndSemesterAndWarningTypeAndWarningLevel(orgId, type, schoolYear, semester, 1).intValue());
                 alertLog.setDeleteOrgNum(warningInformationService.countByOrgIdAndTeacherYearAndSemesterAndWarningTypeAndWarningLevel(orgId, type, schoolYear, semester, 2).intValue());
                 alertLog.setDeleteYelloNum(warningInformationService.countByOrgIdAndTeacherYearAndSemesterAndWarningTypeAndWarningLevel(orgId, type, schoolYear, semester, 3).intValue());
+                
+                warningInformationService.deleteWarningInformation(orgId, type, schoolYear, semester);
             }
             warningInformationService.save(resList);
             alarmCreateRecordService.save(alertLog);
