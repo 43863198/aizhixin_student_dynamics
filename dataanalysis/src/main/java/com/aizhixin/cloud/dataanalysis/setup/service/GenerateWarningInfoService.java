@@ -732,6 +732,7 @@ public class GenerateWarningInfoService {
             warningInformationService.save(resList);
             alarmCreateRecordService.save(alertLog);
             if (dxList.size() > 0) {
+                log.info("有效手机号码数据:{}", dxList.size());
                 //发送短信
                 for (StudentAlertMsgDTO sm : dxList) {
                     try {
@@ -741,6 +742,8 @@ public class GenerateWarningInfoService {
                         log.info("给[{}]电话号码 发送告警短信:[{}]失败", sm.getPhone(), sm.getContent());
                     }
                 }
+            } else {
+                log.info("没有有效手机号码数据");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -769,6 +772,8 @@ public class GenerateWarningInfoService {
             sb.append(w.getWarningCondition());
             sb.append("。希望你认真查找原因，努力学习，以便顺利完成学业。【桂工教务处】");
             d.setPhone(w.getPhone());
+            d.setContent(sb.toString());
+            list.add(d);
         }
     }
 }
