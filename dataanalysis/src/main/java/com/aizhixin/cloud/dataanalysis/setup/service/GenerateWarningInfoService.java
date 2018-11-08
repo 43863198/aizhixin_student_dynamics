@@ -768,9 +768,9 @@ public class GenerateWarningInfoService {
                     break;
                     default:
             }
-            sb.append("色").append(warningTypeName).append("预警通知到你，预警内容");
-            sb.append(w.getWarningCondition());
-            sb.append("。希望你认真查找原因，努力学习，以便顺利完成学业。【桂工教务处】");
+            sb.append("色").append(warningTypeName).append("通知到你，预警内容[");
+            sb.append(w.getWarningStandard());
+            sb.append("]。希望你认真查找原因，努力学习，以便顺利完成学业。【桂工教务处】");
             d.setPhone(w.getPhone());
             d.setContent(sb.toString());
             list.add(d);
