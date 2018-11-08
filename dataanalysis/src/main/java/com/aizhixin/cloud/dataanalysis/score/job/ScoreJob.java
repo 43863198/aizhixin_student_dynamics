@@ -816,12 +816,9 @@ public class ScoreJob {
                                 alertInfor.setWarningSource(totalScoreCount.getDataSource().substring(0, totalScoreCount.getDataSource().length() - 1));
                             }
                             alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
-                            alertInfor.setWarningCondition(totalScoreCount.getLastSchoolYear() + "年" + totalScoreCount.getLastSemester() + ruleParameter.getRuledescribe()
-                                    + totalScoreCount.getFailRequiredCourseNum());
-                            alertInfor.setPhone(totalScoreCount
-                                    .getUserPhone());
-                            alertInfor.setOrgId(ruleParameter
-                                    .getOrgId());
+                            alertInfor.setWarningCondition(totalScoreCount.getLastSchoolYear() + "年" + totalScoreCount.getLastSemester() + ruleParameter.getRuledescribe() + totalScoreCount.getFailRequiredCourseNum());
+                            alertInfor.setPhone(totalScoreCount.getPhone());
+                            alertInfor.setOrgId(ruleParameter.getOrgId());
                             alertInforList.add(alertInfor);
                         } else {
                             continue;
@@ -1037,7 +1034,7 @@ public class ScoreJob {
                         alertInfor.setSemester(semester);
                         alertInfor.setTeacherYear(teachYear);
                         alertInfor.setWarningTime(new Date());
-                        alertInfor.setPhone(makeUpScoreCount.getUserPhone());
+                        alertInfor.setPhone(makeUpScoreCount.getPhone());
                         alertInfor.setOrgId(ruleParameter.getOrgId());
                         if (null != makeUpScoreCount.getDataSource2() && makeUpScoreCount.getDataSource2().length() > 0) {
                             alertInfor.setWarningSource(makeUpScoreCount.getDataSource2().substring(0, makeUpScoreCount.getDataSource2().length() - 1));
@@ -1082,7 +1079,7 @@ public class ScoreJob {
                         alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
                         alertInfor.setWarningCondition("在校学习期间，考核不合格的必修课程（含集中性实践教学环节）学分:" + failCourseCredit.setScale(2, RoundingMode.HALF_UP).toString());
                         alertInfor.setWarningTime(new Date());
-                        alertInfor.setPhone(makeUpScoreCount.getUserPhone());
+                        alertInfor.setPhone(makeUpScoreCount.getPhone());
                         alertInfor.setSemester(semester);
                         alertInfor.setTeacherYear(teachYear);
                         alertInfor.setOrgId(ruleParameter.getOrgId());
