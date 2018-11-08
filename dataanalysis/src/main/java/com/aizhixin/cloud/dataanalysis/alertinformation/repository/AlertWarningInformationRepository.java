@@ -58,5 +58,5 @@ public interface AlertWarningInformationRepository extends JpaRepository<Warning
 //    long countByOrgIdAndTeacherYearAndSemesterAndWarningType(Long orgId, String teacherYear, String semester, String warningType);
 
     @Query("select  new com.aizhixin.cloud.dataanalysis.alertinformation.vo.AlertWarningInfomationCountVO(t.warningType, count(*)) from #{#entityName} t where t.orgId = :orgId and t.collogeCode = :collogeCode and t.teacherYear = :teacherYear and t.semester = :semester group by t.warningType")
-    List<AlertWarningInfomationCountVO> groupByType(Long orgId, String collogeCode, String teacherYear, String semester);
+    List<AlertWarningInfomationCountVO> groupByType(@Param(value = "orgId") Long orgId, @Param(value = "collogeCode") String collogeCode, @Param(value = "teacherYear") String teacherYear, @Param(value = "semester") String semester);
 }
