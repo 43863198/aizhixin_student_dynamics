@@ -18,8 +18,8 @@ public class DealResultDomain {
     @ApiModelProperty(value = "预警信息id", required = false)
     private String warningInformationId;
 
-    @ApiModelProperty(value = "处理操作id", required = false)
-    private String dealId;
+//    @ApiModelProperty(value = "处理操作id", required = false)
+//    private String dealId;
     @ApiModelProperty(value = "状态", required = false)
     private int status;
 

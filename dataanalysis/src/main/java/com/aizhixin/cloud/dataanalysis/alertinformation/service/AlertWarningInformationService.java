@@ -18,8 +18,6 @@ import com.aizhixin.cloud.dataanalysis.common.util.PageJdbcUtil;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
 import com.aizhixin.cloud.dataanalysis.feign.OrgManagerFeignService;
 import com.aizhixin.cloud.dataanalysis.notice.service.NotificationRecordService;
-import com.aizhixin.cloud.dataanalysis.setup.entity.AlarmSettings;
-import com.aizhixin.cloud.dataanalysis.setup.entity.RuleParameter;
 import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
 import com.aizhixin.cloud.dataanalysis.setup.service.RuleParameterService;
@@ -1461,26 +1459,27 @@ public class AlertWarningInformationService {
                     warningDetailsDTO.setCancelComments(alertWarningInformation.getCancelComments());
                 }
 
+                warningDetailsDTO.setWarningStandard(alertWarningInformation.getWarningStandard());
                 Map stuMap = studentJdbc.findOne(warningDetailsDTO.getJobNumber(), alertWarningInformation.getOrgId());
                 if (stuMap != null && stuMap.get("nj") != null) {
                     warningDetailsDTO.setNj(stuMap.get("nj").toString());
                 }
 
-                String standard = "";
-                if (null != alertWarningInformation.getAlarmSettingsId()) {
-                    AlarmSettings as = alarmSettingsService.getAlarmSettingsById(alertWarningInformation.getAlarmSettingsId());
-                    String[] rpIds = as.getRuleSet().split(",");
-                    if (rpIds.length > 0) {
-                        for (String rpId : rpIds) {
-                            RuleParameter rp = ruleParameterService.findById(rpId);
-                            standard = standard + rp.getRuledescribe() + rp.getRightParameter() + as.getRelationship();
-
-                        }
-                    }
-                }
-                if (!StringUtils.isBlank(standard) && standard.length() > 1) {
-                    warningDetailsDTO.setWarningStandard(standard.substring(0, standard.length() - 1));
-                }
+//                String standard = "";
+//                if (null != alertWarningInformation.getAlarmSettingsId()) {
+//                    AlarmSettings as = alarmSettingsService.getAlarmSettingsById(alertWarningInformation.getAlarmSettingsId());
+//                    String[] rpIds = as.getRuleSet().split(",");
+//                    if (rpIds.length > 0) {
+//                        for (String rpId : rpIds) {
+//                            RuleParameter rp = ruleParameterService.findById(rpId);
+//                            standard = standard + rp.getRuledescribe() + rp.getRightParameter() + as.getRelationship();
+//
+//                        }
+//                    }
+//                }
+//                if (!StringUtils.isBlank(standard) && standard.length() > 1) {
+//                    warningDetailsDTO.setWarningStandard(standard.substring(0, standard.length() - 1));
+//                }
                 List<DealDomain> dealDomainList = new ArrayList<>();
                 List<OperationRecord> operationRecordList = operaionRecordService.getOperationRecordByWInfoId(alertWarningInformation.getId());
                 if (null != operationRecordList && operationRecordList.size() > 0) {

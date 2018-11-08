@@ -43,6 +43,7 @@ public class AlarmHandlingService {
             operationRecord.setProposal(submitDealDomain.getDealInfo());
             operationRecord.setWarningInformationId(submitDealDomain.getWarningInformationId());
             String id = operaionRecordService.save(operationRecord);
+            result.put("dealId", id);
             for (AttachmentDomain d : submitDealDomain.getAttachmentDomain()) {
                 AttachmentInformation attachmentInformation = null;
                 if (null != d.getId() && !StringUtils.isBlank(d.getId())) {
@@ -93,6 +94,7 @@ public class AlarmHandlingService {
                         attachmentInformation.setOperationRecordId(dealDomain.getDealId());
                         attachmentInfomationService.save(attachmentInformation);
                     }
+                    result.put("dealId", dealDomain.getDealId());
                 }
             }
         } catch (Exception e) {
@@ -185,36 +187,43 @@ public class AlarmHandlingService {
         Map<String, Object> result = new HashMap<>();
         try {
             WarningInformation warningInformation = alertWarningInformationService.getOneById(dealResultDomain.getWarningInformationId());
-            OperationRecord operationRecord = null;
+//            OperationRecord operationRecord = null;
             if (null != warningInformation) {
                 warningInformation.setWarningState(dealResultDomain.getStatus());
                 warningInformation.setLastModifiedDate(new Date());
                 alertWarningInformationService.save(warningInformation);
             }
-            if (!StringUtils.isBlank(dealResultDomain.getDealId())) {
-                operationRecord = operaionRecordService.getOneById(dealResultDomain.getDealId());
-            }
+//            if (!StringUtils.isBlank(dealResultDomain.getDealId())) {
+//                operationRecord = operaionRecordService.getOneById(dealResultDomain.getDealId());
+//            }
             Map<String, Object> maps = dealResultDomain.getDealTypes();
             if (null != maps) {
                 for (Map.Entry<String, Object> e : maps.entrySet()) {
+//                    operaionRecordService.deleteByWarningInformationIdAndDealType(dealResultDomain.getWarningInformationId(), Integer.parseInt(e.getKey()));
 
-                    operaionRecordService.deleteByWarningInformationIdAndDealType(dealResultDomain.getWarningInformationId(), Integer.parseInt(e.getKey()));
-
-                    operationRecord = new OperationRecord();
-                    operationRecord.setOrgId(warningInformation.getOrgId());
-                    operationRecord.setOperationTime(new Date());
-                    operationRecord.setWarningInformationId(dealResultDomain.getWarningInformationId());
-                    operationRecord.setDealType(Integer.parseInt(e.getKey()));
                     Map map = (Map) e.getValue();
+                    OperationRecord operationRecord = null;
+                    if (null != map.get("dealId")) {
+                        operationRecord = operaionRecordService.getOneById(map.get("dealId").toString());
+                    }
+                    if (null == operationRecord) {
+                        operationRecord = new OperationRecord();
+                        operationRecord.setOrgId(warningInformation.getOrgId());
+                        operationRecord.setWarningInformationId(dealResultDomain.getWarningInformationId());
+                        operationRecord.setDealType(Integer.parseInt(e.getKey()));
+                    }
+                    operationRecord.setOperationTime(new Date());
                     operationRecord.setProposal(map.get("dealInfo").toString());
+
                     String id = operaionRecordService.save(operationRecord);
+
+                    //附件直接使用替换的方式
+                    List<AttachmentInformation> attachmentInformations = attachmentInfomationService.getAttachmentInformationByOprId(id);
+                    if (null != attachmentInformations) {
+                        attachmentInfomationService.deleteAttachmentInformation(attachmentInformations);
+                    }
                     for (AttachmentDomain d : (List<AttachmentDomain>) map.get("attachmentDomain")) {
-                        AttachmentInformation attachmentInformation = null;
-                        if (null != d.getId() && !StringUtils.isBlank(d.getId())) {
-                            attachmentInformation = attachmentInfomationService.getOneById(d.getId());
-                        } else {
-                            attachmentInformation = new AttachmentInformation();
-                        }
+                        AttachmentInformation attachmentInformation = new AttachmentInformation();
                         attachmentInformation.setOrgId(warningInformation.getOrgId());
                         attachmentInformation.setAttachmentName(d.getFileName());
                         attachmentInformation.setAttachmentPath(d.getFileUrl());
@@ -222,11 +231,12 @@ public class AlarmHandlingService {
                         attachmentInfomationService.save(attachmentInformation);
                     }
                 }
-            } else {
-                operationRecord.setOrgId(warningInformation.getOrgId());
-                operationRecord.setOperationTime(new Date());
-                operationRecord.setWarningInformationId(dealResultDomain.getWarningInformationId());
             }
+//            else {
+//                operationRecord.setOrgId(warningInformation.getOrgId());
+//                operationRecord.setOperationTime(new Date());
+//                operationRecord.setWarningInformationId(dealResultDomain.getWarningInformationId());
+//            }
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);
