@@ -1,6 +1,5 @@
 package com.aizhixin.cloud.dataanalysis.alertinformation.dto;
 
-import com.aizhixin.cloud.dataanalysis.alertinformation.domain.DealDomain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -12,7 +11,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author: Created by jianwei.wu
@@ -82,8 +80,8 @@ public class    WarningDetailsDTO {
     @ApiModelProperty(value = "预警状态")
     private int warningState;
 
-    @ApiModelProperty(value = "处理操作", required = false)
-    private List<DealDomain> dealDomainList;
+//    @ApiModelProperty(value = "处理操作", required = false)
+//    private List<DealDomain> dealDomainList;
 
     @ApiModelProperty(value = "预警处理时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -91,6 +89,6 @@ public class    WarningDetailsDTO {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dealTime = new Date();
 
-    @ApiModelProperty(value = "撤销说明(仅在预警状态是40的时候有用)")
-    @Getter @Setter private String cancelComments;
+    @ApiModelProperty(value = "撤销说明或者学院处理意见")
+    @Getter @Setter private String comments;
 }

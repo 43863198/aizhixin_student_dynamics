@@ -3,8 +3,6 @@ package com.aizhixin.cloud.dataanalysis.alertinformation.service;
 import com.aizhixin.cloud.dataanalysis.alertinformation.JdbcTemplate.StudentJdbc;
 import com.aizhixin.cloud.dataanalysis.alertinformation.domain.*;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.*;
-import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AttachmentInformation;
-import com.aizhixin.cloud.dataanalysis.alertinformation.entity.OperationRecord;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
 import com.aizhixin.cloud.dataanalysis.alertinformation.vo.AlertWarningInfomationCountVO;
@@ -16,15 +14,11 @@ import com.aizhixin.cloud.dataanalysis.common.core.PageUtil;
 import com.aizhixin.cloud.dataanalysis.common.domain.SortDTO;
 import com.aizhixin.cloud.dataanalysis.common.util.PageJdbcUtil;
 import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
-import com.aizhixin.cloud.dataanalysis.feign.OrgManagerFeignService;
 import com.aizhixin.cloud.dataanalysis.notice.service.NotificationRecordService;
 import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
-import com.aizhixin.cloud.dataanalysis.setup.service.AlarmSettingsService;
-import com.aizhixin.cloud.dataanalysis.setup.service.RuleParameterService;
 import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -53,21 +47,21 @@ public class AlertWarningInformationService {
     private AlertWarningInformationRepository alertWarningInformationRepository;
     @Autowired
     private PageJdbcUtil pageJdbcUtil;
-    @Autowired
-    private OperaionRecordService operaionRecordService;
-    @Autowired
-    private AttachmentInfomationService attachmentInfomationService;
+//    @Autowired
+//    private OperaionRecordService operaionRecordService;
+//    @Autowired
+//    private AttachmentInfomationService attachmentInfomationService;
     @Autowired
     private WarningTypeService warningTypeService;
-    @Autowired
-    private OrgManagerFeignService orgManagerFeignService;
+//    @Autowired
+//    private OrgManagerFeignService orgManagerFeignService;
     @Autowired
     private StudentJdbc studentJdbc;
-    @Autowired
-    @Lazy
-    private AlarmSettingsService alarmSettingsService;
-    @Autowired
-    private RuleParameterService ruleParameterService;
+//    @Autowired
+//    @Lazy
+//    private AlarmSettingsService alarmSettingsService;
+//    @Autowired
+//    private RuleParameterService ruleParameterService;
     @Autowired
     private NotificationRecordService notificationRecordService;
     @Autowired
@@ -1455,9 +1449,8 @@ public class AlertWarningInformationService {
                 warningDetailsDTO.setDealTime(alertWarningInformation.getLastModifiedDate());
                 warningDetailsDTO.setWarningCondition(alertWarningInformation.getWarningCondition());
                 warningDetailsDTO.setWarningSource(dataFormat(alertWarningInformation.getWarningSource()));
-                if (40 == alertWarningInformation.getWarningState()) {
-                    warningDetailsDTO.setCancelComments(alertWarningInformation.getCancelComments());
-                }
+
+                warningDetailsDTO.setComments(alertWarningInformation.getCancelComments());
 
                 warningDetailsDTO.setWarningStandard(alertWarningInformation.getWarningStandard());
                 Map stuMap = studentJdbc.findOne(warningDetailsDTO.getJobNumber(), alertWarningInformation.getOrgId());
@@ -1480,32 +1473,32 @@ public class AlertWarningInformationService {
 //                if (!StringUtils.isBlank(standard) && standard.length() > 1) {
 //                    warningDetailsDTO.setWarningStandard(standard.substring(0, standard.length() - 1));
 //                }
-                List<DealDomain> dealDomainList = new ArrayList<>();
-                List<OperationRecord> operationRecordList = operaionRecordService.getOperationRecordByWInfoId(alertWarningInformation.getId());
-                if (null != operationRecordList && operationRecordList.size() > 0) {
-                    for (OperationRecord or : operationRecordList) {
-                        DealDomain dealDomain = new DealDomain();
-                        dealDomain.setDealId(or.getId());
-                        dealDomain.setDealType(or.getDealType());
-                        dealDomain.setDealId(or.getId());
-                        dealDomain.setDealInfo(or.getProposal());
-                        dealDomain.setWarningInformationId(or.getWarningInformationId());
-                        List<AttachmentDomain> attachmentDomainList = new ArrayList<>();
-                        List<AttachmentInformation> attachmentInformationList = attachmentInfomationService.getAttachmentInformationByOprId(or.getId());
-                        if (null != attachmentInformationList && attachmentInformationList.size() > 0) {
-                            for (AttachmentInformation aif : attachmentInformationList) {
-                                AttachmentDomain attachmentDomain = new AttachmentDomain();
-                                attachmentDomain.setId(aif.getId());
-                                attachmentDomain.setFileUrl(aif.getAttachmentPath());
-                                attachmentDomain.setFileName(aif.getAttachmentName());
-                                attachmentDomainList.add(attachmentDomain);
-                            }
-                        }
-                        dealDomain.setAttachmentDomain(attachmentDomainList);
-                        dealDomainList.add(dealDomain);
-                    }
-                }
-                warningDetailsDTO.setDealDomainList(dealDomainList);
+//                List<DealDomain> dealDomainList = new ArrayList<>();
+//                List<OperationRecord> operationRecordList = operaionRecordService.getOperationRecordByWInfoId(alertWarningInformation.getId());
+//                if (null != operationRecordList && operationRecordList.size() > 0) {
+//                    for (OperationRecord or : operationRecordList) {
+//                        DealDomain dealDomain = new DealDomain();
+//                        dealDomain.setDealId(or.getId());
+//                        dealDomain.setDealType(or.getDealType());
+//                        dealDomain.setDealId(or.getId());
+//                        dealDomain.setDealInfo(or.getProposal());
+//                        dealDomain.setWarningInformationId(or.getWarningInformationId());
+//                        List<AttachmentDomain> attachmentDomainList = new ArrayList<>();
+//                        List<AttachmentInformation> attachmentInformationList = attachmentInfomationService.getAttachmentInformationByOprId(or.getId());
+//                        if (null != attachmentInformationList && attachmentInformationList.size() > 0) {
+//                            for (AttachmentInformation aif : attachmentInformationList) {
+//                                AttachmentDomain attachmentDomain = new AttachmentDomain();
+//                                attachmentDomain.setId(aif.getId());
+//                                attachmentDomain.setFileUrl(aif.getAttachmentPath());
+//                                attachmentDomain.setFileName(aif.getAttachmentName());
+//                                attachmentDomainList.add(attachmentDomain);
+//                            }
+//                        }
+//                        dealDomain.setAttachmentDomain(attachmentDomainList);
+//                        dealDomainList.add(dealDomain);
+//                    }
+//                }
+//                warningDetailsDTO.setDealDomainList(dealDomainList);
             }
         } catch (Exception e) {
             e.printStackTrace();
