@@ -191,6 +191,9 @@ public class AlarmHandlingService {
             if (null != warningInformation) {
                 warningInformation.setWarningState(dealResultDomain.getStatus());
                 warningInformation.setLastModifiedDate(new Date());
+                if (40 == dealResultDomain.getStatus()) {
+                    warningInformation.setCancelComments(dealResultDomain.getCancelComments());
+                }
                 alertWarningInformationService.save(warningInformation);
             }
 //            if (!StringUtils.isBlank(dealResultDomain.getDealId())) {
