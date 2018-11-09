@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * @author: Created by jianwei.wu
@@ -18,14 +18,12 @@ public class DealResultDomain {
     @ApiModelProperty(value = "预警信息id", required = false)
     private String warningInformationId;
 
-//    @ApiModelProperty(value = "处理操作id", required = false)
-//    private String dealId;
     @ApiModelProperty(value = "状态")
     private int status;
 
-    @ApiModelProperty(value = "状态")
-    private String cancelComments;
+    @ApiModelProperty(value = "撤销意见，或者学院处理意见")
+    private String comments;
 
-    @ApiModelProperty(value = "处理类型（辅导员处理10 学院处理 20）和处理信息（处理建议、附件） ", required = false)
-    private Map<String,Object> dealTypes;
+    @ApiModelProperty(value = "撤销意见，仅在撤销操作时有用")
+    private List<AttachmentDomain> files;
 }

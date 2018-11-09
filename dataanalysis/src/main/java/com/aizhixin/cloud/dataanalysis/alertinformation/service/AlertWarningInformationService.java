@@ -409,21 +409,21 @@ public class AlertWarningInformationService {
                 updateSql += " and WARNING_TYPE in (" + warnTypes + ")";
             }
 
-            if (!StringUtils.isEmpty(domain.getWarningStates())) {
-                String[] warnStateArr = domain.getWarningStates().split(",");
-                String warnStates = "";
-                for (String warnState : warnStateArr) {
-                    if (!StringUtils.isEmpty(warnState)) {
-                        if (StringUtils.isEmpty(warnStates)) {
-                            warnStates = warnState;
-                        } else {
-                            warnStates += "," + warnState;
-                        }
-                    }
-                }
-
-                updateSql += " and WARNING_STATE in (" + warnStates + ")";
-            }
+//            if (!StringUtils.isEmpty(domain.getWarningStates())) {
+//                String[] warnStateArr = domain.getWarningStates().split(",");
+//                String warnStates = "";
+//                for (String warnState : warnStateArr) {
+//                    if (!StringUtils.isEmpty(warnState)) {
+//                        if (StringUtils.isEmpty(warnStates)) {
+//                            warnStates = warnState;
+//                        } else {
+//                            warnStates += "," + warnState;
+//                        }
+//                    }
+//                }
+//
+//                updateSql += " and WARNING_STATE in (" + warnStates + ")";
+//            }
             if (null != domain.getTeacherYear()) {
                 updateSql += " and TEACHING_YEAR = " + domain.getTeacherYear();
             }
@@ -510,21 +510,21 @@ public class AlertWarningInformationService {
                 querySql += " and WARNING_TYPE in (" + warnTypes + ")";
             }
 
-            if (!StringUtils.isEmpty(domain.getWarningStates())) {
-                String[] warnStateArr = domain.getWarningStates().split(",");
-                String warnStates = "";
-                for (String warnState : warnStateArr) {
-                    if (!StringUtils.isEmpty(warnState)) {
-                        if (StringUtils.isEmpty(warnStates)) {
-                            warnStates = warnState;
-                        } else {
-                            warnStates += "," + warnState;
-                        }
-                    }
-                }
-
-                querySql += " and WARNING_STATE in (" + warnStates + ")";
-            }
+//            if (!StringUtils.isEmpty(domain.getWarningStates())) {
+//                String[] warnStateArr = domain.getWarningStates().split(",");
+//                String warnStates = "";
+//                for (String warnState : warnStateArr) {
+//                    if (!StringUtils.isEmpty(warnState)) {
+//                        if (StringUtils.isEmpty(warnStates)) {
+//                            warnStates = warnState;
+//                        } else {
+//                            warnStates += "," + warnState;
+//                        }
+//                    }
+//                }
+//
+//                querySql += " and WARNING_STATE in (" + warnStates + ")";
+//            }
             if (null != domain.getTeacherYear()) {
                 querySql += " and TEACHING_YEAR = " + domain.getTeacherYear();
             }

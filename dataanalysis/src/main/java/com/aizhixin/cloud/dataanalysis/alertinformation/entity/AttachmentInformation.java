@@ -68,6 +68,7 @@ public class AttachmentInformation extends AbstractEntity {
 
       /*
        *  操作信息ID
+       *  潘震改为告警信息ID，去掉操作记录
        */
     @Column(name = "OPERATION_RECORD_ID")
     @Getter @Setter private String operationRecordId;

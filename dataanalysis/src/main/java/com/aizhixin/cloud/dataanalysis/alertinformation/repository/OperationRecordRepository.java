@@ -19,4 +19,6 @@ public interface OperationRecordRepository extends JpaRepository<OperationRecord
     void deleteByOrgId(Long orgId);
 
     void deleteByWarningInformationIdAndDealType(String warningInformationId,int dealType);
+
+    List<OperationRecord> findByWarningInformationIdAndDealTypeAndDeleteFlag(String warningInformationId, int dealType, int deleteFlag);
 }

@@ -1263,7 +1263,7 @@ public class ScoreJob {
                             alertInfor.setProfessionalName(rs.getString("zymc"));
                             alertInfor.setCollogeCode(rs.getString("yxsh"));
                             alertInfor.setCollogeName(rs.getString("yxsmc"));
-                            alertInfor.setPhone("yddh");
+                            alertInfor.setPhone(rs.getString("yddh"));
 
                             alertInfor.setWarningState(AlertTypeConstant.ALERT_IN_PROCESS);
                             alertInfor.setWarningStandard(ruleParameter.getRuledescribe() + ":" + ruleParameter.getRightParameter());
