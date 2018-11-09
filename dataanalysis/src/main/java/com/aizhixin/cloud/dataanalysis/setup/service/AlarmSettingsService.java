@@ -4,28 +4,22 @@ import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningDescparameter
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningGradeDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningSettingsDTO;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.WarningTypeDTO;
-import com.aizhixin.cloud.dataanalysis.alertinformation.service.AlertWarningInformationService;
-import com.aizhixin.cloud.dataanalysis.analysis.job.SchoolStatisticsAnalysisJob;
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
-import com.aizhixin.cloud.dataanalysis.common.constant.WarningTypeConstant;
 import com.aizhixin.cloud.dataanalysis.common.service.DistributeLock;
-import com.aizhixin.cloud.dataanalysis.rollCall.job.RollCallJob;
-import com.aizhixin.cloud.dataanalysis.score.job.ScoreJob;
 import com.aizhixin.cloud.dataanalysis.setup.domain.*;
 import com.aizhixin.cloud.dataanalysis.setup.entity.*;
 import com.aizhixin.cloud.dataanalysis.setup.respository.AlarmSettingsRepository;
-
-import com.aizhixin.cloud.dataanalysis.studentRegister.job.StudentRegisterJob;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author: Created by jianwei.wu
@@ -346,7 +340,7 @@ public class AlarmSettingsService {
             if (null != processingGradeDomainList && processingGradeDomainList.size() > 0) {
                 for (ProcessingGradeDomain pg : processingGradeDomainList) {
                     ProcessingMode processingMode1 = null;
-                    processingMode1 = processingModeService.getBywarningTypeIdAndTypeSet(processingModeDomain.getOrgId(), processingModeDomain.getWarningTypeId(), pg.getGrade(), 10);
+                    processingMode1 = processingModeService.getBywarningTypeIdAndTypeSet(processingModeDomain.getOrgId(), processingModeDomain.getWarningTypeId(), 10, pg.getGrade());
                     if (null == processingMode1) {
                         processingMode1 = new ProcessingMode();
                     }
@@ -357,30 +351,30 @@ public class AlarmSettingsService {
                     processingMode1.setOperationSet(pg.getOperationSet1());
                     processingMode1.setSetupCloseFlag(pg.getSetupCloseFlag1());
                     processingModeService.save(processingMode1);
-                    ProcessingMode processingMode2 = null;
-                    processingMode2 = processingModeService.getBywarningTypeIdAndTypeSet(processingModeDomain.getOrgId(), processingModeDomain.getWarningTypeId(), pg.getGrade(), 20);
-                    if (null == processingMode2) {
-                        processingMode2 = new ProcessingMode();
-                    }
-                    processingMode2.setOrgId(processingModeDomain.getOrgId());
-                    processingMode2.setWarningType(warningType.getType());
-                    processingMode2.setWarningLevel(pg.getGrade());
-                    processingMode2.setOperationTypeSet(20);
-                    processingMode2.setOperationSet(pg.getOperationSet2());
-                    processingMode2.setSetupCloseFlag(pg.getSetupCloseFlag2());
-                    processingModeService.save(processingMode2);
-                    ProcessingMode processingMode3 = null;
-                    processingMode3 = processingModeService.getBywarningTypeIdAndTypeSet(processingModeDomain.getOrgId(), processingModeDomain.getWarningTypeId(), pg.getGrade(), 30);
-                    if (null == processingMode3) {
-                        processingMode3 = new ProcessingMode();
-                    }
-                    processingMode3.setOrgId(processingModeDomain.getOrgId());
-                    processingMode3.setWarningType(warningType.getType());
-                    processingMode3.setWarningLevel(pg.getGrade());
-                    processingMode3.setOperationTypeSet(30);
-                    processingMode3.setOperationSet(pg.getOperationSet3());
-                    processingMode3.setSetupCloseFlag(pg.getSetupCloseFlag3());
-                    processingModeService.save(processingMode3);
+//                    ProcessingMode processingMode2 = null;
+//                    processingMode2 = processingModeService.getBywarningTypeIdAndTypeSet(processingModeDomain.getOrgId(), processingModeDomain.getWarningTypeId(), pg.getGrade(), 20);
+//                    if (null == processingMode2) {
+//                        processingMode2 = new ProcessingMode();
+//                    }
+//                    processingMode2.setOrgId(processingModeDomain.getOrgId());
+//                    processingMode2.setWarningType(warningType.getType());
+//                    processingMode2.setWarningLevel(pg.getGrade());
+//                    processingMode2.setOperationTypeSet(20);
+//                    processingMode2.setOperationSet(pg.getOperationSet2());
+//                    processingMode2.setSetupCloseFlag(pg.getSetupCloseFlag2());
+//                    processingModeService.save(processingMode2);
+//                    ProcessingMode processingMode3 = null;
+//                    processingMode3 = processingModeService.getBywarningTypeIdAndTypeSet(processingModeDomain.getOrgId(), processingModeDomain.getWarningTypeId(), pg.getGrade(), 30);
+//                    if (null == processingMode3) {
+//                        processingMode3 = new ProcessingMode();
+//                    }
+//                    processingMode3.setOrgId(processingModeDomain.getOrgId());
+//                    processingMode3.setWarningType(warningType.getType());
+//                    processingMode3.setWarningLevel(pg.getGrade());
+//                    processingMode3.setOperationTypeSet(30);
+//                    processingMode3.setOperationSet(pg.getOperationSet3());
+//                    processingMode3.setSetupCloseFlag(pg.getSetupCloseFlag3());
+//                    processingModeService.save(processingMode3);
                 }
             }
 
