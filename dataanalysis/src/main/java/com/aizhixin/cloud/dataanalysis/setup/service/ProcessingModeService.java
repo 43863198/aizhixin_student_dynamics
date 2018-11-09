@@ -1,12 +1,8 @@
 package com.aizhixin.cloud.dataanalysis.setup.service;
 
-import java.util.List;
-import java.util.Set;
-
 import com.aizhixin.cloud.dataanalysis.common.constant.DataValidity;
 import com.aizhixin.cloud.dataanalysis.setup.entity.ProcessingMode;
 import com.aizhixin.cloud.dataanalysis.setup.respository.ProcessingModeRespository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,4 +32,8 @@ public class ProcessingModeService {
        processingModeRespository.save(processingMode);
    }
 
+
+    public List<ProcessingMode> getProcessingModeBywarningTypeAndOperationTypeSet(Long orgId, String warningType, int operationTypeSet){
+        return processingModeRespository.findByOrgIdAndWarningTypeAndOperationTypeSetAndDeleteFlag(orgId, warningType, operationTypeSet, DataValidity.VALID.getState());
+    }
 }

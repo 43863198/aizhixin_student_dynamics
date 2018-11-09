@@ -63,6 +63,9 @@ public class GenerateWarningInfoService {
     @Value("${dl.dledu.back.host}")
     private String zhixinUrl;
 
+    @Autowired
+    private ProcessingModeService processingModeService;
+
     public void warningJob() {
         Calendar c = Calendar.getInstance();
         // 当前年份
@@ -665,6 +668,11 @@ public class GenerateWarningInfoService {
                 }
             }
 
+            List<ProcessingMode> plist = processingModeService.getProcessingModeBywarningTypeAndOperationTypeSet(orgId, type, 10);
+            Map<Integer, ProcessingMode> pmap = new HashMap<>();
+            for (ProcessingMode p : plist) {
+                pmap.put(p.getWarningLevel(), p);
+            }
             WarningType warningType = warningTypeService.getWarningTypeByOrgIdAndType(orgId, type);
             //按照预警等级去重
             LinkedList<WarningInformation> resList = new LinkedList<>();
@@ -677,7 +685,9 @@ public class GenerateWarningInfoService {
                     w.setWarningType(type);
                     jobNumber.add(w.getJobNumber());
                     resList.add(w);
-                    addStudentAlertMsgContent(dxList, null != warningType ? warningType.getWarningName() : "", w, 1);
+                    if (null != pmap.get(3)  && 10 == pmap.get(3).getSetupCloseFlag()) {//设置的告警级别是3、 2 、 1分别代表黄橙红
+                        addStudentAlertMsgContent(dxList, null != warningType ? warningType.getWarningName() : "", w, 1);
+                    }
                     r++;
                 }
             }
@@ -688,7 +698,9 @@ public class GenerateWarningInfoService {
                         w.setWarningType(type);
                         jobNumber.add(w.getJobNumber());
                         resList.add(w);
-                        addStudentAlertMsgContent(dxList, null != warningType ? warningType.getWarningName() : "", w, 2);
+                        if (null != pmap.get(2)  && 10 == pmap.get(2).getSetupCloseFlag()) {//设置的告警级别是3、 2 、 1分别代表黄橙红
+                            addStudentAlertMsgContent(dxList, null != warningType ? warningType.getWarningName() : "", w, 2);
+                        }
                         o++;
                     }
                 }
@@ -700,7 +712,9 @@ public class GenerateWarningInfoService {
                         w.setWarningType(type);
                         jobNumber.add(w.getJobNumber());
                         resList.add(w);
-                        addStudentAlertMsgContent(dxList, null != warningType ? warningType.getWarningName() : "", w, 3);
+                        if (null != pmap.get(1)  && 10 == pmap.get(1).getSetupCloseFlag()) {//设置的告警级别是3、 2 、 1分别代表黄橙红
+                            addStudentAlertMsgContent(dxList, null != warningType ? warningType.getWarningName() : "", w, 3);
+                        }
                         y++;
                     }
                 }
