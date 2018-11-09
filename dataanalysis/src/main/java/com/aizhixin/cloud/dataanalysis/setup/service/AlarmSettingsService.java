@@ -340,7 +340,7 @@ public class AlarmSettingsService {
             if (null != processingGradeDomainList && processingGradeDomainList.size() > 0) {
                 for (ProcessingGradeDomain pg : processingGradeDomainList) {
                     ProcessingMode processingMode1 = null;
-                    processingMode1 = processingModeService.getBywarningTypeIdAndTypeSet(processingModeDomain.getOrgId(), processingModeDomain.getWarningTypeId(), 10, pg.getGrade());
+                    processingMode1 = processingModeService.getBywarningTypeIdAndTypeSet(processingModeDomain.getOrgId(), warningType.getType(), 10, pg.getGrade());
                     if (null == processingMode1) {
                         processingMode1 = new ProcessingMode();
                     }
