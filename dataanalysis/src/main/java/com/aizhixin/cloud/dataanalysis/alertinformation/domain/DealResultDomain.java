@@ -20,11 +20,12 @@ public class DealResultDomain {
 
 //    @ApiModelProperty(value = "处理操作id", required = false)
 //    private String dealId;
-    @ApiModelProperty(value = "状态", required = false)
+    @ApiModelProperty(value = "状态")
     private int status;
+
+    @ApiModelProperty(value = "状态")
+    private String cancelComments;
 
     @ApiModelProperty(value = "处理类型（辅导员处理10 学院处理 20）和处理信息（处理建议、附件） ", required = false)
     private Map<String,Object> dealTypes;
-    
-
 }
