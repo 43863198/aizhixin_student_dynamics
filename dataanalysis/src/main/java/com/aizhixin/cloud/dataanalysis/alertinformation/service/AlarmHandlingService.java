@@ -113,23 +113,15 @@ public class AlarmHandlingService {
         try {
             int row = alertWarningInformationService.updateAllAlertInforPage(domain);
             List<Map<String, Object>> idList = alertWarningInformationService.queryAllAlertInforPage(domain);
+            Date cur = new Date ();
             for (Map map : idList) {
                 if (null != map && null != map.get("ID")) {
                     WarningInformation warningInformation = alertWarningInformationService.getOneById(map.get("ID").toString());
-                    if (warningInformation.getWarningState() != 20) {
-                        Map<String, String> maps = domain.getDealTypes();
-                        if (null != maps) {
-                            for (Map.Entry<String, String> e : maps.entrySet()) {
-                                operaionRecordService.deleteByWarningInformationIdAndDealType(map.get("ID").toString(), Integer.parseInt(e.getKey()));
-                                OperationRecord operationRecord1 = new OperationRecord();
-                                operationRecord1.setWarningInformationId(map.get("ID").toString());
-                                operationRecord1.setOrgId(warningInformation.getOrgId());
-                                operationRecord1.setOperationTime(new Date());
-                                operationRecord1.setDealType(Integer.parseInt(e.getKey()));
-                                operationRecord1.setProposal(e.getValue());
-                                operaionRecordService.save(operationRecord1);
-                            }
-                        }
+                    if (warningInformation.getWarningState() < 20) {
+                        warningInformation.setLastModifiedDate(cur);
+                        warningInformation.setWarningState(AlertTypeConstant.ALERT_PROCESSED);
+                        warningInformation.setCancelComments(domain.getComments());
+                        alertWarningInformationService.save(warningInformation);
                     }
                 }
             }
@@ -151,26 +143,14 @@ public class AlarmHandlingService {
         Map<String, Object> result = new HashMap<>();
         try {
             String[] idArray = batchDealDomain.getWarningInformationIds();
+            Date cur = new Date ();
             for (String id : idArray) {
                 WarningInformation warningInformation = alertWarningInformationService.getOneById(id);
-                if (warningInformation.getWarningState() != 20) {
-                    warningInformation.setLastModifiedDate(new Date());
+                if (warningInformation.getWarningState() < 20) {
+                    warningInformation.setLastModifiedDate(cur);
                     warningInformation.setWarningState(AlertTypeConstant.ALERT_PROCESSED);
+                    warningInformation.setCancelComments(batchDealDomain.getComments());
                     alertWarningInformationService.save(warningInformation);
-                    Map<String, String> map = batchDealDomain.getDealTypes();
-                    if (null != map) {
-                        for (Map.Entry<String, String> e : map.entrySet()) {
-                            //删除历史的处理意见
-                            operaionRecordService.deleteByWarningInformationIdAndDealType(id, Integer.parseInt(e.getKey()));
-                            OperationRecord operationRecord1 = new OperationRecord();
-                            operationRecord1.setWarningInformationId(id);
-                            operationRecord1.setOrgId(warningInformation.getOrgId());
-                            operationRecord1.setOperationTime(new Date());
-                            operationRecord1.setDealType(Integer.parseInt(e.getKey()));
-                            operationRecord1.setProposal(e.getValue());
-                            operaionRecordService.save(operationRecord1);
-                        }
-                    }
                 }
             }
         } catch (Exception e) {
@@ -187,59 +167,28 @@ public class AlarmHandlingService {
         Map<String, Object> result = new HashMap<>();
         try {
             WarningInformation warningInformation = alertWarningInformationService.getOneById(dealResultDomain.getWarningInformationId());
-//            OperationRecord operationRecord = null;
             if (null != warningInformation) {
                 warningInformation.setWarningState(dealResultDomain.getStatus());
                 warningInformation.setLastModifiedDate(new Date());
-                if (40 == dealResultDomain.getStatus()) {
-                    warningInformation.setCancelComments(dealResultDomain.getCancelComments());
-                }
+                warningInformation.setCancelComments(dealResultDomain.getComments());
                 alertWarningInformationService.save(warningInformation);
             }
-//            if (!StringUtils.isBlank(dealResultDomain.getDealId())) {
-//                operationRecord = operaionRecordService.getOneById(dealResultDomain.getDealId());
-//            }
-            Map<String, Object> maps = dealResultDomain.getDealTypes();
-            if (null != maps) {
-                for (Map.Entry<String, Object> e : maps.entrySet()) {
-//                    operaionRecordService.deleteByWarningInformationIdAndDealType(dealResultDomain.getWarningInformationId(), Integer.parseInt(e.getKey()));
 
-                    Map map = (Map) e.getValue();
-                    OperationRecord operationRecord = null;
-                    if (null != map.get("dealId")) {
-                        operationRecord = operaionRecordService.getOneById(map.get("dealId").toString());
-                    }
-                    if (null == operationRecord) {
-                        operationRecord = new OperationRecord();
-                        operationRecord.setOrgId(warningInformation.getOrgId());
-                        operationRecord.setWarningInformationId(dealResultDomain.getWarningInformationId());
-                        operationRecord.setDealType(Integer.parseInt(e.getKey()));
-                    }
-                    operationRecord.setOperationTime(new Date());
-                    operationRecord.setProposal(map.get("dealInfo").toString());
-
-                    String id = operaionRecordService.save(operationRecord);
-
-                    //附件直接使用替换的方式
-                    List<AttachmentInformation> attachmentInformations = attachmentInfomationService.getAttachmentInformationByOprId(id);
-                    if (null != attachmentInformations) {
-                        attachmentInfomationService.deleteAttachmentInformation(attachmentInformations);
-                    }
-                    for (AttachmentDomain d : (List<AttachmentDomain>) map.get("attachmentDomain")) {
-                        AttachmentInformation attachmentInformation = new AttachmentInformation();
-                        attachmentInformation.setOrgId(warningInformation.getOrgId());
-                        attachmentInformation.setAttachmentName(d.getFileName());
-                        attachmentInformation.setAttachmentPath(d.getFileUrl());
-                        attachmentInformation.setOperationRecordId(id);
-                        attachmentInfomationService.save(attachmentInformation);
-                    }
+            //附件直接使用替换的方式
+            List<AttachmentInformation> attachmentInformations = attachmentInfomationService.getAttachmentInformationByOprId(warningInformation.getId());
+            if (null != attachmentInformations) {
+                attachmentInfomationService.deleteAttachmentInformation(attachmentInformations);
+            }
+            if (null != dealResultDomain.getFiles()) {
+                for (AttachmentDomain d : dealResultDomain.getFiles()) {
+                    AttachmentInformation attachmentInformation = new AttachmentInformation();
+                    attachmentInformation.setOrgId(warningInformation.getOrgId());
+                    attachmentInformation.setAttachmentName(d.getFileName());
+                    attachmentInformation.setAttachmentPath(d.getFileUrl());
+                    attachmentInformation.setOperationRecordId(warningInformation.getId());
+                    attachmentInfomationService.save(attachmentInformation);
                 }
             }
-//            else {
-//                operationRecord.setOrgId(warningInformation.getOrgId());
-//                operationRecord.setOperationTime(new Date());
-//                operationRecord.setWarningInformationId(dealResultDomain.getWarningInformationId());
-//            }
         } catch (Exception e) {
             e.printStackTrace();
             result.put("success", false);

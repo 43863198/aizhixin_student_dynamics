@@ -37,4 +37,8 @@ public class OperaionRecordService {
         operationRecordRepository.deleteByWarningInformationIdAndDealType(warningInformationId, dealType);
 
     }
+
+    public List<OperationRecord> findCollegeCommentByWarningInformationIdAndDealType(String warningInformationId) {
+        return operationRecordRepository.findByWarningInformationIdAndDealTypeAndDeleteFlag(warningInformationId, 20, DataValidity.VALID.getState());
+    }
 }

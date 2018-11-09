@@ -28,8 +28,8 @@ public class BatchAllDealDomain {
     @ApiModelProperty(value = "预警等级（多个以,分割）", required = false)
     private String warningLevels;
 
-    @ApiModelProperty(value = "预警状态(10:告警中；20：已处理；40:取消)（多个以,分割）", required = false)
-    private String warningStates;
+//    @ApiModelProperty(value = "预警状态(10:告警中；20：已处理；40:取消)（多个以,分割）", required = false)
+//    private String warningStates;
 
     @ApiModelProperty(value = "姓名/学号/工号", required = false)
     private String keywords;
@@ -39,4 +39,7 @@ public class BatchAllDealDomain {
 
     @ApiModelProperty(value = "登录人工号")
     private String workNo;
+
+    @ApiModelProperty(value = "学院处理意见")
+    private String comments;
 }
