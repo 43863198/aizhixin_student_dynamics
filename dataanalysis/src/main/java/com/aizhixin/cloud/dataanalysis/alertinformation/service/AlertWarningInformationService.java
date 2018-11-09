@@ -3,6 +3,7 @@ package com.aizhixin.cloud.dataanalysis.alertinformation.service;
 import com.aizhixin.cloud.dataanalysis.alertinformation.JdbcTemplate.StudentJdbc;
 import com.aizhixin.cloud.dataanalysis.alertinformation.domain.*;
 import com.aizhixin.cloud.dataanalysis.alertinformation.dto.*;
+import com.aizhixin.cloud.dataanalysis.alertinformation.entity.AttachmentInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.entity.WarningInformation;
 import com.aizhixin.cloud.dataanalysis.alertinformation.repository.AlertWarningInformationRepository;
 import com.aizhixin.cloud.dataanalysis.alertinformation.vo.AlertWarningInfomationCountVO;
@@ -49,8 +50,8 @@ public class AlertWarningInformationService {
     private PageJdbcUtil pageJdbcUtil;
 //    @Autowired
 //    private OperaionRecordService operaionRecordService;
-//    @Autowired
-//    private AttachmentInfomationService attachmentInfomationService;
+    @Autowired
+    private AttachmentInfomationService attachmentInfomationService;
     @Autowired
     private WarningTypeService warningTypeService;
 //    @Autowired
@@ -1457,7 +1458,18 @@ public class AlertWarningInformationService {
                 if (stuMap != null && stuMap.get("nj") != null) {
                     warningDetailsDTO.setNj(stuMap.get("nj").toString());
                 }
-
+                List<AttachmentDomain> files = new ArrayList<>();
+                warningDetailsDTO.setFiles(files);
+                List<AttachmentInformation> attachmentInformationList = attachmentInfomationService.getAttachmentInformationByOprId(id);
+                if (null != attachmentInformationList && attachmentInformationList.size() > 0) {
+                    for (AttachmentInformation aif : attachmentInformationList) {
+                        AttachmentDomain attachmentDomain = new AttachmentDomain();
+                        attachmentDomain.setId(aif.getId());
+                        attachmentDomain.setFileUrl(aif.getAttachmentPath());
+                        attachmentDomain.setFileName(aif.getAttachmentName());
+                        files.add(attachmentDomain);
+                    }
+                }
 //                String standard = "";
 //                if (null != alertWarningInformation.getAlarmSettingsId()) {
 //                    AlarmSettings as = alarmSettingsService.getAlarmSettingsById(alertWarningInformation.getAlarmSettingsId());
