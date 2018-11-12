@@ -18,6 +18,7 @@ import com.aizhixin.cloud.dataanalysis.common.util.ProportionUtil;
 import com.aizhixin.cloud.dataanalysis.notice.service.NotificationRecordService;
 import com.aizhixin.cloud.dataanalysis.setup.entity.WarningType;
 import com.aizhixin.cloud.dataanalysis.setup.service.WarningTypeService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +42,7 @@ import java.util.regex.Pattern;
  */
 @Component
 @Transactional
+@Slf4j
 public class AlertWarningInformationService {
     @Autowired
     private EntityManager em;
@@ -347,7 +349,7 @@ public class AlertWarningInformationService {
             String current = sdf.format(new Date());
             String updateSql = "update t_warning_information set LAST_MODIFIED_DATE = '" + current + "',WARNING_STATE = 20" +
                     (!StringUtils.isEmpty(domain.getComments()) ? ",CANCEL_COMMENTS='" + domain.getComments() + "'" : "") +
-            "  where DELETE_FLAG =" + DataValidity.VALID.getState() + " WARNING_STATE < 20 ";
+            "  where DELETE_FLAG =" + DataValidity.VALID.getState() + " and WARNING_STATE < 20 ";
 
             if (!StringUtils.isEmpty(domain.getKeywords())) {
                 updateSql += " and ( NAME like '%" + domain.getKeywords() + "%' or JOB_NUMBER like '%" + domain.getKeywords() + "%') ";
@@ -433,7 +435,10 @@ public class AlertWarningInformationService {
 
             updateSql += " and ORG_ID =" + domain.getOrgId();
 
+            log.info("UPDATE SQL :{}", updateSql);
+
             int row = jdbcTemplate.update(updateSql);
+            log.info("UPDATE count:({}) SQL : ({})", row, updateSql);
             return row;
         } catch (Exception e) {
             e.printStackTrace();

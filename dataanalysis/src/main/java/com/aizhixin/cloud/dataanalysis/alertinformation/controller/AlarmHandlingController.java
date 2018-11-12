@@ -84,8 +84,7 @@ public class AlarmHandlingController {
                     "<br>warningTypes:预警类型(字符串多个以,分隔);<br>" +
                     "<br>warningLevels:预警等级(字符串多个以,分隔)<br>;" +
                     "<br>collegeId:院系id<br>"+
-                    "<b>选填:</b>" +
-                    "dealTypes:处理类型和处理建议 辅导员处理10 学院处理 20;") @RequestBody BatchAllDealDomain domain) {
+                    "<b>选填:</b>") @RequestBody BatchAllDealDomain domain) {
         return alarmHandlingService.batchAllProcessing(domain);
     }
 
