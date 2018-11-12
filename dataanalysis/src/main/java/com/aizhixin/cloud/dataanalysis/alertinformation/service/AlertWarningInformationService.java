@@ -342,15 +342,14 @@ public class AlertWarningInformationService {
     }
 
     public Integer updateAllAlertInforPage(BatchAllDealDomain domain) {
-
         try {
-
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String current = sdf.format(new Date());
-            String updateSql = "update t_warning_information set LAST_MODIFIED_DATE = '" + current + "',WARNING_STATE = '20'  where DELETE_FLAG =" + DataValidity.VALID.getState() + " ";
+            String updateSql = "update t_warning_information set LAST_MODIFIED_DATE = '" + current + "',WARNING_STATE = 20" +
+                    (!StringUtils.isEmpty(domain.getComments()) ? ",CANCEL_COMMENTS='" + domain.getComments() + "'" : "") +
+            "  where DELETE_FLAG =" + DataValidity.VALID.getState() + " WARNING_STATE < 20 ";
 
             if (!StringUtils.isEmpty(domain.getKeywords())) {
-
                 updateSql += " and ( NAME like '%" + domain.getKeywords() + "%' or JOB_NUMBER like '%" + domain.getKeywords() + "%') ";
             }
 

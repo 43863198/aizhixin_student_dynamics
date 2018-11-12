@@ -116,19 +116,19 @@ public class AlarmHandlingService {
         Map<String, Object> result = new HashMap<>();
         try {
             int row = alertWarningInformationService.updateAllAlertInforPage(domain);
-            List<Map<String, Object>> idList = alertWarningInformationService.queryAllAlertInforPage(domain);
-            Date cur = new Date ();
-            for (Map map : idList) {
-                if (null != map && null != map.get("ID")) {
-                    WarningInformation warningInformation = alertWarningInformationService.getOneById(map.get("ID").toString());
-                    if (warningInformation.getWarningState() < 20) {
-                        warningInformation.setLastModifiedDate(cur);
-                        warningInformation.setWarningState(AlertTypeConstant.ALERT_PROCESSED);
-                        warningInformation.setCancelComments(domain.getComments());
-                        alertWarningInformationService.save(warningInformation);
-                    }
-                }
-            }
+//            List<Map<String, Object>> idList = alertWarningInformationService.queryAllAlertInforPage(domain);
+//            Date cur = new Date ();
+//            for (Map map : idList) {
+//                if (null != map && null != map.get("ID")) {
+//                    WarningInformation warningInformation = alertWarningInformationService.getOneById(map.get("ID").toString());
+//                    if (warningInformation.getWarningState() < 20) {
+//                        warningInformation.setLastModifiedDate(cur);
+//                        warningInformation.setWarningState(AlertTypeConstant.ALERT_PROCESSED);
+//                        warningInformation.setCancelComments(domain.getComments());
+//                        alertWarningInformationService.save(warningInformation);
+//                    }
+//                }
+//            }
 
             if (row > 0) {
                 result.put("success", true);
