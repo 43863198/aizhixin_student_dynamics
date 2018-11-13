@@ -150,7 +150,7 @@ public class AlarmHandlingService {
             Date cur = new Date ();
             for (String id : idArray) {
                 WarningInformation warningInformation = alertWarningInformationService.getOneById(id);
-                if (warningInformation.getWarningState() < 20) {
+                if (warningInformation.getWarningState() < 20 && warningInformation.getWarningLevel() > 1) {//只能处理未处理的非红色预警
                     warningInformation.setLastModifiedDate(cur);
                     warningInformation.setWarningState(AlertTypeConstant.ALERT_PROCESSED);
                     warningInformation.setCancelComments(batchDealDomain.getComments());

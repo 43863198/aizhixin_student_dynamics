@@ -349,7 +349,7 @@ public class AlertWarningInformationService {
             String current = sdf.format(new Date());
             String updateSql = "update t_warning_information set LAST_MODIFIED_DATE = '" + current + "',WARNING_STATE = 20" +
                     (!StringUtils.isEmpty(domain.getComments()) ? ",CANCEL_COMMENTS='" + domain.getComments() + "'" : "") +
-            "  where DELETE_FLAG =" + DataValidity.VALID.getState() + " and WARNING_STATE < 20 ";
+            "  where DELETE_FLAG =" + DataValidity.VALID.getState() + " AND WARNING_STATE < 20 AND WARNING_LEVEL > 1 ";
 
             if (!StringUtils.isEmpty(domain.getKeywords())) {
                 updateSql += " and ( NAME like '%" + domain.getKeywords() + "%' or JOB_NUMBER like '%" + domain.getKeywords() + "%') ";
