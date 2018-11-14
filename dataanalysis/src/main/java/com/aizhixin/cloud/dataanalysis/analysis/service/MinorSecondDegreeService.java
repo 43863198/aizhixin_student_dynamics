@@ -107,21 +107,21 @@ public class MinorSecondDegreeService {
                     String code = temp.getCode();
                     minorSecondDegreeVO.setBmCode(code);
                     //本专业辅修统计
-                    List<Map<String,Object>> fxList =  minorSecondDegreeRepository.countByXxdmAndYxshAndZyhFx(xxdm,collegeCode,code);
+                   int fxCount =  minorSecondDegreeRepository.countByXxdmAndYxshAndZyhAndFxzyhIsNotNull(xxdm,collegeCode,code);
                     //本专业二学位统计
-                    List<Map<String,Object>> exwList = minorSecondDegreeRepository.countByXxdmAndYxshAndZyhExw(xxdm,collegeCode,code);
+                    int exwCount = minorSecondDegreeRepository.countByXxdmAndYxshAndZyhAndExwyxshIsNotNull(xxdm,collegeCode,code);
                     //外部门辅修本专业统计
-                    List<Map<String,Object>> wbmfxlist = minorSecondDegreeRepository.countByXxdmAndYxshWBFX(xxdm,collegeCode,code);
+                    int wbmfxCount = minorSecondDegreeRepository.countByXxdmAndYxshWBFX(xxdm,collegeCode,code);
                     //外部门修本专业二学位统计
-                    List<Map<String,Object>> wbmexwlist = minorSecondDegreeRepository.countByXxdmAndYxshWBEXW(xxdm,collegeCode,code);
+                    int wbmexwCount = minorSecondDegreeRepository.countByXxdmAndYxshWBEXW(xxdm,collegeCode,code);
 
-                    if(fxList.size() ==0 && exwList.size() == 0 && wbmfxlist.size() == 0 && wbmexwlist.size() ==0 ){
+                    if(fxCount ==0 && exwCount == 0 && wbmfxCount == 0 && wbmexwCount ==0 ){
                         continue;
                     }
-                    minorSecondDegreeVO.setBmfxs(fxList.size());
-                    minorSecondDegreeVO.setBmexws(exwList.size());
-                    minorSecondDegreeVO.setWbmfxs(wbmfxlist.size());
-                    minorSecondDegreeVO.setWbmexws(wbmexwlist.size());
+                    minorSecondDegreeVO.setBmfxs(fxCount);
+                    minorSecondDegreeVO.setBmexws(exwCount);
+                    minorSecondDegreeVO.setWbmfxs(wbmfxCount);
+                    minorSecondDegreeVO.setWbmexws(wbmexwCount);
 
                     list.add(minorSecondDegreeVO);
                 }
@@ -132,19 +132,19 @@ public class MinorSecondDegreeService {
                 for(OrganizationDTO temp : yxList){
                     MinorSecondDegreeVO minorSecondDegreeVO = new MinorSecondDegreeVO();
                     String code = temp.getCode();
-                    List<Map<String, Object>> fxlist = minorSecondDegreeRepository.countByXxdmAndYxshFxCount(xxdm,code);
-                    List<Map<String, Object>> exwlist = minorSecondDegreeRepository.countByXxdmAndYxshEXWCount(xxdm,code);
-                    List<Map<String,Object>> wbmfxlist = minorSecondDegreeRepository.countByXxdmAndYxshWbFxCount(xxdm,code);
-                    List<Map<String,Object>> wbmexwlist = minorSecondDegreeRepository.countByXxdmAndYxshWbExwCount(xxdm,code);
-                    if(fxlist.size() ==0 && exwlist.size() == 0 && wbmfxlist.size() == 0 && wbmexwlist.size() ==0 ){
+                    long fxCount = minorSecondDegreeRepository.countByXxdmAndYxshAndFxyxshIsNotNull(xxdm,code);
+                    long exwCount = minorSecondDegreeRepository.countByXxdmAndYxshAndExwyxshIsNotNull(xxdm,code);
+                    long wbmfxCount = minorSecondDegreeRepository.countByXxdmAndYxshWbFxCount(xxdm,code);
+                    long wbmexwCount = minorSecondDegreeRepository.countByXxdmAndYxshWbExwCount(xxdm,code);
+                    if(fxCount == 0 && exwCount == 0 && wbmfxCount == 0 && wbmexwCount ==0 ){
                         continue;
                     }
                     minorSecondDegreeVO.setBmmc(StringUtils.isEmpty(temp.getSimple())?temp.getName():temp.getSimple());
                     minorSecondDegreeVO.setBmCode(code);
-                    minorSecondDegreeVO.setBmfxs(fxlist.size());
-                    minorSecondDegreeVO.setBmexws(exwlist.size());
-                    minorSecondDegreeVO.setWbmfxs(wbmfxlist.size());
-                    minorSecondDegreeVO.setWbmexws(wbmexwlist.size());
+                    minorSecondDegreeVO.setBmfxs((int)fxCount);
+                    minorSecondDegreeVO.setBmexws((int)exwCount);
+                    minorSecondDegreeVO.setWbmfxs((int)wbmfxCount);
+                    minorSecondDegreeVO.setWbmexws((int)wbmexwCount);
 
                     list.add(minorSecondDegreeVO);
                 }
