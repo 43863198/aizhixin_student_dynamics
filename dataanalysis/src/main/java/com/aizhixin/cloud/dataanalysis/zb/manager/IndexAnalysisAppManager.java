@@ -18,7 +18,7 @@ import java.util.List;
 public class IndexAnalysisAppManager {
 
     private final static String SQL_DJ_DC_OLD = "SELECT ss.`JOIN_NUMBER` as CKRC,ss.`PASS_NUMBER` as TGRC,ss.`EXAMINATION_DATE` as KSRQ FROM `t_score_statistics` AS ss  WHERE ss.`ORG_ID` = ? and ss.`SCORE_TYPE` LIKE ?  and ss.`CODE` = ? AND ss.`STATISTICS_TYPE` = '000' AND ss.`PARENT_CODE` = ? ORDER BY ss.`EXAMINATION_DATE` DESC LIMIT 1";
-    private final static String SQL_DJ_DP_TGL = "SELECT XN,XQM,KSLX,ZXRS, CKRC,TGRC FROM t_zb_djksjc WHERE XXDM=? and BH=? and DHLJ=? AND KSLX=?  AND XN = (SELECT max(XN) FROM t_zb_djksjc WHERE KSLX=? AND  DHLJ=?) ORDER BY XQM DESC LIMIT 1";
+    private final static String SQL_DJ_DP_TGL = "SELECT XN,XQM,KSLX,ZXRS, CKRC,TGRC FROM t_zb_djksjc WHERE XXDM=? and BH=? and DHLJ=? AND KSLX=?  ORDER BY CONCAT(XN,XQM) DESC LIMIT 1";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -31,9 +31,10 @@ public class IndexAnalysisAppManager {
     @Transactional(readOnly = true)
     public List<EnglishLevelBigScreenVO> getNewLevelTestBigScreenPass(Long orgId) {
         List<EnglishLevelBigScreenVO> rsList = new ArrayList<>();
+        //SELECT XN,XQM,KSLX,ZXRS, CKRC,TGRC FROM t_zb_djksjc WHERE XXDM=? and BH=? and DHLJ=? AND KSLX=?  ORDER BY CONCAT(XN,XQM) DESC LIMIT 1
         List<EnglishLevelBigScreenVO> list = jdbcTemplate.query(SQL_DJ_DP_TGL,
-                new Object[]{orgId.toString(), orgId.toString(), "1", "3", "3", "1"},
-                new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR},
+                new Object[]{orgId.toString(), orgId.toString(), "1", "3"},
+                new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR},
                 (ResultSet rs, int rowNum) ->
                     new EnglishLevelBigScreenVO(rs.getString("XN"), rs.getString("XQM"),
                             rs.getString("KSLX"), rs.getLong("ZXRS"),
@@ -44,8 +45,8 @@ public class IndexAnalysisAppManager {
         }
 
         list = jdbcTemplate.query(SQL_DJ_DP_TGL,
-                new Object[]{orgId.toString(), orgId.toString(), "1", "4", "4", "1"},
-                new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR},
+                new Object[]{orgId.toString(), orgId.toString(), "1", "4"},
+                new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR},
                 (ResultSet rs, int rowNum) ->
                         new EnglishLevelBigScreenVO(rs.getString("XN"), rs.getString("XQM"),
                                 rs.getString("KSLX"), rs.getLong("ZXRS"),
@@ -56,8 +57,8 @@ public class IndexAnalysisAppManager {
         }
 
         list = jdbcTemplate.query(SQL_DJ_DP_TGL,
-                new Object[]{orgId.toString(), orgId.toString(), "1", "6", "6", "1"},
-                new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR},
+                new Object[]{orgId.toString(), orgId.toString(), "1", "6"},
+                new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR},
                 (ResultSet rs, int rowNum) ->
                         new EnglishLevelBigScreenVO(rs.getString("XN"), rs.getString("XQM"),
                                 rs.getString("KSLX"), rs.getLong("ZXRS"),
