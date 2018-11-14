@@ -706,4 +706,11 @@ public class CetBaseIndexService {
         }
         return list;
     }
+
+    /**
+     * 最近11个学期的4、 6级考试的单次均值成绩
+     */
+    public List<Cet46AvgYearsVO> findFirstScreenCet46AvgSemester11(String xxdm) {
+        return cetBaseIndexManager.findNew11SemesterCet46AvgDc(xxdm);
+    }
 }
