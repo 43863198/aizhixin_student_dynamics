@@ -254,4 +254,11 @@ public class CetIndexController {
             @ApiParam(value = "className 班名") @RequestParam(value = "className", required = false) String className) {
         return cetBaseIndexService.findDcAllYearAvgRate(orgId, cetType, collegeCode, professionCode, className);
     }
+
+    @GetMapping(value = "/year/semester11/avg46", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "四、六级历年单次均值(最近的11个学期)", response = Void.class, notes = "四、六级历年单次均值(最近的11个学期)<br><br><b>@author zhen.pan</b>")
+    public List<Cet46AvgYearsVO> dcRateYearAvg(
+            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId) {
+        return cetBaseIndexService.findFirstScreenCet46AvgSemester11(orgId.toString());
+    }
 }
