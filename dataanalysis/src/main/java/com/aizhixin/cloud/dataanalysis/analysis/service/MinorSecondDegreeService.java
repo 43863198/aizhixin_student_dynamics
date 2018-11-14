@@ -6,7 +6,6 @@ import com.aizhixin.cloud.dataanalysis.analysis.respository.MinorSecondDegreeRep
 import com.aizhixin.cloud.dataanalysis.analysis.vo.MinorSecondDegreeVO;
 import com.aizhixin.cloud.dataanalysis.analysis.vo.OverviewVO;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
-import com.aizhixin.cloud.dataanalysis.setup.service.GenerateWarningInfoService;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +18,17 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class MinorSecondDegreeService {
     @Autowired
     private MinorSecondDegreeRepository minorSecondDegreeRepository;
-    @Autowired
-    private GenerateWarningInfoService generateWarningInfoService;
+//    @Autowired
+//    private GenerateWarningInfoService generateWarningInfoService;
     @Autowired
     private EntityManager em;
     @Autowired
@@ -56,13 +58,13 @@ public class MinorSecondDegreeService {
             }
 
             //查询当前时间所属学年学期
-            Map map = getDate(xxdm);
+//            Map map = getDate(xxdm);
+//
+//            String teachYear = map.get("teachYear").toString();
+//            String semester = map.get("semester").toString();
 
-            String teachYear = map.get("teachYear").toString();
-            String semester = map.get("semester").toString();
-
-            minorSecondDegreeInfo.setXn(teachYear);
-            minorSecondDegreeInfo.setXqm(semester);
+//            minorSecondDegreeInfo.setXn(teachYear);
+//            minorSecondDegreeInfo.setXqm(semester);
 
             Example<MinorSecondDegreeInfo> example = Example.of(minorSecondDegreeInfo);
             Pageable pageable = new PageRequest(pageNumber - 1, pageSize);
@@ -85,10 +87,10 @@ public class MinorSecondDegreeService {
     public List<MinorSecondDegreeVO> statistics(Long xxdm, String collegeCode) {
         List<MinorSecondDegreeVO> list = new ArrayList<>();
         //查询当前时间所属学年学期
-        Map map = getDate(xxdm);
+//        Map map = getDate(xxdm);
 
-        String teachYear = map.get("teachYear").toString();
-        String semester = map.get("semester").toString();
+//        String teachYear = map.get("teachYear").toString();
+//        String semester = map.get("semester").toString();
 
 
         try {
@@ -105,13 +107,13 @@ public class MinorSecondDegreeService {
                     String code = temp.getCode();
                     minorSecondDegreeVO.setBmCode(code);
                     //本专业辅修统计
-                    List<Map<String,Object>> fxList =  minorSecondDegreeRepository.countByXxdmAndYxshAndZyhFx(xxdm,collegeCode,code,teachYear,semester);
+                    List<Map<String,Object>> fxList =  minorSecondDegreeRepository.countByXxdmAndYxshAndZyhFx(xxdm,collegeCode,code);
                     //本专业二学位统计
-                    List<Map<String,Object>> exwList = minorSecondDegreeRepository.countByXxdmAndYxshAndZyhExw(xxdm,collegeCode,code,teachYear,semester);
+                    List<Map<String,Object>> exwList = minorSecondDegreeRepository.countByXxdmAndYxshAndZyhExw(xxdm,collegeCode,code);
                     //外部门辅修本专业统计
-                    List<Map<String,Object>> wbmfxlist = minorSecondDegreeRepository.countByXxdmAndYxshWBFX(xxdm,collegeCode,code,teachYear,semester);
+                    List<Map<String,Object>> wbmfxlist = minorSecondDegreeRepository.countByXxdmAndYxshWBFX(xxdm,collegeCode,code);
                     //外部门修本专业二学位统计
-                    List<Map<String,Object>> wbmexwlist = minorSecondDegreeRepository.countByXxdmAndYxshWBEXW(xxdm,collegeCode,code,teachYear,semester);
+                    List<Map<String,Object>> wbmexwlist = minorSecondDegreeRepository.countByXxdmAndYxshWBEXW(xxdm,collegeCode,code);
 
                     if(fxList.size() ==0 && exwList.size() == 0 && wbmfxlist.size() == 0 && wbmexwlist.size() ==0 ){
                         continue;
@@ -130,10 +132,10 @@ public class MinorSecondDegreeService {
                 for(OrganizationDTO temp : yxList){
                     MinorSecondDegreeVO minorSecondDegreeVO = new MinorSecondDegreeVO();
                     String code = temp.getCode();
-                    List<Map<String, Object>> fxlist = minorSecondDegreeRepository.countByXxdmAndYxshFxCount(xxdm,code,teachYear,semester);
-                    List<Map<String, Object>> exwlist = minorSecondDegreeRepository.countByXxdmAndYxshEXWCount(xxdm,code,teachYear,semester);
-                    List<Map<String,Object>> wbmfxlist = minorSecondDegreeRepository.countByXxdmAndYxshWbFxCount(xxdm,code,teachYear,semester);
-                    List<Map<String,Object>> wbmexwlist = minorSecondDegreeRepository.countByXxdmAndYxshWbExwCount(xxdm,code,teachYear,semester);
+                    List<Map<String, Object>> fxlist = minorSecondDegreeRepository.countByXxdmAndYxshFxCount(xxdm,code);
+                    List<Map<String, Object>> exwlist = minorSecondDegreeRepository.countByXxdmAndYxshEXWCount(xxdm,code);
+                    List<Map<String,Object>> wbmfxlist = minorSecondDegreeRepository.countByXxdmAndYxshWbFxCount(xxdm,code);
+                    List<Map<String,Object>> wbmexwlist = minorSecondDegreeRepository.countByXxdmAndYxshWbExwCount(xxdm,code);
                     if(fxlist.size() ==0 && exwlist.size() == 0 && wbmfxlist.size() == 0 && wbmexwlist.size() ==0 ){
                         continue;
                     }
@@ -159,10 +161,10 @@ public class MinorSecondDegreeService {
         Long exwcount;
 
         //查询当前时间所属学年学期
-        Map datemap = getDate(orgId);
+//        Map datemap = getDate(orgId);
 
-        String teachYear = datemap.get("teachYear").toString();
-        String semester = datemap.get("semester").toString();
+//        String teachYear = datemap.get("teachYear").toString();
+//        String semester = datemap.get("semester").toString();
 
 
         List<OverviewVO> list = new ArrayList<>();
@@ -173,13 +175,13 @@ public class MinorSecondDegreeService {
             if (StringUtils.isEmpty(collegeCode)) {
                 sql.append(" and XXID=:orgId ");
                 condition.put("orgId", orgId);
-                fxcount = minorSecondDegreeRepository.countByXxdmAndXnAndXqmAndFxyxshIsNotNull(orgId,teachYear,semester);
-                exwcount = minorSecondDegreeRepository.countByXxdmAndXnAndXqmAndExwyxshIsNotNull(orgId,teachYear,semester);
+                fxcount = minorSecondDegreeRepository.countByXxdmAndFxyxshIsNotNull(orgId);
+                exwcount = minorSecondDegreeRepository.countByXxdmAndExwyxshIsNotNull(orgId);
             } else {
                 sql.append(" and YXSH=:collegeCode ");
                 condition.put("collegeCode", collegeCode);
-                fxcount = minorSecondDegreeRepository.countByXxdmAndYxshAndXnAndXqmAndFxyxshIsNotNull(orgId,collegeCode,teachYear,semester);
-                exwcount = minorSecondDegreeRepository.countByXxdmAndYxshAndXnAndXqmAndExwyxshIsNotNull(orgId,collegeCode,teachYear,semester);
+                fxcount = minorSecondDegreeRepository.countByXxdmAndYxshAndFxyxshIsNotNull(orgId,collegeCode);
+                exwcount = minorSecondDegreeRepository.countByXxdmAndYxshAndExwyxshIsNotNull(orgId,collegeCode);
             }
 
             Query sq = em.createNativeQuery(sql.toString());
@@ -210,30 +212,30 @@ public class MinorSecondDegreeService {
     /**
      * 查询当前时间所属学年学期，并且格式化时间区间
      */
-    public Map getDate(Long xxdm) {
-        Calendar c = Calendar.getInstance();
-        // 当前年份
-        int year = c.get(Calendar.YEAR);
-        // 当前月份
-        int month = c.get(Calendar.MONTH) + 1;
-        //当前日期
-        int day = c.get(Calendar.DAY_OF_MONTH);
-        String end = year + "-" + month + "-" + day;
-        //查询当前时间所属学年学期
-        Map map = generateWarningInfoService.getXQAndXN(xxdm, end);
-        String teachYear = map.get("teacherYear").toString();
-        String semester = map.get("semester").toString();
-        if ("秋".equals(semester)) {
-            semester = "1";
-            teachYear = teachYear + "-" + (Integer.parseInt(teachYear) + 1);
-        } else {
-            semester = "2";
-            teachYear = (Integer.parseInt(teachYear) - 1) + "-" + teachYear;
-        }
-
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("teachYear", teachYear);
-        resultMap.put("semester", semester);
-        return resultMap;
-    }
+//    public Map getDate(Long xxdm) {
+//        Calendar c = Calendar.getInstance();
+//        // 当前年份
+//        int year = c.get(Calendar.YEAR);
+//        // 当前月份
+//        int month = c.get(Calendar.MONTH) + 1;
+//        //当前日期
+//        int day = c.get(Calendar.DAY_OF_MONTH);
+//        String end = year + "-" + month + "-" + day;
+//        //查询当前时间所属学年学期
+//        Map map = generateWarningInfoService.getXQAndXN(xxdm, end);
+//        String teachYear = map.get("teacherYear").toString();
+//        String semester = map.get("semester").toString();
+//        if ("秋".equals(semester)) {
+//            semester = "1";
+//            teachYear = teachYear + "-" + (Integer.parseInt(teachYear) + 1);
+//        } else {
+//            semester = "2";
+//            teachYear = (Integer.parseInt(teachYear) - 1) + "-" + teachYear;
+//        }
+//
+//        Map<String, Object> resultMap = new HashMap<>();
+//        resultMap.put("teachYear", teachYear);
+//        resultMap.put("semester", semester);
+//        return resultMap;
+//    }
 }
