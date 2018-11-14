@@ -1,14 +1,9 @@
 package com.aizhixin.cloud.datainstall.config;
 
-import com.google.common.base.Predicates;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.context.request.async.DeferredResult;
 import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -18,48 +13,35 @@ import static springfox.documentation.builders.PathSelectors.regex;
 
 @Configuration
 @EnableSwagger2
-@RefreshScope
 public class SwaggerConfig {
 	@Value("${sys.version}")
 	private String systemPublish;
-	
-	@Bean
-    public Docket enrichmindApi() {
+
+    @Bean
+    public Docket webApi() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("datainstall")
-                .genericModelSubstitutes(DeferredResult.class)
-                .useDefaultResponseMessages(false)
-                .forCodeGeneration(true)
+                .groupName("WEB相关API")
                 .pathMapping("/")// base，最终调用接口后会和paths拼接在一起
                 .select()
-                .paths(or(regex("/v1/.*")))//过滤的接口
-                .paths(Predicates.not(regex("/error.*")))
+                .paths(or(regex("/web/.*")))//过滤的接口
                 .build()
-                .apiInfo(webApiInfo());
+                .apiInfo(new ApiInfoBuilder()
+                        .title("web相关API")
+                        .version(systemPublish)
+                        .build());
     }
 
-    private ApiInfo webApiInfo() {
-      return new ApiInfoBuilder()
-      .title("数据组装------学情分析数据组装相关API")
-      .description("学情分析数据组装API")
-      .contact(new Contact("aizhixin", "http://www.aizhixin.com", "zhengning@aizhixin.com"))
-      .license("Apache License Version 2.0")
-      .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0")
-      .version(systemPublish)
-      .build();
+    @Bean
+    public Docket otherApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("其它API")
+                .pathMapping("/")// base，最终调用接口后会和paths拼接在一起
+                .select()
+                .paths(or(regex("/manual/.*")))//过滤的接口
+                .build()
+                .apiInfo(new ApiInfoBuilder()
+                        .title("其它API")
+                        .version(systemPublish)
+                        .build());
     }
-    
-//    @Component
-//    @Primary
-//    public class CustomObjectMapper extends ObjectMapper {
-//		private static final long serialVersionUID = -1280512014575039225L;
-//
-//		public CustomObjectMapper() {
-//            setSerializationInclusion(JsonInclude.Include.NON_NULL);
-//            configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-//            configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-//            configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-//            enable(SerializationFeature.INDENT_OUTPUT);
-//        }
-//    }
 }
