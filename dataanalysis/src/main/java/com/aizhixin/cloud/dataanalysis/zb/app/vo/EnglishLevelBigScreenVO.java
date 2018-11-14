@@ -28,8 +28,25 @@ public class EnglishLevelBigScreenVO {
     @Getter @Setter private Long tgrs;
 
     public EnglishLevelBigScreenVO (String xn, String xq, String kslx, Long zxrs, Long ckrs, Long tgrs) {
-        this.xn = xn;
-        this.xq = xq;
+//        this.xn = xn;
+//        this.xq = xq;
+        if ("2".equals(xq)) {
+            this.xq = "春";
+            if (null != xn) {
+                int p = xn.indexOf("-");
+                if (p > 0) {
+                    this.xn = xn.substring(p + 1);
+                }
+            }
+        } else {
+            this.xq = "秋";
+            if (null != xn) {
+                int p = xn.indexOf("-");
+                if (p > 0) {
+                    this.xn = xn.substring(0, p);
+                }
+            }
+        }
         this.kslx = kslx;
         this.zxrs = zxrs;
         this.ckrs = ckrs;
