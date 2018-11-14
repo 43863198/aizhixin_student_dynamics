@@ -202,9 +202,11 @@ public class SchoolStatisticsService {
             teacherlYearData.setSemester(semester);
             teacherlYearData.setTeacherYear(teacherYear);
             h.setTeacherlYearData(teacherlYearData);
+            Date d = new Date ();
+            SimpleDateFormat f = new SimpleDateFormat("yyyyMM");
 
             Map<String, Object> con = new HashMap<>();
-            StringBuilder ssl = new StringBuilder("SELECT sum(if(CURDATE() BETWEEN x.RXNY AND x.YBYNY,1,0)) as count, sum(if(x.YBYNY > now() and datediff(x.YBYNY,now()) < 300,1,0)) as yby FROM t_xsjbxx x WHERE 1 = 1");
+            StringBuilder ssl = new StringBuilder("SELECT sum(if(x.RXNY <= '" + f.format(d) + "' AND CURDATE() <= x.YBYNY,1,0)) as count, sum(if(x.YBYNY > now() and datediff(x.YBYNY,now()) < 300,1,0)) as yby FROM t_xsjbxx x WHERE 1 = 1");
             StringBuilder tsl = new StringBuilder("SELECT count(1) as count FROM t_jzgjbxx");
             StringBuilder tcsl = new StringBuilder("SELECT count(1) as count FROM t_class_teacher");
             if (null != orgId) {
