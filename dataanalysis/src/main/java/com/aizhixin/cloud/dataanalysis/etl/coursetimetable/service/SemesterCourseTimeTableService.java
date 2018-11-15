@@ -32,7 +32,10 @@ public class SemesterCourseTimeTableService {
             o.setOrgId(d.getOrgId());
             o.setJxbh(d.getPkh() + "-" + d.getJxbh());
             o.setJxbmc(d.getJxbmc());
-            if (!StringUtils.isEmpty(d.getSksj())) {//处理上课时间:sksj|3 第3、4节 10:20-12:00|5 第5-8节 14:30-18:00
+            if (!StringUtils.isEmpty(d.getSksj())) {//处理上课时间:sksj|3 第3、4节 10:20-12:00|5 第5-8节 14:30-18:00|4 第6节 15:25-16:10|3 第3节-中午2 10:20-14:05
+                if(d.getSksj().indexOf("中午") > 0) {//中午和单双周不处理
+                    continue;
+                }
                 int p = d.getSksj().indexOf("第");
                 if (p > 0) {
                     tmp = d.getSksj().substring(0, p);
@@ -53,7 +56,12 @@ public class SemesterCourseTimeTableService {
                                 o.setDjj(new Integer(ts[0].trim()));
                                 o.setCxj(new Integer(ts[0].trim()) - o.getDjj() + 1);
                             } else {
-                                log.warn("Not read data 3:{}", d.getSksj());
+                                if (org.apache.commons.lang.StringUtils.isNumeric(tmp)) {
+                                    o.setQsz(new Integer(tmp));
+                                    o.setCxj(1);
+                                } else {
+                                    log.warn("Not read data 3:{}", d.getSksj());
+                                }
                             }
                         }
                     } else {
@@ -91,6 +99,9 @@ public class SemesterCourseTimeTableService {
         }
 
         log.info("XN:{}, XQ:{} course time table out table count:{}", xn, xq, list.size());
+        if (!list.isEmpty()) {
+            semesterCourseTimeTableManager.writeGuiliPksj(list);
+        }
     }
 
     private void oneZc(CourseTimeTableOutDTO o1, String zc) {
@@ -105,6 +116,10 @@ public class SemesterCourseTimeTableService {
         p = zc.indexOf("周");
         if (p > 0) {
             zc = zc.substring(0, p);
+        }
+        p = zc.indexOf("第");
+        if (p >= 0) {
+            zc = zc.substring(p + "第".length());
         }
         p = zc.indexOf("-");
         if (p > 0) {
