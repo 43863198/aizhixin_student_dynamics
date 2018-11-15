@@ -738,7 +738,7 @@ public class SchoolStatisticsService {
 //            }
 //            //因数据问题计算的是2015年开始统计到当前
 //            sql.append(" AND DIPLOMA_NUMBER <> '' AND SUBSTRING(DIPLOMA_NUMBER, 7, 4) BETWEEN '2015' AND '" + year + "' GROUP BY year");
-            String sql = "SELECT BYN `year`, COUNT(*) `count` FROM t_glut_dc_jsxyzlb WHERE BYN >= '2012' GROUP BY BYN";
+            String sql = "SELECT BYN `year`, COUNT(*) `count` FROM t_glut_dc_jsxyzlb WHERE BYN >= '2012' GROUP BY BYN  ORDER BY BYN";
             Query sq = em.createNativeQuery(sql.toString());
             for (Map.Entry<String, Object> e : condition.entrySet()) {
                 sq.setParameter(e.getKey(), e.getValue());
