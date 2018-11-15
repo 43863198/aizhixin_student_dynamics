@@ -23,14 +23,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Types;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -1050,20 +1048,21 @@ public class SchoolStatisticsService {
     @Transactional(readOnly = true)
     public List<NewStudentReportDomain> findNewReportTop10(Long orgId) {
         List<NewStudentReportDomain> list = new ArrayList<>();
-        if (null == orgId || orgId <= 0) {
-            return list;
-        }
-        String sql = "SELECT ss.TEACHER_YEAR, ss.SEMESTER, ss.COLLEGE_NAME, SUM(ss.NEW_STUDENTS_COUNT) as NSN, SUM(ss.ALREADY_REPORT) as RN " +
-                "FROM T_SCHOOL_STATISTICS ss " +
-                "WHERE ss.ORG_ID=? AND ss.TEACHER_YEAR=(SELECT MAX(TEACHER_YEAR) FROM T_SCHOOL_STATISTICS WHERE ORG_ID=?) " +
-                "GROUP BY ss.COLLEGE_NAME " +
-                "ORDER BY SUM(ss.ALREADY_REPORT)/SUM(ss.NEW_STUDENTS_COUNT) DESC LIMIT 10";
-        return jdbcTemplate.query(sql, new Object[]{orgId, orgId}, new int [] {Types.BIGINT, Types.BIGINT}, new RowMapper<NewStudentReportDomain>() {
-            public NewStudentReportDomain mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return new NewStudentReportDomain (rs.getString("TEACHER_YEAR"), rs.getString("SEMESTER"),
-                        rs.getString("COLLEGE_NAME"), rs.getLong("NSN"),rs.getLong("RN"));
-            }
-        });
+        return list;
+//        if (null == orgId || orgId <= 0) {
+//            return list;
+//        }
+//        String sql = "SELECT ss.TEACHER_YEAR, ss.SEMESTER, ss.COLLEGE_NAME, SUM(ss.NEW_STUDENTS_COUNT) as NSN, SUM(ss.ALREADY_REPORT) as RN " +
+//                "FROM T_SCHOOL_STATISTICS ss " +
+//                "WHERE ss.ORG_ID=? AND ss.TEACHER_YEAR=(SELECT MAX(TEACHER_YEAR) FROM T_SCHOOL_STATISTICS WHERE ORG_ID=?) " +
+//                "GROUP BY ss.COLLEGE_NAME " +
+//                "ORDER BY SUM(ss.ALREADY_REPORT)/SUM(ss.NEW_STUDENTS_COUNT) DESC LIMIT 10";
+//        return jdbcTemplate.query(sql, new Object[]{orgId, orgId}, new int [] {Types.BIGINT, Types.BIGINT}, new RowMapper<NewStudentReportDomain>() {
+//            public NewStudentReportDomain mapRow(ResultSet rs, int rowNum) throws SQLException {
+//                return new NewStudentReportDomain (rs.getString("TEACHER_YEAR"), rs.getString("SEMESTER"),
+//                        rs.getString("COLLEGE_NAME"), rs.getLong("NSN"),rs.getLong("RN"));
+//            }
+//        });
     }
 
 }
