@@ -1,7 +1,6 @@
 package com.aizhixin.cloud.dataanalysis.analysis.service;
 
 import com.aizhixin.cloud.dataanalysis.analysis.constant.TrendType;
-import com.aizhixin.cloud.dataanalysis.analysis.domain.MapResultDomain;
 import com.aizhixin.cloud.dataanalysis.analysis.domain.NewStudentReportDomain;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.*;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.SchoolStatistics;
@@ -22,7 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.mapreduce.MapReduceResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -669,61 +667,61 @@ public class SchoolStatisticsService {
     public Map<String, Object> getEnrollment(Long orgId) {
         Map<String, Object> result = new HashMap<>();
         List<ReportRateVO> reportRateVOList = new ArrayList<>();
-        try {
-            Criteria criteria = Criteria.where("orgId").is(orgId);
-            criteria.and("isRegister").is(1);
-            org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
-            query.addCriteria(criteria);
-            //条件
-
-//            AggregationResults<BasicDBObject> register = mongoTemplate.aggregate(
-//                    Aggregation.newAggregation(
-//                            Aggregation.match(criteria),
-//                            Aggregation.group("schoolYear").count().as("count").first("schoolYear").as("schoolYear")
-//                    ), StudentRegister.class, BasicDBObject.class);
-            String map="function(){emit(this.schoolYear, 1);}";
-            String reduce="function(k, v){return Array.sum(v)}";
-            MapReduceResults<MapResultDomain> resultDomains = mongoTemplate.mapReduce(query,"StudentRegister",map,reduce,MapResultDomain.class);
-            for (MapResultDomain mapResultDomain : resultDomains) {
-                ReportRateVO rr = new ReportRateVO();
-                String tmp = mapResultDomain.get_id();
-                if (null != tmp) {
-                    int p = tmp.indexOf(".");
-                    if (p > 0) {
-                        rr.setYear(tmp.substring(0, p));
-                    } else {
-                        rr.setYear(tmp);
-                    }
-                }
-//                rr.setYear(Integer.valueOf(mapResultDomain.get_id()).toString());
-                rr.setReportNumber(mapResultDomain.getValue().intValue());
-                reportRateVOList.add(rr);
-                /*System.out.print(mapResultDomain.get_id());
-                System.out.print(mapResultDomain.getValue());*/
-            }
-//            for (int i = 0; i < register.getMappedResults().size(); i++) {
+//        try {
+//            Criteria criteria = Criteria.where("orgId").is(orgId);
+//            criteria.and("isRegister").is(1);
+//            org.springframework.data.mongodb.core.query.Query query = new org.springframework.data.mongodb.core.query.Query();
+//            query.addCriteria(criteria);
+//            //条件
+//
+////            AggregationResults<BasicDBObject> register = mongoTemplate.aggregate(
+////                    Aggregation.newAggregation(
+////                            Aggregation.match(criteria),
+////                            Aggregation.group("schoolYear").count().as("count").first("schoolYear").as("schoolYear")
+////                    ), StudentRegister.class, BasicDBObject.class);
+//            String map="function(){emit(this.schoolYear, 1);}";
+//            String reduce="function(k, v){return Array.sum(v)}";
+//            MapReduceResults<MapResultDomain> resultDomains = mongoTemplate.mapReduce(query,"StudentRegister",map,reduce,MapResultDomain.class);
+//            for (MapResultDomain mapResultDomain : resultDomains) {
 //                ReportRateVO rr = new ReportRateVO();
-//                rr.setYear(register.getMappedResults().get(i).getString("schoolYear"));
-//                rr.setReportNumber(register.getMappedResults().get(i).getInt("count"));
+//                String tmp = mapResultDomain.get_id();
+//                if (null != tmp) {
+//                    int p = tmp.indexOf(".");
+//                    if (p > 0) {
+//                        rr.setYear(tmp.substring(0, p));
+//                    } else {
+//                        rr.setYear(tmp);
+//                    }
+//                }
+////                rr.setYear(Integer.valueOf(mapResultDomain.get_id()).toString());
+//                rr.setReportNumber(mapResultDomain.getValue().intValue());
 //                reportRateVOList.add(rr);
+//                /*System.out.print(mapResultDomain.get_id());
+//                System.out.print(mapResultDomain.getValue());*/
 //            }
-            if (reportRateVOList.size() > 1) {
-                for (int j = 1; j < reportRateVOList.size(); j++) {
-                    Double change = (Double.valueOf(reportRateVOList.get(j).getReportNumber() - Double.valueOf(reportRateVOList.get(j - 1).getReportNumber())
-                    ) / Double.valueOf(reportRateVOList.get(j - 1).getReportNumber()));
-                    if (null != change && !change.isNaN() && !change.isInfinite()) {
-                        reportRateVOList.get(j).setChange(new DecimalFormat("0.00").format(change * 100));
-                    }
-                }
-            }
+////            for (int i = 0; i < register.getMappedResults().size(); i++) {
+////                ReportRateVO rr = new ReportRateVO();
+////                rr.setYear(register.getMappedResults().get(i).getString("schoolYear"));
+////                rr.setReportNumber(register.getMappedResults().get(i).getInt("count"));
+////                reportRateVOList.add(rr);
+////            }
+//            if (reportRateVOList.size() > 1) {
+//                for (int j = 1; j < reportRateVOList.size(); j++) {
+//                    Double change = (Double.valueOf(reportRateVOList.get(j).getReportNumber() - Double.valueOf(reportRateVOList.get(j - 1).getReportNumber())
+//                    ) / Double.valueOf(reportRateVOList.get(j - 1).getReportNumber()));
+//                    if (null != change && !change.isNaN() && !change.isInfinite()) {
+//                        reportRateVOList.get(j).setChange(new DecimalFormat("0.00").format(change * 100));
+//                    }
+//                }
+//            }
             result.put("success", true);
             result.put("data", reportRateVOList);
             return result;
-        } catch (Exception e) {
-            result.put("success", false);
-            result.put("message", "获取历年报到人数情况失败！");
-            return result;
-        }
+//        } catch (Exception e) {
+//            result.put("success", false);
+//            result.put("message", "获取历年报到人数情况失败！");
+//            return result;
+//        }
 
     }
 
