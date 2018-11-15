@@ -20,7 +20,7 @@ public class EtlSemesterCourseTimeTableController {
     @Autowired
     private SemesterCourseTimeTableService semesterCourseTimeTableService;
     @PutMapping(value = "/etl", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "PUT", value = "英语等级考试数据库对数据库标准数据清洗ETL", response = Void.class, notes = "英语等级考试数据库对数据库标准数据清洗ETL<br><br><b>@author zhen.pan</b>")
+    @ApiOperation(httpMethod = "PUT", value = "排课数据清洗到t_curriculum_schedule表中", response = Void.class, notes = "排课数据清洗到t_curriculum_schedule表中<br><br><b>@author zhen.pan</b>")
     public void etlCet(@ApiParam(value = "xn 学年" , required = true) @RequestParam(value = "xn") String xn,
                        @ApiParam(value = "xq 学期(1,2表示春和秋)" , required = true) @RequestParam(value = "xq") String xq) {
         semesterCourseTimeTableService.etlGuiliPkxx(xn, xq);
