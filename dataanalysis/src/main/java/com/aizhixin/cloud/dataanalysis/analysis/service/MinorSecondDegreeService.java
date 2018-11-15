@@ -18,10 +18,8 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class MinorSecondDegreeService {
@@ -166,11 +164,12 @@ public class MinorSecondDegreeService {
 //        String teachYear = datemap.get("teachYear").toString();
 //        String semester = datemap.get("semester").toString();
 
-
+        Date d = new Date();
+        SimpleDateFormat f = new SimpleDateFormat("yyyyMM");
         List<OverviewVO> list = new ArrayList<>();
         Map<String, Object> condition = new HashMap<>();
         try {
-            StringBuilder sql = new StringBuilder("select count(xh) as total from t_xsjbxx where CURDATE() BETWEEN RXNY and YBYNY and DQZT NOT IN ('02','04','16')");
+            StringBuilder sql = new StringBuilder("select count(xh) as total from t_xsjbxx where   RXNY <= '" + f.format(d) + "' and CURDATE() <= YBYNY and DQZT NOT IN ('02','04','16')");
 
             if (StringUtils.isEmpty(collegeCode)) {
                 sql.append(" and XXID=:orgId ");

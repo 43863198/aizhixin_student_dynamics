@@ -78,42 +78,48 @@ public HomeData<CourseEvaluateDTO> getHomeCourseEvaluate(long orgId) {
 
 }
     public PageData<CourseEvaluateDTO> getCourseEvaluate(long orgId, String semesterId,String teacherYear,String collegeIds, String courseName, String sort, Integer pageSize, Integer pageNumber) {
-        Map<String, Object> result = new HashMap<>();
-        List<SortDTO> sortDTOS = new ArrayList();
-        String querySql = "SELECT COURSE_CODE,COURSE_NAME,avg(AVG_SCORE) as score,max(STATISTICAL_TIME) as STATISTICAL_TIME FROM `T_COURSE_EVALUATE` where DELETE_FLAG =" + DataValidity.VALID.getState() + " and ORG_ID=" + orgId + " ";
-        String countSql = "SELECT COURSE_CODE FROM `T_COURSE_EVALUATE` where DELETE_FLAG =" + DataValidity.VALID.getState() + "  and ORG_ID=" + orgId + " ";
-        if (!StringUtils.isEmpty(semesterId)) {
-            querySql += " and SEMESTER=" + semesterId + " ";
-            countSql += " and SEMESTER=" + semesterId + " ";
-        }
-        if (!StringUtils.isEmpty(teacherYear)) {
-            querySql += " and TEACHER_YEAR=" + teacherYear + " ";
-            countSql += " and TEACHER_YEAR=" + teacherYear + " ";
-        }
-        if (!StringUtils.isEmpty(collegeIds)) {
-            querySql += " and COLLEGE_ID IN (" + collegeIds + ") ";
-            countSql += " and COLLEGE_ID IN (" + collegeIds + ") ";
-        }
-        if (!StringUtils.isEmpty(courseName)) {
-            querySql += " and COURSE_NAME like '%" + courseName + "%' ";
-            countSql += " and COURSE_NAME like '%" + courseName + "%' ";
-        }
-        querySql += "  group by COURSE_CODE";
-        countSql += "  group by COURSE_CODE";
-        countSql="SELECT count(1) FROM ("+countSql+") aa";
-        SortDTO sortDTO = new SortDTO();
-        if (!StringUtils.isEmpty(sort) ) {
-            if (sort == "desc") {
-                sortDTO.setKey("desc");
-                sortDTOS.add(sortDTO);
-            }
-        }
-       Map map=pageJdbcUtil
-               .getPageInfor(pageSize, pageNumber, rowMapper, sortDTOS, querySql, countSql);
-        PageData<CourseEvaluateDTO> p=new PageData<CourseEvaluateDTO>();
-        p.setData((List) map.get("data"));
-        p.setPage((PageDomain)map.get("page"));
+//        Map<String, Object> result = new HashMap<>();
+//        List<SortDTO> sortDTOS = new ArrayList();
+//        String querySql = "SELECT COURSE_CODE,COURSE_NAME,avg(AVG_SCORE) as score,max(STATISTICAL_TIME) as STATISTICAL_TIME FROM `T_COURSE_EVALUATE` where DELETE_FLAG =" + DataValidity.VALID.getState() + " and ORG_ID=" + orgId + " ";
+//        String countSql = "SELECT COURSE_CODE FROM `T_COURSE_EVALUATE` where DELETE_FLAG =" + DataValidity.VALID.getState() + "  and ORG_ID=" + orgId + " ";
+//        if (!StringUtils.isEmpty(semesterId)) {
+//            querySql += " and SEMESTER=" + semesterId + " ";
+//            countSql += " and SEMESTER=" + semesterId + " ";
+//        }
+//        if (!StringUtils.isEmpty(teacherYear)) {
+//            querySql += " and TEACHER_YEAR=" + teacherYear + " ";
+//            countSql += " and TEACHER_YEAR=" + teacherYear + " ";
+//        }
+//        if (!StringUtils.isEmpty(collegeIds)) {
+//            querySql += " and COLLEGE_ID IN (" + collegeIds + ") ";
+//            countSql += " and COLLEGE_ID IN (" + collegeIds + ") ";
+//        }
+//        if (!StringUtils.isEmpty(courseName)) {
+//            querySql += " and COURSE_NAME like '%" + courseName + "%' ";
+//            countSql += " and COURSE_NAME like '%" + courseName + "%' ";
+//        }
+//        querySql += "  group by COURSE_CODE";
+//        countSql += "  group by COURSE_CODE";
+//        countSql="SELECT count(1) FROM ("+countSql+") aa";
+//        SortDTO sortDTO = new SortDTO();
+//        if (!StringUtils.isEmpty(sort) ) {
+//            if (sort == "desc") {
+//                sortDTO.setKey("desc");
+//                sortDTOS.add(sortDTO);
+//            }
+//        }
+//       Map map=pageJdbcUtil
+//               .getPageInfor(pageSize, pageNumber, rowMapper, sortDTOS, querySql, countSql);
+//        PageData<CourseEvaluateDTO> p=new PageData<CourseEvaluateDTO>();
+//        p.setData((List) map.get("data"));
+//        p.setPage((PageDomain)map.get("page"));
 
+        PageData<CourseEvaluateDTO> p=new PageData<CourseEvaluateDTO>();
+        p.setData(new ArrayList<>());
+        p.getPage().setPageNumber(pageNumber);
+        p.getPage().setPageSize(pageSize);
+        p.getPage().setTotalPages(0);
+        p.getPage().setTotalElements(0L);
         return p;
     }
 
