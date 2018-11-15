@@ -44,29 +44,29 @@ public class MySchedulingService {
 //    @Autowired
 //    private EtlRollcallAlertService etlRollcallAlertService;
 
-    @Scheduled(cron = "0 0 3 * * ?")
-    public void rollCallCountJob() {
-        if (distributeLock.getRollCallCountLock()) {
-            LOG.info("开始启动旷课信息统计定时任务");
-            Calendar c = Calendar.getInstance();
-			//当前年份
-			int year = c.get(Calendar.YEAR);
-			//当前月份
-			int month = c.get(Calendar.MONTH)+1;
-			//当前学期编号
-			String semester = "秋";
-			if( month > 1 && month < 9){
-				semester = "春";
-			}
-			if(month == 1 ){
-                year = year - 1;
-			}
-            String teachYear = year+"";
-            rollCallJob.rollCallCountJob(teachYear,semester);
-        } else {
-            LOG.info("启动旷课信息统计任务，获取锁失败");
-        }
-    }
+//    @Scheduled(cron = "0 0 3 * * ?")
+//    public void rollCallCountJob() {
+//        if (distributeLock.getRollCallCountLock()) {
+//            LOG.info("开始启动旷课信息统计定时任务");
+//            Calendar c = Calendar.getInstance();
+//			//当前年份
+//			int year = c.get(Calendar.YEAR);
+//			//当前月份
+//			int month = c.get(Calendar.MONTH)+1;
+//			//当前学期编号
+//			String semester = "秋";
+//			if( month > 1 && month < 9){
+//				semester = "春";
+//			}
+//			if(month == 1 ){
+//                year = year - 1;
+//			}
+//            String teachYear = year+"";
+//            rollCallJob.rollCallCountJob(teachYear,semester);
+//        } else {
+//            LOG.info("启动旷课信息统计任务，获取锁失败");
+//        }
+//    }
 
 
 //    @Scheduled(cron = "0 0/1 * * * ?")
@@ -135,47 +135,47 @@ public class MySchedulingService {
         }
     }*/
 
-    @Scheduled(cron = "0 0 0/3 * * ?")
-    public void rollCallDayJob() {
-        if (distributeLock.getRollCallDayLock()) {
-            LOG.info("开始实时监控考勤统计定时任务");
-            rollCallDayJob.rollCallDayCountJob();
-        } else {
-            LOG.info("启动实时监控考勤统计，获取锁失败");
-        }
-    }
+//    @Scheduled(cron = "0 0 0/3 * * ?")
+//    public void rollCallDayJob() {
+//        if (distributeLock.getRollCallDayLock()) {
+//            LOG.info("开始实时监控考勤统计定时任务");
+//            rollCallDayJob.rollCallDayCountJob();
+//        } else {
+//            LOG.info("启动实时监控考勤统计，获取锁失败");
+//        }
+//    }
 
-    @Scheduled(cron = "0 0 0/3 * * ?")
-    public void teachingScheduleJob() {
-        if (distributeLock.getTeachingScheduleLock()) {
-            LOG.info("开始实时监控排课统计定时任务");
-            teachingScheduleJob.getTeachingScheduleJob();
-        } else {
-            LOG.info("启动实时监控排课统计，获取锁失败");
-        }
-    }
+//    @Scheduled(cron = "0 0 0/3 * * ?")
+//    public void teachingScheduleJob() {
+//        if (distributeLock.getTeachingScheduleLock()) {
+//            LOG.info("开始实时监控排课统计定时任务");
+//            teachingScheduleJob.getTeachingScheduleJob();
+//        } else {
+//            LOG.info("启动实时监控排课统计，获取锁失败");
+//        }
+//    }
+//
+//    @Scheduled(cron = "0 0 2 * * ?")
+//    public void WarningSettingsOnAndOffJob() {
+//        if (distributeLock.getWarningSettingsOnAndOffScheduleLock()) {
+//            LOG.info("预警设置定时任务开启/关闭");
+//            warningTypeOnAndOffJob.updateWarningTypeOnAndOff();
+//        } else {
+//            LOG.info("预警设置定时任务开启/关闭，获取锁失败");
+//        }
+//    }
 
-    @Scheduled(cron = "0 0 2 * * ?")
-    public void WarningSettingsOnAndOffJob() {
-        if (distributeLock.getWarningSettingsOnAndOffScheduleLock()) {
-            LOG.info("预警设置定时任务开启/关闭");
-            warningTypeOnAndOffJob.updateWarningTypeOnAndOff();
-        } else {
-            LOG.info("预警设置定时任务开启/关闭，获取锁失败");
-        }
-    }
-
-    @Scheduled(cron = "0 0/15 * * * ?")
-    public void SyncDate() {
-        if (distributeLock.getSyncClassTeacherLock()) {
-            LOG.info("同步学校管理平台班主任定时任务");
-//            Long orgId = 218L;//测试学校id218
-            //Long orgId = 138L;//现网桂林理工的学校id
-            syncClassTeacher.syncData(orgId);
-        } else {
-            LOG.info("同步学校管理平台班主任定时任务，获取锁失败");
-        }
-    }
+//    @Scheduled(cron = "0 0/15 * * * ?")
+//    public void SyncDate() {
+//        if (distributeLock.getSyncClassTeacherLock()) {
+//            LOG.info("同步学校管理平台班主任定时任务");
+////            Long orgId = 218L;//测试学校id218
+//            //Long orgId = 138L;//现网桂林理工的学校id
+//            syncClassTeacher.syncData(orgId);
+//        } else {
+//            LOG.info("同步学校管理平台班主任定时任务，获取锁失败");
+//        }
+//    }
 
 //    /**
 //     * 最近三天学生考勤告警统计
