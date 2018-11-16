@@ -38,6 +38,10 @@ public class SemesterCourseTimeTableManager {
         );
     }
 
+    public void  cleanPksj() {
+        jdbcTemplate.execute("TRUNCATE t_curriculum_schedule");
+    }
+
     public  void writeGuiliPksj(List<CourseTimeTableOutDTO> list) {
         String sql = "INSERT INTO t_curriculum_schedule (ORG_ID, TEACHING_CLASS_NUMBER, TEACHING_CLASS_NAME, START_WEEK, END_WEEK, DAY_OF_THE_WEEK, START_PERIOD, PERIOD_NUM) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 

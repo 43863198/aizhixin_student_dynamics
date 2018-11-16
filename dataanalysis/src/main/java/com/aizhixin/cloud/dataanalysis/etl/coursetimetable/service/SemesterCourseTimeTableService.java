@@ -25,6 +25,11 @@ public class SemesterCourseTimeTableService {
             return;
         }
         log.info("XN:{}, XQ:{} course time table query count:{}", xn, xq, dlist.size());
+        if (dlist.size() > 0) {
+            semesterCourseTimeTableManager.cleanPksj();
+        } else {
+            return;
+        }
         List<CourseTimeTableOutDTO> list = new ArrayList<>();
         String tmp = null;
         for (CourseTimeTableDTO d : dlist) {
@@ -49,12 +54,12 @@ public class SemesterCourseTimeTableService {
                         String[] ts = tmp.split("-");
                         if (ts.length >= 2) {
                             o.setDjj(new Integer(ts[0].trim()));
-                            o.setCxj(new Integer(ts[0].trim()) - o.getDjj() + 1);
+                            o.setCxj(new Integer(ts[1].trim()) - o.getDjj() + 1);
                         } else {
                             ts = tmp.split("、");
                             if (ts.length >= 2) {
                                 o.setDjj(new Integer(ts[0].trim()));
-                                o.setCxj(new Integer(ts[0].trim()) - o.getDjj() + 1);
+                                o.setCxj(new Integer(ts[1].trim()) - o.getDjj() + 1);
                             } else {
                                 if (org.apache.commons.lang.StringUtils.isNumeric(tmp)) {
                                     o.setQsz(new Integer(tmp));
