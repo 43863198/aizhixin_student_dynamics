@@ -1,6 +1,6 @@
 package com.aizhixin.cloud.datainstall.db.define;
 
-import com.aizhixin.cloud.datainstall.commons.FileUtils;
+import com.aizhixin.cloud.datainstall.commons.FileBaseUtils;
 import com.aizhixin.cloud.datainstall.commons.U8TextFileLineTemplate;
 import org.springframework.stereotype.Component;
 
@@ -12,13 +12,12 @@ import java.util.List;
 public class ConfigHelper {
     public List<TableDefine> readTablesConfig(String baseDir) {
         List<TableDefine> list = new ArrayList<>();
-//        String dir = configBaseDir;
-//        if (!StringUtils.isEmpty(baseDir)) {
-//            dir = baseDir;
-//        }
-        List<File> files = FileUtils.getDirFileNames(baseDir);
+        List<File> files = FileBaseUtils.getDirFileNames(baseDir);
         for (File f : files) {
-            final TableDefine table = new TableDefine ();
+            if (f.isDirectory() || f.getName().indexOf(".") == 0) {
+                continue;
+            }
+            final TableDefine table = new TableDefine();
             String fileName = f.getName();
             int p = fileName.lastIndexOf(".");
             if (p > 0) {

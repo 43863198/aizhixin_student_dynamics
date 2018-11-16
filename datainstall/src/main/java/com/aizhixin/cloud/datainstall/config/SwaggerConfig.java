@@ -1,47 +1,43 @@
 package com.aizhixin.cloud.datainstall.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
+import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import static com.google.common.base.Predicates.or;
-import static springfox.documentation.builders.PathSelectors.regex;
-
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
-	@Value("${sys.version}")
-	private String systemPublish;
+
+    @Autowired
+    private Config config;
 
     @Bean
-    public Docket webApi() {
+    public Docket createRestApi() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("WEB相关API")
-                .pathMapping("/")// base，最终调用接口后会和paths拼接在一起
+                .apiInfo(webApiInfo())
                 .select()
-                .paths(or(regex("/web/.*")))//过滤的接口
-                .build()
-                .apiInfo(new ApiInfoBuilder()
-                        .title("web相关API")
-                        .version(systemPublish)
-                        .build());
+                .apis(RequestHandlerSelectors.basePackage("com.aizhixin.cloud.datainstall"))
+                .paths(PathSelectors.any())
+                .build();
     }
 
-    @Bean
-    public Docket otherApi() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("其它API")
-                .pathMapping("/")// base，最终调用接口后会和paths拼接在一起
-                .select()
-                .paths(or(regex("/manual/.*")))//过滤的接口
-                .build()
-                .apiInfo(new ApiInfoBuilder()
-                        .title("其它API")
-                        .version(systemPublish)
-                        .build());
+    private ApiInfo webApiInfo() {
+        return new ApiInfoBuilder()
+                .title("数据同步 API")
+                .description("数据同步 API")
+                .contact(new Contact("aizhixin", "http://www.aizhixin.com", "mail@aizhixin.com"))
+                .license("Apache License Version 2.0")
+                .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0")
+                .version(config.getSysVersion())
+                .build();
     }
+
 }

@@ -32,7 +32,6 @@ public class JsonUtil {
 	public static void encode(File file, Object obj) {
 		try {
 			objectMapper.writeValue(file, obj);
-			// return objectMapper.writeValueAsString(obj);
 		} catch (IOException e) {
 			log.error("encode(Object)", e);
 		}
@@ -42,7 +41,6 @@ public class JsonUtil {
 	public static void encode(OutputStream out, Object obj) {
 		try {
 			objectMapper.writeValue(out, obj);
-			// return objectMapper.writeValueAsString(obj);
 		} catch (IOException e) {
 			log.error("encode(Object)", e);
 		}
