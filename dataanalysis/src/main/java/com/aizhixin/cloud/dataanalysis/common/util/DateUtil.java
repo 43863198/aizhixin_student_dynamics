@@ -458,4 +458,26 @@ public class DateUtil {
 			return null;
 		}
 	}
+
+	/**
+	 * 根据学期起始周和周数量计算学期的结束日期
+	 */
+	public static Date getSemesterEnd(Date start, int zs) {
+		if (zs <= 1) {
+			return null;
+		}
+		//第一周不一定是从周一开始，所以特殊处理，然后从第二周开始，直接添加天数就可以了
+		Date nextMonday = getNextMonday(start);
+		return afterNDay(nextMonday, (zs - 1)*7 - 1);//结束日期是闭区间，所以减去1
+	}
+
+//	public static void main(String[] args) {
+//		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+//		Calendar c = Calendar.getInstance();
+//		c.set(Calendar.YEAR, 2018);
+//		c.set(Calendar.MONTH, 8);
+//		c.set(Calendar.DAY_OF_MONTH, 3);
+//		Date d = c.getTime();
+//		System.out.println(f.format(d) + "\t" + f.format(getSemesterEnd(d, 20)));
+//	}
 }

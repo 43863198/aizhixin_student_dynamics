@@ -29,12 +29,18 @@ public class SchoolCalendarDTO {
     @ApiModelProperty(value = "总周数量")
     @Getter @Setter private int zs;
 
-    public SchoolCalendarDTO(String xn, String xq, Date ksrq, Date jsrq, int zs) {
+    public SchoolCalendarDTO(String xn, String xq, Date ksrq, int zs) {
         this.xn = xn;
         this.xq = xq;
         this.ksrq = ksrq;
-        this.jsrq = jsrq;
         this.zs = zs;
+        if (null != ksrq && zs >= 1) {
+            this.jsrq = DateUtil.getSemesterEnd(ksrq, zs);
+        }
+    }
+    public SchoolCalendarDTO(String xn, String xq, Date ksrq, Date jsrq, int zs) {
+        this(xn, xq, ksrq, zs);
+        this.jsrq = jsrq;
     }
     public SchoolCalendarDTO(String xn, String xq) {
         this.xn = xn;
