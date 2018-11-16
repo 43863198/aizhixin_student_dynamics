@@ -12,7 +12,7 @@ import java.util.List;
  * 文件及目录操作工具类
  */
 @Slf4j
-public class FileUtils {
+public class FileBaseUtils {
 
     /**
      * 验证目录是否存在，如果不存在，创建他。
