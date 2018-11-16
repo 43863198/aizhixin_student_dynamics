@@ -1,0 +1,436 @@
+一。表结构
+1. 部门信息
+CREATE TABLE `t_glut_dc_bmxx` (
+  `DWH` varchar(20) COLLATE utf8_bin NOT NULL,
+  `DWMC` varchar(120) COLLATE utf8_bin DEFAULT NULL,
+  `ZHGXSJ` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`DWH`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+2. 专业信息
+CREATE TABLE `t_glut_dc_zyxxsjlb` (
+  `ZYH` varchar(20) COLLATE utf8_bin NOT NULL,
+  `DWH` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `ZYMC` varchar(120) COLLATE utf8_bin DEFAULT NULL,
+  `ZYYWMC` varchar(120) COLLATE utf8_bin DEFAULT NULL,
+  `XKLB` varchar(30) COLLATE utf8_bin DEFAULT NULL,
+  `XKMLM` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`ZYH`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+3. 班级信息
+CREATE TABLE `t_glut_dc_bjsjlb` (
+  `BH` varchar(10) COLLATE utf8_bin DEFAULT NULL,
+  `BJMC` varchar(120) COLLATE utf8_bin NOT NULL,
+  `SSNJ` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `SSXYDM` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `SSZYDM` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`BJMC`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+4. 学生信息
+CREATE TABLE `t_glut_dc_xsjbsjzl` (
+  `XH` varchar(30) COLLATE utf8_bin NOT NULL,
+  `XM` varchar(80) COLLATE utf8_bin DEFAULT NULL,
+  `XMPY` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+  `YWXM` varchar(30) COLLATE utf8_bin DEFAULT NULL,
+  `CYM` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `XBM` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `CSRQ` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `CSDM` varchar(30) COLLATE utf8_bin DEFAULT NULL,
+  `JG` varchar(30) COLLATE utf8_bin DEFAULT NULL,
+  `MZM` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `GJDQM` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+  `SFZJLXM` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+  `SFZJH` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+  `HYZKM` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+  `ZZMM` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+  `JKZKM` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+  `ZP` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`XH`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+5. 学生学籍信息
+CREATE TABLE `t_glut_dc_xjjbsjzlb` (
+  `XH` varchar(30) COLLATE utf8_bin NOT NULL,
+  `ZYM` varchar(30) COLLATE utf8_bin DEFAULT NULL,
+  `SZNJ` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `YXSH` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `SZBH` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `RXNY` varchar(10) COLLATE utf8_bin DEFAULT NULL,
+  `XSDQZTM` varchar(10) COLLATE utf8_bin DEFAULT NULL,
+  `XXXS` varchar(10) COLLATE utf8_bin DEFAULT NULL,
+  `PYCC` varchar(10) COLLATE utf8_bin DEFAULT NULL,
+  `XSLBM` varchar(10) COLLATE utf8_bin DEFAULT NULL,
+  `PYFSM` varchar(10) COLLATE utf8_bin DEFAULT NULL,
+  `LQLBM` varchar(10) COLLATE utf8_bin DEFAULT NULL,
+  `RXFS` varchar(10) COLLATE utf8_bin DEFAULT NULL,
+  `XSLY` varchar(10) COLLATE utf8_bin DEFAULT NULL,
+  `XKMLM` varchar(10) COLLATE utf8_bin DEFAULT NULL,
+  `BJMC` varchar(100) COLLATE utf8_bin DEFAULT NULL,
+  `BYRQ` varchar(10) COLLATE utf8_bin DEFAULT NULL,
+  `XZ` varchar(10) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`XH`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+
+6. 教工信息
+CREATE TABLE `t_glut_dc_jgxx` (
+  `GH` varchar(50) COLLATE utf8_bin NOT NULL,
+  `XM` varchar(80) COLLATE utf8_bin DEFAULT NULL,
+  `DWH` varchar(30) COLLATE utf8_bin DEFAULT NULL,
+  `XBM` varchar(10) COLLATE utf8_bin DEFAULT NULL,
+  `MZM` varchar(30) COLLATE utf8_bin DEFAULT NULL,
+  `SFZJH` varchar(30) COLLATE utf8_bin DEFAULT NULL,
+  `ZZMMM` varchar(30) COLLATE utf8_bin DEFAULT NULL,
+  `ZP` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+  `ZGXLM` varchar(30) COLLATE utf8_bin DEFAULT NULL,
+  `DQZTM` varchar(30) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`GH`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+7.学生成绩信息(数据量太大，需程序处理)
+CREATE TABLE `t_xscjxx` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `XSID` bigint(20)  COMMENT '学生ID',
+  `XH` varchar(40)  COMMENT '学号',
+  `XQM` varchar(4)  COMMENT '学期码',
+  `KSRQ` date  COMMENT '考试日期',
+  `KCH` varchar(40)  COMMENT '课程号',
+  `KSFSM` varchar(4)  COMMENT '考试方式码',
+  `KSXZM` varchar(4)  COMMENT '考试性质码',
+  `DJLKSCJ` varchar(10)  COMMENT '等级类考试成绩',
+  `KCCJ` float(10,2)  COMMENT '课程成绩',
+  `KCDJCJM` varchar(10)  COMMENT '课程等级成绩码',
+  `RKJSGH` varchar(20)  COMMENT '任课教师工号',
+  `CJLRRQ` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '成绩录入日期时间',
+  `JD` float(10,2)  COMMENT '绩点',
+  `JXBH` varchar(20)  COMMENT '教学班号',
+  `XN` varchar(10)  COMMENT '学年(度)',
+  `PSCJ` float(10,2)  COMMENT '平时成绩',
+  `FSLKSCJ` float(10,2)  COMMENT '分数类考试成绩',
+  `CJLRRH` varchar(20)  COMMENT '成绩录入人号',
+  `ZHGXSJ` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '最后更新时间',
+  `XKSX` varchar(20)  COMMENT '选必修',
+  `JSXM` varchar(80)  COMMENT '教师姓名',
+  `XSXM` varchar(80)  COMMENT '学生姓名',
+  `KHM` varchar(120)  COMMENT '课程名',
+  PRIMARY KEY (`ID`),
+  KEY `idx_cscjxx_xh` (`XH`),
+  KEY `idx_cscjxx_kch` (`KCH`),
+  KEY `idx_cscjxx_rkjsgh` (`RKJSGH`),
+  KEY `idx_cscjxx_kcm` (`KHM`),
+  KEY `idx_xscjxx_xn` (`XN`) USING BTREE,
+  KEY `idx_xscjxx_xqm` (`XQM`) USING BTREE,
+  KEY `idx_xscjxx_kccj` (`KCCJ`) USING BTREE,
+  KEY `idx_xscjxx_xksx` (`XKSX`)
+)  COMMENT='学生成绩信息';
+
+8.等级考试信息
+CREATE TABLE `t_glut_dc_djksxx` (
+  `ID` int(11) NOT NULL,
+  `XH` varchar(30) COLLATE utf8_bin DEFAULT NULL,
+  `KSLX` varchar(120) COLLATE utf8_bin DEFAULT NULL,
+  `KSRQ` varchar(30) COLLATE utf8_bin DEFAULT NULL,
+  `FSKSCJ` double(10,2) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+9. 课程数据信息
+CREATE TABLE `t_glut_dc_kcsjlb` (
+  `KCH` varchar(20) COLLATE utf8_bin NOT NULL,
+  `KCMC` varchar(100) COLLATE utf8_bin DEFAULT NULL,
+  `KCYWMC` varchar(80) COLLATE utf8_bin DEFAULT NULL,
+  `XF` float(8,2) DEFAULT NULL,
+  `ZXS` float(8,2) DEFAULT NULL,
+  `KCJJ` varchar(600) COLLATE utf8_bin DEFAULT NULL,
+  `CKSM` varchar(100) COLLATE utf8_bin DEFAULT NULL,
+  `KCFZRH` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `KCKSDWH` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `KCJXDG` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `KCLXM` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+  `SFTK` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+10. 老师排课信息
+CREATE TABLE `t_glut_dc_pksjlb` (
+  `PKH` int(11) NOT NULL,
+  `JXBH` int(11) DEFAULT NULL,
+  `KKXN` int(11) DEFAULT NULL,
+  `KKXQM` int(11) DEFAULT NULL,
+  `SKSJ` varchar(600) COLLATE utf8_bin DEFAULT NULL,
+  `SKDD` varchar(100) COLLATE utf8_bin DEFAULT NULL,
+  `KRL` int(11) DEFAULT NULL,
+  `JSSZXQH` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `XKRSXD` int(11) DEFAULT NULL,
+  `PKYQ` varchar(100) COLLATE utf8_bin DEFAULT NULL,
+  `JSLXM` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `SKZC` varchar(60) COLLATE utf8_bin DEFAULT NULL,
+  `JSXM` varchar(80) COLLATE utf8_bin DEFAULT NULL,
+  `KCXZM` varchar(60) COLLATE utf8_bin DEFAULT NULL,
+  `SKBJH` varchar(60) COLLATE utf8_bin DEFAULT NULL,
+  `SKBJMC` varchar(200) COLLATE utf8_bin DEFAULT NULL,
+  `KKSM` varchar(600) COLLATE utf8_bin DEFAULT NULL,
+  `KCSXM` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+  `KKDWH` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+  `JSGH` varchar(30) COLLATE utf8_bin DEFAULT NULL,
+  `SKZCDM` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+  `JXBMC` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`PKH`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+11. 考试安排信息
+CREATE TABLE `t_glut_dc_ksapsjlb` (
+  `ID` int(11) NOT NULL,
+  `JKRXM` varchar(80) COLLATE utf8_bin DEFAULT NULL,
+  `JKRGH` varchar(30) COLLATE utf8_bin DEFAULT NULL,
+  `KSJSH` int(11) DEFAULT NULL,
+  `KSRQ` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `KSSJ` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `KSSC` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `KCH` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+  `KSFSLXM` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `JSSJ` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `idx_ksap_ksjsh` (`KSJSH`),
+  KEY `idx_ksap_kch` (`KCH`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+12. 教室信息
+CREATE TABLE `t_glut_dc_jsjbsjzlb` (
+  `XQH` varchar(10) COLLATE utf8_bin DEFAULT NULL,
+  `JXLH` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+  `SZLC` int(11) DEFAULT NULL,
+  `KSZWS` int(11) DEFAULT NULL,
+  `JSLXM` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `JSH` int(11) DEFAULT NULL,
+  `ZWS` int(11) DEFAULT NULL,
+  `JSGLBM` varchar(100) COLLATE utf8_bin DEFAULT NULL,
+  `JSMC` varchar(100) COLLATE utf8_bin DEFAULT NULL,
+  `KYF` varchar(50) COLLATE utf8_bin DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+13. 辅修及二学位
+CREATE TABLE `t_glut_dc_fxzysxwzlb` (
+  `XH` varchar(30) COLLATE utf8_bin DEFAULT NULL,
+  `FXZYM` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `FXYXSH` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `XW2YXSH` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `XW2ZYM` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `BZ` varchar(80) COLLATE utf8_bin DEFAULT NULL,
+  KEY `idx_fxzy_xh` (`XH`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+14. 结束学业数据
+CREATE TABLE `t_glut_dc_jsxyzlb` (
+  `XH` varchar(30) COLLATE utf8_bin DEFAULT NULL,
+  `BYZSH` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+  `XWZSH` varchar(50) COLLATE utf8_bin DEFAULT NULL,
+  `BYN` varchar(10) COLLATE utf8_bin DEFAULT NULL,
+  KEY `idx_jsxy_xh` (`XH`) USING BTREE,
+  KEY `idx_jsxy_byn` (`BYN`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+14. 校历表
+CREATE TABLE `t_glut_dc_xlxx` (
+  `MC` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `XN` varchar(20) COLLATE utf8_bin DEFAULT NULL,
+  `XQ` varchar(10) COLLATE utf8_bin DEFAULT NULL,
+  `KSSJ` date DEFAULT NULL,
+  `ZZS` int(11) DEFAULT NULL,
+  KEY `idx_xlxx_xn` (`XN`),
+  KEY `idx_xlxx_xq` (`XQ`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+二。
+处理过程及说明。
+部门、专业、学生需使用excel导入到org中，参照excel模板导入就行
+
+
+1. 删除并创建学生基础新乡市表
+CREATE TABLE `t_xsjbxx` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `XH` varchar(40)  COMMENT '学号',
+  `XM` varchar(80)  COMMENT '姓名',
+  `XMPY` varchar(80)  COMMENT '拼音姓名',
+  `YWXM` varchar(40)  COMMENT '英文姓名',
+  `XB` varchar(4)  COMMENT '性别',
+  `CSRQ` date  COMMENT '出生日期',
+  `CSD` varchar(10)  COMMENT '出生地',
+  `NJ` varchar(10)  COMMENT '年级',
+  `XZ` varchar(4)  COMMENT '学制',
+  `RXNY` varchar(10)  COMMENT '入学年月',
+  `YBYNY` date  COMMENT '预计毕业年月',
+  `SFZH` varchar(20)  COMMENT '身份证号码',
+  `BH` varchar(40)  COMMENT '班号',
+  `BJMC` varchar(80)  COMMENT '班级名称',
+  `ZYH` varchar(40)  COMMENT '专业号',
+  `ZYMC` varchar(80)  COMMENT '专业名称',
+  `YXSH` varchar(40)  COMMENT '学院号',
+  `YXSMC` varchar(80)  COMMENT '学院名称',
+  `XXID` bigint(20)  COMMENT '学校ID',
+  `DQZT` varchar(10)  COMMENT '当前状态',
+  `XXXSM` varchar(10)  COMMENT '学习形式码',
+  `PYFSM` varchar(10)  COMMENT '培养方式',
+  `ZYKLM` varchar(10)  COMMENT '学生类别',
+  `LQLB` varchar(10)  COMMENT '录取类别',
+  `RXFS` varchar(10)  COMMENT '入学方式',
+  `XSLY` varchar(10)  COMMENT '学生来源',
+  `NL` int(10)  COMMENT '年龄',
+  PRIMARY KEY (`ID`),
+  KEY `idx_xsjbxx_xh` (`XH`),
+  KEY `idx_xsjbxx_nj` (`NJ`),
+  KEY `idx_xsjbxx_bjmc` (`BJMC`),
+  KEY `idx_xsjbxx_zyh` (`ZYH`),
+  KEY `idx_xsjbxx_yxsh` (`YXSH`),
+  KEY `idx_xsjbxx_xb` (`XB`),
+  KEY `idx_xsjbxx_xxid` (`XXID`),
+  KEY `idx_xsjbxx_rxny` (`RXNY`),
+  KEY `idx_xsjbxx_ybyny` (`YBYNY`),
+  KEY `idx_xsjbxx_jqzt` (`DQZT`)
+) ENGINE=InnoDB  COMMENT='学生基本信息';
+
+
+2.插入新的全量的学生信息
+INSERT INTO t_xsjbxx (XH,XM,XMPY,YWXM,XB,CSRQ,CSD,NJ,XZ,RXNY,YBYNY,SFZH,BH,BJMC,ZYH,ZYMC,YXSH,YXSMC,XXID,DQZT,XXXSM,PYFSM,ZYKLM,LQLB,RXFS,XSLY)
+SELECT
+c.XH, c.XM,c.XMPY, c.YWXM, c.XBM,c.CSRQ,c.JG,c.SZNJ,c.XZ,c.RXNY, c.BYRQ, c.SFZJH,c.SZBH, c.BJMC, c.ZYM, z.ZYMC,c.YXSH, b.DWMC, 218, c.XSDQZTM,c.XXXS,c.PYFSM, c.XSLBM,c.LQLBM,c.RXFS, c.XSLY
+FROM (
+SELECT x.XH, x.XM,x.XMPY, x.YWXM, x.XBM,x.CSRQ,x.JG,j.SZNJ,j.XZ,j.RXNY, j.BYRQ, x.SFZJH,j.SZBH, j.BJMC, j.ZYM,j.YXSH, j.XSDQZTM,j.XXXS,j.PYFSM, j.XSLBM,j.LQLBM,j.RXFS, j.XSLY
+FROM t_glut_dc_xsjbsjzl x, t_glut_dc_xjjbsjzlb j WHERE x.XH=j.XH 
+) c LEFT JOIN t_glut_dc_zyxxsjlb z ON c.ZYM=z.ZYH LEFT JOIN t_glut_dc_bmxx b ON c.YXSH=b.DWH
+
+备份老表：
+CREATE TABLE `t_student_status` (
+  `ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ORG_ID` bigint(20) DEFAULT NULL COMMENT '学校id',
+  `JOB_NUMBER` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '学号',
+  `PROFESSION_CODE` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '专业码',
+  `GRADE` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '年级',
+  `COLLEGE_CODE` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '院系号',
+  `CLASS_CODE` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '班号',
+  `ENROL_YEAR` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '入学日期',
+  `STATE` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '学生当前状态码',
+  `FORM_OF_LEARNING` varchar(100) COLLATE utf8_bin DEFAULT NULL COMMENT '学习形式',
+  `CATEGORY_NUMBER` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '学生类别码',
+  `CULTURE_MODE_NUMBER` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '培养方式码',
+  `ADMISSIONS_CATEGORY_NUMBER` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '录取类别码：提供录取方式名称',
+  `ENROLMENT_NUMBER` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '入学方式码',
+  `SOURCE_NUMBER` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '学生来源码',
+  `PROFESSION_CATEGORY_NUMBER` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '学科门类码',
+  `CLASS_NAME` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '班级名称',
+  `GRADUATION_DATE` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '毕业日期',
+  `SCHOOL_SYSTEM` int(11) DEFAULT NULL COMMENT '学制',
+  PRIMARY KEY (`ID`),
+  KEY `jobNumber` (`JOB_NUMBER`),
+  KEY `college` (`COLLEGE_CODE`),
+  KEY `profession` (`PROFESSION_CODE`),
+  KEY `grade` (`GRADE`)
+) ENGINE=InnoDB ;
+
+INSERT INTO t_student_status (ORG_ID, JOB_NUMBER, PROFESSION_CODE, GRADE, 
+COLLEGE_CODE, CLASS_CODE, ENROL_YEAR,STATE, FORM_OF_LEARNING, 
+CATEGORY_NUMBER,CULTURE_MODE_NUMBER, ADMISSIONS_CATEGORY_NUMBER,
+ENROLMENT_NUMBER, SOURCE_NUMBER, CLASS_NAME, GRADUATION_DATE, SCHOOL_SYSTEM)
+SELECT 218, XH,ZYH,NJ,YXSH,BH,RXNY,DQZT,XXXSM,ZYKLM,PYFSM,LQLB,RXFS,XSLY,BJMC,YBYNY,XZ FROM t_xsjbxx;
+
+
+update t_xsjbxx SET YXSMC='地学院' where YXSH='201';
+update t_xsjbxx SET YXSMC='环境学院' where YXSH='202';
+update t_xsjbxx SET YXSMC='土建学院' where YXSH='203';
+update t_xsjbxx SET YXSMC='材料学院' where YXSH='204';
+update t_xsjbxx SET YXSMC='信息学院' where YXSH='205';
+update t_xsjbxx SET YXSMC='化生学院' where YXSH='206';
+update t_xsjbxx SET YXSMC='机控学院' where YXSH='207';
+update t_xsjbxx SET YXSMC='测绘学院' where YXSH='208';
+update t_xsjbxx SET YXSMC='理学院' where YXSH='209';
+update t_xsjbxx SET YXSMC='商学院' where YXSH='210';
+update t_xsjbxx SET YXSMC='旅游学院' where YXSH='211';
+update t_xsjbxx SET YXSMC='管媒学院' where YXSH='212';
+update t_xsjbxx SET YXSMC='外语学院' where YXSH='214';
+update t_xsjbxx SET YXSMC='艺术学院' where YXSH='215';
+
+3.
+更新学分
+  UPDATE t_b_xscjxx c SET c.XF=(SELECT r.CREDIT FROM t_course r WHERE r.course_number=c.KCH);
+  UPDATE t_b_xscjxx c SET c.XF=(SELECT r.XF FROM t_glut_dc_kcsjlb r WHERE r.KCH=c.KCH) WHERE c.XF IS NULL;
+
+4.等级考试
+  INSERT INTO t_cet_score (ORG_ID, JOB_NUMBER, TYPE, EXAMINATION_DATE, SCORE)
+  SELECT 218, XH, KSLX,KSRQ,FSKSCJ  FROM t_glut_dc_djksxx WHERE FSKSCJ IS NOT NULL;
+
+5. 更新课程
+  INSERT INTO t_course (ORG_ID,COURSE_NUMBER,COURSE_NAME,CREDIT, TOTAL_HOURS, SUBORDINATE_UNIT, COURSE_TYPE, STOP_CLASS, DELETE_FLAG)
+   SELECT 218,KCH, KCMC,  XF, ZXS, KCKSDWH,KCLXM,SFTK,0
+   FROM t_glut_dc_kcsjlb WHERE KCH NOT IN (SELECT DISTINCT COURSE_NUMBER FROM t_course);
+
+6. 添加新课表
+  INSERT INTO t_course_timetable (ORG_ID, COURSE_TABLE_NUMBER, TEACHING_CLASS_NUMBER, SCHOOL_YEAR, SEMESTER_NUMBER, CURRICULA_TIME, PLACE, CAPACITY, CAMPUS, NUMBER_LIMIT, `REQUIRE`, CLASS_ROOM_TYPE, WEEKLY, TEACHER_NAME, COURSE_NATURE, CLASSES, CLASS_NAME, COURSE_PROPERTIES, SET_UP_UNIT, TEACHER_JOB_NUMBER, TEACHING_CLASS_NAME)
+    SELECT 218, PKH, JXBH, KKXN, KKXQM, SKSJ, SKDD, KRL, JSSZXQH, XKRSXD, PKYQ, JSLXM, SKZC, JSXM, KCXZM, SKBJH, SKBJMC, KCSXM, KKDWH, JSGH, JXBMC FROM T_GLUT_DC_PKSJLB WHERE KKXN=2018 AND KKXQM=2
+
+UPDATE t_course_timetable SET PLACE = NULL WHERE LENGTH(PLACE) = 0 AND SCHOOL_YEAR='2018' AND SEMESTER_NUMBER='2';
+UPDATE t_course_timetable SET CURRICULA_TIME = NULL WHERE CURRICULA_TIME = '  -' AND SCHOOL_YEAR='2018' AND SEMESTER_NUMBER='2';
+
+7. 导入考试安排数据
+INSERT INTO t_examination_arrangement (TEACHER_NAME, JOB_NUMBER, ORG_ID, CLASSROOM_NUMBER, TEST_DATE, START_TIME, END_TIME, WHEN_LONG, COURSE_NUMBER)
+SELECT JKRXM, JKRGH, 218, KSJSH, KSRQ, KSSJ, JSSJ, KSSC, KCH
+FROM t_glut_dc_ksapsjlb WHERE KSRQ>='2018-09-01'
+
+8. 更新教室数据，删除所有老的，插入新数据
+INSERT INTO t_class_room(ORG_ID, SCHOOL_AREA_NUMBER, TEACHING_BUILDING_NUMBER, FLOOR, NUMBER_OF_EXAM_SEATS, CLASSROOM_TYPE_CODE, 
+NUMBER_OF_SEATS, CLASSROOM_MANAGEMENT_DEPARTMENT, CLASSROOM_NAME,CLASSROOM_NUMBER,NORMAL)
+SELECT
+218,XQH,JXLH,SZLC,KSZWS,JSLXM,ZWS,JSGLBM,JSMC,JSH,KYF
+FROM t_glut_dc_jsjbsjzlb
+
+9. 更新专业数据
+ 直接使用学校表，可以不更新
+
+10. 更新二学位
+
+INSERT INTO t_fxexwxx (XXDM, XH, XM, ZYH, ZYMC, YXSH, YXMC, FXZYH, FXZYMC, FXYXSH, FXYXMC, EXWZYH, EXWZYMC, EXWYXSH, EXWYXMC)
+SELECT  218, x.XH, x.XM, x.ZYH, x.ZYMC, x.YXSH, x.YXSMC, f.FXZYM, f.FXZY, f.FXYXSH, f.FXYXS, f.XW2ZYM, f.XW2ZY, f.XW2YXSH, f.XW2YXS FROM (
+SELECT f.XH, f.FXZYM, p1.`NAME` FXZY, f.FXYXSH, d1.COMPANY_NAME FXYXS, f.XW2ZYM, p2.`NAME` XW2ZY, f.XW2YXSH , d2.COMPANY_NAME XW2YXS
+FROM T_GLUT_DC_FXZYSXWZLB f, t_profession p1, t_profession p2, t_department d1, t_department d2
+WHERE f.FXZYM=p1.`CODE` AND f.FXYXSH=d1.COMPANY_NUMBER AND f.XW2ZYM=p2.`CODE` AND f.XW2YXSH=d2.COMPANY_NUMBER
+) f LEFT JOIN t_xsjbxx x ON f.XH=x.XH;
+
+update t_fxexwxx SET FXYXMC='地学院' where FXYXSH='201';
+update t_fxexwxx SET FXYXMC='环境学院' where FXYXSH='202';
+update t_fxexwxx SET FXYXMC='土建学院' where FXYXSH='203';
+update t_fxexwxx SET FXYXMC='材料学院' where FXYXSH='204';
+update t_fxexwxx SET FXYXMC='信息学院' where FXYXSH='205';
+update t_fxexwxx SET FXYXMC='化生学院' where FXYXSH='206';
+update t_fxexwxx SET FXYXMC='机控学院' where FXYXSH='207';
+update t_fxexwxx SET FXYXMC='测绘学院' where FXYXSH='208';
+update t_fxexwxx SET FXYXMC='理学院' where FXYXSH='209';
+update t_fxexwxx SET FXYXMC='商学院' where FXYXSH='210';
+update t_fxexwxx SET FXYXMC='旅游学院' where FXYXSH='211';
+update t_fxexwxx SET FXYXMC='管媒学院' where FXYXSH='212';
+update t_fxexwxx SET FXYXMC='外语学院' where FXYXSH='214';
+update t_fxexwxx SET FXYXMC='艺术学院' where FXYXSH='215';
+
+update t_fxexwxx SET EXWYXMC='地学院' where EXWYXSH='201';
+update t_fxexwxx SET EXWYXMC='环境学院' where EXWYXSH='202';
+update t_fxexwxx SET EXWYXMC='土建学院' where EXWYXSH='203';
+update t_fxexwxx SET EXWYXMC='材料学院' where EXWYXSH='204';
+update t_fxexwxx SET EXWYXMC='信息学院' where EXWYXSH='205';
+update t_fxexwxx SET EXWYXMC='化生学院' where EXWYXSH='206';
+update t_fxexwxx SET EXWYXMC='机控学院' where EXWYXSH='207';
+update t_fxexwxx SET EXWYXMC='测绘学院' where EXWYXSH='208';
+update t_fxexwxx SET EXWYXMC='理学院' where EXWYXSH='209';
+update t_fxexwxx SET EXWYXMC='商学院' where EXWYXSH='210';
+update t_fxexwxx SET EXWYXMC='旅游学院' where EXWYXSH='211';
+update t_fxexwxx SET EXWYXMC='管媒学院' where EXWYXSH='212';
+update t_fxexwxx SET EXWYXMC='外语学院' where EXWYXSH='214';
+update t_fxexwxx SET EXWYXMC='艺术学院' where EXWYXSH='215';
+
+
+11. 结束学业数据处理
+UPDATE t_glut_dc_jsxyzlb SET BYZSH=NULL WHERE LENGTH(BYZSH) = 0;
+UPDATE t_glut_dc_jsxyzlb SET XWZSH=NULL WHERE LENGTH(XWZSH) = 0;
+UPDATE t_glut_dc_jsxyzlb SET BYN=SUBSTRING(BYZSH, 7, 4);
+
