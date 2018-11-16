@@ -203,27 +203,27 @@ public class SchoolStatisticsService {
 
             Map<String, Object> con = new HashMap<>();
             StringBuilder ssl = new StringBuilder("SELECT sum(if(x.RXNY <= '" + f.format(d) + "' AND CURDATE() <= x.YBYNY,1,0)) as count, sum(if(x.YBYNY > now() and datediff(x.YBYNY,now()) < 300,1,0)) as yby FROM t_xsjbxx x WHERE 1 = 1");
-            StringBuilder tsl = new StringBuilder("SELECT count(1) as count FROM t_jzgjbxx");
-            StringBuilder tcsl = new StringBuilder("SELECT count(1) as count FROM t_class_teacher");
+            StringBuilder tsl = new StringBuilder("SELECT count(*) as count FROM t_glut_dc_jgxx");
+//            StringBuilder tcsl = new StringBuilder("SELECT count(1) as count FROM t_class_teacher");
             if (null != orgId) {
                 ssl.append(" AND x.XXID = :orgId");
                 con.put("orgId", orgId);
             }
             Query ssq = em.createNativeQuery(ssl.toString());
             Query tsq = em.createNativeQuery(tsl.toString());
-            Query tcsq = em.createNativeQuery(tcsl.toString());
+//            Query tcsq = em.createNativeQuery(tcsl.toString());
             ssq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             tsq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-            tcsq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+//            tcsq.unwrap(SQLQuery.class).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
             for (Map.Entry<String, Object> e : con.entrySet()) {
                 ssq.setParameter(e.getKey(), e.getValue());
             }
             Object re = ssq.getSingleResult();
             Object tre = tsq.getSingleResult();
-            Object tcre = tcsq.getSingleResult();
+//            Object tcre = tcsq.getSingleResult();
             Map<String, Object> map = (Map) re;
             Map<String, Object> tmap = (Map) tre;
-            Map<String, Object> tcmap = (Map) tcre;
+//            Map<String, Object> tcmap = (Map) tcre;
             if (null != map) {
                 if (null != map.get("count")) {
                     schoolProfileDTO.setInSchoolStudent(Long.valueOf(map.get("count").toString()));
@@ -236,9 +236,10 @@ public class SchoolStatisticsService {
             if (null != tmap.get("count")) {
                 schoolProfileDTO.setAllTeacher(Long.valueOf(tmap.get("count").toString()));
             }
-            if (null != tcmap.get("count")) {
-                schoolProfileDTO.setAllInstructor(Long.valueOf(tcmap.get("count").toString()));
-            }
+//            if (null != tcmap.get("count")) {
+//                schoolProfileDTO.setAllInstructor(Long.valueOf(tcmap.get("count").toString()));
+//            }
+            schoolProfileDTO.setAllInstructor(0L);
             h.setObjData(schoolProfileDTO);
             return h;
         } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
