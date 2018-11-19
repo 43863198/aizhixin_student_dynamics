@@ -46,6 +46,10 @@ public class ManualController {
     @PutMapping(value = "/uploadfile", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "PUT", value = "上传数据", response = Void.class, notes = "上传数据<br><br><b>@author hsh</b>")
     public void uploadfile() {
-        ftpService.uploadFile();
+        try {
+            ftpService.uploadSyncFile();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

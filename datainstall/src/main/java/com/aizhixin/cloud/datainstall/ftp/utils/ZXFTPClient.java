@@ -1,6 +1,7 @@
 package com.aizhixin.cloud.datainstall.ftp.utils;
 
 import com.aizhixin.cloud.datainstall.config.Config;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
@@ -10,34 +11,37 @@ import org.springframework.stereotype.Component;
 import java.io.*;
 
 @Component
+@Slf4j
 public class ZXFTPClient {
     @Autowired
     private Config config;
 
-    private FTPClient getClient() {
+    private FTPClient getClient() throws Exception {
         FTPClient ftp = new FTPClient();
         try {
             int reply;
             ftp.connect(config.getFtpHost(), config.getFtpPort());
             System.out.println("Connected to " + config.getFtpHost() + " on " + config.getFtpPort());
             reply = ftp.getReplyCode();
+            log.info("FTP reply code: {}", reply);
             if (!FTPReply.isPositiveCompletion(reply)) {
                 ftp.disconnect();
-                System.err.println("FTP server refused connection.");
+                log.warn("FTP server refused connection.");
+                ftp = null;
+            } else {
+                ftp.login(config.getFtpUserName(), config.getFtpPassword());
+                log.info("FTP登录成功");
+                ftp.setFileType(FTP.BINARY_FILE_TYPE);
             }
-            ftp.login(config.getFtpUserName(), config.getFtpPassword());
-            ftp.setFileType(FTP.BINARY_FILE_TYPE);
         } catch (Exception e) {
+            log.warn("Exception", e);
             if (ftp.isConnected()) {
                 try {
                     ftp.disconnect();
                 } catch (Exception f) {
-                    // do nothing
                 }
             }
-            ftp = null;
-            System.err.println("Could not connect to server.");
-            e.printStackTrace();
+            throw e;
         }
         return ftp;
     }
@@ -61,7 +65,7 @@ public class ZXFTPClient {
         }
     }
 
-    public String downloadFile(String filename, boolean isDelete) {
+    public String downloadFile(String filename, boolean isDelete) throws Exception {
         FTPClient ftp = getClient();
         String result = "";
         if (ftp != null) {
@@ -81,14 +85,17 @@ public class ZXFTPClient {
                     result = local.getAbsolutePath();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.warn("Exception", e);
+                throw e;
+            } finally {
+                closeClient(ftp);
             }
-            closeClient(ftp);
+
         }
         return result;
     }
 
-    public void uploadFile(File file) {
+    public void uploadFile(File file) throws Exception {
         FTPClient ftp = getClient();
         if (ftp != null) {
             try {
@@ -96,9 +103,11 @@ public class ZXFTPClient {
                 ftp.storeFile(file.getName(), input);
                 input.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                log.warn("Exception", e);
+                throw e;
+            } finally {
+                closeClient(ftp);
             }
-            closeClient(ftp);
         }
     }
 }
