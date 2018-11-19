@@ -89,14 +89,14 @@ public class DataSyncService {
     }
 
     private void stopSchedule() {
-        setConfig("isschedule", false);
+        setConfig("isschedule", "false");
     }
 
     private void startSchedule() {
-        setConfig("isschedule", true);
+        setConfig("isschedule", "true");
     }
 
-    private void setConfig(String key, boolean value) {
+    private void setConfig(String key, String value) {
         try {
             File file = new File(config.getFtpCommandFileName());
             String configStr = "";
@@ -112,7 +112,7 @@ public class DataSyncService {
             data.put(key, value);
             configStr = JsonUtil.encode(data);
             FileUtils.writeStringToFile(file, configStr, CharsetNames.UTF_8);
-            config.setSchedule(value);
+            config.setSchedule(Boolean.parseBoolean(value));
         } catch (Exception e) {
             log.warn("Exception", e);
         }
@@ -124,7 +124,7 @@ public class DataSyncService {
             if (file.exists()) {
                 String configStr = FileUtils.readFileToString(file, CharsetNames.UTF_8);
                 if (StringUtils.isNotEmpty(configStr)) {
-                    Map<String, Object> data = JsonUtil.decode(configStr, Map.class);
+                    Map<String, String> data = JsonUtil.decode(configStr, Map.class);
                     if (data.get("isschedule") != null && data.get("isschedule").equals("false")) {
                         config.setSchedule(false);
                     }
