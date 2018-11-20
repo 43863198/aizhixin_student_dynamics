@@ -8,6 +8,7 @@ import com.aizhixin.cloud.dataground.manager.JdbcManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -28,7 +29,12 @@ public class SynDataToDBService {
 
     public void downloadFtpFile(String fileName) {
         //validate local download dir
-        String baseDownloadDir = FileBaseUtils.createDateDirByBase(config.getFtpDownDir());
+        if (StringUtils.isEmpty(fileName) || !fileName.endsWith(".zip")) {
+            log.info("File name ({}) is not end with .zip.");
+            return;
+        }
+        String baseDownloadDir = config.getFtpDownDir();
+        FileBaseUtils.validateAndCreateDir(baseDownloadDir);
         File f = zxftpClient.downloadFile(fileName, baseDownloadDir, true);
         if (null != f) {
             log.info("Download file to local[{}], size({})", f, f.length());
@@ -43,6 +49,15 @@ public class SynDataToDBService {
             public  void doZipEntryFile(String fileName, BufferedReader br) throws IOException {
                 log.info("Start process file({})", fileName);
                 //根据文件名称做一些额外的处理策略
+                int p = fileName.indexOf(".");
+                String tableName = null;
+                if (p > 0) {
+                    tableName = fileName.substring(0, p);
+                }
+                if (null != tableName) {
+                    log.info("TRUNCATE table ({}) data", tableName);
+                    jdbcManager.execute("TRUNCATE " + tableName);
+                }
                 int sqlCount = 0;
                 StringBuilder lineStr = new StringBuilder();
                 String line = null;
