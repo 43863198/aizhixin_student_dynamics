@@ -16,6 +16,9 @@ public class Config {
     @Value("${ftp.port}")
     private Integer ftpPort;
 
+    @Value("${ftp.work-dir}")
+    private String ftpWorkDir;
+
     @Value("${ftp.username}")
     private String ftpUserName;
 
