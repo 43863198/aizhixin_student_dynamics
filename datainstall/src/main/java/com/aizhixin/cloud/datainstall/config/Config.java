@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 @Component
 @Data
 public class Config {
+
+    private boolean isSchedule = true;
+
     @Value("${sys.version}")
     private String sysVersion;
 
@@ -22,11 +25,33 @@ public class Config {
     @Value("${ftp.password}")
     private String ftpPassword;
 
-    @Value("${ftp.down-dir}")
-    private String ftpDownDir;
+    @Value("${ftp.remote-dir}")
+    private String ftpRemoteDir;
 
-    @Value("${ftp.up-dir}")
-    private String ftpUpDir;
+    @Value("${ftp.local-dir}")
+    private String ftpLocalDir;
+
+    public String getFtpConfigFile() {
+        return ftpLocalDir + "/config.txt";
+    }
+
+    public String getFtpDownDir() {
+        return ftpLocalDir + "/ftpdown";
+    }
+
+    public String getFtpUpDir() {
+        return ftpLocalDir + "/ftpup";
+    }
+
+    @Value("${ftp.command-filename}")
+    private String ftpCommandFileName1;
+
+    public String getCommandFilePath() {
+        return ftpRemoteDir + "/" + ftpCommandFileName1;
+    }
+
+    @Value("${db.config.filename}")
+    private String dbConfigFileName;
 
     @Value("${db.config.dir}")
     private String dbConfigDir;
