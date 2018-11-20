@@ -1,10 +1,13 @@
 package com.aizhixin.cloud.dataanalysis.analysis.service;
 
+import com.aizhixin.cloud.dataanalysis.analysis.dto.CodeNameCountDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.dto.OrganizationDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.MinorSecondDegreeInfo;
 import com.aizhixin.cloud.dataanalysis.analysis.respository.MinorSecondDegreeRepository;
+import com.aizhixin.cloud.dataanalysis.analysis.vo.ExwYxsTop10VO;
 import com.aizhixin.cloud.dataanalysis.analysis.vo.MinorSecondDegreeVO;
 import com.aizhixin.cloud.dataanalysis.analysis.vo.OverviewVO;
+import com.aizhixin.cloud.dataanalysis.bz.manager.XsjbxxManager;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
@@ -20,6 +23,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MinorSecondDegreeService {
@@ -31,6 +35,8 @@ public class MinorSecondDegreeService {
     private EntityManager em;
     @Autowired
     private OrganizationService organizationService;
+    @Autowired
+    private XsjbxxManager xsjbxxManager;
 
 
     public PageData<MinorSecondDegreeInfo> list(Long xxdm, String collegeCode, String professionCode, Integer pageNumber, Integer pageSize) {
@@ -237,4 +243,29 @@ public class MinorSecondDegreeService {
 //        resultMap.put("semester", semester);
 //        return resultMap;
 //    }
+
+    public List<ExwYxsTop10VO> queryExw(Long orgId) {
+        List<CodeNameCountDTO> rsList = xsjbxxManager.queryYxsZxrs(orgId);
+        List<ExwYxsTop10VO> voList = new ArrayList<>();
+        Map<String, ExwYxsTop10VO> map = new HashMap<>();
+        for (CodeNameCountDTO v : rsList) {
+            ExwYxsTop10VO e = new ExwYxsTop10VO(v.getCode(), v.getName(), v.getCount());
+            voList.add(e);
+            map.put(e.getYxsh(), e);
+        }
+        List<CodeNameCountDTO> ectList = minorSecondDegreeRepository.countYxsExwByXxdm(orgId);
+        for (CodeNameCountDTO v : ectList) {
+            ExwYxsTop10VO vo = map.get(v.getCode());
+            if (null != vo) {
+                vo.setExwrs(v.getCount());
+                if (0 != v.getCount()) {
+                    vo.setBl(v.getCount() * 100.0 / vo.getZxrs());
+                }
+            }
+        }
+
+        voList.sort((ExwYxsTop10VO o1, ExwYxsTop10VO o2) -> (int)(o2.getBl() - o1.getBl()));
+        voList = voList.stream().limit(10).collect(Collectors.toList());
+        return voList;
+    }
 }

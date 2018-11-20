@@ -1,6 +1,7 @@
 package com.aizhixin.cloud.dataground.service;
 
 import com.aizhixin.cloud.dataground.commons.FileBaseUtils;
+import com.aizhixin.cloud.dataground.commons.ReadZipFileTemplate;
 import com.aizhixin.cloud.dataground.commons.ZXFTPClient;
 import com.aizhixin.cloud.dataground.config.Config;
 import com.aizhixin.cloud.dataground.manager.JdbcManager;
@@ -8,10 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
 
 @Component
 @Slf4j
@@ -29,46 +29,39 @@ public class SynDataToDBService {
         File f = zxftpClient.downloadFile(fileName, baseDownloadDir, false);
         if (null != f) {
             log.info("Download file to local[{}], size({})", f, f.length());
-            readZipFile(f);
+            readAndProcessZipFile(f);
         } else {
             log.info("Download file({}) fail", fileName);
         }
     }
 
-    public void readZipFile(File zipFile) {
-        try {
-            ZipFile zf = new ZipFile(zipFile);
-//            ZipInputStream zip = new ZipInputStream(new FileInputStream(zipFile));
-            ZipInputStream zin = new ZipInputStream(new BufferedInputStream(new FileInputStream(zipFile)));
-            ZipEntry ze = null;
-            while ((ze = zin.getNextEntry()) != null) {
-                if (!ze.isDirectory()) {
-                    log.info("Output file:{}", ze.getName());
-                    long size = ze.getSize();
-                    if (size > 0) {
-                        BufferedReader br = new BufferedReader(new InputStreamReader(zf.getInputStream(ze)));
-                        StringBuilder lineStr = new StringBuilder();
-                        String line = null;
-                        while ((line = br.readLine()) != null) {
-                            lineStr.append(line);
-                            if (line.endsWith(");")) {
-                                line = lineStr.substring(0, lineStr.length() - 1);
-                                if (line.indexOf("#%29%3b#") > 0) {
-                                    jdbcManager.execute(line.replaceAll("#%29%3b#", ");\n"));
-                                } else {
-                                    jdbcManager.execute(line);
-                                }
-                                lineStr.delete(0, lineStr.length());
-                            }
+    public void readAndProcessZipFile(File zipFile) {
+        new ReadZipFileTemplate(zipFile) {
+            public  void doZipEntryFile(String fileName, BufferedReader br) throws IOException {
+                log.info("Start process file({})", fileName);
+                //根据文件名称一些处理策略
+                int sqlCount = 0;
+                StringBuilder lineStr = new StringBuilder();
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    lineStr.append(line);
+                    if (line.endsWith(");")) {
+                        line = lineStr.substring(0, lineStr.length() - 1);
+                        if (line.indexOf("#%29%3b#") > 0) {
+                            jdbcManager.execute(line.replaceAll("#%29%3b#", ");\n"));
+                            sqlCount++;
+                        } else {
+                            jdbcManager.execute(line);
+                            sqlCount++;
                         }
-                        br.close();
+                        lineStr.delete(0, lineStr.length());
+                        if (0 == sqlCount % 50) {
+                            log.info("Process file({}) execute sql count:{}", fileName, sqlCount);//进度显示
+                        }
                     }
                 }
-                zin.closeEntry();
+                log.info("Process file ({}) complete. sql execute count:({})", fileName, sqlCount);
             }
-            zin.close();
-        } catch (IOException e) {
-            log.warn("{}", e);
-        }
+        };
     }
 }

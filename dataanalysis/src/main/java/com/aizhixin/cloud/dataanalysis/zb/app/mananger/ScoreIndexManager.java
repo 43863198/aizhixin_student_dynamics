@@ -3,8 +3,11 @@ package com.aizhixin.cloud.dataanalysis.zb.app.mananger;
 import com.aizhixin.cloud.dataanalysis.zb.app.entity.ScoreIndex;
 import com.aizhixin.cloud.dataanalysis.zb.app.respository.ScoreIndexRespository;
 import com.aizhixin.cloud.dataanalysis.zb.app.vo.ScoreAllYearIndexVO;
+import com.aizhixin.cloud.dataanalysis.zb.app.vo.ScoreAvgYearsVO;
 import com.aizhixin.cloud.dataanalysis.zb.app.vo.ScoreDwCountVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,5 +50,11 @@ public class ScoreIndexManager {
 
     public List<ScoreAllYearIndexVO> findByXxdmAllSemsesterIndex(String xxdm, String bh) {
         return  scoreIndexRespository.findByXxdmAndCollegeAllSemesterCountIndex(xxdm, bh);
+    }
+
+    public List<ScoreAvgYearsVO> findLast10YearAvgScore(String xxdm) {
+        PageRequest pageRequest = new PageRequest(0, 10);
+        Page<ScoreAvgYearsVO> p = scoreIndexRespository.findScoreYears(pageRequest, xxdm);
+        return  p.getContent();
     }
 }

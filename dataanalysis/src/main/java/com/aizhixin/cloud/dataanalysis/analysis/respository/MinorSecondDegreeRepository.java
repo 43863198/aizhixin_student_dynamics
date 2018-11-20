@@ -1,6 +1,7 @@
 package com.aizhixin.cloud.dataanalysis.analysis.respository;
 
 
+import com.aizhixin.cloud.dataanalysis.analysis.dto.CodeNameCountDTO;
 import com.aizhixin.cloud.dataanalysis.analysis.entity.MinorSecondDegreeInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -49,6 +50,6 @@ public interface MinorSecondDegreeRepository extends JpaRepository<MinorSecondDe
 
     Long countByXxdmAndYxshAndExwyxshIsNotNull(Long xxdm,String yxsh);
 
-
-
+    @Query("select  new com.aizhixin.cloud.dataanalysis.analysis.dto.CodeNameCountDTO(yxsh, yxmc, count(*)) from #{#entityName} where xxdm = :xxdm and exwzyh is not null group by yxsh, yxmc")
+    List<CodeNameCountDTO> countYxsExwByXxdm(@Param(value = "xxdm") Long xxdm);
 }
