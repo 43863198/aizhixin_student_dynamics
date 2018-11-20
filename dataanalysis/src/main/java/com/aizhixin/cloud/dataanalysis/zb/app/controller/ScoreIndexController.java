@@ -75,7 +75,7 @@ public class ScoreIndexController {
 
 
     @GetMapping(value = "/last10", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(httpMethod = "GET", value = "最近10年成绩均值及评价GPA", response = Void.class, notes = "最近10年成绩均值及评价GPA<br><br><b>@author zhen.pan</b>")
+    @ApiOperation(httpMethod = "GET", value = "最近10年成绩均值及平均GPA", response = Void.class, notes = "最近10年成绩均值及平均GPA<br><br><b>@author zhen.pan</b>")
     public List<ScoreAvgYearsVO> yearIndex(
             @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") String orgId) {
         return scoreIndexService.findLast10YearAvgScore(orgId);
