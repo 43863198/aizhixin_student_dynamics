@@ -29,6 +29,7 @@ public class ZXFTPClient {
             }
             ftp.login(config.getFtpUserName(), config.getFtpPassword());
             ftp.setFileType(FTP.BINARY_FILE_TYPE);
+            ftp.changeWorkingDirectory(config.getFtpWorkDir());
         } catch (Exception e) {
             if (ftp.isConnected()) {
                 try {

@@ -16,6 +16,9 @@ import java.io.IOException;
 @Component
 @Slf4j
 public class SynDataToDBService {
+    private final  static String ESCAPE_SQL_CHAR = "#%29%3b#";//sql需转义字符
+    private final  static String ESCAPE_SQL_DEST_CHAR = ");\n";//sql转义目标字符
+
     @Autowired
     private Config config;
     @Autowired
@@ -26,7 +29,7 @@ public class SynDataToDBService {
     public void downloadFtpFile(String fileName) {
         //validate local download dir
         String baseDownloadDir = FileBaseUtils.createDateDirByBase(config.getFtpDownDir());
-        File f = zxftpClient.downloadFile(fileName, baseDownloadDir, false);
+        File f = zxftpClient.downloadFile(fileName, baseDownloadDir, true);
         if (null != f) {
             log.info("Download file to local[{}], size({})", f, f.length());
             readAndProcessZipFile(f);
@@ -39,7 +42,7 @@ public class SynDataToDBService {
         new ReadZipFileTemplate(zipFile) {
             public  void doZipEntryFile(String fileName, BufferedReader br) throws IOException {
                 log.info("Start process file({})", fileName);
-                //根据文件名称一些处理策略
+                //根据文件名称做一些额外的处理策略
                 int sqlCount = 0;
                 StringBuilder lineStr = new StringBuilder();
                 String line = null;
@@ -47,8 +50,8 @@ public class SynDataToDBService {
                     lineStr.append(line);
                     if (line.endsWith(");")) {
                         line = lineStr.substring(0, lineStr.length() - 1);
-                        if (line.indexOf("#%29%3b#") > 0) {
-                            jdbcManager.execute(line.replaceAll("#%29%3b#", ");\n"));
+                        if (line.indexOf(ESCAPE_SQL_CHAR) > 0) {
+                            jdbcManager.execute(line.replaceAll(ESCAPE_SQL_CHAR, ESCAPE_SQL_DEST_CHAR));
                             sqlCount++;
                         } else {
                             jdbcManager.execute(line);
