@@ -7,6 +7,7 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.FileCopyUtils;
 
 import java.io.*;
 
@@ -30,6 +31,8 @@ public class ZXFTPClient {
             ftp.login(config.getFtpUserName(), config.getFtpPassword());
             ftp.setFileType(FTP.BINARY_FILE_TYPE);
             ftp.changeWorkingDirectory(config.getFtpWorkDir());
+//            ftp.enterLocalPassiveMode();
+//            ftp.enterLocalActiveMode();
         } catch (Exception e) {
             if (ftp.isConnected()) {
                 try {
@@ -72,12 +75,9 @@ public class ZXFTPClient {
                 if (null == is) {//文件不存在
                     return null;
                 }
-                File dir = new File(localDownDir);
-                if (!dir.exists()) {
-                    dir.mkdirs();
-                }
                 OutputStream output = new FileOutputStream(local);
-                ftp.retrieveFile(fileName, output);
+                FileCopyUtils.copy(is, output);
+//                ftp.retrieveFile(fileName, output);
                 output.close();
                 log.info("Download ftp file to local[{}] success.", local.toString());
 //                FTPFile[] ftpFiles = ftp.listFiles();
