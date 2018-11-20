@@ -25,17 +25,30 @@ public class Config {
     @Value("${ftp.password}")
     private String ftpPassword;
 
-    @Value("${ftp.config-file}")
-    private String ftpConfigFile;
+    @Value("${ftp.remote-dir}")
+    private String ftpRemoteDir;
 
-    @Value("${ftp.down-dir}")
-    private String ftpDownDir;
+    @Value("${ftp.local-dir}")
+    private String ftpLocalDir;
 
-    @Value("${ftp.up-dir}")
-    private String ftpUpDir;
+    public String getFtpConfigFile() {
+        return ftpLocalDir + "/config.txt";
+    }
+
+    public String getFtpDownDir() {
+        return ftpLocalDir + "/ftpdown";
+    }
+
+    public String getFtpUpDir() {
+        return ftpLocalDir + "/ftpup";
+    }
 
     @Value("${ftp.command-filename}")
-    private String ftpCommandFileName;
+    private String ftpCommandFileName1;
+
+    public String getCommandFilePath() {
+        return ftpRemoteDir + "/" + ftpCommandFileName1;
+    }
 
     @Value("${db.config.filename}")
     private String dbConfigFileName;

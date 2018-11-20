@@ -24,9 +24,9 @@ public class FTPService {
 
     public void uploadSyncFile() throws Exception {
         //默认文件夹
-        String currDate = DateFormatUtils.format(new Date(), "yyyyMMdd");
-        File file = new File(config.getDbOutDir(), currDate);
-        uploadSyncFile(file.getAbsolutePath(), currDate);
+        String fileName = DateFormatUtils.format(new Date(), "yyyyMMdd");
+        File file = new File(config.getDbOutDir(), fileName);
+        uploadSyncFile(file.getAbsolutePath(), "data" + fileName);
     }
 
     public void uploadSyncFile(String dirName, String fileName) throws Exception {
@@ -34,6 +34,7 @@ public class FTPService {
     }
 
     private void uploadFile(String dirName, String fileName) throws Exception {
+        log.info("开始上传数据文件 {} {}", dirName, fileName);
         //zip
         File zipDir = new File(config.getFtpUpDir());
         if (!zipDir.exists()) {
@@ -41,8 +42,10 @@ public class FTPService {
         }
         File zipFile = new File(config.getFtpUpDir(), fileName + ".zip");
         ZipUtil.zip(dirName, zipFile.getAbsolutePath());
+        log.info("完成压缩 {} {}", dirName, fileName);
         //upload
         zxftpClient.uploadFile(zipFile);
+        log.info("完成上传 {} {}", dirName, fileName);
     }
 
     public boolean downloadConfig() {
@@ -65,7 +68,7 @@ public class FTPService {
 
     public String downloadCommand() {
         try {
-            String absolutePath = zxftpClient.downloadFile(config.getFtpCommandFileName(), true);
+            String absolutePath = zxftpClient.downloadFile(config.getCommandFilePath(), true);
             if (StringUtils.isNotEmpty(absolutePath)) {
                 log.info("下载命令文件");
                 //读取命令

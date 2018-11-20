@@ -98,7 +98,7 @@ public class DataSyncService {
 
     private void setConfig(String key, String value) {
         try {
-            File file = new File(config.getFtpCommandFileName());
+            File file = new File(config.getFtpConfigFile());
             String configStr = "";
             if (file.exists()) {
                 configStr = FileUtils.readFileToString(file, CharsetNames.UTF_8);
@@ -120,7 +120,7 @@ public class DataSyncService {
 
     public void initConfig() {
         try {
-            File file = new File(config.getFtpCommandFileName());
+            File file = new File(config.getFtpConfigFile());
             if (file.exists()) {
                 String configStr = FileUtils.readFileToString(file, CharsetNames.UTF_8);
                 if (StringUtils.isNotEmpty(configStr)) {
