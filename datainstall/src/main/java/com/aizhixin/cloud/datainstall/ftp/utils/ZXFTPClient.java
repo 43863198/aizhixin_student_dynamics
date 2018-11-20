@@ -2,6 +2,8 @@ package com.aizhixin.cloud.datainstall.ftp.utils;
 
 import com.aizhixin.cloud.datainstall.config.Config;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.CharsetNames;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.nio.charset.Charset;
 
 @Component
 @Slf4j
@@ -32,6 +35,11 @@ public class ZXFTPClient {
                 ftp.login(config.getFtpUserName(), config.getFtpPassword());
                 log.info("FTP登录成功");
                 ftp.setFileType(FTP.BINARY_FILE_TYPE);
+                if (StringUtils.isNotEmpty(config.getFtpRemoteDir())) {
+                    ftp.changeWorkingDirectory(config.getFtpRemoteDir());
+                }
+                ftp.setCharset(Charset.forName(CharsetNames.UTF_8));
+                ftp.enterLocalPassiveMode();
             }
         } catch (Exception e) {
             log.warn("Exception", e);
@@ -100,8 +108,13 @@ public class ZXFTPClient {
         if (ftp != null) {
             try {
                 InputStream input = new FileInputStream(file);
-                ftp.storeFile(file.getName(), input);
+                log.info(ftp.printWorkingDirectory());
+                boolean result = ftp.storeFile(file.getName(), input);
+                log.warn("uploadFile result:{}", result);
                 input.close();
+                if (!result) {
+                    throw new Exception("ftpUploadError");
+                }
             } catch (Exception e) {
                 log.warn("Exception", e);
                 throw e;

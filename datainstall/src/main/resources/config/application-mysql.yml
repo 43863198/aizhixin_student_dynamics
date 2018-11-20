@@ -12,18 +12,24 @@ spring:
       minimum-idle: 2
       maximum-pool-size: 10
       connection-timeout: 10000
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLInnoDBDialect
+    database: MYSQL
+
 
 logging.level.com.aizhixin.cloud: DEBUG
 
 ftp:
   host: 114.67.48.139
   port: 21
-  username: dinglicom
-  password: dinglicom1qa2ws#ED
+  username: aizhixin
+  password: NAVHWK6ADMVKDKW3a.
   # 本地目录
-  down-dir: /Users/hsh/Downloads/data/ftpdown
-  up-dir: /Users/hsh/Downloads/data/ftpup
+  remote-dir: /aizhixin
+  local-dir: /Users/hsh/Downloads/data
   command-filename: synccommand.txt
+
+log-dir: /Users/hsh/Downloads/data/logs
 
 db:
   config.filename: syncconfig.zip

@@ -7,12 +7,10 @@ import com.aizhixin.cloud.datainstall.db.define.ConfigHelper;
 import com.aizhixin.cloud.datainstall.db.define.TableDefine;
 import com.aizhixin.cloud.datainstall.db.define.TableField;
 import com.aizhixin.cloud.datainstall.db.manager.JdbcManager;
-import com.fasterxml.jackson.core.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.CharsetNames;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -171,5 +169,13 @@ public class DataBaseQueryService {
         str = StringUtils.replace(str, "'", "''");
         str = StringUtils.replace(str, ");\n", "#%29%3b#");
         return str;
+    }
+
+    public void deleteDataFile(){
+        try {
+            cleanOutFiles();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

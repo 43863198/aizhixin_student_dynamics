@@ -1,4 +1,4 @@
-package com.aizhixin.cloud.datainstall.sync.schedule;
+package com.aizhixin.cloud.datainstall.schedule;
 
 import com.aizhixin.cloud.datainstall.config.Config;
 import com.aizhixin.cloud.datainstall.sync.service.DataSyncService;
@@ -19,7 +19,7 @@ public class DataSyncSchedule {
 
     @Scheduled(cron = "0 0 22 * * ?")
     public void dayDataTask() {
-        if(!config.isSchedule()){
+        if (!config.isSchedule()) {
             log.info("已停止自动上传数据");
             return;
         }
@@ -31,6 +31,11 @@ public class DataSyncSchedule {
     @Scheduled(cron = "0 0/10 * * * ?")
     public void commandTask() {
         syncService.checkCommand();
+    }
+
+    @Scheduled(cron = "0 0/30 * * * ?")
+    public void uploadTask() {
+        syncService.checkUpload();
     }
 
     @PostConstruct
