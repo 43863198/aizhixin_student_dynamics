@@ -2,6 +2,7 @@ package com.aizhixin.cloud.dataanalysis.analysis.controller;
 
 import com.aizhixin.cloud.dataanalysis.analysis.entity.MinorSecondDegreeInfo;
 import com.aizhixin.cloud.dataanalysis.analysis.service.MinorSecondDegreeService;
+import com.aizhixin.cloud.dataanalysis.analysis.vo.ExwYxsTop10VO;
 import com.aizhixin.cloud.dataanalysis.analysis.vo.MinorSecondDegreeVO;
 import com.aizhixin.cloud.dataanalysis.analysis.vo.OverviewVO;
 import com.aizhixin.cloud.dataanalysis.common.PageData;
@@ -54,4 +55,10 @@ public class MinorSecondDegreeController {
         return minorSecondDegreeService.overview(orgId, collegeCode);
     }
 
+
+    @GetMapping(value = "/exwtop10", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "二学位top10学院", response = Void.class, notes = "二学位top10学院<br><br><b>@author panzhen</b>")
+    public List<ExwYxsTop10VO> top10(@ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") Long orgId) {
+        return minorSecondDegreeService.queryExw(orgId);
+    }
 }

@@ -310,4 +310,8 @@ public class ScoreIndexService {
             }
         }
     }
+
+    public List<ScoreAvgYearsVO> findLast10YearAvgScore(String xxid) {
+        return  scoreIndexManager.findLast10YearAvgScore(xxid);
+    }
 }

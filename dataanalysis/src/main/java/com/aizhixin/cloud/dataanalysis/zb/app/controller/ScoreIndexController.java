@@ -72,4 +72,13 @@ public class ScoreIndexController {
             @ApiParam(value = "pageSize 姓名学号") @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         return scoreIndexService.findScoreSemesterDetails(orgId, xnxq, collegeCode, professionCode, nj, name, pageNumber, pageSize);
     }
+
+
+    @GetMapping(value = "/last10", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(httpMethod = "GET", value = "最近10年成绩均值及评价GPA", response = Void.class, notes = "最近10年成绩均值及评价GPA<br><br><b>@author zhen.pan</b>")
+    public List<ScoreAvgYearsVO> yearIndex(
+            @ApiParam(value = "orgId 机构id", required = true) @RequestParam(value = "orgId") String orgId) {
+        return scoreIndexService.findLast10YearAvgScore(orgId);
+    }
+
 }
