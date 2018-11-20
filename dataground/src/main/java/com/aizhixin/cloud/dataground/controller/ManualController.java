@@ -21,7 +21,7 @@ public class ManualController {
     @PutMapping(value = "/download", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(httpMethod = "PUT", value = "执行同步", response = Void.class, notes = "执行同步<br><br><b>@author hsh</b>")
     public void download(@ApiParam(value = "FTP文件名称", required = true) @RequestParam(value = "fileName") String fileName) {
-        syncData.downloadFtpFile(fileName);
+        syncData.downloadFtpFileAndProcess(fileName);
     }
 
 }

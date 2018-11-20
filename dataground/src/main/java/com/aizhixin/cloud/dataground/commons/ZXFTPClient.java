@@ -80,6 +80,10 @@ public class ZXFTPClient {
 //                ftp.retrieveFile(fileName, output);
                 output.close();
                 log.info("Download ftp file to local[{}] success.", local.toString());
+                if (isDelete) {
+                    ftp.deleteFile(fileName);
+                    log.info("Delete ftp file to [{}] success.", fileName);
+                }
 //                FTPFile[] ftpFiles = ftp.listFiles();
 //                for (FTPFile ftpFile : ftpFiles) {
 //                    File local = new File(config.getFtpDownDir(), ftpFile.getName());
