@@ -34,7 +34,7 @@ public class Config {
 //    @Value("${db.out.dir}")
 //    private String dbOutDir;
 
-    @Value("${db.batch.size}")
-    private int dbBatchSize = 10000;
+//    @Value("${db.batch.size}")
+//    private int dbBatchSize = 10000;
 
 }
