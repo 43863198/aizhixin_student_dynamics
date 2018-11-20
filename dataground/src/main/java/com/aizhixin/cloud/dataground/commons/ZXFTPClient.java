@@ -8,9 +8,7 @@ import org.apache.commons.net.ftp.FTPReply;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 @Component
 @Slf4j
@@ -64,12 +62,16 @@ public class ZXFTPClient {
         }
     }
 
-    public File downloadFile(String fileName, boolean isDelete) {
+    public File downloadFile(String fileName, String localDownDir, boolean isDelete) {
         FTPClient ftp = getClient();
-        File local = new File(config.getFtpDownDir(), fileName);
+        File local = new File(localDownDir, fileName);
         if (ftp != null) {
             try {
-                File dir = new File(config.getFtpDownDir());
+                InputStream is = ftp.retrieveFileStream(fileName);
+                if (null == is) {//文件不存在
+                    return null;
+                }
+                File dir = new File(localDownDir);
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
@@ -88,7 +90,7 @@ public class ZXFTPClient {
 //                    }
 //                    log.info("Download ftp file to local[{}] success.", local.toString());
 //                }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 log.warn("{}", e);
             }
             closeClient(ftp);
