@@ -264,8 +264,7 @@ public class MinorSecondDegreeService {
             }
         }
 
-        voList.sort((ExwYxsTop10VO o1, ExwYxsTop10VO o2) -> (int)(o2.getBl() - o1.getBl()));
-        voList = voList.stream().limit(10).collect(Collectors.toList());
+        voList = voList.stream().sorted((ExwYxsTop10VO o1, ExwYxsTop10VO o2) -> (int)(o2.getBl() - o1.getBl())).limit(10).collect(Collectors.toList());
         return voList;
     }
 }
