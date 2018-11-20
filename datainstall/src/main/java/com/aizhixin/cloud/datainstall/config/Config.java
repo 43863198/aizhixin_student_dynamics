@@ -62,4 +62,7 @@ public class Config {
     @Value("${db.batch.size}")
     private int dbBatchSize = 10000;
 
+    @Value("${log-dir}")
+    private String logDir;
+
 }

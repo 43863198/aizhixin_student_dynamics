@@ -89,10 +89,12 @@ public class DataSyncService {
     }
 
     private void stopSchedule() {
+        log.info("设置停止自动任务");
         setConfig("isschedule", "false");
     }
 
     private void startSchedule() {
+        log.info("设置开始自动任务");
         setConfig("isschedule", "true");
     }
 
@@ -130,6 +132,15 @@ public class DataSyncService {
                     }
                 }
             }
+            log.info("初始化设置 {}", config.isSchedule());
+        } catch (Exception e) {
+            log.warn("Exception", e);
+        }
+    }
+
+    public void checkUpload() {
+        try {
+            ftpService.checkUpload();
         } catch (Exception e) {
             log.warn("Exception", e);
         }
