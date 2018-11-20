@@ -44,6 +44,7 @@ public class DataSyncService {
             //3. 压缩, 上传
             ftpService.uploadSyncFile();
             log.info("同步结束");
+            dataBaseQueryService.deleteDataFile();
         } catch (Exception e) {
             log.warn("Exception", e);
             isUploadLogs = true;

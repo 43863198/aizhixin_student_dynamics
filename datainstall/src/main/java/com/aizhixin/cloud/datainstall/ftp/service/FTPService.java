@@ -36,10 +36,10 @@ public class FTPService {
     }
 
     public void uploadSyncFile(String dirName, String fileName) throws Exception {
-        uploadFile(dirName, fileName, true);
+        uploadFile(dirName, fileName, true, false);
     }
 
-    private void uploadFile(String dirName, String fileName, boolean isRetry) throws Exception {
+    private void uploadFile(String dirName, String fileName, boolean isRetry, boolean isDelSrc) throws Exception {
         log.info("开始上传数据文件 {} {}", dirName, fileName);
         //zip
         File zipDir = new File(config.getFtpUpDir());
@@ -55,6 +55,9 @@ public class FTPService {
             log.info("上传成功 {} {}", dirName, fileName);
             if (isRetry) {
                 uploadMap.remove(zipFile.getAbsolutePath());
+            }
+            if (isDelSrc) {
+                zipFile.delete();
             }
         } catch (Exception e) {
             log.info("上传失败 {} {}", dirName, fileName);
@@ -94,7 +97,7 @@ public class FTPService {
         for (String key : uploadMap.keySet()) {
             UploadRetry dto = uploadMap.get(key);
             if (time >= dto.getNextTime().getTime()) {
-                uploadFile(dto.getDirName(), dto.getFileName(), true);
+                uploadFile(dto.getDirName(), dto.getFileName(), true, false);
                 uploadMap.remove(key);
             }
         }
@@ -120,7 +123,7 @@ public class FTPService {
 
     public String downloadCommand() {
         try {
-            String absolutePath = zxftpClient.downloadFile(config.getCommandFilePath(), true);
+            String absolutePath = zxftpClient.downloadFile(config.getFtpCommandFileName(), true);
             if (StringUtils.isNotEmpty(absolutePath)) {
                 log.info("下载命令文件");
                 //读取命令
@@ -146,7 +149,7 @@ public class FTPService {
     public void uploadLogs(String date) {
         try {
             String logDir = config.getLogDir() + "/datainstall." + date + ".log";
-            uploadFile(logDir, "log" + date, true);
+            uploadFile(logDir, "log" + date, true, true);
         } catch (Exception e) {
             log.warn("Exception", e);
         }

@@ -3,27 +3,33 @@ spring:
     auto: true
     proxy-target-class: true
   datasource:
-    driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://172.16.23.65:3306/student_dynamics_test?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF8&useSSL=false
-    username: org_api
-    password: dinglicom
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@202.193.95.1:1521:glutdb1
+    username: gxzjk
+    password: C5vvgEkf97fLFwvofijzq8waC9
     hikari:
       auto-commit: false
       minimum-idle: 2
       maximum-pool-size: 10
       connection-timeout: 10000
 
+  jpa:
+    database-platform: org.hibernate.dialect.Oracle10gDialect
+    database: ORACLE
+
 logging.level.com.aizhixin.cloud: DEBUG
 
 ftp:
   host: 114.67.48.139
   port: 21
-  username: dinglicom
-  password: dinglicom1qa2ws#ED
+  username: aizhixin
+  password: NAVHWK6ADMVKDKW3a.
   # 本地目录
-  down-dir: D://data/ftpdown
-  up-dir: D://data/ftpup
+  remote-dir: /aizhixin
+  local-dir: D://data
   command-filename: synccommand.txt
+
+log-dir: D://data/logs
 
 db:
   config.filename: syncconfig.zip

@@ -9,8 +9,8 @@
 	 <appender name="FILE"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<!--<fileNamePattern>D://data/logs/datainstall.%d{yyyy-MM-dd}.log</fileNamePattern>-->
-			<fileNamePattern>~/Workspace/dinglicom/logs/datainstall.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<fileNamePattern>D://data/logs/datainstall.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<!--<fileNamePattern>/Users/hsh/Downloads/data/logs/datainstall.%d{yyyy-MM-dd}.log</fileNamePattern>-->
 			<maxHistory>90</maxHistory>
 		</rollingPolicy>
 		<encoder>

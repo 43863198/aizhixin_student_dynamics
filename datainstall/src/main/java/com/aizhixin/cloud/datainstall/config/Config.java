@@ -40,15 +40,11 @@ public class Config {
     }
 
     public String getFtpUpDir() {
-        return ftpLocalDir + "/ftpup";
+        return ftpLocalDir +"/ftpup";
     }
 
     @Value("${ftp.command-filename}")
-    private String ftpCommandFileName1;
-
-    public String getCommandFilePath() {
-        return ftpRemoteDir + "/" + ftpCommandFileName1;
-    }
+    private String ftpCommandFileName;
 
     @Value("${db.config.filename}")
     private String dbConfigFileName;

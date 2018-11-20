@@ -170,4 +170,12 @@ public class DataBaseQueryService {
         str = StringUtils.replace(str, ");\n", "#%29%3b#");
         return str;
     }
+
+    public void deleteDataFile(){
+        try {
+            cleanOutFiles();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

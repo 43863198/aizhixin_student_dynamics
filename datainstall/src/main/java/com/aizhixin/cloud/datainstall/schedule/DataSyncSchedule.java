@@ -19,7 +19,7 @@ public class DataSyncSchedule {
 
     @Scheduled(cron = "0 0 22 * * ?")
     public void dayDataTask() {
-        if(!config.isSchedule()){
+        if (!config.isSchedule()) {
             log.info("已停止自动上传数据");
             return;
         }
