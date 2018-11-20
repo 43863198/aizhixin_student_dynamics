@@ -1,5 +1,6 @@
 package com.aizhixin.cloud.datainstall.ftp.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -8,6 +9,7 @@ import org.apache.commons.compress.utils.IOUtils;
 import java.io.*;
 import java.nio.file.Files;
 
+@Slf4j
 public class ZipUtil {
     public static void unzip(String fileName, String targetDir) {
         try {
@@ -45,28 +47,35 @@ public class ZipUtil {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("Exception", e);
         }
     }
 
-    public static void zip(String zipDir, String outFile) {
+    public static void zip(String srcFilePath, String outFile) {
         try {
-            File dir = new File(zipDir);
+            File srcFile = new File(srcFilePath);
             ZipArchiveOutputStream zipOutput = new ZipArchiveOutputStream(new File(outFile));
-            File[] filesToArchive = dir.listFiles();
-            for (File f : filesToArchive) {
-                ArchiveEntry entry = zipOutput.createArchiveEntry(f, f.getName());
-                zipOutput.putArchiveEntry(entry);
-                if (f.isFile()) {
-                    try (InputStream i = Files.newInputStream(f.toPath())) {
-                        IOUtils.copy(i, zipOutput);
+            File[] filesToArchive;
+            if (srcFile.isDirectory()) {
+                filesToArchive = srcFile.listFiles();
+            } else {
+                filesToArchive = new File[]{srcFile};
+            }
+            if (filesToArchive != null) {
+                for (File f : filesToArchive) {
+                    ArchiveEntry entry = zipOutput.createArchiveEntry(f, f.getName());
+                    zipOutput.putArchiveEntry(entry);
+                    if (f.isFile()) {
+                        try (InputStream i = Files.newInputStream(f.toPath())) {
+                            IOUtils.copy(i, zipOutput);
+                        }
                     }
+                    zipOutput.closeArchiveEntry();
                 }
-                zipOutput.closeArchiveEntry();
             }
             zipOutput.finish();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("Exception", e);
         }
     }
 }

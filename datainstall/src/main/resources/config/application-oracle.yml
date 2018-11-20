@@ -1,0 +1,35 @@
+spring:
+  aop:
+    auto: true
+    proxy-target-class: true
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://172.16.23.65:3306/student_dynamics_test?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF8&useSSL=false
+    username: org_api
+    password: dinglicom
+    hikari:
+      auto-commit: false
+      minimum-idle: 2
+      maximum-pool-size: 10
+      connection-timeout: 10000
+
+logging.level.com.aizhixin.cloud: DEBUG
+
+ftp:
+  host: 114.67.48.139
+  port: 21
+  username: dinglicom
+  password: dinglicom1qa2ws#ED
+  # 本地目录
+  down-dir: D://data/ftpdown
+  up-dir: D://data/ftpup
+  command-filename: synccommand.txt
+
+db:
+  config.filename: syncconfig.zip
+  config.dir: D://data/tt
+  out.dir: D://data/tout
+  batch.size: 1000
+
+sys:
+  version: v0.0.1
