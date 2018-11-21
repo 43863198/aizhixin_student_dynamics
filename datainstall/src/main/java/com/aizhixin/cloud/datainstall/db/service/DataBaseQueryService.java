@@ -36,7 +36,11 @@ public class DataBaseQueryService {
             cleanOutFiles();
             List<TableDefine> tables = configHelper.readTablesConfig(config.getDbConfigDir());
             for (TableDefine t : tables) {
-                queryTableAndOutSql(t);
+                if (config.getDatabase().equals("MYSQL")) {
+                    queryTableAndOutMySql(t);
+                } else {
+                    queryTableAndOutSql(t);
+                }
             }
             return true;
         } catch (Exception e) {
@@ -79,27 +83,72 @@ public class DataBaseQueryService {
         }
     }
 
-    private void queryTableAndOutSql(TableDefine t) {
+    private void queryTableAndOutMySql(TableDefine t) {
         if (StringUtils.isNotEmpty(t.getSelectSQL())) {
+            printDataCount(t);
             try {
                 String sql = t.getSelectSQL() + " LIMIT " + config.getDbBatchSize();
                 int offset = 0;
 
                 List<Map<String, Object>> lines = jdbcManager.query(sql + " OFFSET " + offset);
+                log.info("条数:{}", lines.size());
                 if (!lines.isEmpty()) {
                     outDataToSql(t, lines);
                 }
                 while (lines.size() >= config.getDbBatchSize()) {
                     offset += config.getDbBatchSize();
                     lines = jdbcManager.query(sql + " OFFSET " + offset);
+                    log.info("条数:{}", lines.size());
                     if (!lines.isEmpty()) {
                         outDataToSql(t, lines);
                     }
                 }
-
             } catch (Exception e) {
                 log.warn("Exception", e);
             }
+        }
+    }
+
+    private void queryTableAndOutSql(TableDefine t) {
+        if (StringUtils.isNotEmpty(t.getSelectSQL())) {
+            printDataCount(t);
+            try {
+                int offset = 1;
+                int linum = config.getDbBatchSize();
+
+                String sql = "select * from (" + t.getSelectSQL(config.getDatabase()) + " where rownum <=" + linum + " ) table_alias where rowno >= " + offset;
+                log.info(sql);
+                List<Map<String, Object>> lines = jdbcManager.query(sql);
+                log.info("条数:{}", lines.size());
+                if (!lines.isEmpty()) {
+                    outDataToSql(t, lines);
+                }
+                while (lines.size() >= config.getDbBatchSize()) {
+                    offset += config.getDbBatchSize();
+                    linum += config.getDbBatchSize();
+                    sql = "select * from (" + t.getSelectSQL(config.getDatabase()) + " where rownum <=" + linum + " ) table_alias where rowno >= " + offset;
+                    log.info(sql);
+                    lines = jdbcManager.query(sql);
+                    log.info("条数:{}", lines.size());
+                    if (!lines.isEmpty()) {
+                        outDataToSql(t, lines);
+                    }
+                }
+            } catch (Exception e) {
+                log.warn("Exception", e);
+            }
+        }
+    }
+
+    private void printDataCount(TableDefine t) {
+        try {
+            String sql = "select count(*) rowcount from " + t.getName();
+            Map<String, Object> map = jdbcManager.queryForMap(sql);
+            if (map != null && map.get("rowcount") != null) {
+                log.info("总条数:{}", map.get("rowcount"));
+            }
+        } catch (Exception e) {
+            log.warn("Exception", e);
         }
     }
 
@@ -171,7 +220,7 @@ public class DataBaseQueryService {
         return str;
     }
 
-    public void deleteDataFile(){
+    public void deleteDataFile() {
         try {
             cleanOutFiles();
         } catch (Exception e) {

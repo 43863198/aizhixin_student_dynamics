@@ -10,6 +10,9 @@ public class Config {
 
     private boolean isSchedule = true;
 
+    @Value("${spring.jpa.database}")
+    private String database;
+
     @Value("${sys.version}")
     private String sysVersion;
 

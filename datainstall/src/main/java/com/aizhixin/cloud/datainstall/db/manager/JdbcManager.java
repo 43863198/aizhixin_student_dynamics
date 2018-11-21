@@ -16,4 +16,8 @@ public class JdbcManager {
     public List<Map<String, Object>> query(String sql) {
         return template.queryForList(sql);
     }
+
+    public Map<String, Object> queryForMap(String sql) {
+        return template.queryForMap(sql);
+    }
 }

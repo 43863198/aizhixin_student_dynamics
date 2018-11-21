@@ -75,4 +75,18 @@ public class TableDefine {
         s.append(" FROM ").append(name);
         return s.toString();
     }
+
+    public String getSelectSQL(String database) {
+        if (StringUtils.isEmpty(name) || null == fields || fields.isEmpty()) {
+            log.warn("Table name is null OR field is Empty.");
+            return null;
+        }
+        StringBuilder s = new StringBuilder("SELECT ");
+        if (database.equals("ORACLE")) {
+            s.append(" rownum rowno, ");
+        }
+        s.append(getCsvHead(','));
+        s.append(" FROM ").append(name);
+        return s.toString();
+    }
 }
