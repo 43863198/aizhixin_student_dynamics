@@ -116,7 +116,7 @@ public class DataBaseQueryService {
                 int offset = 1;
                 int linum = config.getDbBatchSize();
 
-                String sql = t.getSelectSQL() + " rownum between " + offset + " and " + linum;
+                String sql = "select * from (" + t.getSelectSQL(config.getDatabase()) + " where rownum <=" + linum + " ) table_alias where rowno >= " + offset;
                 log.info(sql);
                 List<Map<String, Object>> lines = jdbcManager.query(sql);
                 log.info("条数:{}", lines.size());
@@ -126,7 +126,7 @@ public class DataBaseQueryService {
                 while (lines.size() >= config.getDbBatchSize()) {
                     offset += config.getDbBatchSize();
                     linum += config.getDbBatchSize();
-                    sql = t.getSelectSQL() + " rownum between " + offset + " and " + linum;
+                    sql = "select * from (" + t.getSelectSQL(config.getDatabase()) + " where rownum <=" + linum + " ) table_alias where rowno >= " + offset;
                     log.info(sql);
                     lines = jdbcManager.query(sql);
                     log.info("条数:{}", lines.size());
@@ -222,7 +222,7 @@ public class DataBaseQueryService {
 
     public void deleteDataFile() {
         try {
-//            cleanOutFiles();
+            cleanOutFiles();
         } catch (Exception e) {
             e.printStackTrace();
         }
