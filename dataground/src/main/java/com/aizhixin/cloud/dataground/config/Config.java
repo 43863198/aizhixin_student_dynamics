@@ -28,6 +28,9 @@ public class Config {
     @Value("${ftp.down-dir}")
     private String ftpDownDir;
 
+    @Value("${ftp.complete-dir}")
+    private String ftpCompleteDir;
+
 //    @Value("${ftp.up-dir}")
 //    private String ftpUpDir;
 
