@@ -47,8 +47,12 @@ public class FTPService {
             zipDir.mkdirs();
         }
         File zipFile = new File(config.getFtpUpDir(), fileName + ".zip");
-        ZipUtil.zip(dirName, zipFile.getAbsolutePath());
-        log.info("完成压缩 {} {}", dirName, fileName);
+        boolean zipresult = ZipUtil.zip(dirName, zipFile.getAbsolutePath());
+        log.info("完成压缩 {}", zipresult);
+        if (!zipresult) {
+            zipFile.delete();
+            return;
+        }
         //upload
         try {
             zxftpClient.uploadFile(zipFile);
@@ -112,7 +116,7 @@ public class FTPService {
                 ZipUtil.unzip(absolutePath, config.getDbConfigDir());
                 log.info("解压配置文件完成");
                 File zipFile = new File(absolutePath);
-                if(zipFile.exists()){
+                if (zipFile.exists()) {
                     zipFile.delete();
                 }
             } else {
@@ -146,14 +150,17 @@ public class FTPService {
     }
 
     public void uploadLogs() {
-        String currDate = DateFormatUtils.format(new Date(), "yyyyMMdd");
+        String currDate = DateFormatUtils.format(new Date(), "yyyy-MM-dd");
         uploadLogs(currDate);
     }
 
     public void uploadLogs(String date) {
         try {
-            String logDir = config.getLogDir() + "/datainstall." + date + ".log";
-            uploadFile(logDir, "log" + date, true, true);
+            String logFile = config.getLogDir() + "/datainstall." + date + ".log";
+            File file = new File(logFile);
+            if (file.exists() && file.length() > 0) {
+                uploadFile(logFile, "log" + date, true, true);
+            }
         } catch (Exception e) {
             log.warn("Exception", e);
         }

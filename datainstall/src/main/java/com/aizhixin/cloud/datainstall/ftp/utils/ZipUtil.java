@@ -51,7 +51,7 @@ public class ZipUtil {
         }
     }
 
-    public static void zip(String srcFilePath, String outFile) {
+    public static boolean zip(String srcFilePath, String outFile) {
         try {
             File srcFile = new File(srcFilePath);
             ZipArchiveOutputStream zipOutput = new ZipArchiveOutputStream(new File(outFile));
@@ -61,11 +61,13 @@ public class ZipUtil {
             } else {
                 filesToArchive = new File[]{srcFile};
             }
+            int count = 0;
             if (filesToArchive != null) {
                 for (File f : filesToArchive) {
                     ArchiveEntry entry = zipOutput.createArchiveEntry(f, f.getName());
                     zipOutput.putArchiveEntry(entry);
-                    if (f.isFile()) {
+                    if (f.exists() && f.isFile() && f.length() > 0) {
+                        count++;
                         try (InputStream i = Files.newInputStream(f.toPath())) {
                             IOUtils.copy(i, zipOutput);
                         }
@@ -75,8 +77,12 @@ public class ZipUtil {
             }
             zipOutput.finish();
             zipOutput.close();
+            if (count > 0) {
+                return true;
+            }
         } catch (Exception e) {
             log.warn("Exception", e);
         }
+        return false;
     }
 }
