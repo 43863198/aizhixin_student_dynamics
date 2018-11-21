@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://172.16.23.20:3306/student_dynamics?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF8&useSSL=false
+    username: org_api
+    password: LTwx0BL59jC5
+    hikari:
+      auto-commit: false
+      minimum-idle: 2
+      maximum-pool-size: 10
+      connection-timeout: 10000
+
+logging.level.com.aizhixin.cloud: INFO
+
+ftp:
+  host: 114.67.48.139
+  port: 21
+  username: aizhixin
+  password: NAVHWK6ADMVKDKW3a.
+  work-dir: aizhixin
+  down-dir: d:/shdown
+  complete-dir: d:/shcomplete
+
+sys:
+  version: v0.0.1

@@ -46,6 +46,9 @@ public class SynDataToDBService {
             log.info("Download file to local[{}], size({})", f, f.length());
             readAndProcessZipFile(f);//处理下载成功的zip文件
             //移动文件到已处理目录
+            FileBaseUtils.validateAndCreateDir(config.getFtpCompleteDir());
+            File fdes = new File(config.getFtpCompleteDir(), fileName);
+            FileBaseUtils.move(f, fdes);
         } else {
             log.info("Download file({}) fail", fileName);
         }

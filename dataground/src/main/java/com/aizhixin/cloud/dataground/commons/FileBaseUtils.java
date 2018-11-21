@@ -52,4 +52,8 @@ public class FileBaseUtils {
         }
         return d.toString();
     }
+
+    public static void move(File fileSrc, File fileDes) {
+        fileSrc.renameTo(fileDes);
+    }
 }
