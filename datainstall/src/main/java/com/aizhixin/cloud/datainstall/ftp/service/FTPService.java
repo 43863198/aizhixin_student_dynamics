@@ -111,6 +111,10 @@ public class FTPService {
                 log.info("同步配置下载成功:{}", absolutePath);
                 ZipUtil.unzip(absolutePath, config.getDbConfigDir());
                 log.info("解压配置文件完成");
+                File zipFile = new File(absolutePath);
+                if(zipFile.exists()){
+                    zipFile.delete();
+                }
             } else {
                 log.info("无新同步配置");
             }

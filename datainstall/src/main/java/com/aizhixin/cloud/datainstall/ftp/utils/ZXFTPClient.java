@@ -89,8 +89,10 @@ public class ZXFTPClient {
                 if (isDelete) {
                     ftp.deleteFile(filename);
                 }
-                if (local.exists()) {
+                if (local.exists() && local.length() > 0) {
                     result = local.getAbsolutePath();
+                } else {
+                    local.delete();
                 }
             } catch (Exception e) {
                 log.warn("Exception", e);
