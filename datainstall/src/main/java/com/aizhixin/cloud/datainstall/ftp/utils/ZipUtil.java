@@ -74,6 +74,7 @@ public class ZipUtil {
                 }
             }
             zipOutput.finish();
+            zipOutput.close();
         } catch (Exception e) {
             log.warn("Exception", e);
         }
